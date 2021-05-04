@@ -19,12 +19,12 @@ class ArrayValue extends FunctionValue {
 				),
 			localName: 'get',
 			namespaceURI: ARRAY_NAMESPACE_URI,
-			// argumentTypes: [{ type: { kind: BaseType.XSINTEGER }, isRestArgument: false }],
-			argumentTypes: [{ kind: BaseType.XSINTEGER }],
+			// argumentTypes: [{ type: { kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE }, isRestArgument: false }],
+			argumentTypes: [{ kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE }],
 			arity: 1,
 			returnType: { kind: BaseType.ITEM, occurrence: SequenceType.AZERO_OR_MORE },
 		});
-		this.type = { kind: BaseType.ARRAY, items: [] };
+		this.type = { kind: BaseType.ARRAY, items: [], seqType: SequenceType.EXACTLY_ONE };
 		this.members = members;
 	}
 }

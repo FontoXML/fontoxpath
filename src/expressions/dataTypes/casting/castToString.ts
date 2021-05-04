@@ -1,5 +1,5 @@
 import createAtomicValue from '../createAtomicValue';
-import { BaseType, ValueType } from '../Value';
+import { BaseType, ValueType, SequenceType } from '../Value';
 import CastResult from './CastResult';
 import castToStringLikeType from './castToStringLikeType';
 
@@ -15,7 +15,10 @@ export default function castToString(
 
 		return {
 			successful: true,
-			value: createAtomicValue(castResult.value, { kind: BaseType.XSSTRING }),
+			value: createAtomicValue(castResult.value, {
+				kind: BaseType.XSSTRING,
+				seqType: SequenceType.EXACTLY_ONE,
+			}),
 		};
 	};
 }

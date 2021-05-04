@@ -7,7 +7,7 @@ import {
 	validatePattern,
 	validateRestrictions,
 } from '../typeHelpers';
-import { BaseType, ValueType, valueTypeHash } from '../Value';
+import { BaseType, ValueType, valueTypeHash, SequenceType } from '../Value';
 import CastResult from './CastResult';
 import castToAnyURI from './castToAnyURI';
 import castToBase64Binary from './castToBase64Binary';
@@ -105,7 +105,10 @@ function createCastingFunction(from: ValueType, to: ValueType) {
 	if (from.kind === BaseType.XSUNTYPEDATOMIC && to.kind === BaseType.XSSTRING) {
 		return (val) => ({
 			successful: true,
-			value: createAtomicValue(val, { kind: BaseType.XSSTRING }),
+			value: createAtomicValue(val, {
+				kind: BaseType.XSSTRING,
+				seqType: SequenceType.EXACTLY_ONE,
+			}),
 		});
 	}
 	if (to.kind === BaseType.XSNOTATION) {
@@ -137,7 +140,12 @@ function createCastingFunction(from: ValueType, to: ValueType) {
 	}
 
 	if (
-		isSubtypeOf(from, { kind: BaseType.FUNCTION, returnType: undefined, params: [] }) &&
+		isSubtypeOf(from, {
+			kind: BaseType.FUNCTION,
+			returnType: undefined,
+			params: [],
+			seqType: SequenceType.EXACTLY_ONE,
+		}) &&
 		to.kind === BaseType.XSSTRING
 	) {
 		return (_val) => ({

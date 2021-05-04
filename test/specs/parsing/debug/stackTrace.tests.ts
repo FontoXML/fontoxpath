@@ -53,7 +53,7 @@ describe('showStackTraceOnError', () => {
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'boom-abc' },
 			[],
-			{ kind: BaseType.XSSTRING },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
 			(_dynamicContext) => {
 				// This will throw an error so no need for a return
 				c();
@@ -65,7 +65,7 @@ describe('showStackTraceOnError', () => {
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'boom-def' },
 			[],
-			{ kind: BaseType.XSSTRING },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
 			(_dynamicContext) => {
 				// This will throw an error so no need for a return
 				f();

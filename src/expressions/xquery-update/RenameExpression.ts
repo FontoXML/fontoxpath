@@ -7,7 +7,7 @@ import { rename } from './pulPrimitives';
 import { mergeUpdates } from './pulRoutines';
 
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import Value, { BaseType } from '../dataTypes/Value';
+import Value, { BaseType, SequenceType } from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
 import { IIterator, IterationHint, ready } from '../util/iterators';
 import { evaluateNCNameExpression, evaluateQNameExpression } from '../xquery/nameExpression';
@@ -32,9 +32,18 @@ function evaluateTarget(targetXdmValue) {
 		throw errXUTY0012();
 	}
 	if (
-		!isSubtypeOf(targetXdmValue[0].type, { kind: BaseType.ELEMENT }) &&
-		!isSubtypeOf(targetXdmValue[0].type, { kind: BaseType.ATTRIBUTE }) &&
-		!isSubtypeOf(targetXdmValue[0].type, { kind: BaseType.PROCESSINGINSTRUCTION })
+		!isSubtypeOf(targetXdmValue[0].type, {
+			kind: BaseType.ELEMENT,
+			seqType: SequenceType.EXACTLY_ONE,
+		}) &&
+		!isSubtypeOf(targetXdmValue[0].type, {
+			kind: BaseType.ATTRIBUTE,
+			seqType: SequenceType.EXACTLY_ONE,
+		}) &&
+		!isSubtypeOf(targetXdmValue[0].type, {
+			kind: BaseType.PROCESSINGINSTRUCTION,
+			seqType: SequenceType.EXACTLY_ONE,
+		})
 	) {
 		throw errXUTY0012();
 	}

@@ -19,29 +19,35 @@ import createAtomicValue from './createAtomicValue';
 import ISequence from './ISequence';
 import isSubtypeOf from './isSubtypeOf';
 import sequenceFactory from './sequenceFactory';
-import Value, { BaseType } from './Value';
+import Value, { BaseType, SequenceType } from './Value';
 export function atomizeSingleValue(
 	value: Value,
 	executionParameters: ExecutionParameters
 ): ISequence {
 	if (
-		isSubtypeOf(value.type, { kind: BaseType.XSANYATOMICTYPE }) ||
-		isSubtypeOf(value.type, { kind: BaseType.XSUNTYPEDATOMIC }) ||
-		isSubtypeOf(value.type, { kind: BaseType.XSBOOLEAN }) ||
-		isSubtypeOf(value.type, { kind: BaseType.XSDECIMAL }) ||
-		isSubtypeOf(value.type, { kind: BaseType.XSDOUBLE }) ||
-		isSubtypeOf(value.type, { kind: BaseType.XSFLOAT }) ||
-		isSubtypeOf(value.type, { kind: BaseType.XSINTEGER }) ||
-		isSubtypeOf(value.type, { kind: BaseType.XSNUMERIC }) ||
-		isSubtypeOf(value.type, { kind: BaseType.XSQNAME }) ||
-		isSubtypeOf(value.type, { kind: BaseType.XSSTRING })
+		isSubtypeOf(value.type, {
+			kind: BaseType.XSANYATOMICTYPE,
+			seqType: SequenceType.EXACTLY_ONE,
+		}) ||
+		isSubtypeOf(value.type, {
+			kind: BaseType.XSUNTYPEDATOMIC,
+			seqType: SequenceType.EXACTLY_ONE,
+		}) ||
+		isSubtypeOf(value.type, { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE }) ||
+		isSubtypeOf(value.type, { kind: BaseType.XSDECIMAL, seqType: SequenceType.EXACTLY_ONE }) ||
+		isSubtypeOf(value.type, { kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE }) ||
+		isSubtypeOf(value.type, { kind: BaseType.XSFLOAT, seqType: SequenceType.EXACTLY_ONE }) ||
+		isSubtypeOf(value.type, { kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE }) ||
+		isSubtypeOf(value.type, { kind: BaseType.XSNUMERIC, seqType: SequenceType.EXACTLY_ONE }) ||
+		isSubtypeOf(value.type, { kind: BaseType.XSQNAME, seqType: SequenceType.EXACTLY_ONE }) ||
+		isSubtypeOf(value.type, { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE })
 	) {
 		return sequenceFactory.create(value);
 	}
 
 	const domFacade = executionParameters.domFacade;
 
-	if (isSubtypeOf(value.type, { kind: BaseType.NODE })) {
+	if (isSubtypeOf(value.type, { kind: BaseType.NODE, seqType: SequenceType.EXACTLY_ONE })) {
 		const pointer = value.value;
 
 		// TODO: Mix in types, by default get string value.
@@ -54,6 +60,7 @@ export function atomizeSingleValue(
 			return sequenceFactory.create(
 				createAtomicValue(domFacade.getDataFromPointer(pointer), {
 					kind: BaseType.XSUNTYPEDATOMIC,
+					seqType: SequenceType.EXACTLY_ONE
 				})
 			);
 		}
@@ -66,6 +73,7 @@ export function atomizeSingleValue(
 			return sequenceFactory.create(
 				createAtomicValue(domFacade.getDataFromPointer(pointer), {
 					kind: BaseType.XSSTRING,
+					seqType: SequenceType.EXACTLY_ONE
 				})
 			);
 		}
@@ -98,17 +106,35 @@ export function atomizeSingleValue(
 		})(pointer.node);
 
 		return sequenceFactory.create(
-			createAtomicValue(allTexts.join(''), { kind: BaseType.XSUNTYPEDATOMIC })
+			createAtomicValue(allTexts.join(''), {
+				kind: BaseType.XSUNTYPEDATOMIC,
+				seqType: SequenceType.EXACTLY_ONE,
+			})
 		);
 	}
 	// (function || map) && !array
 	if (
-		isSubtypeOf(value.type, { kind: BaseType.FUNCTION, returnType: undefined, params: [] }) &&
-		!isSubtypeOf(value.type, { kind: BaseType.ARRAY, items: [] })
+		isSubtypeOf(value.type, {
+			kind: BaseType.FUNCTION,
+			returnType: undefined,
+			params: [],
+			seqType: SequenceType.EXACTLY_ONE,
+		}) &&
+		!isSubtypeOf(value.type, {
+			kind: BaseType.ARRAY,
+			items: [],
+			seqType: SequenceType.EXACTLY_ONE,
+		})
 	) {
 		throw new Error(`FOTY0013: Atomization is not supported for ${value.type}.`);
 	}
-	if (isSubtypeOf(value.type, { kind: BaseType.ARRAY, items: [] })) {
+	if (
+		isSubtypeOf(value.type, {
+			kind: BaseType.ARRAY,
+			items: [],
+			seqType: SequenceType.EXACTLY_ONE,
+		})
+	) {
 		const arrayValue = value as ArrayValue;
 		return concatSequences(
 			arrayValue.members.map((getMemberSequence) =>

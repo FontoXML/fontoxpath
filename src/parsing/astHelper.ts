@@ -87,31 +87,36 @@ function getTypeDeclaration(ast: IAST): ValueType {
 	const determineType = (typeAst: IAST): ValueType => {
 		switch (typeAst[0]) {
 			case 'documentTest':
-				return { kind: BaseType.DOCUMENTNODE };
+				return { kind: BaseType.DOCUMENTNODE, seqType: SequenceType.EXACTLY_ONE };
 			case 'elementTest':
-				return { kind: BaseType.ELEMENT };
+				return { kind: BaseType.ELEMENT, seqType: SequenceType.EXACTLY_ONE };
 			case 'attributeTest':
-				return { kind: BaseType.ATTRIBUTE };
+				return { kind: BaseType.ATTRIBUTE, seqType: SequenceType.EXACTLY_ONE };
 			case 'piTest':
-				return { kind: BaseType.PROCESSINGINSTRUCTION };
+				return { kind: BaseType.PROCESSINGINSTRUCTION, seqType: SequenceType.EXACTLY_ONE };
 			case 'commentTest':
-				return { kind: BaseType.COMMENT };
+				return { kind: BaseType.COMMENT, seqType: SequenceType.EXACTLY_ONE };
 			case 'textTest':
-				return { kind: BaseType.TEXT };
+				return { kind: BaseType.TEXT, seqType: SequenceType.EXACTLY_ONE };
 			case 'anyKindTest':
-				return { kind: BaseType.NODE };
+				return { kind: BaseType.NODE, seqType: SequenceType.EXACTLY_ONE };
 			case 'anyItemType':
-				return { kind: BaseType.ITEM };
+				return { kind: BaseType.ITEM, seqType: SequenceType.EXACTLY_ONE };
 			case 'anyFunctionTest':
 			case 'functionTest':
 			case 'typedFunctionTest':
-				return { kind: BaseType.FUNCTION, returnType: undefined, params: [] };
+				return {
+					kind: BaseType.FUNCTION,
+					returnType: undefined,
+					params: [],
+					seqType: SequenceType.EXACTLY_ONE,
+				};
 			case 'anyMapTest':
 			case 'typedMapTest':
-				return { kind: BaseType.MAP, items: [] };
+				return { kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE };
 			case 'anyArrayTest':
 			case 'typedArrayTest':
-				return { kind: BaseType.ARRAY, items: [] };
+				return { kind: BaseType.ARRAY, items: [], seqType: SequenceType.EXACTLY_ONE };
 			case 'atomicType':
 				return stringToValueType(
 					[getAttribute(typeAst, 'prefix'), getTextContent(typeAst)].join(':')

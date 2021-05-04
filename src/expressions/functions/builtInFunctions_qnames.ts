@@ -18,7 +18,12 @@ const fnQName: FunctionDefinitionType = (
 ) => {
 	return zipSingleton([paramURI, paramQName], ([uriValue, lexicalQNameValue]) => {
 		const lexicalQName = lexicalQNameValue.value;
-		if (!validatePattern(lexicalQName, { kind: BaseType.XSQNAME })) {
+		if (
+			!validatePattern(lexicalQName, {
+				kind: BaseType.XSQNAME,
+				seqType: SequenceType.EXACTLY_ONE,
+			})
+		) {
 			throw new Error('FOCA0002: The provided QName is invalid.');
 		}
 		const uri = uriValue ? uriValue.value || null : null;
@@ -31,18 +36,27 @@ const fnQName: FunctionDefinitionType = (
 
 		if (paramURI.isEmpty()) {
 			return sequenceFactory.singleton(
-				createAtomicValue(new QName('', null, lexicalQName), { kind: BaseType.XSQNAME })
+				createAtomicValue(new QName('', null, lexicalQName), {
+					kind: BaseType.XSQNAME,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			);
 		}
 		if (!lexicalQName.includes(':')) {
 			// Only a local part
 			return sequenceFactory.singleton(
-				createAtomicValue(new QName('', uri, lexicalQName), { kind: BaseType.XSQNAME })
+				createAtomicValue(new QName('', uri, lexicalQName), {
+					kind: BaseType.XSQNAME,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			);
 		}
 		const [prefix, localName] = lexicalQName.split(':');
 		return sequenceFactory.singleton(
-			createAtomicValue(new QName(prefix, uri, localName), { kind: BaseType.XSQNAME })
+			createAtomicValue(new QName(prefix, uri, localName), {
+				kind: BaseType.XSQNAME,
+				seqType: SequenceType.EXACTLY_ONE,
+			})
 		);
 	});
 };
@@ -62,7 +76,10 @@ const fnPrefixFromQName: FunctionDefinitionType = (
 			return sequenceFactory.empty();
 		}
 		return sequenceFactory.singleton(
-			createAtomicValue(qnameValue.prefix, { kind: BaseType.XSNCNAME })
+			createAtomicValue(qnameValue.prefix, {
+				kind: BaseType.XSNCNAME,
+				seqType: SequenceType.EXACTLY_ONE,
+			})
 		);
 	});
 };
@@ -75,7 +92,10 @@ const fnNamespaceURIFromQName: FunctionDefinitionType = (
 ) => {
 	return arg.map((qname) => {
 		const qnameValue = qname.value;
-		return createAtomicValue(qnameValue.namespaceURI || '', { kind: BaseType.XSANYURI });
+		return createAtomicValue(qnameValue.namespaceURI || '', {
+			kind: BaseType.XSANYURI,
+			seqType: SequenceType.EXACTLY_ONE,
+		});
 	});
 };
 
@@ -87,7 +107,10 @@ const fnLocalNameFromQName: FunctionDefinitionType = (
 ) => {
 	return arg.map((qname) => {
 		const qnameValue = qname.value;
-		return createAtomicValue(qnameValue.localName, { kind: BaseType.XSNCNAME });
+		return createAtomicValue(qnameValue.localName, {
+			kind: BaseType.XSNCNAME,
+			seqType: SequenceType.EXACTLY_ONE,
+		});
 	});
 };
 
@@ -97,9 +120,9 @@ const declarations: BuiltinDeclarationType[] = [
 		localName: 'QName',
 		argumentTypes: [
 			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
 		],
-		returnType: { kind: BaseType.XSQNAME },
+		returnType: { kind: BaseType.XSQNAME, seqType: SequenceType.EXACTLY_ONE },
 		callFunction: fnQName,
 	},
 	{

@@ -27,7 +27,13 @@ const opTo: FunctionDefinitionType = (
 	// By providing a length, we do not have to hold an end condition into account
 	return sequenceFactory.create(
 		{
-			next: () => ready(createAtomicValue(fromValue++, { kind: BaseType.XSINTEGER })),
+			next: () =>
+				ready(
+					createAtomicValue(fromValue++, {
+						kind: BaseType.XSINTEGER,
+						seqType: SequenceType.EXACTLY_ONE,
+					})
+				),
 		},
 		toValue - fromValue + 1
 	);

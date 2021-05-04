@@ -41,7 +41,7 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'boolean',
 		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
-		returnType: { kind: BaseType.XSBOOLEAN },
+		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
 		callFunction: fnBoolean,
 	},
 
@@ -49,7 +49,7 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'true',
 		argumentTypes: [],
-		returnType: { kind: BaseType.XSBOOLEAN },
+		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
 		callFunction: fnTrue,
 	},
 
@@ -57,7 +57,7 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'not',
 		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
-		returnType: { kind: BaseType.XSBOOLEAN },
+		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
 		callFunction: fnNot,
 	},
 
@@ -65,7 +65,7 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'false',
 		argumentTypes: [],
-		returnType: { kind: BaseType.XSBOOLEAN },
+		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
 		callFunction: fnFalse,
 	},
 ];

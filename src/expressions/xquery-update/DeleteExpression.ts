@@ -9,7 +9,7 @@ import { mergeUpdates } from './pulRoutines';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import { IIterator, IterationHint, ready } from '../util/iterators';
 
-import Value, { BaseType } from '../dataTypes/Value';
+import Value, { BaseType, SequenceType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import UpdatingExpressionResult from '../UpdatingExpressionResult';
@@ -48,7 +48,11 @@ class DeleteExpression extends UpdatingExpression {
 					// The result must be a sequence of zero or more nodes; otherwise a type error is raised [err:XUTY0007].
 					if (
 						tv.value.xdmValue.some(
-							(entry) => !isSubtypeOf(entry.type, { kind: BaseType.NODE })
+							(entry) =>
+								!isSubtypeOf(entry.type, {
+									kind: BaseType.NODE,
+									seqType: SequenceType.EXACTLY_ONE,
+								})
 						)
 					) {
 						throw errXUTY0007();

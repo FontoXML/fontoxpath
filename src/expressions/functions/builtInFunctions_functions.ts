@@ -49,7 +49,10 @@ const fnFunctionName: FunctionDefinitionType = (
 			return sequenceFactory.empty();
 		}
 		return sequenceFactory.singleton(
-			createAtomicValue(functionValue.getQName(), { kind: BaseType.XSQNAME })
+			createAtomicValue(functionValue.getQName(), {
+				kind: BaseType.XSQNAME,
+				seqType: SequenceType.EXACTLY_ONE,
+			})
 		);
 	});
 };
@@ -62,14 +65,20 @@ const fnFunctionArity: FunctionDefinitionType = (
 ) => {
 	return zipSingleton([functionItem], ([functionValue]: FunctionValue[]) => {
 		return sequenceFactory.singleton(
-			createAtomicValue(functionValue.getArity(), { kind: BaseType.XSINTEGER })
+			createAtomicValue(functionValue.getArity(), {
+				kind: BaseType.XSINTEGER,
+				seqType: SequenceType.EXACTLY_ONE,
+			})
 		);
 	});
 };
 
 const declarations: BuiltinDeclarationType[] = [
 	{
-		argumentTypes: [{ kind: BaseType.XSQNAME }, { kind: BaseType.XSINTEGER }],
+		argumentTypes: [
+			{ kind: BaseType.XSQNAME, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE },
+		],
 		callFunction: fnFunctionLookup,
 		localName: 'function-lookup',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
@@ -82,19 +91,33 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.FUNCTION, returnType: undefined, params: [] }],
+		argumentTypes: [
+			{
+				kind: BaseType.FUNCTION,
+				returnType: undefined,
+				params: [],
+				seqType: SequenceType.EXACTLY_ONE,
+			},
+		],
 		callFunction: fnFunctionName,
-		localName: 'function-name',ZERO_OR_ONE
+		localName: 'function-name',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSQNAME, seqType: SequenceType.NULLABLE },
+		returnType: { kind: BaseType.XSQNAME, seqType: SequenceType.ZERO_OR_ONE },
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.FUNCTION, returnType: undefined, params: [] }],
+		argumentTypes: [
+			{
+				kind: BaseType.FUNCTION,
+				returnType: undefined,
+				params: [],
+				seqType: SequenceType.EXACTLY_ONE,
+			},
+		],
 		callFunction: fnFunctionArity,
 		localName: 'function-arity',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSINTEGER },
+		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE },
 	},
 ];
 

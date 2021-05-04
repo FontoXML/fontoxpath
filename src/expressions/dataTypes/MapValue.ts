@@ -10,7 +10,7 @@ class MapValue extends FunctionValue<ISequence> {
 	constructor(keyValuePairs: { key: Value; value: () => ISequence }[]) {
 		super({
 			// argumentTypes: [{ type: 'item()', isRestArgument: false }],
-			argumentTypes: [{ kind: BaseType.ITEM }],
+			argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.EXACTLY_ONE }],
 			arity: 1,
 			localName: 'get',
 			namespaceURI: MAP_NAMESPACE_URI,
@@ -24,7 +24,7 @@ class MapValue extends FunctionValue<ISequence> {
 				),
 			returnType: { kind: BaseType.ITEM, occurrence: SequenceType.ZERO_OR_MORE },
 		});
-		this.type = { kind: BaseType.MAP, items: [] };
+		this.type = { kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE };
 		this.keyValuePairs = keyValuePairs;
 	}
 }

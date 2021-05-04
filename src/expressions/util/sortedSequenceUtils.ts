@@ -3,7 +3,7 @@ import { compareNodePositions } from '../dataTypes/documentOrderUtils';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value, { BaseType } from '../dataTypes/Value';
+import Value, { BaseType, SequenceType } from '../dataTypes/Value';
 import arePointersEqual from '../operators/compares/arePointersEqual';
 import { DONE_TOKEN, IIterator, IterationHint, IterationResult } from './iterators';
 
@@ -16,8 +16,8 @@ function isSameNodeValue(a: Value, b: Value) {
 		return false;
 	}
 	if (
-		!isSubtypeOf(a.type, { kind: BaseType.NODE }) ||
-		!isSubtypeOf(b.type, { kind: BaseType.NODE })
+		!isSubtypeOf(a.type, { kind: BaseType.NODE, seqType: SequenceType.EXACTLY_ONE }) ||
+		!isSubtypeOf(b.type, { kind: BaseType.NODE, seqType: SequenceType.EXACTLY_ONE })
 	) {
 		return false;
 	}
@@ -103,7 +103,10 @@ function mergeSortedSequences(domFacade: DomFacade, sequences: IIterator<ISequen
 
 				if (
 					allIterators.every((iterator) =>
-						isSubtypeOf(iterator.current.value.type, { kind: BaseType.NODE })
+						isSubtypeOf(iterator.current.value.type, {
+							kind: BaseType.NODE,
+							seqType: SequenceType.EXACTLY_ONE,
+						})
 					)
 				) {
 					// Sort the iterators initially. We know these iterators return locally sorted items, but we do not know the inter-ordering of these items.
@@ -126,7 +129,12 @@ function mergeSortedSequences(domFacade: DomFacade, sequences: IIterator<ISequen
 				const consumedIterator = allIterators.shift();
 				consumedValue = consumedIterator.current;
 				consumedIterator.current = consumedIterator.next(IterationHint.NONE);
-				if (!isSubtypeOf(consumedValue.value.type, { kind: BaseType.NODE })) {
+				if (
+					!isSubtypeOf(consumedValue.value.type, {
+						kind: BaseType.NODE,
+						seqType: SequenceType.EXACTLY_ONE,
+					})
+				) {
 					// Sorting does not matter
 					return consumedValue;
 				}

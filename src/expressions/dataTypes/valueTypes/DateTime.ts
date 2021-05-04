@@ -1,4 +1,4 @@
-import { BaseType, ValueType } from '../Value';
+import { BaseType, ValueType, SequenceType } from '../Value';
 import AbstractDuration from './AbstractDuration';
 import DayTimeDuration from './DayTimeDuration';
 
@@ -65,7 +65,7 @@ class DateTime {
 		seconds: number,
 		secondFraction: number,
 		timezone: DayTimeDuration,
-		type: ValueType = { kind: BaseType.XSDATETIME }
+		type: ValueType = { kind: BaseType.XSDATETIME, seqType: SequenceType.EXACTLY_ONE }
 	) {
 		this._years = years;
 		this._months = months;
@@ -118,7 +118,7 @@ class DateTime {
 					this._seconds,
 					this.secondFraction,
 					this._timezone,
-					{ kind: BaseType.XSTIME }
+					{ kind: BaseType.XSTIME, seqType: SequenceType.EXACTLY_ONE }
 				);
 			case BaseType.XSDATE:
 				return new DateTime(
@@ -130,7 +130,7 @@ class DateTime {
 					0,
 					0,
 					this._timezone,
-					{ kind: BaseType.XSDATE }
+					{ kind: BaseType.XSDATE, seqType: SequenceType.EXACTLY_ONE }
 				);
 			case BaseType.XSDATETIME:
 			default:
@@ -143,7 +143,7 @@ class DateTime {
 					this._seconds,
 					this.secondFraction,
 					this._timezone,
-					{ kind: BaseType.XSDATETIME }
+					{ kind: BaseType.XSDATETIME, seqType: SequenceType.EXACTLY_ONE }
 				);
 		}
 	}
@@ -313,7 +313,7 @@ DateTime.fromString = (dateString: string): DateTime => {
 			seconds,
 			secondFraction,
 			timezone,
-			{ kind: BaseType.XSDATETIME }
+			{ kind: BaseType.XSDATETIME, seqType: SequenceType.EXACTLY_ONE }
 		);
 	}
 
@@ -326,7 +326,10 @@ DateTime.fromString = (dateString: string): DateTime => {
 
 	if (years !== null && months !== null && days !== null) {
 		// There is no T separator, but there is a complete date component -> date
-		return new DateTime(years, months, days, 0, 0, 0, 0, timezone, { kind: BaseType.XSDATE });
+		return new DateTime(years, months, days, 0, 0, 0, 0, timezone, {
+			kind: BaseType.XSDATE,
+			seqType: SequenceType.EXACTLY_ONE,
+		});
 	}
 
 	if (years !== null && months !== null) {
@@ -345,16 +348,25 @@ DateTime.fromString = (dateString: string): DateTime => {
 
 	if (years !== null) {
 		// There is only a year -> gYear
-		return new DateTime(years, 1, 1, 0, 0, 0, 0, timezone, { kind: BaseType.XSGYEAR });
+		return new DateTime(years, 1, 1, 0, 0, 0, 0, timezone, {
+			kind: BaseType.XSGYEAR,
+			seqType: SequenceType.EXACTLY_ONE,
+		});
 	}
 
 	if (months !== null) {
 		// There is only a month -> gMonth
-		return new DateTime(1972, months, 1, 0, 0, 0, 0, timezone, { kind: BaseType.XSGMONTH });
+		return new DateTime(1972, months, 1, 0, 0, 0, 0, timezone, {
+			kind: BaseType.XSGMONTH,
+			seqType: SequenceType.EXACTLY_ONE,
+		});
 	}
 
 	// There is only one option left -> gDay
-	return new DateTime(1972, 12, days, 0, 0, 0, 0, timezone, { kind: BaseType.XSGDAY });
+	return new DateTime(1972, 12, days, 0, 0, 0, 0, timezone, {
+		kind: BaseType.XSGDAY,
+		seqType: SequenceType.EXACTLY_ONE,
+	});
 };
 
 export function compare(

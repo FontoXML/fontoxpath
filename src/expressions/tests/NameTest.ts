@@ -1,6 +1,6 @@
 import { AttributeNodePointer, ElementNodePointer } from '../../domClone/Pointer';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import Value, { BaseType } from '../dataTypes/Value';
+import Value, { BaseType, SequenceType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Specificity from '../Specificity';
@@ -46,7 +46,10 @@ class NameTest extends TestAbstractExpression {
 		const nodeIsElement = isSubtypeOf(value.type, {
 			kind: BaseType.ELEMENT,
 		});
-		const nodeIsAttribute = isSubtypeOf(value.type, { kind: BaseType.ATTRIBUTE });
+		const nodeIsAttribute = isSubtypeOf(value.type, {
+			kind: BaseType.ATTRIBUTE,
+			seqType: SequenceType.EXACTLY_ONE,
+		});
 		if (!nodeIsElement && !nodeIsAttribute) {
 			return false;
 		}

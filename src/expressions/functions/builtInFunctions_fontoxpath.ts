@@ -132,12 +132,17 @@ const fontoxpathVersion: FunctionDefinitionType = () => {
 	let version: string;
 	// TODO: Refactor when https://github.com/google/closure-compiler/issues/1601 is fixed
 	version = typeof VERSION === 'undefined' ? 'devbuild' : VERSION;
-	return sequenceFactory.singleton(createAtomicValue(version, { kind: BaseType.XSSTRING }));
+	return sequenceFactory.singleton(
+		createAtomicValue(version, { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE })
+	);
 };
 
 const declarations: BuiltinDeclarationType[] = [
 	{
-		argumentTypes: [{ kind: BaseType.XSSTRING }, { kind: BaseType.MAP, items: [] }],
+		argumentTypes: [
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE },
+		],
 		callFunction: fontoxpathEvaluate,
 		localName: 'evaluate',
 		namespaceURI: FONTOXPATH_NAMESPACE_URI,
@@ -148,7 +153,7 @@ const declarations: BuiltinDeclarationType[] = [
 		callFunction: fontoxpathVersion,
 		localName: 'version',
 		namespaceURI: FONTOXPATH_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSSTRING },
+		returnType: { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
 	},
 ];
 

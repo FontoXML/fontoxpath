@@ -28,16 +28,29 @@ function convert(obj: any): ISequence {
 				new MapValue(
 					Object.keys(obj as object).map((key) => {
 						return {
-							key: createAtomicValue(key, { kind: BaseType.XSSTRING }),
+							key: createAtomicValue(key, {
+								kind: BaseType.XSSTRING,
+								seqType: SequenceType.EXACTLY_ONE,
+							}),
 							value: createDoublyIterableSequence(convert((obj as object)[key])),
 						};
 					})
 				)
 			);
 		case 'number':
-			return sequenceFactory.singleton(createAtomicValue(obj, { kind: BaseType.XSDOUBLE }));
+			return sequenceFactory.singleton(
+				createAtomicValue(obj, {
+					kind: BaseType.XSDOUBLE,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
+			);
 		case 'string':
-			return sequenceFactory.singleton(createAtomicValue(obj, { kind: BaseType.XSSTRING }));
+			return sequenceFactory.singleton(
+				createAtomicValue(obj, {
+					kind: BaseType.XSSTRING,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
+			);
 		case 'boolean':
 			return obj
 				? sequenceFactory.singletonTrueSequence()
@@ -67,7 +80,7 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'parse-json',
-		argumentTypes: [{ kind: BaseType.XSSTRING }],
+		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE }],
 		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: fnParseJson,
 	},

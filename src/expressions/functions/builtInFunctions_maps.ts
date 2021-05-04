@@ -20,7 +20,10 @@ const mapMerge: FunctionDefinitionType = (
 	optionMap
 ) => {
 	const duplicateKey = sequenceFactory.singleton(
-		createAtomicValue('duplicates', { kind: BaseType.XSSTRING })
+		createAtomicValue('duplicates', {
+			kind: BaseType.XSSTRING,
+			seqType: SequenceType.EXACTLY_ONE,
+		})
 	);
 	const duplicationHandlingValueSequence = mapGet(
 		dynamicContext,
@@ -133,7 +136,10 @@ const mapSize: FunctionDefinitionType = (
 	mapSequence
 ) => {
 	return mapSequence.map((onlyMap) =>
-		createAtomicValue((onlyMap as MapValue).keyValuePairs.length, { kind: BaseType.XSINTEGER })
+		createAtomicValue((onlyMap as MapValue).keyValuePairs.length, {
+			kind: BaseType.XSINTEGER,
+			seqType: SequenceType.EXACTLY_ONE,
+		})
 	);
 };
 
@@ -215,8 +221,11 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: MAP_NAMESPACE_URI,
 		localName: 'contains',
-		argumentTypes: [{ kind: BaseType.MAP, items: [] }, { kind: BaseType.XSANYATOMICTYPE }],
-		returnType: { kind: BaseType.XSBOOLEAN },
+		argumentTypes: [
+			{ kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
+		],
+		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
 		callFunction: mapContains,
 	},
 
@@ -224,10 +233,10 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: MAP_NAMESPACE_URI,
 		localName: 'entry',
 		argumentTypes: [
-			{ kind: BaseType.XSANYATOMICTYPE },
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
 			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 		],
-		returnType: { kind: BaseType.MAP, items: [] },
+		returnType: { kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE },
 		callFunction: mapEntry,
 	},
 
@@ -235,10 +244,10 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: MAP_NAMESPACE_URI,
 		localName: 'for-each',
 		// TODO: reimplement type checking by parsing the types
-		// argumentTypes: [{ kind: BaseType.MAP, items: [] }, '({ kind: BaseType.XSANYATOMICTYPE ,
+		// argumentTypes: [{ kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE }, '({ kind: BaseType.XSANYATOMICTYPE ,
 		// { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY }) as { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY }'],
 		argumentTypes: [
-			{ kind: BaseType.MAP, items: [] },
+			{ kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE },
 			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 		],
 		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
@@ -248,7 +257,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: MAP_NAMESPACE_URI,
 		localName: 'get',
-		argumentTypes: [{ kind: BaseType.MAP, items: [] }, { kind: BaseType.XSANYATOMICTYPE }],
+		argumentTypes: [
+			{ kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
+		],
 		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 		callFunction: mapGet,
 	},
@@ -256,7 +268,7 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: MAP_NAMESPACE_URI,
 		localName: 'keys',
-		argumentTypes: [{ kind: BaseType.MAP, items: [] }],
+		argumentTypes: [{ kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE }],
 		returnType: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_MORE },
 		callFunction: mapKeys,
 	},
@@ -266,9 +278,9 @@ const declarations: BuiltinDeclarationType[] = [
 		localName: 'merge',
 		argumentTypes: [
 			{ kind: BaseType.MAP, items: [], seqType: SequenceType.ZERO_OR_MORE },
-			{ kind: BaseType.MAP, items: [] },
+			{ kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE },
 		],
-		returnType: { kind: BaseType.MAP, items: [] },
+		returnType: { kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE },
 		callFunction: mapMerge,
 	},
 
@@ -276,7 +288,7 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: MAP_NAMESPACE_URI,
 		localName: 'merge',
 		argumentTypes: [{ kind: BaseType.MAP, items: [], seqType: SequenceType.ZERO_OR_MORE }],
-		returnType: { kind: BaseType.MAP, items: [] },
+		returnType: { kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE },
 		callFunction(dynamicContext, executionParameters, staticContext, maps) {
 			return mapMerge(
 				dynamicContext,
@@ -286,10 +298,16 @@ const declarations: BuiltinDeclarationType[] = [
 				sequenceFactory.singleton(
 					new MapValue([
 						{
-							key: createAtomicValue('duplicates', { kind: BaseType.XSSTRING }),
+							key: createAtomicValue('duplicates', {
+								kind: BaseType.XSSTRING,
+								seqType: SequenceType.EXACTLY_ONE,
+							}),
 							value: () =>
 								sequenceFactory.singleton(
-									createAtomicValue('use-first', { kind: BaseType.XSSTRING })
+									createAtomicValue('use-first', {
+										kind: BaseType.XSSTRING,
+										seqType: SequenceType.EXACTLY_ONE,
+									})
 								),
 						},
 					])
@@ -302,11 +320,11 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: MAP_NAMESPACE_URI,
 		localName: 'put',
 		argumentTypes: [
-			{ kind: BaseType.MAP, items: [] },
-			{ kind: BaseType.XSANYATOMICTYPE },
+			{ kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
 			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 		],
-		returnType: { kind: BaseType.MAP, items: [] },
+		returnType: { kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE },
 		callFunction: mapPut,
 	},
 
@@ -314,18 +332,18 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: MAP_NAMESPACE_URI,
 		localName: 'remove',
 		argumentTypes: [
-			{ kind: BaseType.MAP, items: [] },
+			{ kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE },
 			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_MORE },
 		],
-		returnType: { kind: BaseType.MAP, items: [] },
+		returnType: { kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE },
 		callFunction: mapRemove,
 	},
 
 	{
 		namespaceURI: MAP_NAMESPACE_URI,
 		localName: 'size',
-		argumentTypes: [{ kind: BaseType.MAP, items: [] }],
-		returnType: { kind: BaseType.XSINTEGER },
+		argumentTypes: [{ kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE }],
+		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE },
 		callFunction: mapSize,
 	},
 ];

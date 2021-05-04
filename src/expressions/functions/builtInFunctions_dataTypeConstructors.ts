@@ -37,6 +37,7 @@ const xsQName: FunctionDefinitionType = (
 	if (
 		isSubtypeOf(value.type, {
 			kind: BaseType.XSNUMERIC,
+			seqType: SequenceType.EXACTLY_ONE,
 		})
 	) {
 		// This won't ever work
@@ -44,14 +45,17 @@ const xsQName: FunctionDefinitionType = (
 	}
 	let lexicalQName = castToType(value, {
 		kind: BaseType.XSSTRING,
+		seqType: SequenceType.EXACTLY_ONE,
 	}).value;
 	// Test lexical scope
 	lexicalQName = normalizeWhitespace(lexicalQName, {
 		kind: BaseType.XSQNAME,
+		seqType: SequenceType.EXACTLY_ONE,
 	});
 	if (
 		!validatePattern(lexicalQName, {
 			kind: BaseType.XSQNAME,
+			seqType: SequenceType.EXACTLY_ONE,
 		})
 	) {
 		throw new Error('FORG0001: The provided QName is invalid.');
@@ -62,6 +66,7 @@ const xsQName: FunctionDefinitionType = (
 		return sequenceFactory.singleton(
 			createAtomicValue(new QName('', resolvedDefaultNamespaceURI, lexicalQName), {
 				kind: BaseType.XSQNAME,
+				seqType: SequenceType.EXACTLY_ONE,
 			})
 		);
 	}
@@ -73,7 +78,10 @@ const xsQName: FunctionDefinitionType = (
 		);
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(new QName(prefix, namespaceURI, localName), { kind: BaseType.XSQNAME })
+		createAtomicValue(new QName(prefix, namespaceURI, localName), {
+			kind: BaseType.XSQNAME,
+			seqType: SequenceType.EXACTLY_ONE,
+		})
 	);
 };
 
@@ -312,7 +320,7 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'NMTOKENS',
 		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSNMTOKENS, seqType: OccurrenceIndicatorZERO_OR_MOREY },
+		returnType: { kind: BaseType.XSNMTOKENS, seqType: SequenceType.ZERO_OR_MORE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSNMTOKENS,
 		}) as FunctionDefinitionType,
@@ -375,7 +383,7 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'ENTITIES',
 		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSENTITIES, seqType: OccurrenceIndicatorZERO_OR_MOREY },
+		returnType: { kind: BaseType.XSENTITIES, seqType: SequenceType.ZERO_OR_MORE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSENTITIES,
 		}) as FunctionDefinitionType,

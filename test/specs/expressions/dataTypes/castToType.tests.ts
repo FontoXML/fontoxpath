@@ -1,7 +1,7 @@
 import * as chai from 'chai';
 import castToType from 'fontoxpath/expressions/dataTypes/castToType';
 import createAtomicValue from 'fontoxpath/expressions/dataTypes/createAtomicValue';
-import { BaseType } from 'fontoxpath/expressions/dataTypes/Value';
+import { BaseType, SequenceType } from 'fontoxpath/expressions/dataTypes/Value';
 
 import DateTime from 'fontoxpath/expressions/dataTypes/valueTypes/DateTime';
 import DayTimeDuration from 'fontoxpath/expressions/dataTypes/valueTypes/DayTimeDuration';
@@ -48,16 +48,30 @@ describe('castToType()', () => {
 	describe('casting to or from xs:anySimpleType', () => {
 		it('throws when casting to xs:anySimpleType', () => {
 			chai.assert.throw(() =>
-				castToType(createAtomicValue('string', { kind: BaseType.XSSTRING }), {
-					kind: BaseType.XSANYSIMPLETYPE,
-				})
+				castToType(
+					createAtomicValue('string', {
+						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSANYSIMPLETYPE,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				)
 			);
 		});
 		it('throws when casting from xs:anySimpleType', () => {
 			chai.assert.throw(() =>
-				castToType(createAtomicValue('string', { kind: BaseType.XSANYSIMPLETYPE }), {
-					kind: BaseType.XSSTRING,
-				})
+				castToType(
+					createAtomicValue('string', {
+						kind: BaseType.XSANYSIMPLETYPE,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				)
 			);
 		});
 	});
@@ -65,16 +79,30 @@ describe('castToType()', () => {
 	describe('casting to or from xs:anyAtomicType', () => {
 		it('throws when casting to xs:anyAtomicType', () => {
 			chai.assert.throw(() =>
-				castToType(createAtomicValue('string', { kind: BaseType.XSSTRING }), {
-					kind: BaseType.XSANYATOMICTYPE,
-				})
+				castToType(
+					createAtomicValue('string', {
+						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSANYATOMICTYPE,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				)
 			);
 		});
 		it('throws when casting to xs:anyAtomicTpe', () => {
 			chai.assert.throw(() =>
-				castToType(createAtomicValue('string', { kind: BaseType.XSANYATOMICTYPE }), {
-					kind: BaseType.XSSTRING,
-				})
+				castToType(
+					createAtomicValue('string', {
+						kind: BaseType.XSANYATOMICTYPE,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				)
 			);
 		});
 	});
@@ -82,461 +110,823 @@ describe('castToType()', () => {
 	describe('to xs:untypedAtomic', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('string', { kind: BaseType.XSUNTYPEDATOMIC }), {
+				castToType(
+					createAtomicValue('string', {
+						kind: BaseType.XSUNTYPEDATOMIC,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSUNTYPEDATOMIC,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue('string', {
 					kind: BaseType.XSUNTYPEDATOMIC,
-				}),
-				createAtomicValue('string', { kind: BaseType.XSUNTYPEDATOMIC })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('string', { kind: BaseType.XSSTRING }), {
+				castToType(
+					createAtomicValue('string', {
+						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSUNTYPEDATOMIC,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue('string', {
 					kind: BaseType.XSUNTYPEDATOMIC,
-				}),
-				createAtomicValue('string', { kind: BaseType.XSUNTYPEDATOMIC })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:float', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(10.123, { kind: BaseType.XSFLOAT }), {
+				castToType(
+					createAtomicValue(10.123, {
+						kind: BaseType.XSFLOAT,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSUNTYPEDATOMIC,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue('10.123', {
 					kind: BaseType.XSUNTYPEDATOMIC,
-				}),
-				createAtomicValue('10.123', { kind: BaseType.XSUNTYPEDATOMIC })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:double', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(10.123, { kind: BaseType.XSDOUBLE }), {
+				castToType(
+					createAtomicValue(10.123, {
+						kind: BaseType.XSDOUBLE,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSUNTYPEDATOMIC,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue('10.123', {
 					kind: BaseType.XSUNTYPEDATOMIC,
-				}),
-				createAtomicValue('10.123', { kind: BaseType.XSUNTYPEDATOMIC })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:decimal', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1010, { kind: BaseType.XSDECIMAL }), {
+				castToType(
+					createAtomicValue(1010, {
+						kind: BaseType.XSDECIMAL,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSUNTYPEDATOMIC,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue('1010', {
 					kind: BaseType.XSUNTYPEDATOMIC,
-				}),
-				createAtomicValue('1010', { kind: BaseType.XSUNTYPEDATOMIC })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:integer', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1010, { kind: BaseType.XSINTEGER }), {
+				castToType(
+					createAtomicValue(1010, {
+						kind: BaseType.XSINTEGER,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSUNTYPEDATOMIC,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue('1010', {
 					kind: BaseType.XSUNTYPEDATOMIC,
-				}),
-				createAtomicValue('1010', { kind: BaseType.XSUNTYPEDATOMIC })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:duration', () =>
 			chai.assert.deepEqual(
 				castToType(
 					createAtomicValue(Duration.fromString('P10Y10M10DT10H10M10S'), {
 						kind: BaseType.XSDURATION,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSUNTYPEDATOMIC }
+					{ kind: BaseType.XSUNTYPEDATOMIC, seqType: SequenceType.EXACTLY_ONE }
 				),
-				createAtomicValue('P10Y10M10DT10H10M10S', { kind: BaseType.XSUNTYPEDATOMIC })
+				createAtomicValue('P10Y10M10DT10H10M10S', {
+					kind: BaseType.XSUNTYPEDATOMIC,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:yearMonthDuration', () =>
 			chai.assert.deepEqual(
 				castToType(
 					createAtomicValue(Duration.fromString('P10Y10M'), {
 						kind: BaseType.XSYEARMONTHDURATION,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSUNTYPEDATOMIC }
+					{ kind: BaseType.XSUNTYPEDATOMIC, seqType: SequenceType.EXACTLY_ONE }
 				),
-				createAtomicValue('P10Y10M', { kind: BaseType.XSUNTYPEDATOMIC })
+				createAtomicValue('P10Y10M', {
+					kind: BaseType.XSUNTYPEDATOMIC,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:dayTimeDuration', () =>
 			chai.assert.deepEqual(
 				castToType(
 					createAtomicValue(Duration.fromString('P10DT10H10M10S'), {
 						kind: BaseType.XSDAYTIMEDURATION,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSUNTYPEDATOMIC }
+					{ kind: BaseType.XSUNTYPEDATOMIC, seqType: SequenceType.EXACTLY_ONE }
 				),
-				createAtomicValue('P10DT10H10M10S', { kind: BaseType.XSUNTYPEDATOMIC })
+				createAtomicValue('P10DT10H10M10S', {
+					kind: BaseType.XSUNTYPEDATOMIC,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:dateTime', () =>
 			chai.assert.deepEqual(
 				castToType(
 					createAtomicValue(DateTime.fromString('2000-10-10T10:10:10+10:30'), {
 						kind: BaseType.XSDATETIME,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSUNTYPEDATOMIC }
+					{ kind: BaseType.XSUNTYPEDATOMIC, seqType: SequenceType.EXACTLY_ONE }
 				),
-				createAtomicValue('2000-10-10T10:10:10+10:30', { kind: BaseType.XSUNTYPEDATOMIC })
+				createAtomicValue('2000-10-10T10:10:10+10:30', {
+					kind: BaseType.XSUNTYPEDATOMIC,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:time', () =>
 			chai.assert.deepEqual(
 				castToType(
 					createAtomicValue(DateTime.fromString('10:10:10+10:30'), {
 						kind: BaseType.XSTIME,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
 					{
 						kind: BaseType.XSUNTYPEDATOMIC,
+						seqType: SequenceType.EXACTLY_ONE,
 					}
 				),
-				createAtomicValue('10:10:10+10:30', { kind: BaseType.XSUNTYPEDATOMIC })
+				createAtomicValue('10:10:10+10:30', {
+					kind: BaseType.XSUNTYPEDATOMIC,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:date', () =>
 			chai.assert.deepEqual(
 				castToType(
 					createAtomicValue(DateTime.fromString('2000-10-10+10:30'), {
 						kind: BaseType.XSDATE,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
 					{
 						kind: BaseType.XSUNTYPEDATOMIC,
+						seqType: SequenceType.EXACTLY_ONE,
 					}
 				),
-				createAtomicValue('2000-10-10+10:30', { kind: BaseType.XSUNTYPEDATOMIC })
+				createAtomicValue('2000-10-10+10:30', {
+					kind: BaseType.XSUNTYPEDATOMIC,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:gYearMonth', () =>
 			chai.assert.deepEqual(
 				castToType(
 					createAtomicValue(DateTime.fromString('2000-10+10:30'), {
 						kind: BaseType.XSGYEARMONTH,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSUNTYPEDATOMIC }
+					{ kind: BaseType.XSUNTYPEDATOMIC, seqType: SequenceType.EXACTLY_ONE }
 				),
-				createAtomicValue('2000-10+10:30', { kind: BaseType.XSUNTYPEDATOMIC })
+				createAtomicValue('2000-10+10:30', {
+					kind: BaseType.XSUNTYPEDATOMIC,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:gYear', () =>
 			chai.assert.deepEqual(
 				castToType(
 					createAtomicValue(DateTime.fromString('2000+10:30'), {
 						kind: BaseType.XSGYEAR,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
 					{
 						kind: BaseType.XSUNTYPEDATOMIC,
+						seqType: SequenceType.EXACTLY_ONE,
 					}
 				),
-				createAtomicValue('2000+10:30', { kind: BaseType.XSUNTYPEDATOMIC })
+				createAtomicValue('2000+10:30', {
+					kind: BaseType.XSUNTYPEDATOMIC,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:gMonthDay', () =>
 			chai.assert.deepEqual(
 				castToType(
 					createAtomicValue(DateTime.fromString('--10-10+10:30'), {
 						kind: BaseType.XSGMONTHDAY,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSUNTYPEDATOMIC }
+					{ kind: BaseType.XSUNTYPEDATOMIC, seqType: SequenceType.EXACTLY_ONE }
 				),
-				createAtomicValue('--10-10+10:30', { kind: BaseType.XSUNTYPEDATOMIC })
+				createAtomicValue('--10-10+10:30', {
+					kind: BaseType.XSUNTYPEDATOMIC,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:gDay', () =>
 			chai.assert.deepEqual(
 				castToType(
 					createAtomicValue(DateTime.fromString('---10+10:30'), {
 						kind: BaseType.XSGDAY,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
 					{
 						kind: BaseType.XSUNTYPEDATOMIC,
+						seqType: SequenceType.EXACTLY_ONE,
 					}
 				),
-				createAtomicValue('---10+10:30', { kind: BaseType.XSUNTYPEDATOMIC })
+				createAtomicValue('---10+10:30', {
+					kind: BaseType.XSUNTYPEDATOMIC,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:gMonth', () =>
 			chai.assert.deepEqual(
 				castToType(
 					createAtomicValue(DateTime.fromString('--10+10:30'), {
 						kind: BaseType.XSGMONTH,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
 					{
 						kind: BaseType.XSUNTYPEDATOMIC,
+						seqType: SequenceType.EXACTLY_ONE,
 					}
 				),
-				createAtomicValue('--10+10:30', { kind: BaseType.XSUNTYPEDATOMIC })
+				createAtomicValue('--10+10:30', {
+					kind: BaseType.XSUNTYPEDATOMIC,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:boolean', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(true, { kind: BaseType.XSBOOLEAN }), {
+				castToType(
+					createAtomicValue(true, {
+						kind: BaseType.XSBOOLEAN,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSUNTYPEDATOMIC,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue('true', {
 					kind: BaseType.XSUNTYPEDATOMIC,
-				}),
-				createAtomicValue('true', { kind: BaseType.XSUNTYPEDATOMIC })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:base64Binary', () =>
 			chai.assert.deepEqual(
 				castToType(
 					createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', {
 						kind: BaseType.XSBASE64BINARY,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
 					{
 						kind: BaseType.XSUNTYPEDATOMIC,
+						seqType: SequenceType.EXACTLY_ONE,
 					}
 				),
-				createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', { kind: BaseType.XSUNTYPEDATOMIC })
+				createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', {
+					kind: BaseType.XSUNTYPEDATOMIC,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:hexBinary', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue('21FE3A44123C21FE3A44123C', { kind: BaseType.XSHEXBINARY }),
+					createAtomicValue('21FE3A44123C21FE3A44123C', {
+						kind: BaseType.XSHEXBINARY,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
 					{
 						kind: BaseType.XSUNTYPEDATOMIC,
+						seqType: SequenceType.EXACTLY_ONE,
 					}
 				),
-				createAtomicValue('21FE3A44123C21FE3A44123C', { kind: BaseType.XSUNTYPEDATOMIC })
+				createAtomicValue('21FE3A44123C21FE3A44123C', {
+					kind: BaseType.XSUNTYPEDATOMIC,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:anyURI', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('string', { kind: BaseType.XSANYURI }), {
+				castToType(
+					createAtomicValue('string', {
+						kind: BaseType.XSANYURI,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSUNTYPEDATOMIC,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue('string', {
 					kind: BaseType.XSUNTYPEDATOMIC,
-				}),
-				createAtomicValue('string', { kind: BaseType.XSUNTYPEDATOMIC })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:NOTATION', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('string', { kind: BaseType.XSNOTATION }), {
+				castToType(
+					createAtomicValue('string', {
+						kind: BaseType.XSNOTATION,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSUNTYPEDATOMIC,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue('string', {
 					kind: BaseType.XSUNTYPEDATOMIC,
-				}),
-				createAtomicValue('string', { kind: BaseType.XSUNTYPEDATOMIC })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 	});
 
 	describe('to xs:string', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('string', { kind: BaseType.XSUNTYPEDATOMIC }), {
+				castToType(
+					createAtomicValue('string', {
+						kind: BaseType.XSUNTYPEDATOMIC,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue('string', {
 					kind: BaseType.XSSTRING,
-				}),
-				createAtomicValue('string', { kind: BaseType.XSSTRING })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('string', { kind: BaseType.XSSTRING }), {
+				castToType(
+					createAtomicValue('string', {
+						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue('string', {
 					kind: BaseType.XSSTRING,
-				}),
-				createAtomicValue('string', { kind: BaseType.XSSTRING })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:float', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(10.123, { kind: BaseType.XSFLOAT }), {
+				castToType(
+					createAtomicValue(10.123, {
+						kind: BaseType.XSFLOAT,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue('10.123', {
 					kind: BaseType.XSSTRING,
-				}),
-				createAtomicValue('10.123', { kind: BaseType.XSSTRING })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:double', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(10.123, { kind: BaseType.XSDOUBLE }), {
+				castToType(
+					createAtomicValue(10.123, {
+						kind: BaseType.XSDOUBLE,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue('10.123', {
 					kind: BaseType.XSSTRING,
-				}),
-				createAtomicValue('10.123', { kind: BaseType.XSSTRING })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:decimal', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1010, { kind: BaseType.XSDECIMAL }), {
+				castToType(
+					createAtomicValue(1010, {
+						kind: BaseType.XSDECIMAL,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue('1010', {
 					kind: BaseType.XSSTRING,
-				}),
-				createAtomicValue('1010', { kind: BaseType.XSSTRING })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:integer', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1010, { kind: BaseType.XSINTEGER }), {
+				castToType(
+					createAtomicValue(1010, {
+						kind: BaseType.XSINTEGER,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue('1010', {
 					kind: BaseType.XSSTRING,
-				}),
-				createAtomicValue('1010', { kind: BaseType.XSSTRING })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:duration', () =>
 			chai.assert.deepEqual(
 				castToType(
 					createAtomicValue(Duration.fromString('P10Y10M10DT10H10M10S'), {
 						kind: BaseType.XSDURATION,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSSTRING }
+					{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE }
 				),
-				createAtomicValue('P10Y10M10DT10H10M10S', { kind: BaseType.XSSTRING })
+				createAtomicValue('P10Y10M10DT10H10M10S', {
+					kind: BaseType.XSSTRING,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:yearMonthDuration', () =>
 			chai.assert.deepEqual(
 				castToType(
 					createAtomicValue(Duration.fromString('P10Y10M'), {
 						kind: BaseType.XSYEARMONTHDURATION,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSSTRING }
+					{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE }
 				),
-				createAtomicValue('P10Y10M', { kind: BaseType.XSSTRING })
+				createAtomicValue('P10Y10M', {
+					kind: BaseType.XSSTRING,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:dayTimeDuration', () =>
 			chai.assert.deepEqual(
 				castToType(
 					createAtomicValue(Duration.fromString('P10DT10H10M10S'), {
 						kind: BaseType.XSDAYTIMEDURATION,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSSTRING }
+					{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE }
 				),
-				createAtomicValue('P10DT10H10M10S', { kind: BaseType.XSSTRING })
+				createAtomicValue('P10DT10H10M10S', {
+					kind: BaseType.XSSTRING,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:dateTime', () =>
 			chai.assert.deepEqual(
 				castToType(
 					createAtomicValue(DateTime.fromString('2000-10-10T10:10:10+10:30'), {
 						kind: BaseType.XSDATETIME,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSSTRING }
+					{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE }
 				),
-				createAtomicValue('2000-10-10T10:10:10+10:30', { kind: BaseType.XSSTRING })
+				createAtomicValue('2000-10-10T10:10:10+10:30', {
+					kind: BaseType.XSSTRING,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:time', () =>
 			chai.assert.deepEqual(
 				castToType(
 					createAtomicValue(DateTime.fromString('10:10:10+10:30'), {
 						kind: BaseType.XSTIME,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
 					{
 						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
 					}
 				),
-				createAtomicValue('10:10:10+10:30', { kind: BaseType.XSSTRING })
+				createAtomicValue('10:10:10+10:30', {
+					kind: BaseType.XSSTRING,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:date', () =>
 			chai.assert.deepEqual(
 				castToType(
 					createAtomicValue(DateTime.fromString('2000-10-10+10:30'), {
 						kind: BaseType.XSDATE,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
 					{
 						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
 					}
 				),
-				createAtomicValue('2000-10-10+10:30', { kind: BaseType.XSSTRING })
+				createAtomicValue('2000-10-10+10:30', {
+					kind: BaseType.XSSTRING,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:gYearMonth', () =>
 			chai.assert.deepEqual(
 				castToType(
 					createAtomicValue(DateTime.fromString('2000-10+10:30'), {
 						kind: BaseType.XSGYEARMONTH,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSSTRING }
+					{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE }
 				),
-				createAtomicValue('2000-10+10:30', { kind: BaseType.XSSTRING })
+				createAtomicValue('2000-10+10:30', {
+					kind: BaseType.XSSTRING,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:gYear', () =>
 			chai.assert.deepEqual(
 				castToType(
 					createAtomicValue(DateTime.fromString('2000+10:30'), {
 						kind: BaseType.XSGYEAR,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
 					{
 						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
 					}
 				),
-				createAtomicValue('2000+10:30', { kind: BaseType.XSSTRING })
+				createAtomicValue('2000+10:30', {
+					kind: BaseType.XSSTRING,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:gMonthDay', () =>
 			chai.assert.deepEqual(
 				castToType(
 					createAtomicValue(DateTime.fromString('--10-10+10:30'), {
 						kind: BaseType.XSGMONTHDAY,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSSTRING }
+					{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE }
 				),
-				createAtomicValue('--10-10+10:30', { kind: BaseType.XSSTRING })
+				createAtomicValue('--10-10+10:30', {
+					kind: BaseType.XSSTRING,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:gDay', () =>
 			chai.assert.deepEqual(
 				castToType(
 					createAtomicValue(DateTime.fromString('---10+10:30'), {
 						kind: BaseType.XSGDAY,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
 					{
 						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
 					}
 				),
-				createAtomicValue('---10+10:30', { kind: BaseType.XSSTRING })
+				createAtomicValue('---10+10:30', {
+					kind: BaseType.XSSTRING,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:gMonth', () =>
 			chai.assert.deepEqual(
 				castToType(
 					createAtomicValue(DateTime.fromString('--10+10:30'), {
 						kind: BaseType.XSGMONTH,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
 					{
 						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
 					}
 				),
-				createAtomicValue('--10+10:30', { kind: BaseType.XSSTRING })
+				createAtomicValue('--10+10:30', {
+					kind: BaseType.XSSTRING,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:boolean', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(true, { kind: BaseType.XSBOOLEAN }), {
+				castToType(
+					createAtomicValue(true, {
+						kind: BaseType.XSBOOLEAN,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue('true', {
 					kind: BaseType.XSSTRING,
-				}),
-				createAtomicValue('true', { kind: BaseType.XSSTRING })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:base64Binary', () =>
 			chai.assert.deepEqual(
 				castToType(
 					createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', {
 						kind: BaseType.XSBASE64BINARY,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
 					{
 						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
 					}
 				),
-				createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', { kind: BaseType.XSSTRING })
+				createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', {
+					kind: BaseType.XSSTRING,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:hexBinary', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue('21FE3A44123C21FE3A44123C', { kind: BaseType.XSHEXBINARY }),
+					createAtomicValue('21FE3A44123C21FE3A44123C', {
+						kind: BaseType.XSHEXBINARY,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
 					{
 						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
 					}
 				),
-				createAtomicValue('21FE3A44123C21FE3A44123C', { kind: BaseType.XSSTRING })
+				createAtomicValue('21FE3A44123C21FE3A44123C', {
+					kind: BaseType.XSSTRING,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:anyURI', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('string', { kind: BaseType.XSANYURI }), {
+				castToType(
+					createAtomicValue('string', {
+						kind: BaseType.XSANYURI,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue('string', {
 					kind: BaseType.XSSTRING,
-				}),
-				createAtomicValue('string', { kind: BaseType.XSSTRING })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:NOTATION', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('string', { kind: BaseType.XSNOTATION }), {
+				castToType(
+					createAtomicValue('string', {
+						kind: BaseType.XSNOTATION,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue('string', {
 					kind: BaseType.XSSTRING,
-				}),
-				createAtomicValue('string', { kind: BaseType.XSSTRING })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 	});
 
 	describe('to xs:float', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('10.10', { kind: BaseType.XSUNTYPEDATOMIC }), {
+				castToType(
+					createAtomicValue('10.10', {
+						kind: BaseType.XSUNTYPEDATOMIC,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSFLOAT,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(10.1, {
 					kind: BaseType.XSFLOAT,
-				}),
-				createAtomicValue(10.1, { kind: BaseType.XSFLOAT })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('10.10', { kind: BaseType.XSSTRING }), {
+				castToType(
+					createAtomicValue('10.10', {
+						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSFLOAT,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(10.1, {
 					kind: BaseType.XSFLOAT,
-				}),
-				createAtomicValue(10.1, { kind: BaseType.XSFLOAT })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:float', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(10.123, { kind: BaseType.XSFLOAT }), {
+				castToType(
+					createAtomicValue(10.123, {
+						kind: BaseType.XSFLOAT,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSFLOAT,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(10.123, {
 					kind: BaseType.XSFLOAT,
-				}),
-				createAtomicValue(10.123, { kind: BaseType.XSFLOAT })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:double', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(10.123, { kind: BaseType.XSDOUBLE }), {
+				castToType(
+					createAtomicValue(10.123, {
+						kind: BaseType.XSDOUBLE,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSFLOAT,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(10.123, {
 					kind: BaseType.XSFLOAT,
-				}),
-				createAtomicValue(10.123, { kind: BaseType.XSFLOAT })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:decimal', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1010, { kind: BaseType.XSDECIMAL }), {
+				castToType(
+					createAtomicValue(1010, {
+						kind: BaseType.XSDECIMAL,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSFLOAT,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(1010, {
 					kind: BaseType.XSFLOAT,
-				}),
-				createAtomicValue(1010, { kind: BaseType.XSFLOAT })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:integer', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1010, { kind: BaseType.XSINTEGER }), {
+				castToType(
+					createAtomicValue(1010, {
+						kind: BaseType.XSINTEGER,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSFLOAT,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(1010, {
 					kind: BaseType.XSFLOAT,
-				}),
-				createAtomicValue(1010, { kind: BaseType.XSFLOAT })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:duration (throws XPTY0004)', () =>
 			chai.assert.throws(
@@ -544,9 +934,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSFLOAT,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -557,8 +949,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSYEARMONTHDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSFLOAT }
+						{ kind: BaseType.XSFLOAT, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -568,8 +961,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSDAYTIMEDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSFLOAT }
+						{ kind: BaseType.XSFLOAT, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -579,8 +973,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10-10T10:10:10+10:30'), {
 							kind: BaseType.XSDATETIME,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSFLOAT }
+						{ kind: BaseType.XSFLOAT, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -590,8 +985,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('10:10:10+10:30'), {
 							kind: BaseType.XSTIME,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSFLOAT }
+						{ kind: BaseType.XSFLOAT, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -601,8 +997,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10-10+10:30'), {
 							kind: BaseType.XSDATE,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSFLOAT }
+						{ kind: BaseType.XSFLOAT, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -612,8 +1009,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10+10:30'), {
 							kind: BaseType.XSGYEARMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSFLOAT }
+						{ kind: BaseType.XSFLOAT, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -623,9 +1021,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000+10:30'), {
 							kind: BaseType.XSGYEAR,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSFLOAT,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -636,8 +1036,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10-10+10:30'), {
 							kind: BaseType.XSGMONTHDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSFLOAT }
+						{ kind: BaseType.XSFLOAT, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -647,9 +1048,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('---10+10:30'), {
 							kind: BaseType.XSGDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSFLOAT,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -660,19 +1063,28 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10+10:30'), {
 							kind: BaseType.XSGMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSFLOAT,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
 			));
 		it('from xs:boolean', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(true, { kind: BaseType.XSBOOLEAN }), {
-					kind: BaseType.XSFLOAT,
-				}),
-				createAtomicValue(1, { kind: BaseType.XSFLOAT })
+				castToType(
+					createAtomicValue(true, {
+						kind: BaseType.XSBOOLEAN,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSFLOAT,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(1, { kind: BaseType.XSFLOAT, seqType: SequenceType.EXACTLY_ONE })
 			));
 		it('from xs:base64Binary (throws XPTY0004)', () =>
 			chai.assert.throws(
@@ -680,9 +1092,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', {
 							kind: BaseType.XSBASE64BINARY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSFLOAT,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -693,9 +1107,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue('21FE3A44123C21FE3A44123C', {
 							kind: BaseType.XSHEXBINARY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSFLOAT,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -703,17 +1119,31 @@ describe('castToType()', () => {
 		it('from xs:anyURI (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSANYURI }), {
-						kind: BaseType.XSFLOAT,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSANYURI,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSFLOAT,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSNOTATION }), {
-						kind: BaseType.XSFLOAT,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSNOTATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSFLOAT,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 	});
@@ -721,45 +1151,105 @@ describe('castToType()', () => {
 	describe('to xs:double', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('10.10', { kind: BaseType.XSUNTYPEDATOMIC }), {
+				castToType(
+					createAtomicValue('10.10', {
+						kind: BaseType.XSUNTYPEDATOMIC,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSDOUBLE,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(10.1, {
 					kind: BaseType.XSDOUBLE,
-				}),
-				createAtomicValue(10.1, { kind: BaseType.XSDOUBLE })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('10.10', { kind: BaseType.XSSTRING }), {
+				castToType(
+					createAtomicValue('10.10', {
+						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSDOUBLE,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(10.1, {
 					kind: BaseType.XSDOUBLE,
-				}),
-				createAtomicValue(10.1, { kind: BaseType.XSDOUBLE })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:float', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(10.123, { kind: BaseType.XSFLOAT }), {
+				castToType(
+					createAtomicValue(10.123, {
+						kind: BaseType.XSFLOAT,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSDOUBLE,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(10.123, {
 					kind: BaseType.XSDOUBLE,
-				}),
-				createAtomicValue(10.123, { kind: BaseType.XSDOUBLE })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:double', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(10.123, { kind: BaseType.XSDOUBLE }), {
+				castToType(
+					createAtomicValue(10.123, {
+						kind: BaseType.XSDOUBLE,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSDOUBLE,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(10.123, {
 					kind: BaseType.XSDOUBLE,
-				}),
-				createAtomicValue(10.123, { kind: BaseType.XSDOUBLE })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:decimal', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1010, { kind: BaseType.XSDECIMAL }), {
+				castToType(
+					createAtomicValue(1010, {
+						kind: BaseType.XSDECIMAL,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSDOUBLE,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(1010, {
 					kind: BaseType.XSDOUBLE,
-				}),
-				createAtomicValue(1010, { kind: BaseType.XSDOUBLE })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:integer', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1010, { kind: BaseType.XSINTEGER }), {
+				castToType(
+					createAtomicValue(1010, {
+						kind: BaseType.XSINTEGER,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSDOUBLE,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(1010, {
 					kind: BaseType.XSDOUBLE,
-				}),
-				createAtomicValue(1010, { kind: BaseType.XSDOUBLE })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:duration (throws XPTY0004)', () =>
 			chai.assert.throws(
@@ -767,8 +1257,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDOUBLE }
+						{ kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -778,8 +1269,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSYEARMONTHDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDOUBLE }
+						{ kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -789,8 +1281,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSDAYTIMEDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDOUBLE }
+						{ kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -800,8 +1293,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10-10T10:10:10+10:30'), {
 							kind: BaseType.XSDATETIME,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDOUBLE }
+						{ kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -811,8 +1305,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('10:10:10+10:30'), {
 							kind: BaseType.XSTIME,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDOUBLE }
+						{ kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -822,8 +1317,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10-10+10:30'), {
 							kind: BaseType.XSDATE,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDOUBLE }
+						{ kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -833,8 +1329,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10+10:30'), {
 							kind: BaseType.XSGYEARMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDOUBLE }
+						{ kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -844,9 +1341,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000+10:30'), {
 							kind: BaseType.XSGYEAR,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSDOUBLE,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -857,8 +1356,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10-10+10:30'), {
 							kind: BaseType.XSGMONTHDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDOUBLE }
+						{ kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -868,9 +1368,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('---10+10:30'), {
 							kind: BaseType.XSGDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSDOUBLE,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -881,19 +1383,28 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10+10:30'), {
 							kind: BaseType.XSGMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSDOUBLE,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
 			));
 		it('from xs:boolean', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(true, { kind: BaseType.XSBOOLEAN }), {
-					kind: BaseType.XSDOUBLE,
-				}),
-				createAtomicValue(1, { kind: BaseType.XSDOUBLE })
+				castToType(
+					createAtomicValue(true, {
+						kind: BaseType.XSBOOLEAN,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSDOUBLE,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(1, { kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE })
 			));
 		it('from xs:base64Binary (throws XPTY0004)', () =>
 			chai.assert.throws(
@@ -901,9 +1412,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', {
 							kind: BaseType.XSBASE64BINARY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSDOUBLE,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -914,9 +1427,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue('21FE3A44123C21FE3A44123C', {
 							kind: BaseType.XSHEXBINARY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSDOUBLE,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -924,17 +1439,31 @@ describe('castToType()', () => {
 		it('from xs:anyURI (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSANYURI }), {
-						kind: BaseType.XSDOUBLE,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSANYURI,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSDOUBLE,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSNOTATION }), {
-						kind: BaseType.XSDOUBLE,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSNOTATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSDOUBLE,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 	});
@@ -942,45 +1471,105 @@ describe('castToType()', () => {
 	describe('to xs:double', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('10.10', { kind: BaseType.XSUNTYPEDATOMIC }), {
+				castToType(
+					createAtomicValue('10.10', {
+						kind: BaseType.XSUNTYPEDATOMIC,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSDOUBLE,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(10.1, {
 					kind: BaseType.XSDOUBLE,
-				}),
-				createAtomicValue(10.1, { kind: BaseType.XSDOUBLE })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('10.10', { kind: BaseType.XSSTRING }), {
+				castToType(
+					createAtomicValue('10.10', {
+						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSDOUBLE,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(10.1, {
 					kind: BaseType.XSDOUBLE,
-				}),
-				createAtomicValue(10.1, { kind: BaseType.XSDOUBLE })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:float', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(10.123, { kind: BaseType.XSFLOAT }), {
+				castToType(
+					createAtomicValue(10.123, {
+						kind: BaseType.XSFLOAT,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSDOUBLE,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(10.123, {
 					kind: BaseType.XSDOUBLE,
-				}),
-				createAtomicValue(10.123, { kind: BaseType.XSDOUBLE })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:double', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(10.123, { kind: BaseType.XSDOUBLE }), {
+				castToType(
+					createAtomicValue(10.123, {
+						kind: BaseType.XSDOUBLE,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSDOUBLE,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(10.123, {
 					kind: BaseType.XSDOUBLE,
-				}),
-				createAtomicValue(10.123, { kind: BaseType.XSDOUBLE })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:decimal', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1010, { kind: BaseType.XSDECIMAL }), {
+				castToType(
+					createAtomicValue(1010, {
+						kind: BaseType.XSDECIMAL,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSDOUBLE,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(1010, {
 					kind: BaseType.XSDOUBLE,
-				}),
-				createAtomicValue(1010, { kind: BaseType.XSDOUBLE })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:integer', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1010, { kind: BaseType.XSINTEGER }), {
+				castToType(
+					createAtomicValue(1010, {
+						kind: BaseType.XSINTEGER,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSDOUBLE,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(1010, {
 					kind: BaseType.XSDOUBLE,
-				}),
-				createAtomicValue(1010, { kind: BaseType.XSDOUBLE })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:duration (throws XPTY0004)', () =>
 			chai.assert.throws(
@@ -988,8 +1577,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDOUBLE }
+						{ kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -999,8 +1589,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSYEARMONTHDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDOUBLE }
+						{ kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -1010,8 +1601,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSDAYTIMEDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDOUBLE }
+						{ kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -1021,8 +1613,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10-10T10:10:10+10:30'), {
 							kind: BaseType.XSDATETIME,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDOUBLE }
+						{ kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -1032,8 +1625,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('10:10:10+10:30'), {
 							kind: BaseType.XSTIME,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDOUBLE }
+						{ kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -1043,8 +1637,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10-10+10:30'), {
 							kind: BaseType.XSDATE,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDOUBLE }
+						{ kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -1054,8 +1649,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10+10:30'), {
 							kind: BaseType.XSGYEARMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDOUBLE }
+						{ kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -1065,9 +1661,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000+10:30'), {
 							kind: BaseType.XSGYEAR,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSDOUBLE,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -1078,8 +1676,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10-10+10:30'), {
 							kind: BaseType.XSGMONTHDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDOUBLE }
+						{ kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -1089,9 +1688,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('---10+10:30'), {
 							kind: BaseType.XSGDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSDOUBLE,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -1102,19 +1703,28 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10+10:30'), {
 							kind: BaseType.XSGMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSDOUBLE,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
 			));
 		it('from xs:boolean', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(true, { kind: BaseType.XSBOOLEAN }), {
-					kind: BaseType.XSDOUBLE,
-				}),
-				createAtomicValue(1, { kind: BaseType.XSDOUBLE })
+				castToType(
+					createAtomicValue(true, {
+						kind: BaseType.XSBOOLEAN,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSDOUBLE,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(1, { kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE })
 			));
 		it('from xs:base64Binary (throws XPTY0004)', () =>
 			chai.assert.throws(
@@ -1122,9 +1732,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', {
 							kind: BaseType.XSBASE64BINARY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSDOUBLE,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -1135,9 +1747,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue('21FE3A44123C21FE3A44123C', {
 							kind: BaseType.XSHEXBINARY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSDOUBLE,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -1145,17 +1759,31 @@ describe('castToType()', () => {
 		it('from xs:anyURI (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSANYURI }), {
-						kind: BaseType.XSDOUBLE,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSANYURI,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSDOUBLE,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSNOTATION }), {
-						kind: BaseType.XSDOUBLE,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSNOTATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSDOUBLE,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 	});
@@ -1163,45 +1791,105 @@ describe('castToType()', () => {
 	describe('to xs:decimal', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('10.10', { kind: BaseType.XSUNTYPEDATOMIC }), {
+				castToType(
+					createAtomicValue('10.10', {
+						kind: BaseType.XSUNTYPEDATOMIC,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSDECIMAL,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(10.1, {
 					kind: BaseType.XSDECIMAL,
-				}),
-				createAtomicValue(10.1, { kind: BaseType.XSDECIMAL })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('10.10', { kind: BaseType.XSSTRING }), {
+				castToType(
+					createAtomicValue('10.10', {
+						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSDECIMAL,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(10.1, {
 					kind: BaseType.XSDECIMAL,
-				}),
-				createAtomicValue(10.1, { kind: BaseType.XSDECIMAL })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:float', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(10.123, { kind: BaseType.XSFLOAT }), {
+				castToType(
+					createAtomicValue(10.123, {
+						kind: BaseType.XSFLOAT,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSDECIMAL,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(10.123, {
 					kind: BaseType.XSDECIMAL,
-				}),
-				createAtomicValue(10.123, { kind: BaseType.XSDECIMAL })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:double', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(10.123, { kind: BaseType.XSDOUBLE }), {
+				castToType(
+					createAtomicValue(10.123, {
+						kind: BaseType.XSDOUBLE,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSDECIMAL,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(10.123, {
 					kind: BaseType.XSDECIMAL,
-				}),
-				createAtomicValue(10.123, { kind: BaseType.XSDECIMAL })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:decimal', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1010, { kind: BaseType.XSDECIMAL }), {
+				castToType(
+					createAtomicValue(1010, {
+						kind: BaseType.XSDECIMAL,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSDECIMAL,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(1010, {
 					kind: BaseType.XSDECIMAL,
-				}),
-				createAtomicValue(1010, { kind: BaseType.XSDECIMAL })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:integer', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1010, { kind: BaseType.XSINTEGER }), {
+				castToType(
+					createAtomicValue(1010, {
+						kind: BaseType.XSINTEGER,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSDECIMAL,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(1010, {
 					kind: BaseType.XSDECIMAL,
-				}),
-				createAtomicValue(1010, { kind: BaseType.XSDECIMAL })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:duration (throws XPTY0004)', () =>
 			chai.assert.throws(
@@ -1209,8 +1897,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDECIMAL }
+						{ kind: BaseType.XSDECIMAL, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -1220,8 +1909,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSYEARMONTHDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDECIMAL }
+						{ kind: BaseType.XSDECIMAL, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -1231,8 +1921,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSDAYTIMEDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDECIMAL }
+						{ kind: BaseType.XSDECIMAL, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -1242,8 +1933,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10-10T10:10:10+10:30'), {
 							kind: BaseType.XSDATETIME,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDECIMAL }
+						{ kind: BaseType.XSDECIMAL, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -1253,8 +1945,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('10:10:10+10:30'), {
 							kind: BaseType.XSTIME,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDECIMAL }
+						{ kind: BaseType.XSDECIMAL, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -1264,8 +1957,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10-10+10:30'), {
 							kind: BaseType.XSDATE,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDECIMAL }
+						{ kind: BaseType.XSDECIMAL, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -1275,8 +1969,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10+10:30'), {
 							kind: BaseType.XSGYEARMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDECIMAL }
+						{ kind: BaseType.XSDECIMAL, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -1286,9 +1981,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000+10:30'), {
 							kind: BaseType.XSGYEAR,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSDECIMAL,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -1299,8 +1996,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10-10+10:30'), {
 							kind: BaseType.XSGMONTHDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDECIMAL }
+						{ kind: BaseType.XSDECIMAL, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -1310,9 +2008,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('---10+10:30'), {
 							kind: BaseType.XSGDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSDECIMAL,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -1323,19 +2023,31 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10+10:30'), {
 							kind: BaseType.XSGMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSDECIMAL,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
 			));
 		it('from xs:boolean', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(true, { kind: BaseType.XSBOOLEAN }), {
+				castToType(
+					createAtomicValue(true, {
+						kind: BaseType.XSBOOLEAN,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSDECIMAL,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(1, {
 					kind: BaseType.XSDECIMAL,
-				}),
-				createAtomicValue(1, { kind: BaseType.XSDECIMAL })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:base64Binary (throws XPTY0004)', () =>
 			chai.assert.throws(
@@ -1343,9 +2055,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', {
 							kind: BaseType.XSBASE64BINARY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSDECIMAL,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -1356,9 +2070,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue('21FE3A44123C21FE3A44123C', {
 							kind: BaseType.XSHEXBINARY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSDECIMAL,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -1366,17 +2082,31 @@ describe('castToType()', () => {
 		it('from xs:anyURI (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSANYURI }), {
-						kind: BaseType.XSDECIMAL,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSANYURI,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSDECIMAL,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSNOTATION }), {
-						kind: BaseType.XSDECIMAL,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSNOTATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSDECIMAL,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 	});
@@ -1384,45 +2114,105 @@ describe('castToType()', () => {
 	describe('to xs:integer', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('10', { kind: BaseType.XSUNTYPEDATOMIC }), {
+				castToType(
+					createAtomicValue('10', {
+						kind: BaseType.XSUNTYPEDATOMIC,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSINTEGER,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(10, {
 					kind: BaseType.XSINTEGER,
-				}),
-				createAtomicValue(10, { kind: BaseType.XSINTEGER })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('10', { kind: BaseType.XSSTRING }), {
+				castToType(
+					createAtomicValue('10', {
+						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSINTEGER,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(10, {
 					kind: BaseType.XSINTEGER,
-				}),
-				createAtomicValue(10, { kind: BaseType.XSINTEGER })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:float', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(10.123, { kind: BaseType.XSFLOAT }), {
+				castToType(
+					createAtomicValue(10.123, {
+						kind: BaseType.XSFLOAT,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSINTEGER,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(10, {
 					kind: BaseType.XSINTEGER,
-				}),
-				createAtomicValue(10, { kind: BaseType.XSINTEGER })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:double', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(10.123, { kind: BaseType.XSDOUBLE }), {
+				castToType(
+					createAtomicValue(10.123, {
+						kind: BaseType.XSDOUBLE,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSINTEGER,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(10, {
 					kind: BaseType.XSINTEGER,
-				}),
-				createAtomicValue(10, { kind: BaseType.XSINTEGER })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:decimal', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1010, { kind: BaseType.XSDECIMAL }), {
+				castToType(
+					createAtomicValue(1010, {
+						kind: BaseType.XSDECIMAL,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSINTEGER,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(1010, {
 					kind: BaseType.XSINTEGER,
-				}),
-				createAtomicValue(1010, { kind: BaseType.XSINTEGER })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:integer', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1010, { kind: BaseType.XSINTEGER }), {
+				castToType(
+					createAtomicValue(1010, {
+						kind: BaseType.XSINTEGER,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSINTEGER,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(1010, {
 					kind: BaseType.XSINTEGER,
-				}),
-				createAtomicValue(1010, { kind: BaseType.XSINTEGER })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:duration (throws XPTY0004)', () =>
 			chai.assert.throws(
@@ -1430,8 +2220,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSINTEGER }
+						{ kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -1441,8 +2232,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSYEARMONTHDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSINTEGER }
+						{ kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -1452,8 +2244,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSDAYTIMEDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSINTEGER }
+						{ kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -1463,8 +2256,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10-10T10:10:10+10:30'), {
 							kind: BaseType.XSDATETIME,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSINTEGER }
+						{ kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -1474,8 +2268,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('10:10:10+10:30'), {
 							kind: BaseType.XSTIME,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSINTEGER }
+						{ kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -1485,8 +2280,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10-10+10:30'), {
 							kind: BaseType.XSDATE,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSINTEGER }
+						{ kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -1496,8 +2292,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10+10:30'), {
 							kind: BaseType.XSGYEARMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSINTEGER }
+						{ kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -1507,9 +2304,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000+10:30'), {
 							kind: BaseType.XSGYEAR,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSINTEGER,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -1520,8 +2319,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10-10+10:30'), {
 							kind: BaseType.XSGMONTHDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSINTEGER }
+						{ kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -1531,9 +2331,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('---10+10:30'), {
 							kind: BaseType.XSGDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSINTEGER,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -1544,19 +2346,31 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10+10:30'), {
 							kind: BaseType.XSGMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSINTEGER,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
 			));
 		it('from xs:boolean', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(true, { kind: BaseType.XSBOOLEAN }), {
+				castToType(
+					createAtomicValue(true, {
+						kind: BaseType.XSBOOLEAN,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSINTEGER,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(1, {
 					kind: BaseType.XSINTEGER,
-				}),
-				createAtomicValue(1, { kind: BaseType.XSINTEGER })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:base64Binary (throws XPTY0004)', () =>
 			chai.assert.throws(
@@ -1564,9 +2378,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', {
 							kind: BaseType.XSBASE64BINARY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSINTEGER,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -1577,9 +2393,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue('21FE3A44123C21FE3A44123C', {
 							kind: BaseType.XSHEXBINARY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSINTEGER,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -1587,17 +2405,31 @@ describe('castToType()', () => {
 		it('from xs:anyURI (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSANYURI }), {
-						kind: BaseType.XSINTEGER,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSANYURI,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSINTEGER,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSNOTATION }), {
-						kind: BaseType.XSINTEGER,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSNOTATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSINTEGER,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 	});
@@ -1606,52 +2438,92 @@ describe('castToType()', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue('P10Y10M10DT10H10M10S', { kind: BaseType.XSUNTYPEDATOMIC }),
-					{ kind: BaseType.XSDURATION }
+					createAtomicValue('P10Y10M10DT10H10M10S', {
+						kind: BaseType.XSUNTYPEDATOMIC,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{ kind: BaseType.XSDURATION, seqType: SequenceType.EXACTLY_ONE }
 				),
 				createAtomicValue(Duration.fromString('P10Y10M10DT10H10M10S'), {
 					kind: BaseType.XSDURATION,
+					seqType: SequenceType.EXACTLY_ONE,
 				})
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('P10Y10M10DT10H10M10S', { kind: BaseType.XSSTRING }), {
-					kind: BaseType.XSDURATION,
-				}),
+				castToType(
+					createAtomicValue('P10Y10M10DT10H10M10S', {
+						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSDURATION,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
 				createAtomicValue(Duration.fromString('P10Y10M10DT10H10M10S'), {
 					kind: BaseType.XSDURATION,
+					seqType: SequenceType.EXACTLY_ONE,
 				})
 			));
 		it('from xs:float (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(10.123, { kind: BaseType.XSFLOAT }), {
-						kind: BaseType.XSDURATION,
-					}),
+					castToType(
+						createAtomicValue(10.123, {
+							kind: BaseType.XSFLOAT,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:double (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(10.123, { kind: BaseType.XSDOUBLE }), {
-						kind: BaseType.XSDURATION,
-					}),
+					castToType(
+						createAtomicValue(10.123, {
+							kind: BaseType.XSDOUBLE,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:decimal (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(1010, { kind: BaseType.XSDECIMAL }), {
-						kind: BaseType.XSDURATION,
-					}),
+					castToType(
+						createAtomicValue(1010, {
+							kind: BaseType.XSDECIMAL,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:integer (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(1010, { kind: BaseType.XSINTEGER }), {
-						kind: BaseType.XSDURATION,
-					}),
+					castToType(
+						createAtomicValue(1010, {
+							kind: BaseType.XSINTEGER,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:duration', () =>
@@ -1659,11 +2531,13 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue(Duration.fromString('P10Y10M10DT10H10M10S'), {
 						kind: BaseType.XSDURATION,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSDURATION }
+					{ kind: BaseType.XSDURATION, seqType: SequenceType.EXACTLY_ONE }
 				),
 				createAtomicValue(Duration.fromString('P10Y10M10DT10H10M10S'), {
 					kind: BaseType.XSDURATION,
+					seqType: SequenceType.EXACTLY_ONE,
 				})
 			));
 		it('from xs:yearMonthDuration', () =>
@@ -1671,20 +2545,28 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue(YearMonthDuration.fromString('P10Y10M'), {
 						kind: BaseType.XSYEARMONTHDURATION,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSDURATION }
+					{ kind: BaseType.XSDURATION, seqType: SequenceType.EXACTLY_ONE }
 				),
-				createAtomicValue(Duration.fromString('P10Y10M'), { kind: BaseType.XSDURATION })
+				createAtomicValue(Duration.fromString('P10Y10M'), {
+					kind: BaseType.XSDURATION,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:dayTimeDuration', () =>
 			chai.assert.deepEqual(
 				castToType(
 					createAtomicValue(DayTimeDuration.fromString('P10D'), {
 						kind: BaseType.XSDAYTIMEDURATION,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSDURATION }
+					{ kind: BaseType.XSDURATION, seqType: SequenceType.EXACTLY_ONE }
 				),
-				createAtomicValue(Duration.fromString('P10D'), { kind: BaseType.XSDURATION })
+				createAtomicValue(Duration.fromString('P10D'), {
+					kind: BaseType.XSDURATION,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:dateTime (throws XPTY0004)', () =>
 			chai.assert.throws(
@@ -1692,8 +2574,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10-10T10:10:10+10:30'), {
 							kind: BaseType.XSDATETIME,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDURATION }
+						{ kind: BaseType.XSDURATION, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -1703,8 +2586,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('10:10:10+10:30'), {
 							kind: BaseType.XSTIME,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDURATION }
+						{ kind: BaseType.XSDURATION, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -1714,8 +2598,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10-10+10:30'), {
 							kind: BaseType.XSDATE,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDURATION }
+						{ kind: BaseType.XSDURATION, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -1725,8 +2610,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10+10:30'), {
 							kind: BaseType.XSGYEARMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDURATION }
+						{ kind: BaseType.XSDURATION, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -1736,9 +2622,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000+10:30'), {
 							kind: BaseType.XSGYEAR,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -1749,8 +2637,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10-10+10:30'), {
 							kind: BaseType.XSGMONTHDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDURATION }
+						{ kind: BaseType.XSDURATION, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -1760,9 +2649,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('---10+10:30'), {
 							kind: BaseType.XSGDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -1773,9 +2664,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10+10:30'), {
 							kind: BaseType.XSGMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -1783,9 +2676,16 @@ describe('castToType()', () => {
 		it('from xs:boolean (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(true, { kind: BaseType.XSBOOLEAN }), {
-						kind: BaseType.XSDURATION,
-					}),
+					castToType(
+						createAtomicValue(true, {
+							kind: BaseType.XSBOOLEAN,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:base64Binary (throws XPTY0004)', () =>
@@ -1794,9 +2694,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', {
 							kind: BaseType.XSBASE64BINARY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -1807,9 +2709,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue('21FE3A44123C21FE3A44123C', {
 							kind: BaseType.XSHEXBINARY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -1817,17 +2721,31 @@ describe('castToType()', () => {
 		it('from xs:anyURI (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSANYURI }), {
-						kind: BaseType.XSDURATION,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSANYURI,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSNOTATION }), {
-						kind: BaseType.XSDURATION,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSNOTATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 	});
@@ -1835,52 +2753,96 @@ describe('castToType()', () => {
 	describe('to xs:yearMonthDuration', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('P10Y10M', { kind: BaseType.XSUNTYPEDATOMIC }), {
-					kind: BaseType.XSYEARMONTHDURATION,
-				}),
+				castToType(
+					createAtomicValue('P10Y10M', {
+						kind: BaseType.XSUNTYPEDATOMIC,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSYEARMONTHDURATION,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
 				createAtomicValue(YearMonthDuration.fromString('P10Y10M'), {
 					kind: BaseType.XSYEARMONTHDURATION,
+					seqType: SequenceType.EXACTLY_ONE,
 				})
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('P10Y10M', { kind: BaseType.XSSTRING }), {
-					kind: BaseType.XSYEARMONTHDURATION,
-				}),
+				castToType(
+					createAtomicValue('P10Y10M', {
+						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSYEARMONTHDURATION,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
 				createAtomicValue(YearMonthDuration.fromString('P10Y10M'), {
 					kind: BaseType.XSYEARMONTHDURATION,
+					seqType: SequenceType.EXACTLY_ONE,
 				})
 			));
 		it('from xs:float (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(10.123, { kind: BaseType.XSFLOAT }), {
-						kind: BaseType.XSYEARMONTHDURATION,
-					}),
+					castToType(
+						createAtomicValue(10.123, {
+							kind: BaseType.XSFLOAT,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSYEARMONTHDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:double (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(10.123, { kind: BaseType.XSDOUBLE }), {
-						kind: BaseType.XSYEARMONTHDURATION,
-					}),
+					castToType(
+						createAtomicValue(10.123, {
+							kind: BaseType.XSDOUBLE,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSYEARMONTHDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:decimal (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(1010, { kind: BaseType.XSDECIMAL }), {
-						kind: BaseType.XSYEARMONTHDURATION,
-					}),
+					castToType(
+						createAtomicValue(1010, {
+							kind: BaseType.XSDECIMAL,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSYEARMONTHDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:integer (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(1010, { kind: BaseType.XSINTEGER }), {
-						kind: BaseType.XSYEARMONTHDURATION,
-					}),
+					castToType(
+						createAtomicValue(1010, {
+							kind: BaseType.XSINTEGER,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSYEARMONTHDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:duration', () =>
@@ -1888,11 +2850,13 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue(Duration.fromString('P10Y10M10DT10H10M10S'), {
 						kind: BaseType.XSDURATION,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSYEARMONTHDURATION }
+					{ kind: BaseType.XSYEARMONTHDURATION, seqType: SequenceType.EXACTLY_ONE }
 				),
 				createAtomicValue(YearMonthDuration.fromString('P10Y10M'), {
 					kind: BaseType.XSYEARMONTHDURATION,
+					seqType: SequenceType.EXACTLY_ONE,
 				})
 			));
 		it('from xs:yearMonthDuration', () =>
@@ -1900,11 +2864,13 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue(YearMonthDuration.fromString('P10Y10M'), {
 						kind: BaseType.XSYEARMONTHDURATION,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSYEARMONTHDURATION }
+					{ kind: BaseType.XSYEARMONTHDURATION, seqType: SequenceType.EXACTLY_ONE }
 				),
 				createAtomicValue(YearMonthDuration.fromString('P10Y10M'), {
 					kind: BaseType.XSYEARMONTHDURATION,
+					seqType: SequenceType.EXACTLY_ONE,
 				})
 			));
 		it('from xs:dayTimeDuration', () =>
@@ -1912,11 +2878,13 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue(DayTimeDuration.fromString('P10Y10M'), {
 						kind: BaseType.XSDAYTIMEDURATION,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSYEARMONTHDURATION }
+					{ kind: BaseType.XSYEARMONTHDURATION, seqType: SequenceType.EXACTLY_ONE }
 				),
 				createAtomicValue(YearMonthDuration.fromString('P0M'), {
 					kind: BaseType.XSYEARMONTHDURATION,
+					seqType: SequenceType.EXACTLY_ONE,
 				})
 			));
 		it('from xs:dateTime (throws XPTY0004)', () =>
@@ -1925,8 +2893,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10-10T10:10:10+10:30'), {
 							kind: BaseType.XSDATETIME,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSYEARMONTHDURATION }
+						{ kind: BaseType.XSYEARMONTHDURATION, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -1936,8 +2905,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('10:10:10+10:30'), {
 							kind: BaseType.XSTIME,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSYEARMONTHDURATION }
+						{ kind: BaseType.XSYEARMONTHDURATION, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -1947,8 +2917,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10-10+10:30'), {
 							kind: BaseType.XSDATE,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSYEARMONTHDURATION }
+						{ kind: BaseType.XSYEARMONTHDURATION, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -1958,8 +2929,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10+10:30'), {
 							kind: BaseType.XSGYEARMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSYEARMONTHDURATION }
+						{ kind: BaseType.XSYEARMONTHDURATION, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -1969,9 +2941,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000+10:30'), {
 							kind: BaseType.XSGYEAR,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSYEARMONTHDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -1982,8 +2956,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10-10+10:30'), {
 							kind: BaseType.XSGMONTHDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSYEARMONTHDURATION }
+						{ kind: BaseType.XSYEARMONTHDURATION, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -1993,9 +2968,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('---10+10:30'), {
 							kind: BaseType.XSGDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSYEARMONTHDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -2006,9 +2983,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10+10:30'), {
 							kind: BaseType.XSGMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSYEARMONTHDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -2016,9 +2995,16 @@ describe('castToType()', () => {
 		it('from xs:boolean (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(true, { kind: BaseType.XSBOOLEAN }), {
-						kind: BaseType.XSYEARMONTHDURATION,
-					}),
+					castToType(
+						createAtomicValue(true, {
+							kind: BaseType.XSBOOLEAN,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSYEARMONTHDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:base64Binary (throws XPTY0004)', () =>
@@ -2027,9 +3013,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', {
 							kind: BaseType.XSBASE64BINARY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSYEARMONTHDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -2040,9 +3028,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue('21FE3A44123C21FE3A44123C', {
 							kind: BaseType.XSHEXBINARY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSYEARMONTHDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -2050,17 +3040,31 @@ describe('castToType()', () => {
 		it('from xs:anyURI (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSANYURI }), {
-						kind: BaseType.XSYEARMONTHDURATION,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSANYURI,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSYEARMONTHDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSNOTATION }), {
-						kind: BaseType.XSYEARMONTHDURATION,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSNOTATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSYEARMONTHDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 	});
@@ -2069,52 +3073,92 @@ describe('castToType()', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue('P10DT10H10M10S', { kind: BaseType.XSUNTYPEDATOMIC }),
-					{ kind: BaseType.XSDAYTIMEDURATION }
+					createAtomicValue('P10DT10H10M10S', {
+						kind: BaseType.XSUNTYPEDATOMIC,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{ kind: BaseType.XSDAYTIMEDURATION, seqType: SequenceType.EXACTLY_ONE }
 				),
 				createAtomicValue(DayTimeDuration.fromString('P10DT10H10M10S'), {
 					kind: BaseType.XSDAYTIMEDURATION,
+					seqType: SequenceType.EXACTLY_ONE,
 				})
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('P10DT10H10M10S', { kind: BaseType.XSSTRING }), {
-					kind: BaseType.XSDAYTIMEDURATION,
-				}),
+				castToType(
+					createAtomicValue('P10DT10H10M10S', {
+						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSDAYTIMEDURATION,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
 				createAtomicValue(DayTimeDuration.fromString('P10DT10H10M10S'), {
 					kind: BaseType.XSDAYTIMEDURATION,
+					seqType: SequenceType.EXACTLY_ONE,
 				})
 			));
 		it('from xs:float (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(10.123, { kind: BaseType.XSFLOAT }), {
-						kind: BaseType.XSDAYTIMEDURATION,
-					}),
+					castToType(
+						createAtomicValue(10.123, {
+							kind: BaseType.XSFLOAT,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSDAYTIMEDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:double (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(10.123, { kind: BaseType.XSDOUBLE }), {
-						kind: BaseType.XSDAYTIMEDURATION,
-					}),
+					castToType(
+						createAtomicValue(10.123, {
+							kind: BaseType.XSDOUBLE,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSDAYTIMEDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:decimal (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(1010, { kind: BaseType.XSDECIMAL }), {
-						kind: BaseType.XSDAYTIMEDURATION,
-					}),
+					castToType(
+						createAtomicValue(1010, {
+							kind: BaseType.XSDECIMAL,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSDAYTIMEDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:integer (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(1010, { kind: BaseType.XSINTEGER }), {
-						kind: BaseType.XSDAYTIMEDURATION,
-					}),
+					castToType(
+						createAtomicValue(1010, {
+							kind: BaseType.XSINTEGER,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSDAYTIMEDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:duration', () =>
@@ -2122,11 +3166,13 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue(Duration.fromString('P10Y10M10DT10H10M10S'), {
 						kind: BaseType.XSDURATION,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSDAYTIMEDURATION }
+					{ kind: BaseType.XSDAYTIMEDURATION, seqType: SequenceType.EXACTLY_ONE }
 				),
 				createAtomicValue(DayTimeDuration.fromString('P10DT10H10M10S'), {
 					kind: BaseType.XSDAYTIMEDURATION,
+					seqType: SequenceType.EXACTLY_ONE,
 				})
 			));
 		it('from xs:yearMonthDuration', () =>
@@ -2134,11 +3180,13 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue(YearMonthDuration.fromString('P10Y10M'), {
 						kind: BaseType.XSYEARMONTHDURATION,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSDAYTIMEDURATION }
+					{ kind: BaseType.XSDAYTIMEDURATION, seqType: SequenceType.EXACTLY_ONE }
 				),
 				createAtomicValue(DayTimeDuration.fromString('PT0S'), {
 					kind: BaseType.XSDAYTIMEDURATION,
+					seqType: SequenceType.EXACTLY_ONE,
 				})
 			));
 		it('from xs:dayTimeDuration', () =>
@@ -2146,11 +3194,13 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue(DayTimeDuration.fromString('P10DT10H10M10S'), {
 						kind: BaseType.XSDAYTIMEDURATION,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSDAYTIMEDURATION }
+					{ kind: BaseType.XSDAYTIMEDURATION, seqType: SequenceType.EXACTLY_ONE }
 				),
 				createAtomicValue(DayTimeDuration.fromString('P10DT10H10M10S'), {
 					kind: BaseType.XSDAYTIMEDURATION,
+					seqType: SequenceType.EXACTLY_ONE,
 				})
 			));
 		it('from xs:dateTime (throws XPTY0004)', () =>
@@ -2159,8 +3209,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10-10T10:10:10+10:30'), {
 							kind: BaseType.XSDATETIME,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDAYTIMEDURATION }
+						{ kind: BaseType.XSDAYTIMEDURATION, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -2170,8 +3221,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('10:10:10+10:30'), {
 							kind: BaseType.XSTIME,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDAYTIMEDURATION }
+						{ kind: BaseType.XSDAYTIMEDURATION, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -2181,8 +3233,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10-10+10:30'), {
 							kind: BaseType.XSDATE,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDAYTIMEDURATION }
+						{ kind: BaseType.XSDAYTIMEDURATION, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -2192,8 +3245,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10+10:30'), {
 							kind: BaseType.XSGYEARMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDAYTIMEDURATION }
+						{ kind: BaseType.XSDAYTIMEDURATION, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -2203,9 +3257,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000+10:30'), {
 							kind: BaseType.XSGYEAR,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSDAYTIMEDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -2216,8 +3272,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10-10+10:30'), {
 							kind: BaseType.XSGMONTHDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDAYTIMEDURATION }
+						{ kind: BaseType.XSDAYTIMEDURATION, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -2227,9 +3284,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('---10+10:30'), {
 							kind: BaseType.XSGDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSDAYTIMEDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -2240,9 +3299,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10+10:30'), {
 							kind: BaseType.XSGMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSDAYTIMEDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -2250,9 +3311,16 @@ describe('castToType()', () => {
 		it('from xs:boolean (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(true, { kind: BaseType.XSBOOLEAN }), {
-						kind: BaseType.XSDAYTIMEDURATION,
-					}),
+					castToType(
+						createAtomicValue(true, {
+							kind: BaseType.XSBOOLEAN,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSDAYTIMEDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:base64Binary (throws XPTY0004)', () =>
@@ -2261,9 +3329,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', {
 							kind: BaseType.XSBASE64BINARY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSDAYTIMEDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -2274,9 +3344,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue('21FE3A44123C21FE3A44123C', {
 							kind: BaseType.XSHEXBINARY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSDAYTIMEDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -2284,17 +3356,31 @@ describe('castToType()', () => {
 		it('from xs:anyURI (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSANYURI }), {
-						kind: BaseType.XSDAYTIMEDURATION,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSANYURI,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSDAYTIMEDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSNOTATION }), {
-						kind: BaseType.XSDAYTIMEDURATION,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSNOTATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSDAYTIMEDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 	});
@@ -2305,53 +3391,87 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue('2000-10-10T10:10:10+10:30', {
 						kind: BaseType.XSUNTYPEDATOMIC,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSDATETIME }
+					{ kind: BaseType.XSDATETIME, seqType: SequenceType.EXACTLY_ONE }
 				),
 				createAtomicValue(DateTime.fromString('2000-10-10T10:10:10+10:30'), {
 					kind: BaseType.XSDATETIME,
+					seqType: SequenceType.EXACTLY_ONE,
 				})
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue('2000-10-10T10:10:10+10:30', { kind: BaseType.XSSTRING }),
-					{ kind: BaseType.XSDATETIME }
+					createAtomicValue('2000-10-10T10:10:10+10:30', {
+						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{ kind: BaseType.XSDATETIME, seqType: SequenceType.EXACTLY_ONE }
 				),
 				createAtomicValue(DateTime.fromString('2000-10-10T10:10:10+10:30'), {
 					kind: BaseType.XSDATETIME,
+					seqType: SequenceType.EXACTLY_ONE,
 				})
 			));
 		it('from xs:float (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(10.123, { kind: BaseType.XSFLOAT }), {
-						kind: BaseType.XSDATETIME,
-					}),
+					castToType(
+						createAtomicValue(10.123, {
+							kind: BaseType.XSFLOAT,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSDATETIME,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:double (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(10.123, { kind: BaseType.XSDOUBLE }), {
-						kind: BaseType.XSDATETIME,
-					}),
+					castToType(
+						createAtomicValue(10.123, {
+							kind: BaseType.XSDOUBLE,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSDATETIME,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:decimal (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(1010, { kind: BaseType.XSDECIMAL }), {
-						kind: BaseType.XSDATETIME,
-					}),
+					castToType(
+						createAtomicValue(1010, {
+							kind: BaseType.XSDECIMAL,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSDATETIME,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:integer (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(1010, { kind: BaseType.XSINTEGER }), {
-						kind: BaseType.XSDATETIME,
-					}),
+					castToType(
+						createAtomicValue(1010, {
+							kind: BaseType.XSINTEGER,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSDATETIME,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:duration (throws XPTY0004)', () =>
@@ -2360,8 +3480,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M10DT10H10M10S'), {
 							kind: BaseType.XSDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDATETIME }
+						{ kind: BaseType.XSDATETIME, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -2371,8 +3492,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSYEARMONTHDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDATETIME }
+						{ kind: BaseType.XSDATETIME, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -2382,8 +3504,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSDAYTIMEDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDATETIME }
+						{ kind: BaseType.XSDATETIME, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -2392,11 +3515,13 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue(DateTime.fromString('2000-10-10T10:10:10+10:30'), {
 						kind: BaseType.XSDATETIME,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSDATETIME }
+					{ kind: BaseType.XSDATETIME, seqType: SequenceType.EXACTLY_ONE }
 				),
 				createAtomicValue(DateTime.fromString('2000-10-10T10:10:10+10:30'), {
 					kind: BaseType.XSDATETIME,
+					seqType: SequenceType.EXACTLY_ONE,
 				})
 			));
 		it('from xs:time (throws XPTY0004)', () =>
@@ -2405,8 +3530,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('10:10:10+10:30'), {
 							kind: BaseType.XSTIME,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDATETIME }
+						{ kind: BaseType.XSDATETIME, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -2415,11 +3541,13 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue(DateTime.fromString('2000-10-10+10:30'), {
 						kind: BaseType.XSDATE,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSDATETIME }
+					{ kind: BaseType.XSDATETIME, seqType: SequenceType.EXACTLY_ONE }
 				),
 				createAtomicValue(DateTime.fromString('2000-10-10T00:00:00+10:30'), {
 					kind: BaseType.XSDATETIME,
+					seqType: SequenceType.EXACTLY_ONE,
 				})
 			));
 		it('from xs:gYearMonth (throws XPTY0004)', () =>
@@ -2428,8 +3556,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10+10:30'), {
 							kind: BaseType.XSGYEARMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDATETIME }
+						{ kind: BaseType.XSDATETIME, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -2439,8 +3568,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000+10:30'), {
 							kind: BaseType.XSGYEAR,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDATETIME }
+						{ kind: BaseType.XSDATETIME, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -2450,8 +3580,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10-10+10:30'), {
 							kind: BaseType.XSGMONTHDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDATETIME }
+						{ kind: BaseType.XSDATETIME, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -2461,8 +3592,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('---10+10:30'), {
 							kind: BaseType.XSGDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDATETIME }
+						{ kind: BaseType.XSDATETIME, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -2472,17 +3604,25 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10+10:30'), {
 							kind: BaseType.XSGMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDATETIME }
+						{ kind: BaseType.XSDATETIME, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
 		it('from xs:boolean (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(true, { kind: BaseType.XSBOOLEAN }), {
-						kind: BaseType.XSDATETIME,
-					}),
+					castToType(
+						createAtomicValue(true, {
+							kind: BaseType.XSBOOLEAN,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSDATETIME,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:base64Binary (throws XPTY0004)', () =>
@@ -2491,8 +3631,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', {
 							kind: BaseType.XSBASE64BINARY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDATETIME }
+						{ kind: BaseType.XSDATETIME, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -2502,9 +3643,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue('21FE3A44123C21FE3A44123C', {
 							kind: BaseType.XSHEXBINARY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSDATETIME,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -2512,17 +3655,31 @@ describe('castToType()', () => {
 		it('from xs:anyURI (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSANYURI }), {
-						kind: BaseType.XSDATETIME,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSANYURI,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSDATETIME,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSNOTATION }), {
-						kind: BaseType.XSDATETIME,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSNOTATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSDATETIME,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 	});
@@ -2531,48 +3688,92 @@ describe('castToType()', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue('10:10:10+10:30', { kind: BaseType.XSUNTYPEDATOMIC }),
-					{ kind: BaseType.XSTIME }
+					createAtomicValue('10:10:10+10:30', {
+						kind: BaseType.XSUNTYPEDATOMIC,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{ kind: BaseType.XSTIME, seqType: SequenceType.EXACTLY_ONE }
 				),
-				createAtomicValue(DateTime.fromString('10:10:10+10:30'), { kind: BaseType.XSTIME })
+				createAtomicValue(DateTime.fromString('10:10:10+10:30'), {
+					kind: BaseType.XSTIME,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('10:10:10+10:30', { kind: BaseType.XSSTRING }), {
+				castToType(
+					createAtomicValue('10:10:10+10:30', {
+						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSTIME,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(DateTime.fromString('10:10:10+10:30'), {
 					kind: BaseType.XSTIME,
-				}),
-				createAtomicValue(DateTime.fromString('10:10:10+10:30'), { kind: BaseType.XSTIME })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:float (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(10.123, { kind: BaseType.XSFLOAT }), {
-						kind: BaseType.XSTIME,
-					}),
+					castToType(
+						createAtomicValue(10.123, {
+							kind: BaseType.XSFLOAT,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSTIME,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:double (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(10.123, { kind: BaseType.XSDOUBLE }), {
-						kind: BaseType.XSTIME,
-					}),
+					castToType(
+						createAtomicValue(10.123, {
+							kind: BaseType.XSDOUBLE,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSTIME,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:decimal (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(1010, { kind: BaseType.XSDECIMAL }), {
-						kind: BaseType.XSTIME,
-					}),
+					castToType(
+						createAtomicValue(1010, {
+							kind: BaseType.XSDECIMAL,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSTIME,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:integer (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(1010, { kind: BaseType.XSINTEGER }), {
-						kind: BaseType.XSTIME,
-					}),
+					castToType(
+						createAtomicValue(1010, {
+							kind: BaseType.XSINTEGER,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSTIME,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:duration (throws XPTY0004)', () =>
@@ -2581,8 +3782,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M10DT10H10M10S'), {
 							kind: BaseType.XSDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSTIME }
+						{ kind: BaseType.XSTIME, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -2592,8 +3794,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSYEARMONTHDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSTIME }
+						{ kind: BaseType.XSTIME, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -2603,8 +3806,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSDAYTIMEDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSTIME }
+						{ kind: BaseType.XSTIME, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -2613,20 +3817,28 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue(DateTime.fromString('2000-10-10T10:10:10+10:30'), {
 						kind: BaseType.XSDATETIME,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSTIME }
+					{ kind: BaseType.XSTIME, seqType: SequenceType.EXACTLY_ONE }
 				),
-				createAtomicValue(DateTime.fromString('10:10:10+10:30'), { kind: BaseType.XSTIME })
+				createAtomicValue(DateTime.fromString('10:10:10+10:30'), {
+					kind: BaseType.XSTIME,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:time', () =>
 			chai.assert.deepEqual(
 				castToType(
 					createAtomicValue(DateTime.fromString('10:10:10+10:30'), {
 						kind: BaseType.XSTIME,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSTIME }
+					{ kind: BaseType.XSTIME, seqType: SequenceType.EXACTLY_ONE }
 				),
-				createAtomicValue(DateTime.fromString('10:10:10+10:30'), { kind: BaseType.XSTIME })
+				createAtomicValue(DateTime.fromString('10:10:10+10:30'), {
+					kind: BaseType.XSTIME,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:date (throws XPTY0004)', () =>
 			chai.assert.throws(
@@ -2634,8 +3846,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10-10+10:30'), {
 							kind: BaseType.XSDATE,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSTIME }
+						{ kind: BaseType.XSTIME, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -2645,8 +3858,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10+10:30'), {
 							kind: BaseType.XSGYEARMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSTIME }
+						{ kind: BaseType.XSTIME, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -2656,8 +3870,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000+10:30'), {
 							kind: BaseType.XSGYEAR,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSTIME }
+						{ kind: BaseType.XSTIME, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -2667,8 +3882,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10-10+10:30'), {
 							kind: BaseType.XSGMONTHDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSTIME }
+						{ kind: BaseType.XSTIME, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -2678,9 +3894,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('---10+10:30'), {
 							kind: BaseType.XSGDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSTIME,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -2691,9 +3909,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10+10:30'), {
 							kind: BaseType.XSGMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSTIME,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -2701,9 +3921,16 @@ describe('castToType()', () => {
 		it('from xs:boolean (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(true, { kind: BaseType.XSBOOLEAN }), {
-						kind: BaseType.XSTIME,
-					}),
+					castToType(
+						createAtomicValue(true, {
+							kind: BaseType.XSBOOLEAN,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSTIME,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:base64Binary (throws XPTY0004)', () =>
@@ -2712,9 +3939,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', {
 							kind: BaseType.XSBASE64BINARY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSTIME,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -2725,9 +3954,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue('21FE3A44123C21FE3A44123C', {
 							kind: BaseType.XSHEXBINARY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSTIME,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -2735,17 +3966,31 @@ describe('castToType()', () => {
 		it('from xs:anyURI (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSANYURI }), {
-						kind: BaseType.XSTIME,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSANYURI,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSTIME,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSNOTATION }), {
-						kind: BaseType.XSTIME,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSNOTATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSTIME,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 	});
@@ -2754,52 +3999,92 @@ describe('castToType()', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue('2000-10-10+10:30', { kind: BaseType.XSUNTYPEDATOMIC }),
-					{ kind: BaseType.XSDATE }
+					createAtomicValue('2000-10-10+10:30', {
+						kind: BaseType.XSUNTYPEDATOMIC,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{ kind: BaseType.XSDATE, seqType: SequenceType.EXACTLY_ONE }
 				),
 				createAtomicValue(DateTime.fromString('2000-10-10+10:30'), {
 					kind: BaseType.XSDATE,
+					seqType: SequenceType.EXACTLY_ONE,
 				})
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('2000-10-10+10:30', { kind: BaseType.XSSTRING }), {
-					kind: BaseType.XSDATE,
-				}),
+				castToType(
+					createAtomicValue('2000-10-10+10:30', {
+						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSDATE,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
 				createAtomicValue(DateTime.fromString('2000-10-10+10:30'), {
 					kind: BaseType.XSDATE,
+					seqType: SequenceType.EXACTLY_ONE,
 				})
 			));
 		it('from xs:float (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(10.123, { kind: BaseType.XSFLOAT }), {
-						kind: BaseType.XSDATE,
-					}),
+					castToType(
+						createAtomicValue(10.123, {
+							kind: BaseType.XSFLOAT,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSDATE,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:double (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(10.123, { kind: BaseType.XSDOUBLE }), {
-						kind: BaseType.XSDATE,
-					}),
+					castToType(
+						createAtomicValue(10.123, {
+							kind: BaseType.XSDOUBLE,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSDATE,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:decimal (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(1010, { kind: BaseType.XSDECIMAL }), {
-						kind: BaseType.XSDATE,
-					}),
+					castToType(
+						createAtomicValue(1010, {
+							kind: BaseType.XSDECIMAL,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSDATE,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:integer (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(1010, { kind: BaseType.XSINTEGER }), {
-						kind: BaseType.XSDATE,
-					}),
+					castToType(
+						createAtomicValue(1010, {
+							kind: BaseType.XSINTEGER,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSDATE,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:duration (throws XPTY0004)', () =>
@@ -2808,8 +4093,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M10DT10H10M10S'), {
 							kind: BaseType.XSDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDATE }
+						{ kind: BaseType.XSDATE, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -2819,8 +4105,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSYEARMONTHDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDATE }
+						{ kind: BaseType.XSDATE, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -2830,8 +4117,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSDAYTIMEDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDATE }
+						{ kind: BaseType.XSDATE, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -2840,11 +4128,13 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue(DateTime.fromString('2000-10-10T10:10:10+10:30'), {
 						kind: BaseType.XSDATETIME,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSDATE }
+					{ kind: BaseType.XSDATE, seqType: SequenceType.EXACTLY_ONE }
 				),
 				createAtomicValue(DateTime.fromString('2000-10-10+10:30'), {
 					kind: BaseType.XSDATE,
+					seqType: SequenceType.EXACTLY_ONE,
 				})
 			));
 		it('from xs:time (throws XPTY0004)', () =>
@@ -2853,8 +4143,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('10:10:10+10:30'), {
 							kind: BaseType.XSTIME,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDATE }
+						{ kind: BaseType.XSDATE, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -2863,11 +4154,13 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue(DateTime.fromString('2000-10-10+10:30'), {
 						kind: BaseType.XSDATE,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSDATE }
+					{ kind: BaseType.XSDATE, seqType: SequenceType.EXACTLY_ONE }
 				),
 				createAtomicValue(DateTime.fromString('2000-10-10+10:30'), {
 					kind: BaseType.XSDATE,
+					seqType: SequenceType.EXACTLY_ONE,
 				})
 			));
 		it('from xs:gYearMonth (throws XPTY0004)', () =>
@@ -2876,8 +4169,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10+10:30'), {
 							kind: BaseType.XSGYEARMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDATE }
+						{ kind: BaseType.XSDATE, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -2887,8 +4181,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000+10:30'), {
 							kind: BaseType.XSGYEAR,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDATE }
+						{ kind: BaseType.XSDATE, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -2898,8 +4193,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10-10+10:30'), {
 							kind: BaseType.XSGMONTHDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSDATE }
+						{ kind: BaseType.XSDATE, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -2909,9 +4205,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('---10+10:30'), {
 							kind: BaseType.XSGDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSDATE,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -2922,9 +4220,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10+10:30'), {
 							kind: BaseType.XSGMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSDATE,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -2932,9 +4232,16 @@ describe('castToType()', () => {
 		it('from xs:boolean (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(true, { kind: BaseType.XSBOOLEAN }), {
-						kind: BaseType.XSDATE,
-					}),
+					castToType(
+						createAtomicValue(true, {
+							kind: BaseType.XSBOOLEAN,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSDATE,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:base64Binary (throws XPTY0004)', () =>
@@ -2943,9 +4250,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', {
 							kind: BaseType.XSBASE64BINARY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSDATE,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -2956,9 +4265,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue('21FE3A44123C21FE3A44123C', {
 							kind: BaseType.XSHEXBINARY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSDATE,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -2966,17 +4277,31 @@ describe('castToType()', () => {
 		it('from xs:anyURI (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSANYURI }), {
-						kind: BaseType.XSDATE,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSANYURI,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSDATE,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSNOTATION }), {
-						kind: BaseType.XSDATE,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSNOTATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSDATE,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 	});
@@ -2984,52 +4309,96 @@ describe('castToType()', () => {
 	describe('to xs:gYearMonth', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('2000-10+10:30', { kind: BaseType.XSUNTYPEDATOMIC }), {
-					kind: BaseType.XSGYEARMONTH,
-				}),
+				castToType(
+					createAtomicValue('2000-10+10:30', {
+						kind: BaseType.XSUNTYPEDATOMIC,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSGYEARMONTH,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
 				createAtomicValue(DateTime.fromString('2000-10+10:30'), {
 					kind: BaseType.XSGYEARMONTH,
+					seqType: SequenceType.EXACTLY_ONE,
 				})
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('2000-10+10:30', { kind: BaseType.XSSTRING }), {
-					kind: BaseType.XSGYEARMONTH,
-				}),
+				castToType(
+					createAtomicValue('2000-10+10:30', {
+						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSGYEARMONTH,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
 				createAtomicValue(DateTime.fromString('2000-10+10:30'), {
 					kind: BaseType.XSGYEARMONTH,
+					seqType: SequenceType.EXACTLY_ONE,
 				})
 			));
 		it('from xs:float (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(10.123, { kind: BaseType.XSFLOAT }), {
-						kind: BaseType.XSGYEARMONTH,
-					}),
+					castToType(
+						createAtomicValue(10.123, {
+							kind: BaseType.XSFLOAT,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSGYEARMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:double (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(10.123, { kind: BaseType.XSDOUBLE }), {
-						kind: BaseType.XSGYEARMONTH,
-					}),
+					castToType(
+						createAtomicValue(10.123, {
+							kind: BaseType.XSDOUBLE,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSGYEARMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:decimal (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(1010, { kind: BaseType.XSDECIMAL }), {
-						kind: BaseType.XSGYEARMONTH,
-					}),
+					castToType(
+						createAtomicValue(1010, {
+							kind: BaseType.XSDECIMAL,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSGYEARMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:integer (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(1010, { kind: BaseType.XSINTEGER }), {
-						kind: BaseType.XSGYEARMONTH,
-					}),
+					castToType(
+						createAtomicValue(1010, {
+							kind: BaseType.XSINTEGER,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSGYEARMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:duration (throws XPTY0004)', () =>
@@ -3038,8 +4407,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M10DT10H10M10S'), {
 							kind: BaseType.XSDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSGYEARMONTH }
+						{ kind: BaseType.XSGYEARMONTH, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -3049,8 +4419,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSYEARMONTHDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSGYEARMONTH }
+						{ kind: BaseType.XSGYEARMONTH, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -3060,8 +4431,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSDAYTIMEDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSGYEARMONTH }
+						{ kind: BaseType.XSGYEARMONTH, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -3070,11 +4442,13 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue(DateTime.fromString('2000-10-10T10:10:10+10:30'), {
 						kind: BaseType.XSDATETIME,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSGYEARMONTH }
+					{ kind: BaseType.XSGYEARMONTH, seqType: SequenceType.EXACTLY_ONE }
 				),
 				createAtomicValue(DateTime.fromString('2000-10+10:30'), {
 					kind: BaseType.XSGYEARMONTH,
+					seqType: SequenceType.EXACTLY_ONE,
 				})
 			));
 		it('from xs:time (throws XPTY0004)', () =>
@@ -3083,8 +4457,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('10:10:10+10:30'), {
 							kind: BaseType.XSTIME,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSGYEARMONTH }
+						{ kind: BaseType.XSGYEARMONTH, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -3093,11 +4468,13 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue(DateTime.fromString('2000-10-10+10:30'), {
 						kind: BaseType.XSDATE,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSGYEARMONTH }
+					{ kind: BaseType.XSGYEARMONTH, seqType: SequenceType.EXACTLY_ONE }
 				),
 				createAtomicValue(DateTime.fromString('2000-10+10:30'), {
 					kind: BaseType.XSGYEARMONTH,
+					seqType: SequenceType.EXACTLY_ONE,
 				})
 			));
 		it('from xs:gYearMonth', () =>
@@ -3105,11 +4482,13 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue(DateTime.fromString('2000-10+10:30'), {
 						kind: BaseType.XSGYEARMONTH,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSGYEARMONTH }
+					{ kind: BaseType.XSGYEARMONTH, seqType: SequenceType.EXACTLY_ONE }
 				),
 				createAtomicValue(DateTime.fromString('2000-10+10:30'), {
 					kind: BaseType.XSGYEARMONTH,
+					seqType: SequenceType.EXACTLY_ONE,
 				})
 			));
 		it('from xs:gYear (throws XPTY0004)', () =>
@@ -3118,8 +4497,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000+10:30'), {
 							kind: BaseType.XSGYEAR,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSGYEARMONTH }
+						{ kind: BaseType.XSGYEARMONTH, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -3129,8 +4509,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10-10+10:30'), {
 							kind: BaseType.XSGMONTHDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSGYEARMONTH }
+						{ kind: BaseType.XSGYEARMONTH, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -3140,9 +4521,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('---10+10:30'), {
 							kind: BaseType.XSGDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSGYEARMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -3153,9 +4536,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10+10:30'), {
 							kind: BaseType.XSGMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSGYEARMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -3163,9 +4548,16 @@ describe('castToType()', () => {
 		it('from xs:boolean (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(true, { kind: BaseType.XSBOOLEAN }), {
-						kind: BaseType.XSGYEARMONTH,
-					}),
+					castToType(
+						createAtomicValue(true, {
+							kind: BaseType.XSBOOLEAN,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSGYEARMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:base64Binary (throws XPTY0004)', () =>
@@ -3174,9 +4566,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', {
 							kind: BaseType.XSBASE64BINARY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSGYEARMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -3187,9 +4581,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue('21FE3A44123C21FE3A44123C', {
 							kind: BaseType.XSHEXBINARY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSGYEARMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -3197,17 +4593,31 @@ describe('castToType()', () => {
 		it('from xs:anyURI (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSANYURI }), {
-						kind: BaseType.XSGYEARMONTH,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSANYURI,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSGYEARMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSNOTATION }), {
-						kind: BaseType.XSGYEARMONTH,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSNOTATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSGYEARMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 	});
@@ -3215,48 +4625,96 @@ describe('castToType()', () => {
 	describe('to xs:gYear', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('2000+10:30', { kind: BaseType.XSUNTYPEDATOMIC }), {
+				castToType(
+					createAtomicValue('2000+10:30', {
+						kind: BaseType.XSUNTYPEDATOMIC,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSGYEAR,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(DateTime.fromString('2000+10:30'), {
 					kind: BaseType.XSGYEAR,
-				}),
-				createAtomicValue(DateTime.fromString('2000+10:30'), { kind: BaseType.XSGYEAR })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('2000+10:30', { kind: BaseType.XSSTRING }), {
+				castToType(
+					createAtomicValue('2000+10:30', {
+						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSGYEAR,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(DateTime.fromString('2000+10:30'), {
 					kind: BaseType.XSGYEAR,
-				}),
-				createAtomicValue(DateTime.fromString('2000+10:30'), { kind: BaseType.XSGYEAR })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:float (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(10.123, { kind: BaseType.XSFLOAT }), {
-						kind: BaseType.XSGYEAR,
-					}),
+					castToType(
+						createAtomicValue(10.123, {
+							kind: BaseType.XSFLOAT,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSGYEAR,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:double (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(10.123, { kind: BaseType.XSDOUBLE }), {
-						kind: BaseType.XSGYEAR,
-					}),
+					castToType(
+						createAtomicValue(10.123, {
+							kind: BaseType.XSDOUBLE,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSGYEAR,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:decimal (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(1010, { kind: BaseType.XSDECIMAL }), {
-						kind: BaseType.XSGYEAR,
-					}),
+					castToType(
+						createAtomicValue(1010, {
+							kind: BaseType.XSDECIMAL,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSGYEAR,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:integer (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(1010, { kind: BaseType.XSINTEGER }), {
-						kind: BaseType.XSGYEAR,
-					}),
+					castToType(
+						createAtomicValue(1010, {
+							kind: BaseType.XSINTEGER,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSGYEAR,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:duration (throws XPTY0004)', () =>
@@ -3265,8 +4723,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M10DT10H10M10S'), {
 							kind: BaseType.XSDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSGYEAR }
+						{ kind: BaseType.XSGYEAR, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -3276,8 +4735,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSYEARMONTHDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSGYEAR }
+						{ kind: BaseType.XSGYEAR, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -3287,8 +4747,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSDAYTIMEDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSGYEAR }
+						{ kind: BaseType.XSGYEAR, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -3297,10 +4758,14 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue(DateTime.fromString('2000-10-10T10:10:10+10:30'), {
 						kind: BaseType.XSDATETIME,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSGYEAR }
+					{ kind: BaseType.XSGYEAR, seqType: SequenceType.EXACTLY_ONE }
 				),
-				createAtomicValue(DateTime.fromString('2000+10:30'), { kind: BaseType.XSGYEAR })
+				createAtomicValue(DateTime.fromString('2000+10:30'), {
+					kind: BaseType.XSGYEAR,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:time (throws XPTY0004)', () =>
 			chai.assert.throws(
@@ -3308,8 +4773,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('10:10:10+10:30'), {
 							kind: BaseType.XSTIME,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSGYEAR }
+						{ kind: BaseType.XSGYEAR, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -3318,10 +4784,14 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue(DateTime.fromString('2000-10-10+10:30'), {
 						kind: BaseType.XSDATE,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSGYEAR }
+					{ kind: BaseType.XSGYEAR, seqType: SequenceType.EXACTLY_ONE }
 				),
-				createAtomicValue(DateTime.fromString('2000+10:30'), { kind: BaseType.XSGYEAR })
+				createAtomicValue(DateTime.fromString('2000+10:30'), {
+					kind: BaseType.XSGYEAR,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:gYearMonth (throws XPTY0004)', () =>
 			chai.assert.throws(
@@ -3329,8 +4799,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10+10:30'), {
 							kind: BaseType.XSGYEARMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSGYEAR }
+						{ kind: BaseType.XSGYEAR, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -3339,10 +4810,14 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue(DateTime.fromString('2000+10:30'), {
 						kind: BaseType.XSGYEAR,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSGYEAR }
+					{ kind: BaseType.XSGYEAR, seqType: SequenceType.EXACTLY_ONE }
 				),
-				createAtomicValue(DateTime.fromString('2000+10:30'), { kind: BaseType.XSGYEAR })
+				createAtomicValue(DateTime.fromString('2000+10:30'), {
+					kind: BaseType.XSGYEAR,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:gMonthDay (throws XPTY0004)', () =>
 			chai.assert.throws(
@@ -3350,8 +4825,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10-10+10:30'), {
 							kind: BaseType.XSGMONTHDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSGYEAR }
+						{ kind: BaseType.XSGYEAR, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -3361,9 +4837,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('---10+10:30'), {
 							kind: BaseType.XSGDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSGYEAR,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -3374,9 +4852,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10+10:30'), {
 							kind: BaseType.XSGMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSGYEAR,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -3384,9 +4864,16 @@ describe('castToType()', () => {
 		it('from xs:boolean (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(true, { kind: BaseType.XSBOOLEAN }), {
-						kind: BaseType.XSGYEAR,
-					}),
+					castToType(
+						createAtomicValue(true, {
+							kind: BaseType.XSBOOLEAN,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSGYEAR,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:base64Binary (throws XPTY0004)', () =>
@@ -3395,9 +4882,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', {
 							kind: BaseType.XSBASE64BINARY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSGYEAR,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -3408,9 +4897,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue('21FE3A44123C21FE3A44123C', {
 							kind: BaseType.XSHEXBINARY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSGYEAR,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -3418,17 +4909,31 @@ describe('castToType()', () => {
 		it('from xs:anyURI (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSANYURI }), {
-						kind: BaseType.XSGYEAR,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSANYURI,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSGYEAR,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSNOTATION }), {
-						kind: BaseType.XSGYEAR,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSNOTATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSGYEAR,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 	});
@@ -3436,52 +4941,96 @@ describe('castToType()', () => {
 	describe('to xs:gMonthDay', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('--10-10+10:30', { kind: BaseType.XSUNTYPEDATOMIC }), {
-					kind: BaseType.XSGMONTHDAY,
-				}),
+				castToType(
+					createAtomicValue('--10-10+10:30', {
+						kind: BaseType.XSUNTYPEDATOMIC,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSGMONTHDAY,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
 				createAtomicValue(DateTime.fromString('--10-10+10:30'), {
 					kind: BaseType.XSGMONTHDAY,
+					seqType: SequenceType.EXACTLY_ONE,
 				})
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('--10-10+10:30', { kind: BaseType.XSSTRING }), {
-					kind: BaseType.XSGMONTHDAY,
-				}),
+				castToType(
+					createAtomicValue('--10-10+10:30', {
+						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSGMONTHDAY,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
 				createAtomicValue(DateTime.fromString('--10-10+10:30'), {
 					kind: BaseType.XSGMONTHDAY,
+					seqType: SequenceType.EXACTLY_ONE,
 				})
 			));
 		it('from xs:float (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(10.123, { kind: BaseType.XSFLOAT }), {
-						kind: BaseType.XSGMONTHDAY,
-					}),
+					castToType(
+						createAtomicValue(10.123, {
+							kind: BaseType.XSFLOAT,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSGMONTHDAY,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:double (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(10.123, { kind: BaseType.XSDOUBLE }), {
-						kind: BaseType.XSGMONTHDAY,
-					}),
+					castToType(
+						createAtomicValue(10.123, {
+							kind: BaseType.XSDOUBLE,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSGMONTHDAY,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:decimal (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(1010, { kind: BaseType.XSDECIMAL }), {
-						kind: BaseType.XSGMONTHDAY,
-					}),
+					castToType(
+						createAtomicValue(1010, {
+							kind: BaseType.XSDECIMAL,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSGMONTHDAY,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:integer (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(1010, { kind: BaseType.XSINTEGER }), {
-						kind: BaseType.XSGMONTHDAY,
-					}),
+					castToType(
+						createAtomicValue(1010, {
+							kind: BaseType.XSINTEGER,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSGMONTHDAY,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:duration (throws XPTY0004)', () =>
@@ -3490,8 +5039,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M10DT10H10M10S'), {
 							kind: BaseType.XSDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSGMONTHDAY }
+						{ kind: BaseType.XSGMONTHDAY, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -3501,8 +5051,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSYEARMONTHDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSGMONTHDAY }
+						{ kind: BaseType.XSGMONTHDAY, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -3512,8 +5063,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSDAYTIMEDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSGMONTHDAY }
+						{ kind: BaseType.XSGMONTHDAY, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -3522,11 +5074,13 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue(DateTime.fromString('2000-10-10T10:10:10+10:30'), {
 						kind: BaseType.XSDATETIME,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSGMONTHDAY }
+					{ kind: BaseType.XSGMONTHDAY, seqType: SequenceType.EXACTLY_ONE }
 				),
 				createAtomicValue(DateTime.fromString('--10-10+10:30'), {
 					kind: BaseType.XSGMONTHDAY,
+					seqType: SequenceType.EXACTLY_ONE,
 				})
 			));
 		it('from xs:time (throws XPTY0004)', () =>
@@ -3535,8 +5089,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('10:10:10+10:30'), {
 							kind: BaseType.XSTIME,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSGMONTHDAY }
+						{ kind: BaseType.XSGMONTHDAY, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -3545,11 +5100,13 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue(DateTime.fromString('2000-10-10+10:30'), {
 						kind: BaseType.XSDATE,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSGMONTHDAY }
+					{ kind: BaseType.XSGMONTHDAY, seqType: SequenceType.EXACTLY_ONE }
 				),
 				createAtomicValue(DateTime.fromString('--10-10+10:30'), {
 					kind: BaseType.XSGMONTHDAY,
+					seqType: SequenceType.EXACTLY_ONE,
 				})
 			));
 		it('from xs:gYearMonth (throws XPTY0004)', () =>
@@ -3558,8 +5115,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10+10:30'), {
 							kind: BaseType.XSGYEARMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSGMONTHDAY }
+						{ kind: BaseType.XSGMONTHDAY, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -3569,8 +5127,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000+10:30'), {
 							kind: BaseType.XSGYEAR,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSGMONTHDAY }
+						{ kind: BaseType.XSGMONTHDAY, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -3579,11 +5138,13 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue(DateTime.fromString('--10-10+10:30'), {
 						kind: BaseType.XSGMONTHDAY,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSGMONTHDAY }
+					{ kind: BaseType.XSGMONTHDAY, seqType: SequenceType.EXACTLY_ONE }
 				),
 				createAtomicValue(DateTime.fromString('--10-10+10:30'), {
 					kind: BaseType.XSGMONTHDAY,
+					seqType: SequenceType.EXACTLY_ONE,
 				})
 			));
 		it('from xs:gDay (throws XPTY0004)', () =>
@@ -3592,9 +5153,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('---10+10:30'), {
 							kind: BaseType.XSGDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSGMONTHDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -3605,9 +5168,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10+10:30'), {
 							kind: BaseType.XSGMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSGMONTHDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -3615,9 +5180,16 @@ describe('castToType()', () => {
 		it('from xs:boolean (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(true, { kind: BaseType.XSBOOLEAN }), {
-						kind: BaseType.XSGMONTHDAY,
-					}),
+					castToType(
+						createAtomicValue(true, {
+							kind: BaseType.XSBOOLEAN,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSGMONTHDAY,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:base64Binary (throws XPTY0004)', () =>
@@ -3626,9 +5198,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', {
 							kind: BaseType.XSBASE64BINARY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSGMONTHDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -3639,9 +5213,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue('21FE3A44123C21FE3A44123C', {
 							kind: BaseType.XSHEXBINARY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSGMONTHDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -3649,17 +5225,31 @@ describe('castToType()', () => {
 		it('from xs:anyURI (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSANYURI }), {
-						kind: BaseType.XSGMONTHDAY,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSANYURI,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSGMONTHDAY,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSNOTATION }), {
-						kind: BaseType.XSGMONTHDAY,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSNOTATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSGMONTHDAY,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 	});
@@ -3667,48 +5257,96 @@ describe('castToType()', () => {
 	describe('to xs:gDay', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('---10+10:30', { kind: BaseType.XSUNTYPEDATOMIC }), {
+				castToType(
+					createAtomicValue('---10+10:30', {
+						kind: BaseType.XSUNTYPEDATOMIC,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSGDAY,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(DateTime.fromString('---10+10:30'), {
 					kind: BaseType.XSGDAY,
-				}),
-				createAtomicValue(DateTime.fromString('---10+10:30'), { kind: BaseType.XSGDAY })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('---10+10:30', { kind: BaseType.XSSTRING }), {
+				castToType(
+					createAtomicValue('---10+10:30', {
+						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSGDAY,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(DateTime.fromString('---10+10:30'), {
 					kind: BaseType.XSGDAY,
-				}),
-				createAtomicValue(DateTime.fromString('---10+10:30'), { kind: BaseType.XSGDAY })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:float (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(10.123, { kind: BaseType.XSFLOAT }), {
-						kind: BaseType.XSGDAY,
-					}),
+					castToType(
+						createAtomicValue(10.123, {
+							kind: BaseType.XSFLOAT,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSGDAY,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:double (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(10.123, { kind: BaseType.XSDOUBLE }), {
-						kind: BaseType.XSGDAY,
-					}),
+					castToType(
+						createAtomicValue(10.123, {
+							kind: BaseType.XSDOUBLE,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSGDAY,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:decimal (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(1010, { kind: BaseType.XSDECIMAL }), {
-						kind: BaseType.XSGDAY,
-					}),
+					castToType(
+						createAtomicValue(1010, {
+							kind: BaseType.XSDECIMAL,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSGDAY,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:integer (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(1010, { kind: BaseType.XSINTEGER }), {
-						kind: BaseType.XSGDAY,
-					}),
+					castToType(
+						createAtomicValue(1010, {
+							kind: BaseType.XSINTEGER,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSGDAY,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:duration (throws XPTY0004)', () =>
@@ -3717,8 +5355,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M10DT10H10M10S'), {
 							kind: BaseType.XSDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSGDAY }
+						{ kind: BaseType.XSGDAY, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -3728,8 +5367,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSYEARMONTHDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSGDAY }
+						{ kind: BaseType.XSGDAY, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -3739,8 +5379,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSDAYTIMEDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSGDAY }
+						{ kind: BaseType.XSGDAY, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -3749,10 +5390,14 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue(DateTime.fromString('2000-10-10T10:10:10+10:30'), {
 						kind: BaseType.XSDATETIME,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSGDAY }
+					{ kind: BaseType.XSGDAY, seqType: SequenceType.EXACTLY_ONE }
 				),
-				createAtomicValue(DateTime.fromString('---10+10:30'), { kind: BaseType.XSGDAY })
+				createAtomicValue(DateTime.fromString('---10+10:30'), {
+					kind: BaseType.XSGDAY,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:time (throws XPTY0004)', () =>
 			chai.assert.throws(
@@ -3760,8 +5405,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('10:10:10+10:30'), {
 							kind: BaseType.XSTIME,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSGDAY }
+						{ kind: BaseType.XSGDAY, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -3770,10 +5416,14 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue(DateTime.fromString('2000-10-10+10:30'), {
 						kind: BaseType.XSDATE,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSGDAY }
+					{ kind: BaseType.XSGDAY, seqType: SequenceType.EXACTLY_ONE }
 				),
-				createAtomicValue(DateTime.fromString('---10+10:30'), { kind: BaseType.XSGDAY })
+				createAtomicValue(DateTime.fromString('---10+10:30'), {
+					kind: BaseType.XSGDAY,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:gYearMonth (throws XPTY0004)', () =>
 			chai.assert.throws(
@@ -3781,8 +5431,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10+10:30'), {
 							kind: BaseType.XSGYEARMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSGDAY }
+						{ kind: BaseType.XSGDAY, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -3792,8 +5443,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000+10:30'), {
 							kind: BaseType.XSGYEAR,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSGDAY }
+						{ kind: BaseType.XSGDAY, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -3803,8 +5455,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10-10+10:30'), {
 							kind: BaseType.XSGMONTHDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSGDAY }
+						{ kind: BaseType.XSGDAY, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -3813,10 +5466,14 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue(DateTime.fromString('---10+10:30'), {
 						kind: BaseType.XSGDAY,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSGDAY }
+					{ kind: BaseType.XSGDAY, seqType: SequenceType.EXACTLY_ONE }
 				),
-				createAtomicValue(DateTime.fromString('---10+10:30'), { kind: BaseType.XSGDAY })
+				createAtomicValue(DateTime.fromString('---10+10:30'), {
+					kind: BaseType.XSGDAY,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:gMonth (throws XPTY0004)', () =>
 			chai.assert.throws(
@@ -3824,17 +5481,25 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10+10:30'), {
 							kind: BaseType.XSGMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSGDAY }
+						{ kind: BaseType.XSGDAY, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
 		it('from xs:boolean (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(true, { kind: BaseType.XSBOOLEAN }), {
-						kind: BaseType.XSGDAY,
-					}),
+					castToType(
+						createAtomicValue(true, {
+							kind: BaseType.XSBOOLEAN,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSGDAY,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:base64Binary (throws XPTY0004)', () =>
@@ -3843,9 +5508,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', {
 							kind: BaseType.XSBASE64BINARY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSGDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -3856,9 +5523,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue('21FE3A44123C21FE3A44123C', {
 							kind: BaseType.XSHEXBINARY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSGDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -3866,17 +5535,31 @@ describe('castToType()', () => {
 		it('from xs:anyURI (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSANYURI }), {
-						kind: BaseType.XSGDAY,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSANYURI,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSGDAY,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSNOTATION }), {
-						kind: BaseType.XSGDAY,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSNOTATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSGDAY,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 	});
@@ -3884,48 +5567,96 @@ describe('castToType()', () => {
 	describe('to xs:gMonth', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('--10+10:30', { kind: BaseType.XSUNTYPEDATOMIC }), {
+				castToType(
+					createAtomicValue('--10+10:30', {
+						kind: BaseType.XSUNTYPEDATOMIC,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSGMONTH,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(DateTime.fromString('--10+10:30'), {
 					kind: BaseType.XSGMONTH,
-				}),
-				createAtomicValue(DateTime.fromString('--10+10:30'), { kind: BaseType.XSGMONTH })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('--10+10:30', { kind: BaseType.XSSTRING }), {
+				castToType(
+					createAtomicValue('--10+10:30', {
+						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSGMONTH,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(DateTime.fromString('--10+10:30'), {
 					kind: BaseType.XSGMONTH,
-				}),
-				createAtomicValue(DateTime.fromString('--10+10:30'), { kind: BaseType.XSGMONTH })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:float (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(10.123, { kind: BaseType.XSFLOAT }), {
-						kind: BaseType.XSGMONTH,
-					}),
+					castToType(
+						createAtomicValue(10.123, {
+							kind: BaseType.XSFLOAT,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSGMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:double (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(10.123, { kind: BaseType.XSDOUBLE }), {
-						kind: BaseType.XSGMONTH,
-					}),
+					castToType(
+						createAtomicValue(10.123, {
+							kind: BaseType.XSDOUBLE,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSGMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:decimal (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(1010, { kind: BaseType.XSDECIMAL }), {
-						kind: BaseType.XSGMONTH,
-					}),
+					castToType(
+						createAtomicValue(1010, {
+							kind: BaseType.XSDECIMAL,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSGMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:integer (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(1010, { kind: BaseType.XSINTEGER }), {
-						kind: BaseType.XSGMONTH,
-					}),
+					castToType(
+						createAtomicValue(1010, {
+							kind: BaseType.XSINTEGER,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSGMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:duration (throws XPTY0004)', () =>
@@ -3934,8 +5665,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M10DT10H10M10S'), {
 							kind: BaseType.XSDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSGMONTH }
+						{ kind: BaseType.XSGMONTH, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -3945,8 +5677,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSYEARMONTHDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSGMONTH }
+						{ kind: BaseType.XSGMONTH, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -3956,8 +5689,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSDAYTIMEDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSGMONTH }
+						{ kind: BaseType.XSGMONTH, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -3966,10 +5700,14 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue(DateTime.fromString('2000-10-10T10:10:10+10:30'), {
 						kind: BaseType.XSDATETIME,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSGMONTH }
+					{ kind: BaseType.XSGMONTH, seqType: SequenceType.EXACTLY_ONE }
 				),
-				createAtomicValue(DateTime.fromString('--10+10:30'), { kind: BaseType.XSGMONTH })
+				createAtomicValue(DateTime.fromString('--10+10:30'), {
+					kind: BaseType.XSGMONTH,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:time (throws XPTY0004)', () =>
 			chai.assert.throws(
@@ -3977,8 +5715,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('10:10:10+10:30'), {
 							kind: BaseType.XSTIME,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSGMONTH }
+						{ kind: BaseType.XSGMONTH, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -3987,10 +5726,14 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue(DateTime.fromString('2000-10-10+10:30'), {
 						kind: BaseType.XSDATE,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSGMONTH }
+					{ kind: BaseType.XSGMONTH, seqType: SequenceType.EXACTLY_ONE }
 				),
-				createAtomicValue(DateTime.fromString('--10+10:30'), { kind: BaseType.XSGMONTH })
+				createAtomicValue(DateTime.fromString('--10+10:30'), {
+					kind: BaseType.XSGMONTH,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:gYearMonth (throws XPTY0004)', () =>
 			chai.assert.throws(
@@ -3998,8 +5741,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10+10:30'), {
 							kind: BaseType.XSGYEARMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSGMONTH }
+						{ kind: BaseType.XSGMONTH, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4009,8 +5753,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000+10:30'), {
 							kind: BaseType.XSGYEAR,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSGMONTH }
+						{ kind: BaseType.XSGMONTH, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4020,8 +5765,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10-10+10:30'), {
 							kind: BaseType.XSGMONTHDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSGMONTH }
+						{ kind: BaseType.XSGMONTH, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4031,8 +5777,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('---10+10:30'), {
 							kind: BaseType.XSGDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSGMONTH }
+						{ kind: BaseType.XSGMONTH, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4041,17 +5788,28 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue(DateTime.fromString('--10+10:30'), {
 						kind: BaseType.XSGMONTH,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSGMONTH }
+					{ kind: BaseType.XSGMONTH, seqType: SequenceType.EXACTLY_ONE }
 				),
-				createAtomicValue(DateTime.fromString('--10+10:30'), { kind: BaseType.XSGMONTH })
+				createAtomicValue(DateTime.fromString('--10+10:30'), {
+					kind: BaseType.XSGMONTH,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:boolean (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(true, { kind: BaseType.XSBOOLEAN }), {
-						kind: BaseType.XSGMONTH,
-					}),
+					castToType(
+						createAtomicValue(true, {
+							kind: BaseType.XSBOOLEAN,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSGMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:base64Binary (throws XPTY0004)', () =>
@@ -4060,9 +5818,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', {
 							kind: BaseType.XSBASE64BINARY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSGMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -4073,9 +5833,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue('21FE3A44123C21FE3A44123C', {
 							kind: BaseType.XSHEXBINARY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSGMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -4083,17 +5845,31 @@ describe('castToType()', () => {
 		it('from xs:anyURI (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSANYURI }), {
-						kind: BaseType.XSGMONTH,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSANYURI,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSGMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSNOTATION }), {
-						kind: BaseType.XSGMONTH,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSNOTATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSGMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 	});
@@ -4101,45 +5877,105 @@ describe('castToType()', () => {
 	describe('to xs:boolean', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('true', { kind: BaseType.XSUNTYPEDATOMIC }), {
+				castToType(
+					createAtomicValue('true', {
+						kind: BaseType.XSUNTYPEDATOMIC,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSBOOLEAN,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(true, {
 					kind: BaseType.XSBOOLEAN,
-				}),
-				createAtomicValue(true, { kind: BaseType.XSBOOLEAN })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('true', { kind: BaseType.XSSTRING }), {
+				castToType(
+					createAtomicValue('true', {
+						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSBOOLEAN,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(true, {
 					kind: BaseType.XSBOOLEAN,
-				}),
-				createAtomicValue(true, { kind: BaseType.XSBOOLEAN })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:float', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1, { kind: BaseType.XSFLOAT }), {
+				castToType(
+					createAtomicValue(1, {
+						kind: BaseType.XSFLOAT,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSBOOLEAN,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(true, {
 					kind: BaseType.XSBOOLEAN,
-				}),
-				createAtomicValue(true, { kind: BaseType.XSBOOLEAN })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:double', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1, { kind: BaseType.XSDOUBLE }), {
+				castToType(
+					createAtomicValue(1, {
+						kind: BaseType.XSDOUBLE,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSBOOLEAN,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(true, {
 					kind: BaseType.XSBOOLEAN,
-				}),
-				createAtomicValue(true, { kind: BaseType.XSBOOLEAN })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:decimal', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1, { kind: BaseType.XSDECIMAL }), {
+				castToType(
+					createAtomicValue(1, {
+						kind: BaseType.XSDECIMAL,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSBOOLEAN,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(true, {
 					kind: BaseType.XSBOOLEAN,
-				}),
-				createAtomicValue(true, { kind: BaseType.XSBOOLEAN })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:integer', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1, { kind: BaseType.XSINTEGER }), {
+				castToType(
+					createAtomicValue(1, {
+						kind: BaseType.XSINTEGER,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSBOOLEAN,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(true, {
 					kind: BaseType.XSBOOLEAN,
-				}),
-				createAtomicValue(true, { kind: BaseType.XSBOOLEAN })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:duration (throws XPTY0004)', () =>
 			chai.assert.throws(
@@ -4147,8 +5983,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M10DT10H10M10S'), {
 							kind: BaseType.XSDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSBOOLEAN }
+						{ kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4158,8 +5995,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSYEARMONTHDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSBOOLEAN }
+						{ kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4169,8 +6007,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSDAYTIMEDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSBOOLEAN }
+						{ kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4180,8 +6019,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10-10T10:10:10+10:30'), {
 							kind: BaseType.XSDATETIME,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSBOOLEAN }
+						{ kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4191,8 +6031,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('10:10:10+10:30'), {
 							kind: BaseType.XSTIME,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSBOOLEAN }
+						{ kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4202,8 +6043,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10-10+10:30'), {
 							kind: BaseType.XSDATE,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSBOOLEAN }
+						{ kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4213,8 +6055,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10+10:30'), {
 							kind: BaseType.XSGYEARMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSBOOLEAN }
+						{ kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4224,8 +6067,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000+10:30'), {
 							kind: BaseType.XSGYEAR,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSBOOLEAN }
+						{ kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4235,8 +6079,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10-10+10:30'), {
 							kind: BaseType.XSGMONTHDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSBOOLEAN }
+						{ kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4246,8 +6091,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('---10+10:30'), {
 							kind: BaseType.XSGDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSBOOLEAN }
+						{ kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4257,17 +6103,28 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10+10:30'), {
 							kind: BaseType.XSGMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSBOOLEAN }
+						{ kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
 		it('from xs:boolean', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(true, { kind: BaseType.XSBOOLEAN }), {
+				castToType(
+					createAtomicValue(true, {
+						kind: BaseType.XSBOOLEAN,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSBOOLEAN,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue(true, {
 					kind: BaseType.XSBOOLEAN,
-				}),
-				createAtomicValue(true, { kind: BaseType.XSBOOLEAN })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:base64Binary (throws XPTY0004)', () =>
 			chai.assert.throws(
@@ -4275,9 +6132,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', {
 							kind: BaseType.XSBASE64BINARY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSBOOLEAN,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -4288,9 +6147,11 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue('21FE3A44123C21FE3A44123C', {
 							kind: BaseType.XSHEXBINARY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
 						{
 							kind: BaseType.XSBOOLEAN,
+							seqType: SequenceType.EXACTLY_ONE,
 						}
 					),
 				'XPTY0004'
@@ -4298,17 +6159,31 @@ describe('castToType()', () => {
 		it('from xs:anyURI (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSANYURI }), {
-						kind: BaseType.XSBOOLEAN,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSANYURI,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSBOOLEAN,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSNOTATION }), {
-						kind: BaseType.XSBOOLEAN,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSNOTATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSBOOLEAN,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 	});
@@ -4319,49 +6194,87 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', {
 						kind: BaseType.XSUNTYPEDATOMIC,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSBASE64BINARY }
+					{ kind: BaseType.XSBASE64BINARY, seqType: SequenceType.EXACTLY_ONE }
 				),
-				createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', { kind: BaseType.XSBASE64BINARY })
+				createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', {
+					kind: BaseType.XSBASE64BINARY,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', { kind: BaseType.XSSTRING }),
-					{ kind: BaseType.XSBASE64BINARY }
+					createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', {
+						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{ kind: BaseType.XSBASE64BINARY, seqType: SequenceType.EXACTLY_ONE }
 				),
-				createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', { kind: BaseType.XSBASE64BINARY })
+				createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', {
+					kind: BaseType.XSBASE64BINARY,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:float (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(1, { kind: BaseType.XSFLOAT }), {
-						kind: BaseType.XSBASE64BINARY,
-					}),
+					castToType(
+						createAtomicValue(1, {
+							kind: BaseType.XSFLOAT,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSBASE64BINARY,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:double (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(1, { kind: BaseType.XSDOUBLE }), {
-						kind: BaseType.XSBASE64BINARY,
-					}),
+					castToType(
+						createAtomicValue(1, {
+							kind: BaseType.XSDOUBLE,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSBASE64BINARY,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:decimal (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(1, { kind: BaseType.XSDECIMAL }), {
-						kind: BaseType.XSBASE64BINARY,
-					}),
+					castToType(
+						createAtomicValue(1, {
+							kind: BaseType.XSDECIMAL,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSBASE64BINARY,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:integer (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(1, { kind: BaseType.XSINTEGER }), {
-						kind: BaseType.XSBASE64BINARY,
-					}),
+					castToType(
+						createAtomicValue(1, {
+							kind: BaseType.XSINTEGER,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSBASE64BINARY,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:duration (throws XPTY0004)', () =>
@@ -4370,8 +6283,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M10DT10H10M10S'), {
 							kind: BaseType.XSDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSBASE64BINARY }
+						{ kind: BaseType.XSBASE64BINARY, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4381,8 +6295,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSYEARMONTHDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSBASE64BINARY }
+						{ kind: BaseType.XSBASE64BINARY, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4392,8 +6307,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSDAYTIMEDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSBASE64BINARY }
+						{ kind: BaseType.XSBASE64BINARY, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4403,8 +6319,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10-10T10:10:10+10:30'), {
 							kind: BaseType.XSDATETIME,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSBASE64BINARY }
+						{ kind: BaseType.XSBASE64BINARY, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4414,8 +6331,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('10:10:10+10:30'), {
 							kind: BaseType.XSTIME,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSBASE64BINARY }
+						{ kind: BaseType.XSBASE64BINARY, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4425,8 +6343,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10-10+10:30'), {
 							kind: BaseType.XSDATE,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSBASE64BINARY }
+						{ kind: BaseType.XSBASE64BINARY, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4436,8 +6355,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10+10:30'), {
 							kind: BaseType.XSGYEARMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSBASE64BINARY }
+						{ kind: BaseType.XSBASE64BINARY, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4447,8 +6367,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000+10:30'), {
 							kind: BaseType.XSGYEAR,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSBASE64BINARY }
+						{ kind: BaseType.XSBASE64BINARY, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4458,8 +6379,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10-10+10:30'), {
 							kind: BaseType.XSGMONTHDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSBASE64BINARY }
+						{ kind: BaseType.XSBASE64BINARY, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4469,8 +6391,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('---10+10:30'), {
 							kind: BaseType.XSGDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSBASE64BINARY }
+						{ kind: BaseType.XSBASE64BINARY, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4480,17 +6403,25 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10+10:30'), {
 							kind: BaseType.XSGMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSBASE64BINARY }
+						{ kind: BaseType.XSBASE64BINARY, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
 		it('from xs:boolean (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(true, { kind: BaseType.XSBOOLEAN }), {
-						kind: BaseType.XSBASE64BINARY,
-					}),
+					castToType(
+						createAtomicValue(true, {
+							kind: BaseType.XSBOOLEAN,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSBASE64BINARY,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:base64Binary', () =>
@@ -4498,37 +6429,60 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', {
 						kind: BaseType.XSBASE64BINARY,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSBASE64BINARY }
+					{ kind: BaseType.XSBASE64BINARY, seqType: SequenceType.EXACTLY_ONE }
 				),
-				createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', { kind: BaseType.XSBASE64BINARY })
+				createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', {
+					kind: BaseType.XSBASE64BINARY,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:hexBinary', () =>
 			chai.assert.deepEqual(
 				castToType(
 					createAtomicValue('736F6D65206261736536342074657874', {
 						kind: BaseType.XSHEXBINARY,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
 					{
 						kind: BaseType.XSBASE64BINARY,
+						seqType: SequenceType.EXACTLY_ONE,
 					}
 				),
-				createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', { kind: BaseType.XSBASE64BINARY })
+				createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', {
+					kind: BaseType.XSBASE64BINARY,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:anyURI (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSANYURI }), {
-						kind: BaseType.XSBASE64BINARY,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSANYURI,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSBASE64BINARY,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSNOTATION }), {
-						kind: BaseType.XSBASE64BINARY,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSNOTATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSBASE64BINARY,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 	});
@@ -4539,11 +6493,13 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue('736F6D65206261736536342074657874', {
 						kind: BaseType.XSUNTYPEDATOMIC,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSHEXBINARY }
+					{ kind: BaseType.XSHEXBINARY, seqType: SequenceType.EXACTLY_ONE }
 				),
 				createAtomicValue('736F6D65206261736536342074657874', {
 					kind: BaseType.XSHEXBINARY,
+					seqType: SequenceType.EXACTLY_ONE,
 				})
 			));
 		it('from xs:string', () =>
@@ -4551,43 +6507,73 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue('736F6D65206261736536342074657874', {
 						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSHEXBINARY }
+					{ kind: BaseType.XSHEXBINARY, seqType: SequenceType.EXACTLY_ONE }
 				),
 				createAtomicValue('736F6D65206261736536342074657874', {
 					kind: BaseType.XSHEXBINARY,
+					seqType: SequenceType.EXACTLY_ONE,
 				})
 			));
 		it('from xs:float (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(1, { kind: BaseType.XSFLOAT }), {
-						kind: BaseType.XSHEXBINARY,
-					}),
+					castToType(
+						createAtomicValue(1, {
+							kind: BaseType.XSFLOAT,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSHEXBINARY,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:double (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(1, { kind: BaseType.XSDOUBLE }), {
-						kind: BaseType.XSHEXBINARY,
-					}),
+					castToType(
+						createAtomicValue(1, {
+							kind: BaseType.XSDOUBLE,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSHEXBINARY,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:decimal (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(1, { kind: BaseType.XSDECIMAL }), {
-						kind: BaseType.XSHEXBINARY,
-					}),
+					castToType(
+						createAtomicValue(1, {
+							kind: BaseType.XSDECIMAL,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSHEXBINARY,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:integer (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(1, { kind: BaseType.XSINTEGER }), {
-						kind: BaseType.XSHEXBINARY,
-					}),
+					castToType(
+						createAtomicValue(1, {
+							kind: BaseType.XSINTEGER,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSHEXBINARY,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:duration (throws XPTY0004)', () =>
@@ -4596,8 +6582,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M10DT10H10M10S'), {
 							kind: BaseType.XSDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSHEXBINARY }
+						{ kind: BaseType.XSHEXBINARY, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4607,8 +6594,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSYEARMONTHDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSHEXBINARY }
+						{ kind: BaseType.XSHEXBINARY, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4618,8 +6606,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSDAYTIMEDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSHEXBINARY }
+						{ kind: BaseType.XSHEXBINARY, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4629,8 +6618,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10-10T10:10:10+10:30'), {
 							kind: BaseType.XSDATETIME,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSHEXBINARY }
+						{ kind: BaseType.XSHEXBINARY, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4640,8 +6630,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('10:10:10+10:30'), {
 							kind: BaseType.XSTIME,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSHEXBINARY }
+						{ kind: BaseType.XSHEXBINARY, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4651,8 +6642,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10-10+10:30'), {
 							kind: BaseType.XSDATE,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSHEXBINARY }
+						{ kind: BaseType.XSHEXBINARY, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4662,8 +6654,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10+10:30'), {
 							kind: BaseType.XSGYEARMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSHEXBINARY }
+						{ kind: BaseType.XSHEXBINARY, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4673,8 +6666,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000+10:30'), {
 							kind: BaseType.XSGYEAR,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSHEXBINARY }
+						{ kind: BaseType.XSHEXBINARY, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4684,8 +6678,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10-10+10:30'), {
 							kind: BaseType.XSGMONTHDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSHEXBINARY }
+						{ kind: BaseType.XSHEXBINARY, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4695,8 +6690,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('---10+10:30'), {
 							kind: BaseType.XSGDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSHEXBINARY }
+						{ kind: BaseType.XSHEXBINARY, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4706,17 +6702,25 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10+10:30'), {
 							kind: BaseType.XSGMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSHEXBINARY }
+						{ kind: BaseType.XSHEXBINARY, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
 		it('from xs:boolean (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(true, { kind: BaseType.XSBOOLEAN }), {
-						kind: BaseType.XSHEXBINARY,
-					}),
+					castToType(
+						createAtomicValue(true, {
+							kind: BaseType.XSBOOLEAN,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSHEXBINARY,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:base64Binary', () =>
@@ -4724,11 +6728,13 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', {
 						kind: BaseType.XSBASE64BINARY,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSHEXBINARY }
+					{ kind: BaseType.XSHEXBINARY, seqType: SequenceType.EXACTLY_ONE }
 				),
 				createAtomicValue('736F6D65206261736536342074657874', {
 					kind: BaseType.XSHEXBINARY,
+					seqType: SequenceType.EXACTLY_ONE,
 				})
 			));
 		it('from xs:hexBinary', () =>
@@ -4736,27 +6742,43 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue('736F6D65206261736536342074657874', {
 						kind: BaseType.XSHEXBINARY,
+						seqType: SequenceType.EXACTLY_ONE,
 					}),
-					{ kind: BaseType.XSHEXBINARY }
+					{ kind: BaseType.XSHEXBINARY, seqType: SequenceType.EXACTLY_ONE }
 				),
 				createAtomicValue('736F6D65206261736536342074657874', {
 					kind: BaseType.XSHEXBINARY,
+					seqType: SequenceType.EXACTLY_ONE,
 				})
 			));
 		it('from xs:anyURI (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSANYURI }), {
-						kind: BaseType.XSHEXBINARY,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSANYURI,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSHEXBINARY,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSNOTATION }), {
-						kind: BaseType.XSHEXBINARY,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSNOTATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSHEXBINARY,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 	});
@@ -4764,48 +6786,96 @@ describe('castToType()', () => {
 	describe('to xs:anyURI', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('string', { kind: BaseType.XSUNTYPEDATOMIC }), {
+				castToType(
+					createAtomicValue('string', {
+						kind: BaseType.XSUNTYPEDATOMIC,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSANYURI,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue('string', {
 					kind: BaseType.XSANYURI,
-				}),
-				createAtomicValue('string', { kind: BaseType.XSANYURI })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('string', { kind: BaseType.XSSTRING }), {
+				castToType(
+					createAtomicValue('string', {
+						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSANYURI,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue('string', {
 					kind: BaseType.XSANYURI,
-				}),
-				createAtomicValue('string', { kind: BaseType.XSANYURI })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:float (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(1, { kind: BaseType.XSFLOAT }), {
-						kind: BaseType.XSANYURI,
-					}),
+					castToType(
+						createAtomicValue(1, {
+							kind: BaseType.XSFLOAT,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSANYURI,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:double (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(1, { kind: BaseType.XSDOUBLE }), {
-						kind: BaseType.XSANYURI,
-					}),
+					castToType(
+						createAtomicValue(1, {
+							kind: BaseType.XSDOUBLE,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSANYURI,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:decimal (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(1, { kind: BaseType.XSDECIMAL }), {
-						kind: BaseType.XSANYURI,
-					}),
+					castToType(
+						createAtomicValue(1, {
+							kind: BaseType.XSDECIMAL,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSANYURI,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:integer (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(1, { kind: BaseType.XSINTEGER }), {
-						kind: BaseType.XSANYURI,
-					}),
+					castToType(
+						createAtomicValue(1, {
+							kind: BaseType.XSINTEGER,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSANYURI,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:duration (throws XPTY0004)', () =>
@@ -4814,8 +6884,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M10DT10H10M10S'), {
 							kind: BaseType.XSDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSANYURI }
+						{ kind: BaseType.XSANYURI, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4825,8 +6896,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSYEARMONTHDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSANYURI }
+						{ kind: BaseType.XSANYURI, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4836,8 +6908,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSDAYTIMEDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSANYURI }
+						{ kind: BaseType.XSANYURI, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4847,8 +6920,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10-10T10:10:10+10:30'), {
 							kind: BaseType.XSDATETIME,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSANYURI }
+						{ kind: BaseType.XSANYURI, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4858,8 +6932,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('10:10:10+10:30'), {
 							kind: BaseType.XSTIME,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSANYURI }
+						{ kind: BaseType.XSANYURI, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4869,8 +6944,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10-10+10:30'), {
 							kind: BaseType.XSDATE,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSANYURI }
+						{ kind: BaseType.XSANYURI, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4880,8 +6956,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10+10:30'), {
 							kind: BaseType.XSGYEARMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSANYURI }
+						{ kind: BaseType.XSANYURI, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4891,8 +6968,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000+10:30'), {
 							kind: BaseType.XSGYEAR,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSANYURI }
+						{ kind: BaseType.XSANYURI, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4902,8 +6980,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10-10+10:30'), {
 							kind: BaseType.XSGMONTHDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSANYURI }
+						{ kind: BaseType.XSANYURI, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4913,8 +6992,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('---10+10:30'), {
 							kind: BaseType.XSGDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSANYURI }
+						{ kind: BaseType.XSANYURI, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4924,17 +7004,25 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10+10:30'), {
 							kind: BaseType.XSGMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSANYURI }
+						{ kind: BaseType.XSANYURI, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
 		it('from xs:boolean (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(true, { kind: BaseType.XSBOOLEAN }), {
-						kind: BaseType.XSANYURI,
-					}),
+					castToType(
+						createAtomicValue(true, {
+							kind: BaseType.XSBOOLEAN,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSANYURI,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 		it('from xs:base64Binary (throws XPTY0004)', () =>
@@ -4943,8 +7031,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', {
 							kind: BaseType.XSBASE64BINARY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSANYURI }
+						{ kind: BaseType.XSANYURI, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
@@ -4954,24 +7043,42 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue('736F6D65206261736536342074657874', {
 							kind: BaseType.XSHEXBINARY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSANYURI }
+						{ kind: BaseType.XSANYURI, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPTY0004'
 			));
 		it('from xs:anyURI', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('string', { kind: BaseType.XSANYURI }), {
+				castToType(
+					createAtomicValue('string', {
+						kind: BaseType.XSANYURI,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
+					{
+						kind: BaseType.XSANYURI,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				),
+				createAtomicValue('string', {
 					kind: BaseType.XSANYURI,
-				}),
-				createAtomicValue('string', { kind: BaseType.XSANYURI })
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSNOTATION }), {
-						kind: BaseType.XSANYURI,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSNOTATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSANYURI,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPTY0004'
 			));
 	});
@@ -4980,49 +7087,91 @@ describe('castToType()', () => {
 		it('from xs:untypedAtomic (throws XPST0080)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSUNTYPEDATOMIC }), {
-						kind: BaseType.XSNOTATION,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSUNTYPEDATOMIC,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSNOTATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPST0080'
 			));
 		it('from xs:string (throws XPST0080)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSSTRING }), {
-						kind: BaseType.XSNOTATION,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSSTRING,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSNOTATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPST0080'
 			));
 		it('from xs:float (throws XPST0080)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(1, { kind: BaseType.XSFLOAT }), {
-						kind: BaseType.XSNOTATION,
-					}),
+					castToType(
+						createAtomicValue(1, {
+							kind: BaseType.XSFLOAT,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSNOTATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPST0080'
 			));
 		it('from xs:double (throws XPST0080)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(1, { kind: BaseType.XSDOUBLE }), {
-						kind: BaseType.XSNOTATION,
-					}),
+					castToType(
+						createAtomicValue(1, {
+							kind: BaseType.XSDOUBLE,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSNOTATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPST0080'
 			));
 		it('from xs:decimal (throws XPST0080)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(1, { kind: BaseType.XSDECIMAL }), {
-						kind: BaseType.XSNOTATION,
-					}),
+					castToType(
+						createAtomicValue(1, {
+							kind: BaseType.XSDECIMAL,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSNOTATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPST0080'
 			));
 		it('from xs:integer (throws XPST0080)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(1, { kind: BaseType.XSINTEGER }), {
-						kind: BaseType.XSNOTATION,
-					}),
+					castToType(
+						createAtomicValue(1, {
+							kind: BaseType.XSINTEGER,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSNOTATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPST0080'
 			));
 		it('from xs:duration (throws XPST0080)', () =>
@@ -5031,8 +7180,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M10DT10H10M10S'), {
 							kind: BaseType.XSDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSNOTATION }
+						{ kind: BaseType.XSNOTATION, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPST0080'
 			));
@@ -5042,8 +7192,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSYEARMONTHDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSNOTATION }
+						{ kind: BaseType.XSNOTATION, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPST0080'
 			));
@@ -5053,8 +7204,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(Duration.fromString('P10Y10M'), {
 							kind: BaseType.XSDAYTIMEDURATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSNOTATION }
+						{ kind: BaseType.XSNOTATION, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPST0080'
 			));
@@ -5064,8 +7216,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10-10T10:10:10+10:30'), {
 							kind: BaseType.XSDATETIME,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSNOTATION }
+						{ kind: BaseType.XSNOTATION, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPST0080'
 			));
@@ -5075,8 +7228,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('10:10:10+10:30'), {
 							kind: BaseType.XSTIME,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSNOTATION }
+						{ kind: BaseType.XSNOTATION, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPST0080'
 			));
@@ -5086,8 +7240,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10-10+10:30'), {
 							kind: BaseType.XSDATE,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSNOTATION }
+						{ kind: BaseType.XSNOTATION, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPST0080'
 			));
@@ -5097,8 +7252,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000-10+10:30'), {
 							kind: BaseType.XSGYEARMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSNOTATION }
+						{ kind: BaseType.XSNOTATION, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPST0080'
 			));
@@ -5108,8 +7264,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('2000+10:30'), {
 							kind: BaseType.XSGYEAR,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSNOTATION }
+						{ kind: BaseType.XSNOTATION, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPST0080'
 			));
@@ -5119,8 +7276,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10-10+10:30'), {
 							kind: BaseType.XSGMONTHDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSNOTATION }
+						{ kind: BaseType.XSNOTATION, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPST0080'
 			));
@@ -5130,8 +7288,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('---10+10:30'), {
 							kind: BaseType.XSGDAY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSNOTATION }
+						{ kind: BaseType.XSNOTATION, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPST0080'
 			));
@@ -5141,17 +7300,25 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(DateTime.fromString('--10+10:30'), {
 							kind: BaseType.XSGMONTH,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSNOTATION }
+						{ kind: BaseType.XSNOTATION, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPST0080'
 			));
 		it('from xs:boolean (throws XPST0080)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue(true, { kind: BaseType.XSBOOLEAN }), {
-						kind: BaseType.XSNOTATION,
-					}),
+					castToType(
+						createAtomicValue(true, {
+							kind: BaseType.XSBOOLEAN,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSNOTATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPST0080'
 			));
 		it('from xs:base64Binary (throws XPST0080)', () =>
@@ -5160,8 +7327,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', {
 							kind: BaseType.XSBASE64BINARY,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSNOTATION }
+						{ kind: BaseType.XSNOTATION, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPST0080'
 			));
@@ -5171,25 +7339,40 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue('736F6D65206261736536342074657874', {
 							kind: BaseType.XSNOTATION,
+							seqType: SequenceType.EXACTLY_ONE,
 						}),
-						{ kind: BaseType.XSNOTATION }
+						{ kind: BaseType.XSNOTATION, seqType: SequenceType.EXACTLY_ONE }
 					),
 				'XPST0080'
 			));
 		it('from xs:anyURI (throws XPST0080)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSANYURI }), {
-						kind: BaseType.XSNOTATION,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSANYURI,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSNOTATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPST0080'
 			));
 		it('from xs:NOTATION', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', { kind: BaseType.XSNOTATION }), {
-						kind: BaseType.XSNOTATION,
-					}),
+					castToType(
+						createAtomicValue('string', {
+							kind: BaseType.XSNOTATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}),
+						{
+							kind: BaseType.XSNOTATION,
+							seqType: SequenceType.EXACTLY_ONE,
+						}
+					),
 				'XPST0080'
 			));
 	});

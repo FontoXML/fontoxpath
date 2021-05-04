@@ -17,7 +17,9 @@ const fnTrace: FunctionDefinitionType = (
 ) => {
 	return arg.mapAll((allItems) => {
 		const argumentAsStrings = atomize(sequenceFactory.create(allItems), executionParameters)
-			.map((value) => castToType(value, { kind: BaseType.XSSTRING }))
+			.map((value) =>
+				castToType(value, { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE })
+			)
 			.getAllValues();
 
 		let newMessage = '';
@@ -44,17 +46,17 @@ const declarations: BuiltinDeclarationType[] = [
 		callFunction: fnTrace,
 		localName: 'trace',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ANZERO_OR_MORE,
+		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 	},
 	{
 		argumentTypes: [
-			{ kind: BaseType.ITEM, seqType: SequenceType.ANZERO_OR_MORE,
-			{ kind: BaseType.XSSTRING },
+			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
 		],
 		callFunction: fnTrace,
 		localName: 'trace',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM, seqType: SequenceType.AZERO_OR_MORE},
+		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 	},
 ];
 

@@ -4,7 +4,7 @@ import { falseBoolean, trueBoolean } from '../../dataTypes/createAtomicValue';
 import ISequence from '../../dataTypes/ISequence';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import { BaseType } from '../../dataTypes/Value';
+import { BaseType, SequenceType } from '../../dataTypes/Value';
 import DynamicContext from '../../DynamicContext';
 import ExecutionParameters from '../../ExecutionParameters';
 import Expression from '../../Expression';
@@ -42,6 +42,7 @@ class AndOperator extends Expression {
 				contextItem !== null &&
 				isSubtypeOf(contextItem.type, {
 					kind: BaseType.NODE,
+					seqType: SequenceType.EXACTLY_ONE
 				})
 			) {
 				contextItemBuckets = getBucketsForPointer(

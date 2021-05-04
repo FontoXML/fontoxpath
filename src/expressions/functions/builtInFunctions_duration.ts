@@ -15,7 +15,10 @@ const fnYearsFromDuration: FunctionDefinitionType = (
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getYears(), { kind: BaseType.XSINTEGER })
+		createAtomicValue(sequence.first().value.getYears(), {
+			kind: BaseType.XSINTEGER,
+			seqType: SequenceType.EXACTLY_ONE,
+		})
 	);
 };
 
@@ -29,7 +32,10 @@ const fnMonthsFromDuration: FunctionDefinitionType = (
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getMonths(), { kind: BaseType.XSINTEGER })
+		createAtomicValue(sequence.first().value.getMonths(), {
+			kind: BaseType.XSINTEGER,
+			seqType: SequenceType.EXACTLY_ONE,
+		})
 	);
 };
 
@@ -43,7 +49,10 @@ const fnDaysFromDuration: FunctionDefinitionType = (
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getDays(), { kind: BaseType.XSINTEGER })
+		createAtomicValue(sequence.first().value.getDays(), {
+			kind: BaseType.XSINTEGER,
+			seqType: SequenceType.EXACTLY_ONE,
+		})
 	);
 };
 
@@ -57,7 +66,10 @@ const fnHoursFromDuration: FunctionDefinitionType = (
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getHours(), { kind: BaseType.XSINTEGER })
+		createAtomicValue(sequence.first().value.getHours(), {
+			kind: BaseType.XSINTEGER,
+			seqType: SequenceType.EXACTLY_ONE,
+		})
 	);
 };
 
@@ -71,7 +83,10 @@ const fnMinutesFromDuration: FunctionDefinitionType = (
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getMinutes(), { kind: BaseType.XSINTEGER })
+		createAtomicValue(sequence.first().value.getMinutes(), {
+			kind: BaseType.XSINTEGER,
+			seqType: SequenceType.EXACTLY_ONE,
+		})
 	);
 };
 
@@ -85,7 +100,10 @@ const fnSecondsFromDuration: FunctionDefinitionType = (
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getSeconds(), { kind: BaseType.XSDECIMAL })
+		createAtomicValue(sequence.first().value.getSeconds(), {
+			kind: BaseType.XSDECIMAL,
+			seqType: SequenceType.EXACTLY_ONE,
+		})
 	);
 };
 

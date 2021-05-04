@@ -1,7 +1,7 @@
 import createPointerValue from '../dataTypes/createPointerValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { BaseType } from '../dataTypes/Value';
+import { BaseType, ValueType, SequenceType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
@@ -35,7 +35,12 @@ class AttributeAxis extends Expression {
 
 		const domFacade = executionParameters.domFacade;
 
-		if (!isSubtypeOf(contextItem.type, { kind: BaseType.ELEMENT })) {
+		if (
+			!isSubtypeOf(contextItem.type, {
+				kind: BaseType.ELEMENT,
+				seqType: SequenceType.EXACTLY_ONE,
+			})
+		) {
 			return sequenceFactory.empty();
 		}
 

@@ -1,20 +1,29 @@
 import createAtomicValue from '../createAtomicValue';
-import { BaseType, ValueType } from '../Value';
+import { BaseType, ValueType, SequenceType } from '../Value';
 import DateTime from '../valueTypes/DateTime';
 import CastResult from './CastResult';
 
-const createDateTimeValue = (value) => createAtomicValue(value, { kind: BaseType.XSDATETIME });
+const createDateTimeValue = (value) =>
+	createAtomicValue(value, { kind: BaseType.XSDATETIME, seqType: SequenceType.EXACTLY_ONE });
 
 export default function castToDateTime(
 	instanceOf: (typeName: ValueType) => boolean
 ): (value: DateTime) => CastResult {
-	if (instanceOf({ kind: BaseType.XSDATE })) {
+	if (instanceOf({ kind: BaseType.XSDATE, seqType: SequenceType.EXACTLY_ONE })) {
 		return (value) => ({
 			successful: true,
-			value: createDateTimeValue(value.convertToType({ kind: BaseType.XSDATETIME })),
+			value: createDateTimeValue(
+				value.convertToType({
+					kind: BaseType.XSDATETIME,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
+			),
 		});
 	}
-	if (instanceOf({ kind: BaseType.XSUNTYPEDATOMIC }) || instanceOf({ kind: BaseType.XSSTRING })) {
+	if (
+		instanceOf({ kind: BaseType.XSUNTYPEDATOMIC, seqType: SequenceType.EXACTLY_ONE }) ||
+		instanceOf({ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE })
+	) {
 		return (value) => ({
 			successful: true,
 			value: createDateTimeValue(DateTime.fromString(value)),

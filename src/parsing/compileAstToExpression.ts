@@ -62,7 +62,7 @@ import RenameExpression from '../expressions/xquery-update/RenameExpression';
 import ReplaceExpression from '../expressions/xquery-update/ReplaceExpression';
 import TransformExpression from '../expressions/xquery-update/TransformExpression';
 
-import { BaseType, ValueType } from '../expressions/dataTypes/Value';
+import { BaseType, ValueType, SequenceType } from '../expressions/dataTypes/Value';
 import QName from '../expressions/dataTypes/valueTypes/QName';
 import FlworExpression from '../expressions/FlworExpression';
 import OrderByExpression from '../expressions/OrderByExpression';
@@ -1151,7 +1151,10 @@ function dirElementConstructor(ast: IAST, compilationOptions: CompilationOptions
 
 function CDataSection(ast: IAST, _compilationOptions: CompilationOptions) {
 	// Walks like a stringliteral, talks like a stringliteral, it's a stringliteral
-	return new Literal(astHelper.getTextContent(ast), { kind: BaseType.XSSTRING });
+	return new Literal(astHelper.getTextContent(ast), {
+		kind: BaseType.XSSTRING,
+		seqType: SequenceType.EXACTLY_ONE,
+	});
 }
 
 function attributeConstructor(ast: IAST, compilationOptions: CompilationOptions) {

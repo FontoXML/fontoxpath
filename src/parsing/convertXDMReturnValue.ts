@@ -8,7 +8,7 @@ import ISequence from '../expressions/dataTypes/ISequence';
 import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
 import MapValue from '../expressions/dataTypes/MapValue';
 import sequenceFactory from '../expressions/dataTypes/sequenceFactory';
-import { BaseType } from '../expressions/dataTypes/Value';
+import { BaseType, SequenceType } from '../expressions/dataTypes/Value';
 import ExecutionParameters from '../expressions/ExecutionParameters';
 import { IterationHint } from '../expressions/util/iterators';
 import transformXPathItemToJavascriptObject, {
@@ -73,7 +73,13 @@ export default function convertXDMReturnValue<
 			}
 			// Atomize to convert (attribute)nodes to be strings
 			return allValues
-				.map((value) => castToType(value, { kind: BaseType.XSSTRING }).value)
+				.map(
+					(value) =>
+						castToType(value, {
+							kind: BaseType.XSSTRING,
+							seqType: SequenceType.EXACTLY_ONE,
+						}).value
+				)
 				.join(' ') as IReturnTypes<TNode>[TReturnType];
 		}
 		case ReturnType.STRINGS: {
@@ -92,7 +98,12 @@ export default function convertXDMReturnValue<
 			if (first === null) {
 				return NaN as IReturnTypes<TNode>[TReturnType];
 			}
-			if (!isSubtypeOf(first.type, { kind: BaseType.XSNUMERIC })) {
+			if (
+				!isSubtypeOf(first.type, {
+					kind: BaseType.XSNUMERIC,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
+			) {
 				return NaN as IReturnTypes<TNode>[TReturnType];
 			}
 			return first.value as IReturnTypes<TNode>[TReturnType];
@@ -103,7 +114,9 @@ export default function convertXDMReturnValue<
 			if (first === null) {
 				return null as IReturnTypes<TNode>[TReturnType];
 			}
-			if (!isSubtypeOf(first.type, { kind: BaseType.NODE })) {
+			if (
+				!isSubtypeOf(first.type, { kind: BaseType.NODE, seqType: SequenceType.EXACTLY_ONE })
+			) {
 				throw new Error(
 					'Expected XPath ' + expression + ' to resolve to Node. Got ' + first.type
 				);
@@ -123,7 +136,10 @@ export default function convertXDMReturnValue<
 
 			if (
 				!allResults.every((value) => {
-					return isSubtypeOf(value.type, { kind: BaseType.NODE });
+					return isSubtypeOf(value.type, {
+						kind: BaseType.NODE,
+						seqType: SequenceType.EXACTLY_ONE,
+					});
 				})
 			) {
 				throw new Error(
@@ -146,7 +162,13 @@ export default function convertXDMReturnValue<
 				throw new Error('Expected XPath ' + expression + ' to resolve to a single map.');
 			}
 			const first = allValues[0];
-			if (!isSubtypeOf(first.type, { kind: BaseType.MAP, items: [] })) {
+			if (
+				!isSubtypeOf(first.type, {
+					kind: BaseType.MAP,
+					items: [],
+					seqType: SequenceType.EXACTLY_ONE,
+				})
+			) {
 				throw new Error('Expected XPath ' + expression + ' to resolve to a map');
 			}
 			const transformedMap = transformMapToObject(
@@ -163,7 +185,13 @@ export default function convertXDMReturnValue<
 				throw new Error('Expected XPath ' + expression + ' to resolve to a single array.');
 			}
 			const first = allValues[0];
-			if (!isSubtypeOf(first.type, { kind: BaseType.ARRAY, items: [] })) {
+			if (
+				!isSubtypeOf(first.type, {
+					kind: BaseType.ARRAY,
+					items: [],
+					seqType: SequenceType.EXACTLY_ONE,
+				})
+			) {
 				throw new Error('Expected XPath ' + expression + ' to resolve to an array');
 			}
 			const transformedArray = transformArrayToArray(
@@ -176,7 +204,12 @@ export default function convertXDMReturnValue<
 		case ReturnType.NUMBERS: {
 			const allValues = rawResults.getAllValues();
 			return allValues.map((value) => {
-				if (!isSubtypeOf(value.type, { kind: BaseType.XSNUMERIC })) {
+				if (
+					!isSubtypeOf(value.type, {
+						kind: BaseType.XSNUMERIC,
+						seqType: SequenceType.EXACTLY_ONE,
+					})
+				) {
 					throw new Error('Expected XPath ' + expression + ' to resolve to numbers');
 				}
 				return value.value;
@@ -234,8 +267,14 @@ export default function convertXDMReturnValue<
 			const allValues = rawResults.getAllValues();
 			const allValuesAreNodes = allValues.every((value) => {
 				return (
-					isSubtypeOf(value.type, { kind: BaseType.NODE }) &&
-					!isSubtypeOf(value.type, { kind: BaseType.ATTRIBUTE })
+					isSubtypeOf(value.type, {
+						kind: BaseType.NODE,
+						seqType: SequenceType.EXACTLY_ONE,
+					}) &&
+					!isSubtypeOf(value.type, {
+						kind: BaseType.ATTRIBUTE,
+						seqType: SequenceType.EXACTLY_ONE,
+					})
 				);
 			});
 			if (allValuesAreNodes) {
@@ -250,14 +289,26 @@ export default function convertXDMReturnValue<
 			}
 			if (allValues.length === 1) {
 				const first = allValues[0];
-				if (isSubtypeOf(first.type, { kind: BaseType.ARRAY, items: [] })) {
+				if (
+					isSubtypeOf(first.type, {
+						kind: BaseType.ARRAY,
+						items: [],
+						seqType: SequenceType.EXACTLY_ONE,
+					})
+				) {
 					const transformedArray = transformArrayToArray(
 						first as ArrayValue,
 						executionParameters
 					).next(IterationHint.NONE);
 					return transformedArray.value as IReturnTypes<TNode>[TReturnType];
 				}
-				if (isSubtypeOf(first.type, { kind: BaseType.MAP, items: [] })) {
+				if (
+					isSubtypeOf(first.type, {
+						kind: BaseType.MAP,
+						items: [],
+						seqType: SequenceType.EXACTLY_ONE,
+					})
+				) {
 					const transformedMap = transformMapToObject(
 						first as MapValue,
 						executionParameters

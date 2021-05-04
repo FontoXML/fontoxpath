@@ -18,8 +18,8 @@ function mapItem(
 	}
 
 	if (
-		isSubtypeOf(type, { kind: BaseType.XSANYATOMICTYPE }) &&
-		isSubtypeOf(argumentItem.type, { kind: BaseType.NODE })
+		isSubtypeOf(type, { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE }) &&
+		isSubtypeOf(argumentItem.type, { kind: BaseType.NODE, seqType: SequenceType.EXACTLY_ONE })
 	) {
 		// Assume here that a node always atomizes to a singlevalue. This will not work
 		// anymore when schema support will be imlemented.
@@ -35,7 +35,12 @@ function mapItem(
 	if (type.kind === BaseType.XSANYATOMICTYPE) {
 		return argumentItem;
 	}
-	if (isSubtypeOf(argumentItem.type, { kind: BaseType.XSUNTYPEDATOMIC })) {
+	if (
+		isSubtypeOf(argumentItem.type, {
+			kind: BaseType.XSUNTYPEDATOMIC,
+			seqType: SequenceType.EXACTLY_ONE,
+		})
+	) {
 		// We might be able to cast this to the wished type
 		const convertedItem = castToType(argumentItem, type);
 		if (!convertedItem) {

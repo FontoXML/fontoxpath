@@ -52,7 +52,12 @@ const fnDateTime: FunctionDefinitionType = (
 		time.getSecondFraction(),
 		timezoneToUse
 	);
-	return sequenceFactory.singleton(createAtomicValue(dateTime, { kind: BaseType.XSDATETIME }));
+	return sequenceFactory.singleton(
+		createAtomicValue(dateTime, {
+			kind: BaseType.XSDATETIME,
+			seqType: SequenceType.EXACTLY_ONE,
+		})
+	);
 };
 
 const fnYearFromDateTime: FunctionDefinitionType = (
@@ -65,7 +70,10 @@ const fnYearFromDateTime: FunctionDefinitionType = (
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getYear(), { kind: BaseType.XSINTEGER })
+		createAtomicValue(sequence.first().value.getYear(), {
+			kind: BaseType.XSINTEGER,
+			seqType: SequenceType.EXACTLY_ONE,
+		})
 	);
 };
 
@@ -79,7 +87,10 @@ const fnMonthFromDateTime: FunctionDefinitionType = (
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getMonth(), { kind: BaseType.XSINTEGER })
+		createAtomicValue(sequence.first().value.getMonth(), {
+			kind: BaseType.XSINTEGER,
+			seqType: SequenceType.EXACTLY_ONE,
+		})
 	);
 };
 
@@ -93,7 +104,10 @@ const fnDayFromDateTime: FunctionDefinitionType = (
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getDay(), { kind: BaseType.XSINTEGER })
+		createAtomicValue(sequence.first().value.getDay(), {
+			kind: BaseType.XSINTEGER,
+			seqType: SequenceType.EXACTLY_ONE,
+		})
 	);
 };
 
@@ -107,7 +121,10 @@ const fnHoursFromDateTime: FunctionDefinitionType = (
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getHours(), { kind: BaseType.XSINTEGER })
+		createAtomicValue(sequence.first().value.getHours(), {
+			kind: BaseType.XSINTEGER,
+			seqType: SequenceType.EXACTLY_ONE,
+		})
 	);
 };
 
@@ -121,7 +138,10 @@ const fnMinutesFromDateTime: FunctionDefinitionType = (
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getMinutes(), { kind: BaseType.XSINTEGER })
+		createAtomicValue(sequence.first().value.getMinutes(), {
+			kind: BaseType.XSINTEGER,
+			seqType: SequenceType.EXACTLY_ONE,
+		})
 	);
 };
 
@@ -135,7 +155,10 @@ const fnSecondsFromDateTime: FunctionDefinitionType = (
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getFullSeconds(), { kind: BaseType.XSDECIMAL })
+		createAtomicValue(sequence.first().value.getFullSeconds(), {
+			kind: BaseType.XSDECIMAL,
+			seqType: SequenceType.EXACTLY_ONE,
+		})
 	);
 };
 const fnTimezoneFromDateTime: FunctionDefinitionType = (
@@ -154,7 +177,10 @@ const fnTimezoneFromDateTime: FunctionDefinitionType = (
 	}
 
 	return sequenceFactory.singleton(
-		createAtomicValue(timezone, { kind: BaseType.XSDAYTIMEDURATION })
+		createAtomicValue(timezone, {
+			kind: BaseType.XSDAYTIMEDURATION,
+			seqType: SequenceType.EXACTLY_ONE,
+		})
 	);
 };
 

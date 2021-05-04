@@ -79,7 +79,7 @@ describe('measuring performance', () => {
 	before(() => {
 		registerCustomXPathFunction(
 			'perftest:syncsleep',
-			[{ kind: BaseType.ITEM }],
+			[{ kind: BaseType.ITEM, seqType: SequenceType.EXACTLY_ONE }],
 			{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.NULLABLE },
 			(_, shouldRecurse) => {
 				now++;

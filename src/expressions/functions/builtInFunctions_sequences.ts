@@ -54,8 +54,13 @@ function subSequence(sequence: ISequence, start: number, length: number) {
 
 function castUntypedItemsToDouble(items: Value[]) {
 	return items.map((item) => {
-		if (isSubtypeOf(item.type, { kind: BaseType.XSUNTYPEDATOMIC })) {
-			return castToType(item, { kind: BaseType.XSDOUBLE });
+		if (
+			isSubtypeOf(item.type, {
+				kind: BaseType.XSUNTYPEDATOMIC,
+				seqType: SequenceType.EXACTLY_ONE,
+			})
+		) {
+			return castToType(item, { kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE });
 		}
 		return item;
 	});
@@ -70,7 +75,9 @@ function castItemsForMinMax(items: Value[]) {
 			return Number.isNaN(item.value);
 		})
 	) {
-		return [createAtomicValue(NaN, { kind: BaseType.XSDOUBLE })];
+		return [
+			createAtomicValue(NaN, { kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE }),
+		];
 	}
 
 	const convertResult = convertItemsToCommonType(items);
@@ -243,8 +250,14 @@ const fnIndexOf: FunctionDefinitionType = (
 		atomize(sequence, executionParameters)
 			.map((element, i) => {
 				return valueCompare('eqOp', element, onlySearchValue, dynamicContext)
-					? createAtomicValue(i + 1, { kind: BaseType.XSINTEGER })
-					: createAtomicValue(-1, { kind: BaseType.XSINTEGER });
+					? createAtomicValue(i + 1, {
+							kind: BaseType.XSINTEGER,
+							seqType: SequenceType.EXACTLY_ONE,
+					  })
+					: createAtomicValue(-1, {
+							kind: BaseType.XSINTEGER,
+							seqType: SequenceType.EXACTLY_ONE,
+					  });
 			})
 			.filter((indexValue) => {
 				return indexValue.value !== -1;
@@ -278,7 +291,12 @@ const fnDeepEqual: FunctionDefinitionType = (
 				return result;
 			}
 			hasPassed = true;
-			return ready(createAtomicValue(result.value, { kind: BaseType.XSBOOLEAN }));
+			return ready(
+				createAtomicValue(result.value, {
+					kind: BaseType.XSBOOLEAN,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
+			);
 		},
 	});
 };
@@ -297,7 +315,12 @@ const fnCount: FunctionDefinitionType = (
 			}
 			const length = sequence.getLength();
 			hasPassed = true;
-			return ready(createAtomicValue(length, { kind: BaseType.XSINTEGER }));
+			return ready(
+				createAtomicValue(length, {
+					kind: BaseType.XSINTEGER,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
+			);
 		},
 	});
 };
@@ -319,7 +342,11 @@ const fnAvg: FunctionDefinitionType = (
 		throw new Error('FORG0006: Incompatible types to be converted to a common type');
 	}
 
-	if (!items.every((item) => isSubtypeOf(item.type, { kind: BaseType.XSNUMERIC }))) {
+	if (
+		!items.every((item) =>
+			isSubtypeOf(item.type, { kind: BaseType.XSNUMERIC, seqType: SequenceType.EXACTLY_ONE })
+		)
+	) {
 		throw new Error('FORG0006: items passed to fn:avg are not all numeric.');
 	}
 
@@ -331,27 +358,47 @@ const fnAvg: FunctionDefinitionType = (
 	if (
 		items.every((item) => {
 			return (
-				isSubtypeOf(item.type, { kind: BaseType.XSINTEGER }) ||
-				isSubtypeOf(item.type, { kind: BaseType.XSDOUBLE })
+				isSubtypeOf(item.type, {
+					kind: BaseType.XSINTEGER,
+					seqType: SequenceType.EXACTLY_ONE,
+				}) ||
+				isSubtypeOf(item.type, {
+					kind: BaseType.XSDOUBLE,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			);
 		})
 	) {
 		return sequenceFactory.singleton(
-			createAtomicValue(resultValue, { kind: BaseType.XSDOUBLE })
+			createAtomicValue(resultValue, {
+				kind: BaseType.XSDOUBLE,
+				seqType: SequenceType.EXACTLY_ONE,
+			})
 		);
 	}
 
 	if (
 		items.every((item) => {
-			return isSubtypeOf(item.type, { kind: BaseType.XSDECIMAL });
+			return isSubtypeOf(item.type, {
+				kind: BaseType.XSDECIMAL,
+				seqType: SequenceType.EXACTLY_ONE,
+			});
 		})
 	) {
 		return sequenceFactory.singleton(
-			createAtomicValue(resultValue, { kind: BaseType.XSDECIMAL })
+			createAtomicValue(resultValue, {
+				kind: BaseType.XSDECIMAL,
+				seqType: SequenceType.EXACTLY_ONE,
+			})
 		);
 	}
 
-	return sequenceFactory.singleton(createAtomicValue(resultValue, { kind: BaseType.XSFLOAT }));
+	return sequenceFactory.singleton(
+		createAtomicValue(resultValue, {
+			kind: BaseType.XSFLOAT,
+			seqType: SequenceType.EXACTLY_ONE,
+		})
+	);
 };
 
 const fnMax: FunctionDefinitionType = (
@@ -412,7 +459,11 @@ const fnSum: FunctionDefinitionType = (
 		throw new Error('FORG0006: Incompatible types to be converted to a common type');
 	}
 
-	if (!items.every((item) => isSubtypeOf(item.type, { kind: BaseType.XSNUMERIC }))) {
+	if (
+		!items.every((item) =>
+			isSubtypeOf(item.type, { kind: BaseType.XSNUMERIC, seqType: SequenceType.EXACTLY_ONE })
+		)
+	) {
 		throw new Error('FORG0006: items passed to fn:sum are not all numeric.');
 	}
 
@@ -422,35 +473,58 @@ const fnSum: FunctionDefinitionType = (
 
 	if (
 		items.every((item) => {
-			return isSubtypeOf(item.type, { kind: BaseType.XSINTEGER });
+			return isSubtypeOf(item.type, {
+				kind: BaseType.XSINTEGER,
+				seqType: SequenceType.EXACTLY_ONE,
+			});
 		})
 	) {
 		return sequenceFactory.singleton(
-			createAtomicValue(resultValue, { kind: BaseType.XSINTEGER })
+			createAtomicValue(resultValue, {
+				kind: BaseType.XSINTEGER,
+				seqType: SequenceType.EXACTLY_ONE,
+			})
 		);
 	}
 
 	if (
 		items.every((item) => {
-			return isSubtypeOf(item.type, { kind: BaseType.XSDOUBLE });
+			return isSubtypeOf(item.type, {
+				kind: BaseType.XSDOUBLE,
+				seqType: SequenceType.EXACTLY_ONE,
+			});
 		})
 	) {
 		return sequenceFactory.singleton(
-			createAtomicValue(resultValue, { kind: BaseType.XSDOUBLE })
+			createAtomicValue(resultValue, {
+				kind: BaseType.XSDOUBLE,
+				seqType: SequenceType.EXACTLY_ONE,
+			})
 		);
 	}
 
 	if (
 		items.every((item) => {
-			return isSubtypeOf(item.type, { kind: BaseType.XSDECIMAL });
+			return isSubtypeOf(item.type, {
+				kind: BaseType.XSDECIMAL,
+				seqType: SequenceType.EXACTLY_ONE,
+			});
 		})
 	) {
 		return sequenceFactory.singleton(
-			createAtomicValue(resultValue, { kind: BaseType.XSDECIMAL })
+			createAtomicValue(resultValue, {
+				kind: BaseType.XSDECIMAL,
+				seqType: SequenceType.EXACTLY_ONE,
+			})
 		);
 	}
 
-	return sequenceFactory.singleton(createAtomicValue(resultValue, { kind: BaseType.XSFLOAT }));
+	return sequenceFactory.singleton(
+		createAtomicValue(resultValue, {
+			kind: BaseType.XSFLOAT,
+			seqType: SequenceType.EXACTLY_ONE,
+		})
+	);
 };
 
 const fnZeroOrOne: FunctionDefinitionType = (
@@ -528,7 +602,10 @@ const fnFilter: FunctionDefinitionType = (
 		);
 		if (
 			!functionCallResult.isSingleton() ||
-			!isSubtypeOf(functionCallResult.first().type, { kind: BaseType.XSBOOLEAN })
+			!isSubtypeOf(functionCallResult.first().type, {
+				kind: BaseType.XSBOOLEAN,
+				seqType: SequenceType.EXACTLY_ONE,
+			})
 		) {
 			throw new Error(`XPTY0004: signature of function passed to fn:filter is incompatible.`);
 		}
@@ -691,7 +768,7 @@ const declarations: BuiltinDeclarationType[] = [
 		callFunction: fnEmpty,
 		localName: 'empty',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSBOOLEAN },
+		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
 	},
 
 	{
@@ -699,7 +776,7 @@ const declarations: BuiltinDeclarationType[] = [
 		callFunction: fnExists,
 		localName: 'exists',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSBOOLEAN },
+		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
 	},
 
 	{
@@ -721,7 +798,7 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		argumentTypes: [
 			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
-			{ kind: BaseType.XSINTEGER },
+			{ kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE },
 			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 		],
 		callFunction: fnInsertBefore,
@@ -733,7 +810,7 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		argumentTypes: [
 			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
-			{ kind: BaseType.XSINTEGER },
+			{ kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE },
 		],
 		callFunction: fnRemove,
 		localName: 'remove',
@@ -752,7 +829,7 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		argumentTypes: [
 			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
-			{ kind: BaseType.XSDOUBLE },
+			{ kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE },
 		],
 		callFunction: ((dynamicContext, executionParameters, _staticContext, sequence, start) =>
 			fnSubsequence(
@@ -771,8 +848,8 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		argumentTypes: [
 			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
-			{ kind: BaseType.XSDOUBLE },
-			{ kind: BaseType.XSDOUBLE },
+			{ kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE },
 		],
 		callFunction: fnSubsequence,
 		localName: 'subsequence',
@@ -791,7 +868,7 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		argumentTypes: [
 			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_MORE },
-			{ kind: BaseType.XSANYATOMICTYPE },
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
 		],
 		callFunction: fnIndexOf,
 		localName: 'index-of',
@@ -802,8 +879,8 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		argumentTypes: [
 			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_MORE },
-			{ kind: BaseType.XSANYATOMICTYPE },
-			{ kind: BaseType.XSSTRING },
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
 		],
 		callFunction() {
 			throw new Error('FOCH0002: No collations are supported');
@@ -821,21 +898,21 @@ const declarations: BuiltinDeclarationType[] = [
 		callFunction: fnDeepEqual,
 		localName: 'deep-equal',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSBOOLEAN },
+		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
 	},
 
 	{
 		argumentTypes: [
 			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
-			{ kind: BaseType.XSSTRING },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
 		],
 		callFunction() {
 			throw new Error('FOCH0002: No collations are supported');
 		},
 		localName: 'deep-equal',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSBOOLEAN },
+		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
 	},
 
 	{
@@ -843,7 +920,7 @@ const declarations: BuiltinDeclarationType[] = [
 		callFunction: fnCount,
 		localName: 'count',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSINTEGER },
+		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE },
 	},
 
 	{
@@ -865,7 +942,7 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		argumentTypes: [
 			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_MORE },
-			{ kind: BaseType.XSSTRING },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
 		],
 		callFunction() {
 			throw new Error('FOCH0002: No collations are supported');
@@ -886,7 +963,7 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		argumentTypes: [
 			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_MORE },
-			{ kind: BaseType.XSSTRING },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
 		],
 		callFunction() {
 			throw new Error('FOCH0002: No collations are supported');
@@ -904,12 +981,17 @@ const declarations: BuiltinDeclarationType[] = [
 				executionParameters,
 				_staticContext,
 				sequence,
-				sequenceFactory.singleton(createAtomicValue(0, { kind: BaseType.XSINTEGER }))
+				sequenceFactory.singleton(
+					createAtomicValue(0, {
+						kind: BaseType.XSINTEGER,
+						seqType: SequenceType.EXACTLY_ONE,
+					})
+				)
 			);
 		}) as FunctionDefinitionType,
 		localName: 'sum',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSANYATOMICTYPE },
+		returnType: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
 	},
 
 	{
@@ -944,13 +1026,18 @@ const declarations: BuiltinDeclarationType[] = [
 		callFunction: fnExactlyOne,
 		localName: 'exactly-one',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceType.EXACTLY_ONE },
 	},
 
 	{
 		argumentTypes: [
 			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
-			{ kind: BaseType.FUNCTION, returnType: undefined, params: [] },
+			{
+				kind: BaseType.FUNCTION,
+				returnType: undefined,
+				params: [],
+				seqType: SequenceType.EXACTLY_ONE,
+			},
 		],
 		callFunction: fnFilter,
 		localName: 'filter',
@@ -961,7 +1048,12 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		argumentTypes: [
 			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
-			{ kind: BaseType.FUNCTION, returnType: undefined, params: [] },
+			{
+				kind: BaseType.FUNCTION,
+				returnType: undefined,
+				params: [],
+				seqType: SequenceType.EXACTLY_ONE,
+			},
 		],
 		callFunction: fnForEach,
 		localName: 'for-each',
@@ -973,7 +1065,12 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [
 			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
-			{ kind: BaseType.FUNCTION, returnType: undefined, params: [] },
+			{
+				kind: BaseType.FUNCTION,
+				returnType: undefined,
+				params: [],
+				seqType: SequenceType.EXACTLY_ONE,
+			},
 		],
 		callFunction: fnFoldLeft,
 		localName: 'fold-left',
@@ -985,7 +1082,12 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [
 			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
-			{ kind: BaseType.FUNCTION, returnType: undefined, params: [] },
+			{
+				kind: BaseType.FUNCTION,
+				returnType: undefined,
+				params: [],
+				seqType: SequenceType.EXACTLY_ONE,
+			},
 		],
 		callFunction: fnFoldRight,
 		localName: 'fold-right',

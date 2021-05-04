@@ -1,7 +1,7 @@
 import FunctionValue from '../dataTypes/FunctionValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import Value, { BaseType, ValueType } from '../dataTypes/Value';
+import Value, { BaseType, ValueType, SequenceType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
@@ -50,7 +50,14 @@ export function transformArgumentList(
 }
 
 function validateFunctionItem(item: Value, callArity: number): FunctionValue {
-	if (!isSubtypeOf(item.type, { kind: BaseType.FUNCTION, returnType: undefined, params: [] })) {
+	if (
+		!isSubtypeOf(item.type, {
+			kind: BaseType.FUNCTION,
+			returnType: undefined,
+			params: [],
+			seqType: SequenceType.EXACTLY_ONE,
+		})
+	) {
 		throw errXPTY0004('Expected base expression to evaluate to a function item');
 	}
 

@@ -3,7 +3,7 @@ import castToType from '../../dataTypes/castToType';
 import createAtomicValue from '../../dataTypes/createAtomicValue';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import { BaseType } from '../../dataTypes/Value';
+import { BaseType, SequenceType } from '../../dataTypes/Value';
 import Expression from '../../Expression';
 
 class Unary extends Expression {
@@ -40,52 +40,111 @@ class Unary extends Expression {
 
 			const value = atomizedValues[0];
 
-			if (isSubtypeOf(value.type, { kind: BaseType.XSUNTYPEDATOMIC })) {
-				const castValue = castToType(value, { kind: BaseType.XSDOUBLE }).value as number;
+			if (
+				isSubtypeOf(value.type, {
+					kind: BaseType.XSUNTYPEDATOMIC,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
+			) {
+				const castValue = castToType(value, {
+					kind: BaseType.XSDOUBLE,
+					seqType: SequenceType.EXACTLY_ONE,
+				}).value as number;
 				return sequenceFactory.singleton(
 					createAtomicValue(this._kind === '+' ? castValue : -castValue, {
 						kind: BaseType.XSDOUBLE,
+						seqType: SequenceType.EXACTLY_ONE
 					})
 				);
 			}
 
 			if (this._kind === '+') {
 				if (
-					isSubtypeOf(value.type, { kind: BaseType.XSDECIMAL }) ||
-					isSubtypeOf(value.type, { kind: BaseType.XSDOUBLE }) ||
-					isSubtypeOf(value.type, { kind: BaseType.XSFLOAT }) ||
-					isSubtypeOf(value.type, { kind: BaseType.XSINTEGER })
+					isSubtypeOf(value.type, {
+						kind: BaseType.XSDECIMAL,
+						seqType: SequenceType.EXACTLY_ONE,
+					}) ||
+					isSubtypeOf(value.type, {
+						kind: BaseType.XSDOUBLE,
+						seqType: SequenceType.EXACTLY_ONE,
+					}) ||
+					isSubtypeOf(value.type, {
+						kind: BaseType.XSFLOAT,
+						seqType: SequenceType.EXACTLY_ONE,
+					}) ||
+					isSubtypeOf(value.type, {
+						kind: BaseType.XSINTEGER,
+						seqType: SequenceType.EXACTLY_ONE,
+					})
 				) {
 					return sequenceFactory.singleton(atomizedValues[0]);
 				}
 				return sequenceFactory.singleton(
-					createAtomicValue(Number.NaN, { kind: BaseType.XSDOUBLE })
+					createAtomicValue(Number.NaN, {
+						kind: BaseType.XSDOUBLE,
+						seqType: SequenceType.EXACTLY_ONE,
+					})
 				);
 			}
 
-			if (isSubtypeOf(value.type, { kind: BaseType.XSINTEGER })) {
+			if (
+				isSubtypeOf(value.type, {
+					kind: BaseType.XSINTEGER,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
+			) {
 				return sequenceFactory.singleton(
-					createAtomicValue((value.value as number) * -1, { kind: BaseType.XSINTEGER })
+					createAtomicValue((value.value as number) * -1, {
+						kind: BaseType.XSINTEGER,
+						seqType: SequenceType.EXACTLY_ONE,
+					})
 				);
 			}
-			if (isSubtypeOf(value.type, { kind: BaseType.XSDECIMAL })) {
+			if (
+				isSubtypeOf(value.type, {
+					kind: BaseType.XSDECIMAL,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
+			) {
 				return sequenceFactory.singleton(
-					createAtomicValue((value.value as number) * -1, { kind: BaseType.XSDECIMAL })
+					createAtomicValue((value.value as number) * -1, {
+						kind: BaseType.XSDECIMAL,
+						seqType: SequenceType.EXACTLY_ONE,
+					})
 				);
 			}
-			if (isSubtypeOf(value.type, { kind: BaseType.XSDOUBLE })) {
+			if (
+				isSubtypeOf(value.type, {
+					kind: BaseType.XSDOUBLE,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
+			) {
 				return sequenceFactory.singleton(
-					createAtomicValue((value.value as number) * -1, { kind: BaseType.XSDOUBLE })
+					createAtomicValue((value.value as number) * -1, {
+						kind: BaseType.XSDOUBLE,
+						seqType: SequenceType.EXACTLY_ONE,
+					})
 				);
 			}
-			if (isSubtypeOf(value.type, { kind: BaseType.XSFLOAT })) {
+			if (
+				isSubtypeOf(value.type, {
+					kind: BaseType.XSFLOAT,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
+			) {
 				return sequenceFactory.singleton(
-					createAtomicValue((value.value as number) * -1, { kind: BaseType.XSFLOAT })
+					createAtomicValue((value.value as number) * -1, {
+						kind: BaseType.XSFLOAT,
+						seqType: SequenceType.EXACTLY_ONE,
+					})
 				);
 			}
 
 			return sequenceFactory.singleton(
-				createAtomicValue(Number.NaN, { kind: BaseType.XSDOUBLE })
+				createAtomicValue(Number.NaN, {
+					kind: BaseType.XSDOUBLE,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
 			);
 		});
 	}

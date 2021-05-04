@@ -5,7 +5,7 @@ import { atomizeSingleValue } from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import createPointerValue from '../dataTypes/createPointerValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import Value, { BaseType } from '../dataTypes/Value';
+import Value, { BaseType, SequenceType } from '../dataTypes/Value';
 import ExecutionParameters from '../ExecutionParameters';
 function createTinyTextNode(content): TinyTextNode {
 	const tinyTextNode: TinyTextNode = {
@@ -27,7 +27,13 @@ function parseChildNodes(
 	// Plonk all childNodes, these are special though
 	childNodes
 		.reduce(function flattenArray(convertedChildNodes: Value[], childNode: Value) {
-			if (isSubtypeOf(childNode.type, { kind: BaseType.ARRAY, items: [] })) {
+			if (
+				isSubtypeOf(childNode.type, {
+					kind: BaseType.ARRAY,
+					items: [],
+					seqType: SequenceType.EXACTLY_ONE,
+				})
+			) {
 				const arrayValue = childNode as ArrayValue;
 				// Flatten out arrays
 				arrayValue.members.forEach((member) =>
@@ -41,7 +47,12 @@ function parseChildNodes(
 			return convertedChildNodes;
 		}, [])
 		.forEach((childNode, i, atomizedChildNodes) => {
-			if (isSubtypeOf(childNode.type, { kind: BaseType.ATTRIBUTE })) {
+			if (
+				isSubtypeOf(childNode.type, {
+					kind: BaseType.ATTRIBUTE,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
+			) {
 				if (attributesDone) {
 					throw attributeError(childNode.value, domFacade);
 				}
@@ -50,8 +61,14 @@ function parseChildNodes(
 				return;
 			}
 			if (
-				isSubtypeOf(childNode.type, { kind: BaseType.XSANYATOMICTYPE }) ||
-				(isSubtypeOf(childNode.type, { kind: BaseType.NODE }) &&
+				isSubtypeOf(childNode.type, {
+					kind: BaseType.XSANYATOMICTYPE,
+					seqType: SequenceType.EXACTLY_ONE,
+				}) ||
+				(isSubtypeOf(childNode.type, {
+					kind: BaseType.NODE,
+					seqType: SequenceType.EXACTLY_ONE,
+				}) &&
 					domFacade.getNodeType(childNode.value) === NODE_TYPES.TEXT_NODE)
 			) {
 				// childNode is a textnode-like
@@ -67,7 +84,10 @@ function parseChildNodes(
 					isSubtypeOf(atomizedChildNodes[i - 1].type, {
 						kind: BaseType.XSANYATOMICTYPE,
 					}) &&
-					isSubtypeOf(childNode.type, { kind: BaseType.XSANYATOMICTYPE })
+					isSubtypeOf(childNode.type, {
+						kind: BaseType.XSANYATOMICTYPE,
+						seqType: SequenceType.EXACTLY_ONE,
+					})
 				) {
 					contentNodes.push(createTinyTextNode(' ' + atomizedValue));
 					attributesDone = true;
@@ -79,7 +99,12 @@ function parseChildNodes(
 				}
 				return;
 			}
-			if (isSubtypeOf(childNode.type, { kind: BaseType.DOCUMENTNODE })) {
+			if (
+				isSubtypeOf(childNode.type, {
+					kind: BaseType.DOCUMENTNODE,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
+			) {
 				const docChildNodes = [];
 				domFacade
 					.getChildNodePointers(childNode.value)
@@ -94,7 +119,12 @@ function parseChildNodes(
 				);
 				return;
 			}
-			if (isSubtypeOf(childNode.type, { kind: BaseType.NODE })) {
+			if (
+				isSubtypeOf(childNode.type, {
+					kind: BaseType.NODE,
+					seqType: SequenceType.EXACTLY_ONE,
+				})
+			) {
 				// Deep clone child elements
 				// TODO: skip copy if the childNode has already been created in the expression
 				contentNodes.push(childNode.value.node);

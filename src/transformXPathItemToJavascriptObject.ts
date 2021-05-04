@@ -3,7 +3,7 @@ import realizeDom from './domClone/realizeDom';
 import ArrayValue from './expressions/dataTypes/ArrayValue';
 import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
 import MapValue from './expressions/dataTypes/MapValue';
-import Value, { BaseType } from './expressions/dataTypes/Value';
+import Value, { BaseType, SequenceType } from './expressions/dataTypes/Value';
 import DateTime from './expressions/dataTypes/valueTypes/DateTime';
 import QName from './expressions/dataTypes/valueTypes/QName';
 import ExecutionParameters from './expressions/ExecutionParameters';
@@ -109,13 +109,25 @@ export default function transformXPathItemToJavascriptObject(
 	value: Value,
 	executionParameters: ExecutionParameters
 ): IIterator<any> {
-	if (isSubtypeOf(value.type, { kind: BaseType.MAP, items: [] })) {
+	if (
+		isSubtypeOf(value.type, {
+			kind: BaseType.MAP,
+			items: [],
+			seqType: SequenceType.EXACTLY_ONE,
+		})
+	) {
 		return transformMapToObject(value as MapValue, executionParameters);
 	}
-	if (isSubtypeOf(value.type, { kind: BaseType.ARRAY, items: [] })) {
+	if (
+		isSubtypeOf(value.type, {
+			kind: BaseType.ARRAY,
+			items: [],
+			seqType: SequenceType.EXACTLY_ONE,
+		})
+	) {
 		return transformArrayToArray(value as ArrayValue, executionParameters);
 	}
-	if (isSubtypeOf(value.type, { kind: BaseType.XSQNAME })) {
+	if (isSubtypeOf(value.type, { kind: BaseType.XSQNAME, seqType: SequenceType.EXACTLY_ONE })) {
 		const qualifiedName = value.value as QName;
 		return {
 			next: () => ready(`Q{${qualifiedName.namespaceURI || ''}}${qualifiedName.localName}`),

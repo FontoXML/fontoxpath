@@ -124,7 +124,7 @@ declare function x:fn () external;`);
 				localName: 'external-1',
 			},
 			[],
-			{ kind: BaseType.ITEM },
+			{ kind: BaseType.ITEM, seqType: SequenceType.EXACTLY_ONE },
 			() => 'meep'
 		);
 
@@ -158,7 +158,7 @@ declare function x:fn () external;`);
 				localName: 'external-2',
 			},
 			[],
-			{ kind: BaseType.XSSTRING },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
 			() => 'meep'
 		);
 
@@ -191,8 +191,8 @@ declare function x:fn () external;`);
 				namespaceURI: 'http://www.example.com',
 				localName: 'external-3',
 			},
-			[{ kind: BaseType.XSSTRING }],
-			{ kind: BaseType.ITEM },
+			[{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE }],
+			{ kind: BaseType.ITEM, seqType: SequenceType.EXACTLY_ONE },
 			() => 'meep'
 		);
 
@@ -224,7 +224,7 @@ declare function x:fn () external;`);
 				localName: 'duplicate-fn',
 			},
 			[],
-			{ kind: BaseType.ITEM },
+			{ kind: BaseType.ITEM, seqType: SequenceType.EXACTLY_ONE },
 			() => 'meep'
 		);
 
@@ -247,7 +247,7 @@ declare function x:fn () external;`);
 				localName: 'pre-registered-fn',
 			},
 			[],
-			{ kind: BaseType.ITEM },
+			{ kind: BaseType.ITEM, seqType: SequenceType.EXACTLY_ONE },
 			() => 'meep'
 		);
 

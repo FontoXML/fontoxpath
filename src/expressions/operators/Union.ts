@@ -1,7 +1,7 @@
 import { sortNodeValues } from '../dataTypes/documentOrderUtils';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { BaseType } from '../dataTypes/Value';
+import { BaseType, ValueType, SequenceType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
@@ -57,6 +57,7 @@ class Union extends Expression {
 				if (
 					!isSubtypeOf(value.type, {
 						kind: BaseType.NODE,
+						seqType: SequenceType.EXACTLY_ONE
 					})
 				) {
 					throw new Error('XPTY0004: The sequences to union are not of type node()*');
@@ -74,6 +75,7 @@ class Union extends Expression {
 					(nodeValue) =>
 						!isSubtypeOf(nodeValue.type, {
 							kind: BaseType.NODE,
+							seqType: SequenceType.EXACTLY_ONE
 						})
 				)
 			) {

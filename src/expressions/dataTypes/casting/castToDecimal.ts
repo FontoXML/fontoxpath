@@ -1,17 +1,23 @@
 import createAtomicValue from '../createAtomicValue';
-import { BaseType, ValueType } from '../Value';
+import { BaseType, ValueType, SequenceType } from '../Value';
 import CastResult from './CastResult';
 
 export default function castToDecimal(
 	instanceOf: (typeName: ValueType) => boolean
 ): (value) => CastResult {
-	if (instanceOf({ kind: BaseType.XSINTEGER })) {
+	if (instanceOf({ kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE })) {
 		return (value) => ({
 			successful: true,
-			value: createAtomicValue(value, { kind: BaseType.XSDECIMAL }),
+			value: createAtomicValue(value, {
+				kind: BaseType.XSDECIMAL,
+				seqType: SequenceType.EXACTLY_ONE,
+			}),
 		});
 	}
-	if (instanceOf({ kind: BaseType.XSFLOAT }) || instanceOf({ kind: BaseType.XSDOUBLE })) {
+	if (
+		instanceOf({ kind: BaseType.XSFLOAT, seqType: SequenceType.EXACTLY_ONE }) ||
+		instanceOf({ kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE })
+	) {
 		return (value) => {
 			if (isNaN(value) || !isFinite(value)) {
 				return {
@@ -29,24 +35,36 @@ export default function castToDecimal(
 			}
 			return {
 				successful: true,
-				value: createAtomicValue(value, { kind: BaseType.XSDECIMAL }),
+				value: createAtomicValue(value, {
+					kind: BaseType.XSDECIMAL,
+					seqType: SequenceType.EXACTLY_ONE,
+				}),
 			};
 		};
 	}
-	if (instanceOf({ kind: BaseType.XSBOOLEAN })) {
+	if (instanceOf({ kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE })) {
 		return (value) => ({
 			successful: true,
-			value: createAtomicValue(value ? 1 : 0, { kind: BaseType.XSDECIMAL }),
+			value: createAtomicValue(value ? 1 : 0, {
+				kind: BaseType.XSDECIMAL,
+				seqType: SequenceType.EXACTLY_ONE,
+			}),
 		});
 	}
 
-	if (instanceOf({ kind: BaseType.XSSTRING }) || instanceOf({ kind: BaseType.XSUNTYPEDATOMIC })) {
+	if (
+		instanceOf({ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE }) ||
+		instanceOf({ kind: BaseType.XSUNTYPEDATOMIC, seqType: SequenceType.EXACTLY_ONE })
+	) {
 		return (value) => {
 			const decimalValue = parseFloat(value);
 			if (!isNaN(decimalValue) || isFinite(decimalValue)) {
 				return {
 					successful: true,
-					value: createAtomicValue(decimalValue, { kind: BaseType.XSDECIMAL }),
+					value: createAtomicValue(decimalValue, {
+						kind: BaseType.XSDECIMAL,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
 				};
 			}
 			return {

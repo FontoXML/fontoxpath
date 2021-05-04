@@ -1,22 +1,25 @@
-import { BaseType, ValueType } from '../Value';
+import { BaseType, ValueType, SequenceType } from '../Value';
 import QName from '../valueTypes/QName';
 
 export default function castToStringLikeType(
 	instanceOf: (t: ValueType) => boolean
 ): (value: any) => { successful: true; value: any } | { error: Error; successful: false } {
-	if (instanceOf({ kind: BaseType.XSSTRING }) || instanceOf({ kind: BaseType.XSUNTYPEDATOMIC })) {
+	if (
+		instanceOf({ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE }) ||
+		instanceOf({ kind: BaseType.XSUNTYPEDATOMIC, seqType: SequenceType.EXACTLY_ONE })
+	) {
 		return (value) => ({
 			successful: true,
 			value: value + '',
 		});
 	}
-	if (instanceOf({ kind: BaseType.XSANYURI })) {
+	if (instanceOf({ kind: BaseType.XSANYURI, seqType: SequenceType.EXACTLY_ONE })) {
 		return (value) => ({
 			successful: true,
 			value,
 		});
 	}
-	if (instanceOf({ kind: BaseType.XSQNAME })) {
+	if (instanceOf({ kind: BaseType.XSQNAME, seqType: SequenceType.EXACTLY_ONE })) {
 		return (value: QName) => {
 			return {
 				successful: true,
@@ -24,20 +27,26 @@ export default function castToStringLikeType(
 			};
 		};
 	}
-	if (instanceOf({ kind: BaseType.XSNOTATION })) {
+	if (instanceOf({ kind: BaseType.XSNOTATION, seqType: SequenceType.EXACTLY_ONE })) {
 		return (value) => ({
 			successful: true,
 			value: value.toString(),
 		});
 	}
-	if (instanceOf({ kind: BaseType.XSNUMERIC })) {
-		if (instanceOf({ kind: BaseType.XSINTEGER }) || instanceOf({ kind: BaseType.XSDECIMAL })) {
+	if (instanceOf({ kind: BaseType.XSNUMERIC, seqType: SequenceType.EXACTLY_ONE })) {
+		if (
+			instanceOf({ kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE }) ||
+			instanceOf({ kind: BaseType.XSDECIMAL, seqType: SequenceType.EXACTLY_ONE })
+		) {
 			return (value) => ({
 				successful: true,
 				value: (value + '').replace('e', 'E'),
 			});
 		}
-		if (instanceOf({ kind: BaseType.XSFLOAT }) || instanceOf({ kind: BaseType.XSDOUBLE })) {
+		if (
+			instanceOf({ kind: BaseType.XSFLOAT, seqType: SequenceType.EXACTLY_ONE }) ||
+			instanceOf({ kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE })
+		) {
 			return (value) => {
 				if (isNaN(value)) {
 					return {
@@ -67,39 +76,39 @@ export default function castToStringLikeType(
 		}
 	}
 	if (
-		instanceOf({ kind: BaseType.XSDATETIME }) ||
-		instanceOf({ kind: BaseType.XSDATE }) ||
-		instanceOf({ kind: BaseType.XSTIME }) ||
-		instanceOf({ kind: BaseType.XSGDAY }) ||
-		instanceOf({ kind: BaseType.XSGMONTH }) ||
-		instanceOf({ kind: BaseType.XSGMONTHDAY }) ||
-		instanceOf({ kind: BaseType.XSGYEAR }) ||
-		instanceOf({ kind: BaseType.XSGYEARMONTH })
+		instanceOf({ kind: BaseType.XSDATETIME, seqType: SequenceType.EXACTLY_ONE }) ||
+		instanceOf({ kind: BaseType.XSDATE, seqType: SequenceType.EXACTLY_ONE }) ||
+		instanceOf({ kind: BaseType.XSTIME, seqType: SequenceType.EXACTLY_ONE }) ||
+		instanceOf({ kind: BaseType.XSGDAY, seqType: SequenceType.EXACTLY_ONE }) ||
+		instanceOf({ kind: BaseType.XSGMONTH, seqType: SequenceType.EXACTLY_ONE }) ||
+		instanceOf({ kind: BaseType.XSGMONTHDAY, seqType: SequenceType.EXACTLY_ONE }) ||
+		instanceOf({ kind: BaseType.XSGYEAR, seqType: SequenceType.EXACTLY_ONE }) ||
+		instanceOf({ kind: BaseType.XSGYEARMONTH, seqType: SequenceType.EXACTLY_ONE })
 	) {
 		return (value) => ({
 			successful: true,
 			value: value.toString(),
 		});
 	}
-	if (instanceOf({ kind: BaseType.XSYEARMONTHDURATION })) {
+	if (instanceOf({ kind: BaseType.XSYEARMONTHDURATION, seqType: SequenceType.EXACTLY_ONE })) {
 		return (value) => ({
 			successful: true,
 			value: value.toString(),
 		});
 	}
-	if (instanceOf({ kind: BaseType.XSDAYTIMEDURATION })) {
+	if (instanceOf({ kind: BaseType.XSDAYTIMEDURATION, seqType: SequenceType.EXACTLY_ONE })) {
 		return (value) => ({
 			successful: true,
 			value: value.toString(),
 		});
 	}
-	if (instanceOf({ kind: BaseType.XSDURATION })) {
+	if (instanceOf({ kind: BaseType.XSDURATION, seqType: SequenceType.EXACTLY_ONE })) {
 		return (value) => ({
 			successful: true,
 			value: value.toString(),
 		});
 	}
-	if (instanceOf({ kind: BaseType.XSHEXBINARY })) {
+	if (instanceOf({ kind: BaseType.XSHEXBINARY, seqType: SequenceType.EXACTLY_ONE })) {
 		return (value) => ({
 			successful: true,
 			value: value.toUpperCase(),

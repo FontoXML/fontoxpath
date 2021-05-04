@@ -1,7 +1,7 @@
 import { AttributeNodePointer, ChildNodePointer, ElementNodePointer } from '../../domClone/Pointer';
 import DomFacade from '../../domFacade/DomFacade';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import Value, { BaseType } from '../dataTypes/Value';
+import Value, { BaseType, SequenceType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
@@ -210,8 +210,14 @@ class InsertExpression extends UpdatingExpression {
 							throw errXUTY0005();
 						}
 						if (
-							!isSubtypeOf(tv.value.xdmValue[0].type, { kind: BaseType.ELEMENT }) &&
-							!isSubtypeOf(tv.value.xdmValue[0].type, { kind: BaseType.DOCUMENTNODE })
+							!isSubtypeOf(tv.value.xdmValue[0].type, {
+								kind: BaseType.ELEMENT,
+								seqType: SequenceType.EXACTLY_ONE,
+							}) &&
+							!isSubtypeOf(tv.value.xdmValue[0].type, {
+								kind: BaseType.DOCUMENTNODE,
+								seqType: SequenceType.EXACTLY_ONE,
+							})
 						) {
 							throw errXUTY0005();
 						}
@@ -221,9 +227,18 @@ class InsertExpression extends UpdatingExpression {
 							throw errXUTY0006();
 						}
 						if (
-							!isSubtypeOf(tv.value.xdmValue[0].type, { kind: BaseType.ELEMENT }) &&
-							!isSubtypeOf(tv.value.xdmValue[0].type, { kind: BaseType.TEXT }) &&
-							!isSubtypeOf(tv.value.xdmValue[0].type, { kind: BaseType.COMMENT }) &&
+							!isSubtypeOf(tv.value.xdmValue[0].type, {
+								kind: BaseType.ELEMENT,
+								seqType: SequenceType.EXACTLY_ONE,
+							}) &&
+							!isSubtypeOf(tv.value.xdmValue[0].type, {
+								kind: BaseType.TEXT,
+								seqType: SequenceType.EXACTLY_ONE,
+							}) &&
+							!isSubtypeOf(tv.value.xdmValue[0].type, {
+								kind: BaseType.COMMENT,
+								seqType: SequenceType.EXACTLY_ONE,
+							}) &&
 							!isSubtypeOf(tv.value.xdmValue[0].type, {
 								kind: BaseType.PROCESSINGINSTRUCTION,
 							})
@@ -247,7 +262,12 @@ class InsertExpression extends UpdatingExpression {
 				if (alist.length) {
 					if (this._targetChoice >= TargetChoice.INSERT_INTO) {
 						// a. $target must be an element node [err:XUTY0022].
-						if (!isSubtypeOf(target.type, { kind: BaseType.ELEMENT })) {
+						if (
+							!isSubtypeOf(target.type, {
+								kind: BaseType.ELEMENT,
+								seqType: SequenceType.EXACTLY_ONE,
+							})
+						) {
 							throw errXUTY0022();
 						}
 					} else {

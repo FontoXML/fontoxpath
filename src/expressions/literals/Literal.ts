@@ -5,7 +5,7 @@ import sequenceFactory from '../dataTypes/sequenceFactory';
 
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import ISequence from '../dataTypes/ISequence';
-import { BaseType, ValueType } from '../dataTypes/Value';
+import { BaseType, ValueType, SequenceType } from '../dataTypes/Value';
 
 class Literal extends Expression {
 	private _createValueSequence: () => ISequence;

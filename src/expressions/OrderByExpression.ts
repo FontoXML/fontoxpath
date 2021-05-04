@@ -117,8 +117,19 @@ class OrderByExpression extends FlworExpression {
 							return value;
 						}
 
-						if (isSubtypeOf({ kind: BaseType.XSUNTYPEDATOMIC }, value.type)) {
-							return castToType(value, { kind: BaseType.XSSTRING });
+						if (
+							isSubtypeOf(
+								{
+									kind: BaseType.XSUNTYPEDATOMIC,
+									seqType: SequenceType.EXACTLY_ONE,
+								},
+								value.type
+							)
+						) {
+							return castToType(value, {
+								kind: BaseType.XSSTRING,
+								seqType: SequenceType.EXACTLY_ONE,
+							});
 						}
 
 						return value;

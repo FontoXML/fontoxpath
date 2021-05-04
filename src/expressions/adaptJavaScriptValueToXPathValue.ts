@@ -34,9 +34,15 @@ function adaptSingleJavaScriptValue(value: ValidValue, domFacade: DomFacade): Va
 		case 'boolean':
 			return value ? trueBoolean : falseBoolean;
 		case 'number':
-			return createAtomicValue(value, { kind: BaseType.XSDOUBLE });
+			return createAtomicValue(value, {
+				kind: BaseType.XSDOUBLE,
+				seqType: SequenceType.EXACTLY_ONE,
+			});
 		case 'string':
-			return createAtomicValue(value, { kind: BaseType.XSSTRING });
+			return createAtomicValue(value, {
+				kind: BaseType.XSSTRING,
+				seqType: SequenceType.EXACTLY_ONE,
+			});
 		case 'object':
 			// Test if it is a node
 			if ('nodeType' in value) {
@@ -71,7 +77,10 @@ function adaptSingleJavaScriptValue(value: ValidValue, domFacade: DomFacade): Va
 								: sequenceFactory.singleton(adaptedValue);
 
 						return {
-							key: createAtomicValue(key, { kind: BaseType.XSSTRING }),
+							key: createAtomicValue(key, {
+								kind: BaseType.XSSTRING,
+								seqType: SequenceType.EXACTLY_ONE,
+							}),
 							value: createDoublyIterableSequence(adaptedSequence),
 						};
 					})
@@ -119,20 +128,35 @@ function adaptJavaScriptValueToXPath(
 		case BaseType.XSBOOLEAN:
 			return value ? trueBoolean : falseBoolean;
 		case BaseType.XSSTRING:
-			return createAtomicValue(value + '', { kind: BaseType.XSSTRING });
+			return createAtomicValue(value + '', {
+				kind: BaseType.XSSTRING,
+				seqType: SequenceType.EXACTLY_ONE,
+			});
 		case BaseType.XSDOUBLE:
 		case BaseType.XSNUMERIC:
 			checkNumericType(value, BaseType.XSDOUBLE);
-			return createAtomicValue(+value, { kind: BaseType.XSDOUBLE });
+			return createAtomicValue(+value, {
+				kind: BaseType.XSDOUBLE,
+				seqType: SequenceType.EXACTLY_ONE,
+			});
 		case BaseType.XSDECIMAL:
 			checkNumericType(value, type.kind);
-			return createAtomicValue(+value, { kind: BaseType.XSDECIMAL });
+			return createAtomicValue(+value, {
+				kind: BaseType.XSDECIMAL,
+				seqType: SequenceType.EXACTLY_ONE,
+			});
 		case BaseType.XSINTEGER:
 			checkNumericType(value, type.kind);
-			return createAtomicValue(value | 0, { kind: BaseType.XSINTEGER });
+			return createAtomicValue(value | 0, {
+				kind: BaseType.XSINTEGER,
+				seqType: SequenceType.EXACTLY_ONE,
+			});
 		case BaseType.XSFLOAT:
 			checkNumericType(value, type.kind);
-			return createAtomicValue(+value, { kind: BaseType.XSFLOAT });
+			return createAtomicValue(+value, {
+				kind: BaseType.XSFLOAT,
+				seqType: SequenceType.EXACTLY_ONE,
+			});
 		case BaseType.XSDATE:
 		case BaseType.XSTIME:
 		case BaseType.XSDATETIME:

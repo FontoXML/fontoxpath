@@ -4,7 +4,7 @@ import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import createPointerValue from '../dataTypes/createPointerValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { BaseType } from '../dataTypes/Value';
+import { BaseType, SequenceType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
@@ -31,7 +31,13 @@ class TextConstructor extends Expression {
 				return sequenceFactory.empty();
 			}
 			const content = items
-				.map((item) => castToType(item, { kind: BaseType.XSSTRING }).value)
+				.map(
+					(item) =>
+						castToType(item, {
+							kind: BaseType.XSSTRING,
+							seqType: SequenceType.EXACTLY_ONE,
+						}).value
+				)
 				.join(' ');
 
 			const tinyTextNode: TinyTextNode = {
