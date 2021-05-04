@@ -20,9 +20,15 @@
 //
 // * Multi CPU core support
 // * Component library + mutation strategy
-// * Clean the corpus
+// * Clean up the corpus
 // * Corpus feedback
-// * Run fuzzer on compiled XPath engine
+// * Execute XQuery randomly
+//
+// # References
+//
+// * [Fuzz Week](https://www.youtube.com/playlist?list=PLSkhUfcCXvqHsOy2VUxuoAf5m_7c8RqvO)
+// * [YouTube](https://www.youtube.com/user/gamozolabs)
+// * [Twitch](https://www.twitch.tv/gamozo)
 //
 
 import { evaluateXPath } from 'fontoxpath';
@@ -345,9 +351,6 @@ function worker(tid: number) {
 		// Mutate the input using a simple character mutation
 		expression = mutateString(expression);
 		expression = mutateCharactersInPlace(expression);
-		// if (totalCases % 100 === 0) {
-		// 	process.stdout.write(`${expression}\n`);
-		// }
 
 		// Try to evaluate the expression
 		try {
