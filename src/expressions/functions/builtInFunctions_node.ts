@@ -422,23 +422,23 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		argumentTypes: [ { kind: BaseType.NODE , occurrence: OccurrenceIndicator.ANY  }],
+		argumentTypes: [{ kind: BaseType.NODE, occurrence: OccurrenceIndicator.ANY }],
 		callFunction: fnInnermost,
 		localName: 'innermost',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.NODE , occurrence: OccurrenceIndicator.ANY  },
+		returnType: { kind: BaseType.NODE, occurrence: OccurrenceIndicator.ANY },
 	},
 
 	{
-		argumentTypes: [ { kind: BaseType.NODE , occurrence: OccurrenceIndicator.ANY }],
+		argumentTypes: [{ kind: BaseType.NODE, occurrence: OccurrenceIndicator.ANY }],
 		callFunction: fnOutermost,
 		localName: 'outermost',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType:  { kind: BaseType.NODE , occurrence: OccurrenceIndicator.ANY  },
+		returnType: { kind: BaseType.NODE, occurrence: OccurrenceIndicator.ANY },
 	},
 
 	{
-		argumentTypes: [ { kind: BaseType.NODE , occurrence: OccurrenceIndicator.ANY  }],
+		argumentTypes: [{ kind: BaseType.NODE, occurrence: OccurrenceIndicator.NULLABLE }],
 		callFunction: fnHasChildren,
 		localName: 'has-children',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
@@ -524,14 +524,14 @@ const declarations: BuiltinDeclarationType[] = [
 		callFunction: contextItemAsFirstArgument.bind(null, fnData),
 		localName: 'data',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType:  { kind: BaseType.XSANYATOMICTYPE , occurrence: OccurrenceIndicator.ANY  },
+		returnType: { kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.ANY },
 	},
 	{
-		argumentTypes: [{ kind: BaseType.ITEM , occurrence: OccurrenceIndicator.ANY }],
+		argumentTypes: [{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY }],
 		callFunction: fnData,
 		localName: 'data',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType:  { kind: BaseType.XSANYATOMICTYPE , occurrence: OccurrenceIndicator.ANY  },
+		returnType: { kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.ANY },
 	},
 ];
 
