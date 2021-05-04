@@ -22,7 +22,6 @@
 // * Component library + mutation strategy
 // * Clean up the corpus
 // * Corpus feedback
-// * Execute XQuery randomly
 //
 // # References
 //
@@ -38,6 +37,21 @@ import { sync } from 'slimdom-sax-parser';
 
 function rand(upper: number): number {
 	return Math.floor(Math.random() * upper);
+}
+
+// Pick a random language XPath, XQuery, XQuery UF
+function randomLanguage(): string {
+	const idx = rand(3);
+	switch (idx) {
+		case 0:
+			return evaluateXPath.XPATH_3_1_LANGUAGE;
+		case 1:
+			return evaluateXPath.XQUERY_3_1_LANGUAGE;
+		case 2:
+			return evaluateXPath.XQUERY_UPDATE_3_1_LANGUAGE;
+		default:
+			throw new Error('Out of bounds');
+	}
 }
 
 const STRING_POOL = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-[]{}()<>,./?:;\"\'|\\!@#$%^&*+=';
@@ -348,6 +362,9 @@ function worker(tid: number) {
 		// Select an expression from the corpus
 		let expression = corpus[rand(corpus.length)];
 
+		// Select a random language
+		const language = randomLanguage();
+
 		// Mutate the input using a simple character mutation
 		expression = mutateString(expression);
 		expression = mutateCharactersInPlace(expression);
@@ -355,7 +372,8 @@ function worker(tid: number) {
 		// Try to evaluate the expression
 		try {
 			evaluateXPath(expression, documentNode, null, null, null, {
-				disableCache: true
+				disableCache: true,
+				language: language
 			});
 		} catch (error) {
 			// Not interested in static errors, we're looking for crashes
@@ -379,7 +397,7 @@ function worker(tid: number) {
 
 			// Print the error
 			process.stdout.write(
-				`\n\n!!! Found error !!\nInput: ${expression}\n${error.stack}\n\n`
+				`\n\n!!! Found error !!\nInput: ${expression}\nLanguage: ${language}\n${error.stack}\n\n`
 			);
 		}
 	}
