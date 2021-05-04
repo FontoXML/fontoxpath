@@ -1,7 +1,7 @@
 import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { BaseType, OccurrenceIndicator } from '../dataTypes/Value';
+import { BaseType, SequenceType } from '../dataTypes/Value';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { BuiltinDeclarationType } from './builtInFunctions';
@@ -40,21 +40,21 @@ const fnTrace: FunctionDefinitionType = (
 
 const declarations: BuiltinDeclarationType[] = [
 	{
-		argumentTypes: [{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY }],
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
 		callFunction: fnTrace,
 		localName: 'trace',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ANZERO_OR_MORE,
 	},
 	{
 		argumentTypes: [
-			{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
+			{ kind: BaseType.ITEM, seqType: SequenceType.ANZERO_OR_MORE,
 			{ kind: BaseType.XSSTRING },
 		],
 		callFunction: fnTrace,
 		localName: 'trace',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceType.AZERO_OR_MORE},
 	},
 ];
 

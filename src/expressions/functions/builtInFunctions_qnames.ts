@@ -1,7 +1,7 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { validatePattern } from '../dataTypes/typeHelpers';
-import { BaseType, OccurrenceIndicator } from '../dataTypes/Value';
+import { BaseType, SequenceType } from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import zipSingleton from '../util/zipSingleton';
@@ -96,7 +96,7 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'QName',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
 			{ kind: BaseType.XSSTRING },
 		],
 		returnType: { kind: BaseType.XSQNAME },
@@ -105,22 +105,22 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'prefix-from-QName',
-		argumentTypes: [{ kind: BaseType.XSQNAME, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSNCNAME, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSQNAME, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSNCNAME, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: fnPrefixFromQName,
 	},
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'local-name-from-QName',
-		argumentTypes: [{ kind: BaseType.XSQNAME, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSNCNAME, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSQNAME, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSNCNAME, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: fnLocalNameFromQName,
 	},
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'namespace-uri-from-QName',
-		argumentTypes: [{ kind: BaseType.XSQNAME, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSANYURI, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSQNAME, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSANYURI, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: fnNamespaceURIFromQName,
 	},
 ];

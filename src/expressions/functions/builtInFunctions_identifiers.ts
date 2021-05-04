@@ -4,7 +4,7 @@ import DomFacade from '../../domFacade/DomFacade';
 import createPointerValue from '../dataTypes/createPointerValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { BaseType, OccurrenceIndicator } from '../dataTypes/Value';
+import { BaseType, SequenceType } from '../dataTypes/Value';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { errXPTY0004, XPDY0002 } from '../XPathErrors';
 import { BuiltinDeclarationType } from './builtInFunctions';
@@ -149,18 +149,18 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'id',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.ANY },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.ANZERO_OR_MORE,
 			{ kind: BaseType.NODE },
 		],
-		returnType: { kind: BaseType.ELEMENT, occurrence: OccurrenceIndicator.ANY },
+		returnType: { kind: BaseType.ELEMENT, seqType: SequenceType.AZERO_OR_MORE},
 		callFunction: fnId,
 	},
 
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'id',
-		argumentTypes: [{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.ANY }],
-		returnType: { kind: BaseType.ELEMENT, occurrence: OccurrenceIndicator.ANY },
+		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceType.AZERO_OR_MORE}],
+		returnType: { kind: BaseType.ELEMENT, seqType: SequenceType.ANZERO_OR_MORE,
 		callFunction(dynamicContext, executionParameters, _staticContext, strings) {
 			return fnId(
 				dynamicContext,
@@ -176,18 +176,18 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'idref',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.ANY },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.ANZERO_OR_MORE,
 			{ kind: BaseType.NODE },
 		],
-		returnType: { kind: BaseType.NODE, occurrence: OccurrenceIndicator.ANY },
+		returnType: { kind: BaseType.NODE, seqType: SequenceType.ANZERO_OR_MORE,
 		callFunction: fnIdref,
 	},
 
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'idref',
-		argumentTypes: [{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.ANY }],
-		returnType: { kind: BaseType.NODE, occurrence: OccurrenceIndicator.ANY },
+		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceType.AZERO_OR_MORE}],
+		returnType: { kind: BaseType.NODE, seqType: SequenceType.AZERO_OR_MORE},
 		callFunction(dynamicContext, executionParameters, _staticContext, strings) {
 			return fnIdref(
 				dynamicContext,

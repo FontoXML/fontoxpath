@@ -1,6 +1,6 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { BaseType, OccurrenceIndicator } from '../dataTypes/Value';
+import { BaseType, SequenceType } from '../dataTypes/Value';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { BuiltinDeclarationType } from './builtInFunctions';
 import FunctionDefinitionType from './FunctionDefinitionType';
@@ -93,43 +93,43 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'years-from-duration',
-		argumentTypes: [{ kind: BaseType.XSDURATION, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSINTEGER, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSDURATION, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: fnYearsFromDuration,
 	},
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'months-from-duration',
-		argumentTypes: [{ kind: BaseType.XSDURATION, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSINTEGER, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSDURATION, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: fnMonthsFromDuration,
 	},
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'days-from-duration',
-		argumentTypes: [{ kind: BaseType.XSDURATION, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSINTEGER, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSDURATION, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: fnDaysFromDuration,
 	},
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'hours-from-duration',
-		argumentTypes: [{ kind: BaseType.XSDURATION, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSINTEGER, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSDURATION, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: fnHoursFromDuration,
 	},
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'minutes-from-duration',
-		argumentTypes: [{ kind: BaseType.XSDURATION, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSINTEGER, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSDURATION, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: fnMinutesFromDuration,
 	},
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'seconds-from-duration',
-		argumentTypes: [{ kind: BaseType.XSDURATION, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSDECIMAL, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSDURATION, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSDECIMAL, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: fnSecondsFromDuration,
 	},
 ];

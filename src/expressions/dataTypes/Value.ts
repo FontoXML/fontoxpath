@@ -6,10 +6,10 @@ export default class Value {
 }
 
 /**
- * The base type
+ * The base types within the program.
  * @public
  */
-export enum BaseType {
+export const enum BaseType {
 	XSBOOLEAN,
 	XSSTRING,
 	XSNUMERIC,
@@ -73,24 +73,32 @@ export enum BaseType {
 	FUNCTION,
 	MAP,
 	ARRAY,
-	ELLIPSIS,
 }
 
 /**
  * Handles the occurances in the XPath specs.
- * Zero or one '?' maps to NULLABLE;
- * One or more '+' maps to SOME;
- * Zero or more '*' maps to ANY;
- * Exactly one, empty, singleton, multiple.
+ * Zero or one matches to '?';
+ * One or more matches to '+';
+ * Zero or more matches to '*'
  * @public
  */
-export enum OccurrenceIndicator {
-	// Nullable refers to the '?' symbol: zero or one occurance
-	NULLABLE,
-	// Some refers to the '+' symbol: one or more occurances
-	SOME,
-	// Any refers to the '*' zero or more occurances
-	ANY,
+export enum SequenceType {
+	ZERO_OR_ONE,
+	ONE_OR_MORE,
+	ZERO_OR_MORE,
+	EXACTLY_ONE,
+}
+
+/**
+ * A superset of the SequenceType that also includes the ellipsis operator '...'
+ * @public
+ */
+export const enum ParameterType {
+	ZERO_OR_ONE = SequenceType.ZERO_OR_ONE,
+	ONE_OR_MORE = SequenceType.ONE_OR_MORE,
+	ZERO_OR_MORE = SequenceType.ZERO_OR_MORE,
+	EXACTLY_ONE = SequenceType.EXACTLY_ONE,
+	ELLIPSIS,
 }
 
 export function startWithXS(inType: BaseType): boolean {
@@ -161,7 +169,6 @@ const a = new Map([
 	[BaseType.FUNCTION, false],
 	[BaseType.MAP, false],
 	[BaseType.ARRAY, false],
-	[BaseType.ELLIPSIS, false],
 ]);
 
 /**
@@ -169,80 +176,78 @@ const a = new Map([
  * @public
  */
 export type ValueType =
-	| { kind: BaseType.XSBOOLEAN; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSSTRING; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSNUMERIC; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSDOUBLE; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSDECIMAL; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSINTEGER; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSFLOAT; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSDATE; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSTIME; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSDATETIME; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSDATETIMESTAMP; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSGYEARMONTH; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSGYEAR; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSGMONTHDAY; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSGMONTH; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSGDAY; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSYEARMONTHDURATION; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSDAYTIMEDURATION; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSDURATION; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSUNTYPEDATOMIC; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSANYURI; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSBASE64BINARY; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSHEXBINARY; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSQNAME; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSNCNAME; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSNAME; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSENTITY; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSNONPOSITIVEINTEGER; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSNEGATIVEINTEGER; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSPOSITIVEINTEGER; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSNONNEGATIVEINTEGER; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSLONG; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSINT; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSSHORT; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSBYTE; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSUNSIGNEDINT; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSUNSIGNEDLONG; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSUNSIGNEDBYTE; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSUNSIGNEDSHORT; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSERROR; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSENTITIES; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSIDREF; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSID; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSIDREFS; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSNOTATION; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSANYSIMPLETYPE; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSANYATOMICTYPE; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.ATTRIBUTE; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSNORMALIZEDSTRING; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSNMTOKENS; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSNMTOKEN; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSLANGUAGE; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.XSTOKEN; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.NODE; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.ELEMENT; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.DOCUMENTNODE; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.TEXT; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.PROCESSINGINSTRUCTION; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.COMMENT; occurrence?: OccurrenceIndicator }
-	| { kind: BaseType.ITEM; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSBOOLEAN; seqType: SequenceType }
+	| { kind: BaseType.XSSTRING; seqType: SequenceType }
+	| { kind: BaseType.XSNUMERIC; seqType: SequenceType }
+	| { kind: BaseType.XSDOUBLE; seqType: SequenceType }
+	| { kind: BaseType.XSDECIMAL; seqType: SequenceType }
+	| { kind: BaseType.XSINTEGER; seqType: SequenceType }
+	| { kind: BaseType.XSFLOAT; seqType: SequenceType }
+	| { kind: BaseType.XSDATE; seqType: SequenceType }
+	| { kind: BaseType.XSTIME; seqType: SequenceType }
+	| { kind: BaseType.XSDATETIME; seqType: SequenceType }
+	| { kind: BaseType.XSDATETIMESTAMP; seqType: SequenceType }
+	| { kind: BaseType.XSGYEARMONTH; seqType: SequenceType }
+	| { kind: BaseType.XSGYEAR; seqType: SequenceType }
+	| { kind: BaseType.XSGMONTHDAY; seqType: SequenceType }
+	| { kind: BaseType.XSGMONTH; seqType: SequenceType }
+	| { kind: BaseType.XSGDAY; seqType: SequenceType }
+	| { kind: BaseType.XSYEARMONTHDURATION; seqType: SequenceType }
+	| { kind: BaseType.XSDAYTIMEDURATION; seqType: SequenceType }
+	| { kind: BaseType.XSDURATION; seqType: SequenceType }
+	| { kind: BaseType.XSUNTYPEDATOMIC; seqType: SequenceType }
+	| { kind: BaseType.XSANYURI; seqType: SequenceType }
+	| { kind: BaseType.XSBASE64BINARY; seqType: SequenceType }
+	| { kind: BaseType.XSHEXBINARY; seqType: SequenceType }
+	| { kind: BaseType.XSQNAME; seqType: SequenceType }
+	| { kind: BaseType.XSNCNAME; seqType: SequenceType }
+	| { kind: BaseType.XSNAME; seqType: SequenceType }
+	| { kind: BaseType.XSENTITY; seqType: SequenceType }
+	| { kind: BaseType.XSNONPOSITIVEINTEGER; seqType: SequenceType }
+	| { kind: BaseType.XSNEGATIVEINTEGER; seqType: SequenceType }
+	| { kind: BaseType.XSPOSITIVEINTEGER; seqType: SequenceType }
+	| { kind: BaseType.XSNONNEGATIVEINTEGER; seqType: SequenceType }
+	| { kind: BaseType.XSLONG; seqType: SequenceType }
+	| { kind: BaseType.XSINT; seqType: SequenceType }
+	| { kind: BaseType.XSSHORT; seqType: SequenceType }
+	| { kind: BaseType.XSBYTE; seqType: SequenceType }
+	| { kind: BaseType.XSUNSIGNEDINT; seqType: SequenceType }
+	| { kind: BaseType.XSUNSIGNEDLONG; seqType: SequenceType }
+	| { kind: BaseType.XSUNSIGNEDBYTE; seqType: SequenceType }
+	| { kind: BaseType.XSUNSIGNEDSHORT; seqType: SequenceType }
+	| { kind: BaseType.XSERROR; seqType: SequenceType }
+	| { kind: BaseType.XSENTITIES; seqType: SequenceType }
+	| { kind: BaseType.XSIDREF; seqType: SequenceType }
+	| { kind: BaseType.XSID; seqType: SequenceType }
+	| { kind: BaseType.XSIDREFS; seqType: SequenceType }
+	| { kind: BaseType.XSNOTATION; seqType: SequenceType }
+	| { kind: BaseType.XSANYSIMPLETYPE; seqType: SequenceType }
+	| { kind: BaseType.XSANYATOMICTYPE; seqType: SequenceType }
+	| { kind: BaseType.ATTRIBUTE; seqType: SequenceType }
+	| { kind: BaseType.XSNORMALIZEDSTRING; seqType: SequenceType }
+	| { kind: BaseType.XSNMTOKENS; seqType: SequenceType }
+	| { kind: BaseType.XSNMTOKEN; seqType: SequenceType }
+	| { kind: BaseType.XSLANGUAGE; seqType: SequenceType }
+	| { kind: BaseType.XSTOKEN; seqType: SequenceType }
+	| { kind: BaseType.NODE; seqType: SequenceType }
+	| { kind: BaseType.ELEMENT; seqType: SequenceType }
+	| { kind: BaseType.DOCUMENTNODE; seqType: SequenceType }
+	| { kind: BaseType.TEXT; seqType: SequenceType }
+	| { kind: BaseType.PROCESSINGINSTRUCTION; seqType: SequenceType }
+	| { kind: BaseType.COMMENT; seqType: SequenceType }
+	| { kind: BaseType.ITEM; seqType: SequenceType }
 	| {
 			kind: BaseType.FUNCTION;
-			occurrence?: OccurrenceIndicator;
+			seqType: SequenceType;
 			params: ValueType[];
 			returnType: ValueType | undefined;
 	  }
 	| {
 			items: [ValueType, ValueType][];
 			kind: BaseType.MAP;
-			occurrence?: OccurrenceIndicator;
+			seqType: SequenceType;
 	  }
-	| { items: ValueType[]; kind: BaseType.ARRAY; occurrence?: OccurrenceIndicator }
-	// item types, sequence types, function args = seq + "..."
-	| { kind: BaseType.ELLIPSIS; occurrence?: OccurrenceIndicator };
+	| { items: ValueType[]; kind: BaseType.ARRAY; seqType: SequenceType };
 
 /**
  * Recursively creates a hash for a type and its potential subtypes
@@ -365,13 +370,13 @@ export function baseTypeToString(input: BaseType): string {
  * @returns the correct string representation of the type
  */
 export function valueTypeToString(input: ValueType): string {
-	if (input.occurrence === OccurrenceIndicator.ANY) {
+	if (input.seqType === SequenceType.ZERO_OR_MORE) {
 		return baseTypeToString(input.kind) + '*';
 	}
-	if (input.occurrence === OccurrenceIndicator.SOME) {
+	if (input.seqType === SequenceType.ONE_OR_MORE) {
 		return baseTypeToString(input.kind) + '+';
 	}
-	if (input.occurrence === OccurrenceIndicator.NULLABLE) {
+	if (input.seqType === SequenceType.ZERO_OR_ONE) {
 		return baseTypeToString(input.kind) + '?';
 	}
 

@@ -7,7 +7,7 @@ import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { BaseType, OccurrenceIndicator, ValueType } from '../dataTypes/Value';
+import { BaseType, SequenceType, ValueType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
@@ -243,12 +243,12 @@ const fnRandomNumberGenerator: FunctionDefinitionType = (
 							localName: '',
 							namespaceURI: '',
 							argumentTypes: [
-								{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
+								{ kind: BaseType.ITEM, occurrence: SequenceType.ZERO_OR_MORE },
 							],
 							arity: 1,
 							returnType: {
 								kind: BaseType.ITEM,
-								occurrence: OccurrenceIndicator.ANY,
+								occurrence: SequenceType.ZERO_OR_MORE,
 							},
 						})
 					),
@@ -261,32 +261,32 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'abs',
-		argumentTypes: [{ kind: BaseType.XSNUMERIC, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSNUMERIC, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSNUMERIC, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSNUMERIC, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: fnAbs,
 	},
 
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'ceiling',
-		argumentTypes: [{ kind: BaseType.XSNUMERIC, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSNUMERIC, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSNUMERIC, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSNUMERIC, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: fnCeiling,
 	},
 
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'floor',
-		argumentTypes: [{ kind: BaseType.XSNUMERIC, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSNUMERIC, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSNUMERIC, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSNUMERIC, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: fnFloor,
 	},
 
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'round',
-		argumentTypes: [{ kind: BaseType.XSNUMERIC, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSNUMERIC, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSNUMERIC, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSNUMERIC, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: fnRound.bind(null, false),
 	},
 
@@ -294,18 +294,18 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'round',
 		argumentTypes: [
-			{ kind: BaseType.XSNUMERIC, occurrence: OccurrenceIndicator.NULLABLE },
+			{ kind: BaseType.XSNUMERIC, seqType: SequenceType.ZERO_OR_ONE },
 			{ kind: BaseType.XSINTEGER },
 		],
-		returnType: { kind: BaseType.XSNUMERIC, occurrence: OccurrenceIndicator.NULLABLE },
+		returnType: { kind: BaseType.XSNUMERIC, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: fnRound.bind(null, false),
 	},
 
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'round-half-to-even',
-		argumentTypes: [{ kind: BaseType.XSNUMERIC, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSNUMERIC, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSNUMERIC, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSNUMERIC, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: fnRound.bind(null, true),
 	},
 
@@ -313,19 +313,17 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'round-half-to-even',
 		argumentTypes: [
-			{ kind: BaseType.XSNUMERIC, occurrence: OccurrenceIndicator.NULLABLE },
+			{ kind: BaseType.XSNUMERIC, seqType: SequenceType.ZERO_OR_ONE },
 			{ kind: BaseType.XSINTEGER },
 		],
-		returnType: { kind: BaseType.XSNUMERIC, occurrence: OccurrenceIndicator.NULLABLE },
+		returnType: { kind: BaseType.XSNUMERIC, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: fnRound.bind(null, true),
 	},
 
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'number',
-		argumentTypes: [
-			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
-		],
+		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
 		returnType: { kind: BaseType.XSDOUBLE },
 		callFunction: fnNumber,
 	},
@@ -339,7 +337,7 @@ const declarations: BuiltinDeclarationType[] = [
 			const atomizedContextItem =
 				dynamicContext.contextItem &&
 				performFunctionConversion(
-					{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+					{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE },
 					sequenceFactory.singleton(dynamicContext.contextItem),
 					executionParameters,
 					'fn:number',
@@ -371,7 +369,7 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [
 			{
 				kind: BaseType.XSANYATOMICTYPE,
-				occurrence: OccurrenceIndicator.NULLABLE,
+				seqType: SequenceType.ZERO_OR_ONE,
 			},
 		],
 		returnType: { kind: BaseType.MAP, items: [] },

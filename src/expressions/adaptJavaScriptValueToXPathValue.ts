@@ -11,7 +11,7 @@ import sequenceFactory from './dataTypes/sequenceFactory';
 import Value, {
 	BaseType,
 	baseTypeToString,
-	OccurrenceIndicator,
+	SequenceType,
 	ValueType,
 	valueTypeToString,
 } from './dataTypes/Value';
@@ -182,14 +182,14 @@ export function adaptJavaScriptValueToArrayOfXPathValues(
 	value: UntypedExternalValue,
 	expectedType: ValueType
 ): Value[] {
-	if (expectedType.occurrence === OccurrenceIndicator.NULLABLE) {
+	if (expectedType.seqType === SequenceType.ZERO_OR_ONE) {
 		const converted = adaptJavaScriptValueToXPath(expectedType, value, domFacade);
 		return converted === null ? [] : [converted];
 	}
 
 	if (
-		expectedType.occurrence === OccurrenceIndicator.ANY ||
-		expectedType.occurrence === OccurrenceIndicator.SOME
+		expectedType.seqType === SequenceType.ZERO_OR_MORE ||
+		expectedType.seqType === SequenceType.ONE_OR_MORE
 	) {
 		if (!Array.isArray(value)) {
 			throw new Error(
@@ -227,7 +227,7 @@ export function adaptJavaScriptValueToArrayOfXPathValues(
 export function adaptJavaScriptValueToSequence(
 	domFacade: DomFacade,
 	value: UntypedExternalValue,
-	expectedType: ValueType = { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.NULLABLE }
+	expectedType: ValueType = { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_ONE }
 ): ISequence {
 	return sequenceFactory.create(
 		adaptJavaScriptValueToArrayOfXPathValues(domFacade, value, expectedType)

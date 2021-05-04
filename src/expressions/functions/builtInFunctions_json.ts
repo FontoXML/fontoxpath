@@ -4,7 +4,7 @@ import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 
 import ISequence from '../dataTypes/ISequence';
-import { BaseType, OccurrenceIndicator } from '../dataTypes/Value';
+import { BaseType, SequenceType } from '../dataTypes/Value';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import { BuiltinDeclarationType } from './builtInFunctions';
@@ -68,7 +68,7 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'parse-json',
 		argumentTypes: [{ kind: BaseType.XSSTRING }],
-		returnType: { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.NULLABLE },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: fnParseJson,
 	},
 ];

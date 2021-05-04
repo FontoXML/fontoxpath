@@ -3,7 +3,7 @@ import { ARRAY_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import FunctionValue from './FunctionValue';
 import ISequence from './ISequence';
 import sequenceFactory from './sequenceFactory';
-import { BaseType, OccurrenceIndicator } from './Value';
+import { BaseType, SequenceType } from './Value';
 
 class ArrayValue extends FunctionValue {
 	public members: (() => ISequence)[];
@@ -22,7 +22,7 @@ class ArrayValue extends FunctionValue {
 			// argumentTypes: [{ type: { kind: BaseType.XSINTEGER }, isRestArgument: false }],
 			argumentTypes: [{ kind: BaseType.XSINTEGER }],
 			arity: 1,
-			returnType: { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
+			returnType: { kind: BaseType.ITEM, occurrence: SequenceType.AZERO_OR_MORE },
 		});
 		this.type = { kind: BaseType.ARRAY, items: [] };
 		this.members = members;

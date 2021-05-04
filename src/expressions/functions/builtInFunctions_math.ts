@@ -1,6 +1,6 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { BaseType, OccurrenceIndicator } from '../dataTypes/Value';
+import { BaseType, SequenceType } from '../dataTypes/Value';
 
 import { MATH_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { BuiltinDeclarationType } from './builtInFunctions';
@@ -181,32 +181,32 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: MATH_NAMESPACE_URI,
 		localName: 'exp',
-		argumentTypes: [{ kind: BaseType.XSDOUBLE, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSDOUBLE, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSDOUBLE, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSDOUBLE, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: mathExp,
 	},
 
 	{
 		namespaceURI: MATH_NAMESPACE_URI,
 		localName: 'exp10',
-		argumentTypes: [{ kind: BaseType.XSDOUBLE, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSDOUBLE, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSDOUBLE, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSDOUBLE, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: mathExp10,
 	},
 
 	{
 		namespaceURI: MATH_NAMESPACE_URI,
 		localName: 'log',
-		argumentTypes: [{ kind: BaseType.XSDOUBLE, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSDOUBLE, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSDOUBLE, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSDOUBLE, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: mathLog,
 	},
 
 	{
 		namespaceURI: MATH_NAMESPACE_URI,
 		localName: 'log10',
-		argumentTypes: [{ kind: BaseType.XSDOUBLE, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSDOUBLE, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSDOUBLE, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSDOUBLE, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: mathLog10,
 	},
 
@@ -214,66 +214,66 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: MATH_NAMESPACE_URI,
 		localName: 'pow',
 		argumentTypes: [
-			{ kind: BaseType.XSDOUBLE, occurrence: OccurrenceIndicator.NULLABLE },
+			{ kind: BaseType.XSDOUBLE, seqType: SequenceType.ZERO_OR_ONE },
 			{ kind: BaseType.XSNUMERIC },
 		],
-		returnType: { kind: BaseType.XSDOUBLE, occurrence: OccurrenceIndicator.NULLABLE },
+		returnType: { kind: BaseType.XSDOUBLE, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: mathPow,
 	},
 
 	{
 		namespaceURI: MATH_NAMESPACE_URI,
 		localName: 'sqrt',
-		argumentTypes: [{ kind: BaseType.XSDOUBLE, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSDOUBLE, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSDOUBLE, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSDOUBLE, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: mathSqrt,
 	},
 
 	{
 		namespaceURI: MATH_NAMESPACE_URI,
 		localName: 'sin',
-		argumentTypes: [{ kind: BaseType.XSDOUBLE, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSDOUBLE, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSDOUBLE, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSDOUBLE, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: mathSin,
 	},
 
 	{
 		namespaceURI: MATH_NAMESPACE_URI,
 		localName: 'cos',
-		argumentTypes: [{ kind: BaseType.XSDOUBLE, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSDOUBLE, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSDOUBLE, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSDOUBLE, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: mathCos,
 	},
 
 	{
 		namespaceURI: MATH_NAMESPACE_URI,
 		localName: 'tan',
-		argumentTypes: [{ kind: BaseType.XSDOUBLE, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSDOUBLE, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSDOUBLE, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSDOUBLE, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: mathTan,
 	},
 
 	{
 		namespaceURI: MATH_NAMESPACE_URI,
 		localName: 'asin',
-		argumentTypes: [{ kind: BaseType.XSDOUBLE, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSDOUBLE, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSDOUBLE, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSDOUBLE, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: mathAsin,
 	},
 
 	{
 		namespaceURI: MATH_NAMESPACE_URI,
 		localName: 'acos',
-		argumentTypes: [{ kind: BaseType.XSDOUBLE, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSDOUBLE, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSDOUBLE, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSDOUBLE, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: mathAcos,
 	},
 
 	{
 		namespaceURI: MATH_NAMESPACE_URI,
 		localName: 'atan',
-		argumentTypes: [{ kind: BaseType.XSDOUBLE, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSDOUBLE, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSDOUBLE, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSDOUBLE, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: mathAtan,
 	},
 
@@ -281,10 +281,10 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: MATH_NAMESPACE_URI,
 		localName: 'atan2',
 		argumentTypes: [
-			{ kind: BaseType.XSDOUBLE, occurrence: OccurrenceIndicator.NULLABLE },
+			{ kind: BaseType.XSDOUBLE, seqType: SequenceType.ZERO_OR_ONE },
 			{ kind: BaseType.XSDOUBLE },
 		],
-		returnType: { kind: BaseType.XSDOUBLE, occurrence: OccurrenceIndicator.NULLABLE },
+		returnType: { kind: BaseType.XSDOUBLE, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: mathAtan2,
 	},
 ];

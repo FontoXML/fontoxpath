@@ -15,7 +15,7 @@ import evaluateXPathToNumbers from './evaluateXPathToNumbers';
 import evaluateXPathToString from './evaluateXPathToString';
 import evaluateXPathToStrings from './evaluateXPathToStrings';
 import executePendingUpdateList from './executePendingUpdateList';
-import { BaseType, OccurrenceIndicator, ValueType } from './expressions/dataTypes/Value';
+import { BaseType, SequenceType, ValueType } from './expressions/dataTypes/Value';
 import { getBucketsForNode } from './getBuckets';
 import INodesFactory from './nodesFactory/INodesFactory';
 import ISimpleNodesFactory from './nodesFactory/ISimpleNodesFactory';
@@ -189,7 +189,7 @@ export {
 	Logger,
 	NamespaceResolver,
 	Node,
-	OccurrenceIndicator,
+	SequenceType as OccurrenceIndicator,
 	Options,
 	ProcessingInstruction,
 	Profiler,

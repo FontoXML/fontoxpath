@@ -5,7 +5,7 @@ import FunctionValue from '../dataTypes/FunctionValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value, { BaseType, OccurrenceIndicator, ValueType } from '../dataTypes/Value';
+import Value, { BaseType, SequenceType, ValueType } from '../dataTypes/Value';
 import valueCompare from '../operators/compares/valueCompare';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { DONE_TOKEN, IIterator, IterationHint, ready } from '../util/iterators';
@@ -687,7 +687,7 @@ const fnFoldRight: FunctionDefinitionType = (
 
 const declarations: BuiltinDeclarationType[] = [
 	{
-		argumentTypes: [{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY }],
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
 		callFunction: fnEmpty,
 		localName: 'empty',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
@@ -695,7 +695,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY }],
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
 		callFunction: fnExists,
 		localName: 'exists',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
@@ -703,55 +703,55 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY }],
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
 		callFunction: fnHead,
 		localName: 'head',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.NULLABLE },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_ONE },
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY }],
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
 		callFunction: fnTail,
 		localName: 'tail',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 	},
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
+			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 			{ kind: BaseType.XSINTEGER },
-			{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
+			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 		],
 		callFunction: fnInsertBefore,
 		localName: 'insert-before',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 	},
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
+			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 			{ kind: BaseType.XSINTEGER },
 		],
 		callFunction: fnRemove,
 		localName: 'remove',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY }],
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
 		callFunction: fnReverse,
 		localName: 'reverse',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 	},
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
+			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 			{ kind: BaseType.XSDOUBLE },
 		],
 		callFunction: ((dynamicContext, executionParameters, _staticContext, sequence, start) =>
@@ -765,43 +765,43 @@ const declarations: BuiltinDeclarationType[] = [
 			)) as FunctionDefinitionType,
 		localName: 'subsequence',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 	},
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
+			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 			{ kind: BaseType.XSDOUBLE },
 			{ kind: BaseType.XSDOUBLE },
 		],
 		callFunction: fnSubsequence,
 		localName: 'subsequence',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY }],
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
 		callFunction: fnUnordered,
 		localName: 'unordered',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 	},
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.ANY },
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_MORE },
 			{ kind: BaseType.XSANYATOMICTYPE },
 		],
 		callFunction: fnIndexOf,
 		localName: 'index-of',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSINTEGER, occurrence: OccurrenceIndicator.ANY },
+		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.ZERO_OR_MORE },
 	},
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.ANY },
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_MORE },
 			{ kind: BaseType.XSANYATOMICTYPE },
 			{ kind: BaseType.XSSTRING },
 		],
@@ -810,13 +810,13 @@ const declarations: BuiltinDeclarationType[] = [
 		},
 		localName: 'index-of',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSINTEGER, occurrence: OccurrenceIndicator.ANY },
+		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.ZERO_OR_MORE },
 	},
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
-			{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
+			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 		],
 		callFunction: fnDeepEqual,
 		localName: 'deep-equal',
@@ -826,8 +826,8 @@ const declarations: BuiltinDeclarationType[] = [
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
-			{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
+			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 			{ kind: BaseType.XSSTRING },
 		],
 		callFunction() {
@@ -839,7 +839,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY }],
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
 		callFunction: fnCount,
 		localName: 'count',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
@@ -847,24 +847,24 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.ANY }],
+		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_MORE }],
 		callFunction: fnAvg,
 		localName: 'avg',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		returnType: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE },
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.ANY }],
+		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_MORE }],
 		callFunction: fnMax,
 		localName: 'max',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		returnType: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE },
 	},
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.ANY },
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_MORE },
 			{ kind: BaseType.XSSTRING },
 		],
 		callFunction() {
@@ -872,20 +872,20 @@ const declarations: BuiltinDeclarationType[] = [
 		},
 		localName: 'max',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		returnType: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE },
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.ANY }],
+		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_MORE }],
 		callFunction: fnMin,
 		localName: 'min',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		returnType: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE },
 	},
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.ANY },
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_MORE },
 			{ kind: BaseType.XSSTRING },
 		],
 		callFunction() {
@@ -893,11 +893,11 @@ const declarations: BuiltinDeclarationType[] = [
 		},
 		localName: 'min',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		returnType: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE },
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.ANY }],
+		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_MORE }],
 		callFunction: ((dynamicContext, executionParameters, _staticContext, sequence) => {
 			return fnSum(
 				dynamicContext,
@@ -914,33 +914,33 @@ const declarations: BuiltinDeclarationType[] = [
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.ANY },
-			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_MORE },
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE },
 		],
 		callFunction: fnSum,
 		localName: 'sum',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		returnType: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE },
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY }],
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
 		callFunction: fnZeroOrOne,
 		localName: 'zero-or-one',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.NULLABLE },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_ONE },
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY }],
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
 		callFunction: fnOneOrMore,
 		localName: 'one-or-more',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.SOME },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ONE_OR_MORE },
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY }],
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
 		callFunction: fnExactlyOne,
 		localName: 'exactly-one',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
@@ -949,48 +949,48 @@ const declarations: BuiltinDeclarationType[] = [
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
+			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 			{ kind: BaseType.FUNCTION, returnType: undefined, params: [] },
 		],
 		callFunction: fnFilter,
 		localName: 'filter',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 	},
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
+			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 			{ kind: BaseType.FUNCTION, returnType: undefined, params: [] },
 		],
 		callFunction: fnForEach,
 		localName: 'for-each',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 	},
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
-			{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
+			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 			{ kind: BaseType.FUNCTION, returnType: undefined, params: [] },
 		],
 		callFunction: fnFoldLeft,
 		localName: 'fold-left',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 	},
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
-			{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
+			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 			{ kind: BaseType.FUNCTION, returnType: undefined, params: [] },
 		],
 		callFunction: fnFoldRight,
 		localName: 'fold-right',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 	},
 ];
 

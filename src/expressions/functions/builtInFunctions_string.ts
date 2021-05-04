@@ -5,7 +5,7 @@ import createAtomicValue from '../dataTypes/createAtomicValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value, { BaseType, OccurrenceIndicator } from '../dataTypes/Value';
+import Value, { BaseType, SequenceType } from '../dataTypes/Value';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { DONE_TOKEN, ready } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
@@ -586,10 +586,10 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'compare',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
-			{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
 		],
-		returnType: { kind: BaseType.XSINTEGER, occurrence: OccurrenceIndicator.NULLABLE },
+		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: fnCompare,
 	},
 
@@ -597,11 +597,11 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'compare',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
-			{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
 			{ kind: BaseType.XSSTRING },
 		],
-		returnType: { kind: BaseType.XSINTEGER, occurrence: OccurrenceIndicator.NULLABLE },
+		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: collationError,
 	},
 
@@ -609,8 +609,8 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'concat',
 		argumentTypes: [
-			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
-			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE },
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE },
 			{ kind: BaseType.ELLIPSIS },
 		],
 		returnType: { kind: BaseType.XSSTRING },
@@ -621,9 +621,9 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'contains',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
-			{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
-			{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
 		],
 		returnType: { kind: BaseType.XSBOOLEAN },
 		callFunction: collationError,
@@ -633,8 +633,8 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'contains',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
-			{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
 		],
 		returnType: { kind: BaseType.XSBOOLEAN },
 		callFunction: fnContains,
@@ -644,8 +644,8 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'ends-with',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
-			{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
 		],
 		returnType: { kind: BaseType.XSBOOLEAN },
 		callFunction: fnEndsWith,
@@ -655,8 +655,8 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'ends-with',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
-			{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
 			{ kind: BaseType.XSSTRING },
 		],
 		returnType: { kind: BaseType.XSBOOLEAN },
@@ -666,7 +666,7 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'normalize-space',
-		argumentTypes: [{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE }],
+		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE }],
 		returnType: { kind: BaseType.XSSTRING },
 		callFunction: fnNormalizeSpace,
 	},
@@ -692,8 +692,8 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'starts-with',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
-			{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
 		],
 		returnType: { kind: BaseType.XSBOOLEAN },
 		callFunction: fnStartsWith,
@@ -703,8 +703,8 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'starts-with',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
-			{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
 			{ kind: BaseType.XSSTRING },
 		],
 		returnType: { kind: BaseType.XSBOOLEAN },
@@ -714,7 +714,7 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'string',
-		argumentTypes: [{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.NULLABLE }],
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_ONE }],
 		returnType: { kind: BaseType.XSSTRING },
 		callFunction: fnString,
 	},
@@ -731,8 +731,8 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'substring-before',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
-			{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
 		],
 		returnType: { kind: BaseType.XSSTRING },
 		callFunction: fnSubstringBefore,
@@ -742,8 +742,8 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'substring-after',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
-			{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
 		],
 		returnType: { kind: BaseType.XSSTRING },
 		callFunction: fnSubstringAfter,
@@ -753,7 +753,7 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'substring',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
 			{ kind: BaseType.XSDOUBLE },
 		],
 		returnType: { kind: BaseType.XSSTRING },
@@ -764,7 +764,7 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'substring',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
 			{ kind: BaseType.XSDOUBLE },
 			{ kind: BaseType.XSDOUBLE },
 		],
@@ -775,7 +775,7 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'upper-case',
-		argumentTypes: [{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE }],
+		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE }],
 		returnType: { kind: BaseType.XSSTRING },
 		callFunction: fnUpperCase,
 	},
@@ -783,7 +783,7 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'lower-case',
-		argumentTypes: [{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE }],
+		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE }],
 		returnType: { kind: BaseType.XSSTRING },
 		callFunction: fnLowerCase,
 	},
@@ -792,7 +792,7 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'string-join',
 		argumentTypes: [
-			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.ANY },
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_MORE },
 			{ kind: BaseType.XSSTRING },
 		],
 		returnType: { kind: BaseType.XSSTRING },
@@ -802,7 +802,7 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'string-join',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.ANY }],
+		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_MORE }],
 		returnType: { kind: BaseType.XSSTRING },
 		callFunction(dynamicContext, executionParameters, staticContext, arg1) {
 			return fnStringJoin(
@@ -818,7 +818,7 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'string-length',
-		argumentTypes: [{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE }],
+		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE }],
 		returnType: { kind: BaseType.XSINTEGER },
 		callFunction: fnStringLength,
 	},
@@ -844,13 +844,13 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'tokenize',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
 			{ kind: BaseType.XSSTRING },
 			{ kind: BaseType.XSSTRING },
 		],
 		returnType: {
 			kind: BaseType.XSSTRING,
-			occurrence: OccurrenceIndicator.ANY,
+			seqType: SequenceType.ZERO_OR_MORE,
 		},
 		callFunction(
 			_dynamicContext,
@@ -868,12 +868,12 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'tokenize',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
 			{ kind: BaseType.XSSTRING },
 		],
 		returnType: {
 			kind: BaseType.XSSTRING,
-			occurrence: OccurrenceIndicator.ANY,
+			seqType: SequenceType.ZERO_OR_MORE,
 		},
 		callFunction: fnTokenize,
 	},
@@ -881,10 +881,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'tokenize',
-		argumentTypes: [{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE }],
+		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE }],
 		returnType: {
 			kind: BaseType.XSSTRING,
-			occurrence: OccurrenceIndicator.ANY,
+			seqType: SequenceType.ZERO_OR_MORE,
 		},
 		callFunction(dynamicContext, executionParameters, staticContext, input) {
 			return fnTokenize(
@@ -899,7 +899,7 @@ const declarations: BuiltinDeclarationType[] = [
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
 			{ kind: BaseType.XSSTRING },
 			{ kind: BaseType.XSSTRING },
 		],
@@ -913,7 +913,7 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [
 			{
 				kind: BaseType.XSINTEGER,
-				occurrence: OccurrenceIndicator.ANY,
+				seqType: SequenceType.ZERO_OR_MORE,
 			},
 		],
 		callFunction: fnCodepointsToString,
@@ -923,18 +923,18 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE }],
+		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE }],
 		callFunction: fnStringToCodepoints,
 		localName: 'string-to-codepoints',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		returnType: {
-			kind: BaseType.XSINTEGER,
-			occurrence: OccurrenceIndicator.ANY,
+			kind: BaseType.XSINTEGER,ZERO_OR_MORE
+			seqType: SequenceType.ANY,
 		},
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE }],
+		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE }],
 		callFunction: fnEncodeForUri,
 		localName: 'encode-for-uri',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
@@ -942,7 +942,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE }],
+		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE }],
 		callFunction: fnIriToUri,
 		localName: 'iri-to-uri',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
@@ -951,21 +951,21 @@ const declarations: BuiltinDeclarationType[] = [
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
-			{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
 		],
 		callFunction: fnCodepointEqual,
 		localName: 'codepoint-equal',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		returnType: {
 			kind: BaseType.XSBOOLEAN,
-			occurrence: OccurrenceIndicator.NULLABLE,
+			seqType: SequenceType.ZERO_OR_ONE,
 		},
 	},
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
 			{ kind: BaseType.XSSTRING },
 		],
 		callFunction: fnMatches,

@@ -1,6 +1,6 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { BaseType, OccurrenceIndicator } from '../dataTypes/Value';
+import { BaseType, SequenceType } from '../dataTypes/Value';
 import { ready } from '../util/iterators';
 import { BuiltinDeclarationType } from './builtInFunctions';
 import FunctionDefinitionType from './FunctionDefinitionType';
@@ -38,10 +38,10 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: 'http://fontoxpath/operators',
 		localName: 'to',
 		argumentTypes: [
-			{ kind: BaseType.XSINTEGER, occurrence: OccurrenceIndicator.NULLABLE },
-			{ kind: BaseType.XSINTEGER, occurrence: OccurrenceIndicator.NULLABLE },
+			{ kind: BaseType.XSINTEGER, seqType: SequenceType.ZERO_OR_ONE },
+			{ kind: BaseType.XSINTEGER, seqType: SequenceType.ZERO_OR_ONE },
 		],
-		returnType: { kind: BaseType.XSINTEGER, occurrence: OccurrenceIndicator.ANY },
+		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.ZERO_OR_MORE },
 		callFunction: opTo,
 	},
 ];

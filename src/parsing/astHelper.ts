@@ -1,6 +1,6 @@
 import {
 	BaseType,
-	OccurrenceIndicator,
+	SequenceType,
 	stringToValueType,
 	ValueType,
 } from '../expressions/dataTypes/Value';
@@ -81,7 +81,7 @@ function getTextContent(ast: IAST): string {
 function getTypeDeclaration(ast: IAST): ValueType {
 	const typeDeclarationAst = getFirstChild(ast, 'typeDeclaration');
 	if (!typeDeclarationAst || getFirstChild(typeDeclarationAst, 'voidSequenceType')) {
-		return { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY };
+		return { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE };
 	}
 
 	const determineType = (typeAst: IAST): ValueType => {
@@ -140,13 +140,13 @@ function getTypeDeclaration(ast: IAST): ValueType {
 
 	switch (occurrence) {
 		case '*':
-			type.occurrence = OccurrenceIndicator.ANY;
+			type.seqType = SequenceType.ZERO_OR_MORE;
 			return type;
 		case '?':
-			type.occurrence = OccurrenceIndicator.NULLABLE;
+			type.seqType = SequenceType.ZERO_OR_ONE;
 			return type;
 		case '+':
-			type.occurrence = OccurrenceIndicator.SOME;
+			type.seqType = SequenceType.ONE_OR_MORE;
 			return type;
 		case '':
 		case null:

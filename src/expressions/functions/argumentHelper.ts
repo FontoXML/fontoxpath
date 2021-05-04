@@ -3,12 +3,7 @@ import castToType from '../dataTypes/castToType';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import promoteToType from '../dataTypes/promoteToType';
-import Value, {
-	BaseType,
-	OccurrenceIndicator,
-	ValueType,
-	valueTypeToString,
-} from '../dataTypes/Value';
+import Value, { BaseType, SequenceType, ValueType, valueTypeToString } from '../dataTypes/Value';
 import ExecutionParameters from '../ExecutionParameters';
 
 function mapItem(
@@ -79,7 +74,7 @@ export const performFunctionConversion = (
 	functionName: string,
 	isReturn: boolean
 ): ISequence => {
-	if (argumentType.occurrence === OccurrenceIndicator.NULLABLE) {
+	if (argumentType.seqType === SequenceType.ZERO_OR_ONE) {
 		return argument.switchCases({
 			default: () =>
 				argument.map((value) =>
@@ -96,7 +91,7 @@ export const performFunctionConversion = (
 			},
 		});
 	}
-	if (argumentType.occurrence === OccurrenceIndicator.SOME) {
+	if (argumentType.seqType === SequenceType.ONE_OR_MORE) {
 		return argument.switchCases({
 			empty: () => {
 				throw new Error(
@@ -113,7 +108,7 @@ export const performFunctionConversion = (
 				),
 		});
 	}
-	if (argumentType.occurrence === OccurrenceIndicator.ANY) {
+	if (argumentType.seqType === SequenceType.ZERO_OR_MORE) {
 		return argument.map((value) =>
 			mapItem(value, argumentType, executionParameters, functionName, isReturn)
 		);
