@@ -30,16 +30,15 @@ function emitNameTestFromQName(
 	{ prefix, namespaceURI, localName }: QName
 ): EmittedJavaScript {
 	const conditionCode = `${identifier}.nodeType && (${identifier}.nodeType === NODE_TYPES.ELEMENT_NODE || ${identifier}.nodeType === NODE_TYPES.ATTRIBUTE_NODE)`;
+	if (namespaceURI) {
+		return rejectAst('Unsupported: namespace URI in name tests.');
+	}
 
 	if (prefix === '*' && localName === '*') {
 		return acceptAst(conditionCode);
 	}
 
-	if (localName !== '*') {
-		return acceptAst(`${conditionCode} && ${identifier}.localName === "${localName}"`);
-	}
-
-	return rejectAst('Unsupported: the provided name test. Namespace URI is not supported.');
+	return acceptAst(`${conditionCode} && ${identifier}.localName === "${localName}"`);
 }
 
 // element() and element(*) match any single element node, regardless of its name or type annotation.

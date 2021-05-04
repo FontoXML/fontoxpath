@@ -198,7 +198,6 @@ const compileWithJsCodegenBackend = <
 	const expressionString = normalizeEndOfLines(selector);
 
 	const compilationOptions = {
-		allowUpdating: options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE,
 		allowXQuery:
 			options['language'] === Language.XQUERY_3_1_LANGUAGE ||
 			options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE,
