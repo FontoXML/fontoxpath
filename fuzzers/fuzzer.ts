@@ -23,7 +23,6 @@
 // * Clean the corpus
 // * Corpus feedback
 // * Run fuzzer on compiled XPath engine
-// * Disable parse cache
 //
 
 import { evaluateXPath } from 'fontoxpath';
@@ -352,7 +351,9 @@ function worker(tid: number) {
 
 		// Try to evaluate the expression
 		try {
-			evaluateXPath(expression, documentNode);
+			evaluateXPath(expression, documentNode, null, null, null, {
+				disableCache: true
+			});
 		} catch (error) {
 			// Not interested in static errors, we're looking for crashes
 			if (error.message.startsWith('XPST')) {
