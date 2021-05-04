@@ -11,7 +11,7 @@ const compilersByReturnValue = {
 };
 
 const runtimeLibImports = `
-const { NODE_TYPES, DONE_TOKEN, ready, isSubtypeOf, determinePredicateTruthValue,
+const { DONE_TOKEN, ready, isSubtypeOf, determinePredicateTruthValue,
 		adaptSingleJavaScriptValue } = runtimeLibrary;
 `;
 

@@ -1,4 +1,3 @@
-import { NODE_TYPES } from '../domFacade/ConcreteNode';
 import { adaptSingleJavaScriptValue } from '../expressions/adaptJavaScriptValueToXPathValue';
 import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
 import getEffectiveBooleanValue from '../expressions/dataTypes/Sequences/getEffectiveBooleanValue';
@@ -19,7 +18,6 @@ export function determinePredicateTruthValue(iterator) {
 }
 
 export {
-	NODE_TYPES,
 	ready,
 	DONE_TOKEN,
 	isSubtypeOf,

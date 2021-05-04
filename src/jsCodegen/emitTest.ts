@@ -1,3 +1,4 @@
+import { NODE_TYPES } from '../domFacade/ConcreteNode';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { acceptAst, EmittedJavaScript, rejectAst } from './EmittedJavaScript';
 
@@ -20,7 +21,7 @@ const testEmittersByAstNodeName = {
 // text() matches any text node.
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-TextTest
 function emitTextTest(_ast: IAST, identifier: string): EmittedJavaScript {
-	return acceptAst(`${identifier}.nodeType === NODE_TYPES.TEXT_NODE`);
+	return acceptAst(`${identifier}.nodeType === ${NODE_TYPES.TEXT_NODE}`);
 }
 
 type QName = { localName: string; namespaceURI: string; prefix: string };
@@ -29,7 +30,7 @@ function emitNameTestFromQName(
 	identifier: string,
 	{ prefix, namespaceURI, localName }: QName
 ): EmittedJavaScript {
-	const conditionCode = `${identifier}.nodeType && (${identifier}.nodeType === NODE_TYPES.ELEMENT_NODE || ${identifier}.nodeType === NODE_TYPES.ATTRIBUTE_NODE)`;
+	const conditionCode = `${identifier}.nodeType && (${identifier}.nodeType === ${NODE_TYPES.ELEMENT_NODE} || ${identifier}.nodeType === ${NODE_TYPES.ATTRIBUTE_NODE})`;
 	if (namespaceURI) {
 		return rejectAst('Unsupported: namespace URI in name tests.');
 	}
@@ -46,7 +47,7 @@ function emitNameTestFromQName(
 function emitElementTest(ast: IAST, identifier: string): EmittedJavaScript {
 	const elementName = astHelper.getFirstChild(ast, 'elementName');
 	const star = elementName && astHelper.getFirstChild(elementName, 'star');
-	const isElementCode = `${identifier}.nodeType === NODE_TYPES.ELEMENT_NODE`;
+	const isElementCode = `${identifier}.nodeType === ${NODE_TYPES.ELEMENT_NODE}`;
 	if (elementName === null || star) {
 		return acceptAst(isElementCode);
 	}

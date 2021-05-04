@@ -154,7 +154,7 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 	if (backend === 'js-codegen' || backend === 'auto') {
 		const compiledJavaScriptResult = compileWithJsCodegenBackend(selector, returnType, options);
 
-		if (compiledJavaScriptResult.isAstAccepted) {
+		if (compiledJavaScriptResult.isAstAccepted === true) {
 			const wrappedDomFacade: DomFacade = new DomFacade(
 				domFacade === null ? new ExternalDomFacade() : domFacade
 			);

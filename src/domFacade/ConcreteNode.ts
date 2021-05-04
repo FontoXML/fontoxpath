@@ -8,7 +8,7 @@ import {
 	Text,
 } from '../types/Types';
 
-export enum NODE_TYPES {
+export const enum NODE_TYPES {
 	ELEMENT_NODE = 1,
 	ATTRIBUTE_NODE = 2,
 	TEXT_NODE = 3,
