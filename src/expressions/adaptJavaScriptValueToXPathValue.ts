@@ -8,7 +8,13 @@ import createPointerValue from './dataTypes/createPointerValue';
 import ISequence from './dataTypes/ISequence';
 import MapValue from './dataTypes/MapValue';
 import sequenceFactory from './dataTypes/sequenceFactory';
-import Value, { BaseType, baseTypeToString, ValueType, valueTypeToString } from './dataTypes/Value';
+import Value, {
+	BaseType,
+	baseTypeToString,
+	OccurrenceIndicator,
+	ValueType,
+	valueTypeToString,
+} from './dataTypes/Value';
 import DateTime from './dataTypes/valueTypes/DateTime';
 import createDoublyIterableSequence from './util/createDoublyIterableSequence';
 
@@ -176,12 +182,15 @@ export function adaptJavaScriptValueToArrayOfXPathValues(
 	value: UntypedExternalValue,
 	expectedType: ValueType
 ): Value[] {
-	if (expectedType.kind === BaseType.NULLABLE) {
-		const converted = adaptJavaScriptValueToXPath(expectedType.item, value, domFacade);
+	if (expectedType.occurrence === OccurrenceIndicator.NULLABLE) {
+		const converted = adaptJavaScriptValueToXPath(expectedType, value, domFacade);
 		return converted === null ? [] : [converted];
 	}
 
-	if (expectedType.kind === BaseType.ANY || expectedType.kind === BaseType.SOME) {
+	if (
+		expectedType.occurrence === OccurrenceIndicator.ANY ||
+		expectedType.occurrence === OccurrenceIndicator.SOME
+	) {
 		if (!Array.isArray(value)) {
 			throw new Error(
 				`The JavaScript value ${value} should be an array if it is to be converted to ${valueTypeToString(
@@ -190,7 +199,7 @@ export function adaptJavaScriptValueToArrayOfXPathValues(
 			);
 		}
 		return value
-			.map((val) => adaptJavaScriptValueToXPath(expectedType.item, val, domFacade))
+			.map((val) => adaptJavaScriptValueToXPath(expectedType, val, domFacade))
 			.filter((val: Value | null) => val !== null);
 	}
 
@@ -218,7 +227,7 @@ export function adaptJavaScriptValueToArrayOfXPathValues(
 export function adaptJavaScriptValueToSequence(
 	domFacade: DomFacade,
 	value: UntypedExternalValue,
-	expectedType: ValueType = { kind: BaseType.NULLABLE, item: { kind: BaseType.ITEM } }
+	expectedType: ValueType = { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.NULLABLE }
 ): ISequence {
 	return sequenceFactory.create(
 		adaptJavaScriptValueToArrayOfXPathValues(domFacade, value, expectedType)

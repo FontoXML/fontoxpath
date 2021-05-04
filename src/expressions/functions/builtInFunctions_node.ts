@@ -16,7 +16,7 @@ import { sortNodeValues } from '../dataTypes/documentOrderUtils';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value, { BaseType } from '../dataTypes/Value';
+import Value, { BaseType, OccurrenceIndicator } from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
@@ -390,11 +390,11 @@ const fnRoot: FunctionDefinitionType = (
 
 const declarations: BuiltinDeclarationType[] = [
 	{
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.NODE } }],
+		argumentTypes: [{ kind: BaseType.NODE, occurrence: OccurrenceIndicator.NULLABLE }],
 		callFunction: fnName,
 		localName: 'name',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+		returnType: { kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
 	},
 
 	{
@@ -422,23 +422,23 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.NODE } }],
+		argumentTypes: [{ kind: BaseType.NODE, occurrence: OccurrenceIndicator.ANY }],
 		callFunction: fnInnermost,
 		localName: 'innermost',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ANY, item: { kind: BaseType.NODE } },
+		returnType: { kind: BaseType.NODE, occurrence: OccurrenceIndicator.ANY },
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.NODE } }],
+		argumentTypes: [{ kind: BaseType.NODE, occurrence: OccurrenceIndicator.ANY }],
 		callFunction: fnOutermost,
 		localName: 'outermost',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ANY, item: { kind: BaseType.NODE } },
+		returnType: { kind: BaseType.NODE, occurrence: OccurrenceIndicator.ANY },
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.NODE } }],
+		argumentTypes: [{ kind: BaseType.NODE, occurrence: OccurrenceIndicator.NULLABLE }],
 		callFunction: fnHasChildren,
 		localName: 'has-children',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
@@ -456,11 +456,11 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.NODE } }],
+		argumentTypes: [{ kind: BaseType.NODE, occurrence: OccurrenceIndicator.NULLABLE }],
 		callFunction: fnPath,
 		localName: 'path',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+		returnType: { kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
 	},
 
 	{
@@ -468,15 +468,15 @@ const declarations: BuiltinDeclarationType[] = [
 		callFunction: contextItemAsFirstArgument.bind(null, fnPath),
 		localName: 'path',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+		returnType: { kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.NODE } }],
+		argumentTypes: [{ kind: BaseType.NODE, occurrence: OccurrenceIndicator.NULLABLE }],
 		callFunction: fnNodeName,
 		localName: 'node-name',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSQNAME } },
+		returnType: { kind: BaseType.XSQNAME, occurrence: OccurrenceIndicator.NULLABLE },
 	},
 
 	{
@@ -484,11 +484,11 @@ const declarations: BuiltinDeclarationType[] = [
 		callFunction: contextItemAsFirstArgument.bind(null, fnNodeName),
 		localName: 'node-name',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSQNAME } },
+		returnType: { kind: BaseType.XSQNAME, occurrence: OccurrenceIndicator.NULLABLE },
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.NODE } }],
+		argumentTypes: [{ kind: BaseType.NODE, occurrence: OccurrenceIndicator.NULLABLE }],
 		callFunction: fnLocalName,
 		localName: 'local-name',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
@@ -504,11 +504,11 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.NODE } }],
+		argumentTypes: [{ kind: BaseType.NODE, occurrence: OccurrenceIndicator.NULLABLE }],
 		callFunction: fnRoot,
 		localName: 'root',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.NODE } },
+		returnType: { kind: BaseType.NODE, occurrence: OccurrenceIndicator.NULLABLE },
 	},
 
 	{
@@ -516,7 +516,7 @@ const declarations: BuiltinDeclarationType[] = [
 		callFunction: contextItemAsFirstArgument.bind(null, fnRoot),
 		localName: 'root',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.NODE } },
+		returnType: { kind: BaseType.NODE, occurrence: OccurrenceIndicator.NULLABLE },
 	},
 
 	{
@@ -524,14 +524,14 @@ const declarations: BuiltinDeclarationType[] = [
 		callFunction: contextItemAsFirstArgument.bind(null, fnData),
 		localName: 'data',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ANY, item: { kind: BaseType.XSANYATOMICTYPE } },
+		returnType: { kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.ANY },
 	},
 	{
-		argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } }],
+		argumentTypes: [{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY }],
 		callFunction: fnData,
 		localName: 'data',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ANY, item: { kind: BaseType.XSANYATOMICTYPE } },
+		returnType: { kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.ANY },
 	},
 ];
 

@@ -2,7 +2,7 @@ import sequenceFactory from '../dataTypes/sequenceFactory';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
-import { BaseType } from '../dataTypes/Value';
+import { BaseType, OccurrenceIndicator } from '../dataTypes/Value';
 import { BuiltinDeclarationType } from './builtInFunctions';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
@@ -40,7 +40,7 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'boolean',
-		argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } }],
+		argumentTypes: [{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY }],
 		returnType: { kind: BaseType.XSBOOLEAN },
 		callFunction: fnBoolean,
 	},
@@ -56,7 +56,7 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'not',
-		argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } }],
+		argumentTypes: [{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY }],
 		returnType: { kind: BaseType.XSBOOLEAN },
 		callFunction: fnNot,
 	},

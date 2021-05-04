@@ -3,7 +3,12 @@ import castToType from '../dataTypes/castToType';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import promoteToType from '../dataTypes/promoteToType';
-import Value, { BaseType, ValueType, valueTypeToString } from '../dataTypes/Value';
+import Value, {
+	BaseType,
+	OccurrenceIndicator,
+	ValueType,
+	valueTypeToString,
+} from '../dataTypes/Value';
 import ExecutionParameters from '../ExecutionParameters';
 
 function mapItem(
@@ -74,43 +79,43 @@ export const performFunctionConversion = (
 	functionName: string,
 	isReturn: boolean
 ): ISequence => {
-	if (argumentType.kind === BaseType.NULLABLE) {
+	if (argumentType.occurrence === OccurrenceIndicator.NULLABLE) {
 		return argument.switchCases({
 			default: () =>
 				argument.map((value) =>
-					mapItem(value, argumentType.item, executionParameters, functionName, isReturn)
+					mapItem(value, argumentType, executionParameters, functionName, isReturn)
 				),
 			multiple: () => {
 				throw new Error(
 					`XPTY0004: Multiplicity of ${
 						isReturn ? 'function return value' : 'function argument'
-					} of type ${argumentType.item}${
+					} of type ${argumentType}${
 						argumentType.kind || ''
 					} for ${functionName} is incorrect. Expected "?", but got "+".`
 				);
 			},
 		});
 	}
-	if (argumentType.kind === BaseType.SOME) {
+	if (argumentType.occurrence === OccurrenceIndicator.SOME) {
 		return argument.switchCases({
 			empty: () => {
 				throw new Error(
 					`XPTY0004: Multiplicity of ${
 						isReturn ? 'function return value' : 'function argument'
-					} of type ${argumentType.item}${
+					} of type ${argumentType}${
 						argumentType.kind || ''
 					} for ${functionName} is incorrect. Expected "+", but got "empty-sequence()"`
 				);
 			},
 			default: () =>
 				argument.map((value) =>
-					mapItem(value, argumentType.item, executionParameters, functionName, isReturn)
+					mapItem(value, argumentType, executionParameters, functionName, isReturn)
 				),
 		});
 	}
-	if (argumentType.kind === BaseType.ANY) {
+	if (argumentType.occurrence === OccurrenceIndicator.ANY) {
 		return argument.map((value) =>
-			mapItem(value, argumentType.item, executionParameters, functionName, isReturn)
+			mapItem(value, argumentType, executionParameters, functionName, isReturn)
 		);
 	}
 

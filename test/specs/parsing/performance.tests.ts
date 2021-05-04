@@ -5,6 +5,7 @@ import {
 	profiler,
 	registerCustomXPathFunction,
 } from 'fontoxpath';
+import { OccurrenceIndicator } from 'fontoxpath/expressions/dataTypes/Value';
 import * as slimdom from 'slimdom';
 
 function timeXPath(xpath, document) {
@@ -79,7 +80,7 @@ describe('measuring performance', () => {
 		registerCustomXPathFunction(
 			'perftest:syncsleep',
 			[{ kind: BaseType.ITEM }],
-			{ kind: BaseType.NULLABLE, item: { kind: BaseType.ITEM } },
+			{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.NULLABLE },
 			(_, shouldRecurse) => {
 				now++;
 				if (shouldRecurse) {

@@ -73,10 +73,24 @@ export enum BaseType {
 	FUNCTION,
 	MAP,
 	ARRAY,
-	NULLABLE,
-	ANY,
-	SOME,
 	ELLIPSIS,
+}
+
+/**
+ * Handles the occurances in the XPath specs.
+ * Zero or one '?' maps to NULLABLE;
+ * One or more '+' maps to SOME;
+ * Zero or more '*' maps to ANY;
+ * Exactly one, empty, singleton, multiple.
+ * @public
+ */
+export enum OccurrenceIndicator {
+	// Nullable refers to the '?' symbol: zero or one occurance
+	NULLABLE,
+	// Some refers to the '+' symbol: one or more occurances
+	SOME,
+	// Any refers to the '*' zero or more occurances
+	ANY,
 }
 
 export function startWithXS(inType: BaseType): boolean {
@@ -147,9 +161,6 @@ const a = new Map([
 	[BaseType.FUNCTION, false],
 	[BaseType.MAP, false],
 	[BaseType.ARRAY, false],
-	[BaseType.NULLABLE, false],
-	[BaseType.ANY, false],
-	[BaseType.SOME, false],
 	[BaseType.ELLIPSIS, false],
 ]);
 
@@ -158,75 +169,80 @@ const a = new Map([
  * @public
  */
 export type ValueType =
-	| { kind: BaseType.XSBOOLEAN }
-	| { kind: BaseType.XSSTRING }
-	| { kind: BaseType.XSNUMERIC }
-	| { kind: BaseType.XSDOUBLE }
-	| { kind: BaseType.XSDECIMAL }
-	| { kind: BaseType.XSINTEGER }
-	| { kind: BaseType.XSFLOAT }
-	| { kind: BaseType.XSDATE }
-	| { kind: BaseType.XSTIME }
-	| { kind: BaseType.XSDATETIME }
-	| { kind: BaseType.XSDATETIMESTAMP }
-	| { kind: BaseType.XSGYEARMONTH }
-	| { kind: BaseType.XSGYEAR }
-	| { kind: BaseType.XSGMONTHDAY }
-	| { kind: BaseType.XSGMONTH }
-	| { kind: BaseType.XSGDAY }
-	| { kind: BaseType.XSYEARMONTHDURATION }
-	| { kind: BaseType.XSDAYTIMEDURATION }
-	| { kind: BaseType.XSDURATION }
-	| { kind: BaseType.XSUNTYPEDATOMIC }
-	| { kind: BaseType.XSANYURI }
-	| { kind: BaseType.XSBASE64BINARY }
-	| { kind: BaseType.XSHEXBINARY }
-	| { kind: BaseType.XSQNAME }
-	| { kind: BaseType.XSNCNAME }
-	| { kind: BaseType.XSNAME }
-	| { kind: BaseType.XSENTITY }
-	| { kind: BaseType.XSNONPOSITIVEINTEGER }
-	| { kind: BaseType.XSNEGATIVEINTEGER }
-	| { kind: BaseType.XSPOSITIVEINTEGER }
-	| { kind: BaseType.XSNONNEGATIVEINTEGER }
-	| { kind: BaseType.XSLONG }
-	| { kind: BaseType.XSINT }
-	| { kind: BaseType.XSSHORT }
-	| { kind: BaseType.XSBYTE }
-	| { kind: BaseType.XSUNSIGNEDINT }
-	| { kind: BaseType.XSUNSIGNEDLONG }
-	| { kind: BaseType.XSUNSIGNEDBYTE }
-	| { kind: BaseType.XSUNSIGNEDSHORT }
-	| { kind: BaseType.XSERROR }
-	| { kind: BaseType.XSENTITIES }
-	| { kind: BaseType.XSIDREF }
-	| { kind: BaseType.XSID }
-	| { kind: BaseType.XSIDREFS }
-	| { kind: BaseType.XSNOTATION }
-	| { kind: BaseType.XSANYSIMPLETYPE }
-	| { kind: BaseType.XSANYATOMICTYPE }
-	| { kind: BaseType.ATTRIBUTE }
-	| { kind: BaseType.XSNORMALIZEDSTRING }
-	| { kind: BaseType.XSNMTOKENS }
-	| { kind: BaseType.XSNMTOKEN }
-	| { kind: BaseType.XSLANGUAGE }
-	| { kind: BaseType.XSTOKEN }
-	| { kind: BaseType.NODE }
-	| { kind: BaseType.ELEMENT }
-	| { kind: BaseType.DOCUMENTNODE }
-	| { kind: BaseType.TEXT }
-	| { kind: BaseType.PROCESSINGINSTRUCTION }
-	| { kind: BaseType.COMMENT }
-	| { kind: BaseType.ITEM }
-	| { kind: BaseType.FUNCTION; params: ValueType[]; returnType: ValueType | undefined }
-	| { items: [ValueType, ValueType][]; kind: BaseType.MAP }
-	| { items: ValueType[]; kind: BaseType.ARRAY }
+	| { kind: BaseType.XSBOOLEAN; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSSTRING; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSNUMERIC; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSDOUBLE; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSDECIMAL; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSINTEGER; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSFLOAT; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSDATE; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSTIME; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSDATETIME; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSDATETIMESTAMP; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSGYEARMONTH; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSGYEAR; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSGMONTHDAY; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSGMONTH; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSGDAY; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSYEARMONTHDURATION; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSDAYTIMEDURATION; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSDURATION; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSUNTYPEDATOMIC; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSANYURI; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSBASE64BINARY; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSHEXBINARY; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSQNAME; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSNCNAME; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSNAME; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSENTITY; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSNONPOSITIVEINTEGER; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSNEGATIVEINTEGER; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSPOSITIVEINTEGER; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSNONNEGATIVEINTEGER; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSLONG; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSINT; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSSHORT; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSBYTE; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSUNSIGNEDINT; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSUNSIGNEDLONG; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSUNSIGNEDBYTE; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSUNSIGNEDSHORT; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSERROR; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSENTITIES; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSIDREF; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSID; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSIDREFS; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSNOTATION; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSANYSIMPLETYPE; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSANYATOMICTYPE; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.ATTRIBUTE; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSNORMALIZEDSTRING; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSNMTOKENS; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSNMTOKEN; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSLANGUAGE; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.XSTOKEN; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.NODE; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.ELEMENT; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.DOCUMENTNODE; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.TEXT; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.PROCESSINGINSTRUCTION; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.COMMENT; occurrence?: OccurrenceIndicator }
+	| { kind: BaseType.ITEM; occurrence?: OccurrenceIndicator }
+	| {
+			kind: BaseType.FUNCTION;
+			occurrence?: OccurrenceIndicator;
+			params: ValueType[];
+			returnType: ValueType | undefined;
+	  }
+	| {
+			items: [ValueType, ValueType][];
+			kind: BaseType.MAP;
+			occurrence?: OccurrenceIndicator;
+	  }
+	| { items: ValueType[]; kind: BaseType.ARRAY; occurrence?: OccurrenceIndicator }
 	// item types, sequence types, function args = seq + "..."
-	// zero or one, exactly one, one or more, empty, singleton, multiple
-	| { item: ValueType; kind: BaseType.NULLABLE }
-	| { item: ValueType; kind: BaseType.ANY }
-	| { item: ValueType; kind: BaseType.SOME }
-	| { kind: BaseType.ELLIPSIS };
+	| { kind: BaseType.ELLIPSIS; occurrence?: OccurrenceIndicator };
 
 /**
  * Recursively creates a hash for a type and its potential subtypes
@@ -256,11 +272,6 @@ export function valueTypeHash(type: ValueType): number {
 			for (const item of type.items) {
 				result = prime * result + valueTypeHash(item);
 			}
-			break;
-		case BaseType.NULLABLE:
-		case BaseType.ANY:
-		case BaseType.SOME:
-			result = prime * result + valueTypeHash(type.item);
 			break;
 	}
 
@@ -339,9 +350,6 @@ export function baseTypeToString(input: BaseType): string {
 		[BaseType.MAP]: 'map(*)',
 		[BaseType.ARRAY]: 'array(*)',
 		[BaseType.ELLIPSIS]: '...',
-		[BaseType.NULLABLE]: '?',
-		[BaseType.ANY]: '*',
-		[BaseType.SOME]: '+',
 	};
 
 	const stringVal = typeToStringMap[input];
@@ -357,14 +365,14 @@ export function baseTypeToString(input: BaseType): string {
  * @returns the correct string representation of the type
  */
 export function valueTypeToString(input: ValueType): string {
-	if (input.kind === BaseType.ANY) {
-		return valueTypeToString(input.item) + '*';
+	if (input.occurrence === OccurrenceIndicator.ANY) {
+		return baseTypeToString(input.kind) + '*';
 	}
-	if (input.kind === BaseType.SOME) {
-		return valueTypeToString(input.item) + '+';
+	if (input.occurrence === OccurrenceIndicator.SOME) {
+		return baseTypeToString(input.kind) + '+';
 	}
-	if (input.kind === BaseType.NULLABLE) {
-		return valueTypeToString(input.item) + '?';
+	if (input.occurrence === OccurrenceIndicator.NULLABLE) {
+		return baseTypeToString(input.kind) + '?';
 	}
 
 	return baseTypeToString(input.kind);

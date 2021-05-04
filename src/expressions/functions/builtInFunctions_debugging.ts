@@ -1,7 +1,7 @@
 import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { BaseType } from '../dataTypes/Value';
+import { BaseType, OccurrenceIndicator } from '../dataTypes/Value';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { BuiltinDeclarationType } from './builtInFunctions';
@@ -40,21 +40,21 @@ const fnTrace: FunctionDefinitionType = (
 
 const declarations: BuiltinDeclarationType[] = [
 	{
-		argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } }],
+		argumentTypes: [{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY }],
 		callFunction: fnTrace,
 		localName: 'trace',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+		returnType:  { kind: BaseType.ITEM , occurrence: OccurrenceIndicator.ANY },
 	},
 	{
 		argumentTypes: [
-			{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+			 { kind: BaseType.ITEM , occurrence: OccurrenceIndicator.ANY  },
 			{ kind: BaseType.XSSTRING },
 		],
 		callFunction: fnTrace,
 		localName: 'trace',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+		returnType: { kind: BaseType.ITEM , occurrence: OccurrenceIndicator.ANY  },
 	},
 ];
 

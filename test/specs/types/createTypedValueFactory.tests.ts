@@ -2,6 +2,7 @@ import * as chai from 'chai';
 import * as slimdom from 'slimdom';
 
 import { BaseType, createTypedValueFactory, evaluateXPathToBoolean } from 'fontoxpath';
+import { OccurrenceIndicator } from 'fontoxpath/expressions/dataTypes/Value';
 
 let documentNode;
 beforeEach(() => {
@@ -82,8 +83,8 @@ describe('createTypedValueFactory', () => {
 
 	it('throws when expecting an array', () => {
 		const typedValueFactory = createTypedValueFactory({
-			kind: BaseType.ANY,
-			item: { kind: BaseType.XSINTEGER },
+			kind: BaseType.XSINTEGER,
+			occurrence: OccurrenceIndicator.ANY,
 		});
 
 		chai.assert.throws(

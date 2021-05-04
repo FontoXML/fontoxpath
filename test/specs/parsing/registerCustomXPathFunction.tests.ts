@@ -13,7 +13,7 @@ import {
 
 import IDomFacade from 'fontoxpath/domFacade/IDomFacade';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
-import { BaseType } from 'fontoxpath/expressions/dataTypes/Value';
+import { BaseType, OccurrenceIndicator } from 'fontoxpath/expressions/dataTypes/Value';
 
 describe('registerCustomXPathFunction', () => {
 	function identityNamespaceResolver(prefix) {
@@ -22,8 +22,8 @@ describe('registerCustomXPathFunction', () => {
 
 	let documentNode;
 	const stringValueFactory = createTypedValueFactory({
-		kind: BaseType.NULLABLE,
-		item: { kind: BaseType.XSSTRING },
+		kind: BaseType.XSSTRING,
+		occurrence: OccurrenceIndicator.NULLABLE
 	});
 	beforeEach(() => {
 		documentNode = new slimdom.Document();
@@ -34,7 +34,7 @@ describe('registerCustomXPathFunction', () => {
 	before(() => {
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'custom-function1' },
-			[{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } }],
+			[{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE }],
 			{ kind: BaseType.XSBOOLEAN },
 			(dynamicContext, stringValue) => {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
@@ -57,7 +57,7 @@ describe('registerCustomXPathFunction', () => {
 
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'custom-function3' },
-			[{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } }],
+			[{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY }],
 			{ kind: BaseType.ITEM },
 			(dynamicContext, input) => {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
@@ -69,8 +69,8 @@ describe('registerCustomXPathFunction', () => {
 
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'custom-function4' },
-			[{ kind: BaseType.ANY, item: { kind: BaseType.XSSTRING } }],
-			{ kind: BaseType.ANY, item: { kind: BaseType.XSSTRING } },
+			[{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.ANY }],
+			{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.ANY },
 			(dynamicContext, stringArray) => {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
@@ -83,8 +83,8 @@ describe('registerCustomXPathFunction', () => {
 
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'custom-function5' },
-			[{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } }],
-			{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+			[{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE }],
+			{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
 			(dynamicContext, stringValue) => {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
@@ -558,8 +558,8 @@ describe('registerCustomXPathFunction', () => {
 
 			registerCustomXPathFunction(
 				{ namespaceURI: 'test', localName: 'custom-date-function-optional-param' },
-				[{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDATE } }],
-				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDATE } },
+				[{ kind: BaseType.XSDATE, occurrence: OccurrenceIndicator.NULLABLE }],
+				{ kind: BaseType.XSDATE, occurrence: OccurrenceIndicator.NULLABLE },
 				(dynamicContext, date) => {
 					chai.assert.isTrue(
 						date === null || date instanceof Date,
@@ -571,8 +571,8 @@ describe('registerCustomXPathFunction', () => {
 
 			registerCustomXPathFunction(
 				{ namespaceURI: 'test', localName: 'custom-date-function-zero-to-many-param' },
-				[{ kind: BaseType.ANY, item: { kind: BaseType.XSDATE } }],
-				{ kind: BaseType.ANY, item: { kind: BaseType.XSDATE } },
+				[{ kind: BaseType.XSDATE, occurrence: OccurrenceIndicator.ANY }],
+				{ kind: BaseType.XSDATE, occurrence: OccurrenceIndicator.ANY },
 				(dynamicContext, dates) => {
 					chai.assert.isTrue(Array.isArray(dates), 'Parameter is not an array');
 
@@ -588,8 +588,8 @@ describe('registerCustomXPathFunction', () => {
 
 			registerCustomXPathFunction(
 				{ namespaceURI: 'test', localName: 'custom-date-function-one-to-many-param' },
-				[{ kind: BaseType.SOME, item: { kind: BaseType.XSDATE } }],
-				{ kind: BaseType.ANY, item: { kind: BaseType.XSDATE } },
+				[{ kind: BaseType.XSDATE, occurrence: OccurrenceIndicator.SOME }],
+				{ kind: BaseType.XSDATE, occurrence: OccurrenceIndicator.ANY },
 				(dynamicContext, dates) => {
 					chai.assert.isTrue(Array.isArray(dates), 'Parameter is not an array');
 
