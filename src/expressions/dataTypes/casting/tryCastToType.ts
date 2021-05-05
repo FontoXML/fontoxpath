@@ -7,7 +7,14 @@ import {
 	validatePattern,
 	validateRestrictions,
 } from '../typeHelpers';
-import { BaseType, ValueType, valueTypeHash, SequenceType } from '../Value';
+import {
+	BaseType,
+	ValueType,
+	valueTypeHash,
+	SequenceType,
+	valueTypeToString,
+	baseTypeToString,
+} from '../Value';
 import CastResult from './CastResult';
 import castToAnyURI from './castToAnyURI';
 import castToBase64Binary from './castToBase64Binary';
@@ -101,8 +108,8 @@ function castToPrimitiveType(from: BaseType, to: BaseType): (value) => CastResul
 
 const precomputedCastFunctorsByTypeString = Object.create(null);
 
-function createCastingFunction(from: ValueType, to: BaseType) {
-	if (from.kind === BaseType.XSUNTYPEDATOMIC && to === BaseType.XSSTRING) {
+function createCastingFunction(from: ValueType, to: ValueType) {
+	if (from.kind === BaseType.XSUNTYPEDATOMIC && to.kind === BaseType.XSSTRING) {
 		return (val) => ({
 			successful: true,
 			value: createAtomicValue(val, {
@@ -111,35 +118,35 @@ function createCastingFunction(from: ValueType, to: BaseType) {
 			}),
 		});
 	}
-	if (to === BaseType.XSNOTATION) {
+	if (to.kind === BaseType.XSNOTATION) {
 		return (_val) => ({
 			successful: false,
 			error: new Error('XPST0080: Casting to xs:NOTATION is not permitted.'),
 		});
 	}
 
-	if (to === BaseType.XSERROR) {
+	if (to.kind === BaseType.XSERROR) {
 		return (_val) => ({
 			successful: false,
 			error: new Error('FORG0001: Casting to xs:error is not permitted.'),
 		});
 	}
 
-	if (from.kind === BaseType.XSANYSIMPLETYPE || to === BaseType.XSANYSIMPLETYPE) {
+	if (from.kind === BaseType.XSANYSIMPLETYPE || to.kind === BaseType.XSANYSIMPLETYPE) {
 		return (_val) => ({
 			successful: false,
 			error: new Error('XPST0080: Casting from or to xs:anySimpleType is not permitted.'),
 		});
 	}
 
-	if (from.kind === BaseType.XSANYATOMICTYPE || to === BaseType.XSANYATOMICTYPE) {
+	if (from.kind === BaseType.XSANYATOMICTYPE || to.kind === BaseType.XSANYATOMICTYPE) {
 		return (_val) => ({
 			successful: false,
 			error: new Error('XPST0080: Casting from or to xs:anyAtomicType is not permitted.'),
 		});
 	}
 
-	if (isSubtypeOf(from.kind, BaseType.FUNCTION) && to === BaseType.XSSTRING) {
+	if (isSubtypeOf(from.kind, BaseType.FUNCTION) && to.kind === BaseType.XSSTRING) {
 		return (_val) => ({
 			successful: false,
 			error: new Error('FOTY0014: Casting from function item to xs:string is not permitted.'),
@@ -149,21 +156,28 @@ function createCastingFunction(from: ValueType, to: BaseType) {
 	const primitiveFrom: BaseType = TREAT_AS_PRIMITIVE.includes(from.kind)
 		? from.kind
 		: getPrimitiveTypeName(from.kind);
-	const primitiveTo: BaseType = TREAT_AS_PRIMITIVE.includes(to) ? to : getPrimitiveTypeName(to);
+	const primitiveTo: BaseType = TREAT_AS_PRIMITIVE.includes(to.kind)
+		? to.kind
+		: getPrimitiveTypeName(to.kind);
 
-	if (!primitiveTo || !primitiveFrom) {
+	if (primitiveTo === null || primitiveFrom === null) {
 		return (_val) => ({
 			successful: false,
-			error: new Error(`XPST0081: Can not cast: type ${primitiveTo ? from : to} is unknown.`),
+			error: new Error(
+				`XPST0081: Can not cast: type ${
+					primitiveTo ? valueTypeToString(from) : valueTypeToString(to)
+				} is unknown.`
+			),
 		});
 	}
+
 	const converters = [];
 
 	if (primitiveFrom === BaseType.XSSTRING || primitiveFrom === BaseType.XSUNTYPEDATOMIC) {
 		// We are dealing with string-like types. Check whitespace / pattern
 		converters.push((value) => {
-			const strValue = normalizeWhitespace(value, to);
-			if (!validatePattern(strValue, to)) {
+			const strValue = normalizeWhitespace(value, to.kind);
+			if (!validatePattern(strValue, to.kind)) {
 				return {
 					successful: false,
 					error: new Error(
@@ -188,7 +202,7 @@ function createCastingFunction(from: ValueType, to: BaseType) {
 	}
 	if (primitiveTo === BaseType.XSUNTYPEDATOMIC || primitiveTo === BaseType.XSSTRING) {
 		converters.push((typedValue) => {
-			if (!validatePattern(typedValue, to)) {
+			if (!validatePattern(typedValue, to.kind)) {
 				return {
 					successful: false,
 					error: new Error(
@@ -203,7 +217,7 @@ function createCastingFunction(from: ValueType, to: BaseType) {
 		});
 	}
 	converters.push((typedValue) => {
-		if (!validateRestrictions(typedValue, to)) {
+		if (!validateRestrictions(typedValue, to.kind)) {
 			return {
 				successful: false,
 				error: new Error(
@@ -238,8 +252,8 @@ function createCastingFunction(from: ValueType, to: BaseType) {
 	};
 }
 
-export default function tryCastToType(valueTuple: AtomicValue, type: BaseType): CastResult {
-	const index = valueTypeHash(valueTuple.type) + (type as number) * 100000;
+export default function tryCastToType(valueTuple: AtomicValue, type: ValueType): CastResult {
+	const index = valueTypeHash(valueTuple.type) + valueTypeHash(type) * 10000;
 	let prefabConverter = precomputedCastFunctorsByTypeString[index];
 
 	if (!prefabConverter) {

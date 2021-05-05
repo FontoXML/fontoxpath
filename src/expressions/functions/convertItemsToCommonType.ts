@@ -47,7 +47,7 @@ export default function convertItemsToCommonType(items: (Value | null)[]): (Valu
 	) {
 		return items.map((item) =>
 			item
-				? castToType(item, BaseType.XSSTRING)
+				? castToType(item, { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE })
 				: null
 		);
 	}
@@ -64,7 +64,7 @@ export default function convertItemsToCommonType(items: (Value | null)[]): (Valu
 	) {
 		return items.map((item) =>
 			item
-				? castToType(item, BaseType.XSFLOAT)
+				? castToType(item, { kind: BaseType.XSFLOAT, seqType: SequenceType.EXACTLY_ONE })
 				: item
 		);
 	}
@@ -81,7 +81,7 @@ export default function convertItemsToCommonType(items: (Value | null)[]): (Valu
 	) {
 		return items.map((item) =>
 			item
-				? castToType(item, BaseType.XSDOUBLE)
+				? castToType(item, { kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE })
 				: item
 		);
 	}

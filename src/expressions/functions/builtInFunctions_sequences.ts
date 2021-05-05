@@ -55,7 +55,7 @@ function subSequence(sequence: ISequence, start: number, length: number) {
 function castUntypedItemsToDouble(items: Value[]) {
 	return items.map((item) => {
 		if (isSubtypeOf(item.type.kind, BaseType.XSUNTYPEDATOMIC)) {
-			return castToType(item, BaseType.XSDOUBLE);
+			return castToType(item, { kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE });
 		}
 		return item;
 	});

@@ -53,7 +53,7 @@ class CastAsOperator extends Expression {
 				return sequenceFactory.empty();
 			},
 			singleton: () => {
-				return evaluatedExpression.map((value) => castToType(value, this._targetType.kind));
+				return evaluatedExpression.map((value) => castToType(value, this._targetType));
 			},
 			multiple: () => {
 				throw new Error('XPTY0004: Sequence to cast is not singleton or empty.');

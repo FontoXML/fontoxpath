@@ -69,8 +69,14 @@ function anyAtomicTypeDeepEqual(
 		(isSubtypeOf(item2.type.kind, BaseType.XSDECIMAL) ||
 			isSubtypeOf(item2.type.kind, BaseType.XSFLOAT))
 	) {
-		const temp1 = castToType(item1, BaseType.XSFLOAT);
-		const temp2 = castToType(item2, BaseType.XSFLOAT);
+		const temp1 = castToType(item1, {
+			kind: BaseType.XSFLOAT,
+			seqType: SequenceType.EXACTLY_ONE,
+		});
+		const temp2 = castToType(item2, {
+			kind: BaseType.XSFLOAT,
+			seqType: SequenceType.EXACTLY_ONE,
+		});
 		return temp1.value === temp2.value || (isNaN(item1.value) && isNaN(item2.value));
 	}
 	if (
@@ -81,8 +87,14 @@ function anyAtomicTypeDeepEqual(
 			isSubtypeOf(item2.type.kind, BaseType.XSFLOAT) ||
 			isSubtypeOf(item2.type.kind, BaseType.XSDOUBLE))
 	) {
-		const temp1 = castToType(item1, BaseType.XSDOUBLE);
-		const temp2 = castToType(item2, BaseType.XSDOUBLE);
+		const temp1 = castToType(item1, {
+			kind: BaseType.XSDOUBLE,
+			seqType: SequenceType.EXACTLY_ONE,
+		});
+		const temp2 = castToType(item2, {
+			kind: BaseType.XSDOUBLE,
+			seqType: SequenceType.EXACTLY_ONE,
+		});
 		return temp1.value === temp2.value || (isNaN(item1.value) && isNaN(item2.value));
 	}
 

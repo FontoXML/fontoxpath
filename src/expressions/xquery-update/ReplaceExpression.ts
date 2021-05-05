@@ -192,7 +192,12 @@ function evaluateReplaceNodeValue(
 				const atomized = atomize(
 					sequenceFactory.create(rl.value.xdmValue),
 					executionParameters
-				).map((value) => castToType(value, BaseType.XSSTRING));
+				).map((value) =>
+					castToType(value, {
+						kind: BaseType.XSSTRING,
+						seqType: SequenceType.EXACTLY_ONE,
+					})
+				);
 
 				const textContent = atomized
 					.getAllValues()

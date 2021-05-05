@@ -161,7 +161,10 @@ function fnRound(
 			].find((type: ValueType) => {
 				return isSubtypeOf(firstValue.type.kind, type.kind);
 			});
-			const itemAsDecimal = castToType(firstValue, BaseType.XSDECIMAL);
+			const itemAsDecimal = castToType(firstValue, {
+				kind: BaseType.XSDECIMAL,
+				seqType: SequenceType.EXACTLY_ONE,
+			});
 			const scaling = Math.pow(10, scalingPrecision);
 			const roundedNumber = determineRoundedNumber(itemAsDecimal.value, halfToEven, scaling);
 			switch (originalType.kind) {
@@ -213,7 +216,10 @@ const fnNumber: FunctionDefinitionType = (
 				})
 			),
 		singleton: () => {
-			const castResult = tryCastToType(sequence.first(), BaseType.XSDOUBLE);
+			const castResult = tryCastToType(sequence.first(), {
+				kind: BaseType.XSDOUBLE,
+				seqType: SequenceType.EXACTLY_ONE,
+			});
 			if (castResult.successful) {
 				return sequenceFactory.singleton(castResult.value);
 			}

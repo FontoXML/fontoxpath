@@ -14,17 +14,17 @@ import ExecutionParameters from '../ExecutionParameters';
 
 function mapItem(
 	argumentItem: Value,
-	type: BaseType,
+	type: ValueType,
 	executionParameters: ExecutionParameters,
 	functionName: string,
 	isReturn: boolean
 ) {
-	if (isSubtypeOf(argumentItem.type.kind, type)) {
+	if (isSubtypeOf(argumentItem.type.kind, type.kind)) {
 		return argumentItem;
 	}
 
 	if (
-		isSubtypeOf(type, BaseType.XSANYATOMICTYPE) &&
+		isSubtypeOf(type.kind, BaseType.XSANYATOMICTYPE) &&
 		isSubtypeOf(argumentItem.type.kind, BaseType.NODE)
 	) {
 		// Assume here that a node always atomizes to a singlevalue. This will not work
@@ -33,12 +33,12 @@ function mapItem(
 	}
 
 	// Maybe after atomization, we have the correct type
-	if (isSubtypeOf(argumentItem.type.kind, type)) {
+	if (isSubtypeOf(argumentItem.type.kind, type.kind)) {
 		return argumentItem;
 	}
 
 	// Everything is an anyAtomicType, so no casting necessary.
-	if (type === BaseType.XSANYATOMICTYPE) {
+	if (type.kind === BaseType.XSANYATOMICTYPE) {
 		return argumentItem;
 	}
 	if (isSubtypeOf(argumentItem.type.kind, BaseType.XSUNTYPEDATOMIC)) {
@@ -48,7 +48,7 @@ function mapItem(
 			throw new Error(
 				`XPTY0004 Unable to convert ${
 					isReturn ? 'return' : 'argument'
-				} of type ${valueTypeToString(argumentItem.type)} to type ${baseTypeToString(
+				} of type ${valueTypeToString(argumentItem.type)} to type ${valueTypeToString(
 					type
 				)} while calling ${functionName}`
 			);
@@ -57,12 +57,12 @@ function mapItem(
 	}
 
 	// We need to promote this
-	const item = promoteToType(argumentItem, type);
+	const item = promoteToType(argumentItem, type.kind);
 	if (!item) {
 		throw new Error(
 			`XPTY0004 Unable to cast ${
 				isReturn ? 'return' : 'argument'
-			} of type ${valueTypeToString(argumentItem.type)} to type ${baseTypeToString(
+			} of type ${valueTypeToString(argumentItem.type)} to type ${valueTypeToString(
 				type
 			)} while calling ${functionName}`
 		);
@@ -84,7 +84,7 @@ export const performFunctionConversion = (
 		return argument.switchCases({
 			default: () =>
 				argument.map((value) =>
-					mapItem(value, argumentType.kind, executionParameters, functionName, isReturn)
+					mapItem(value, argumentType, executionParameters, functionName, isReturn)
 				),
 			multiple: () => {
 				throw new Error(
@@ -110,20 +110,20 @@ export const performFunctionConversion = (
 			},
 			default: () =>
 				argument.map((value) =>
-					mapItem(value, argumentType.kind, executionParameters, functionName, isReturn)
+					mapItem(value, argumentType, executionParameters, functionName, isReturn)
 				),
 		});
 	}
 	if (argumentType.seqType === SequenceType.ZERO_OR_MORE) {
 		return argument.map((value) =>
-			mapItem(value, argumentType.kind, executionParameters, functionName, isReturn)
+			mapItem(value, argumentType, executionParameters, functionName, isReturn)
 		);
 	}
 
 	return argument.switchCases({
 		singleton: () =>
 			argument.map((value) =>
-				mapItem(value, argumentType.kind, executionParameters, functionName, isReturn)
+				mapItem(value, argumentType, executionParameters, functionName, isReturn)
 			),
 		default: () => {
 			throw new Error(

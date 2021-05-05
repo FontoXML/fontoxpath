@@ -41,7 +41,10 @@ class Unary extends Expression {
 			const value = atomizedValues[0];
 
 			if (isSubtypeOf(value.type.kind, BaseType.XSUNTYPEDATOMIC)) {
-				const castValue = castToType(value, BaseType.XSDOUBLE).value as number;
+				const castValue = castToType(value, {
+					kind: BaseType.XSDOUBLE,
+					seqType: SequenceType.EXACTLY_ONE,
+				}).value as number;
 				return sequenceFactory.singleton(
 					createAtomicValue(this._kind === '+' ? castValue : -castValue, {
 						kind: BaseType.XSDOUBLE,

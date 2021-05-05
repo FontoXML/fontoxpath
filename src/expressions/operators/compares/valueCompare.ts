@@ -34,22 +34,22 @@ function areBothStringOrAnyURI(a, b) {
 
 function generateCompareFunction(
 	operator: string,
-	typeA: BaseType,
-	typeB: BaseType,
+	typeA: ValueType,
+	typeB: ValueType,
 	dynamicContext: DynamicContext
 ): (valA: any, valB: any) => boolean {
 	let castFunctionForValueA = null;
 	let castFunctionForValueB = null;
 
 	if (
-		isSubtypeOf(typeA, BaseType.XSUNTYPEDATOMIC) &&
-		isSubtypeOf(typeB, BaseType.XSUNTYPEDATOMIC)
+		isSubtypeOf(typeA.kind, BaseType.XSUNTYPEDATOMIC) &&
+		isSubtypeOf(typeB.kind, BaseType.XSUNTYPEDATOMIC)
 	) {
-		typeA = typeB = BaseType.XSSTRING;
-	} else if (isSubtypeOf(typeA, BaseType.XSUNTYPEDATOMIC)) {
+		typeA = typeB = { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE };
+	} else if (isSubtypeOf(typeA.kind, BaseType.XSUNTYPEDATOMIC)) {
 		castFunctionForValueA = (val) => castToType(val, typeB);
 		typeA = typeB;
-	} else if (isSubtypeOf(typeB, BaseType.XSUNTYPEDATOMIC)) {
+	} else if (isSubtypeOf(typeB.kind, BaseType.XSUNTYPEDATOMIC)) {
 		castFunctionForValueB = (val) => castToType(val, typeA);
 		typeB = typeA;
 	}
@@ -61,7 +61,7 @@ function generateCompareFunction(
 		};
 	}
 
-	if (isSubtypeOf(typeA, BaseType.XSQNAME) && isSubtypeOf(typeB, BaseType.XSQNAME)) {
+	if (isSubtypeOf(typeA.kind, BaseType.XSQNAME) && isSubtypeOf(typeB.kind, BaseType.XSQNAME)) {
 		if (operator === 'eqOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
@@ -84,7 +84,7 @@ function generateCompareFunction(
 	}
 
 	function areBothSubtypeOf(type: BaseType) {
-		return isSubtypeOf(typeA, type) && isSubtypeOf(typeB, type);
+		return isSubtypeOf(typeA.kind, type) && isSubtypeOf(typeB.kind, type);
 	}
 
 	if (
@@ -339,8 +339,8 @@ export default function (
 	if (!prefabComparator) {
 		prefabComparator = comparatorsByTypingKey[typingKey] = generateCompareFunction(
 			operator,
-			valueA.type.kind,
-			valueB.type.kind,
+			valueA.type,
+			valueB.type,
 			dynamicContext
 		);
 	}

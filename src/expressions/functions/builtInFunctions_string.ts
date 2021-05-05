@@ -78,7 +78,10 @@ const fnConcat: FunctionDefinitionType = (
 						.map((stringValue) =>
 							stringValue === null
 								? ''
-								: castToType(stringValue, BaseType.XSSTRING).value
+								: castToType(stringValue, {
+										kind: BaseType.XSSTRING,
+										seqType: SequenceType.EXACTLY_ONE,
+								  }).value
 						)
 						.join(''),
 					{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE }
@@ -187,11 +190,17 @@ const fnString: FunctionDefinitionType = (
 					// anymore when schema support will be imlemented.
 					const stringValue = stringValueSequence.first();
 					if (isSubtypeOf(value.type.kind, BaseType.ATTRIBUTE)) {
-						return castToType(stringValue, BaseType.XSSTRING);
+						return castToType(stringValue, {
+							kind: BaseType.XSSTRING,
+							seqType: SequenceType.EXACTLY_ONE,
+						});
 					}
 					return stringValue;
 				}
-				return castToType(value, BaseType.XSSTRING);
+				return castToType(value, {
+					kind: BaseType.XSSTRING,
+					seqType: SequenceType.EXACTLY_ONE,
+				});
 			}),
 	});
 };
@@ -206,7 +215,13 @@ const fnStringJoin: FunctionDefinitionType = (
 	return zipSingleton([separator], ([separatorString]) =>
 		atomize(sequence, executionParameters).mapAll((allStrings) => {
 			const joinedString = allStrings
-				.map((stringValue) => castToType(stringValue, BaseType.XSSTRING).value)
+				.map(
+					(stringValue) =>
+						castToType(stringValue, {
+							kind: BaseType.XSSTRING,
+							seqType: SequenceType.EXACTLY_ONE,
+						}).value
+				)
 				.join(separatorString.value);
 			return sequenceFactory.singleton(
 				createAtomicValue(joinedString, {

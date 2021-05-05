@@ -43,11 +43,13 @@ function generateBinaryOperatorFunction(operator, typeA: BaseType, typeB: BaseTy
 	let castFunctionForValueB = null;
 
 	if (isSubtypeOf(typeA, BaseType.XSUNTYPEDATOMIC)) {
-		castFunctionForValueA = (value) => castToType(value, BaseType.XSDOUBLE);
+		castFunctionForValueA = (value) =>
+			castToType(value, { kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE });
 		typeA = BaseType.XSDOUBLE;
 	}
 	if (isSubtypeOf(typeB, BaseType.XSUNTYPEDATOMIC)) {
-		castFunctionForValueB = (value) => castToType(value, BaseType.XSDOUBLE);
+		castFunctionForValueB = (value) =>
+			castToType(value, { kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE });
 		typeB = BaseType.XSDOUBLE;
 	}
 

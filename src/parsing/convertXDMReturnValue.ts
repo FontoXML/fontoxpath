@@ -73,7 +73,13 @@ export default function convertXDMReturnValue<
 			}
 			// Atomize to convert (attribute)nodes to be strings
 			return allValues
-				.map((value) => castToType(value, BaseType.XSSTRING).value)
+				.map(
+					(value) =>
+						castToType(value, {
+							kind: BaseType.XSSTRING,
+							seqType: SequenceType.EXACTLY_ONE,
+						}).value
+				)
 				.join(' ') as IReturnTypes<TNode>[TReturnType];
 		}
 		case ReturnType.STRINGS: {

@@ -38,7 +38,10 @@ const xsQName: FunctionDefinitionType = (
 		// This won't ever work
 		throw new Error('XPTY0004: The provided QName is not a string-like value.');
 	}
-	let lexicalQName = castToType(value, BaseType.XSSTRING).value;
+	let lexicalQName = castToType(value, {
+		kind: BaseType.XSSTRING,
+		seqType: SequenceType.EXACTLY_ONE,
+	}).value;
 	// Test lexical scope
 	lexicalQName = normalizeWhitespace(lexicalQName, BaseType.XSQNAME);
 	if (!validatePattern(lexicalQName, BaseType.XSQNAME)) {

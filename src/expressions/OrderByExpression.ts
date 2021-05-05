@@ -4,7 +4,7 @@ import ISequence from './dataTypes/ISequence';
 import isSubtypeOf from './dataTypes/isSubtypeOf';
 import sequenceFactory from './dataTypes/sequenceFactory';
 import { getPrimitiveTypeName } from './dataTypes/typeHelpers';
-import Value, { BaseType, ValueType } from './dataTypes/Value';
+import Value, { BaseType, SequenceType, ValueType } from './dataTypes/Value';
 import DynamicContext from './DynamicContext';
 import ExecutionParameters from './ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from './Expression';
@@ -118,7 +118,10 @@ class OrderByExpression extends FlworExpression {
 						}
 
 						if (isSubtypeOf(BaseType.XSUNTYPEDATOMIC, value.type.kind)) {
-							return castToType(value, BaseType.XSSTRING);
+							return castToType(value, {
+								kind: BaseType.XSSTRING,
+								seqType: SequenceType.EXACTLY_ONE,
+							});
 						}
 
 						return value;

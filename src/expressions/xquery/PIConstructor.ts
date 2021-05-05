@@ -59,7 +59,15 @@ class PIConstructor extends Expression {
 			executionParameters
 		);
 		return atomize(dataSequence, executionParameters).mapAll((items) => {
-			const data = items.map((item) => castToType(item, BaseType.XSSTRING).value).join(' ');
+			const data = items
+				.map(
+					(item) =>
+						castToType(item, {
+							kind: BaseType.XSSTRING,
+							seqType: SequenceType.EXACTLY_ONE,
+						}).value
+				)
+				.join(' ');
 
 			if (data.indexOf('?>') !== -1) {
 				throw new Error(

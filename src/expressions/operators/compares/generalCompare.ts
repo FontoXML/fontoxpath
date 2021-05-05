@@ -50,25 +50,43 @@ export default function generalCompare(
 						isSubtypeOf(secondValue.type.kind, BaseType.XSUNTYPEDATOMIC)
 					) {
 						if (isSubtypeOf(firstValue.type.kind, BaseType.XSNUMERIC)) {
-							secondValue = castToType(secondValue, BaseType.XSDOUBLE);
+							secondValue = castToType(secondValue, {
+								kind: BaseType.XSDOUBLE,
+								seqType: SequenceType.EXACTLY_ONE,
+							});
 						} else if (isSubtypeOf(secondValue.type.kind, BaseType.XSNUMERIC)) {
-							firstValue = castToType(firstValue, BaseType.XSDOUBLE);
+							firstValue = castToType(firstValue, {
+								kind: BaseType.XSDOUBLE,
+								seqType: SequenceType.EXACTLY_ONE,
+							});
 						} else if (isSubtypeOf(firstValue.type.kind, BaseType.XSDAYTIMEDURATION)) {
-							secondValue = castToType(secondValue, BaseType.XSDAYTIMEDURATION);
+							secondValue = castToType(secondValue, {
+								kind: BaseType.XSDAYTIMEDURATION,
+								seqType: SequenceType.EXACTLY_ONE,
+							});
 						} else if (isSubtypeOf(secondValue.type.kind, BaseType.XSDAYTIMEDURATION)) {
-							firstValue = castToType(firstValue, BaseType.XSDAYTIMEDURATION);
+							firstValue = castToType(firstValue, {
+								kind: BaseType.XSDAYTIMEDURATION,
+								seqType: SequenceType.EXACTLY_ONE,
+							});
 						} else if (
 							isSubtypeOf(firstValue.type.kind, BaseType.XSYEARMONTHDURATION)
 						) {
-							secondValue = castToType(secondValue, BaseType.XSYEARMONTHDURATION);
+							secondValue = castToType(secondValue, {
+								kind: BaseType.XSYEARMONTHDURATION,
+								seqType: SequenceType.EXACTLY_ONE,
+							});
 						} else if (
 							isSubtypeOf(secondValue.type.kind, BaseType.XSYEARMONTHDURATION)
 						) {
-							firstValue = castToType(firstValue, BaseType.XSYEARMONTHDURATION);
+							firstValue = castToType(firstValue, {
+								kind: BaseType.XSYEARMONTHDURATION,
+								seqType: SequenceType.EXACTLY_ONE,
+							});
 						} else if (isSubtypeOf(firstValue.type.kind, BaseType.XSUNTYPEDATOMIC)) {
-							firstValue = castToType(firstValue, secondValue.type.kind);
+							firstValue = castToType(firstValue, secondValue.type);
 						} else if (isSubtypeOf(secondValue.type.kind, BaseType.XSUNTYPEDATOMIC)) {
-							secondValue = castToType(secondValue, firstValue.type.kind);
+							secondValue = castToType(secondValue, firstValue.type);
 						}
 					}
 

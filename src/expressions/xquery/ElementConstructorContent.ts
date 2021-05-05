@@ -56,10 +56,10 @@ function parseChildNodes(
 			) {
 				// childNode is a textnode-like
 				const atomizedValue = isSubtypeOf(childNode.type.kind, BaseType.XSANYATOMICTYPE)
-					? castToType(
-							atomizeSingleValue(childNode, executionParameters).first(),
-							BaseType.XSSTRING
-					  ).value
+					? castToType(atomizeSingleValue(childNode, executionParameters).first(), {
+							kind: BaseType.XSSTRING,
+							seqType: SequenceType.EXACTLY_ONE,
+					  }).value
 					: domFacade.getDataFromPointer(childNode.value);
 				if (
 					i !== 0 &&
