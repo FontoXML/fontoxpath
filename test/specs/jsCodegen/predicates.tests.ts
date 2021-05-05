@@ -17,7 +17,7 @@ describe('predicates', () => {
 		],
 		document
 	);
-	it('compiles predicates', () => {
+	it('compiles path expressions with one predicate', () => {
 		chai.assert.isTrue(
 			evaluateXPathToBoolean('/xml/tips[parent::element()]', document, null, null, {
 				backend: 'js-codegen',
@@ -38,6 +38,18 @@ describe('predicates', () => {
 					backend: 'js-codegen',
 				}
 			)
+		);
+	});
+	it('compiles path expressions with multiple predicates', () => {
+		chai.assert.isTrue(
+			evaluateXPathToBoolean('/xml/tips[parent::element()][self::element()][child::element(tip)]', document, null, null, {
+				backend: 'js-codegen',
+			})
+		);
+		chai.assert.isFalse(
+			evaluateXPathToBoolean('/xml/tips/tip/text()[parent::text()][self::element()]', document, null, null, {
+				backend: 'js-codegen',
+			})
 		);
 	});
 	it('compiles predicates with a combination of "and" and "or" expressions', () => {
