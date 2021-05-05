@@ -18,8 +18,7 @@ class CastAsOperator extends Expression {
 		this._targetType = stringToValueType(
 			targetType.prefix
 				? `${targetType.prefix}:${targetType.localName}`
-				: targetType.localName,
-			SequenceType.EXACTLY_ONE
+				: targetType.localName
 		);
 		if (
 			this._targetType.kind === BaseType.XSANYATOMICTYPE ||
@@ -54,7 +53,7 @@ class CastAsOperator extends Expression {
 				return sequenceFactory.empty();
 			},
 			singleton: () => {
-				return evaluatedExpression.map((value) => castToType(value, this._targetType));
+				return evaluatedExpression.map((value) => castToType(value, this._targetType.kind));
 			},
 			multiple: () => {
 				throw new Error('XPTY0004: Sequence to cast is not singleton or empty.');

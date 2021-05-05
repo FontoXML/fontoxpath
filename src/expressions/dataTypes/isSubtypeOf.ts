@@ -1,20 +1,21 @@
-import { BaseType } from 'src';
-import builtinDataTypesByType from './builtins/builtinDataTypesByType';
-import { startWithXS, ValueType } from './Value';
+import builtinDataTypesByType, { TypeModel } from './builtins/builtinDataTypesByType';
+import { BaseType, startWithXS, ValueType } from './Value';
 import { Variety } from './Variety';
 
-function isSubtypeOfType(subType, superType) {
+function isSubtypeOfType(subType: TypeModel, superType: TypeModel) {
 	if (superType.variety === Variety.UNION) {
 		// It is a union type, which can only be the topmost types
 		return !!superType.memberTypes.find((memberType) => isSubtypeOfType(subType, memberType));
 	}
 
 	while (subType) {
-		if (subType.name.kind === superType.name.kind) {
+		if (subType.type.kind === superType.type.kind) {
 			return true;
 		}
 		if (subType.variety === Variety.UNION) {
-			return !!subType.memberTypes.find((memberType) => isSubtypeOf(memberType, superType));
+			return !!subType.memberTypes.find((memberType) =>
+				isSubtypeOf(memberType.type.kind, superType.type.kind)
+			);
 		}
 		subType = subType.parent;
 	}
@@ -31,8 +32,8 @@ export default function isSubtypeOf(baseSubType: BaseType, baseSuperType: BaseTy
 		return true;
 	}
 
-	const superType = builtinDataTypesByType[baseSuperType];
-	const subType = builtinDataTypesByType[baseSubType];
+	const superType: TypeModel = builtinDataTypesByType[baseSuperType];
+	const subType: TypeModel = builtinDataTypesByType[baseSubType];
 
 	if (!superType) {
 		if (!startWithXS(baseSuperType)) {

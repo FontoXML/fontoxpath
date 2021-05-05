@@ -16,12 +16,7 @@ function sortResults(domFacade: DomFacade, result: Value[]) {
 	let resultContainsNodes = false;
 	let resultContainsNonNodes = false;
 	result.forEach((resultValue) => {
-		if (
-			isSubtypeOf(resultValue.type, {
-				kind: BaseType.NODE,
-				seqType: SequenceType.EXACTLY_ONE,
-			})
-		) {
+		if (isSubtypeOf(resultValue.type.kind, BaseType.NODE)) {
 			resultContainsNodes = true;
 		} else {
 			resultContainsNonNodes = true;
@@ -88,10 +83,7 @@ class PathExpression extends Expression {
 						}
 						if (
 							childContext.value.contextItem !== null &&
-							!isSubtypeOf(childContext.value.contextItem.type, {
-								kind: BaseType.NODE,
-								seqType: SequenceType.EXACTLY_ONE,
-							})
+							!isSubtypeOf(childContext.value.contextItem.type.kind, BaseType.NODE)
 						) {
 							throw new Error(
 								'XPTY0019: The / operator can only be applied to xml/json nodes.'

@@ -25,41 +25,30 @@ import {
 } from '../../dataTypes/valueTypes/YearMonthDuration';
 import Expression from '../../Expression';
 
-function determineReturnType(typeA: ValueType, typeB: ValueType): ValueType {
-	if (
-		isSubtypeOf(typeA, { kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE }) &&
-		isSubtypeOf(typeB, { kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE })
-	) {
+function determineReturnType(typeA: BaseType, typeB: BaseType): ValueType {
+	if (isSubtypeOf(typeA, BaseType.XSINTEGER) && isSubtypeOf(typeB, BaseType.XSINTEGER)) {
 		return { kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE };
 	}
-	if (
-		isSubtypeOf(typeA, { kind: BaseType.XSDECIMAL, seqType: SequenceType.EXACTLY_ONE }) &&
-		isSubtypeOf(typeB, { kind: BaseType.XSDECIMAL, seqType: SequenceType.EXACTLY_ONE })
-	) {
+	if (isSubtypeOf(typeA, BaseType.XSDECIMAL) && isSubtypeOf(typeB, BaseType.XSDECIMAL)) {
 		return { kind: BaseType.XSDECIMAL, seqType: SequenceType.EXACTLY_ONE };
 	}
-	if (
-		isSubtypeOf(typeA, { kind: BaseType.XSFLOAT, seqType: SequenceType.EXACTLY_ONE }) &&
-		isSubtypeOf(typeB, { kind: BaseType.XSFLOAT, seqType: SequenceType.EXACTLY_ONE })
-	) {
+	if (isSubtypeOf(typeA, BaseType.XSFLOAT) && isSubtypeOf(typeB, BaseType.XSFLOAT)) {
 		return { kind: BaseType.XSFLOAT, seqType: SequenceType.EXACTLY_ONE };
 	}
 	return { kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE };
 }
 
-function generateBinaryOperatorFunction(operator, typeA: ValueType, typeB: ValueType) {
+function generateBinaryOperatorFunction(operator, typeA: BaseType, typeB: BaseType) {
 	let castFunctionForValueA = null;
 	let castFunctionForValueB = null;
 
-	if (isSubtypeOf(typeA, { kind: BaseType.XSUNTYPEDATOMIC, seqType: SequenceType.EXACTLY_ONE })) {
-		castFunctionForValueA = (value) =>
-			castToType(value, { kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE });
-		typeA = { kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE };
+	if (isSubtypeOf(typeA, BaseType.XSUNTYPEDATOMIC)) {
+		castFunctionForValueA = (value) => castToType(value, BaseType.XSDOUBLE);
+		typeA = BaseType.XSDOUBLE;
 	}
-	if (isSubtypeOf(typeB, { kind: BaseType.XSUNTYPEDATOMIC, seqType: SequenceType.EXACTLY_ONE })) {
-		castFunctionForValueB = (value) =>
-			castToType(value, { kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE });
-		typeB = { kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE };
+	if (isSubtypeOf(typeB, BaseType.XSUNTYPEDATOMIC)) {
+		castFunctionForValueB = (value) => castToType(value, BaseType.XSDOUBLE);
+		typeB = BaseType.XSDOUBLE;
 	}
 
 	function applyCastFunctions(valueA, valueB) {
@@ -69,10 +58,7 @@ function generateBinaryOperatorFunction(operator, typeA: ValueType, typeB: Value
 		};
 	}
 
-	if (
-		isSubtypeOf(typeA, { kind: BaseType.XSNUMERIC, seqType: SequenceType.EXACTLY_ONE }) &&
-		isSubtypeOf(typeB, { kind: BaseType.XSNUMERIC, seqType: SequenceType.EXACTLY_ONE })
-	) {
+	if (isSubtypeOf(typeA, BaseType.XSNUMERIC) && isSubtypeOf(typeB, BaseType.XSNUMERIC)) {
 		switch (operator) {
 			case 'addOp': {
 				const returnType = determineReturnType(typeA, typeB);
@@ -143,14 +129,8 @@ function generateBinaryOperatorFunction(operator, typeA: ValueType, typeB: Value
 	}
 
 	if (
-		isSubtypeOf(typeA, {
-			kind: BaseType.XSYEARMONTHDURATION,
-			seqType: SequenceType.EXACTLY_ONE,
-		}) &&
-		isSubtypeOf(typeB, {
-			kind: BaseType.XSYEARMONTHDURATION,
-			seqType: SequenceType.EXACTLY_ONE,
-		})
+		isSubtypeOf(typeA, BaseType.XSYEARMONTHDURATION) &&
+		isSubtypeOf(typeB, BaseType.XSYEARMONTHDURATION)
 	) {
 		switch (operator) {
 			case 'addOp':
@@ -184,11 +164,8 @@ function generateBinaryOperatorFunction(operator, typeA: ValueType, typeB: Value
 	}
 
 	if (
-		isSubtypeOf(typeA, {
-			kind: BaseType.XSYEARMONTHDURATION,
-			seqType: SequenceType.EXACTLY_ONE,
-		}) &&
-		isSubtypeOf(typeB, { kind: BaseType.XSNUMERIC, seqType: SequenceType.EXACTLY_ONE })
+		isSubtypeOf(typeA, BaseType.XSYEARMONTHDURATION) &&
+		isSubtypeOf(typeB, BaseType.XSNUMERIC)
 	) {
 		switch (operator) {
 			case 'multiplyOp':
@@ -211,11 +188,8 @@ function generateBinaryOperatorFunction(operator, typeA: ValueType, typeB: Value
 	}
 
 	if (
-		isSubtypeOf(typeA, { kind: BaseType.XSNUMERIC, seqType: SequenceType.EXACTLY_ONE }) &&
-		isSubtypeOf(typeB, {
-			kind: BaseType.XSYEARMONTHDURATION,
-			seqType: SequenceType.EXACTLY_ONE,
-		})
+		isSubtypeOf(typeA, BaseType.XSNUMERIC) &&
+		isSubtypeOf(typeB, BaseType.XSYEARMONTHDURATION)
 	) {
 		if (operator === 'multiplyOp') {
 			return (a, b) => {
@@ -229,11 +203,8 @@ function generateBinaryOperatorFunction(operator, typeA: ValueType, typeB: Value
 	}
 
 	if (
-		isSubtypeOf(typeA, {
-			kind: BaseType.XSDAYTIMEDURATION,
-			seqType: SequenceType.EXACTLY_ONE,
-		}) &&
-		isSubtypeOf(typeB, { kind: BaseType.XSDAYTIMEDURATION, seqType: SequenceType.EXACTLY_ONE })
+		isSubtypeOf(typeA, BaseType.XSDAYTIMEDURATION) &&
+		isSubtypeOf(typeB, BaseType.XSDAYTIMEDURATION)
 	) {
 		switch (operator) {
 			case 'addOp':
@@ -262,13 +233,7 @@ function generateBinaryOperatorFunction(operator, typeA: ValueType, typeB: Value
 				};
 		}
 	}
-	if (
-		isSubtypeOf(typeA, {
-			kind: BaseType.XSDAYTIMEDURATION,
-			seqType: SequenceType.EXACTLY_ONE,
-		}) &&
-		isSubtypeOf(typeB, { kind: BaseType.XSNUMERIC, seqType: SequenceType.EXACTLY_ONE })
-	) {
+	if (isSubtypeOf(typeA, BaseType.XSDAYTIMEDURATION) && isSubtypeOf(typeB, BaseType.XSNUMERIC)) {
 		switch (operator) {
 			case 'multiplyOp':
 				return (a, b) => {
@@ -288,10 +253,7 @@ function generateBinaryOperatorFunction(operator, typeA: ValueType, typeB: Value
 				};
 		}
 	}
-	if (
-		isSubtypeOf(typeA, { kind: BaseType.XSNUMERIC, seqType: SequenceType.EXACTLY_ONE }) &&
-		isSubtypeOf(typeB, { kind: BaseType.XSDAYTIMEDURATION, seqType: SequenceType.EXACTLY_ONE })
-	) {
+	if (isSubtypeOf(typeA, BaseType.XSNUMERIC) && isSubtypeOf(typeB, BaseType.XSDAYTIMEDURATION)) {
 		if (operator === 'multiplyOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
@@ -304,12 +266,9 @@ function generateBinaryOperatorFunction(operator, typeA: ValueType, typeB: Value
 	}
 
 	if (
-		(isSubtypeOf(typeA, { kind: BaseType.XSDATETIME, seqType: SequenceType.EXACTLY_ONE }) &&
-			isSubtypeOf(typeB, { kind: BaseType.XSDATETIME, seqType: SequenceType.EXACTLY_ONE })) ||
-		(isSubtypeOf(typeA, { kind: BaseType.XSDATE, seqType: SequenceType.EXACTLY_ONE }) &&
-			isSubtypeOf(typeB, { kind: BaseType.XSDATE, seqType: SequenceType.EXACTLY_ONE })) ||
-		(isSubtypeOf(typeA, { kind: BaseType.XSTIME, seqType: SequenceType.EXACTLY_ONE }) &&
-			isSubtypeOf(typeB, { kind: BaseType.XSTIME, seqType: SequenceType.EXACTLY_ONE }))
+		(isSubtypeOf(typeA, BaseType.XSDATETIME) && isSubtypeOf(typeB, BaseType.XSDATETIME)) ||
+		(isSubtypeOf(typeA, BaseType.XSDATE) && isSubtypeOf(typeB, BaseType.XSDATE)) ||
+		(isSubtypeOf(typeA, BaseType.XSTIME) && isSubtypeOf(typeB, BaseType.XSTIME))
 	) {
 		if (operator === 'subtractOp') {
 			return (a, b) => {
@@ -325,16 +284,9 @@ function generateBinaryOperatorFunction(operator, typeA: ValueType, typeB: Value
 	}
 
 	if (
-		(isSubtypeOf(typeA, { kind: BaseType.XSDATETIME, seqType: SequenceType.EXACTLY_ONE }) &&
-			isSubtypeOf(typeB, {
-				kind: BaseType.XSYEARMONTHDURATION,
-				seqType: SequenceType.EXACTLY_ONE,
-			})) ||
-		(isSubtypeOf(typeA, { kind: BaseType.XSDATETIME, seqType: SequenceType.EXACTLY_ONE }) &&
-			isSubtypeOf(typeB, {
-				kind: BaseType.XSDAYTIMEDURATION,
-				seqType: SequenceType.EXACTLY_ONE,
-			}))
+		(isSubtypeOf(typeA, BaseType.XSDATETIME) &&
+			isSubtypeOf(typeB, BaseType.XSYEARMONTHDURATION)) ||
+		(isSubtypeOf(typeA, BaseType.XSDATETIME) && isSubtypeOf(typeB, BaseType.XSDAYTIMEDURATION))
 	) {
 		if (operator === 'addOp') {
 			return (a, b) => {
@@ -357,16 +309,8 @@ function generateBinaryOperatorFunction(operator, typeA: ValueType, typeB: Value
 	}
 
 	if (
-		(isSubtypeOf(typeA, { kind: BaseType.XSDATE, seqType: SequenceType.EXACTLY_ONE }) &&
-			isSubtypeOf(typeB, {
-				kind: BaseType.XSYEARMONTHDURATION,
-				seqType: SequenceType.EXACTLY_ONE,
-			})) ||
-		(isSubtypeOf(typeA, { kind: BaseType.XSDATE, seqType: SequenceType.EXACTLY_ONE }) &&
-			isSubtypeOf(typeB, {
-				kind: BaseType.XSDAYTIMEDURATION,
-				seqType: SequenceType.EXACTLY_ONE,
-			}))
+		(isSubtypeOf(typeA, BaseType.XSDATE) && isSubtypeOf(typeB, BaseType.XSYEARMONTHDURATION)) ||
+		(isSubtypeOf(typeA, BaseType.XSDATE) && isSubtypeOf(typeB, BaseType.XSDAYTIMEDURATION))
 	) {
 		if (operator === 'addOp') {
 			return (a, b) => {
@@ -388,10 +332,7 @@ function generateBinaryOperatorFunction(operator, typeA: ValueType, typeB: Value
 		}
 	}
 
-	if (
-		isSubtypeOf(typeA, { kind: BaseType.XSTIME, seqType: SequenceType.EXACTLY_ONE }) &&
-		isSubtypeOf(typeB, { kind: BaseType.XSDAYTIMEDURATION, seqType: SequenceType.EXACTLY_ONE })
-	) {
+	if (isSubtypeOf(typeA, BaseType.XSTIME) && isSubtypeOf(typeB, BaseType.XSDAYTIMEDURATION)) {
 		if (operator === 'addOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
@@ -413,16 +354,9 @@ function generateBinaryOperatorFunction(operator, typeA: ValueType, typeB: Value
 	}
 
 	if (
-		(isSubtypeOf(typeB, {
-			kind: BaseType.XSYEARMONTHDURATION,
-			seqType: SequenceType.EXACTLY_ONE,
-		}) &&
-			isSubtypeOf(typeA, { kind: BaseType.XSDATETIME, seqType: SequenceType.EXACTLY_ONE })) ||
-		(isSubtypeOf(typeB, {
-			kind: BaseType.XSDAYTIMEDURATION,
-			seqType: SequenceType.EXACTLY_ONE,
-		}) &&
-			isSubtypeOf(typeA, { kind: BaseType.XSDATETIME, seqType: SequenceType.EXACTLY_ONE }))
+		(isSubtypeOf(typeB, BaseType.XSYEARMONTHDURATION) &&
+			isSubtypeOf(typeA, BaseType.XSDATETIME)) ||
+		(isSubtypeOf(typeB, BaseType.XSDAYTIMEDURATION) && isSubtypeOf(typeA, BaseType.XSDATETIME))
 	) {
 		if (operator === 'addOp') {
 			return (a, b) => {
@@ -445,16 +379,8 @@ function generateBinaryOperatorFunction(operator, typeA: ValueType, typeB: Value
 	}
 
 	if (
-		(isSubtypeOf(typeB, {
-			kind: BaseType.XSDAYTIMEDURATION,
-			seqType: SequenceType.EXACTLY_ONE,
-		}) &&
-			isSubtypeOf(typeA, { kind: BaseType.XSDATE, seqType: SequenceType.EXACTLY_ONE })) ||
-		(isSubtypeOf(typeB, {
-			kind: BaseType.XSYEARMONTHDURATION,
-			seqType: SequenceType.EXACTLY_ONE,
-		}) &&
-			isSubtypeOf(typeA, { kind: BaseType.XSDATE, seqType: SequenceType.EXACTLY_ONE }))
+		(isSubtypeOf(typeB, BaseType.XSDAYTIMEDURATION) && isSubtypeOf(typeA, BaseType.XSDATE)) ||
+		(isSubtypeOf(typeB, BaseType.XSYEARMONTHDURATION) && isSubtypeOf(typeA, BaseType.XSDATE))
 	) {
 		if (operator === 'addOp') {
 			return (a, b) => {
@@ -476,13 +402,7 @@ function generateBinaryOperatorFunction(operator, typeA: ValueType, typeB: Value
 		}
 	}
 
-	if (
-		isSubtypeOf(typeB, {
-			kind: BaseType.XSDAYTIMEDURATION,
-			seqType: SequenceType.EXACTLY_ONE,
-		}) &&
-		isSubtypeOf(typeA, { kind: BaseType.XSTIME, seqType: SequenceType.EXACTLY_ONE })
-	) {
+	if (isSubtypeOf(typeB, BaseType.XSDAYTIMEDURATION) && isSubtypeOf(typeA, BaseType.XSTIME)) {
 		if (operator === 'addOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
@@ -572,8 +492,8 @@ class BinaryOperator extends Expression {
 						typingKey
 					] = generateBinaryOperatorFunction(
 						this._operator,
-						firstValue.type,
-						secondValue.type
+						firstValue.type.kind,
+						secondValue.type.kind
 					);
 				}
 

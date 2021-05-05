@@ -43,14 +43,8 @@ class NameTest extends TestAbstractExpression {
 		executionParameters: ExecutionParameters
 	) {
 		const domFacade = executionParameters.domFacade;
-		const nodeIsElement = isSubtypeOf(value.type, {
-			kind: BaseType.ELEMENT,
-		seqType: SequenceType.EXACTLY_ONE,
-		});
-		const nodeIsAttribute = isSubtypeOf(value.type, {
-			kind: BaseType.ATTRIBUTE,
-			seqType: SequenceType.EXACTLY_ONE,
-		});
+		const nodeIsElement = isSubtypeOf(value.type.kind, BaseType.ELEMENT);
+		const nodeIsAttribute = isSubtypeOf(value.type.kind, BaseType.ATTRIBUTE);
 		if (!nodeIsElement && !nodeIsAttribute) {
 			return false;
 		}

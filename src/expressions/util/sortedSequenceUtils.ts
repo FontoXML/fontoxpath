@@ -15,10 +15,7 @@ function isSameNodeValue(a: Value, b: Value) {
 	if (a === null || b === null) {
 		return false;
 	}
-	if (
-		!isSubtypeOf(a.type, { kind: BaseType.NODE, seqType: SequenceType.EXACTLY_ONE }) ||
-		!isSubtypeOf(b.type, { kind: BaseType.NODE, seqType: SequenceType.EXACTLY_ONE })
-	) {
+	if (!isSubtypeOf(a.type.kind, BaseType.NODE) || !isSubtypeOf(b.type.kind, BaseType.NODE)) {
 		return false;
 	}
 
@@ -103,10 +100,7 @@ function mergeSortedSequences(domFacade: DomFacade, sequences: IIterator<ISequen
 
 				if (
 					allIterators.every((iterator) =>
-						isSubtypeOf(iterator.current.value.type, {
-							kind: BaseType.NODE,
-							seqType: SequenceType.EXACTLY_ONE,
-						})
+						isSubtypeOf(iterator.current.value.type.kind, BaseType.NODE)
 					)
 				) {
 					// Sort the iterators initially. We know these iterators return locally sorted items, but we do not know the inter-ordering of these items.
@@ -129,12 +123,7 @@ function mergeSortedSequences(domFacade: DomFacade, sequences: IIterator<ISequen
 				const consumedIterator = allIterators.shift();
 				consumedValue = consumedIterator.current;
 				consumedIterator.current = consumedIterator.next(IterationHint.NONE);
-				if (
-					!isSubtypeOf(consumedValue.value.type, {
-						kind: BaseType.NODE,
-						seqType: SequenceType.EXACTLY_ONE,
-					})
-				) {
+				if (!isSubtypeOf(consumedValue.value.type.kind, BaseType.NODE)) {
 					// Sorting does not matter
 					return consumedValue;
 				}

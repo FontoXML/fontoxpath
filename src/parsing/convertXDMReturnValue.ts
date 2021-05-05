@@ -73,13 +73,7 @@ export default function convertXDMReturnValue<
 			}
 			// Atomize to convert (attribute)nodes to be strings
 			return allValues
-				.map(
-					(value) =>
-						castToType(value, {
-							kind: BaseType.XSSTRING,
-							seqType: SequenceType.EXACTLY_ONE,
-						}).value
-				)
+				.map((value) => castToType(value, BaseType.XSSTRING).value)
 				.join(' ') as IReturnTypes<TNode>[TReturnType];
 		}
 		case ReturnType.STRINGS: {
@@ -98,12 +92,7 @@ export default function convertXDMReturnValue<
 			if (first === null) {
 				return NaN as IReturnTypes<TNode>[TReturnType];
 			}
-			if (
-				!isSubtypeOf(first.type, {
-					kind: BaseType.XSNUMERIC,
-					seqType: SequenceType.EXACTLY_ONE,
-				})
-			) {
+			if (!isSubtypeOf(first.type.kind, BaseType.XSNUMERIC)) {
 				return NaN as IReturnTypes<TNode>[TReturnType];
 			}
 			return first.value as IReturnTypes<TNode>[TReturnType];
@@ -114,9 +103,7 @@ export default function convertXDMReturnValue<
 			if (first === null) {
 				return null as IReturnTypes<TNode>[TReturnType];
 			}
-			if (
-				!isSubtypeOf(first.type, { kind: BaseType.NODE, seqType: SequenceType.EXACTLY_ONE })
-			) {
+			if (!isSubtypeOf(first.type.kind, BaseType.NODE)) {
 				throw new Error(
 					'Expected XPath ' + expression + ' to resolve to Node. Got ' + first.type
 				);
@@ -136,10 +123,7 @@ export default function convertXDMReturnValue<
 
 			if (
 				!allResults.every((value) => {
-					return isSubtypeOf(value.type, {
-						kind: BaseType.NODE,
-						seqType: SequenceType.EXACTLY_ONE,
-					});
+					return isSubtypeOf(value.type.kind, BaseType.NODE);
 				})
 			) {
 				throw new Error(

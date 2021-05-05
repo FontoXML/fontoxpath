@@ -25,14 +25,8 @@ export default function nodeCompare(
 				singleton: () => {
 					return zipSingleton([firstSequence, secondSequence], ([first, second]) => {
 						if (
-							!isSubtypeOf(first.type, {
-								kind: BaseType.NODE,
-								seqType: SequenceType.EXACTLY_ONE,
-							}) ||
-							!isSubtypeOf(second.type, {
-								kind: BaseType.NODE,
-								seqType: SequenceType.EXACTLY_ONE,
-							})
+							!isSubtypeOf(first.type.kind, BaseType.NODE) ||
+							!isSubtypeOf(second.type.kind, BaseType.NODE)
 						) {
 							throw new Error('XPTY0004: Sequences to compare are not nodes');
 						}

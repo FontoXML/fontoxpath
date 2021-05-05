@@ -20,8 +20,7 @@ class CastableAsOperator extends Expression {
 		this._targetType = stringToValueType(
 			targetType.prefix
 				? `${targetType.prefix}:${targetType.localName}`
-				: targetType.localName,
-			SequenceType.EXACTLY_ONE
+				: targetType.localName
 		);
 		if (
 			this._targetType.kind === BaseType.XSANYATOMICTYPE ||

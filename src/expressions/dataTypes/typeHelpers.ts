@@ -1,6 +1,5 @@
-import { BaseType } from 'src';
 import builtinDataTypesByType, { TypeModel } from './builtins/builtinDataTypesByType';
-import { ValueType } from './Value';
+import { BaseType } from './Value';
 import { Variety } from './Variety';
 
 export function getPrimitiveTypeName(typeName: BaseType): BaseType | null {

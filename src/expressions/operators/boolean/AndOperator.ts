@@ -38,13 +38,7 @@ class AndOperator extends Expression {
 		let contextItemBuckets: string[] | null = null;
 		if (dynamicContext !== null) {
 			const contextItem = dynamicContext.contextItem;
-			if (
-				contextItem !== null &&
-				isSubtypeOf(contextItem.type, {
-					kind: BaseType.NODE,
-					seqType: SequenceType.EXACTLY_ONE
-				})
-			) {
+			if (contextItem !== null && isSubtypeOf(contextItem.type.kind, BaseType.NODE)) {
 				contextItemBuckets = getBucketsForPointer(
 					contextItem.value as NodePointer,
 					executionParameters.domFacade

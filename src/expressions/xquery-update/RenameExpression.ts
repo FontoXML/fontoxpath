@@ -32,18 +32,9 @@ function evaluateTarget(targetXdmValue) {
 		throw errXUTY0012();
 	}
 	if (
-		!isSubtypeOf(targetXdmValue[0].type, {
-			kind: BaseType.ELEMENT,
-			seqType: SequenceType.EXACTLY_ONE,
-		}) &&
-		!isSubtypeOf(targetXdmValue[0].type, {
-			kind: BaseType.ATTRIBUTE,
-			seqType: SequenceType.EXACTLY_ONE,
-		}) &&
-		!isSubtypeOf(targetXdmValue[0].type, {
-			kind: BaseType.PROCESSINGINSTRUCTION,
-			seqType: SequenceType.EXACTLY_ONE,
-		})
+		!isSubtypeOf(targetXdmValue[0].type.kind, BaseType.ELEMENT) &&
+		!isSubtypeOf(targetXdmValue[0].type.kind, BaseType.ATTRIBUTE) &&
+		!isSubtypeOf(targetXdmValue[0].type.kind, BaseType.PROCESSINGINSTRUCTION)
 	) {
 		throw errXUTY0012();
 	}

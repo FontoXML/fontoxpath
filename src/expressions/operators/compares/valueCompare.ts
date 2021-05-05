@@ -27,35 +27,29 @@ import DynamicContext from '../../DynamicContext';
 // Use partial application to get to a comparer faster
 function areBothStringOrAnyURI(a, b) {
 	return (
-		(isSubtypeOf(a, { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE }) ||
-			isSubtypeOf(a, { kind: BaseType.XSANYURI, seqType: SequenceType.EXACTLY_ONE })) &&
-		(isSubtypeOf(b, { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE }) ||
-			isSubtypeOf(b, { kind: BaseType.XSANYURI, seqType: SequenceType.EXACTLY_ONE }))
+		(isSubtypeOf(a, BaseType.XSSTRING) || isSubtypeOf(a, BaseType.XSANYURI)) &&
+		(isSubtypeOf(b, BaseType.XSSTRING) || isSubtypeOf(b, BaseType.XSANYURI))
 	);
 }
 
 function generateCompareFunction(
 	operator: string,
-	typeA: ValueType,
-	typeB: ValueType,
+	typeA: BaseType,
+	typeB: BaseType,
 	dynamicContext: DynamicContext
 ): (valA: any, valB: any) => boolean {
 	let castFunctionForValueA = null;
 	let castFunctionForValueB = null;
 
 	if (
-		isSubtypeOf(typeA, { kind: BaseType.XSUNTYPEDATOMIC, seqType: SequenceType.EXACTLY_ONE }) &&
-		isSubtypeOf(typeB, { kind: BaseType.XSUNTYPEDATOMIC, seqType: SequenceType.EXACTLY_ONE })
+		isSubtypeOf(typeA, BaseType.XSUNTYPEDATOMIC) &&
+		isSubtypeOf(typeB, BaseType.XSUNTYPEDATOMIC)
 	) {
-		typeA = typeB = { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE };
-	} else if (
-		isSubtypeOf(typeA, { kind: BaseType.XSUNTYPEDATOMIC, seqType: SequenceType.EXACTLY_ONE })
-	) {
+		typeA = typeB = BaseType.XSSTRING;
+	} else if (isSubtypeOf(typeA, BaseType.XSUNTYPEDATOMIC)) {
 		castFunctionForValueA = (val) => castToType(val, typeB);
 		typeA = typeB;
-	} else if (
-		isSubtypeOf(typeB, { kind: BaseType.XSUNTYPEDATOMIC, seqType: SequenceType.EXACTLY_ONE })
-	) {
+	} else if (isSubtypeOf(typeB, BaseType.XSUNTYPEDATOMIC)) {
 		castFunctionForValueB = (val) => castToType(val, typeA);
 		typeB = typeA;
 	}
@@ -67,10 +61,7 @@ function generateCompareFunction(
 		};
 	}
 
-	if (
-		isSubtypeOf(typeA, { kind: BaseType.XSQNAME, seqType: SequenceType.EXACTLY_ONE }) &&
-		isSubtypeOf(typeB, { kind: BaseType.XSQNAME, seqType: SequenceType.EXACTLY_ONE })
-	) {
+	if (isSubtypeOf(typeA, BaseType.XSQNAME) && isSubtypeOf(typeB, BaseType.XSQNAME)) {
 		if (operator === 'eqOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
@@ -92,17 +83,17 @@ function generateCompareFunction(
 		throw new Error('XPTY0004: Only the "eq" and "ne" comparison is defined for xs:QName');
 	}
 
-	function areBothSubtypeOf(type: ValueType) {
+	function areBothSubtypeOf(type: BaseType) {
 		return isSubtypeOf(typeA, type) && isSubtypeOf(typeB, type);
 	}
 
 	if (
-		areBothSubtypeOf({ kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE }) ||
-		areBothSubtypeOf({ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE }) ||
-		areBothSubtypeOf({ kind: BaseType.XSNUMERIC, seqType: SequenceType.EXACTLY_ONE }) ||
-		areBothSubtypeOf({ kind: BaseType.XSANYURI, seqType: SequenceType.EXACTLY_ONE }) ||
-		areBothSubtypeOf({ kind: BaseType.XSHEXBINARY, seqType: SequenceType.EXACTLY_ONE }) ||
-		areBothSubtypeOf({ kind: BaseType.XSBASE64BINARY, seqType: SequenceType.EXACTLY_ONE }) ||
+		areBothSubtypeOf(BaseType.XSBOOLEAN) ||
+		areBothSubtypeOf(BaseType.XSSTRING) ||
+		areBothSubtypeOf(BaseType.XSNUMERIC) ||
+		areBothSubtypeOf(BaseType.XSANYURI) ||
+		areBothSubtypeOf(BaseType.XSHEXBINARY) ||
+		areBothSubtypeOf(BaseType.XSBASE64BINARY) ||
 		areBothStringOrAnyURI(typeA, typeB)
 	) {
 		switch (operator) {
@@ -140,9 +131,9 @@ function generateCompareFunction(
 	}
 
 	if (
-		areBothSubtypeOf({ kind: BaseType.XSDATETIME, seqType: SequenceType.EXACTLY_ONE }) ||
-		areBothSubtypeOf({ kind: BaseType.XSDATE, seqType: SequenceType.EXACTLY_ONE }) ||
-		areBothSubtypeOf({ kind: BaseType.XSTIME, seqType: SequenceType.EXACTLY_ONE })
+		areBothSubtypeOf(BaseType.XSDATETIME) ||
+		areBothSubtypeOf(BaseType.XSDATE) ||
+		areBothSubtypeOf(BaseType.XSTIME)
 	) {
 		switch (operator) {
 			case 'eqOp':
@@ -219,11 +210,11 @@ function generateCompareFunction(
 	}
 
 	if (
-		areBothSubtypeOf({ kind: BaseType.XSGYEARMONTH, seqType: SequenceType.EXACTLY_ONE }) ||
-		areBothSubtypeOf({ kind: BaseType.XSGYEAR, seqType: SequenceType.EXACTLY_ONE }) ||
-		areBothSubtypeOf({ kind: BaseType.XSGMONTHDAY, seqType: SequenceType.EXACTLY_ONE }) ||
-		areBothSubtypeOf({ kind: BaseType.XSGMONTH, seqType: SequenceType.EXACTLY_ONE }) ||
-		areBothSubtypeOf({ kind: BaseType.XSGDAY, seqType: SequenceType.EXACTLY_ONE })
+		areBothSubtypeOf(BaseType.XSGYEARMONTH) ||
+		areBothSubtypeOf(BaseType.XSGYEAR) ||
+		areBothSubtypeOf(BaseType.XSGMONTHDAY) ||
+		areBothSubtypeOf(BaseType.XSGMONTH) ||
+		areBothSubtypeOf(BaseType.XSGDAY)
 	) {
 		switch (operator) {
 			case 'eqOp':
@@ -247,9 +238,7 @@ function generateCompareFunction(
 		}
 	}
 
-	if (
-		areBothSubtypeOf({ kind: BaseType.XSYEARMONTHDURATION, seqType: SequenceType.EXACTLY_ONE })
-	) {
+	if (areBothSubtypeOf(BaseType.XSYEARMONTHDURATION)) {
 		switch (operator) {
 			case 'ltOp':
 				return (a, b) => {
@@ -281,7 +270,7 @@ function generateCompareFunction(
 		}
 	}
 
-	if (areBothSubtypeOf({ kind: BaseType.XSDAYTIMEDURATION, seqType: SequenceType.EXACTLY_ONE })) {
+	if (areBothSubtypeOf(BaseType.XSDAYTIMEDURATION)) {
 		switch (operator) {
 			case 'eqOp':
 				return (a, b) => {
@@ -317,7 +306,7 @@ function generateCompareFunction(
 		}
 	}
 
-	if (areBothSubtypeOf({ kind: BaseType.XSDURATION, seqType: SequenceType.EXACTLY_ONE })) {
+	if (areBothSubtypeOf(BaseType.XSDURATION)) {
 		switch (operator) {
 			case 'eqOp':
 				return (a, b) => {
@@ -350,8 +339,8 @@ export default function (
 	if (!prefabComparator) {
 		prefabComparator = comparatorsByTypingKey[typingKey] = generateCompareFunction(
 			operator,
-			valueA.type,
-			valueB.type,
+			valueA.type.kind,
+			valueB.type.kind,
 			dynamicContext
 		);
 	}

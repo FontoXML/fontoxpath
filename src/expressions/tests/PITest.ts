@@ -25,10 +25,8 @@ class PITest extends TestAbstractExpression {
 	) {
 		// Assume singleton
 		const isMatchingProcessingInstruction =
-			isSubtypeOf(node.type, {
-				kind: BaseType.PROCESSINGINSTRUCTION,
-				seqType: SequenceType.EXACTLY_ONE,
-			}) && executionParameters.domFacade.getTarget(node.value) === this._target;
+			isSubtypeOf(node.type.kind, BaseType.PROCESSINGINSTRUCTION) &&
+			executionParameters.domFacade.getTarget(node.value) === this._target;
 		return isMatchingProcessingInstruction;
 	}
 

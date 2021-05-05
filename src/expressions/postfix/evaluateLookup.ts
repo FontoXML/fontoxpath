@@ -20,22 +20,11 @@ function performLookup(
 ): ISequence {
 	const sequences = [previousSequence];
 
-	if (
-		isSubtypeOf(contextItem.type, {
-			kind: BaseType.ARRAY,
-			items: [],
-			seqType: SequenceType.EXACTLY_ONE,
-		})
-	) {
+	if (isSubtypeOf(contextItem.type.kind, BaseType.ARRAY)) {
 		const arrayItem = contextItem as ArrayValue;
 		if (lookup === '*') {
 			sequences.push(...arrayItem.members.map((member) => member()));
-		} else if (
-			!isSubtypeOf(lookup.type, {
-				kind: BaseType.XSINTEGER,
-				seqType: SequenceType.EXACTLY_ONE,
-			})
-		) {
+		} else if (!isSubtypeOf(lookup.type.kind, BaseType.XSINTEGER)) {
 			throw errXPTY0004('The key specifier is not an integer.');
 		} else {
 			const index = lookup.value as number;
@@ -44,13 +33,7 @@ function performLookup(
 			}
 			sequences.push(arrayItem.members[index - 1]());
 		}
-	} else if (
-		isSubtypeOf(contextItem.type, {
-			kind: BaseType.MAP,
-			items: [],
-			seqType: SequenceType.EXACTLY_ONE,
-		})
-	) {
+	} else if (isSubtypeOf(contextItem.type.kind, BaseType.MAP)) {
 		const mapItem = contextItem as MapValue;
 		if (lookup === '*') {
 			sequences.push(...mapItem.keyValuePairs.map((keyValuePair) => keyValuePair.value()));

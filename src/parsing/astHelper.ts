@@ -1,6 +1,5 @@
 import Value, {
 	BaseType,
-	ParameterType,
 	SequenceType,
 	stringToValueType,
 	ValueType,

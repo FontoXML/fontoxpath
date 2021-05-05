@@ -31,13 +31,7 @@ class TextConstructor extends Expression {
 				return sequenceFactory.empty();
 			}
 			const content = items
-				.map(
-					(item) =>
-						castToType(item, {
-							kind: BaseType.XSSTRING,
-							seqType: SequenceType.EXACTLY_ONE,
-						}).value
-				)
+				.map((item) => castToType(item, BaseType.XSSTRING).value)
 				.join(' ');
 
 			const tinyTextNode: TinyTextNode = {

@@ -46,89 +46,29 @@ export default function generalCompare(
 					// In all other cases, V is cast to the primitive base type of T.
 					let secondValue = allSecondValues[i];
 					if (
-						isSubtypeOf(firstValue.type, {
-							kind: BaseType.XSUNTYPEDATOMIC,
-							seqType: SequenceType.EXACTLY_ONE,
-						}) ||
-						isSubtypeOf(secondValue.type, {
-							kind: BaseType.XSUNTYPEDATOMIC,
-							seqType: SequenceType.EXACTLY_ONE,
-						})
+						isSubtypeOf(firstValue.type.kind, BaseType.XSUNTYPEDATOMIC) ||
+						isSubtypeOf(secondValue.type.kind, BaseType.XSUNTYPEDATOMIC)
 					) {
-						if (
-							isSubtypeOf(firstValue.type, {
-								kind: BaseType.XSNUMERIC,
-								seqType: SequenceType.EXACTLY_ONE
-							})
-						) {
-							secondValue = castToType(secondValue, {
-								kind: BaseType.XSDOUBLE,
-								seqType: SequenceType.EXACTLY_ONE,
-							});
+						if (isSubtypeOf(firstValue.type.kind, BaseType.XSNUMERIC)) {
+							secondValue = castToType(secondValue, BaseType.XSDOUBLE);
+						} else if (isSubtypeOf(secondValue.type.kind, BaseType.XSNUMERIC)) {
+							firstValue = castToType(firstValue, BaseType.XSDOUBLE);
+						} else if (isSubtypeOf(firstValue.type.kind, BaseType.XSDAYTIMEDURATION)) {
+							secondValue = castToType(secondValue, BaseType.XSDAYTIMEDURATION);
+						} else if (isSubtypeOf(secondValue.type.kind, BaseType.XSDAYTIMEDURATION)) {
+							firstValue = castToType(firstValue, BaseType.XSDAYTIMEDURATION);
 						} else if (
-							isSubtypeOf(secondValue.type, {
-								kind: BaseType.XSNUMERIC,
-								seqType: SequenceType.EXACTLY_ONE,
-							})
+							isSubtypeOf(firstValue.type.kind, BaseType.XSYEARMONTHDURATION)
 						) {
-							firstValue = castToType(firstValue, {
-								kind: BaseType.XSDOUBLE,
-								seqType: SequenceType.EXACTLY_ONE,
-							});
+							secondValue = castToType(secondValue, BaseType.XSYEARMONTHDURATION);
 						} else if (
-							isSubtypeOf(firstValue.type, {
-								kind: BaseType.XSDAYTIMEDURATION,
-								seqType: SequenceType.EXACTLY_ONE,
-							})
+							isSubtypeOf(secondValue.type.kind, BaseType.XSYEARMONTHDURATION)
 						) {
-							secondValue = castToType(secondValue, {
-								kind: BaseType.XSDAYTIMEDURATION,
-								seqType: SequenceType.EXACTLY_ONE
-							});
-						} else if (
-							isSubtypeOf(secondValue.type, {
-								kind: BaseType.XSDAYTIMEDURATION,
-								seqType: SequenceType.EXACTLY_ONE,
-							})
-						) {
-							firstValue = castToType(firstValue, {
-								kind: BaseType.XSDAYTIMEDURATION,
-								seqType: SequenceType.EXACTLY_ONE
-							});
-						} else if (
-							isSubtypeOf(firstValue.type, {
-								kind: BaseType.XSYEARMONTHDURATION,
-								seqType: SequenceType.EXACTLY_ONE,
-							})
-						) {
-							secondValue = castToType(secondValue, {
-								kind: BaseType.XSYEARMONTHDURATION,
-								seqType: SequenceType.EXACTLY_ONE
-							});
-						} else if (
-							isSubtypeOf(secondValue.type, {
-								kind: BaseType.XSYEARMONTHDURATION,
-								seqType: SequenceType.EXACTLY_ONE,
-							})
-						) {
-							firstValue = castToType(firstValue, {
-								kind: BaseType.XSYEARMONTHDURATION,
-								seqType: SequenceType.EXACTLY_ONE
-							});
-						} else if (
-							isSubtypeOf(firstValue.type, {
-								kind: BaseType.XSUNTYPEDATOMIC,
-								seqType: SequenceType.EXACTLY_ONE,
-							})
-						) {
-							firstValue = castToType(firstValue, secondValue.type);
-						} else if (
-							isSubtypeOf(secondValue.type, {
-								kind: BaseType.XSUNTYPEDATOMIC,
-								seqType: SequenceType.EXACTLY_ONE,
-							})
-						) {
-							secondValue = castToType(secondValue, firstValue.type);
+							firstValue = castToType(firstValue, BaseType.XSYEARMONTHDURATION);
+						} else if (isSubtypeOf(firstValue.type.kind, BaseType.XSUNTYPEDATOMIC)) {
+							firstValue = castToType(firstValue, secondValue.type.kind);
+						} else if (isSubtypeOf(secondValue.type.kind, BaseType.XSUNTYPEDATOMIC)) {
+							secondValue = castToType(secondValue, firstValue.type.kind);
 						}
 					}
 

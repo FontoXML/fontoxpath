@@ -40,42 +40,22 @@ class Unary extends Expression {
 
 			const value = atomizedValues[0];
 
-			if (
-				isSubtypeOf(value.type, {
-					kind: BaseType.XSUNTYPEDATOMIC,
-					seqType: SequenceType.EXACTLY_ONE,
-				})
-			) {
-				const castValue = castToType(value, {
-					kind: BaseType.XSDOUBLE,
-					seqType: SequenceType.EXACTLY_ONE,
-				}).value as number;
+			if (isSubtypeOf(value.type.kind, BaseType.XSUNTYPEDATOMIC)) {
+				const castValue = castToType(value, BaseType.XSDOUBLE).value as number;
 				return sequenceFactory.singleton(
 					createAtomicValue(this._kind === '+' ? castValue : -castValue, {
 						kind: BaseType.XSDOUBLE,
-						seqType: SequenceType.EXACTLY_ONE
+						seqType: SequenceType.EXACTLY_ONE,
 					})
 				);
 			}
 
 			if (this._kind === '+') {
 				if (
-					isSubtypeOf(value.type, {
-						kind: BaseType.XSDECIMAL,
-						seqType: SequenceType.EXACTLY_ONE,
-					}) ||
-					isSubtypeOf(value.type, {
-						kind: BaseType.XSDOUBLE,
-						seqType: SequenceType.EXACTLY_ONE,
-					}) ||
-					isSubtypeOf(value.type, {
-						kind: BaseType.XSFLOAT,
-						seqType: SequenceType.EXACTLY_ONE,
-					}) ||
-					isSubtypeOf(value.type, {
-						kind: BaseType.XSINTEGER,
-						seqType: SequenceType.EXACTLY_ONE,
-					})
+					isSubtypeOf(value.type.kind, BaseType.XSDECIMAL) ||
+					isSubtypeOf(value.type.kind, BaseType.XSDOUBLE) ||
+					isSubtypeOf(value.type.kind, BaseType.XSFLOAT) ||
+					isSubtypeOf(value.type.kind, BaseType.XSINTEGER)
 				) {
 					return sequenceFactory.singleton(atomizedValues[0]);
 				}
@@ -87,12 +67,7 @@ class Unary extends Expression {
 				);
 			}
 
-			if (
-				isSubtypeOf(value.type, {
-					kind: BaseType.XSINTEGER,
-					seqType: SequenceType.EXACTLY_ONE,
-				})
-			) {
+			if (isSubtypeOf(value.type.kind, BaseType.XSINTEGER)) {
 				return sequenceFactory.singleton(
 					createAtomicValue((value.value as number) * -1, {
 						kind: BaseType.XSINTEGER,
@@ -100,12 +75,7 @@ class Unary extends Expression {
 					})
 				);
 			}
-			if (
-				isSubtypeOf(value.type, {
-					kind: BaseType.XSDECIMAL,
-					seqType: SequenceType.EXACTLY_ONE,
-				})
-			) {
+			if (isSubtypeOf(value.type.kind, BaseType.XSDECIMAL)) {
 				return sequenceFactory.singleton(
 					createAtomicValue((value.value as number) * -1, {
 						kind: BaseType.XSDECIMAL,
@@ -113,12 +83,7 @@ class Unary extends Expression {
 					})
 				);
 			}
-			if (
-				isSubtypeOf(value.type, {
-					kind: BaseType.XSDOUBLE,
-					seqType: SequenceType.EXACTLY_ONE,
-				})
-			) {
+			if (isSubtypeOf(value.type.kind, BaseType.XSDOUBLE)) {
 				return sequenceFactory.singleton(
 					createAtomicValue((value.value as number) * -1, {
 						kind: BaseType.XSDOUBLE,
@@ -126,12 +91,7 @@ class Unary extends Expression {
 					})
 				);
 			}
-			if (
-				isSubtypeOf(value.type, {
-					kind: BaseType.XSFLOAT,
-					seqType: SequenceType.EXACTLY_ONE,
-				})
-			) {
+			if (isSubtypeOf(value.type.kind, BaseType.XSFLOAT)) {
 				return sequenceFactory.singleton(
 					createAtomicValue((value.value as number) * -1, {
 						kind: BaseType.XSFLOAT,

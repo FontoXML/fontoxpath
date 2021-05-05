@@ -48,11 +48,7 @@ class DeleteExpression extends UpdatingExpression {
 					// The result must be a sequence of zero or more nodes; otherwise a type error is raised [err:XUTY0007].
 					if (
 						tv.value.xdmValue.some(
-							(entry) =>
-								!isSubtypeOf(entry.type, {
-									kind: BaseType.NODE,
-									seqType: SequenceType.EXACTLY_ONE,
-								})
+							(entry) => !isSubtypeOf(entry.type.kind, BaseType.NODE)
 						)
 					) {
 						throw errXUTY0007();

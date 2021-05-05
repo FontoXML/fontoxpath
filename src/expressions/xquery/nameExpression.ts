@@ -35,14 +35,8 @@ export function evaluateNCNameExpression(
 		singleton: (seq) => {
 			const nameValue = seq.first();
 			if (
-				isSubtypeOf(nameValue.type, {
-					kind: BaseType.XSSTRING,
-					seqType: SequenceType.EXACTLY_ONE,
-				}) ||
-				isSubtypeOf(nameValue.type, {
-					kind: BaseType.XSUNTYPEDATOMIC,
-					seqType: SequenceType.EXACTLY_ONE,
-				})
+				isSubtypeOf(nameValue.type.kind, BaseType.XSSTRING) ||
+				isSubtypeOf(nameValue.type.kind, BaseType.XSUNTYPEDATOMIC)
 			) {
 				if (!isValidNCName(nameValue.value)) {
 					throw errXQDY0041(nameValue.value);
@@ -66,22 +60,11 @@ export function evaluateQNameExpression(
 	return name.switchCases({
 		singleton: (seq) => {
 			const nameValue = seq.first();
-			if (
-				isSubtypeOf(nameValue.type, {
-					kind: BaseType.XSQNAME,
-					seqType: SequenceType.EXACTLY_ONE,
-				})
-			) {
+			if (isSubtypeOf(nameValue.type.kind, BaseType.XSQNAME)) {
 				return sequenceFactory.singleton(nameValue);
 			} else if (
-				isSubtypeOf(nameValue.type, {
-					kind: BaseType.XSSTRING,
-					seqType: SequenceType.EXACTLY_ONE,
-				}) ||
-				isSubtypeOf(nameValue.type, {
-					kind: BaseType.XSUNTYPEDATOMIC,
-					seqType: SequenceType.EXACTLY_ONE,
-				})
+				isSubtypeOf(nameValue.type.kind, BaseType.XSSTRING) ||
+				isSubtypeOf(nameValue.type.kind, BaseType.XSUNTYPEDATOMIC)
 			) {
 				let prefix: string;
 				let namespaceURI: string;

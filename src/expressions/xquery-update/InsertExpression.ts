@@ -210,14 +210,8 @@ class InsertExpression extends UpdatingExpression {
 							throw errXUTY0005();
 						}
 						if (
-							!isSubtypeOf(tv.value.xdmValue[0].type, {
-								kind: BaseType.ELEMENT,
-								seqType: SequenceType.EXACTLY_ONE,
-							}) &&
-							!isSubtypeOf(tv.value.xdmValue[0].type, {
-								kind: BaseType.DOCUMENTNODE,
-								seqType: SequenceType.EXACTLY_ONE,
-							})
+							!isSubtypeOf(tv.value.xdmValue[0].type.kind, BaseType.ELEMENT) &&
+							!isSubtypeOf(tv.value.xdmValue[0].type.kind, BaseType.DOCUMENTNODE)
 						) {
 							throw errXUTY0005();
 						}
@@ -227,22 +221,13 @@ class InsertExpression extends UpdatingExpression {
 							throw errXUTY0006();
 						}
 						if (
-							!isSubtypeOf(tv.value.xdmValue[0].type, {
-								kind: BaseType.ELEMENT,
-								seqType: SequenceType.EXACTLY_ONE,
-							}) &&
-							!isSubtypeOf(tv.value.xdmValue[0].type, {
-								kind: BaseType.TEXT,
-								seqType: SequenceType.EXACTLY_ONE,
-							}) &&
-							!isSubtypeOf(tv.value.xdmValue[0].type, {
-								kind: BaseType.COMMENT,
-								seqType: SequenceType.EXACTLY_ONE,
-							}) &&
-							!isSubtypeOf(tv.value.xdmValue[0].type, {
-								kind: BaseType.PROCESSINGINSTRUCTION,
-								seqType: SequenceType.EXACTLY_ONE,
-							})
+							!isSubtypeOf(tv.value.xdmValue[0].type.kind, BaseType.ELEMENT) &&
+							!isSubtypeOf(tv.value.xdmValue[0].type.kind, BaseType.TEXT) &&
+							!isSubtypeOf(tv.value.xdmValue[0].type.kind, BaseType.COMMENT) &&
+							!isSubtypeOf(
+								tv.value.xdmValue[0].type.kind,
+								BaseType.PROCESSINGINSTRUCTION
+							)
 						) {
 							throw errXUTY0006();
 						}
@@ -263,12 +248,7 @@ class InsertExpression extends UpdatingExpression {
 				if (alist.length) {
 					if (this._targetChoice >= TargetChoice.INSERT_INTO) {
 						// a. $target must be an element node [err:XUTY0022].
-						if (
-							!isSubtypeOf(target.type, {
-								kind: BaseType.ELEMENT,
-								seqType: SequenceType.EXACTLY_ONE,
-							})
-						) {
+						if (!isSubtypeOf(target.type.kind, BaseType.ELEMENT)) {
 							throw errXUTY0022();
 						}
 					} else {

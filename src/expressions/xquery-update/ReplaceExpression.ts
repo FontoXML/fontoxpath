@@ -75,26 +75,11 @@ function evaluateReplaceNode(
 				throw errXUTY0008();
 			}
 			if (
-				!isSubtypeOf(tv.value.xdmValue[0].type, {
-					kind: BaseType.ELEMENT,
-					seqType: SequenceType.EXACTLY_ONE,
-				}) &&
-				!isSubtypeOf(tv.value.xdmValue[0].type, {
-					kind: BaseType.ATTRIBUTE,
-					seqType: SequenceType.EXACTLY_ONE,
-				}) &&
-				!isSubtypeOf(tv.value.xdmValue[0].type, {
-					kind: BaseType.TEXT,
-					seqType: SequenceType.EXACTLY_ONE,
-				}) &&
-				!isSubtypeOf(tv.value.xdmValue[0].type, {
-					kind: BaseType.COMMENT,
-					seqType: SequenceType.EXACTLY_ONE,
-				}) &&
-				!isSubtypeOf(tv.value.xdmValue[0].type, {
-					kind: BaseType.PROCESSINGINSTRUCTION,
-					seqType: SequenceType.EXACTLY_ONE,
-				})
+				!isSubtypeOf(tv.value.xdmValue[0].type.kind, BaseType.ELEMENT) &&
+				!isSubtypeOf(tv.value.xdmValue[0].type.kind, BaseType.ATTRIBUTE) &&
+				!isSubtypeOf(tv.value.xdmValue[0].type.kind, BaseType.TEXT) &&
+				!isSubtypeOf(tv.value.xdmValue[0].type.kind, BaseType.COMMENT) &&
+				!isSubtypeOf(tv.value.xdmValue[0].type.kind, BaseType.PROCESSINGINSTRUCTION)
 			) {
 				throw errXUTY0008();
 			}
@@ -119,12 +104,7 @@ function evaluateReplaceNode(
 			// consist exclusively of zero or more element, text,
 			// comment, or processing instruction nodes
 			// [err:XUTY0010].
-			if (
-				!isSubtypeOf(target.type, {
-					kind: BaseType.ATTRIBUTE,
-					seqType: SequenceType.EXACTLY_ONE,
-				})
-			) {
+			if (!isSubtypeOf(target.type.kind, BaseType.ATTRIBUTE)) {
 				if (rlist.attributes.length) {
 					throw errXUTY0010();
 				}
@@ -212,12 +192,7 @@ function evaluateReplaceNodeValue(
 				const atomized = atomize(
 					sequenceFactory.create(rl.value.xdmValue),
 					executionParameters
-				).map((value) =>
-					castToType(value, {
-						kind: BaseType.XSSTRING,
-						seqType: SequenceType.EXACTLY_ONE,
-					})
-				);
+				).map((value) => castToType(value, BaseType.XSSTRING));
 
 				const textContent = atomized
 					.getAllValues()
@@ -250,26 +225,11 @@ function evaluateReplaceNodeValue(
 					throw errXUTY0008();
 				}
 				if (
-					!isSubtypeOf(tv.value.xdmValue[0].type, {
-						kind: BaseType.ELEMENT,
-						seqType: SequenceType.EXACTLY_ONE,
-					}) &&
-					!isSubtypeOf(tv.value.xdmValue[0].type, {
-						kind: BaseType.ATTRIBUTE,
-						seqType: SequenceType.EXACTLY_ONE,
-					}) &&
-					!isSubtypeOf(tv.value.xdmValue[0].type, {
-						kind: BaseType.TEXT,
-						seqType: SequenceType.EXACTLY_ONE,
-					}) &&
-					!isSubtypeOf(tv.value.xdmValue[0].type, {
-						kind: BaseType.COMMENT,
-						seqType: SequenceType.EXACTLY_ONE,
-					}) &&
-					!isSubtypeOf(tv.value.xdmValue[0].type, {
-						kind: BaseType.PROCESSINGINSTRUCTION,
-						seqType: SequenceType.EXACTLY_ONE
-					})
+					!isSubtypeOf(tv.value.xdmValue[0].type.kind, BaseType.ELEMENT) &&
+					!isSubtypeOf(tv.value.xdmValue[0].type.kind, BaseType.ATTRIBUTE) &&
+					!isSubtypeOf(tv.value.xdmValue[0].type.kind, BaseType.TEXT) &&
+					!isSubtypeOf(tv.value.xdmValue[0].type.kind, BaseType.COMMENT) &&
+					!isSubtypeOf(tv.value.xdmValue[0].type.kind, BaseType.PROCESSINGINSTRUCTION)
 				) {
 					throw errXUTY0008();
 				}
@@ -287,12 +247,7 @@ function evaluateReplaceNodeValue(
 			// expression following the keyword with with the
 			// following update primitives using upd:mergeUpdates:
 			// upd:replaceElementContent($target, $text)
-			if (
-				isSubtypeOf(target.type, {
-					kind: BaseType.ELEMENT,
-					seqType: SequenceType.EXACTLY_ONE,
-				})
-			) {
+			if (isSubtypeOf(target.type.kind, BaseType.ELEMENT)) {
 				done = true;
 				return ready({
 					xdmValue: [],
@@ -310,22 +265,10 @@ function evaluateReplaceNodeValue(
 			// 1 did not construct a text node, let $string be a
 			// zero-length string. Then:
 			if (
-				isSubtypeOf(target.type, {
-					kind: BaseType.ATTRIBUTE,
-					seqType: SequenceType.EXACTLY_ONE,
-				}) ||
-				isSubtypeOf(target.type, {
-					kind: BaseType.TEXT,
-					seqType: SequenceType.EXACTLY_ONE,
-				}) ||
-				isSubtypeOf(target.type, {
-					kind: BaseType.COMMENT,
-					seqType: SequenceType.EXACTLY_ONE,
-				}) ||
-				isSubtypeOf(target.type, {
-					kind: BaseType.PROCESSINGINSTRUCTION,
-					seqType: SequenceType.EXACTLY_ONE,
-				})
+				isSubtypeOf(target.type.kind, BaseType.ATTRIBUTE) ||
+				isSubtypeOf(target.type.kind, BaseType.TEXT) ||
+				isSubtypeOf(target.type.kind, BaseType.COMMENT) ||
+				isSubtypeOf(target.type.kind, BaseType.PROCESSINGINSTRUCTION)
 			) {
 				const stringValue = text
 					? executionParameters.domFacade.getDataFromPointer(text)
@@ -335,10 +278,7 @@ function evaluateReplaceNodeValue(
 				// two adjacent hyphens or ends with a hyphen, a
 				// dynamic error is raised [err:XQDY0072].
 				if (
-					isSubtypeOf(target.type, {
-						kind: BaseType.COMMENT,
-						seqType: SequenceType.EXACTLY_ONE,
-					}) &&
+					isSubtypeOf(target.type.kind, BaseType.COMMENT) &&
 					(stringValue.includes('--') || stringValue.endsWith('-'))
 				) {
 					throw errXQDY0072(stringValue);
@@ -348,10 +288,7 @@ function evaluateReplaceNodeValue(
 				// $string contains the substring "?>", a dynamic
 				// error is raised [err:XQDY0026].
 				if (
-					isSubtypeOf(target.type, {
-						kind: BaseType.PROCESSINGINSTRUCTION,
-						seqType: SequenceType.EXACTLY_ONE,
-					}) &&
+					isSubtypeOf(target.type.kind, BaseType.PROCESSINGINSTRUCTION) &&
 					stringValue.includes('?>')
 				) {
 					throw errXQDY0026(stringValue);

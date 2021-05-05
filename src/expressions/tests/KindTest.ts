@@ -22,12 +22,7 @@ class KindTest extends TestAbstractExpression {
 		node: Value,
 		executionParameters: ExecutionParameters
 	) {
-		if (
-			!isSubtypeOf(node.type, {
-				kind: BaseType.NODE,
-		seqType: SequenceType.EXACTLY_ONE,
-			})
-		) {
+		if (!isSubtypeOf(node.type.kind, BaseType.NODE)) {
 			return false;
 		}
 		const nodeType = executionParameters.domFacade.getNodeType(node.value);

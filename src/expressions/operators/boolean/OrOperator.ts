@@ -55,13 +55,7 @@ class OrOperator extends Expression {
 		let contextItemBuckets = null;
 		if (dynamicContext !== null) {
 			const contextItem = dynamicContext.contextItem;
-			if (
-				contextItem !== null &&
-				isSubtypeOf(contextItem.type, {
-					kind: BaseType.NODE,
-					seqType: SequenceType.EXACTLY_ONE,
-				})
-			) {
+			if (contextItem !== null && isSubtypeOf(contextItem.type.kind, BaseType.NODE)) {
 				contextItemBuckets = getBucketsForPointer(
 					contextItem.value,
 					executionParameters.domFacade
