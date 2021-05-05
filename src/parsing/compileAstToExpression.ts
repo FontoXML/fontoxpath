@@ -376,6 +376,7 @@ function compileLookup(ast: IAST, compilationOptions: CompilationOptions): '*' |
 		case 'NCName':
 			return new Literal(astHelper.getTextContent(keyExpression), {
 				kind: BaseType.XSSTRING,
+				seqType: SequenceType.EXACTLY_ONE,
 			});
 		case 'star':
 			return '*';
@@ -719,24 +720,28 @@ function instanceOf(
 function integerConstantExpr(ast: IAST, _compilationOptions: CompilationOptions) {
 	return new Literal(astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')), {
 		kind: BaseType.XSINTEGER,
+		seqType: SequenceType.EXACTLY_ONE,
 	});
 }
 
 function stringConstantExpr(ast: IAST, _compilationOptions: CompilationOptions) {
 	return new Literal(astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')), {
 		kind: BaseType.XSSTRING,
+		seqType: SequenceType.EXACTLY_ONE,
 	});
 }
 
 function decimalConstantExpr(ast: IAST, _compilationOptions: CompilationOptions) {
 	return new Literal(astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')), {
 		kind: BaseType.XSDECIMAL,
+		seqType: SequenceType.EXACTLY_ONE,
 	});
 }
 
 function doubleConstantExpr(ast: IAST, _compilationOptions: CompilationOptions) {
 	return new Literal(astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')), {
 		kind: BaseType.XSDOUBLE,
+		seqType: SequenceType.EXACTLY_ONE,
 	});
 }
 

@@ -241,6 +241,7 @@ class InsertExpression extends UpdatingExpression {
 							}) &&
 							!isSubtypeOf(tv.value.xdmValue[0].type, {
 								kind: BaseType.PROCESSINGINSTRUCTION,
+								seqType: SequenceType.EXACTLY_ONE,
 							})
 						) {
 							throw errXUTY0006();

@@ -74,15 +74,18 @@ function parseChildNodes(
 				// childNode is a textnode-like
 				const atomizedValue = isSubtypeOf(childNode.type, {
 					kind: BaseType.XSANYATOMICTYPE,
+		seqType: SequenceType.EXACTLY_ONE,
 				})
 					? castToType(atomizeSingleValue(childNode, executionParameters).first(), {
 							kind: BaseType.XSSTRING,
+		seqType: SequenceType.EXACTLY_ONE,
 					  }).value
 					: domFacade.getDataFromPointer(childNode.value);
 				if (
 					i !== 0 &&
 					isSubtypeOf(atomizedChildNodes[i - 1].type, {
 						kind: BaseType.XSANYATOMICTYPE,
+		seqType: SequenceType.EXACTLY_ONE,
 					}) &&
 					isSubtypeOf(childNode.type, {
 						kind: BaseType.XSANYATOMICTYPE,
@@ -136,6 +139,7 @@ function parseChildNodes(
 			if (
 				isSubtypeOf(childNode.type, {
 					kind: BaseType.FUNCTION,
+					seqType: SequenceType.EXACTLY_ONE,
 					returnType: undefined,
 					params: [],
 				})

@@ -25,6 +25,7 @@ class KindTest extends TestAbstractExpression {
 		if (
 			!isSubtypeOf(node.type, {
 				kind: BaseType.NODE,
+		seqType: SequenceType.EXACTLY_ONE,
 			})
 		) {
 			return false;
