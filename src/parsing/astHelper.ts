@@ -1,8 +1,6 @@
-import {
+import Value, {
 	BaseType,
-	GenericValueType,
 	ParameterType,
-	ParameterValueType,
 	SequenceType,
 	stringToValueType,
 	ValueType,
@@ -81,7 +79,7 @@ function getTextContent(ast: IAST): string {
  * @param   ast  The parent
  * @return  The type declaration
  */
-function getTypeDeclaration<T = ParameterType | SequenceType>(ast: IAST): GenericValueType<T> {
+function getTypeDeclaration(ast: IAST): ValueType {
 	const zeroOrMore = SequenceType.ZERO_OR_MORE;
 	const exactlyOne = SequenceType.EXACTLY_ONE;
 
@@ -90,7 +88,7 @@ function getTypeDeclaration<T = ParameterType | SequenceType>(ast: IAST): Generi
 		return { kind: BaseType.ITEM, seqType: zeroOrMore };
 	}
 
-	const determineType = (typeAst: IAST): T => {
+	const determineType = (typeAst: IAST): ValueType => {
 		switch (typeAst[0]) {
 			case 'documentTest':
 				return { kind: BaseType.DOCUMENTNODE, seqType: exactlyOne };
@@ -125,8 +123,7 @@ function getTypeDeclaration<T = ParameterType | SequenceType>(ast: IAST): Generi
 				return { kind: BaseType.ARRAY, items: [], seqType: exactlyOne };
 			case 'atomicType':
 				return stringToValueType(
-					[getAttribute(typeAst, 'prefix'), getTextContent(typeAst)].join(':'),
-					exactlyOne
+					[getAttribute(typeAst, 'prefix'), getTextContent(typeAst)].join(':')
 				);
 			case 'parenthesizedItemType':
 				return determineType(getFirstChild(typeAst, '*'));

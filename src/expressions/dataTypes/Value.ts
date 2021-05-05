@@ -93,11 +93,7 @@ export const enum SequenceType {
  * A superset of the SequenceType that also includes the ellipsis operator '...'
  * @public
  */
-export const enum ParameterType {
-	ZERO_OR_ONE = SequenceType.ZERO_OR_ONE,
-	ONE_OR_MORE = SequenceType.ONE_OR_MORE,
-	ZERO_OR_MORE = SequenceType.ZERO_OR_MORE,
-	EXACTLY_ONE = SequenceType.EXACTLY_ONE,
+export const enum EllipsisType {
 	ELLIPSIS = 4,
 }
 
@@ -172,114 +168,82 @@ const a = new Map([
 ]);
 
 /**
- * The composite type containing more info
- * @public
- */
-export type ValueType = GenericValueType<SequenceType>;
-
-/**
- * The composite type containing more info for parameters
- * @public
- */
-export type ParameterValueType = GenericValueType<ParameterType>;
-
-/**
  * The generic composite type
  * @public
  */
-export type GenericValueType<T> =
-	| { kind: BaseType.XSBOOLEAN; seqType: T }
-	| { kind: BaseType.XSSTRING; seqType: T }
-	| { kind: BaseType.XSNUMERIC; seqType: T }
-	| { kind: BaseType.XSDOUBLE; seqType: T }
-	| { kind: BaseType.XSDECIMAL; seqType: T }
-	| { kind: BaseType.XSINTEGER; seqType: T }
-	| { kind: BaseType.XSFLOAT; seqType: T }
-	| { kind: BaseType.XSDATE; seqType: T }
-	| { kind: BaseType.XSTIME; seqType: T }
-	| { kind: BaseType.XSDATETIME; seqType: T }
-	| { kind: BaseType.XSDATETIMESTAMP; seqType: T }
-	| { kind: BaseType.XSGYEARMONTH; seqType: T }
-	| { kind: BaseType.XSGYEAR; seqType: T }
-	| { kind: BaseType.XSGMONTHDAY; seqType: T }
-	| { kind: BaseType.XSGMONTH; seqType: T }
-	| { kind: BaseType.XSGDAY; seqType: T }
-	| { kind: BaseType.XSYEARMONTHDURATION; seqType: T }
-	| { kind: BaseType.XSDAYTIMEDURATION; seqType: T }
-	| { kind: BaseType.XSDURATION; seqType: T }
-	| { kind: BaseType.XSUNTYPEDATOMIC; seqType: T }
-	| { kind: BaseType.XSANYURI; seqType: T }
-	| { kind: BaseType.XSBASE64BINARY; seqType: T }
-	| { kind: BaseType.XSHEXBINARY; seqType: T }
-	| { kind: BaseType.XSQNAME; seqType: T }
-	| { kind: BaseType.XSNCNAME; seqType: T }
-	| { kind: BaseType.XSNAME; seqType: T }
-	| { kind: BaseType.XSENTITY; seqType: T }
-	| { kind: BaseType.XSNONPOSITIVEINTEGER; seqType: T }
-	| { kind: BaseType.XSNEGATIVEINTEGER; seqType: T }
-	| { kind: BaseType.XSPOSITIVEINTEGER; seqType: T }
-	| { kind: BaseType.XSNONNEGATIVEINTEGER; seqType: T }
-	| { kind: BaseType.XSLONG; seqType: T }
-	| { kind: BaseType.XSINT; seqType: T }
-	| { kind: BaseType.XSSHORT; seqType: T }
-	| { kind: BaseType.XSBYTE; seqType: T }
-	| { kind: BaseType.XSUNSIGNEDINT; seqType: T }
-	| { kind: BaseType.XSUNSIGNEDLONG; seqType: T }
-	| { kind: BaseType.XSUNSIGNEDBYTE; seqType: T }
-	| { kind: BaseType.XSUNSIGNEDSHORT; seqType: T }
-	| { kind: BaseType.XSERROR; seqType: T }
-	| { kind: BaseType.XSENTITIES; seqType: T }
-	| { kind: BaseType.XSIDREF; seqType: T }
-	| { kind: BaseType.XSID; seqType: T }
-	| { kind: BaseType.XSIDREFS; seqType: T }
-	| { kind: BaseType.XSNOTATION; seqType: T }
-	| { kind: BaseType.XSANYSIMPLETYPE; seqType: T }
-	| { kind: BaseType.XSANYATOMICTYPE; seqType: T }
-	| { kind: BaseType.ATTRIBUTE; seqType: T }
-	| { kind: BaseType.XSNORMALIZEDSTRING; seqType: T }
-	| { kind: BaseType.XSNMTOKENS; seqType: T }
-	| { kind: BaseType.XSNMTOKEN; seqType: T }
-	| { kind: BaseType.XSLANGUAGE; seqType: T }
-	| { kind: BaseType.XSTOKEN; seqType: T }
-	| { kind: BaseType.NODE; seqType: T }
-	| { kind: BaseType.ELEMENT; seqType: T }
-	| { kind: BaseType.DOCUMENTNODE; seqType: T }
-	| { kind: BaseType.TEXT; seqType: T }
-	| { kind: BaseType.PROCESSINGINSTRUCTION; seqType: T }
-	| { kind: BaseType.COMMENT; seqType: T }
-	| { kind: BaseType.ITEM; seqType: T }
+export type ValueType =
+	| { kind: BaseType.XSBOOLEAN; seqType: SequenceType }
+	| { kind: BaseType.XSSTRING; seqType: SequenceType }
+	| { kind: BaseType.XSNUMERIC; seqType: SequenceType }
+	| { kind: BaseType.XSDOUBLE; seqType: SequenceType }
+	| { kind: BaseType.XSDECIMAL; seqType: SequenceType }
+	| { kind: BaseType.XSINTEGER; seqType: SequenceType }
+	| { kind: BaseType.XSFLOAT; seqType: SequenceType }
+	| { kind: BaseType.XSDATE; seqType: SequenceType }
+	| { kind: BaseType.XSTIME; seqType: SequenceType }
+	| { kind: BaseType.XSDATETIME; seqType: SequenceType }
+	| { kind: BaseType.XSDATETIMESTAMP; seqType: SequenceType }
+	| { kind: BaseType.XSGYEARMONTH; seqType: SequenceType }
+	| { kind: BaseType.XSGYEAR; seqType: SequenceType }
+	| { kind: BaseType.XSGMONTHDAY; seqType: SequenceType }
+	| { kind: BaseType.XSGMONTH; seqType: SequenceType }
+	| { kind: BaseType.XSGDAY; seqType: SequenceType }
+	| { kind: BaseType.XSYEARMONTHDURATION; seqType: SequenceType }
+	| { kind: BaseType.XSDAYTIMEDURATION; seqType: SequenceType }
+	| { kind: BaseType.XSDURATION; seqType: SequenceType }
+	| { kind: BaseType.XSUNTYPEDATOMIC; seqType: SequenceType }
+	| { kind: BaseType.XSANYURI; seqType: SequenceType }
+	| { kind: BaseType.XSBASE64BINARY; seqType: SequenceType }
+	| { kind: BaseType.XSHEXBINARY; seqType: SequenceType }
+	| { kind: BaseType.XSQNAME; seqType: SequenceType }
+	| { kind: BaseType.XSNCNAME; seqType: SequenceType }
+	| { kind: BaseType.XSNAME; seqType: SequenceType }
+	| { kind: BaseType.XSENTITY; seqType: SequenceType }
+	| { kind: BaseType.XSNONPOSITIVEINTEGER; seqType: SequenceType }
+	| { kind: BaseType.XSNEGATIVEINTEGER; seqType: SequenceType }
+	| { kind: BaseType.XSPOSITIVEINTEGER; seqType: SequenceType }
+	| { kind: BaseType.XSNONNEGATIVEINTEGER; seqType: SequenceType }
+	| { kind: BaseType.XSLONG; seqType: SequenceType }
+	| { kind: BaseType.XSINT; seqType: SequenceType }
+	| { kind: BaseType.XSSHORT; seqType: SequenceType }
+	| { kind: BaseType.XSBYTE; seqType: SequenceType }
+	| { kind: BaseType.XSUNSIGNEDINT; seqType: SequenceType }
+	| { kind: BaseType.XSUNSIGNEDLONG; seqType: SequenceType }
+	| { kind: BaseType.XSUNSIGNEDBYTE; seqType: SequenceType }
+	| { kind: BaseType.XSUNSIGNEDSHORT; seqType: SequenceType }
+	| { kind: BaseType.XSERROR; seqType: SequenceType }
+	| { kind: BaseType.XSENTITIES; seqType: SequenceType }
+	| { kind: BaseType.XSIDREF; seqType: SequenceType }
+	| { kind: BaseType.XSID; seqType: SequenceType }
+	| { kind: BaseType.XSIDREFS; seqType: SequenceType }
+	| { kind: BaseType.XSNOTATION; seqType: SequenceType }
+	| { kind: BaseType.XSANYSIMPLETYPE; seqType: SequenceType }
+	| { kind: BaseType.XSANYATOMICTYPE; seqType: SequenceType }
+	| { kind: BaseType.ATTRIBUTE; seqType: SequenceType }
+	| { kind: BaseType.XSNORMALIZEDSTRING; seqType: SequenceType }
+	| { kind: BaseType.XSNMTOKENS; seqType: SequenceType }
+	| { kind: BaseType.XSNMTOKEN; seqType: SequenceType }
+	| { kind: BaseType.XSLANGUAGE; seqType: SequenceType }
+	| { kind: BaseType.XSTOKEN; seqType: SequenceType }
+	| { kind: BaseType.NODE; seqType: SequenceType }
+	| { kind: BaseType.ELEMENT; seqType: SequenceType }
+	| { kind: BaseType.DOCUMENTNODE; seqType: SequenceType }
+	| { kind: BaseType.TEXT; seqType: SequenceType }
+	| { kind: BaseType.PROCESSINGINSTRUCTION; seqType: SequenceType }
+	| { kind: BaseType.COMMENT; seqType: SequenceType }
+	| { kind: BaseType.ITEM; seqType: SequenceType }
 	| {
 			kind: BaseType.FUNCTION;
-			seqType: T;
-			params: GenericValueType<T>[];
+			seqType: SequenceType;
+			params: ValueType[];
 			returnType: ValueType | undefined;
 	  }
 	| {
-			items: [GenericValueType<T>, GenericValueType<T>][];
+			items: [ValueType, ValueType][];
 			kind: BaseType.MAP;
-			seqType: T;
+			seqType: SequenceType;
 	  }
-	| { items: GenericValueType<T>[]; kind: BaseType.ARRAY; seqType: T };
-
-// export function parameterValueTypeToValueType(type: ParameterValueType): ValueType {
-// 	let newType;
-// 	switch (type.seqType) {
-// 		case ParameterType.EXACTLY_ONE:
-// 			newType = SequenceType.EXACTLY_ONE;
-// 			break;
-// 		case ParameterType.ONE_OR_MORE:
-// 			newType = SequenceType.ONE_OR_MORE;
-// 			break;
-// 		case ParameterType.ZERO_OR_ONE:
-// 			newType = SequenceType.ZERO_OR_ONE;
-// 			break;
-// 		case ParameterType.ZERO_OR_MORE:
-// 			newType = SequenceType.ZERO_OR_MORE;
-// 			break;
-// 		default:
-// 			throw new Error(`Trying to convert parameter value type ${type} to value type`);
-// 	}
-// }
+	| { items: ValueType[]; kind: BaseType.ARRAY; seqType: SequenceType };
 
 /**
  * Recursively creates a hash for a type and its potential subtypes
@@ -400,7 +364,7 @@ export function baseTypeToString(input: BaseType): string {
  * @param input the ValueType
  * @returns the correct string representation of the type
  */
-export function valueTypeToString(input: ValueType | ParameterValueType): string {
+export function valueTypeToString(input: ValueType): string {
 	if (input.seqType === SequenceType.ZERO_OR_MORE) {
 		return baseTypeToString(input.kind) + '*';
 	}
@@ -421,15 +385,14 @@ export function valueTypeToString(input: ValueType | ParameterValueType): string
  * @returns the corresponding ValueType object.
  * @throws Error if the type cannot be mapped from string to ValueType.
  */
-export function stringToValueType<T = ParameterType | SequenceType>(
-	input: string,
-	seqType: T
-): GenericValueType<T> {
+export function stringToValueType(input: string): ValueType {
 	if (!input.startsWith('xs:') && input.indexOf(':') >= 0) {
 		throw new Error('XPST0081: Invalid prefix for input ' + input);
 	}
 
-	const stringToTypeMap: { [key: string]: GenericValueType<T> } = {
+	const seqType = SequenceType.EXACTLY_ONE;
+
+	const stringToTypeMap: { [key: string]: ValueType } = {
 		'xs:boolean': { kind: BaseType.XSBOOLEAN, seqType },
 		'xs:string': { kind: BaseType.XSSTRING, seqType },
 		'xs:numeric': { kind: BaseType.XSNUMERIC, seqType },

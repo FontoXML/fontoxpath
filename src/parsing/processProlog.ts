@@ -1,6 +1,6 @@
 import ISequence from '../expressions/dataTypes/ISequence';
 import sequenceFactory from '../expressions/dataTypes/sequenceFactory';
-import { ParameterType, ParameterValueType, ValueType } from '../expressions/dataTypes/Value';
+import { ValueType } from '../expressions/dataTypes/Value';
 import DynamicContext from '../expressions/DynamicContext';
 import ExecutionParameters from '../expressions/ExecutionParameters';
 import Expression from '../expressions/Expression';
@@ -193,9 +193,7 @@ export default function processProlog(
 			'param'
 		);
 		const paramNames = params.map((param) => astHelper.getFirstChild(param, 'varName'));
-		const paramTypes: ParameterValueType[] = params.map((param) =>
-			astHelper.getTypeDeclaration(param)
-		);
+		const paramTypes: ValueType[] = params.map((param) => astHelper.getTypeDeclaration(param));
 
 		let functionDefinition: GenericFunctionDefinition<any, any>;
 		const functionBody = astHelper.getFirstChild(declaration, 'functionBody');
@@ -348,7 +346,7 @@ export default function processProlog(
 					actualFunctionProperties.argumentTypes.some(
 						// TODO: what do we do with any RestArguments here?
 						// It seems that callFunction in FunctionCall.ts performs a similar cast...
-						(type, i) => (type as ParameterValueType).kind !== paramTypes[i].kind
+						(type, i) => (type as ValueType).kind !== paramTypes[i].kind
 					)
 				) {
 					throw new Error(

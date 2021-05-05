@@ -5,13 +5,7 @@ import FunctionValue from '../dataTypes/FunctionValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value, {
-	BaseType,
-	ParameterType,
-	ParameterValueType,
-	SequenceType,
-	ValueType,
-} from '../dataTypes/Value';
+import Value, { BaseType, SequenceType, ValueType } from '../dataTypes/Value';
 import valueCompare from '../operators/compares/valueCompare';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { DONE_TOKEN, IIterator, IterationHint, ready } from '../util/iterators';
@@ -60,13 +54,8 @@ function subSequence(sequence: ISequence, start: number, length: number) {
 
 function castUntypedItemsToDouble(items: Value[]) {
 	return items.map((item) => {
-		if (
-			isSubtypeOf(item.type, {
-				kind: BaseType.XSUNTYPEDATOMIC,
-				seqType: SequenceType.EXACTLY_ONE,
-			})
-		) {
-			return castToType(item, { kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE });
+		if (isSubtypeOf(item.type.kind, BaseType.XSUNTYPEDATOMIC)) {
+			return castToType(item, BaseType.XSDOUBLE);
 		}
 		return item;
 	});
@@ -348,11 +337,7 @@ const fnAvg: FunctionDefinitionType = (
 		throw new Error('FORG0006: Incompatible types to be converted to a common type');
 	}
 
-	if (
-		!items.every((item) =>
-			isSubtypeOf(item.type, { kind: BaseType.XSNUMERIC, seqType: SequenceType.EXACTLY_ONE })
-		)
-	) {
+	if (!items.every((item) => isSubtypeOf(item.type.kind, BaseType.XSNUMERIC))) {
 		throw new Error('FORG0006: items passed to fn:avg are not all numeric.');
 	}
 
@@ -364,14 +349,8 @@ const fnAvg: FunctionDefinitionType = (
 	if (
 		items.every((item) => {
 			return (
-				isSubtypeOf(item.type, {
-					kind: BaseType.XSINTEGER,
-					seqType: SequenceType.EXACTLY_ONE,
-				}) ||
-				isSubtypeOf(item.type, {
-					kind: BaseType.XSDOUBLE,
-					seqType: SequenceType.EXACTLY_ONE,
-				})
+				isSubtypeOf(item.type.kind, BaseType.XSINTEGER) ||
+				isSubtypeOf(item.type.kind, BaseType.XSDOUBLE)
 			);
 		})
 	) {
@@ -385,10 +364,7 @@ const fnAvg: FunctionDefinitionType = (
 
 	if (
 		items.every((item) => {
-			return isSubtypeOf(item.type, {
-				kind: BaseType.XSDECIMAL,
-				seqType: SequenceType.EXACTLY_ONE,
-			});
+			return isSubtypeOf(item.type.kind, BaseType.XSDECIMAL);
 		})
 	) {
 		return sequenceFactory.singleton(
@@ -465,11 +441,7 @@ const fnSum: FunctionDefinitionType = (
 		throw new Error('FORG0006: Incompatible types to be converted to a common type');
 	}
 
-	if (
-		!items.every((item) =>
-			isSubtypeOf(item.type, { kind: BaseType.XSNUMERIC, seqType: SequenceType.EXACTLY_ONE })
-		)
-	) {
+	if (!items.every((item) => isSubtypeOf(item.type.kind, BaseType.XSNUMERIC))) {
 		throw new Error('FORG0006: items passed to fn:sum are not all numeric.');
 	}
 
@@ -479,10 +451,7 @@ const fnSum: FunctionDefinitionType = (
 
 	if (
 		items.every((item) => {
-			return isSubtypeOf(item.type, {
-				kind: BaseType.XSINTEGER,
-				seqType: SequenceType.EXACTLY_ONE,
-			});
+			return isSubtypeOf(item.type.kind, BaseType.XSINTEGER);
 		})
 	) {
 		return sequenceFactory.singleton(
@@ -495,10 +464,7 @@ const fnSum: FunctionDefinitionType = (
 
 	if (
 		items.every((item) => {
-			return isSubtypeOf(item.type, {
-				kind: BaseType.XSDOUBLE,
-				seqType: SequenceType.EXACTLY_ONE,
-			});
+			return isSubtypeOf(item.type.kind, BaseType.XSDOUBLE);
 		})
 	) {
 		return sequenceFactory.singleton(
@@ -511,10 +477,7 @@ const fnSum: FunctionDefinitionType = (
 
 	if (
 		items.every((item) => {
-			return isSubtypeOf(item.type, {
-				kind: BaseType.XSDECIMAL,
-				seqType: SequenceType.EXACTLY_ONE,
-			});
+			return isSubtypeOf(item.type.kind, BaseType.XSDECIMAL);
 		})
 	) {
 		return sequenceFactory.singleton(
@@ -608,10 +571,7 @@ const fnFilter: FunctionDefinitionType = (
 		);
 		if (
 			!functionCallResult.isSingleton() ||
-			!isSubtypeOf(functionCallResult.first().type, {
-				kind: BaseType.XSBOOLEAN,
-				seqType: SequenceType.EXACTLY_ONE,
-			})
+			!isSubtypeOf(functionCallResult.first().type.kind, BaseType.XSBOOLEAN)
 		) {
 			throw new Error(`XPTY0004: signature of function passed to fn:filter is incompatible.`);
 		}
@@ -649,7 +609,7 @@ const fnForEach: FunctionDefinitionType = (
 					}
 
 					const transformedArgument = performFunctionConversion(
-						callbackArgumentTypes[0] as ParameterValueType,
+						callbackArgumentTypes[0] as ValueType,
 						sequenceFactory.singleton(item.value),
 						executionParameters,
 						'fn:for-each',
@@ -697,14 +657,14 @@ const fnFoldLeft: FunctionDefinitionType = (
 	return sequence.mapAll((values) =>
 		values.reduce((previous, current) => {
 			const previousArg = performFunctionConversion(
-				callbackArgumentTypes[0] as ParameterValueType,
+				callbackArgumentTypes[0] as ValueType,
 				previous,
 				executionParameters,
 				'fn:fold-left',
 				false
 			);
 			const currentArg = performFunctionConversion(
-				callbackArgumentTypes[1] as ParameterValueType,
+				callbackArgumentTypes[1] as ValueType,
 				sequenceFactory.singleton(current),
 				executionParameters,
 				'fn:fold-left',
@@ -743,14 +703,14 @@ const fnFoldRight: FunctionDefinitionType = (
 	return sequence.mapAll((values) =>
 		values.reduceRight((previous, current) => {
 			const previousArg = performFunctionConversion(
-				callbackArgumentTypes[0] as ParameterValueType,
+				callbackArgumentTypes[0] as ValueType,
 				previous,
 				executionParameters,
 				'fn:fold-right',
 				false
 			);
 			const currentArg = performFunctionConversion(
-				callbackArgumentTypes[1] as ParameterValueType,
+				callbackArgumentTypes[1] as ValueType,
 				sequenceFactory.singleton(current),
 				executionParameters,
 				'fn:fold-right',
@@ -770,7 +730,7 @@ const fnFoldRight: FunctionDefinitionType = (
 
 const declarations: BuiltinDeclarationType[] = [
 	{
-		argumentTypes: [{ kind: BaseType.ITEM, seqType: ParameterType.ZERO_OR_MORE }],
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
 		callFunction: fnEmpty,
 		localName: 'empty',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
@@ -778,7 +738,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.ITEM, seqType: ParameterType.ZERO_OR_MORE }],
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
 		callFunction: fnExists,
 		localName: 'exists',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
@@ -786,7 +746,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.ITEM, seqType: ParameterType.ZERO_OR_MORE }],
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
 		callFunction: fnHead,
 		localName: 'head',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
@@ -794,7 +754,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.ITEM, seqType: ParameterType.ZERO_OR_MORE }],
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
 		callFunction: fnTail,
 		localName: 'tail',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,

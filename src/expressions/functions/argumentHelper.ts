@@ -6,8 +6,6 @@ import promoteToType from '../dataTypes/promoteToType';
 import Value, {
 	BaseType,
 	baseTypeToString,
-	ParameterType,
-	ParameterValueType,
 	SequenceType,
 	ValueType,
 	valueTypeToString,
@@ -76,13 +74,13 @@ function mapItem(
  * Test whether the provided argument is valid to be used as an function argument of the given type
  */
 export const performFunctionConversion = (
-	argumentType: ParameterValueType,
+	argumentType: ValueType,
 	argument: ISequence,
 	executionParameters: ExecutionParameters,
 	functionName: string,
 	isReturn: boolean
 ): ISequence => {
-	if (argumentType.seqType === ParameterType.ZERO_OR_ONE) {
+	if (argumentType.seqType === SequenceType.ZERO_OR_ONE) {
 		return argument.switchCases({
 			default: () =>
 				argument.map((value) =>
@@ -99,7 +97,7 @@ export const performFunctionConversion = (
 			},
 		});
 	}
-	if (argumentType.seqType === ParameterType.ONE_OR_MORE) {
+	if (argumentType.seqType === SequenceType.ONE_OR_MORE) {
 		return argument.switchCases({
 			empty: () => {
 				throw new Error(
@@ -116,7 +114,7 @@ export const performFunctionConversion = (
 				),
 		});
 	}
-	if (argumentType.seqType === ParameterType.ZERO_OR_MORE) {
+	if (argumentType.seqType === SequenceType.ZERO_OR_MORE) {
 		return argument.map((value) =>
 			mapItem(value, argumentType.kind, executionParameters, functionName, isReturn)
 		);

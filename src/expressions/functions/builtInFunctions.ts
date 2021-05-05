@@ -19,11 +19,11 @@ import builtInStringFunctions from './builtInFunctions_string';
 
 import builtInFontoxpathFunctions from './builtInFunctions_fontoxpath';
 
-import { ParameterType, ParameterValueType, ValueType } from '../dataTypes/Value';
+import { EllipsisType, ParameterType, ValueType } from '../dataTypes/Value';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
 export type BuiltinDeclarationType = {
-	argumentTypes: ParameterValueType[];
+	argumentTypes: (ValueType | EllipsisType)[];
 	callFunction: FunctionDefinitionType;
 	localName: string;
 	namespaceURI: string;

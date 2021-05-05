@@ -4,14 +4,7 @@ import { adaptJavaScriptValueToSequence } from './expressions/adaptJavaScriptVal
 import ISequence from './expressions/dataTypes/ISequence';
 import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
 import sequenceFactory from './expressions/dataTypes/sequenceFactory';
-import Value, {
-	BaseType,
-	GenericValueType,
-	ParameterType,
-	ParameterValueType,
-	SequenceType,
-	ValueType,
-} from './expressions/dataTypes/Value';
+import Value, { BaseType, SequenceType, ValueType } from './expressions/dataTypes/Value';
 import DynamicContext from './expressions/DynamicContext';
 import ExecutionParameters from './expressions/ExecutionParameters';
 import { registerFunction } from './expressions/functions/functionRegistry';
@@ -84,12 +77,7 @@ function adaptXPathValueToJavascriptValue(
 		sequenceType.seqType === SequenceType.ONE_OR_MORE
 	) {
 		return valueSequence.getAllValues().map((value) => {
-			if (
-				isSubtypeOf(value.type, {
-					kind: BaseType.ATTRIBUTE,
-					seqType: SequenceType.EXACTLY_ONE,
-				})
-			) {
+			if (isSubtypeOf(value.type.kind, BaseType.ATTRIBUTE)) {
 				throw new Error('Cannot pass attribute nodes to custom functions');
 			}
 			return transformXPathItemToJavascriptObject(value, executionParameters).next(
@@ -140,7 +128,7 @@ function splitFunctionName(
  */
 export default function registerCustomXPathFunction(
 	name: string | { localName: string; namespaceURI: string },
-	signature: ParameterValueType[],
+	signature: ValueType[],
 	returnType: ValueType,
 	callback: (
 		domFacade: { currentContext: any; domFacade: IDomFacade },
