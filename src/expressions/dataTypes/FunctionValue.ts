@@ -1,3 +1,4 @@
+import { ParameterType } from 'src';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import StaticContext from '../StaticContext';
@@ -5,7 +6,7 @@ import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import ISequence from './ISequence';
 import RestArgument from './RestArgument';
 import sequenceFactory from './sequenceFactory';
-import Value, { BaseType, SequenceType, ValueType } from './Value';
+import Value, { BaseType, ParameterValueType, SequenceType, ValueType } from './Value';
 import QName from './valueTypes/QName';
 
 export type FunctionSignature<T> = (
@@ -15,7 +16,10 @@ export type FunctionSignature<T> = (
 	...args: ISequence[]
 ) => T;
 
-function expandRestArgumentToArity(argumentTypes: (ValueType | RestArgument)[], arity: number) {
+function expandRestArgumentToArity(
+	argumentTypes: (ParameterValueType | RestArgument)[],
+	arity: number
+) {
 	let indexOfRest = -1;
 	for (let i = 0; i < argumentTypes.length; i++) {
 		if ((argumentTypes[i] as RestArgument).isRestArgument) {
@@ -36,7 +40,7 @@ function expandRestArgumentToArity(argumentTypes: (ValueType | RestArgument)[], 
 class FunctionValue<T = ISequence> extends Value {
 	public readonly isUpdating: boolean;
 	public readonly value: FunctionSignature<T>;
-	private readonly _argumentTypes: (ValueType | RestArgument)[];
+	private readonly _argumentTypes: (ParameterValueType | RestArgument)[];
 	private readonly _arity: number;
 	private readonly _isAnonymous: boolean;
 	private readonly _localName: string;
@@ -53,7 +57,7 @@ class FunctionValue<T = ISequence> extends Value {
 		returnType,
 		value,
 	}: {
-		argumentTypes: (ValueType | RestArgument)[];
+		argumentTypes: (ParameterValueType | RestArgument)[];
 		arity: number;
 		isAnonymous?: boolean;
 		isUpdating?: boolean;
@@ -115,7 +119,11 @@ class FunctionValue<T = ISequence> extends Value {
 			);
 		}
 		const argumentTypes = appliedArguments.reduce(
-			(indices: (ValueType | RestArgument)[], arg: ISequence | null, index: number) => {
+			(
+				indices: (ParameterValueType | RestArgument)[],
+				arg: ISequence | null,
+				index: number
+			) => {
 				if (arg === null) {
 					indices.push(this._argumentTypes[index]);
 				}

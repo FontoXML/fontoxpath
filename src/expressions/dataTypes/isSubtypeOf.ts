@@ -1,3 +1,4 @@
+import { BaseType } from 'src';
 import builtinDataTypesByType from './builtins/builtinDataTypesByType';
 import { startWithXS, ValueType } from './Value';
 import { Variety } from './Variety';
@@ -25,20 +26,20 @@ function isSubtypeOfType(subType, superType) {
  * xs:decimal is a subtype of xs:numeric
  * xs:NMTOKENS is a subtype of xs:NM TOKEN
  */
-export default function isSubtypeOf(subTypeName: ValueType, superTypeName: ValueType): boolean {
-	if (subTypeName.kind === superTypeName.kind) {
+export default function isSubtypeOf(baseSubType: BaseType, baseSuperType: BaseType): boolean {
+	if (baseSubType === baseSuperType) {
 		return true;
 	}
 
-	const superType = builtinDataTypesByType[superTypeName.kind];
-	const subType = builtinDataTypesByType[subTypeName.kind];
+	const superType = builtinDataTypesByType[baseSuperType];
+	const subType = builtinDataTypesByType[baseSubType];
 
 	if (!superType) {
-		if (!startWithXS(superTypeName.kind)) {
+		if (!startWithXS(baseSuperType)) {
 			// Note that 'xs' is the only namespace currently supported
-			throw new Error(`XPST0081: The type ${superTypeName} could not be found.`);
+			throw new Error(`XPST0081: The type ${baseSuperType} could not be found.`);
 		}
-		throw new Error(`XPST0051: The type ${superTypeName} could not be found.`);
+		throw new Error(`XPST0051: The type ${baseSuperType} could not be found.`);
 	}
 
 	return isSubtypeOfType(subType, superType);

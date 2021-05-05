@@ -688,8 +688,8 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'compare',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.ZERO_OR_ONE },
 		],
 		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: fnCompare,
@@ -699,9 +699,9 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'compare',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.EXACTLY_ONE },
 		],
 		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: collationError,
@@ -711,10 +711,10 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'concat',
 		argumentTypes: [
-			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE },
-			//TODO: Fix this situation
-			//{ kind: ParameterType.ELLIPSIS },
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: ParameterType.ZERO_OR_ONE },
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: ParameterType.ZERO_OR_ONE },
+			//TODO: CHANGE THIS BASETYPE
+			{ kind: BaseType.XSSHORT, seqType: ParameterType.ELLIPSIS },
 		],
 		returnType: { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
 		callFunction: fnConcat,
@@ -724,9 +724,9 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'contains',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.ZERO_OR_ONE },
 		],
 		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
 		callFunction: collationError,
@@ -736,8 +736,8 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'contains',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.ZERO_OR_ONE },
 		],
 		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
 		callFunction: fnContains,
@@ -747,8 +747,8 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'ends-with',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.ZERO_OR_ONE },
 		],
 		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
 		callFunction: fnEndsWith,
@@ -758,9 +758,9 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'ends-with',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.EXACTLY_ONE },
 		],
 		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
 		callFunction: collationError,
@@ -769,7 +769,7 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'normalize-space',
-		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE }],
+		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: ParameterType.ZERO_OR_ONE }],
 		returnType: { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
 		callFunction: fnNormalizeSpace,
 	},
@@ -795,8 +795,8 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'starts-with',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.ZERO_OR_ONE },
 		],
 		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
 		callFunction: fnStartsWith,
@@ -806,9 +806,9 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'starts-with',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.EXACTLY_ONE },
 		],
 		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
 		callFunction: collationError,
@@ -817,7 +817,7 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'string',
-		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_ONE }],
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: ParameterType.ZERO_OR_ONE }],
 		returnType: { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
 		callFunction: fnString,
 	},
@@ -834,8 +834,8 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'substring-before',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.ZERO_OR_ONE },
 		],
 		returnType: { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
 		callFunction: fnSubstringBefore,
@@ -845,8 +845,8 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'substring-after',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.ZERO_OR_ONE },
 		],
 		returnType: { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
 		callFunction: fnSubstringAfter,
@@ -856,8 +856,8 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'substring',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.ZERO_OR_ONE },
+			{ kind: BaseType.XSDOUBLE, seqType: ParameterType.EXACTLY_ONE },
 		],
 		returnType: { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
 		callFunction: fnSubstring,
@@ -867,9 +867,9 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'substring',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE },
-			{ kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.ZERO_OR_ONE },
+			{ kind: BaseType.XSDOUBLE, seqType: ParameterType.EXACTLY_ONE },
+			{ kind: BaseType.XSDOUBLE, seqType: ParameterType.EXACTLY_ONE },
 		],
 		returnType: { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
 		callFunction: fnSubstring,
@@ -878,7 +878,7 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'upper-case',
-		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE }],
+		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: ParameterType.ZERO_OR_ONE }],
 		returnType: { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
 		callFunction: fnUpperCase,
 	},
@@ -886,7 +886,7 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'lower-case',
-		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE }],
+		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: ParameterType.ZERO_OR_ONE }],
 		returnType: { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
 		callFunction: fnLowerCase,
 	},
@@ -895,8 +895,8 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'string-join',
 		argumentTypes: [
-			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_MORE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: ParameterType.ZERO_OR_MORE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.EXACTLY_ONE },
 		],
 		returnType: { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
 		callFunction: fnStringJoin,
@@ -905,7 +905,7 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'string-join',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_MORE }],
+		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: ParameterType.ZERO_OR_MORE }],
 		returnType: { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
 		callFunction(dynamicContext, executionParameters, staticContext, arg1) {
 			return fnStringJoin(
@@ -926,7 +926,7 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'string-length',
-		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE }],
+		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: ParameterType.ZERO_OR_ONE }],
 		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE },
 		callFunction: fnStringLength,
 	},
@@ -952,9 +952,9 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'tokenize',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.EXACTLY_ONE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.EXACTLY_ONE },
 		],
 		returnType: {
 			kind: BaseType.XSSTRING,
@@ -976,8 +976,8 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'tokenize',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.EXACTLY_ONE },
 		],
 		returnType: {
 			kind: BaseType.XSSTRING,
@@ -989,7 +989,7 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'tokenize',
-		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE }],
+		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: ParameterType.ZERO_OR_ONE }],
 		returnType: {
 			kind: BaseType.XSSTRING,
 			seqType: SequenceType.ZERO_OR_MORE,
@@ -1012,9 +1012,9 @@ const declarations: BuiltinDeclarationType[] = [
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.EXACTLY_ONE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.EXACTLY_ONE },
 		],
 		callFunction: fnTranslate,
 		localName: 'translate',
@@ -1026,7 +1026,7 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [
 			{
 				kind: BaseType.XSINTEGER,
-				seqType: SequenceType.ZERO_OR_MORE,
+				seqType: ParameterType.ZERO_OR_MORE,
 			},
 		],
 		callFunction: fnCodepointsToString,
@@ -1036,7 +1036,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE }],
+		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: ParameterType.ZERO_OR_ONE }],
 		callFunction: fnStringToCodepoints,
 		localName: 'string-to-codepoints',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
@@ -1047,7 +1047,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE }],
+		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: ParameterType.ZERO_OR_ONE }],
 		callFunction: fnEncodeForUri,
 		localName: 'encode-for-uri',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
@@ -1055,7 +1055,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE }],
+		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: ParameterType.ZERO_OR_ONE }],
 		callFunction: fnIriToUri,
 		localName: 'iri-to-uri',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
@@ -1064,8 +1064,8 @@ const declarations: BuiltinDeclarationType[] = [
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.ZERO_OR_ONE },
 		],
 		callFunction: fnCodepointEqual,
 		localName: 'codepoint-equal',
@@ -1078,8 +1078,8 @@ const declarations: BuiltinDeclarationType[] = [
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: ParameterType.EXACTLY_ONE },
 		],
 		callFunction: fnMatches,
 		localName: 'matches',

@@ -4,7 +4,14 @@ import { adaptJavaScriptValueToSequence } from './expressions/adaptJavaScriptVal
 import ISequence from './expressions/dataTypes/ISequence';
 import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
 import sequenceFactory from './expressions/dataTypes/sequenceFactory';
-import { BaseType, SequenceType, ValueType } from './expressions/dataTypes/Value';
+import Value, {
+	BaseType,
+	GenericValueType,
+	ParameterType,
+	ParameterValueType,
+	SequenceType,
+	ValueType,
+} from './expressions/dataTypes/Value';
 import DynamicContext from './expressions/DynamicContext';
 import ExecutionParameters from './expressions/ExecutionParameters';
 import { registerFunction } from './expressions/functions/functionRegistry';
@@ -133,7 +140,7 @@ function splitFunctionName(
  */
 export default function registerCustomXPathFunction(
 	name: string | { localName: string; namespaceURI: string },
-	signature: ValueType[],
+	signature: ParameterValueType[],
 	returnType: ValueType,
 	callback: (
 		domFacade: { currentContext: any; domFacade: IDomFacade },
@@ -160,7 +167,7 @@ export default function registerCustomXPathFunction(
 		const newArguments = args.map((argument, index) => {
 			return adaptXPathValueToJavascriptValue(
 				argument,
-				signature[index],
+				signature[index] as ValueType,
 				executionParameters
 			);
 		});

@@ -1,5 +1,8 @@
 import {
 	BaseType,
+	GenericValueType,
+	ParameterType,
+	ParameterValueType,
 	SequenceType,
 	stringToValueType,
 	ValueType,
@@ -78,30 +81,33 @@ function getTextContent(ast: IAST): string {
  * @param   ast  The parent
  * @return  The type declaration
  */
-function getTypeDeclaration(ast: IAST): ValueType {
+function getTypeDeclaration<T = ParameterType | SequenceType>(ast: IAST): GenericValueType<T> {
+	const zeroOrMore = SequenceType.ZERO_OR_MORE;
+	const exactlyOne = SequenceType.EXACTLY_ONE;
+
 	const typeDeclarationAst = getFirstChild(ast, 'typeDeclaration');
 	if (!typeDeclarationAst || getFirstChild(typeDeclarationAst, 'voidSequenceType')) {
-		return { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE };
+		return { kind: BaseType.ITEM, seqType: zeroOrMore };
 	}
 
-	const determineType = (typeAst: IAST): ValueType => {
+	const determineType = (typeAst: IAST): T => {
 		switch (typeAst[0]) {
 			case 'documentTest':
-				return { kind: BaseType.DOCUMENTNODE, seqType: SequenceType.EXACTLY_ONE };
+				return { kind: BaseType.DOCUMENTNODE, seqType: exactlyOne };
 			case 'elementTest':
-				return { kind: BaseType.ELEMENT, seqType: SequenceType.EXACTLY_ONE };
+				return { kind: BaseType.ELEMENT, seqType: exactlyOne };
 			case 'attributeTest':
-				return { kind: BaseType.ATTRIBUTE, seqType: SequenceType.EXACTLY_ONE };
+				return { kind: BaseType.ATTRIBUTE, seqType: exactlyOne };
 			case 'piTest':
-				return { kind: BaseType.PROCESSINGINSTRUCTION, seqType: SequenceType.EXACTLY_ONE };
+				return { kind: BaseType.PROCESSINGINSTRUCTION, seqType: exactlyOne };
 			case 'commentTest':
-				return { kind: BaseType.COMMENT, seqType: SequenceType.EXACTLY_ONE };
+				return { kind: BaseType.COMMENT, seqType: exactlyOne };
 			case 'textTest':
-				return { kind: BaseType.TEXT, seqType: SequenceType.EXACTLY_ONE };
+				return { kind: BaseType.TEXT, seqType: exactlyOne };
 			case 'anyKindTest':
-				return { kind: BaseType.NODE, seqType: SequenceType.EXACTLY_ONE };
+				return { kind: BaseType.NODE, seqType: exactlyOne };
 			case 'anyItemType':
-				return { kind: BaseType.ITEM, seqType: SequenceType.EXACTLY_ONE };
+				return { kind: BaseType.ITEM, seqType: exactlyOne };
 			case 'anyFunctionTest':
 			case 'functionTest':
 			case 'typedFunctionTest':
@@ -109,17 +115,18 @@ function getTypeDeclaration(ast: IAST): ValueType {
 					kind: BaseType.FUNCTION,
 					returnType: undefined,
 					params: [],
-					seqType: SequenceType.EXACTLY_ONE,
+					seqType: exactlyOne,
 				};
 			case 'anyMapTest':
 			case 'typedMapTest':
-				return { kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE };
+				return { kind: BaseType.MAP, items: [], seqType: exactlyOne };
 			case 'anyArrayTest':
 			case 'typedArrayTest':
-				return { kind: BaseType.ARRAY, items: [], seqType: SequenceType.EXACTLY_ONE };
+				return { kind: BaseType.ARRAY, items: [], seqType: exactlyOne };
 			case 'atomicType':
 				return stringToValueType(
-					[getAttribute(typeAst, 'prefix'), getTextContent(typeAst)].join(':')
+					[getAttribute(typeAst, 'prefix'), getTextContent(typeAst)].join(':'),
+					exactlyOne
 				);
 			case 'parenthesizedItemType':
 				return determineType(getFirstChild(typeAst, '*'));
@@ -145,13 +152,13 @@ function getTypeDeclaration(ast: IAST): ValueType {
 
 	switch (occurrence) {
 		case '*':
-			type.seqType = SequenceType.ZERO_OR_MORE;
+			type.seqType = zeroOrMore;
 			return type;
 		case '?':
-			type.seqType = SequenceType.ZERO_OR_ONE;
+			type.seqType = zeroOrMore;
 			return type;
 		case '+':
-			type.seqType = SequenceType.ONE_OR_MORE;
+			type.seqType = zeroOrMore;
 			return type;
 		case '':
 		case null:

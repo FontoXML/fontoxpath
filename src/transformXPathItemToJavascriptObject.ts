@@ -109,25 +109,13 @@ export default function transformXPathItemToJavascriptObject(
 	value: Value,
 	executionParameters: ExecutionParameters
 ): IIterator<any> {
-	if (
-		isSubtypeOf(value.type, {
-			kind: BaseType.MAP,
-			items: [],
-			seqType: SequenceType.EXACTLY_ONE,
-		})
-	) {
+	if (isSubtypeOf(value.type.kind, BaseType.MAP)) {
 		return transformMapToObject(value as MapValue, executionParameters);
 	}
-	if (
-		isSubtypeOf(value.type, {
-			kind: BaseType.ARRAY,
-			items: [],
-			seqType: SequenceType.EXACTLY_ONE,
-		})
-	) {
+	if (isSubtypeOf(value.type.kind, BaseType.ARRAY)) {
 		return transformArrayToArray(value as ArrayValue, executionParameters);
 	}
-	if (isSubtypeOf(value.type, { kind: BaseType.XSQNAME, seqType: SequenceType.EXACTLY_ONE })) {
+	if (isSubtypeOf(value.type.kind, BaseType.XSQNAME)) {
 		const qualifiedName = value.value as QName;
 		return {
 			next: () => ready(`Q{${qualifiedName.namespaceURI || ''}}${qualifiedName.localName}`),

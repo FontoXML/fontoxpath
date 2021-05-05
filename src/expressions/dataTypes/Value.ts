@@ -83,10 +83,10 @@ export const enum BaseType {
  * @public
  */
 export const enum SequenceType {
-	ZERO_OR_ONE,
-	ONE_OR_MORE,
-	ZERO_OR_MORE,
-	EXACTLY_ONE,
+	ZERO_OR_ONE = 0,
+	ONE_OR_MORE = 1,
+	ZERO_OR_MORE = 2,
+	EXACTLY_ONE = 3,
 }
 
 /**
@@ -98,7 +98,7 @@ export const enum ParameterType {
 	ONE_OR_MORE = SequenceType.ONE_OR_MORE,
 	ZERO_OR_MORE = SequenceType.ZERO_OR_MORE,
 	EXACTLY_ONE = SequenceType.EXACTLY_ONE,
-	ELLIPSIS,
+	ELLIPSIS = 4,
 }
 
 export function startWithXS(inType: BaseType): boolean {
@@ -175,79 +175,111 @@ const a = new Map([
  * The composite type containing more info
  * @public
  */
-export type ValueType =
-	| { kind: BaseType.XSBOOLEAN; seqType: SequenceType }
-	| { kind: BaseType.XSSTRING; seqType: SequenceType }
-	| { kind: BaseType.XSNUMERIC; seqType: SequenceType }
-	| { kind: BaseType.XSDOUBLE; seqType: SequenceType }
-	| { kind: BaseType.XSDECIMAL; seqType: SequenceType }
-	| { kind: BaseType.XSINTEGER; seqType: SequenceType }
-	| { kind: BaseType.XSFLOAT; seqType: SequenceType }
-	| { kind: BaseType.XSDATE; seqType: SequenceType }
-	| { kind: BaseType.XSTIME; seqType: SequenceType }
-	| { kind: BaseType.XSDATETIME; seqType: SequenceType }
-	| { kind: BaseType.XSDATETIMESTAMP; seqType: SequenceType }
-	| { kind: BaseType.XSGYEARMONTH; seqType: SequenceType }
-	| { kind: BaseType.XSGYEAR; seqType: SequenceType }
-	| { kind: BaseType.XSGMONTHDAY; seqType: SequenceType }
-	| { kind: BaseType.XSGMONTH; seqType: SequenceType }
-	| { kind: BaseType.XSGDAY; seqType: SequenceType }
-	| { kind: BaseType.XSYEARMONTHDURATION; seqType: SequenceType }
-	| { kind: BaseType.XSDAYTIMEDURATION; seqType: SequenceType }
-	| { kind: BaseType.XSDURATION; seqType: SequenceType }
-	| { kind: BaseType.XSUNTYPEDATOMIC; seqType: SequenceType }
-	| { kind: BaseType.XSANYURI; seqType: SequenceType }
-	| { kind: BaseType.XSBASE64BINARY; seqType: SequenceType }
-	| { kind: BaseType.XSHEXBINARY; seqType: SequenceType }
-	| { kind: BaseType.XSQNAME; seqType: SequenceType }
-	| { kind: BaseType.XSNCNAME; seqType: SequenceType }
-	| { kind: BaseType.XSNAME; seqType: SequenceType }
-	| { kind: BaseType.XSENTITY; seqType: SequenceType }
-	| { kind: BaseType.XSNONPOSITIVEINTEGER; seqType: SequenceType }
-	| { kind: BaseType.XSNEGATIVEINTEGER; seqType: SequenceType }
-	| { kind: BaseType.XSPOSITIVEINTEGER; seqType: SequenceType }
-	| { kind: BaseType.XSNONNEGATIVEINTEGER; seqType: SequenceType }
-	| { kind: BaseType.XSLONG; seqType: SequenceType }
-	| { kind: BaseType.XSINT; seqType: SequenceType }
-	| { kind: BaseType.XSSHORT; seqType: SequenceType }
-	| { kind: BaseType.XSBYTE; seqType: SequenceType }
-	| { kind: BaseType.XSUNSIGNEDINT; seqType: SequenceType }
-	| { kind: BaseType.XSUNSIGNEDLONG; seqType: SequenceType }
-	| { kind: BaseType.XSUNSIGNEDBYTE; seqType: SequenceType }
-	| { kind: BaseType.XSUNSIGNEDSHORT; seqType: SequenceType }
-	| { kind: BaseType.XSERROR; seqType: SequenceType }
-	| { kind: BaseType.XSENTITIES; seqType: SequenceType }
-	| { kind: BaseType.XSIDREF; seqType: SequenceType }
-	| { kind: BaseType.XSID; seqType: SequenceType }
-	| { kind: BaseType.XSIDREFS; seqType: SequenceType }
-	| { kind: BaseType.XSNOTATION; seqType: SequenceType }
-	| { kind: BaseType.XSANYSIMPLETYPE; seqType: SequenceType }
-	| { kind: BaseType.XSANYATOMICTYPE; seqType: SequenceType }
-	| { kind: BaseType.ATTRIBUTE; seqType: SequenceType }
-	| { kind: BaseType.XSNORMALIZEDSTRING; seqType: SequenceType }
-	| { kind: BaseType.XSNMTOKENS; seqType: SequenceType }
-	| { kind: BaseType.XSNMTOKEN; seqType: SequenceType }
-	| { kind: BaseType.XSLANGUAGE; seqType: SequenceType }
-	| { kind: BaseType.XSTOKEN; seqType: SequenceType }
-	| { kind: BaseType.NODE; seqType: SequenceType }
-	| { kind: BaseType.ELEMENT; seqType: SequenceType }
-	| { kind: BaseType.DOCUMENTNODE; seqType: SequenceType }
-	| { kind: BaseType.TEXT; seqType: SequenceType }
-	| { kind: BaseType.PROCESSINGINSTRUCTION; seqType: SequenceType }
-	| { kind: BaseType.COMMENT; seqType: SequenceType }
-	| { kind: BaseType.ITEM; seqType: SequenceType }
+export type ValueType = GenericValueType<SequenceType>;
+
+/**
+ * The composite type containing more info for parameters
+ * @public
+ */
+export type ParameterValueType = GenericValueType<ParameterType>;
+
+/**
+ * The generic composite type
+ * @public
+ */
+export type GenericValueType<T> =
+	| { kind: BaseType.XSBOOLEAN; seqType: T }
+	| { kind: BaseType.XSSTRING; seqType: T }
+	| { kind: BaseType.XSNUMERIC; seqType: T }
+	| { kind: BaseType.XSDOUBLE; seqType: T }
+	| { kind: BaseType.XSDECIMAL; seqType: T }
+	| { kind: BaseType.XSINTEGER; seqType: T }
+	| { kind: BaseType.XSFLOAT; seqType: T }
+	| { kind: BaseType.XSDATE; seqType: T }
+	| { kind: BaseType.XSTIME; seqType: T }
+	| { kind: BaseType.XSDATETIME; seqType: T }
+	| { kind: BaseType.XSDATETIMESTAMP; seqType: T }
+	| { kind: BaseType.XSGYEARMONTH; seqType: T }
+	| { kind: BaseType.XSGYEAR; seqType: T }
+	| { kind: BaseType.XSGMONTHDAY; seqType: T }
+	| { kind: BaseType.XSGMONTH; seqType: T }
+	| { kind: BaseType.XSGDAY; seqType: T }
+	| { kind: BaseType.XSYEARMONTHDURATION; seqType: T }
+	| { kind: BaseType.XSDAYTIMEDURATION; seqType: T }
+	| { kind: BaseType.XSDURATION; seqType: T }
+	| { kind: BaseType.XSUNTYPEDATOMIC; seqType: T }
+	| { kind: BaseType.XSANYURI; seqType: T }
+	| { kind: BaseType.XSBASE64BINARY; seqType: T }
+	| { kind: BaseType.XSHEXBINARY; seqType: T }
+	| { kind: BaseType.XSQNAME; seqType: T }
+	| { kind: BaseType.XSNCNAME; seqType: T }
+	| { kind: BaseType.XSNAME; seqType: T }
+	| { kind: BaseType.XSENTITY; seqType: T }
+	| { kind: BaseType.XSNONPOSITIVEINTEGER; seqType: T }
+	| { kind: BaseType.XSNEGATIVEINTEGER; seqType: T }
+	| { kind: BaseType.XSPOSITIVEINTEGER; seqType: T }
+	| { kind: BaseType.XSNONNEGATIVEINTEGER; seqType: T }
+	| { kind: BaseType.XSLONG; seqType: T }
+	| { kind: BaseType.XSINT; seqType: T }
+	| { kind: BaseType.XSSHORT; seqType: T }
+	| { kind: BaseType.XSBYTE; seqType: T }
+	| { kind: BaseType.XSUNSIGNEDINT; seqType: T }
+	| { kind: BaseType.XSUNSIGNEDLONG; seqType: T }
+	| { kind: BaseType.XSUNSIGNEDBYTE; seqType: T }
+	| { kind: BaseType.XSUNSIGNEDSHORT; seqType: T }
+	| { kind: BaseType.XSERROR; seqType: T }
+	| { kind: BaseType.XSENTITIES; seqType: T }
+	| { kind: BaseType.XSIDREF; seqType: T }
+	| { kind: BaseType.XSID; seqType: T }
+	| { kind: BaseType.XSIDREFS; seqType: T }
+	| { kind: BaseType.XSNOTATION; seqType: T }
+	| { kind: BaseType.XSANYSIMPLETYPE; seqType: T }
+	| { kind: BaseType.XSANYATOMICTYPE; seqType: T }
+	| { kind: BaseType.ATTRIBUTE; seqType: T }
+	| { kind: BaseType.XSNORMALIZEDSTRING; seqType: T }
+	| { kind: BaseType.XSNMTOKENS; seqType: T }
+	| { kind: BaseType.XSNMTOKEN; seqType: T }
+	| { kind: BaseType.XSLANGUAGE; seqType: T }
+	| { kind: BaseType.XSTOKEN; seqType: T }
+	| { kind: BaseType.NODE; seqType: T }
+	| { kind: BaseType.ELEMENT; seqType: T }
+	| { kind: BaseType.DOCUMENTNODE; seqType: T }
+	| { kind: BaseType.TEXT; seqType: T }
+	| { kind: BaseType.PROCESSINGINSTRUCTION; seqType: T }
+	| { kind: BaseType.COMMENT; seqType: T }
+	| { kind: BaseType.ITEM; seqType: T }
 	| {
 			kind: BaseType.FUNCTION;
-			seqType: SequenceType;
-			params: ValueType[];
+			seqType: T;
+			params: GenericValueType<T>[];
 			returnType: ValueType | undefined;
 	  }
 	| {
-			items: [ValueType, ValueType][];
+			items: [GenericValueType<T>, GenericValueType<T>][];
 			kind: BaseType.MAP;
-			seqType: SequenceType;
+			seqType: T;
 	  }
-	| { items: ValueType[]; kind: BaseType.ARRAY; seqType: SequenceType };
+	| { items: GenericValueType<T>[]; kind: BaseType.ARRAY; seqType: T };
+
+// export function parameterValueTypeToValueType(type: ParameterValueType): ValueType {
+// 	let newType;
+// 	switch (type.seqType) {
+// 		case ParameterType.EXACTLY_ONE:
+// 			newType = SequenceType.EXACTLY_ONE;
+// 			break;
+// 		case ParameterType.ONE_OR_MORE:
+// 			newType = SequenceType.ONE_OR_MORE;
+// 			break;
+// 		case ParameterType.ZERO_OR_ONE:
+// 			newType = SequenceType.ZERO_OR_ONE;
+// 			break;
+// 		case ParameterType.ZERO_OR_MORE:
+// 			newType = SequenceType.ZERO_OR_MORE;
+// 			break;
+// 		default:
+// 			throw new Error(`Trying to convert parameter value type ${type} to value type`);
+// 	}
+// }
 
 /**
  * Recursively creates a hash for a type and its potential subtypes
@@ -368,7 +400,7 @@ export function baseTypeToString(input: BaseType): string {
  * @param input the ValueType
  * @returns the correct string representation of the type
  */
-export function valueTypeToString(input: ValueType): string {
+export function valueTypeToString(input: ValueType | ParameterValueType): string {
 	if (input.seqType === SequenceType.ZERO_OR_MORE) {
 		return baseTypeToString(input.kind) + '*';
 	}
@@ -389,104 +421,107 @@ export function valueTypeToString(input: ValueType): string {
  * @returns the corresponding ValueType object.
  * @throws Error if the type cannot be mapped from string to ValueType.
  */
-export function stringToValueType(input: string): ValueType {
+export function stringToValueType<T = ParameterType | SequenceType>(
+	input: string,
+	seqType: T
+): GenericValueType<T> {
 	if (!input.startsWith('xs:') && input.indexOf(':') >= 0) {
 		throw new Error('XPST0081: Invalid prefix for input ' + input);
 	}
 
-	const stringToTypeMap: { [key: string]: ValueType } = {
-		'xs:boolean': { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
-		'xs:string': { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
-		'xs:numeric': { kind: BaseType.XSNUMERIC, seqType: SequenceType.EXACTLY_ONE },
-		'xs:double': { kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE },
-		'xs:decimal': { kind: BaseType.XSDECIMAL, seqType: SequenceType.EXACTLY_ONE },
-		'xs:integer': { kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE },
-		'xs:float': { kind: BaseType.XSFLOAT, seqType: SequenceType.EXACTLY_ONE },
-		'xs:date': { kind: BaseType.XSDATE, seqType: SequenceType.EXACTLY_ONE },
-		'xs:time': { kind: BaseType.XSTIME, seqType: SequenceType.EXACTLY_ONE },
-		'xs:dateTime': { kind: BaseType.XSDATETIME, seqType: SequenceType.EXACTLY_ONE },
-		'xs:dateTimeStamp': { kind: BaseType.XSDATETIMESTAMP, seqType: SequenceType.EXACTLY_ONE },
-		'xs:gYearMonth': { kind: BaseType.XSGYEARMONTH, seqType: SequenceType.EXACTLY_ONE },
-		'xs:gYear': { kind: BaseType.XSGYEAR, seqType: SequenceType.EXACTLY_ONE },
-		'xs:gMonthDay': { kind: BaseType.XSGMONTHDAY, seqType: SequenceType.EXACTLY_ONE },
-		'xs:gMonth': { kind: BaseType.XSGMONTH, seqType: SequenceType.EXACTLY_ONE },
-		'xs:gDay': { kind: BaseType.XSGDAY, seqType: SequenceType.EXACTLY_ONE },
+	const stringToTypeMap: { [key: string]: GenericValueType<T> } = {
+		'xs:boolean': { kind: BaseType.XSBOOLEAN, seqType },
+		'xs:string': { kind: BaseType.XSSTRING, seqType },
+		'xs:numeric': { kind: BaseType.XSNUMERIC, seqType },
+		'xs:double': { kind: BaseType.XSDOUBLE, seqType },
+		'xs:decimal': { kind: BaseType.XSDECIMAL, seqType },
+		'xs:integer': { kind: BaseType.XSINTEGER, seqType },
+		'xs:float': { kind: BaseType.XSFLOAT, seqType },
+		'xs:date': { kind: BaseType.XSDATE, seqType },
+		'xs:time': { kind: BaseType.XSTIME, seqType },
+		'xs:dateTime': { kind: BaseType.XSDATETIME, seqType },
+		'xs:dateTimeStamp': { kind: BaseType.XSDATETIMESTAMP, seqType },
+		'xs:gYearMonth': { kind: BaseType.XSGYEARMONTH, seqType },
+		'xs:gYear': { kind: BaseType.XSGYEAR, seqType },
+		'xs:gMonthDay': { kind: BaseType.XSGMONTHDAY, seqType },
+		'xs:gMonth': { kind: BaseType.XSGMONTH, seqType },
+		'xs:gDay': { kind: BaseType.XSGDAY, seqType },
 		'xs:yearMonthDuration': {
 			kind: BaseType.XSYEARMONTHDURATION,
-			seqType: SequenceType.EXACTLY_ONE,
+			seqType,
 		},
 		'xs:dayTimeDuration': {
 			kind: BaseType.XSDAYTIMEDURATION,
-			seqType: SequenceType.EXACTLY_ONE,
+			seqType,
 		},
-		'xs:duration': { kind: BaseType.XSDURATION, seqType: SequenceType.EXACTLY_ONE },
-		'xs:untypedAtomic': { kind: BaseType.XSUNTYPEDATOMIC, seqType: SequenceType.EXACTLY_ONE },
-		'xs:anyURI': { kind: BaseType.XSANYURI, seqType: SequenceType.EXACTLY_ONE },
-		'xs:base64Binary': { kind: BaseType.XSBASE64BINARY, seqType: SequenceType.EXACTLY_ONE },
-		'xs:hexBinary': { kind: BaseType.XSHEXBINARY, seqType: SequenceType.EXACTLY_ONE },
-		'xs:QName': { kind: BaseType.XSQNAME, seqType: SequenceType.EXACTLY_ONE },
-		'xs:NCName': { kind: BaseType.XSNCNAME, seqType: SequenceType.EXACTLY_ONE },
-		'xs:Name': { kind: BaseType.XSNAME, seqType: SequenceType.EXACTLY_ONE },
-		'xs:ENTITY': { kind: BaseType.XSENTITY, seqType: SequenceType.EXACTLY_ONE },
+		'xs:duration': { kind: BaseType.XSDURATION, seqType },
+		'xs:untypedAtomic': { kind: BaseType.XSUNTYPEDATOMIC, seqType },
+		'xs:anyURI': { kind: BaseType.XSANYURI, seqType },
+		'xs:base64Binary': { kind: BaseType.XSBASE64BINARY, seqType },
+		'xs:hexBinary': { kind: BaseType.XSHEXBINARY, seqType },
+		'xs:QName': { kind: BaseType.XSQNAME, seqType },
+		'xs:NCName': { kind: BaseType.XSNCNAME, seqType },
+		'xs:Name': { kind: BaseType.XSNAME, seqType },
+		'xs:ENTITY': { kind: BaseType.XSENTITY, seqType },
 		'xs:nonPositiveInteger': {
 			kind: BaseType.XSNONPOSITIVEINTEGER,
-			seqType: SequenceType.EXACTLY_ONE,
+			seqType,
 		},
 		'xs:negativeInteger': {
 			kind: BaseType.XSNEGATIVEINTEGER,
-			seqType: SequenceType.EXACTLY_ONE,
+			seqType,
 		},
 		'xs:positiveInteger': {
 			kind: BaseType.XSPOSITIVEINTEGER,
-			seqType: SequenceType.EXACTLY_ONE,
+			seqType,
 		},
 		'xs:nonNegativeInteger': {
 			kind: BaseType.XSNONNEGATIVEINTEGER,
-			seqType: SequenceType.EXACTLY_ONE,
+			seqType,
 		},
-		'xs:long': { kind: BaseType.XSLONG, seqType: SequenceType.EXACTLY_ONE },
-		'xs:int': { kind: BaseType.XSINT, seqType: SequenceType.EXACTLY_ONE },
-		'xs:short': { kind: BaseType.XSSHORT, seqType: SequenceType.EXACTLY_ONE },
-		'xs:byte': { kind: BaseType.XSBYTE, seqType: SequenceType.EXACTLY_ONE },
-		'xs:unsignedInt': { kind: BaseType.XSUNSIGNEDINT, seqType: SequenceType.EXACTLY_ONE },
-		'xs:unsignedLong': { kind: BaseType.XSUNSIGNEDLONG, seqType: SequenceType.EXACTLY_ONE },
-		'xs:unsignedByte': { kind: BaseType.XSUNSIGNEDBYTE, seqType: SequenceType.EXACTLY_ONE },
-		'xs:unsignedShort': { kind: BaseType.XSUNSIGNEDSHORT, seqType: SequenceType.EXACTLY_ONE },
-		'xs:error': { kind: BaseType.XSERROR, seqType: SequenceType.EXACTLY_ONE },
-		'xs:ENTITIES': { kind: BaseType.XSENTITIES, seqType: SequenceType.EXACTLY_ONE },
-		'xs:IDREF': { kind: BaseType.XSIDREF, seqType: SequenceType.EXACTLY_ONE },
-		'xs:ID': { kind: BaseType.XSID, seqType: SequenceType.EXACTLY_ONE },
-		'xs:IDREFS': { kind: BaseType.XSIDREFS, seqType: SequenceType.EXACTLY_ONE },
-		'xs:NOTATION': { kind: BaseType.XSNOTATION, seqType: SequenceType.EXACTLY_ONE },
-		'xs:anySimpleType': { kind: BaseType.XSANYSIMPLETYPE, seqType: SequenceType.EXACTLY_ONE },
-		'xs:anyAtomicType': { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
-		'attribute()': { kind: BaseType.ATTRIBUTE, seqType: SequenceType.EXACTLY_ONE },
+		'xs:long': { kind: BaseType.XSLONG, seqType },
+		'xs:int': { kind: BaseType.XSINT, seqType },
+		'xs:short': { kind: BaseType.XSSHORT, seqType },
+		'xs:byte': { kind: BaseType.XSBYTE, seqType },
+		'xs:unsignedInt': { kind: BaseType.XSUNSIGNEDINT, seqType },
+		'xs:unsignedLong': { kind: BaseType.XSUNSIGNEDLONG, seqType },
+		'xs:unsignedByte': { kind: BaseType.XSUNSIGNEDBYTE, seqType },
+		'xs:unsignedShort': { kind: BaseType.XSUNSIGNEDSHORT, seqType },
+		'xs:error': { kind: BaseType.XSERROR, seqType },
+		'xs:ENTITIES': { kind: BaseType.XSENTITIES, seqType },
+		'xs:IDREF': { kind: BaseType.XSIDREF, seqType },
+		'xs:ID': { kind: BaseType.XSID, seqType },
+		'xs:IDREFS': { kind: BaseType.XSIDREFS, seqType },
+		'xs:NOTATION': { kind: BaseType.XSNOTATION, seqType },
+		'xs:anySimpleType': { kind: BaseType.XSANYSIMPLETYPE, seqType },
+		'xs:anyAtomicType': { kind: BaseType.XSANYATOMICTYPE, seqType },
+		'attribute()': { kind: BaseType.ATTRIBUTE, seqType },
 		'xs:normalizedString': {
 			kind: BaseType.XSNORMALIZEDSTRING,
-			seqType: SequenceType.EXACTLY_ONE,
+			seqType,
 		},
-		'xs:NMTOKENS': { kind: BaseType.XSNMTOKENS, seqType: SequenceType.EXACTLY_ONE },
-		'xs:NMTOKEN': { kind: BaseType.XSNMTOKEN, seqType: SequenceType.EXACTLY_ONE },
-		'xs:language': { kind: BaseType.XSLANGUAGE, seqType: SequenceType.EXACTLY_ONE },
-		'xs:token': { kind: BaseType.XSTOKEN, seqType: SequenceType.EXACTLY_ONE },
-		'node()': { kind: BaseType.NODE, seqType: SequenceType.EXACTLY_ONE },
-		'element()': { kind: BaseType.ELEMENT, seqType: SequenceType.EXACTLY_ONE },
-		'document-node()': { kind: BaseType.DOCUMENTNODE, seqType: SequenceType.EXACTLY_ONE },
-		'text()': { kind: BaseType.TEXT, seqType: SequenceType.EXACTLY_ONE },
+		'xs:NMTOKENS': { kind: BaseType.XSNMTOKENS, seqType },
+		'xs:NMTOKEN': { kind: BaseType.XSNMTOKEN, seqType },
+		'xs:language': { kind: BaseType.XSLANGUAGE, seqType },
+		'xs:token': { kind: BaseType.XSTOKEN, seqType },
+		'node()': { kind: BaseType.NODE, seqType },
+		'element()': { kind: BaseType.ELEMENT, seqType },
+		'document-node()': { kind: BaseType.DOCUMENTNODE, seqType },
+		'text()': { kind: BaseType.TEXT, seqType },
 		'processing-instruction()': {
 			kind: BaseType.PROCESSINGINSTRUCTION,
-			seqType: SequenceType.EXACTLY_ONE,
+			seqType,
 		},
-		'comment()': { kind: BaseType.COMMENT, seqType: SequenceType.EXACTLY_ONE },
-		'item()': { kind: BaseType.ITEM, seqType: SequenceType.EXACTLY_ONE },
+		'comment()': { kind: BaseType.COMMENT, seqType },
+		'item()': { kind: BaseType.ITEM, seqType },
 		'function(*)': {
 			kind: BaseType.FUNCTION,
 			returnType: undefined,
 			params: [],
-			seqType: SequenceType.EXACTLY_ONE,
+			seqType,
 		},
-		'map(*)': { kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE },
-		'array(*)': { kind: BaseType.ARRAY, items: [], seqType: SequenceType.EXACTLY_ONE },
+		'map(*)': { kind: BaseType.MAP, items: [], seqType },
+		'array(*)': { kind: BaseType.ARRAY, items: [], seqType },
 	};
 
 	const typeVal = stringToTypeMap[input];

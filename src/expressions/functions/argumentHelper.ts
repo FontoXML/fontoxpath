@@ -3,23 +3,31 @@ import castToType from '../dataTypes/castToType';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import promoteToType from '../dataTypes/promoteToType';
-import Value, { BaseType, SequenceType, ValueType, valueTypeToString } from '../dataTypes/Value';
+import Value, {
+	BaseType,
+	baseTypeToString,
+	ParameterType,
+	ParameterValueType,
+	SequenceType,
+	ValueType,
+	valueTypeToString,
+} from '../dataTypes/Value';
 import ExecutionParameters from '../ExecutionParameters';
 
 function mapItem(
 	argumentItem: Value,
-	type: ValueType,
+	type: BaseType,
 	executionParameters: ExecutionParameters,
 	functionName: string,
 	isReturn: boolean
 ) {
-	if (isSubtypeOf(argumentItem.type, type)) {
+	if (isSubtypeOf(argumentItem.type.kind, type)) {
 		return argumentItem;
 	}
 
 	if (
-		isSubtypeOf(type, { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE }) &&
-		isSubtypeOf(argumentItem.type, { kind: BaseType.NODE, seqType: SequenceType.EXACTLY_ONE })
+		isSubtypeOf(type, BaseType.XSANYATOMICTYPE) &&
+		isSubtypeOf(argumentItem.type.kind, BaseType.NODE)
 	) {
 		// Assume here that a node always atomizes to a singlevalue. This will not work
 		// anymore when schema support will be imlemented.
@@ -27,27 +35,22 @@ function mapItem(
 	}
 
 	// Maybe after atomization, we have the correct type
-	if (isSubtypeOf(argumentItem.type, type)) {
+	if (isSubtypeOf(argumentItem.type.kind, type)) {
 		return argumentItem;
 	}
 
 	// Everything is an anyAtomicType, so no casting necessary.
-	if (type.kind === BaseType.XSANYATOMICTYPE) {
+	if (type === BaseType.XSANYATOMICTYPE) {
 		return argumentItem;
 	}
-	if (
-		isSubtypeOf(argumentItem.type, {
-			kind: BaseType.XSUNTYPEDATOMIC,
-			seqType: SequenceType.EXACTLY_ONE,
-		})
-	) {
+	if (isSubtypeOf(argumentItem.type.kind, BaseType.XSUNTYPEDATOMIC)) {
 		// We might be able to cast this to the wished type
 		const convertedItem = castToType(argumentItem, type);
 		if (!convertedItem) {
 			throw new Error(
 				`XPTY0004 Unable to convert ${
 					isReturn ? 'return' : 'argument'
-				} of type ${valueTypeToString(argumentItem.type)} to type ${valueTypeToString(
+				} of type ${valueTypeToString(argumentItem.type)} to type ${baseTypeToString(
 					type
 				)} while calling ${functionName}`
 			);
@@ -61,7 +64,7 @@ function mapItem(
 		throw new Error(
 			`XPTY0004 Unable to cast ${
 				isReturn ? 'return' : 'argument'
-			} of type ${valueTypeToString(argumentItem.type)} to type ${valueTypeToString(
+			} of type ${valueTypeToString(argumentItem.type)} to type ${baseTypeToString(
 				type
 			)} while calling ${functionName}`
 		);
@@ -73,17 +76,17 @@ function mapItem(
  * Test whether the provided argument is valid to be used as an function argument of the given type
  */
 export const performFunctionConversion = (
-	argumentType: ValueType,
+	argumentType: ParameterValueType,
 	argument: ISequence,
 	executionParameters: ExecutionParameters,
 	functionName: string,
 	isReturn: boolean
 ): ISequence => {
-	if (argumentType.seqType === SequenceType.ZERO_OR_ONE) {
+	if (argumentType.seqType === ParameterType.ZERO_OR_ONE) {
 		return argument.switchCases({
 			default: () =>
 				argument.map((value) =>
-					mapItem(value, argumentType, executionParameters, functionName, isReturn)
+					mapItem(value, argumentType.kind, executionParameters, functionName, isReturn)
 				),
 			multiple: () => {
 				throw new Error(
@@ -96,7 +99,7 @@ export const performFunctionConversion = (
 			},
 		});
 	}
-	if (argumentType.seqType === SequenceType.ONE_OR_MORE) {
+	if (argumentType.seqType === ParameterType.ONE_OR_MORE) {
 		return argument.switchCases({
 			empty: () => {
 				throw new Error(
@@ -109,20 +112,20 @@ export const performFunctionConversion = (
 			},
 			default: () =>
 				argument.map((value) =>
-					mapItem(value, argumentType, executionParameters, functionName, isReturn)
+					mapItem(value, argumentType.kind, executionParameters, functionName, isReturn)
 				),
 		});
 	}
-	if (argumentType.seqType === SequenceType.ZERO_OR_MORE) {
+	if (argumentType.seqType === ParameterType.ZERO_OR_MORE) {
 		return argument.map((value) =>
-			mapItem(value, argumentType, executionParameters, functionName, isReturn)
+			mapItem(value, argumentType.kind, executionParameters, functionName, isReturn)
 		);
 	}
 
 	return argument.switchCases({
 		singleton: () =>
 			argument.map((value) =>
-				mapItem(value, argumentType, executionParameters, functionName, isReturn)
+				mapItem(value, argumentType.kind, executionParameters, functionName, isReturn)
 			),
 		default: () => {
 			throw new Error(

@@ -15,7 +15,14 @@ import evaluateXPathToNumbers from './evaluateXPathToNumbers';
 import evaluateXPathToString from './evaluateXPathToString';
 import evaluateXPathToStrings from './evaluateXPathToStrings';
 import executePendingUpdateList from './executePendingUpdateList';
-import { BaseType, SequenceType, ParameterType, ValueType } from './expressions/dataTypes/Value';
+import {
+	BaseType,
+	SequenceType,
+	ParameterType,
+	ValueType,
+	GenericValueType,
+	ParameterValueType,
+} from './expressions/dataTypes/Value';
 import { getBucketsForNode } from './getBuckets';
 import INodesFactory from './nodesFactory/INodesFactory';
 import ISimpleNodesFactory from './nodesFactory/ISimpleNodesFactory';
@@ -169,6 +176,8 @@ export const createTypedValueFactory = internalCreateTypedValueFactory as Extern
 
 export {
 	ValueType,
+	GenericValueType,
+	ParameterValueType,
 	BaseType,
 	SequenceType,
 	ParameterType,

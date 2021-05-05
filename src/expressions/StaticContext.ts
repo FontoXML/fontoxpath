@@ -1,4 +1,4 @@
-import { ValueType } from '../expressions/dataTypes/Value';
+import { ParameterValueType, ValueType } from '../expressions/dataTypes/Value';
 import { LexicalQualifiedName, ResolvedQualifiedName } from '../types/Options';
 import IContext from './Context';
 import ISequence from './dataTypes/ISequence';
@@ -25,7 +25,7 @@ function lookupInOverrides(overrides: any[] | { [x: string]: any }[], key: strin
 }
 
 export type GenericFunctionDefinition<isUpdating, callFunctionType> = {
-	argumentTypes: ValueType[];
+	argumentTypes: ParameterValueType[];
 	arity: number;
 	callFunction: callFunctionType;
 	isExternal: boolean;

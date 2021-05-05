@@ -2,7 +2,7 @@ import atomize from '../../dataTypes/atomize';
 import canCastToType from '../../dataTypes/canCastToType';
 import { falseBoolean, trueBoolean } from '../../dataTypes/createAtomicValue';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import { BaseType, stringToValueType, ValueType } from '../../dataTypes/Value';
+import { BaseType, SequenceType, stringToValueType, ValueType } from '../../dataTypes/Value';
 import Expression from '../../Expression';
 
 class CastableAsOperator extends Expression {
@@ -20,7 +20,8 @@ class CastableAsOperator extends Expression {
 		this._targetType = stringToValueType(
 			targetType.prefix
 				? `${targetType.prefix}:${targetType.localName}`
-				: targetType.localName
+				: targetType.localName,
+			SequenceType.EXACTLY_ONE
 		);
 		if (
 			this._targetType.kind === BaseType.XSANYATOMICTYPE ||

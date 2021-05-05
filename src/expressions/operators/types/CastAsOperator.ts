@@ -1,7 +1,7 @@
 import atomize from '../../dataTypes/atomize';
 import castToType from '../../dataTypes/castToType';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import { BaseType, stringToValueType, ValueType } from '../../dataTypes/Value';
+import { BaseType, SequenceType, stringToValueType, ValueType } from '../../dataTypes/Value';
 import Expression from '../../Expression';
 
 class CastAsOperator extends Expression {
@@ -18,7 +18,8 @@ class CastAsOperator extends Expression {
 		this._targetType = stringToValueType(
 			targetType.prefix
 				? `${targetType.prefix}:${targetType.localName}`
-				: targetType.localName
+				: targetType.localName,
+			SequenceType.EXACTLY_ONE
 		);
 		if (
 			this._targetType.kind === BaseType.XSANYATOMICTYPE ||

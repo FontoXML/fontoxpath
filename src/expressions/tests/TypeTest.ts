@@ -1,5 +1,5 @@
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import Value, { stringToValueType, ValueType } from '../dataTypes/Value';
+import Value, { SequenceType, stringToValueType, ValueType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Specificity from '../Specificity';
@@ -23,7 +23,8 @@ class TypeTest extends TestAbstractExpression {
 			stringToValueType(
 				this._type.prefix
 					? this._type.prefix + ':' + this._type.localName
-					: this._type.localName
+					: this._type.localName,
+				SequenceType.EXACTLY_ONE
 			)
 		);
 	}

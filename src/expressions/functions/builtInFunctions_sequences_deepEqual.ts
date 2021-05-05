@@ -60,44 +60,26 @@ function anyAtomicTypeDeepEqual(
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	item1,
-	item2
+	item1: Value,
+	item2: Value
 ): boolean {
 	if (
-		(isSubtypeOf(item1.type, { kind: BaseType.XSDECIMAL, seqType: SequenceType.EXACTLY_ONE }) ||
-			isSubtypeOf(item1.type, {
-				kind: BaseType.XSFLOAT,
-				seqType: SequenceType.EXACTLY_ONE,
-			})) &&
-		(isSubtypeOf(item2.type, { kind: BaseType.XSDECIMAL, seqType: SequenceType.EXACTLY_ONE }) ||
-			isSubtypeOf(item2.type, { kind: BaseType.XSFLOAT, seqType: SequenceType.EXACTLY_ONE }))
+		(isSubtypeOf(item1.type.kind, BaseType.XSDECIMAL) ||
+			isSubtypeOf(item1.type.kind, BaseType.XSFLOAT)) &&
+		(isSubtypeOf(item2.type.kind, BaseType.XSDECIMAL) ||
+			isSubtypeOf(item2.type.kind, BaseType.XSFLOAT))
 	) {
-		const temp1 = castToType(item1, {
-			kind: BaseType.XSFLOAT,
-			seqType: SequenceType.EXACTLY_ONE,
-		});
-		const temp2 = castToType(item2, {
-			kind: BaseType.XSFLOAT,
-			seqType: SequenceType.EXACTLY_ONE,
-		});
+		const temp1 = castToType(item1, BaseType.XSFLOAT);
+		const temp2 = castToType(item2, BaseType.XSFLOAT);
 		return temp1.value === temp2.value || (isNaN(item1.value) && isNaN(item2.value));
 	}
 	if (
-		(isSubtypeOf(item1.type, { kind: BaseType.XSDECIMAL, seqType: SequenceType.EXACTLY_ONE }) ||
-			isSubtypeOf(item1.type, {
-				kind: BaseType.XSFLOAT,
-				seqType: SequenceType.EXACTLY_ONE,
-			}) ||
-			isSubtypeOf(item1.type, {
-				kind: BaseType.XSDOUBLE,
-				seqType: SequenceType.EXACTLY_ONE,
-			})) &&
-		(isSubtypeOf(item2.type, { kind: BaseType.XSDECIMAL, seqType: SequenceType.EXACTLY_ONE }) ||
-			isSubtypeOf(item2.type, {
-				kind: BaseType.XSFLOAT,
-				seqType: SequenceType.EXACTLY_ONE,
-			}) ||
-			isSubtypeOf(item2.type, { kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE }))
+		(isSubtypeOf(item1.type.kind, BaseType.XSDECIMAL) ||
+			isSubtypeOf(item1.type.kind, BaseType.XSFLOAT) ||
+			isSubtypeOf(item1.type.kind, BaseType.XSDOUBLE)) &&
+		(isSubtypeOf(item2.type.kind, BaseType.XSDECIMAL) ||
+			isSubtypeOf(item2.type.kind, BaseType.XSFLOAT) ||
+			isSubtypeOf(item2.type.kind, BaseType.XSDOUBLE))
 	) {
 		const temp1 = castToType(item1, {
 			kind: BaseType.XSDOUBLE,
@@ -127,7 +109,7 @@ function anyAtomicTypeDeepEqual(
 		}) ||
 			isSubtypeOf(item1.type, {
 				kind: BaseType.XSDATE,
-				seqType: SequenceType.EXACTLY_ONE
+				seqType: SequenceType.EXACTLY_ONE,
 			}) ||
 			isSubtypeOf(item1.type, { kind: BaseType.XSTIME, seqType: SequenceType.EXACTLY_ONE }) ||
 			isSubtypeOf(item1.type, {
@@ -216,10 +198,7 @@ function takeConsecutiveTextValues(
 	iterator: IIterator<Value>,
 	domFacade: DomFacade
 ): IterationResult<Value> {
-	while (
-		item.value &&
-		isSubtypeOf(item.value.type, { kind: BaseType.TEXT, seqType: SequenceType.EXACTLY_ONE })
-	) {
+	while (item.value && isSubtypeOf(item.value.type.kind, BaseType.TEXT)) {
 		textValues.push(item.value);
 		const nextSibling = domFacade.getNextSiblingPointer(item.value.value as TextNodePointer);
 		item = iterator.next(IterationHint.NONE);
