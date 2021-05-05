@@ -5,7 +5,13 @@ import FunctionValue from '../dataTypes/FunctionValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value, { BaseType, SequenceType, ValueType } from '../dataTypes/Value';
+import Value, {
+	BaseType,
+	ParameterType,
+	ParameterValueType,
+	SequenceType,
+	ValueType,
+} from '../dataTypes/Value';
 import valueCompare from '../operators/compares/valueCompare';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { DONE_TOKEN, IIterator, IterationHint, ready } from '../util/iterators';
@@ -643,7 +649,7 @@ const fnForEach: FunctionDefinitionType = (
 					}
 
 					const transformedArgument = performFunctionConversion(
-						callbackArgumentTypes[0] as ValueType,
+						callbackArgumentTypes[0] as ParameterValueType,
 						sequenceFactory.singleton(item.value),
 						executionParameters,
 						'fn:for-each',
@@ -691,14 +697,14 @@ const fnFoldLeft: FunctionDefinitionType = (
 	return sequence.mapAll((values) =>
 		values.reduce((previous, current) => {
 			const previousArg = performFunctionConversion(
-				callbackArgumentTypes[0] as ValueType,
+				callbackArgumentTypes[0] as ParameterValueType,
 				previous,
 				executionParameters,
 				'fn:fold-left',
 				false
 			);
 			const currentArg = performFunctionConversion(
-				callbackArgumentTypes[1] as ValueType,
+				callbackArgumentTypes[1] as ParameterValueType,
 				sequenceFactory.singleton(current),
 				executionParameters,
 				'fn:fold-left',
@@ -737,14 +743,14 @@ const fnFoldRight: FunctionDefinitionType = (
 	return sequence.mapAll((values) =>
 		values.reduceRight((previous, current) => {
 			const previousArg = performFunctionConversion(
-				callbackArgumentTypes[0] as ValueType,
+				callbackArgumentTypes[0] as ParameterValueType,
 				previous,
 				executionParameters,
 				'fn:fold-right',
 				false
 			);
 			const currentArg = performFunctionConversion(
-				callbackArgumentTypes[1] as ValueType,
+				callbackArgumentTypes[1] as ParameterValueType,
 				sequenceFactory.singleton(current),
 				executionParameters,
 				'fn:fold-right',
@@ -764,7 +770,7 @@ const fnFoldRight: FunctionDefinitionType = (
 
 const declarations: BuiltinDeclarationType[] = [
 	{
-		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: ParameterType.ZERO_OR_MORE }],
 		callFunction: fnEmpty,
 		localName: 'empty',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
@@ -772,7 +778,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: ParameterType.ZERO_OR_MORE }],
 		callFunction: fnExists,
 		localName: 'exists',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
@@ -780,7 +786,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: ParameterType.ZERO_OR_MORE }],
 		callFunction: fnHead,
 		localName: 'head',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
@@ -788,7 +794,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: ParameterType.ZERO_OR_MORE }],
 		callFunction: fnTail,
 		localName: 'tail',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
