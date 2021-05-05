@@ -13,14 +13,8 @@ export default function convertItemsToCommonType(items: (Value | null)[]): (Valu
 			// xs:integer is the only numeric type with inherits from another numeric type
 			return (
 				item === null ||
-				isSubtypeOf(item.type, {
-					kind: BaseType.XSINTEGER,
-					seqType: SequenceType.EXACTLY_ONE,
-				}) ||
-				isSubtypeOf(item.type, {
-					kind: BaseType.XSDECIMAL,
-					seqType: SequenceType.EXACTLY_ONE,
-				})
+				isSubtypeOf(item.type.kind, BaseType.XSINTEGER) ||
+				isSubtypeOf(item.type.kind, BaseType.XSDECIMAL)
 			);
 		})
 	) {
@@ -28,12 +22,12 @@ export default function convertItemsToCommonType(items: (Value | null)[]): (Valu
 		return items;
 	}
 	const commonTypeName = items
-		.map((item) => (item ? getPrimitiveTypeName(item.type) : null))
+		.map((item) => (item ? getPrimitiveTypeName(item.type.kind) : null))
 		.reduce((typeName, itemType) => {
 			if (itemType === null) {
 				return typeName;
 			}
-			return itemType && typeName && itemType.kind === typeName.kind ? typeName : null;
+			return itemType && typeName && itemType === typeName ? typeName : null;
 		});
 
 	if (commonTypeName !== null) {
@@ -46,20 +40,14 @@ export default function convertItemsToCommonType(items: (Value | null)[]): (Valu
 		items.every((item) => {
 			return (
 				item === null ||
-				isSubtypeOf(item.type, {
-					kind: BaseType.XSSTRING,
-					seqType: SequenceType.EXACTLY_ONE,
-				}) ||
-				isSubtypeOf(item.type, {
-					kind: BaseType.XSANYURI,
-					seqType: SequenceType.EXACTLY_ONE,
-				})
+				isSubtypeOf(item.type.kind, BaseType.XSSTRING) ||
+				isSubtypeOf(item.type.kind, BaseType.XSANYURI)
 			);
 		})
 	) {
 		return items.map((item) =>
 			item
-				? castToType(item, { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE })
+				? castToType(item, BaseType.XSSTRING)
 				: null
 		);
 	}
@@ -69,20 +57,14 @@ export default function convertItemsToCommonType(items: (Value | null)[]): (Valu
 		items.every((item) => {
 			return (
 				item === null ||
-				isSubtypeOf(item.type, {
-					kind: BaseType.XSDECIMAL,
-					seqType: SequenceType.EXACTLY_ONE,
-				}) ||
-				isSubtypeOf(item.type, {
-					kind: BaseType.XSFLOAT,
-					seqType: SequenceType.EXACTLY_ONE,
-				})
+				isSubtypeOf(item.type.kind, BaseType.XSDECIMAL) ||
+				isSubtypeOf(item.type.kind, BaseType.XSFLOAT)
 			);
 		})
 	) {
 		return items.map((item) =>
 			item
-				? castToType(item, { kind: BaseType.XSFLOAT, seqType: SequenceType.EXACTLY_ONE })
+				? castToType(item, BaseType.XSFLOAT)
 				: item
 		);
 	}
@@ -91,24 +73,15 @@ export default function convertItemsToCommonType(items: (Value | null)[]): (Valu
 		items.every((item) => {
 			return (
 				item === null ||
-				isSubtypeOf(item.type, {
-					kind: BaseType.XSDECIMAL,
-					seqType: SequenceType.EXACTLY_ONE,
-				}) ||
-				isSubtypeOf(item.type, {
-					kind: BaseType.XSFLOAT,
-					seqType: SequenceType.EXACTLY_ONE,
-				}) ||
-				isSubtypeOf(item.type, {
-					kind: BaseType.XSDOUBLE,
-					seqType: SequenceType.EXACTLY_ONE,
-				})
+				isSubtypeOf(item.type.kind, BaseType.XSDECIMAL) ||
+				isSubtypeOf(item.type.kind, BaseType.XSFLOAT) ||
+				isSubtypeOf(item.type.kind, BaseType.XSDOUBLE)
 			);
 		})
 	) {
 		return items.map((item) =>
 			item
-				? castToType(item, { kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE })
+				? castToType(item, BaseType.XSDOUBLE)
 				: item
 		);
 	}

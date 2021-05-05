@@ -55,10 +55,7 @@ class Union extends Expression {
 				},
 			}).map((value) => {
 				if (
-					!isSubtypeOf(value.type, {
-						kind: BaseType.NODE,
-						seqType: SequenceType.EXACTLY_ONE
-					})
+					!isSubtypeOf(value.type.kind, BaseType.NODE)
 				) {
 					throw new Error('XPTY0004: The sequences to union are not of type node()*');
 				}
@@ -73,10 +70,7 @@ class Union extends Expression {
 			if (
 				allValues.some(
 					(nodeValue) =>
-						!isSubtypeOf(nodeValue.type, {
-							kind: BaseType.NODE,
-							seqType: SequenceType.EXACTLY_ONE
-						})
+						!isSubtypeOf(nodeValue.type.kind, BaseType.NODE)
 				)
 			) {
 				throw new Error('XPTY0004: The sequences to union are not of type node()*');

@@ -19,10 +19,7 @@ const fnQName: FunctionDefinitionType = (
 	return zipSingleton([paramURI, paramQName], ([uriValue, lexicalQNameValue]) => {
 		const lexicalQName = lexicalQNameValue.value;
 		if (
-			!validatePattern(lexicalQName, {
-				kind: BaseType.XSQNAME,
-				seqType: SequenceType.EXACTLY_ONE,
-			})
+			!validatePattern(lexicalQName, BaseType.XSQNAME)
 		) {
 			throw new Error('FOCA0002: The provided QName is invalid.');
 		}

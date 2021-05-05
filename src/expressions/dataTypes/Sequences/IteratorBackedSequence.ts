@@ -121,8 +121,7 @@ export default class IteratorBackedSequence implements ISequence {
 		const firstValue = it.value;
 
 		if (
-			isSubtypeOf(firstValue.type, { kind: BaseType.NODE, seqType: SequenceType.EXACTLY_ONE })
-		) {
+			isSubtypeOf(firstValue.type.kind, BaseType.NODE)) {
 			this.reset(oldPosition);
 			return true;
 		}

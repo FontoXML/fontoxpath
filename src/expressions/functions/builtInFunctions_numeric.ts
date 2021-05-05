@@ -18,19 +18,19 @@ import { BuiltinDeclarationType } from './builtInFunctions';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
 function createValidNumericType(type: ValueType, transformedValue: number) {
-	if (isSubtypeOf(type, { kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE })) {
+	if (isSubtypeOf(type.kind, BaseType.XSINTEGER)) {
 		return createAtomicValue(transformedValue, {
 			kind: BaseType.XSINTEGER,
 			seqType: SequenceType.EXACTLY_ONE,
 		});
 	}
-	if (isSubtypeOf(type, { kind: BaseType.XSFLOAT, seqType: SequenceType.EXACTLY_ONE })) {
+	if (isSubtypeOf(type.kind, BaseType.XSFLOAT)) {
 		return createAtomicValue(transformedValue, {
 			kind: BaseType.XSFLOAT,
 			seqType: SequenceType.EXACTLY_ONE,
 		});
 	}
-	if (isSubtypeOf(type, { kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE })) {
+	if (isSubtypeOf(type.kind, BaseType.XSDOUBLE)) {
 		return createAtomicValue(transformedValue, {
 			kind: BaseType.XSDOUBLE,
 			seqType: SequenceType.EXACTLY_ONE,
@@ -130,14 +130,8 @@ function fnRound(
 			}
 
 			if (
-				(isSubtypeOf(firstValue.type, {
-					kind: BaseType.XSFLOAT,
-					seqType: SequenceType.EXACTLY_ONE,
-				}) ||
-					isSubtypeOf(firstValue.type, {
-						kind: BaseType.XSDOUBLE,
-						seqType: SequenceType.EXACTLY_ONE,
-					})) &&
+				(isSubtypeOf(firstValue.type.kind, BaseType.XSFLOAT) ||
+					isSubtypeOf(firstValue.type.kind, BaseType.XSDOUBLE)) &&
 				(firstValue.value === 0 ||
 					isNaN(firstValue.value as number) ||
 					firstValue.value === +Infinity ||
@@ -165,12 +159,9 @@ function fnRound(
 				{ kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE },
 				{ kind: BaseType.XSFLOAT, seqType: SequenceType.EXACTLY_ONE },
 			].find((type: ValueType) => {
-				return isSubtypeOf(firstValue.type, type);
+				return isSubtypeOf(firstValue.type.kind, type.kind);
 			});
-			const itemAsDecimal = castToType(firstValue, {
-				kind: BaseType.XSDECIMAL,
-				seqType: SequenceType.EXACTLY_ONE,
-			});
+			const itemAsDecimal = castToType(firstValue, BaseType.XSDECIMAL);
 			const scaling = Math.pow(10, scalingPrecision);
 			const roundedNumber = determineRoundedNumber(itemAsDecimal.value, halfToEven, scaling);
 			switch (originalType.kind) {
@@ -222,10 +213,7 @@ const fnNumber: FunctionDefinitionType = (
 				})
 			),
 		singleton: () => {
-			const castResult = tryCastToType(sequence.first(), {
-				kind: BaseType.XSDOUBLE,
-				seqType: SequenceType.EXACTLY_ONE,
-			});
+			const castResult = tryCastToType(sequence.first(), BaseType.XSDOUBLE);
 			if (castResult.successful) {
 				return sequenceFactory.singleton(castResult.value);
 			}

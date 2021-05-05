@@ -18,7 +18,7 @@ const fnTrace: FunctionDefinitionType = (
 	return arg.mapAll((allItems) => {
 		const argumentAsStrings = atomize(sequenceFactory.create(allItems), executionParameters)
 			.map((value) =>
-				castToType(value, { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE })
+				castToType(value, BaseType.XSSTRING)
 			)
 			.getAllValues();
 

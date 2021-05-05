@@ -34,30 +34,14 @@ const xsQName: FunctionDefinitionType = (
 		return sequence;
 	}
 	const value = sequence.first();
-	if (
-		isSubtypeOf(value.type, {
-			kind: BaseType.XSNUMERIC,
-			seqType: SequenceType.EXACTLY_ONE,
-		})
-	) {
+	if (isSubtypeOf(value.type.kind, BaseType.XSNUMERIC)) {
 		// This won't ever work
 		throw new Error('XPTY0004: The provided QName is not a string-like value.');
 	}
-	let lexicalQName = castToType(value, {
-		kind: BaseType.XSSTRING,
-		seqType: SequenceType.EXACTLY_ONE,
-	}).value;
+	let lexicalQName = castToType(value, BaseType.XSSTRING).value;
 	// Test lexical scope
-	lexicalQName = normalizeWhitespace(lexicalQName, {
-		kind: BaseType.XSQNAME,
-		seqType: SequenceType.EXACTLY_ONE,
-	});
-	if (
-		!validatePattern(lexicalQName, {
-			kind: BaseType.XSQNAME,
-			seqType: SequenceType.EXACTLY_ONE,
-		})
-	) {
+	lexicalQName = normalizeWhitespace(lexicalQName, BaseType.XSQNAME);
+	if (!validatePattern(lexicalQName, BaseType.XSQNAME)) {
 		throw new Error('FORG0001: The provided QName is invalid.');
 	}
 	if (!lexicalQName.includes(':')) {

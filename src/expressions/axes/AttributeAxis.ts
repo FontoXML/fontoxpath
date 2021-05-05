@@ -36,11 +36,7 @@ class AttributeAxis extends Expression {
 		const domFacade = executionParameters.domFacade;
 
 		if (
-			!isSubtypeOf(contextItem.type, {
-				kind: BaseType.ELEMENT,
-				seqType: SequenceType.EXACTLY_ONE,
-			})
-		) {
+			!isSubtypeOf(contextItem.type.kind, BaseType.ELEMENT)) {
 			return sequenceFactory.empty();
 		}
 

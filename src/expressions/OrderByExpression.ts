@@ -17,14 +17,14 @@ import { DONE_TOKEN, IIterator, IterationHint, IterationResult, ready } from './
 import { errXPTY0004 } from './xquery/XQueryErrors';
 import { SequenceType } from './dataTypes/Value';
 
-function getFirstPrimitiveType(values: Value[]): ValueType | null {
+function getFirstPrimitiveType(values: Value[]): BaseType | null {
 	const firstActualValue = values.find((value) => !!value);
 
 	if (!firstActualValue) {
 		return null;
 	}
 
-	return getPrimitiveTypeName(firstActualValue.type);
+	return getPrimitiveTypeName(firstActualValue.type.kind);
 }
 
 class OrderByExpression extends FlworExpression {
@@ -118,19 +118,9 @@ class OrderByExpression extends FlworExpression {
 							return value;
 						}
 
-						if (
-							isSubtypeOf(
-								{
-									kind: BaseType.XSUNTYPEDATOMIC,
-									seqType: SequenceType.EXACTLY_ONE,
-								},
-								value.type
-							)
-						) {
-							return castToType(value, {
-								kind: BaseType.XSSTRING,
-								seqType: SequenceType.EXACTLY_ONE,
-							});
+						if (isSubtypeOf(BaseType.XSUNTYPEDATOMIC, value.type.kind))
+						{
+							return castToType(value, BaseType.XSSTRING);
 						}
 
 						return value;
@@ -141,7 +131,7 @@ class OrderByExpression extends FlworExpression {
 					// 2. If each value is an instance of one of the types xs:decimal or xs:float, then all values are cast to type xs:float.
 					// 3. If each value is an instance of one of the types xs:decimal, xs:float, or xs:double, then all values are cast to type xs:double.
 					// 4. Otherwise, a type error is raised [err:XPTY0004].
-					const firstPrimitiveType: ValueType | null = getFirstPrimitiveType(values);
+					const firstPrimitiveType: BaseType | null = getFirstPrimitiveType(values);
 
 					if (firstPrimitiveType) {
 						values = convertItemsToCommonType(values);

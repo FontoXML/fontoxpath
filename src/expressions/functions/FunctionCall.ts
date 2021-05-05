@@ -1,13 +1,7 @@
 import FunctionValue from '../dataTypes/FunctionValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import Value, {
-	BaseType,
-	ValueType,
-	SequenceType,
-	ParameterType,
-	ParameterValueType,
-} from '../dataTypes/Value';
+import Value, { BaseType, ValueType, SequenceType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
@@ -31,7 +25,7 @@ const functionXPTY0004 = () =>
 	);
 
 export function transformArgumentList(
-	argumentTypes: ParameterValueType[],
+	argumentTypes: ValueType[],
 	argumentList: ISequence[],
 	executionParameters: ExecutionParameters,
 	functionItem: string
@@ -92,7 +86,7 @@ function callFunction(
 
 	// Test if we have the correct arguments, and pre-convert the ones we can pre-convert
 	const transformedArguments = transformArgumentList(
-		functionItem.getArgumentTypes() as ParameterValueType[],
+		functionItem.getArgumentTypes() as ValueType[],
 		evaluatedArgs,
 		executionParameters,
 		functionItem.getName()

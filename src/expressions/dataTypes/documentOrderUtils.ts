@@ -204,14 +204,8 @@ function compareNodePositionsWithTieBreaker(
 	node1: Value,
 	node2: Value
 ) {
-	const isNode1SubtypeOfAttribute = isSubtypeOf(node1.type, {
-		kind: BaseType.ATTRIBUTE,
-		seqType: SequenceType.EXACTLY_ONE,
-	});
-	const isNode2SubtypeOfAttribute = isSubtypeOf(node2.type, {
-		kind: BaseType.ATTRIBUTE,
-		seqType: SequenceType.EXACTLY_ONE,
-	});
+	const isNode1SubtypeOfAttribute = isSubtypeOf(node1.type.kind, BaseType.ATTRIBUTE);
+	const isNode2SubtypeOfAttribute = isSubtypeOf(node2.type.kind, BaseType.ATTRIBUTE);
 	let value1: NodePointer;
 	let value2: NodePointer;
 	if (isNode1SubtypeOfAttribute && !isNode2SubtypeOfAttribute) {

@@ -46,12 +46,7 @@ const fnId: FunctionDefinitionType = (
 	if (!targetNodeValue) {
 		throw XPDY0002('The context is absent, it needs to be present to use id function.');
 	}
-	if (
-		!isSubtypeOf(targetNodeValue.type, {
-			kind: BaseType.NODE,
-			seqType: SequenceType.EXACTLY_ONE,
-		})
-	) {
+	if (!isSubtypeOf(targetNodeValue.type.kind, BaseType.NODE)) {
 		throw errXPTY0004(
 			'The context item is not a node, it needs to be node to use id function.'
 		);
@@ -108,12 +103,7 @@ const fnIdref: FunctionDefinitionType = (
 	if (!targetNodeValue) {
 		throw XPDY0002('The context is absent, it needs to be present to use idref function.');
 	}
-	if (
-		!isSubtypeOf(targetNodeValue.type, {
-			kind: BaseType.NODE,
-			seqType: SequenceType.EXACTLY_ONE,
-		})
-	) {
+	if (!isSubtypeOf(targetNodeValue.type.kind, BaseType.NODE)) {
 		throw errXPTY0004(
 			'The context item is not a node, it needs to be node to use idref function.'
 		);

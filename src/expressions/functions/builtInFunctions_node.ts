@@ -393,7 +393,7 @@ const fnRoot: FunctionDefinitionType = (
 	nodeSequence
 ) => {
 	return nodeSequence.map((node) => {
-		if (!isSubtypeOf(node.type, { kind: BaseType.NODE, seqType: SequenceType.EXACTLY_ONE })) {
+		if (!isSubtypeOf(node.type.kind, BaseType.NODE)) {
 			throw new Error('XPTY0004 Argument passed to fn:root() should be of the type node()');
 		}
 

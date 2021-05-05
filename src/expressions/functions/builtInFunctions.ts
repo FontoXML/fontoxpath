@@ -19,7 +19,7 @@ import builtInStringFunctions from './builtInFunctions_string';
 
 import builtInFontoxpathFunctions from './builtInFunctions_fontoxpath';
 
-import { EllipsisType, ParameterType, ValueType } from '../dataTypes/Value';
+import { EllipsisType, ValueType } from '../dataTypes/Value';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
 export type BuiltinDeclarationType = {

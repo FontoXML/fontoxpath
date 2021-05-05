@@ -19,10 +19,7 @@ function ensureSortedSequence(
 		if (
 			values.some(
 				(value) =>
-					!isSubtypeOf(value.type, {
-						kind: BaseType.NODE,
-						seqType: SequenceType.EXACTLY_ONE,
-					})
+					!isSubtypeOf(value.type.kind, BaseType.NODE)
 			)
 		) {
 			throw new Error(
