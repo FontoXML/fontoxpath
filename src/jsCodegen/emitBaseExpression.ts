@@ -1,6 +1,6 @@
 import astHelper, { IAST } from '../parsing/astHelper';
+import { acceptAst, PartiallyCompiledJavaScriptResult, rejectAst } from './CompiledJavaScript';
 import { axisEmittersByAstNodeName } from './emitAxis';
-import { acceptAst, EmittedJavaScript, rejectAst } from './EmittedJavaScript';
 import emitTest, { testAstNodes } from './emitTest';
 
 const baseExpressionAstNodeNames = {
@@ -17,7 +17,7 @@ const baseExpressionEmittersByAstNodeName = {
 	[baseExpressionAstNodeNames.OR_OP]: emitOrExpression,
 };
 
-function emitPredicates(predicatesAst: IAST, nestLevel: number): EmittedJavaScript {
+function emitPredicates(predicatesAst: IAST, nestLevel: number): PartiallyCompiledJavaScriptResult {
 	let evaluatePredicateConditionCode = '';
 	const functionDeclarations = [];
 
@@ -49,7 +49,7 @@ function emitPredicates(predicatesAst: IAST, nestLevel: number): EmittedJavaScri
 	return acceptAst(evaluatePredicateConditionCode, functionDeclarations);
 }
 
-function emitSteps(stepsAst: IAST[]): EmittedJavaScript {
+function emitSteps(stepsAst: IAST[]): PartiallyCompiledJavaScriptResult {
 	if (stepsAst.length === 0) {
 		return acceptAst(
 			`
@@ -130,7 +130,7 @@ function emitSteps(stepsAst: IAST[]): EmittedJavaScript {
 // A path expression can be used to locate nodes within trees. A path expression
 // consists of a series of one or more steps.
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-PathExpr
-function emitPathExpression(ast: IAST, identifier: string): EmittedJavaScript {
+function emitPathExpression(ast: IAST, identifier: string): PartiallyCompiledJavaScriptResult {
 	const emittedSteps = emitSteps(astHelper.getChildren(ast, 'stepExpr'));
 	if (!emittedSteps.isAstAccepted) {
 		return emittedSteps;
@@ -167,7 +167,7 @@ function emitCompiledOperand(
 	ast: IAST,
 	identifier: string,
 	operandKind: string
-): EmittedJavaScript {
+): PartiallyCompiledJavaScriptResult {
 	const operand = astHelper.getFirstChild(ast, operandKind);
 	const expressionAst = astHelper.getFirstChild(operand, baseExpressionAstNodes);
 
@@ -188,7 +188,7 @@ function emitCompiledOperand(
 }
 
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-AndExpr
-function emitAndExpression(ast: IAST, identifier: string): EmittedJavaScript {
+function emitAndExpression(ast: IAST, identifier: string): PartiallyCompiledJavaScriptResult {
 	const firstCompiledExpression = emitCompiledOperand(ast, identifier, firstOperandIdentifier);
 	if (!firstCompiledExpression.isAstAccepted) {
 		return firstCompiledExpression;
@@ -210,7 +210,7 @@ function emitAndExpression(ast: IAST, identifier: string): EmittedJavaScript {
 }
 
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-OrExpr
-function emitOrExpression(ast: IAST, identifier: string): EmittedJavaScript {
+function emitOrExpression(ast: IAST, identifier: string): PartiallyCompiledJavaScriptResult {
 	const firstCompiledExpression = emitCompiledOperand(ast, identifier, firstOperandIdentifier);
 	if (!firstCompiledExpression.isAstAccepted) {
 		return firstCompiledExpression;
@@ -231,7 +231,10 @@ function emitOrExpression(ast: IAST, identifier: string): EmittedJavaScript {
 	return acceptAst(orOpCode);
 }
 
-export function emitBaseExpression(ast: IAST, identifier: string): EmittedJavaScript {
+export function emitBaseExpression(
+	ast: IAST,
+	identifier: string
+): PartiallyCompiledJavaScriptResult {
 	const name = ast[0];
 	const baseExpressionToEmit = baseExpressionEmittersByAstNodeName[name];
 	if (baseExpressionToEmit === undefined) {

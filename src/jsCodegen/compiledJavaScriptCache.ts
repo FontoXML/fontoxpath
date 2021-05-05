@@ -1,5 +1,5 @@
 import { ReturnType } from '../parsing/convertXDMReturnValue';
-import CompiledJavaScript from './CompiledJavaScript';
+import { CompiledJavaScriptFunction } from './evaluateCompiledJavaScript';
 
 const compiledJavaScriptCache = {};
 
@@ -14,7 +14,7 @@ export function getCompiledJavaScriptFromCache(normalizedQuery: string, returnTy
 export function storeCompiledJavaScriptInCache(
 	normalizedQuery: string,
 	returnType: ReturnType,
-	compiledJavaScript: CompiledJavaScript
+	compiledJavaScript: CompiledJavaScriptFunction
 ) {
 	compiledJavaScriptCache[generateCacheKey(normalizedQuery, returnType)] = compiledJavaScript;
 }

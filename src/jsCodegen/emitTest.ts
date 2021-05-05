@@ -1,6 +1,6 @@
 import { NODE_TYPES } from '../domFacade/ConcreteNode';
 import astHelper, { IAST } from '../parsing/astHelper';
-import { acceptAst, EmittedJavaScript, rejectAst } from './EmittedJavaScript';
+import { acceptAst, PartiallyCompiledJavaScriptResult, rejectAst } from './CompiledJavaScript';
 
 const testAstNodeNames = {
 	TEXT_TEST: 'textTest',
@@ -20,7 +20,7 @@ const testEmittersByAstNodeName = {
 
 // text() matches any text node.
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-TextTest
-function emitTextTest(_ast: IAST, identifier: string): EmittedJavaScript {
+function emitTextTest(_ast: IAST, identifier: string): PartiallyCompiledJavaScriptResult {
 	return acceptAst(`${identifier}.nodeType === ${NODE_TYPES.TEXT_NODE}`);
 }
 
@@ -29,7 +29,7 @@ type QName = { localName: string; namespaceURI: string; prefix: string };
 function emitNameTestFromQName(
 	identifier: string,
 	{ prefix, namespaceURI, localName }: QName
-): EmittedJavaScript {
+): PartiallyCompiledJavaScriptResult {
 	const conditionCode = `${identifier}.nodeType && (${identifier}.nodeType === ${NODE_TYPES.ELEMENT_NODE} || ${identifier}.nodeType === ${NODE_TYPES.ATTRIBUTE_NODE})`;
 	if (namespaceURI) {
 		return rejectAst('Unsupported: namespace URI in name tests.');
@@ -44,7 +44,7 @@ function emitNameTestFromQName(
 
 // element() and element(*) match any single element node, regardless of its name or type annotation.
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-ElementTest
-function emitElementTest(ast: IAST, identifier: string): EmittedJavaScript {
+function emitElementTest(ast: IAST, identifier: string): PartiallyCompiledJavaScriptResult {
 	const elementName = astHelper.getFirstChild(ast, 'elementName');
 	const star = elementName && astHelper.getFirstChild(elementName, 'star');
 	const isElementCode = `${identifier}.nodeType === ${NODE_TYPES.ELEMENT_NODE}`;
@@ -66,7 +66,7 @@ function emitNameTest(ast: IAST, identifier: string) {
 // select all element children of the context node
 // for example: child::*.
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-Wildcard
-function emitWildcard(ast: IAST, identifier: string): EmittedJavaScript {
+function emitWildcard(ast: IAST, identifier: string): PartiallyCompiledJavaScriptResult {
 	if (!astHelper.getFirstChild(ast, 'star')) {
 		return emitNameTestFromQName(identifier, {
 			localName: '*',
@@ -78,7 +78,7 @@ function emitWildcard(ast: IAST, identifier: string): EmittedJavaScript {
 	return rejectAst('Unsupported: the given wildcard.');
 }
 
-export default function emitTest(ast: IAST, identifier: string): EmittedJavaScript {
+export default function emitTest(ast: IAST, identifier: string): PartiallyCompiledJavaScriptResult {
 	const test = ast[0];
 	const emittedTest = testEmittersByAstNodeName[test](ast, identifier);
 

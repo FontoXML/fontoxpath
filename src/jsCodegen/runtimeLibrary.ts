@@ -1,10 +1,11 @@
 import { adaptSingleJavaScriptValue } from '../expressions/adaptJavaScriptValueToXPathValue';
 import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
 import getEffectiveBooleanValue from '../expressions/dataTypes/Sequences/getEffectiveBooleanValue';
-import { DONE_TOKEN, ready } from '../expressions/util/iterators';
+import Value from '../expressions/dataTypes/Value';
+import { DONE_TOKEN, IterationResult, ready } from '../expressions/util/iterators';
 import { XPDY0002 } from '../expressions/XPathErrors';
 
-export function determinePredicateTruthValue(iterator) {
+export function determinePredicateTruthValue(iterator: { next: () => IterationResult<Value> }) {
 	if (typeof iterator === 'boolean') {
 		return iterator;
 	}

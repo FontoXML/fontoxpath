@@ -1,22 +1,18 @@
-import DomFacade from './domFacade/DomFacade';
-import ExternalDomFacade from './domFacade/ExternalDomFacade';
 import IDomFacade from './domFacade/IDomFacade';
 import buildEvaluationContext, {
 	normalizeEndOfLines,
 } from './evaluationUtils/buildEvaluationContext';
 import { printAndRethrowError } from './evaluationUtils/printAndRethrowError';
-import { adaptJavaScriptValueToArrayOfXPathValues } from './expressions/adaptJavaScriptValueToXPathValue';
 import DynamicContext from './expressions/DynamicContext';
 import ExecutionParameters from './expressions/ExecutionParameters';
 import Expression from './expressions/Expression';
 import { getBucketsForNode } from './getBuckets';
 import compileAstToJavaScript from './jsCodegen/compileAstToJavaScript';
-import { CompiledJavaScriptResult } from './jsCodegen/CompiledJavaScript';
 import {
 	getCompiledJavaScriptFromCache,
 	storeCompiledJavaScriptInCache,
 } from './jsCodegen/compiledJavaScriptCache';
-import astHelper from './parsing/astHelper';
+import evaluateCompiledJavaScript from './jsCodegen/evaluateCompiledJavaScript';
 import convertXDMReturnValue, { IReturnTypes, ReturnType } from './parsing/convertXDMReturnValue';
 import parseExpression from './parsing/parseExpression';
 import { markXPathEnd, markXPathStart } from './performance';
@@ -149,55 +145,10 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 		throw new TypeError("Failed to execute 'evaluateXPath': xpathExpression must be a string.");
 	}
 
-	const backend = options && options.backend ? options.backend : 'expression';
-
-	if (backend === 'js-codegen' || backend === 'auto') {
-		const compiledJavaScriptResult = compileWithJsCodegenBackend(selector, returnType, options);
-
-		if (compiledJavaScriptResult.isAstAccepted === true) {
-			const wrappedDomFacade: DomFacade = new DomFacade(
-				domFacade === null ? new ExternalDomFacade() : domFacade
-			);
-			const contextArray = adaptJavaScriptValueToArrayOfXPathValues(
-				wrappedDomFacade,
-				contextItem,
-				'item()?'
-			);
-			return compiledJavaScriptResult.result.evaluate(contextArray[0], wrappedDomFacade);
-		} else if (backend !== 'auto') {
-			// When only using the js-codegen backend, we should not proceed if
-			// it fails.
-			throw new Error(
-				`Failed compiling the given XPath with the js-codegen backend. ${compiledJavaScriptResult.reason}`
-			);
-		}
-	}
-
-	try {
-		return evaluateWithExpressionBackend(
-			selector,
-			contextItem,
-			domFacade,
-			variables,
-			returnType,
-			options
-		);
-	} catch (error) {
-		printAndRethrowError(selector, error);
-	}
-};
-
-const compileWithJsCodegenBackend = <
-	TNode extends Node,
-	TReturnType extends keyof IReturnTypes<TNode>
->(
-	selector: string,
-	returnType?: TReturnType,
-	options?: Options | null
-): CompiledJavaScriptResult => {
-	const expressionString = normalizeEndOfLines(selector);
+	options = options || {};
 
 	const compilationOptions = {
+		allowUpdating: options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE,
 		allowXQuery:
 			options['language'] === Language.XQUERY_3_1_LANGUAGE ||
 			options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE,
@@ -205,46 +156,42 @@ const compileWithJsCodegenBackend = <
 		disableCache: !!options['disableCache'],
 	};
 
-	let compiledJavaScriptResult = compilationOptions.disableCache
-		? null
-		: getCompiledJavaScriptFromCache(expressionString, returnType);
+	if (options.backend === 'js-codegen' || options.backend === 'auto') {
+		const expressionString = normalizeEndOfLines(selector);
 
-	if (!compiledJavaScriptResult) {
-		const ast = parseExpression(expressionString, compilationOptions);
-		const mainModule = astHelper.getFirstChild(ast, 'mainModule');
+		let compiledJavaScriptFunction = compilationOptions.disableCache
+			? null
+			: getCompiledJavaScriptFromCache(expressionString, returnType);
 
-		if (!mainModule) {
-			// This must be a library module
-			throw new Error('Can not execute a library module.');
+		if (!compiledJavaScriptFunction) {
+			const ast = parseExpression(expressionString, compilationOptions);
+			const compiledJavaScriptResult = compileAstToJavaScript(ast, returnType);
+
+			if (compiledJavaScriptResult.isAstAccepted === true) {
+				// tslint:disable-next-line
+				compiledJavaScriptFunction = new Function(
+					'contextItem',
+					'domFacade',
+					'runtimeLibrary',
+					compiledJavaScriptResult.code
+				);
+
+				storeCompiledJavaScriptInCache(
+					expressionString,
+					returnType,
+					compiledJavaScriptFunction
+				);
+			}
 		}
 
-		const prolog = astHelper.getFirstChild(mainModule, 'prolog');
-		const queryBodyContents = astHelper.followPath(mainModule, ['queryBody', '*']);
-
-		if (prolog) {
-			throw new Error('Unsupported: XQuery.');
+		if (compiledJavaScriptFunction) {
+			return evaluateCompiledJavaScript(compiledJavaScriptFunction, contextItem, domFacade);
+		} else if (options.backend !== 'auto') {
+			throw new Error(
+				`Failed compiling the given XPath with the js-codegen backend. ${compiledJavaScriptFunction.reason}`
+			);
 		}
-
-		compiledJavaScriptResult = compileAstToJavaScript(queryBodyContents, returnType);
-		storeCompiledJavaScriptInCache(expressionString, returnType, compiledJavaScriptResult);
 	}
-	return compiledJavaScriptResult;
-};
-
-const evaluateWithExpressionBackend = <
-	TNode extends Node,
-	TReturnType extends keyof IReturnTypes<TNode>
->(
-	selector: string,
-	contextItem?: any | null,
-	domFacade?: IDomFacade | null,
-	variables?: {
-		[s: string]: TypedExternalValue | UntypedExternalValue;
-	} | null,
-	returnType?: TReturnType,
-	options?: Options | null
-): IReturnTypes<TNode>[TReturnType] => {
-	options = options || {};
 
 	let dynamicContext: DynamicContext;
 	let executionParameters: ExecutionParameters;
@@ -256,14 +203,7 @@ const evaluateWithExpressionBackend = <
 			domFacade || null,
 			variables || {},
 			options,
-			{
-				allowUpdating: options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE,
-				allowXQuery:
-					options['language'] === Language.XQUERY_3_1_LANGUAGE ||
-					options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE,
-				debug: !!options['debug'],
-				disableCache: !!options['disableCache'],
-			}
+			compilationOptions
 		);
 		dynamicContext = context.dynamicContext;
 		executionParameters = context.executionParameters;
@@ -290,17 +230,21 @@ const evaluateWithExpressionBackend = <
 		}
 	}
 
-	markXPathStart(selector);
-	const rawResults = expression.evaluateMaybeStatically(dynamicContext, executionParameters);
-	const toReturn = convertXDMReturnValue<TNode, TReturnType>(
-		selector,
-		rawResults,
-		returnType,
-		executionParameters
-	);
-	markXPathEnd(selector);
+	try {
+		markXPathStart(selector);
+		const rawResults = expression.evaluateMaybeStatically(dynamicContext, executionParameters);
+		const toReturn = convertXDMReturnValue<TNode, TReturnType>(
+			selector,
+			rawResults,
+			returnType,
+			executionParameters
+		);
+		markXPathEnd(selector);
 
-	return toReturn;
+		return toReturn;
+	} catch (error) {
+		printAndRethrowError(selector, error);
+	}
 };
 
 Object.assign(evaluateXPath, {

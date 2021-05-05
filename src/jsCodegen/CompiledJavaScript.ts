@@ -1,29 +1,24 @@
-import DomFacade from '../domFacade/DomFacade';
-import Value from '../expressions/dataTypes/Value';
+type AstRejection = { isAstAccepted: false; reason: string };
 
-export type CompiledJavaScriptResult =
-	| { isAstAccepted: true; result: CompiledJavaScript }
-	| { isAstAccepted: false; reason: string };
+export type CompiledJavaScriptResult = { code: string; isAstAccepted: true } | AstRejection;
 
-export default class CompiledJavaScript {
-	private compiledJavaScript: string;
-	private fn: any;
-	private runtimeLibrary: any;
+export type PartiallyCompiledJavaScriptResult =
+	| {
+			code: string;
+			isAstAccepted: true;
+			// Contains variables for the upper scope, if any.
+			variables?: string[];
+	  }
+	| AstRejection;
 
-	constructor(compiledJavaScript: string, runtimeLibrary: any) {
-		this.compiledJavaScript = compiledJavaScript;
-		this.runtimeLibrary = runtimeLibrary;
+export function acceptAst(code: string, variables?: string[]): PartiallyCompiledJavaScriptResult {
+	return {
+		code,
+		variables,
+		isAstAccepted: true,
+	};
+}
 
-		// tslint:disable-next-line function-constructor
-		this.fn = new Function(
-			'contextItem',
-			'domFacade',
-			`runtimeLibrary`,
-			this.compiledJavaScript
-		);
-	}
-
-	public evaluate(dynamicContext: Value, domFacade: DomFacade) {
-		return this.fn(dynamicContext, domFacade, this.runtimeLibrary);
-	}
+export function rejectAst(reason: string): AstRejection {
+	return { isAstAccepted: false, reason };
 }

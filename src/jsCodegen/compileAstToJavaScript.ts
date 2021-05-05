@@ -1,10 +1,9 @@
-import CompiledJavaScript, { CompiledJavaScriptResult } from '../jsCodegen/CompiledJavaScript';
-import { IAST } from '../parsing/astHelper';
+import astHelper, { IAST } from '../parsing/astHelper';
 import { ReturnType } from '../parsing/convertXDMReturnValue';
+import { CompiledJavaScriptResult, rejectAst } from './CompiledJavaScript';
 import { emitBaseExpression } from './emitBaseExpression';
-import * as runtimeLibrary from './runtimeLibrary';
 
-const compilersByReturnValue = {
+const emittersByReturnType = {
 	[ReturnType.NODES]: compileAstToReturnNodes,
 	[ReturnType.BOOLEAN]: compileAstToReturnBoolean,
 	[ReturnType.FIRST_NODE]: compileAstToReturnFirstNode,
@@ -16,19 +15,20 @@ const { DONE_TOKEN, ready, isSubtypeOf, determinePredicateTruthValue,
 `;
 
 // Return all matching nodes.
-function compileAstToReturnNodes(identifier: string) {
+function compileAstToReturnNodes(identifier: string): string {
 	const transformToNodesCode = `
 	const nodes = [];
 	for (const node of ${identifier}(contextItem)) {
 		nodes.push(node.value.node);
 	}
-	return nodes;`;
+	return nodes;
+	`;
 
 	return transformToNodesCode;
 }
 
 // Get effective boolean value.
-function compileAstToReturnBoolean(identifier: string) {
+function compileAstToReturnBoolean(identifier: string): string {
 	const transformToBooleanCode = `
 	return determinePredicateTruthValue(${identifier}(contextItem));
 	`;
@@ -36,7 +36,7 @@ function compileAstToReturnBoolean(identifier: string) {
 	return transformToBooleanCode;
 }
 
-function compileAstToReturnFirstNode(identifier: string) {
+function compileAstToReturnFirstNode(identifier: string): string {
 	const transformToBooleanCode = `
 	return ${identifier}(contextItem).next().value.value.node;
 	`;
@@ -46,15 +46,24 @@ function compileAstToReturnFirstNode(identifier: string) {
 
 const compiledXPathIdentifier = 'compiledXPathExpression';
 export default function (xPathAst: IAST, returnType: ReturnType): CompiledJavaScriptResult {
-	const emitReturnTypeConversion = compilersByReturnValue[returnType];
-	if (emitReturnTypeConversion === undefined) {
-		return {
-			isAstAccepted: false,
-			reason: `Unsupported: the return type '${returnType}'.`,
-		};
+	const emitReturnTypeCode = emittersByReturnType[returnType];
+	if (emitReturnTypeCode === undefined) {
+		return rejectAst(`Unsupported: the return type '${returnType}'.`);
 	}
 
-	const emittedBaseExpression = emitBaseExpression(xPathAst, compiledXPathIdentifier);
+	const mainModule = astHelper.getFirstChild(xPathAst, 'mainModule');
+	if (!mainModule) {
+		return rejectAst(`Unsupported: Can not execute a library module.`);
+	}
+
+	const prolog = astHelper.getFirstChild(mainModule, 'prolog');
+	const queryBodyContents = astHelper.followPath(mainModule, ['queryBody', '*']);
+
+	if (prolog) {
+		return rejectAst(`Unsupported: XQuery.`);
+	}
+
+	const emittedBaseExpression = emitBaseExpression(queryBodyContents, compiledXPathIdentifier);
 	if (emittedBaseExpression.isAstAccepted === false) {
 		return emittedBaseExpression;
 	}
@@ -65,12 +74,10 @@ export default function (xPathAst: IAST, returnType: ReturnType): CompiledJavaSc
 
 	return {
 		isAstAccepted: true,
-		result: new CompiledJavaScript(
+		code:
 			runtimeLibImports +
-				emittedVariables +
-				emittedBaseExpression.code +
-				emitReturnTypeConversion(compiledXPathIdentifier),
-			runtimeLibrary
-		),
+			emittedVariables +
+			emittedBaseExpression.code +
+			emitReturnTypeCode(compiledXPathIdentifier),
 	};
 }
