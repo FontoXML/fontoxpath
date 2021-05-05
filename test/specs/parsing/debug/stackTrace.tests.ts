@@ -6,6 +6,7 @@ import {
 	evaluateXPathToString,
 	registerCustomXPathFunction,
 	registerXQueryModule,
+	SequenceType,
 } from 'fontoxpath';
 import * as sinon from 'sinon';
 
