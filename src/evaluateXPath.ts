@@ -167,7 +167,7 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 			const ast = parseExpression(expressionString, compilationOptions);
 			const compiledJavaScriptResult = compileAstToJavaScript(ast, returnType);
 
-			if (compiledJavaScriptResult.isAstAccepted === true) {
+			if (compiledJavaScriptResult.isAstAccepted) {
 				// tslint:disable-next-line
 				compiledJavaScriptFunction = new Function(
 					'contextItem',
