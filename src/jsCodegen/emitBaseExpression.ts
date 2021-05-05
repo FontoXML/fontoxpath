@@ -106,10 +106,6 @@ function emitSteps(stepsAst: IAST[]): PartiallyCompiledJavaScriptResult {
 				nestedCode
 			);
 
-			if (!emittedStep.isAstAccepted) {
-				return emittedStep;
-			}
-
 			emittedSteps.variables.push(...emittedStep.variables, ...emittedPredicates.variables);
 			emittedSteps.code = emittedStep.code;
 		} else {
@@ -172,7 +168,7 @@ function emitCompiledOperand(
 	const expressionAst = astHelper.getFirstChild(operand, baseExpressionAstNodes);
 
 	if (!expressionAst) {
-		return rejectAst('Unsupported: operands without expressions.');
+		return rejectAst('Unsupported: a base expression used with an operand.');
 	}
 
 	const expressionIdentifier = identifier + operandKind;
@@ -236,9 +232,11 @@ export function emitBaseExpression(
 	identifier: string
 ): PartiallyCompiledJavaScriptResult {
 	const name = ast[0];
-	const baseExpressionToEmit = baseExpressionEmittersByAstNodeName[name];
-	if (baseExpressionToEmit === undefined) {
+	const emitBaseExpressionFunction = baseExpressionEmittersByAstNodeName[name];
+
+	if (!emitBaseExpressionFunction) {
 		return rejectAst(`Unsupported: the base expression '${name}'.`);
 	}
-	return baseExpressionToEmit(ast, identifier);
+
+	return emitBaseExpressionFunction(ast, identifier);
 }

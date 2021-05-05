@@ -80,10 +80,11 @@ function emitWildcard(ast: IAST, identifier: string): PartiallyCompiledJavaScrip
 
 export default function emitTest(ast: IAST, identifier: string): PartiallyCompiledJavaScriptResult {
 	const test = ast[0];
-	const emittedTest = testEmittersByAstNodeName[test](ast, identifier);
+	const emitTestFunction = testEmittersByAstNodeName[test];
 
-	if (emittedTest === undefined) {
+	if (!emitTestFunction) {
 		return rejectAst(`Unsupported: the test '${test}'.`);
 	}
-	return emittedTest;
+
+	return emitTestFunction(ast, identifier);
 }

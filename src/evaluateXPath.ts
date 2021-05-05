@@ -167,7 +167,7 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 			const ast = parseExpression(expressionString, compilationOptions);
 			const compiledJavaScriptResult = compileAstToJavaScript(ast, returnType);
 
-			if (compiledJavaScriptResult.isAstAccepted) {
+			if (compiledJavaScriptResult.isAstAccepted === true) {
 				// tslint:disable-next-line
 				compiledJavaScriptFunction = new Function(
 					'contextItem',
@@ -181,15 +181,15 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 					returnType,
 					compiledJavaScriptFunction
 				);
+			} else if (options.backend !== 'auto') {
+				throw new Error(
+					`Failed compiling the given XPath with the js-codegen backend. ${compiledJavaScriptResult.reason}`
+				);
 			}
 		}
 
 		if (compiledJavaScriptFunction) {
 			return evaluateCompiledJavaScript(compiledJavaScriptFunction, contextItem, domFacade);
-		} else if (options.backend !== 'auto') {
-			throw new Error(
-				`Failed compiling the given XPath with the js-codegen backend. ${compiledJavaScriptFunction.reason}`
-			);
 		}
 	}
 

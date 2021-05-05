@@ -46,8 +46,8 @@ function compileAstToReturnFirstNode(identifier: string): string {
 
 const compiledXPathIdentifier = 'compiledXPathExpression';
 export default function (xPathAst: IAST, returnType: ReturnType): CompiledJavaScriptResult {
-	const emitReturnTypeCode = emittersByReturnType[returnType];
-	if (emitReturnTypeCode === undefined) {
+	const compileJavaScriptFunction = emittersByReturnType[returnType];
+	if (!compileJavaScriptFunction) {
 		return rejectAst(`Unsupported: the return type '${returnType}'.`);
 	}
 
@@ -78,6 +78,6 @@ export default function (xPathAst: IAST, returnType: ReturnType): CompiledJavaSc
 			runtimeLibImports +
 			emittedVariables +
 			emittedBaseExpression.code +
-			emitReturnTypeCode(compiledXPathIdentifier),
+			compileJavaScriptFunction(compiledXPathIdentifier),
 	};
 }

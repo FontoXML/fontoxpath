@@ -1,17 +1,17 @@
-type AstRejection = { isAstAccepted: false; reason: string };
+type RejectedAst = { isAstAccepted: false; reason: string };
 
-export type CompiledJavaScriptResult = { code: string; isAstAccepted: true } | AstRejection;
+export type AcceptedAst = {
+	code: string;
+	isAstAccepted: true;
+	// Contains variables for the upper scope, if any.
+	variables?: string[];
+};
 
-export type PartiallyCompiledJavaScriptResult =
-	| {
-			code: string;
-			isAstAccepted: true;
-			// Contains variables for the upper scope, if any.
-			variables?: string[];
-	  }
-	| AstRejection;
+export type PartiallyCompiledJavaScriptResult = AcceptedAst | RejectedAst;
 
-export function acceptAst(code: string, variables?: string[]): PartiallyCompiledJavaScriptResult {
+export type CompiledJavaScriptResult = { code: string; isAstAccepted: true } | RejectedAst;
+
+export function acceptAst(code: string, variables?: string[]): AcceptedAst {
 	return {
 		code,
 		variables,
@@ -19,6 +19,6 @@ export function acceptAst(code: string, variables?: string[]): PartiallyCompiled
 	};
 }
 
-export function rejectAst(reason: string): AstRejection {
+export function rejectAst(reason: string): RejectedAst {
 	return { isAstAccepted: false, reason };
 }
