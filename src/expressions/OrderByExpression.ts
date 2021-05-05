@@ -15,6 +15,7 @@ import PossiblyUpdatingExpression from './PossiblyUpdatingExpression';
 import Specificity from './Specificity';
 import { DONE_TOKEN, IIterator, IterationHint, IterationResult, ready } from './util/iterators';
 import { errXPTY0004 } from './xquery/XQueryErrors';
+import { SequenceType } from './dataTypes/Value';
 
 function getFirstPrimitiveType(values: Value[]): ValueType | null {
 	const firstActualValue = values.find((value) => !!value);
