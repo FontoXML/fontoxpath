@@ -5,6 +5,7 @@ import {
 	evaluateXPathToString,
 	registerCustomXPathFunction,
 	registerXQueryModule,
+	SequenceType,
 } from 'fontoxpath';
 
 describe('registerXQueryModule', () => {

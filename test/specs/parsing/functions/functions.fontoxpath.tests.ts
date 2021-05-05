@@ -7,6 +7,7 @@ import {
 	evaluateXPathToNumber,
 	evaluateXPathToString,
 	registerCustomXPathFunction,
+	SequenceType,
 } from 'fontoxpath';
 import * as slimdom from 'slimdom';
 
