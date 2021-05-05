@@ -127,6 +127,7 @@ function anyAtomicTypeDeepEqual(
 		}) ||
 			isSubtypeOf(item1.type, {
 				kind: BaseType.XSDATE,
+				seqType: SequenceType.EXACTLY_ONE
 			}) ||
 			isSubtypeOf(item1.type, { kind: BaseType.XSTIME, seqType: SequenceType.EXACTLY_ONE }) ||
 			isSubtypeOf(item1.type, {

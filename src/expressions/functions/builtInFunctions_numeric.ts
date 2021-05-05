@@ -314,12 +314,12 @@ const fnRandomNumberGenerator: FunctionDefinitionType = (
 							localName: '',
 							namespaceURI: '',
 							argumentTypes: [
-								{ kind: BaseType.ITEM, occurrence: SequenceType.ZERO_OR_MORE },
+								{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 							],
 							arity: 1,
 							returnType: {
 								kind: BaseType.ITEM,
-								occurrence: SequenceType.ZERO_OR_MORE,
+								seqType: SequenceType.ZERO_OR_MORE,
 							},
 						})
 					),

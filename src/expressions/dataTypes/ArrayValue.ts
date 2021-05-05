@@ -22,7 +22,7 @@ class ArrayValue extends FunctionValue {
 			// argumentTypes: [{ type: { kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE }, isRestArgument: false }],
 			argumentTypes: [{ kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE }],
 			arity: 1,
-			returnType: { kind: BaseType.ITEM, occurrence: SequenceType.AZERO_OR_MORE },
+			returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 		});
 		this.type = { kind: BaseType.ARRAY, items: [], seqType: SequenceType.EXACTLY_ONE };
 		this.members = members;

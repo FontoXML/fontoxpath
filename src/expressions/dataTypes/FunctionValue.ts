@@ -5,7 +5,7 @@ import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import ISequence from './ISequence';
 import RestArgument from './RestArgument';
 import sequenceFactory from './sequenceFactory';
-import Value, { BaseType, ValueType } from './Value';
+import Value, { BaseType, SequenceType, ValueType } from './Value';
 import QName from './valueTypes/QName';
 
 export type FunctionSignature<T> = (
@@ -65,6 +65,7 @@ class FunctionValue<T = ISequence> extends Value {
 		super(
 			{
 				kind: BaseType.FUNCTION,
+				seqType: SequenceType.EXACTLY_ONE,
 				returnType: undefined,
 				params: [],
 			},

@@ -565,6 +565,7 @@ const declarations: BuiltinDeclarationType[] = [
 					arraySequence.first().value.length - startSequence.first().value + 1,
 					{
 						kind: BaseType.XSINTEGER,
+						seqType: SequenceType.EXACTLY_ONE
 					}
 				)
 			);

@@ -87,6 +87,7 @@ const mathPow: FunctionDefinitionType = (
 			}
 			return createAtomicValue(Math.pow(valueX.value, valueY.value), {
 				kind: BaseType.XSDOUBLE,
+				seqType: SequenceType.EXACTLY_ONE
 			});
 		})
 	);
@@ -202,6 +203,7 @@ const mathAtan2: FunctionDefinitionType = (
 		x.map((onlyXValue) =>
 			createAtomicValue(Math.atan2(onlyXValue.value, onlyYValue.value), {
 				kind: BaseType.XSDOUBLE,
+				seqType: SequenceType.EXACTLY_ONE
 			})
 		)
 	);
