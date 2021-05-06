@@ -5,7 +5,8 @@ import { compareNodePositions, sortNodeValues } from '../dataTypes/documentOrder
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { BaseType } from '../dataTypes/Value';
+import { SequenceType } from '../dataTypes/Value';
+import { BaseType } from '../dataTypes/BaseType';
 import { DONE_TOKEN, IterationHint, ready } from '../util/iterators';
 import arePointersEqual from './compares/arePointersEqual';
 
@@ -16,7 +17,7 @@ function ensureSortedSequence(
 	expectedResultOrder: any
 ): ISequence {
 	return sequence.mapAll((values) => {
-		if (values.some((value) => !isSubtypeOf(value.type, { kind: BaseType.NODE }))) {
+		if (values.some((value) => !isSubtypeOf(value.type.kind, BaseType.NODE))) {
 			throw new Error(
 				`XPTY0004: Sequences given to ${intersectOrExcept} should only contain nodes.`
 			);

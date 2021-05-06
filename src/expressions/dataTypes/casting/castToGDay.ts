@@ -1,20 +1,25 @@
+import AtomicValue from '../AtomicValue';
 import createAtomicValue from '../createAtomicValue';
-import { BaseType, ValueType } from '../Value';
+import { SequenceType } from '../Value';
+import { BaseType } from '../BaseType';
 import DateTime from '../valueTypes/DateTime';
 import CastResult from './CastResult';
 
-const createGDayValue = (value) => createAtomicValue(value, { kind: BaseType.XSGDAY });
+const createGDayValue = (value: any): AtomicValue =>
+	createAtomicValue(value, { kind: BaseType.XSGDAY, seqType: SequenceType.EXACTLY_ONE });
 
 export default function castToGDay(
-	instanceOf: (typeName: ValueType) => boolean
-): (value: DateTime) => CastResult {
-	if (instanceOf({ kind: BaseType.XSDATE }) || instanceOf({ kind: BaseType.XSDATETIME })) {
+	instanceOf: (typeName: BaseType) => boolean
+): (value: any) => CastResult {
+	if (instanceOf(BaseType.XSDATE) || instanceOf(BaseType.XSDATETIME)) {
 		return (value) => ({
 			successful: true,
-			value: createGDayValue(value.convertToType({ kind: BaseType.XSGDAY })),
+			value: createGDayValue(
+				value.convertToType({ kind: BaseType.XSGDAY, seqType: SequenceType.EXACTLY_ONE })
+			),
 		});
 	}
-	if (instanceOf({ kind: BaseType.XSUNTYPEDATOMIC }) || instanceOf({ kind: BaseType.XSSTRING })) {
+	if (instanceOf(BaseType.XSUNTYPEDATOMIC) || instanceOf(BaseType.XSSTRING)) {
 		return (value) => ({
 			successful: true,
 			value: createGDayValue(DateTime.fromString(value)),

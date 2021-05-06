@@ -15,16 +15,21 @@ import {
 	lessThan as yearMonthDurationLessThan,
 } from '../../dataTypes/valueTypes/YearMonthDuration';
 
-import { BaseType, ValueType, valueTypeHash } from '../../../expressions/dataTypes/Value';
+import {
+	SequenceType,
+	ValueType,
+	valueTypeHash,
+	valueTypeToString,
+} from '../../../expressions/dataTypes/Value';
+import { BaseType } from '../../../expressions/dataTypes/BaseType';
 import AtomicValue from '../../dataTypes/AtomicValue';
 import DynamicContext from '../../DynamicContext';
 
 // Use partial application to get to a comparer faster
-function areBothStringOrAnyURI(a, b) {
+function areBothStringOrAnyURI(a: BaseType, b: BaseType) {
 	return (
-		(isSubtypeOf(a, { kind: BaseType.XSSTRING }) ||
-			isSubtypeOf(a, { kind: BaseType.XSANYURI })) &&
-		(isSubtypeOf(b, { kind: BaseType.XSSTRING }) || isSubtypeOf(b, { kind: BaseType.XSANYURI }))
+		(isSubtypeOf(a, BaseType.XSSTRING) || isSubtypeOf(a, BaseType.XSANYURI)) &&
+		(isSubtypeOf(b, BaseType.XSSTRING) || isSubtypeOf(b, BaseType.XSANYURI))
 	);
 }
 
@@ -34,33 +39,30 @@ function generateCompareFunction(
 	typeB: ValueType,
 	dynamicContext: DynamicContext
 ): (valA: any, valB: any) => boolean {
-	let castFunctionForValueA = null;
-	let castFunctionForValueB = null;
+	let castFunctionForValueA: (x: AtomicValue) => AtomicValue = null;
+	let castFunctionForValueB: (x: AtomicValue) => AtomicValue = null;
 
 	if (
-		isSubtypeOf(typeA, { kind: BaseType.XSUNTYPEDATOMIC }) &&
-		isSubtypeOf(typeB, { kind: BaseType.XSUNTYPEDATOMIC })
+		isSubtypeOf(typeA.kind, BaseType.XSUNTYPEDATOMIC) &&
+		isSubtypeOf(typeB.kind, BaseType.XSUNTYPEDATOMIC)
 	) {
-		typeA = typeB = { kind: BaseType.XSSTRING };
-	} else if (isSubtypeOf(typeA, { kind: BaseType.XSUNTYPEDATOMIC })) {
-		castFunctionForValueA = (val) => castToType(val, typeB);
+		typeA = typeB = { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE };
+	} else if (isSubtypeOf(typeA.kind, BaseType.XSUNTYPEDATOMIC)) {
+		castFunctionForValueA = (val: AtomicValue) => castToType(val, typeB);
 		typeA = typeB;
-	} else if (isSubtypeOf(typeB, { kind: BaseType.XSUNTYPEDATOMIC })) {
-		castFunctionForValueB = (val) => castToType(val, typeA);
+	} else if (isSubtypeOf(typeB.kind, BaseType.XSUNTYPEDATOMIC)) {
+		castFunctionForValueB = (val: AtomicValue) => castToType(val, typeA);
 		typeB = typeA;
 	}
 
-	function applyCastFunctions(valA, valB) {
+	function applyCastFunctions(valA: AtomicValue, valB: AtomicValue) {
 		return {
 			castA: castFunctionForValueA ? castFunctionForValueA(valA) : valA,
 			castB: castFunctionForValueB ? castFunctionForValueB(valB) : valB,
 		};
 	}
 
-	if (
-		isSubtypeOf(typeA, { kind: BaseType.XSQNAME }) &&
-		isSubtypeOf(typeB, { kind: BaseType.XSQNAME })
-	) {
+	if (isSubtypeOf(typeA.kind, BaseType.XSQNAME) && isSubtypeOf(typeB.kind, BaseType.XSQNAME)) {
 		if (operator === 'eqOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
@@ -82,18 +84,18 @@ function generateCompareFunction(
 		throw new Error('XPTY0004: Only the "eq" and "ne" comparison is defined for xs:QName');
 	}
 
-	function areBothSubtypeOf(type: ValueType) {
-		return isSubtypeOf(typeA, type) && isSubtypeOf(typeB, type);
+	function areBothSubtypeOf(type: BaseType) {
+		return isSubtypeOf(typeA.kind, type) && isSubtypeOf(typeB.kind, type);
 	}
 
 	if (
-		areBothSubtypeOf({ kind: BaseType.XSBOOLEAN }) ||
-		areBothSubtypeOf({ kind: BaseType.XSSTRING }) ||
-		areBothSubtypeOf({ kind: BaseType.XSNUMERIC }) ||
-		areBothSubtypeOf({ kind: BaseType.XSANYURI }) ||
-		areBothSubtypeOf({ kind: BaseType.XSHEXBINARY }) ||
-		areBothSubtypeOf({ kind: BaseType.XSBASE64BINARY }) ||
-		areBothStringOrAnyURI(typeA, typeB)
+		areBothSubtypeOf(BaseType.XSBOOLEAN) ||
+		areBothSubtypeOf(BaseType.XSSTRING) ||
+		areBothSubtypeOf(BaseType.XSNUMERIC) ||
+		areBothSubtypeOf(BaseType.XSANYURI) ||
+		areBothSubtypeOf(BaseType.XSHEXBINARY) ||
+		areBothSubtypeOf(BaseType.XSBASE64BINARY) ||
+		areBothStringOrAnyURI(typeA.kind, typeB.kind)
 	) {
 		switch (operator) {
 			case 'eqOp':
@@ -130,9 +132,9 @@ function generateCompareFunction(
 	}
 
 	if (
-		areBothSubtypeOf({ kind: BaseType.XSDATETIME }) ||
-		areBothSubtypeOf({ kind: BaseType.XSDATE }) ||
-		areBothSubtypeOf({ kind: BaseType.XSTIME })
+		areBothSubtypeOf(BaseType.XSDATETIME) ||
+		areBothSubtypeOf(BaseType.XSDATE) ||
+		areBothSubtypeOf(BaseType.XSTIME)
 	) {
 		switch (operator) {
 			case 'eqOp':
@@ -209,11 +211,11 @@ function generateCompareFunction(
 	}
 
 	if (
-		areBothSubtypeOf({ kind: BaseType.XSGYEARMONTH }) ||
-		areBothSubtypeOf({ kind: BaseType.XSGYEAR }) ||
-		areBothSubtypeOf({ kind: BaseType.XSGMONTHDAY }) ||
-		areBothSubtypeOf({ kind: BaseType.XSGMONTH }) ||
-		areBothSubtypeOf({ kind: BaseType.XSGDAY })
+		areBothSubtypeOf(BaseType.XSGYEARMONTH) ||
+		areBothSubtypeOf(BaseType.XSGYEAR) ||
+		areBothSubtypeOf(BaseType.XSGMONTHDAY) ||
+		areBothSubtypeOf(BaseType.XSGMONTH) ||
+		areBothSubtypeOf(BaseType.XSGDAY)
 	) {
 		switch (operator) {
 			case 'eqOp':
@@ -237,7 +239,7 @@ function generateCompareFunction(
 		}
 	}
 
-	if (areBothSubtypeOf({ kind: BaseType.XSYEARMONTHDURATION })) {
+	if (areBothSubtypeOf(BaseType.XSYEARMONTHDURATION)) {
 		switch (operator) {
 			case 'ltOp':
 				return (a, b) => {
@@ -269,7 +271,7 @@ function generateCompareFunction(
 		}
 	}
 
-	if (areBothSubtypeOf({ kind: BaseType.XSDAYTIMEDURATION })) {
+	if (areBothSubtypeOf(BaseType.XSDAYTIMEDURATION)) {
 		switch (operator) {
 			case 'eqOp':
 				return (a, b) => {
@@ -305,7 +307,7 @@ function generateCompareFunction(
 		}
 	}
 
-	if (areBothSubtypeOf({ kind: BaseType.XSDURATION })) {
+	if (areBothSubtypeOf(BaseType.XSDURATION)) {
 		switch (operator) {
 			case 'eqOp':
 				return (a, b) => {
@@ -320,7 +322,11 @@ function generateCompareFunction(
 		}
 	}
 
-	throw new Error(`XPTY0004: ${operator} not available for ${typeA} and ${typeB}`);
+	throw new Error(
+		`XPTY0004: ${operator} not available for ${valueTypeToString(
+			typeA
+		)} and ${valueTypeToString(typeB)}`
+	);
 }
 
 const comparatorsByTypingKey = Object.create(null);

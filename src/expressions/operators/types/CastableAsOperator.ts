@@ -2,7 +2,8 @@ import atomize from '../../dataTypes/atomize';
 import canCastToType from '../../dataTypes/canCastToType';
 import { falseBoolean, trueBoolean } from '../../dataTypes/createAtomicValue';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import { BaseType, stringToValueType, ValueType } from '../../dataTypes/Value';
+import { SequenceType, stringToValueType, ValueType } from '../../dataTypes/Value';
+import { BaseType } from '../../dataTypes/BaseType';
 import Expression from '../../Expression';
 
 class CastableAsOperator extends Expression {

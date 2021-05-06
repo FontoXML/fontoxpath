@@ -1,6 +1,7 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { BaseType, OccurrenceIndicator } from '../dataTypes/Value';
+import { SequenceType } from '../dataTypes/Value';
+import { BaseType } from '../dataTypes/BaseType';
 import DateTime from '../dataTypes/valueTypes/DateTime';
 import DayTimeDuration from '../dataTypes/valueTypes/DayTimeDuration';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
@@ -52,7 +53,12 @@ const fnDateTime: FunctionDefinitionType = (
 		time.getSecondFraction(),
 		timezoneToUse
 	);
-	return sequenceFactory.singleton(createAtomicValue(dateTime, { kind: BaseType.XSDATETIME }));
+	return sequenceFactory.singleton(
+		createAtomicValue(dateTime, {
+			kind: BaseType.XSDATETIME,
+			seqType: SequenceType.EXACTLY_ONE,
+		})
+	);
 };
 
 const fnYearFromDateTime: FunctionDefinitionType = (
@@ -65,7 +71,10 @@ const fnYearFromDateTime: FunctionDefinitionType = (
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getYear(), { kind: BaseType.XSINTEGER })
+		createAtomicValue(sequence.first().value.getYear(), {
+			kind: BaseType.XSINTEGER,
+			seqType: SequenceType.EXACTLY_ONE,
+		})
 	);
 };
 
@@ -79,7 +88,10 @@ const fnMonthFromDateTime: FunctionDefinitionType = (
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getMonth(), { kind: BaseType.XSINTEGER })
+		createAtomicValue(sequence.first().value.getMonth(), {
+			kind: BaseType.XSINTEGER,
+			seqType: SequenceType.EXACTLY_ONE,
+		})
 	);
 };
 
@@ -93,7 +105,10 @@ const fnDayFromDateTime: FunctionDefinitionType = (
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getDay(), { kind: BaseType.XSINTEGER })
+		createAtomicValue(sequence.first().value.getDay(), {
+			kind: BaseType.XSINTEGER,
+			seqType: SequenceType.EXACTLY_ONE,
+		})
 	);
 };
 
@@ -107,7 +122,10 @@ const fnHoursFromDateTime: FunctionDefinitionType = (
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getHours(), { kind: BaseType.XSINTEGER })
+		createAtomicValue(sequence.first().value.getHours(), {
+			kind: BaseType.XSINTEGER,
+			seqType: SequenceType.EXACTLY_ONE,
+		})
 	);
 };
 
@@ -121,7 +139,10 @@ const fnMinutesFromDateTime: FunctionDefinitionType = (
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getMinutes(), { kind: BaseType.XSINTEGER })
+		createAtomicValue(sequence.first().value.getMinutes(), {
+			kind: BaseType.XSINTEGER,
+			seqType: SequenceType.EXACTLY_ONE,
+		})
 	);
 };
 
@@ -135,7 +156,10 @@ const fnSecondsFromDateTime: FunctionDefinitionType = (
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getFullSeconds(), { kind: BaseType.XSDECIMAL })
+		createAtomicValue(sequence.first().value.getFullSeconds(), {
+			kind: BaseType.XSDECIMAL,
+			seqType: SequenceType.EXACTLY_ONE,
+		})
 	);
 };
 const fnTimezoneFromDateTime: FunctionDefinitionType = (
@@ -154,7 +178,10 @@ const fnTimezoneFromDateTime: FunctionDefinitionType = (
 	}
 
 	return sequenceFactory.singleton(
-		createAtomicValue(timezone, { kind: BaseType.XSDAYTIMEDURATION })
+		createAtomicValue(timezone, {
+			kind: BaseType.XSDAYTIMEDURATION,
+			seqType: SequenceType.EXACTLY_ONE,
+		})
 	);
 };
 
@@ -163,115 +190,115 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'dateTime',
 		argumentTypes: [
-			{ kind: BaseType.XSDATE, occurrence: OccurrenceIndicator.NULLABLE },
-			{ kind: BaseType.XSTIME, occurrence: OccurrenceIndicator.NULLABLE },
+			{ kind: BaseType.XSDATE, seqType: SequenceType.ZERO_OR_ONE },
+			{ kind: BaseType.XSTIME, seqType: SequenceType.ZERO_OR_ONE },
 		],
-		returnType: { kind: BaseType.XSDATETIME, occurrence: OccurrenceIndicator.NULLABLE },
+		returnType: { kind: BaseType.XSDATETIME, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: fnDateTime,
 	},
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'year-from-dateTime',
-		argumentTypes: [{ kind: BaseType.XSDATETIME, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSINTEGER, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSDATETIME, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: fnYearFromDateTime,
 	},
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'month-from-dateTime',
-		argumentTypes: [{ kind: BaseType.XSDATETIME, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSINTEGER, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSDATETIME, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: fnMonthFromDateTime,
 	},
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'day-from-dateTime',
-		argumentTypes: [{ kind: BaseType.XSDATETIME, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSINTEGER, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSDATETIME, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: fnDayFromDateTime,
 	},
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'hours-from-dateTime',
-		argumentTypes: [{ kind: BaseType.XSDATETIME, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSINTEGER, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSDATETIME, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: fnHoursFromDateTime,
 	},
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'minutes-from-dateTime',
-		argumentTypes: [{ kind: BaseType.XSDATETIME, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSINTEGER, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSDATETIME, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: fnMinutesFromDateTime,
 	},
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'seconds-from-dateTime',
-		argumentTypes: [{ kind: BaseType.XSDATETIME, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSDECIMAL, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSDATETIME, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSDECIMAL, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: fnSecondsFromDateTime,
 	},
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'timezone-from-dateTime',
-		argumentTypes: [{ kind: BaseType.XSDATETIME, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSDAYTIMEDURATION, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSDATETIME, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSDAYTIMEDURATION, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: fnTimezoneFromDateTime,
 	},
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'year-from-date',
-		argumentTypes: [{ kind: BaseType.XSDATE, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSINTEGER, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSDATE, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: fnYearFromDateTime,
 	},
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'month-from-date',
-		argumentTypes: [{ kind: BaseType.XSDATE, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSINTEGER, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSDATE, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: fnMonthFromDateTime,
 	},
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'day-from-date',
-		argumentTypes: [{ kind: BaseType.XSDATE, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSINTEGER, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSDATE, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: fnDayFromDateTime,
 	},
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'timezone-from-date',
-		argumentTypes: [{ kind: BaseType.XSDATE, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSDAYTIMEDURATION, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSDATE, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSDAYTIMEDURATION, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: fnTimezoneFromDateTime,
 	},
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'hours-from-time',
-		argumentTypes: [{ kind: BaseType.XSTIME, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSINTEGER, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSTIME, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: fnHoursFromDateTime,
 	},
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'minutes-from-time',
-		argumentTypes: [{ kind: BaseType.XSTIME, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSINTEGER, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSTIME, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: fnMinutesFromDateTime,
 	},
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'seconds-from-time',
-		argumentTypes: [{ kind: BaseType.XSTIME, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSDECIMAL, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSTIME, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSDECIMAL, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: fnSecondsFromDateTime,
 	},
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'timezone-from-time',
-		argumentTypes: [{ kind: BaseType.XSTIME, occurrence: OccurrenceIndicator.NULLABLE }],
-		returnType: { kind: BaseType.XSDAYTIMEDURATION, occurrence: OccurrenceIndicator.NULLABLE },
+		argumentTypes: [{ kind: BaseType.XSTIME, seqType: SequenceType.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSDAYTIMEDURATION, seqType: SequenceType.ZERO_OR_ONE },
 		callFunction: fnTimezoneFromDateTime,
 	},
 ];

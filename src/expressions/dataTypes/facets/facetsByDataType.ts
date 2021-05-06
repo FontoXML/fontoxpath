@@ -1,4 +1,4 @@
-import { BaseType } from '../../dataTypes/Value';
+import { BaseType } from '../../dataTypes/BaseType';
 import decimalComparator from './comparators/decimalComparator';
 
 // fractionDigits

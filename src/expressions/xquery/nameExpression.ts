@@ -2,7 +2,8 @@ import atomize from '../dataTypes/atomize';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value, { BaseType } from '../dataTypes/Value';
+import Value, { SequenceType } from '../dataTypes/Value';
+import { BaseType } from '../dataTypes/BaseType';
 import QName from '../dataTypes/valueTypes/QName';
 import ExecutionParameters from '../ExecutionParameters';
 import StaticContext from '../StaticContext';
@@ -35,8 +36,8 @@ export function evaluateNCNameExpression(
 		singleton: (seq) => {
 			const nameValue = seq.first();
 			if (
-				isSubtypeOf(nameValue.type, { kind: BaseType.XSSTRING }) ||
-				isSubtypeOf(nameValue.type, { kind: BaseType.XSUNTYPEDATOMIC })
+				isSubtypeOf(nameValue.type.kind, BaseType.XSSTRING) ||
+				isSubtypeOf(nameValue.type.kind, BaseType.XSUNTYPEDATOMIC)
 			) {
 				if (!isValidNCName(nameValue.value)) {
 					throw errXQDY0041(nameValue.value);
@@ -60,11 +61,11 @@ export function evaluateQNameExpression(
 	return name.switchCases({
 		singleton: (seq) => {
 			const nameValue = seq.first();
-			if (isSubtypeOf(nameValue.type, { kind: BaseType.XSQNAME })) {
+			if (isSubtypeOf(nameValue.type.kind, BaseType.XSQNAME)) {
 				return sequenceFactory.singleton(nameValue);
 			} else if (
-				isSubtypeOf(nameValue.type, { kind: BaseType.XSSTRING }) ||
-				isSubtypeOf(nameValue.type, { kind: BaseType.XSUNTYPEDATOMIC })
+				isSubtypeOf(nameValue.type.kind, BaseType.XSSTRING) ||
+				isSubtypeOf(nameValue.type.kind, BaseType.XSUNTYPEDATOMIC)
 			) {
 				let prefix: string;
 				let namespaceURI: string;
@@ -84,7 +85,7 @@ export function evaluateQNameExpression(
 					throw errXQDY0074(`${prefix}:${localName}`);
 				}
 				return sequenceFactory.singleton({
-					type: { kind: BaseType.XSQNAME },
+					type: { kind: BaseType.XSQNAME, seqType: SequenceType.EXACTLY_ONE },
 					value: new QName(prefix, namespaceURI, localName),
 				});
 			}

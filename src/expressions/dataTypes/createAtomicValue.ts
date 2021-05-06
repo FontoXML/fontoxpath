@@ -1,7 +1,8 @@
 import builtinDataTypesByType from './builtins/builtinDataTypesByType';
 
 import AtomicValue from './AtomicValue';
-import { BaseType, ValueType } from './Value';
+import { SequenceType, ValueType } from './Value';
+import { BaseType } from './BaseType';
 
 export default function createAtomicValue(value: any, type: ValueType): AtomicValue {
 	if (!builtinDataTypesByType[type.kind]) {
@@ -14,5 +15,11 @@ export default function createAtomicValue(value: any, type: ValueType): AtomicVa
 	};
 }
 
-export const trueBoolean = createAtomicValue(true, { kind: BaseType.XSBOOLEAN });
-export const falseBoolean = createAtomicValue(false, { kind: BaseType.XSBOOLEAN });
+export const trueBoolean = createAtomicValue(true, {
+	kind: BaseType.XSBOOLEAN,
+	seqType: SequenceType.EXACTLY_ONE,
+});
+export const falseBoolean = createAtomicValue(false, {
+	kind: BaseType.XSBOOLEAN,
+	seqType: SequenceType.EXACTLY_ONE,
+});

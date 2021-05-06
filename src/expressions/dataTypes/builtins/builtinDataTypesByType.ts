@@ -1,5 +1,6 @@
 import facetHandlersByDataTypeName from '../facets/facetsByDataType';
-import { BaseType, ValueType } from '../Value';
+import { ValueType } from '../Value';
+import { BaseType } from '../BaseType';
 import { Variety } from '../Variety';
 import builtinModels from './builtinModels';
 import { getValidatorForType } from './dataTypeValidatorByType';
@@ -7,9 +8,9 @@ import { getValidatorForType } from './dataTypeValidatorByType';
 export type TypeModel = {
 	facetHandlers: object;
 	memberTypes: TypeModel[];
-	name: ValueType;
 	parent: TypeModel;
 	restrictionsByName: { [s: string]: number | string };
+	type: ValueType;
 	validator: (value: string) => boolean;
 	variety: Variety;
 };
@@ -26,7 +27,7 @@ builtinModels.forEach((model) => {
 		const facetHandlers = facetHandlersByDataTypeName.getFacetByDataType(name.kind);
 		builtinDataTypesByType[name.kind] = {
 			variety: Variety.PRIMITIVE,
-			name,
+			type: name,
 			restrictionsByName,
 			parent,
 			validator,
@@ -38,7 +39,7 @@ builtinModels.forEach((model) => {
 		const validator = getValidatorForType(name.kind) || null;
 		builtinDataTypesByType[name.kind] = {
 			variety: Variety.DERIVED,
-			name,
+			type: name,
 			restrictionsByName,
 			parent: base,
 			validator,
@@ -49,7 +50,7 @@ builtinModels.forEach((model) => {
 		const type = builtinDataTypesByType[model.type.kind];
 		builtinDataTypesByType[name.kind] = {
 			variety: Variety.LIST,
-			name,
+			type: name,
 			restrictionsByName,
 			parent: type,
 			validator: null,
@@ -62,7 +63,7 @@ builtinModels.forEach((model) => {
 		);
 		builtinDataTypesByType[name.kind] = {
 			variety: Variety.UNION,
-			name,
+			type: name,
 			restrictionsByName,
 			parent: null,
 			validator: null,

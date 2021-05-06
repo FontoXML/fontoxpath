@@ -3,7 +3,8 @@ import realizeDom from './domClone/realizeDom';
 import ArrayValue from './expressions/dataTypes/ArrayValue';
 import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
 import MapValue from './expressions/dataTypes/MapValue';
-import Value, { BaseType } from './expressions/dataTypes/Value';
+import Value, { SequenceType } from './expressions/dataTypes/Value';
+import { BaseType } from './expressions/dataTypes/BaseType';
 import DateTime from './expressions/dataTypes/valueTypes/DateTime';
 import QName from './expressions/dataTypes/valueTypes/QName';
 import ExecutionParameters from './expressions/ExecutionParameters';
@@ -109,13 +110,13 @@ export default function transformXPathItemToJavascriptObject(
 	value: Value,
 	executionParameters: ExecutionParameters
 ): IIterator<any> {
-	if (isSubtypeOf(value.type, { kind: BaseType.MAP, items: [] })) {
+	if (isSubtypeOf(value.type.kind, BaseType.MAP)) {
 		return transformMapToObject(value as MapValue, executionParameters);
 	}
-	if (isSubtypeOf(value.type, { kind: BaseType.ARRAY, items: [] })) {
+	if (isSubtypeOf(value.type.kind, BaseType.ARRAY)) {
 		return transformArrayToArray(value as ArrayValue, executionParameters);
 	}
-	if (isSubtypeOf(value.type, { kind: BaseType.XSQNAME })) {
+	if (isSubtypeOf(value.type.kind, BaseType.XSQNAME)) {
 		const qualifiedName = value.value as QName;
 		return {
 			next: () => ready(`Q{${qualifiedName.namespaceURI || ''}}${qualifiedName.localName}`),

@@ -1,17 +1,21 @@
 import createAtomicValue from '../createAtomicValue';
-import { BaseType, ValueType } from '../Value';
+import { SequenceType } from '../Value';
+import { BaseType } from '../BaseType';
 import CastResult from './CastResult';
 
 export default function castToDecimal(
-	instanceOf: (typeName: ValueType) => boolean
-): (value) => CastResult {
-	if (instanceOf({ kind: BaseType.XSINTEGER })) {
+	instanceOf: (typeName: BaseType) => boolean
+): (value: any) => CastResult {
+	if (instanceOf(BaseType.XSINTEGER)) {
 		return (value) => ({
 			successful: true,
-			value: createAtomicValue(value, { kind: BaseType.XSDECIMAL }),
+			value: createAtomicValue(value, {
+				kind: BaseType.XSDECIMAL,
+				seqType: SequenceType.EXACTLY_ONE,
+			}),
 		});
 	}
-	if (instanceOf({ kind: BaseType.XSFLOAT }) || instanceOf({ kind: BaseType.XSDOUBLE })) {
+	if (instanceOf(BaseType.XSFLOAT) || instanceOf(BaseType.XSDOUBLE)) {
 		return (value) => {
 			if (isNaN(value) || !isFinite(value)) {
 				return {
@@ -29,24 +33,33 @@ export default function castToDecimal(
 			}
 			return {
 				successful: true,
-				value: createAtomicValue(value, { kind: BaseType.XSDECIMAL }),
+				value: createAtomicValue(value, {
+					kind: BaseType.XSDECIMAL,
+					seqType: SequenceType.EXACTLY_ONE,
+				}),
 			};
 		};
 	}
-	if (instanceOf({ kind: BaseType.XSBOOLEAN })) {
+	if (instanceOf(BaseType.XSBOOLEAN)) {
 		return (value) => ({
 			successful: true,
-			value: createAtomicValue(value ? 1 : 0, { kind: BaseType.XSDECIMAL }),
+			value: createAtomicValue(value ? 1 : 0, {
+				kind: BaseType.XSDECIMAL,
+				seqType: SequenceType.EXACTLY_ONE,
+			}),
 		});
 	}
 
-	if (instanceOf({ kind: BaseType.XSSTRING }) || instanceOf({ kind: BaseType.XSUNTYPEDATOMIC })) {
+	if (instanceOf(BaseType.XSSTRING) || instanceOf(BaseType.XSUNTYPEDATOMIC)) {
 		return (value) => {
 			const decimalValue = parseFloat(value);
 			if (!isNaN(decimalValue) || isFinite(decimalValue)) {
 				return {
 					successful: true,
-					value: createAtomicValue(decimalValue, { kind: BaseType.XSDECIMAL }),
+					value: createAtomicValue(decimalValue, {
+						kind: BaseType.XSDECIMAL,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
 				};
 			}
 			return {

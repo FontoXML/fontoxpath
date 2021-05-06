@@ -15,7 +15,11 @@ import evaluateXPathToNumbers from './evaluateXPathToNumbers';
 import evaluateXPathToString from './evaluateXPathToString';
 import evaluateXPathToStrings from './evaluateXPathToStrings';
 import executePendingUpdateList from './executePendingUpdateList';
-import { BaseType, OccurrenceIndicator, ValueType } from './expressions/dataTypes/Value';
+import castToType from './expressions/dataTypes/castToType';
+import createAtomicValue from './expressions/dataTypes/createAtomicValue';
+import { getPrimitiveTypeName } from './expressions/dataTypes/typeHelpers';
+import { EllipsisType, SequenceType, ValueType } from './expressions/dataTypes/Value';
+import { BaseType } from './expressions/dataTypes/BaseType';
 import { getBucketsForNode } from './getBuckets';
 import INodesFactory from './nodesFactory/INodesFactory';
 import ISimpleNodesFactory from './nodesFactory/ISimpleNodesFactory';
@@ -169,7 +173,9 @@ export const createTypedValueFactory = internalCreateTypedValueFactory as Extern
 
 export {
 	ValueType,
+	EllipsisType,
 	BaseType,
+	SequenceType,
 	Attr,
 	CDATASection,
 	CharacterData,
@@ -189,7 +195,7 @@ export {
 	Logger,
 	NamespaceResolver,
 	Node,
-	OccurrenceIndicator,
+	SequenceType as OccurrenceIndicator,
 	Options,
 	ProcessingInstruction,
 	Profiler,
