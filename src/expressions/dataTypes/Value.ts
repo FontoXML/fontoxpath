@@ -6,7 +6,8 @@ export default class Value {
 }
 
 /**
- * The base types within the program.
+ * The BaseTypes;
+ * Previously represented by strings.
  * @public
  */
 export const enum BaseType {
@@ -108,10 +109,10 @@ export type ParameterType = ValueType | EllipsisType;
  * @returns a boolean, true when the type starts with XS
  */
 export function startWithXS(inType: BaseType): boolean {
-	return xsMap[inType];
+	return startWithXSLookupTable[inType];
 }
 
-const xsMap = new Map([
+const startWithXSLookupTable = new Map([
 	[BaseType.XSBOOLEAN, true],
 	[BaseType.XSSTRING, true],
 	[BaseType.XSNUMERIC, true],
@@ -178,7 +179,8 @@ const xsMap = new Map([
 ]);
 
 /**
- * The generic composite type
+ * The composite type which containing BaseType under the filed kind
+ * and OccurrenceIndicator under the optional field occurrence.
  * @public
  */
 export type ValueType =
@@ -368,6 +370,7 @@ export function baseTypeToString(input: BaseType): string {
 	}
 	return stringVal;
 }
+
 /**
  * Converts a ValueType to the correct string representation
  *
