@@ -1,7 +1,8 @@
 import { AttributeNodePointer, ChildNodePointer, ElementNodePointer } from '../../domClone/Pointer';
 import DomFacade from '../../domFacade/DomFacade';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import Value, { BaseType } from '../dataTypes/Value';
+import Value, { SequenceType } from '../dataTypes/Value';
+import { BaseType } from '../dataTypes/BaseType';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
@@ -210,8 +211,8 @@ class InsertExpression extends UpdatingExpression {
 							throw errXUTY0005();
 						}
 						if (
-							!isSubtypeOf(tv.value.xdmValue[0].type, { kind: BaseType.ELEMENT }) &&
-							!isSubtypeOf(tv.value.xdmValue[0].type, { kind: BaseType.DOCUMENTNODE })
+							!isSubtypeOf(tv.value.xdmValue[0].type.kind, BaseType.ELEMENT) &&
+							!isSubtypeOf(tv.value.xdmValue[0].type.kind, BaseType.DOCUMENTNODE)
 						) {
 							throw errXUTY0005();
 						}
@@ -221,12 +222,13 @@ class InsertExpression extends UpdatingExpression {
 							throw errXUTY0006();
 						}
 						if (
-							!isSubtypeOf(tv.value.xdmValue[0].type, { kind: BaseType.ELEMENT }) &&
-							!isSubtypeOf(tv.value.xdmValue[0].type, { kind: BaseType.TEXT }) &&
-							!isSubtypeOf(tv.value.xdmValue[0].type, { kind: BaseType.COMMENT }) &&
-							!isSubtypeOf(tv.value.xdmValue[0].type, {
-								kind: BaseType.PROCESSINGINSTRUCTION,
-							})
+							!isSubtypeOf(tv.value.xdmValue[0].type.kind, BaseType.ELEMENT) &&
+							!isSubtypeOf(tv.value.xdmValue[0].type.kind, BaseType.TEXT) &&
+							!isSubtypeOf(tv.value.xdmValue[0].type.kind, BaseType.COMMENT) &&
+							!isSubtypeOf(
+								tv.value.xdmValue[0].type.kind,
+								BaseType.PROCESSINGINSTRUCTION
+							)
 						) {
 							throw errXUTY0006();
 						}
@@ -247,7 +249,7 @@ class InsertExpression extends UpdatingExpression {
 				if (alist.length) {
 					if (this._targetChoice >= TargetChoice.INSERT_INTO) {
 						// a. $target must be an element node [err:XUTY0022].
-						if (!isSubtypeOf(target.type, { kind: BaseType.ELEMENT })) {
+						if (!isSubtypeOf(target.type.kind, BaseType.ELEMENT)) {
 							throw errXUTY0022();
 						}
 					} else {

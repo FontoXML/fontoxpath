@@ -3,12 +3,8 @@ import castToType from '../dataTypes/castToType';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import promoteToType from '../dataTypes/promoteToType';
-import Value, {
-	BaseType,
-	OccurrenceIndicator,
-	ValueType,
-	valueTypeToString,
-} from '../dataTypes/Value';
+import Value, { SequenceType, ValueType, valueTypeToString } from '../dataTypes/Value';
+import { BaseType } from '../dataTypes/BaseType';
 import ExecutionParameters from '../ExecutionParameters';
 
 function mapItem(
@@ -18,13 +14,13 @@ function mapItem(
 	functionName: string,
 	isReturn: boolean
 ) {
-	if (isSubtypeOf(argumentItem.type, type)) {
+	if (isSubtypeOf(argumentItem.type.kind, type.kind)) {
 		return argumentItem;
 	}
 
 	if (
-		isSubtypeOf(type, { kind: BaseType.XSANYATOMICTYPE }) &&
-		isSubtypeOf(argumentItem.type, { kind: BaseType.NODE })
+		isSubtypeOf(type.kind, BaseType.XSANYATOMICTYPE) &&
+		isSubtypeOf(argumentItem.type.kind, BaseType.NODE)
 	) {
 		// Assume here that a node always atomizes to a singlevalue. This will not work
 		// anymore when schema support will be imlemented.
@@ -32,7 +28,7 @@ function mapItem(
 	}
 
 	// Maybe after atomization, we have the correct type
-	if (isSubtypeOf(argumentItem.type, type)) {
+	if (isSubtypeOf(argumentItem.type.kind, type.kind)) {
 		return argumentItem;
 	}
 
@@ -40,7 +36,7 @@ function mapItem(
 	if (type.kind === BaseType.XSANYATOMICTYPE) {
 		return argumentItem;
 	}
-	if (isSubtypeOf(argumentItem.type, { kind: BaseType.XSUNTYPEDATOMIC })) {
+	if (isSubtypeOf(argumentItem.type.kind, BaseType.XSUNTYPEDATOMIC)) {
 		// We might be able to cast this to the wished type
 		const convertedItem = castToType(argumentItem, type);
 		if (!convertedItem) {
@@ -56,7 +52,7 @@ function mapItem(
 	}
 
 	// We need to promote this
-	const item = promoteToType(argumentItem, type);
+	const item = promoteToType(argumentItem, type.kind);
 	if (!item) {
 		throw new Error(
 			`XPTY0004 Unable to cast ${
@@ -79,7 +75,7 @@ export const performFunctionConversion = (
 	functionName: string,
 	isReturn: boolean
 ): ISequence => {
-	if (argumentType.occurrence === OccurrenceIndicator.NULLABLE) {
+	if (argumentType.seqType === SequenceType.ZERO_OR_ONE) {
 		return argument.switchCases({
 			default: () =>
 				argument.map((value) =>
@@ -96,7 +92,7 @@ export const performFunctionConversion = (
 			},
 		});
 	}
-	if (argumentType.occurrence === OccurrenceIndicator.SOME) {
+	if (argumentType.seqType === SequenceType.ONE_OR_MORE) {
 		return argument.switchCases({
 			empty: () => {
 				throw new Error(
@@ -113,7 +109,7 @@ export const performFunctionConversion = (
 				),
 		});
 	}
-	if (argumentType.occurrence === OccurrenceIndicator.ANY) {
+	if (argumentType.seqType === SequenceType.ZERO_OR_MORE) {
 		return argument.map((value) =>
 			mapItem(value, argumentType, executionParameters, functionName, isReturn)
 		);

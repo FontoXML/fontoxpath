@@ -1,30 +1,31 @@
 import createAtomicValue from '../createAtomicValue';
-import { BaseType, ValueType } from '../Value';
+import { SequenceType } from '../Value';
+import { BaseType } from '../BaseType';
 import YearMonthDuration from '../valueTypes/YearMonthDuration';
 import CastResult from './CastResult';
 
 const createYearMonthDurationValue = (value) =>
-	createAtomicValue(value, { kind: BaseType.XSYEARMONTHDURATION });
+	createAtomicValue(value, {
+		kind: BaseType.XSYEARMONTHDURATION,
+		seqType: SequenceType.EXACTLY_ONE,
+	});
 
 export default function castToYearMonthDuration(
-	instanceOf: (typeName: ValueType) => boolean
+	instanceOf: (typeName: BaseType) => boolean
 ): (value) => CastResult {
-	if (
-		instanceOf({ kind: BaseType.XSDURATION }) &&
-		!instanceOf({ kind: BaseType.XSDAYTIMEDURATION })
-	) {
+	if (instanceOf(BaseType.XSDURATION) && !instanceOf(BaseType.XSDAYTIMEDURATION)) {
 		return (value) => ({
 			successful: true,
 			value: createYearMonthDurationValue(value.getYearMonthDuration()),
 		});
 	}
-	if (instanceOf({ kind: BaseType.XSDAYTIMEDURATION })) {
+	if (instanceOf(BaseType.XSDAYTIMEDURATION)) {
 		return (_value) => ({
 			successful: true,
 			value: createYearMonthDurationValue(YearMonthDuration.fromString('P0M')),
 		});
 	}
-	if (instanceOf({ kind: BaseType.XSUNTYPEDATOMIC }) || instanceOf({ kind: BaseType.XSSTRING })) {
+	if (instanceOf(BaseType.XSUNTYPEDATOMIC) || instanceOf(BaseType.XSSTRING)) {
 		return (value) => {
 			const parsedDuration = YearMonthDuration.fromString(value);
 			if (parsedDuration) {

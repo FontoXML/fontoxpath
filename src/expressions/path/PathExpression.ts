@@ -3,7 +3,8 @@ import { sortNodeValues } from '../dataTypes/documentOrderUtils';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value, { BaseType } from '../dataTypes/Value';
+import Value, { SequenceType } from '../dataTypes/Value';
+import { BaseType } from '../dataTypes/BaseType';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
@@ -16,7 +17,7 @@ function sortResults(domFacade: DomFacade, result: Value[]) {
 	let resultContainsNodes = false;
 	let resultContainsNonNodes = false;
 	result.forEach((resultValue) => {
-		if (isSubtypeOf(resultValue.type, { kind: BaseType.NODE })) {
+		if (isSubtypeOf(resultValue.type.kind, BaseType.NODE)) {
 			resultContainsNodes = true;
 		} else {
 			resultContainsNonNodes = true;
@@ -83,9 +84,7 @@ class PathExpression extends Expression {
 						}
 						if (
 							childContext.value.contextItem !== null &&
-							!isSubtypeOf(childContext.value.contextItem.type, {
-								kind: BaseType.NODE,
-							})
+							!isSubtypeOf(childContext.value.contextItem.type.kind, BaseType.NODE)
 						) {
 							throw new Error(
 								'XPTY0019: The / operator can only be applied to xml/json nodes.'

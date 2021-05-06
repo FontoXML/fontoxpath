@@ -6,7 +6,8 @@ import createAtomicValue from '../dataTypes/createAtomicValue';
 import createPointerValue from '../dataTypes/createPointerValue';
 import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value, { BaseType, OccurrenceIndicator } from '../dataTypes/Value';
+import Value, { SequenceType } from '../dataTypes/Value';
+import { BaseType } from '../dataTypes/BaseType';
 import DynamicContext from '../DynamicContext';
 import ExecutionSpecificStaticContext from '../ExecutionSpecificStaticContext';
 import { FONTOXPATH_NAMESPACE_URI, FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
@@ -132,23 +133,28 @@ const fontoxpathVersion: FunctionDefinitionType = () => {
 	let version: string;
 	// TODO: Refactor when https://github.com/google/closure-compiler/issues/1601 is fixed
 	version = typeof VERSION === 'undefined' ? 'devbuild' : VERSION;
-	return sequenceFactory.singleton(createAtomicValue(version, { kind: BaseType.XSSTRING }));
+	return sequenceFactory.singleton(
+		createAtomicValue(version, { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE })
+	);
 };
 
 const declarations: BuiltinDeclarationType[] = [
 	{
-		argumentTypes: [{ kind: BaseType.XSSTRING }, { kind: BaseType.MAP, items: [] }],
+		argumentTypes: [
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE },
+		],
 		callFunction: fontoxpathEvaluate,
 		localName: 'evaluate',
 		namespaceURI: FONTOXPATH_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 	},
 	{
 		argumentTypes: [],
 		callFunction: fontoxpathVersion,
 		localName: 'version',
 		namespaceURI: FONTOXPATH_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSSTRING },
+		returnType: { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
 	},
 ];
 

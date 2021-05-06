@@ -1,7 +1,7 @@
 import { FunctionSignature } from '../dataTypes/FunctionValue';
 import ISequence from '../dataTypes/ISequence';
 import RestArgument, { REST_ARGUMENT_INSTANCE } from '../dataTypes/RestArgument';
-import Value, { BaseType, ValueType, valueTypeToString } from '../dataTypes/Value';
+import { EllipsisType, ParameterType, ValueType, valueTypeToString } from '../dataTypes/Value';
 
 export type FunctionProperties = {
 	argumentTypes: (ValueType | RestArgument)[];
@@ -152,7 +152,7 @@ export function getFunctionByArity(
 export function registerFunction(
 	namespaceURI,
 	localName,
-	argumentTypes: ValueType[],
+	argumentTypes: ParameterType[],
 	returnType: ValueType,
 	callFunction
 ) {
@@ -161,8 +161,8 @@ export function registerFunction(
 	}
 
 	registeredFunctionsByName[namespaceURI + ':' + localName].push({
-		argumentTypes: argumentTypes.map((argumentType: ValueType) =>
-			argumentType.kind === BaseType.ELLIPSIS ? REST_ARGUMENT_INSTANCE : argumentType
+		argumentTypes: argumentTypes.map((argumentType: ParameterType) =>
+			argumentType === EllipsisType.ELLIPSIS ? REST_ARGUMENT_INSTANCE : argumentType
 		),
 		arity: argumentTypes.length,
 		callFunction,
