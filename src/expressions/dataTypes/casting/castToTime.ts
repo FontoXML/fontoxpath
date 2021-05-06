@@ -18,10 +18,7 @@ export default function castToTime(
 			),
 		});
 	}
-	if (
-		instanceOf(BaseType.XSUNTYPEDATOMIC) ||
-		instanceOf(BaseType.XSSTRING)
-	) {
+	if (instanceOf(BaseType.XSUNTYPEDATOMIC) || instanceOf(BaseType.XSSTRING)) {
 		return (value) => ({
 			successful: true,
 			value: createTimeValue(DateTime.fromString(value)),

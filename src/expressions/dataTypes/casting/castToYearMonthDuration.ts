@@ -12,10 +12,7 @@ const createYearMonthDurationValue = (value) =>
 export default function castToYearMonthDuration(
 	instanceOf: (typeName: BaseType) => boolean
 ): (value) => CastResult {
-	if (
-		instanceOf(BaseType.XSDURATION) &&
-		!instanceOf(BaseType.XSDAYTIMEDURATION)
-	) {
+	if (instanceOf(BaseType.XSDURATION) && !instanceOf(BaseType.XSDAYTIMEDURATION)) {
 		return (value) => ({
 			successful: true,
 			value: createYearMonthDurationValue(value.getYearMonthDuration()),
@@ -27,10 +24,7 @@ export default function castToYearMonthDuration(
 			value: createYearMonthDurationValue(YearMonthDuration.fromString('P0M')),
 		});
 	}
-	if (
-		instanceOf(BaseType.XSUNTYPEDATOMIC) ||
-		instanceOf(BaseType.XSSTRING)
-	) {
+	if (instanceOf(BaseType.XSUNTYPEDATOMIC) || instanceOf(BaseType.XSSTRING)) {
 		return (value) => {
 			const parsedDuration = YearMonthDuration.fromString(value);
 			if (parsedDuration) {

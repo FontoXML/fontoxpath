@@ -39,10 +39,7 @@ export default function castToInteger(
 			};
 		};
 	}
-	if (
-		instanceOf(BaseType.XSSTRING) ||
-		instanceOf(BaseType.XSUNTYPEDATOMIC)
-	) {
+	if (instanceOf(BaseType.XSSTRING) || instanceOf(BaseType.XSUNTYPEDATOMIC)) {
 		return (value) => {
 			const integerValue = parseInt(value, 10);
 			if (isNaN(integerValue)) {

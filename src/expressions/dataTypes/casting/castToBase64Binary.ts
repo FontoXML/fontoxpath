@@ -26,10 +26,7 @@ export default function castToBase64Binary(
 			value: createBase64BinaryValue(btoa(hexToString(value))),
 		});
 	}
-	if (
-		instanceOf(BaseType.XSSTRING) ||
-		instanceOf(BaseType.XSUNTYPEDATOMIC)
-	) {
+	if (instanceOf(BaseType.XSSTRING) || instanceOf(BaseType.XSUNTYPEDATOMIC)) {
 		return (value) => ({
 			successful: true,
 			value: createBase64BinaryValue(value),

@@ -10,10 +10,7 @@ const createGMonthValue = (value: any): AtomicValue =>
 export default function castToGMonth(
 	instanceOf: (typeName: BaseType) => boolean
 ): (value: any) => CastResult {
-	if (
-		instanceOf(BaseType.XSDATE) ||
-		instanceOf(BaseType.XSDATETIME)
-	) {
+	if (instanceOf(BaseType.XSDATE) || instanceOf(BaseType.XSDATETIME)) {
 		return (value) => ({
 			successful: true,
 			value: createGMonthValue(
@@ -21,10 +18,7 @@ export default function castToGMonth(
 			),
 		});
 	}
-	if (
-		instanceOf(BaseType.XSUNTYPEDATOMIC) ||
-		instanceOf(BaseType.XSSTRING)
-	) {
+	if (instanceOf(BaseType.XSUNTYPEDATOMIC) || instanceOf(BaseType.XSSTRING)) {
 		return (value) => ({
 			successful: true,
 			value: createGMonthValue(DateTime.fromString(value)),

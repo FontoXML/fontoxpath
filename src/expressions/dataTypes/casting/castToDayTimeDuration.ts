@@ -12,10 +12,7 @@ const createDayTimeDurationValue = (value) =>
 export default function castToDayTimeDuration(
 	instanceOf: (typeName: BaseType) => boolean
 ): (value) => CastResult {
-	if (
-		instanceOf(BaseType.XSDURATION) &&
-		!instanceOf(BaseType.XSYEARMONTHDURATION)
-	) {
+	if (instanceOf(BaseType.XSDURATION) && !instanceOf(BaseType.XSYEARMONTHDURATION)) {
 		return (value) => ({
 			successful: true,
 			value: createDayTimeDurationValue(value.getDayTimeDuration()),
@@ -27,10 +24,7 @@ export default function castToDayTimeDuration(
 			value: createDayTimeDurationValue(DayTimeDuration.fromString('PT0.0S')),
 		});
 	}
-	if (
-		instanceOf(BaseType.XSUNTYPEDATOMIC) ||
-		instanceOf(BaseType.XSSTRING)
-	) {
+	if (instanceOf(BaseType.XSUNTYPEDATOMIC) || instanceOf(BaseType.XSSTRING)) {
 		return (value) => {
 			const parsedDuration = DayTimeDuration.fromString(value);
 			if (parsedDuration) {

@@ -4,10 +4,7 @@ import QName from '../valueTypes/QName';
 export default function castToStringLikeType(
 	instanceOf: (t: BaseType) => boolean
 ): (value: any) => { successful: true; value: any } | { error: Error; successful: false } {
-	if (
-		instanceOf(BaseType.XSSTRING) ||
-		instanceOf(BaseType.XSUNTYPEDATOMIC)
-	) {
+	if (instanceOf(BaseType.XSSTRING) || instanceOf(BaseType.XSUNTYPEDATOMIC)) {
 		return (value) => ({
 			successful: true,
 			value: value + '',
@@ -34,19 +31,13 @@ export default function castToStringLikeType(
 		});
 	}
 	if (instanceOf(BaseType.XSNUMERIC)) {
-		if (
-			instanceOf(BaseType.XSINTEGER) ||
-			instanceOf(BaseType.XSDECIMAL)
-		) {
+		if (instanceOf(BaseType.XSINTEGER) || instanceOf(BaseType.XSDECIMAL)) {
 			return (value) => ({
 				successful: true,
 				value: (value + '').replace('e', 'E'),
 			});
 		}
-		if (
-			instanceOf(BaseType.XSFLOAT) ||
-			instanceOf(BaseType.XSDOUBLE)
-		) {
+		if (instanceOf(BaseType.XSFLOAT) || instanceOf(BaseType.XSDOUBLE)) {
 			return (value) => {
 				if (isNaN(value)) {
 					return {

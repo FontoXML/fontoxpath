@@ -11,10 +11,7 @@ export default function castToBoolean(
 			value: value === 0 || isNaN(value) ? falseBoolean : trueBoolean,
 		});
 	}
-	if (
-		instanceOf(BaseType.XSSTRING) ||
-		instanceOf(BaseType.XSUNTYPEDATOMIC)
-	) {
+	if (instanceOf(BaseType.XSSTRING) || instanceOf(BaseType.XSUNTYPEDATOMIC)) {
 		return (value) => {
 			switch (value) {
 				case 'true':

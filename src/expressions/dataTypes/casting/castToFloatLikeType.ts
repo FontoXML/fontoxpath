@@ -16,10 +16,7 @@ export default function castToFloatLikeType(
 			value: value ? 1 : 0,
 		});
 	}
-	if (
-		instanceOf(BaseType.XSSTRING) ||
-		instanceOf(BaseType.XSUNTYPEDATOMIC)
-	) {
+	if (instanceOf(BaseType.XSSTRING) || instanceOf(BaseType.XSUNTYPEDATOMIC)) {
 		return (value) => {
 			switch (value) {
 				case 'NaN':

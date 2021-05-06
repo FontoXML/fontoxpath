@@ -9,10 +9,7 @@ const createAnyURIValue = (value: any): AtomicValue =>
 export default function castToAnyURI(
 	instanceOf: (typeName: BaseType) => boolean
 ): (value: any) => CastResult {
-	if (
-		instanceOf(BaseType.XSSTRING) ||
-		instanceOf(BaseType.XSUNTYPEDATOMIC)
-	) {
+	if (instanceOf(BaseType.XSSTRING) || instanceOf(BaseType.XSUNTYPEDATOMIC)) {
 		return (value) => ({
 			successful: true,
 			value: createAnyURIValue(value),

@@ -14,10 +14,7 @@ export default function castToDecimal(
 			}),
 		});
 	}
-	if (
-		instanceOf(BaseType.XSFLOAT) ||
-		instanceOf(BaseType.XSDOUBLE)
-	) {
+	if (instanceOf(BaseType.XSFLOAT) || instanceOf(BaseType.XSDOUBLE)) {
 		return (value) => {
 			if (isNaN(value) || !isFinite(value)) {
 				return {
@@ -52,10 +49,7 @@ export default function castToDecimal(
 		});
 	}
 
-	if (
-		instanceOf(BaseType.XSSTRING) ||
-		instanceOf(BaseType.XSUNTYPEDATOMIC)
-	) {
+	if (instanceOf(BaseType.XSSTRING) || instanceOf(BaseType.XSUNTYPEDATOMIC)) {
 		return (value) => {
 			const decimalValue = parseFloat(value);
 			if (!isNaN(decimalValue) || isFinite(decimalValue)) {

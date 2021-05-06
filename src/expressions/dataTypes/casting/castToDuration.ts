@@ -27,10 +27,7 @@ export default function castToDuration(
 			value: createDurationValue(value),
 		});
 	}
-	if (
-		instanceOf(BaseType.XSUNTYPEDATOMIC) ||
-		instanceOf(BaseType.XSSTRING)
-	) {
+	if (instanceOf(BaseType.XSUNTYPEDATOMIC) || instanceOf(BaseType.XSSTRING)) {
 		return (value) => {
 			const parsedDuration = Duration.fromString(value);
 			if (parsedDuration) {

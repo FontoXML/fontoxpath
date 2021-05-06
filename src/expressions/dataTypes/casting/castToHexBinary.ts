@@ -26,10 +26,7 @@ export default function castToHexBinary(
 			value: createHexBinaryValue(stringToHex(atob(value))),
 		});
 	}
-	if (
-		instanceOf(BaseType.XSSTRING) ||
-		instanceOf(BaseType.XSUNTYPEDATOMIC)
-	) {
+	if (instanceOf(BaseType.XSSTRING) || instanceOf(BaseType.XSUNTYPEDATOMIC)) {
 		return (value) => ({
 			successful: true,
 			value: createHexBinaryValue(value),

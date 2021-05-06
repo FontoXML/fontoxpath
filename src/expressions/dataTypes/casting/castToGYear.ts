@@ -10,10 +10,7 @@ const createGYearValue = (value: any): AtomicValue =>
 export default function castToGYear(
 	instanceOf: (typeName: BaseType) => boolean
 ): (value: DateTime) => CastResult {
-	if (
-		instanceOf(BaseType.XSDATE) ||
-		instanceOf(BaseType.XSDATETIME)
-	) {
+	if (instanceOf(BaseType.XSDATE) || instanceOf(BaseType.XSDATETIME)) {
 		return (value) => ({
 			successful: true,
 			value: createGYearValue(
@@ -21,10 +18,7 @@ export default function castToGYear(
 			),
 		});
 	}
-	if (
-		instanceOf(BaseType.XSUNTYPEDATOMIC) ||
-		instanceOf(BaseType.XSSTRING)
-	) {
+	if (instanceOf(BaseType.XSUNTYPEDATOMIC) || instanceOf(BaseType.XSSTRING)) {
 		return (value) => ({
 			successful: true,
 			value: createGYearValue(DateTime.fromString(value)),
