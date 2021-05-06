@@ -3,7 +3,8 @@ import castToType from '../../dataTypes/castToType';
 import createAtomicValue from '../../dataTypes/createAtomicValue';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import { BaseType, SequenceType, ValueType, valueTypeHash } from '../../dataTypes/Value';
+import { SequenceType, ValueType, valueTypeHash } from '../../dataTypes/Value';
+import { BaseType } from '../../dataTypes/BaseType';
 import {
 	addDuration as addDurationToDateTime,
 	subtract as dateTimeSubtract,

@@ -16,12 +16,12 @@ import {
 } from '../../dataTypes/valueTypes/YearMonthDuration';
 
 import {
-	BaseType,
 	SequenceType,
 	ValueType,
 	valueTypeHash,
 	valueTypeToString,
 } from '../../../expressions/dataTypes/Value';
+import { BaseType } from '../../../expressions/dataTypes/BaseType';
 import AtomicValue from '../../dataTypes/AtomicValue';
 import DynamicContext from '../../DynamicContext';
 

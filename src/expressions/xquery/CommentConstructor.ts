@@ -4,7 +4,8 @@ import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import createPointerValue from '../dataTypes/createPointerValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { BaseType, SequenceType } from '../dataTypes/Value';
+import { SequenceType } from '../dataTypes/Value';
+import { BaseType } from '../dataTypes/BaseType';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
 

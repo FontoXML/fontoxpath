@@ -4,7 +4,8 @@ import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 
 import ISequence from '../dataTypes/ISequence';
-import { BaseType, SequenceType } from '../dataTypes/Value';
+import { SequenceType } from '../dataTypes/Value';
+import { BaseType } from '../dataTypes/BaseType';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import { BuiltinDeclarationType } from './builtInFunctions';

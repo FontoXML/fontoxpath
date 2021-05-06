@@ -1,7 +1,8 @@
 import castToType from '../../dataTypes/castToType';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import { BaseType, SequenceType } from '../../dataTypes/Value';
+import { SequenceType } from '../../dataTypes/Value';
+import { BaseType } from '../../dataTypes/BaseType';
 import valueCompare from './valueCompare';
 
 import ISequence from '../../dataTypes/ISequence';

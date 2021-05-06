@@ -1,4 +1,5 @@
-import { BaseType, SequenceType, ValueType } from '../Value';
+import { SequenceType, ValueType } from '../Value';
+import { BaseType } from '../BaseType';
 import QName from '../valueTypes/QName';
 
 export default function castToStringLikeType(

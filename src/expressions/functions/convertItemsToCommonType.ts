@@ -1,7 +1,8 @@
 import castToType from '../dataTypes/castToType';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import { getPrimitiveTypeName } from '../dataTypes/typeHelpers';
-import Value, { BaseType, SequenceType } from '../dataTypes/Value';
+import Value, { SequenceType } from '../dataTypes/Value';
+import { BaseType } from '../dataTypes/BaseType';
 
 /**
  * Promote all given (numeric) items to single common type

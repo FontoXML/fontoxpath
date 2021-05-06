@@ -3,7 +3,8 @@ import { ARRAY_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import FunctionValue from './FunctionValue';
 import ISequence from './ISequence';
 import sequenceFactory from './sequenceFactory';
-import { BaseType, SequenceType } from './Value';
+import { SequenceType } from './Value';
+import { BaseType } from './BaseType';
 
 class ArrayValue extends FunctionValue {
 	public members: (() => ISequence)[];

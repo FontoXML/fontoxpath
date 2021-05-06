@@ -7,7 +7,8 @@ import { rename } from './pulPrimitives';
 import { mergeUpdates } from './pulRoutines';
 
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import Value, { BaseType, SequenceType } from '../dataTypes/Value';
+import Value, { SequenceType } from '../dataTypes/Value';
+import { BaseType } from '../dataTypes/BaseType';
 import QName from '../dataTypes/valueTypes/QName';
 import { IIterator, IterationHint, ready } from '../util/iterators';
 import { evaluateNCNameExpression, evaluateQNameExpression } from '../xquery/nameExpression';

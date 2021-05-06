@@ -1,7 +1,8 @@
 import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { BaseType, SequenceType } from '../dataTypes/Value';
+import { SequenceType } from '../dataTypes/Value';
+import { BaseType } from '../dataTypes/BaseType';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { BuiltinDeclarationType } from './builtInFunctions';

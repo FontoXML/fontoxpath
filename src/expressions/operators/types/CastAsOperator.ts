@@ -1,7 +1,8 @@
 import atomize from '../../dataTypes/atomize';
 import castToType from '../../dataTypes/castToType';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import { BaseType, SequenceType, stringToValueType, ValueType } from '../../dataTypes/Value';
+import { SequenceType, stringToValueType, ValueType } from '../../dataTypes/Value';
+import { BaseType } from '../../dataTypes/BaseType';
 import Expression from '../../Expression';
 
 class CastAsOperator extends Expression {

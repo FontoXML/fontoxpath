@@ -2,7 +2,8 @@ import { compareNodePositions } from '../../dataTypes/documentOrderUtils';
 import ISequence from '../../dataTypes/ISequence';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import { BaseType, SequenceType } from '../../dataTypes/Value';
+import { SequenceType } from '../../dataTypes/Value';
+import { BaseType } from '../../dataTypes/BaseType';
 import zipSingleton from '../../util/zipSingleton';
 import arePointersEqual from './arePointersEqual';
 

@@ -3,7 +3,8 @@ import { DONE_TOKEN, IIterator, IterationHint, ready } from '../../util/iterator
 import ISequence, { SwitchCasesCases } from '../ISequence';
 import isSubtypeOf from '../isSubtypeOf';
 import sequenceFactory from '../sequenceFactory';
-import Value, { BaseType, SequenceType } from '../Value';
+import Value, { SequenceType } from '../Value';
+import { BaseType } from '../BaseType';
 import getEffectiveBooleanValue from './getEffectiveBooleanValue';
 
 export default class IteratorBackedSequence implements ISequence {

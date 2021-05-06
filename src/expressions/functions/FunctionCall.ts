@@ -1,7 +1,8 @@
 import FunctionValue from '../dataTypes/FunctionValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import Value, { BaseType, SequenceType, ValueType } from '../dataTypes/Value';
+import Value, { SequenceType, ValueType } from '../dataTypes/Value';
+import { BaseType } from '../dataTypes/BaseType';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';

@@ -3,7 +3,8 @@ import { MAP_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import FunctionValue from './FunctionValue';
 import ISequence from './ISequence';
 import sequenceFactory from './sequenceFactory';
-import Value, { BaseType, SequenceType } from './Value';
+import Value, { SequenceType } from './Value';
+import { BaseType } from './BaseType';
 
 class MapValue extends FunctionValue<ISequence> {
 	public keyValuePairs: { key: Value; value: () => ISequence }[];

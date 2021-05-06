@@ -5,7 +5,8 @@ import { atomizeSingleValue } from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import createPointerValue from '../dataTypes/createPointerValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import Value, { BaseType, SequenceType } from '../dataTypes/Value';
+import Value, { SequenceType } from '../dataTypes/Value';
+import { BaseType } from '../dataTypes/BaseType';
 import ExecutionParameters from '../ExecutionParameters';
 function createTinyTextNode(content): TinyTextNode {
 	const tinyTextNode: TinyTextNode = {

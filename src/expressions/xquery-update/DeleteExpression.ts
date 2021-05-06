@@ -9,7 +9,8 @@ import { mergeUpdates } from './pulRoutines';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import { IIterator, IterationHint, ready } from '../util/iterators';
 
-import Value, { BaseType, SequenceType } from '../dataTypes/Value';
+import Value, { SequenceType } from '../dataTypes/Value';
+import { BaseType } from '../dataTypes/BaseType';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import UpdatingExpressionResult from '../UpdatingExpressionResult';

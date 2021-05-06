@@ -1,5 +1,6 @@
 import createAtomicValue from '../createAtomicValue';
-import { BaseType, SequenceType, ValueType } from '../Value';
+import { SequenceType, ValueType } from '../Value';
+import { BaseType } from '../BaseType';
 import CastResult from './CastResult';
 import castToStringLikeType from './castToStringLikeType';
 

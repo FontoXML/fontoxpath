@@ -8,7 +8,8 @@ import ISequence from '../expressions/dataTypes/ISequence';
 import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
 import MapValue from '../expressions/dataTypes/MapValue';
 import sequenceFactory from '../expressions/dataTypes/sequenceFactory';
-import { BaseType, SequenceType } from '../expressions/dataTypes/Value';
+import { SequenceType } from '../expressions/dataTypes/Value';
+import { BaseType } from '../expressions/dataTypes/BaseType';
 import ExecutionParameters from '../expressions/ExecutionParameters';
 import { IterationHint } from '../expressions/util/iterators';
 import transformXPathItemToJavascriptObject, {

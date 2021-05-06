@@ -1,9 +1,9 @@
 import Value, {
-	BaseType,
 	SequenceType,
 	stringToValueType,
 	ValueType,
 } from '../expressions/dataTypes/Value';
+import { BaseType } from "../expressions/dataTypes/BaseType";
 import { SourceRange } from '../expressions/debug/StackTraceGenerator';
 
 type QName = { localName: string; namespaceURI: string | null; prefix: string };

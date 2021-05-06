@@ -1,7 +1,8 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { BaseType, SequenceType } from '../dataTypes/Value';
+import { SequenceType } from '../dataTypes/Value';
+import { BaseType } from '../dataTypes/BaseType';
 import { MAP_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import concatSequences from '../util/concatSequences';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';

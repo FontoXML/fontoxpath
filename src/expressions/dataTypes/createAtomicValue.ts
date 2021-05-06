@@ -1,7 +1,8 @@
 import builtinDataTypesByType from './builtins/builtinDataTypesByType';
 
 import AtomicValue from './AtomicValue';
-import { BaseType, SequenceType, ValueType } from './Value';
+import { SequenceType, ValueType } from './Value';
+import { BaseType } from './BaseType';
 
 export default function createAtomicValue(value: any, type: ValueType): AtomicValue {
 	if (!builtinDataTypesByType[type.kind]) {

@@ -1,7 +1,8 @@
 import AtomicValue from './AtomicValue';
 import createAtomicValue from './createAtomicValue';
 import isSubtypeOf from './isSubtypeOf';
-import { BaseType, SequenceType } from './Value';
+import { SequenceType } from './Value';
+import { BaseType } from './BaseType';
 
 export default function promoteToType(value, type: BaseType): AtomicValue {
 	if (isSubtypeOf(value.type.kind, BaseType.XSNUMERIC)) {

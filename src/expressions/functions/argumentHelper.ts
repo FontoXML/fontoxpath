@@ -3,13 +3,8 @@ import castToType from '../dataTypes/castToType';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import promoteToType from '../dataTypes/promoteToType';
-import Value, {
-	BaseType,
-	baseTypeToString,
-	SequenceType,
-	ValueType,
-	valueTypeToString,
-} from '../dataTypes/Value';
+import Value, { SequenceType, ValueType, valueTypeToString } from '../dataTypes/Value';
+import { BaseType } from '../dataTypes/BaseType';
 import ExecutionParameters from '../ExecutionParameters';
 
 function mapItem(

@@ -1,4 +1,4 @@
-import { BaseType } from '../Value';
+import { BaseType } from '../BaseType';
 
 export default function castToFloatLikeType(
 	instanceOf: (typeName: BaseType) => boolean,

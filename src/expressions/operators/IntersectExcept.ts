@@ -5,7 +5,8 @@ import { compareNodePositions, sortNodeValues } from '../dataTypes/documentOrder
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { BaseType, SequenceType } from '../dataTypes/Value';
+import { SequenceType } from '../dataTypes/Value';
+import { BaseType } from '../dataTypes/BaseType';
 import { DONE_TOKEN, IterationHint, ready } from '../util/iterators';
 import arePointersEqual from './compares/arePointersEqual';
 

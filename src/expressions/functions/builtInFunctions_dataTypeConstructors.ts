@@ -4,7 +4,8 @@ import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { normalizeWhitespace, validatePattern } from '../dataTypes/typeHelpers';
-import { BaseType, SequenceType, ValueType } from '../dataTypes/Value';
+import { SequenceType, ValueType } from '../dataTypes/Value';
+import { BaseType } from '../dataTypes/BaseType';
 import QName from '../dataTypes/valueTypes/QName';
 
 import { XMLSCHEMA_NAMESPACE_URI } from '../staticallyKnownNamespaces';

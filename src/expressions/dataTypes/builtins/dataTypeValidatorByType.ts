@@ -1,7 +1,7 @@
 // Validators for all XML-schema built-in types.
 // Implemented by spec: http://www.w3.org/TR/xmlschema-2/
 
-import { BaseType } from '../Value';
+import { BaseType } from '../BaseType';
 
 function isValidAnySimpleType(_value: string): boolean {
 	return true;

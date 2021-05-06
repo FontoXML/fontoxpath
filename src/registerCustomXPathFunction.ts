@@ -4,7 +4,8 @@ import { adaptJavaScriptValueToSequence } from './expressions/adaptJavaScriptVal
 import ISequence from './expressions/dataTypes/ISequence';
 import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
 import sequenceFactory from './expressions/dataTypes/sequenceFactory';
-import Value, { BaseType, SequenceType, ValueType } from './expressions/dataTypes/Value';
+import Value, { SequenceType, ValueType } from './expressions/dataTypes/Value';
+import { BaseType } from './expressions/dataTypes/BaseType';
 import DynamicContext from './expressions/DynamicContext';
 import ExecutionParameters from './expressions/ExecutionParameters';
 import { registerFunction } from './expressions/functions/functionRegistry';

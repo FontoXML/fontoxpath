@@ -1,5 +1,6 @@
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import Value, { BaseType, SequenceType } from '../dataTypes/Value';
+import Value, { SequenceType } from '../dataTypes/Value';
+import { BaseType } from '../dataTypes/BaseType';
 
 export default function isSameMapKey(k1: Value, k2: Value): boolean {
 	const k1IsStringLike =

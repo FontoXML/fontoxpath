@@ -19,7 +19,8 @@ import createAtomicValue from './createAtomicValue';
 import ISequence from './ISequence';
 import isSubtypeOf from './isSubtypeOf';
 import sequenceFactory from './sequenceFactory';
-import Value, { BaseType, SequenceType } from './Value';
+import Value, { SequenceType } from './Value';
+import { BaseType } from './BaseType';
 export function atomizeSingleValue(
 	value: Value,
 	executionParameters: ExecutionParameters

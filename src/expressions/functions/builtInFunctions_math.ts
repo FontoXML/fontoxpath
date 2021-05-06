@@ -1,6 +1,7 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { BaseType, SequenceType } from '../dataTypes/Value';
+import { SequenceType } from '../dataTypes/Value';
+import { BaseType } from '../dataTypes/BaseType';
 
 import { MATH_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { BuiltinDeclarationType } from './builtInFunctions';

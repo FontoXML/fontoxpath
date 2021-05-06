@@ -1,7 +1,8 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { validatePattern } from '../dataTypes/typeHelpers';
-import { BaseType, SequenceType } from '../dataTypes/Value';
+import { SequenceType } from '../dataTypes/Value';
+import { BaseType } from '../dataTypes/BaseType';
 import QName from '../dataTypes/valueTypes/QName';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import zipSingleton from '../util/zipSingleton';

@@ -3,7 +3,8 @@ import { compareNodePositions } from '../dataTypes/documentOrderUtils';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value, { BaseType, SequenceType } from '../dataTypes/Value';
+import Value, { SequenceType } from '../dataTypes/Value';
+import { BaseType } from '../dataTypes/BaseType';
 import arePointersEqual from '../operators/compares/arePointersEqual';
 import { DONE_TOKEN, IIterator, IterationHint, IterationResult } from './iterators';
 

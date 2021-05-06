@@ -1,7 +1,8 @@
 import { AttributeNodePointer, ChildNodePointer, ElementNodePointer } from '../../domClone/Pointer';
 import DomFacade from '../../domFacade/DomFacade';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import Value, { BaseType, SequenceType } from '../dataTypes/Value';
+import Value, { SequenceType } from '../dataTypes/Value';
+import { BaseType } from '../dataTypes/BaseType';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';

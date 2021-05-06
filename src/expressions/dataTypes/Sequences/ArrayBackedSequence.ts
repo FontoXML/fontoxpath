@@ -3,7 +3,8 @@ import { DONE_TOKEN, IIterator, ready } from '../../util/iterators';
 import ISequence, { SwitchCasesCases } from '../ISequence';
 import isSubtypeOf from '../isSubtypeOf';
 import sequenceFactory from '../sequenceFactory';
-import Value, { BaseType, SequenceType } from '../Value';
+import Value, { SequenceType } from '../Value';
+import { BaseType } from '../BaseType';
 
 export default class ArrayBackedSequence implements ISequence {
 	public value: IIterator<Value>;

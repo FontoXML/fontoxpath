@@ -5,7 +5,8 @@ import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import ISequence from './ISequence';
 import RestArgument from './RestArgument';
 import sequenceFactory from './sequenceFactory';
-import Value, { BaseType, SequenceType, ValueType } from './Value';
+import Value, { SequenceType, ValueType } from './Value';
+import { BaseType } from './BaseType';
 import QName from './valueTypes/QName';
 
 export type FunctionSignature<T> = (

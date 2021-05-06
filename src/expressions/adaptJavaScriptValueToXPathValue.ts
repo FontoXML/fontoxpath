@@ -8,13 +8,8 @@ import createPointerValue from './dataTypes/createPointerValue';
 import ISequence from './dataTypes/ISequence';
 import MapValue from './dataTypes/MapValue';
 import sequenceFactory from './dataTypes/sequenceFactory';
-import Value, {
-	BaseType,
-	baseTypeToString,
-	SequenceType,
-	ValueType,
-	valueTypeToString,
-} from './dataTypes/Value';
+import Value, { SequenceType, ValueType, valueTypeToString } from './dataTypes/Value';
+import { BaseType, baseTypeToString } from './dataTypes/BaseType';
 import DateTime from './dataTypes/valueTypes/DateTime';
 import createDoublyIterableSequence from './util/createDoublyIterableSequence';
 

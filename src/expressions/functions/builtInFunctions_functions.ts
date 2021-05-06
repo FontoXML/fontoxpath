@@ -1,7 +1,8 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import FunctionValue from '../dataTypes/FunctionValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { BaseType, SequenceType } from '../dataTypes/Value';
+import { SequenceType } from '../dataTypes/Value';
+import { BaseType } from '../dataTypes/BaseType';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import zipSingleton from '../util/zipSingleton';
 import { BuiltinDeclarationType } from './builtInFunctions';
