@@ -20,6 +20,7 @@ import {
 	ValueType,
 	SequenceType,
 	valueTypeHash,
+	valueTypeToString,
 } from '../../../expressions/dataTypes/Value';
 import AtomicValue from '../../dataTypes/AtomicValue';
 import DynamicContext from '../../DynamicContext';
@@ -321,7 +322,7 @@ function generateCompareFunction(
 		}
 	}
 
-	throw new Error(`XPTY0004: ${operator} not available for ${typeA} and ${typeB}`);
+	throw new Error(`XPTY0004: ${operator} not available for ${valueTypeToString(typeA)} and ${valueTypeToString(typeB)}`);
 }
 
 const comparatorsByTypingKey = Object.create(null);
