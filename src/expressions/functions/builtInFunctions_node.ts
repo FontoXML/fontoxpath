@@ -259,7 +259,7 @@ const fnNamespaceURI: FunctionDefinitionType = (
 	return sequence.map((node) =>
 		createAtomicValue(executionParameters.domFacade.getNamespaceURI(node.value) || '', {
 			kind: BaseType.XSANYURI,
-			seqType: SequenceType.EXACTLY_ONE
+			seqType: SequenceType.EXACTLY_ONE,
 		})
 	);
 };
@@ -284,7 +284,7 @@ const fnLocalName: FunctionDefinitionType = (
 
 				return createAtomicValue(domFacade.getLocalName(node.value) || '', {
 					kind: BaseType.XSSTRING,
-					seqType: SequenceType.EXACTLY_ONE
+					seqType: SequenceType.EXACTLY_ONE,
 				});
 			});
 		},
@@ -463,7 +463,7 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		returnType: {
 			kind: BaseType.XSBOOLEAN,
-			seqType: SequenceType.EXACTLY_ONE
+			seqType: SequenceType.EXACTLY_ONE,
 		},
 	},
 

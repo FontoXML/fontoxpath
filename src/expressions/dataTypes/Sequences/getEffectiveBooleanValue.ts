@@ -19,7 +19,8 @@ export default function getEffectiveBooleanValue(value: Value): boolean {
 	if (
 		isSubtypeOf(value.type.kind, BaseType.XSSTRING) ||
 		isSubtypeOf(value.type.kind, BaseType.XSANYURI) ||
-		isSubtypeOf(value.type.kind, BaseType.XSUNTYPEDATOMIC)) {
+		isSubtypeOf(value.type.kind, BaseType.XSUNTYPEDATOMIC)
+	) {
 		return (jsValue as string).length !== 0;
 	}
 

@@ -7,14 +7,7 @@ import {
 	validatePattern,
 	validateRestrictions,
 } from '../typeHelpers';
-import {
-	BaseType,
-	ValueType,
-	valueTypeHash,
-	SequenceType,
-	valueTypeToString,
-	baseTypeToString,
-} from '../Value';
+import { BaseType, SequenceType, ValueType, valueTypeHash, valueTypeToString } from '../Value';
 import CastResult from './CastResult';
 import castToAnyURI from './castToAnyURI';
 import castToBase64Binary from './castToBase64Binary';

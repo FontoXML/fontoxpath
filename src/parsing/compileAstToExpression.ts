@@ -62,7 +62,7 @@ import RenameExpression from '../expressions/xquery-update/RenameExpression';
 import ReplaceExpression from '../expressions/xquery-update/ReplaceExpression';
 import TransformExpression from '../expressions/xquery-update/TransformExpression';
 
-import { BaseType, ValueType, SequenceType } from '../expressions/dataTypes/Value';
+import { BaseType, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import QName from '../expressions/dataTypes/valueTypes/QName';
 import FlworExpression from '../expressions/FlworExpression';
 import OrderByExpression from '../expressions/OrderByExpression';

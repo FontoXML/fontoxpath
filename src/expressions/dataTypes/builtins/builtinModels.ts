@@ -1,4 +1,4 @@
-import { BaseType, ValueType, SequenceType } from '../Value';
+import { BaseType, SequenceType, ValueType } from '../Value';
 import { Variety } from '../Variety';
 
 type BuildinModelTypeDeclaration = {

@@ -244,9 +244,9 @@ export type ValueType =
 	| { kind: BaseType.ITEM; seqType: SequenceType }
 	| {
 			kind: BaseType.FUNCTION;
-			seqType: SequenceType;
 			params: ValueType[];
 			returnType: ValueType | undefined;
+			seqType: SequenceType;
 	  }
 	| {
 			items: [ValueType, ValueType][];

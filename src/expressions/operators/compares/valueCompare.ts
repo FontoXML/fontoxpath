@@ -17,8 +17,8 @@ import {
 
 import {
 	BaseType,
-	ValueType,
 	SequenceType,
+	ValueType,
 	valueTypeHash,
 	valueTypeToString,
 } from '../../../expressions/dataTypes/Value';
@@ -322,7 +322,11 @@ function generateCompareFunction(
 		}
 	}
 
-	throw new Error(`XPTY0004: ${operator} not available for ${valueTypeToString(typeA)} and ${valueTypeToString(typeB)}`);
+	throw new Error(
+		`XPTY0004: ${operator} not available for ${valueTypeToString(
+			typeA
+		)} and ${valueTypeToString(typeB)}`
+	);
 }
 
 const comparatorsByTypingKey = Object.create(null);

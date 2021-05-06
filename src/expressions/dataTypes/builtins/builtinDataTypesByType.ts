@@ -1,5 +1,5 @@
 import facetHandlersByDataTypeName from '../facets/facetsByDataType';
-import { BaseType, ValueType, SequenceType } from '../Value';
+import { BaseType, ValueType } from '../Value';
 import { Variety } from '../Variety';
 import builtinModels from './builtinModels';
 import { getValidatorForType } from './dataTypeValidatorByType';
@@ -7,9 +7,9 @@ import { getValidatorForType } from './dataTypeValidatorByType';
 export type TypeModel = {
 	facetHandlers: object;
 	memberTypes: TypeModel[];
-	type: ValueType;
 	parent: TypeModel;
 	restrictionsByName: { [s: string]: number | string };
+	type: ValueType;
 	validator: (value: string) => boolean;
 	variety: Variety;
 };

@@ -18,7 +18,7 @@ import executePendingUpdateList from './executePendingUpdateList';
 import castToType from './expressions/dataTypes/castToType';
 import createAtomicValue from './expressions/dataTypes/createAtomicValue';
 import { getPrimitiveTypeName } from './expressions/dataTypes/typeHelpers';
-import { BaseType, SequenceType, ValueType, EllipsisType } from './expressions/dataTypes/Value';
+import { BaseType, EllipsisType, SequenceType, ValueType } from './expressions/dataTypes/Value';
 import { getBucketsForNode } from './getBuckets';
 import INodesFactory from './nodesFactory/INodesFactory';
 import ISimpleNodesFactory from './nodesFactory/ISimpleNodesFactory';

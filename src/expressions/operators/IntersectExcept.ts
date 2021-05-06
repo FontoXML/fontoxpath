@@ -16,12 +16,7 @@ function ensureSortedSequence(
 	expectedResultOrder: any
 ): ISequence {
 	return sequence.mapAll((values) => {
-		if (
-			values.some(
-				(value) =>
-					!isSubtypeOf(value.type.kind, BaseType.NODE)
-			)
-		) {
+		if (values.some((value) => !isSubtypeOf(value.type.kind, BaseType.NODE))) {
 			throw new Error(
 				`XPTY0004: Sequences given to ${intersectOrExcept} should only contain nodes.`
 			);

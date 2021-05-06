@@ -155,7 +155,7 @@ export default function registerCustomXPathFunction(
 		const newArguments = args.map((argument, index) => {
 			return adaptXPathValueToJavascriptValue(
 				argument,
-				signature[index] as ValueType,
+				signature[index],
 				executionParameters
 			);
 		});

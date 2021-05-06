@@ -1,5 +1,5 @@
 import { falseBoolean, trueBoolean } from '../createAtomicValue';
-import { BaseType, ValueType, SequenceType } from '../Value';
+import { BaseType, SequenceType, ValueType } from '../Value';
 import CastResult from './CastResult';
 
 export default function castToBoolean(

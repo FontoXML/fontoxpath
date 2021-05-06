@@ -1,5 +1,5 @@
 import createAtomicValue from '../createAtomicValue';
-import { BaseType, ValueType, SequenceType } from '../Value';
+import { BaseType, SequenceType, ValueType } from '../Value';
 import Duration from '../valueTypes/Duration';
 import CastResult from './CastResult';
 
