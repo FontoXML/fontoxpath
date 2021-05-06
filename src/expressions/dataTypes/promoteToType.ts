@@ -4,7 +4,7 @@ import { BaseType, ValueType, SequenceType } from './Value';
 
 export default function promoteToType(value, type: BaseType) {
 	if (isSubtypeOf(value.type.kind, BaseType.XSNUMERIC)) {
-		if (isSubtypeOf(value.type, BaseType.XSFLOAT)) {
+		if (isSubtypeOf(value.type.kind, BaseType.XSFLOAT)) {
 			if (type === BaseType.XSDOUBLE) {
 				return createAtomicValue(value.value, {
 					kind: BaseType.XSDOUBLE,
@@ -13,7 +13,7 @@ export default function promoteToType(value, type: BaseType) {
 			}
 			return null;
 		}
-		if (isSubtypeOf(value.type, BaseType.XSDECIMAL)) {
+		if (isSubtypeOf(value.type.kind, BaseType.XSDECIMAL)) {
 			if (type === BaseType.XSFLOAT) {
 				return createAtomicValue(value.value, {
 					kind: BaseType.XSFLOAT,
@@ -30,7 +30,7 @@ export default function promoteToType(value, type: BaseType) {
 		return null;
 	}
 
-	if (isSubtypeOf(value.type, BaseType.XSANYURI)) {
+	if (isSubtypeOf(value.type.kind, BaseType.XSANYURI)) {
 		if (type === BaseType.XSSTRING) {
 			return createAtomicValue(value.value, {
 				kind: BaseType.XSSTRING,
