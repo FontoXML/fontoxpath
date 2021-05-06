@@ -244,8 +244,6 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: MAP_NAMESPACE_URI,
 		localName: 'for-each',
 		// TODO: reimplement type checking by parsing the types
-		// argumentTypes: [{ kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE }, '({ kind: BaseType.XSANYATOMICTYPE ,
-		// { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY }) as { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY }'],
 		argumentTypes: [
 			{ kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE },
 			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },

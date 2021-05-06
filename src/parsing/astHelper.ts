@@ -79,12 +79,11 @@ function getTextContent(ast: IAST): string {
  * @return  The type declaration
  */
 function getTypeDeclaration(ast: IAST): ValueType {
-	const zeroOrMore = SequenceType.ZERO_OR_MORE;
 	const exactlyOne = SequenceType.EXACTLY_ONE;
 
 	const typeDeclarationAst = getFirstChild(ast, 'typeDeclaration');
 	if (!typeDeclarationAst || getFirstChild(typeDeclarationAst, 'voidSequenceType')) {
-		return { kind: BaseType.ITEM, seqType: zeroOrMore };
+		return { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE };
 	}
 
 	const determineType = (typeAst: IAST): ValueType => {
@@ -148,13 +147,13 @@ function getTypeDeclaration(ast: IAST): ValueType {
 
 	switch (occurrence) {
 		case '*':
-			type.seqType = zeroOrMore;
+			type.seqType = SequenceType.ZERO_OR_MORE;
 			return type;
 		case '?':
-			type.seqType = zeroOrMore;
+			type.seqType = SequenceType.ZERO_OR_ONE;
 			return type;
 		case '+':
-			type.seqType = zeroOrMore;
+			type.seqType = SequenceType.ONE_OR_MORE;
 			return type;
 		case '':
 		case null:
