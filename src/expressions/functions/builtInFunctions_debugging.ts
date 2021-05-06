@@ -1,7 +1,8 @@
 import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { BaseType } from '../dataTypes/Value';
+import { SequenceType } from '../dataTypes/Value';
+import { BaseType } from '../dataTypes/BaseType';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { BuiltinDeclarationType } from './builtInFunctions';
@@ -17,7 +18,9 @@ const fnTrace: FunctionDefinitionType = (
 ) => {
 	return arg.mapAll((allItems) => {
 		const argumentAsStrings = atomize(sequenceFactory.create(allItems), executionParameters)
-			.map((value) => castToType(value, { kind: BaseType.XSSTRING }))
+			.map((value) =>
+				castToType(value, { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE })
+			)
 			.getAllValues();
 
 		let newMessage = '';
@@ -40,21 +43,21 @@ const fnTrace: FunctionDefinitionType = (
 
 const declarations: BuiltinDeclarationType[] = [
 	{
-		argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } }],
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
 		callFunction: fnTrace,
 		localName: 'trace',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 	},
 	{
 		argumentTypes: [
-			{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
-			{ kind: BaseType.XSSTRING },
+			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
 		],
 		callFunction: fnTrace,
 		localName: 'trace',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 	},
 ];
 

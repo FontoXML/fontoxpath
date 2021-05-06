@@ -3,7 +3,8 @@ import { DONE_TOKEN, IIterator, ready } from '../../util/iterators';
 import ISequence, { SwitchCasesCases } from '../ISequence';
 import isSubtypeOf from '../isSubtypeOf';
 import sequenceFactory from '../sequenceFactory';
-import Value, { BaseType } from '../Value';
+import Value, { SequenceType } from '../Value';
+import { BaseType } from '../BaseType';
 
 export default class ArrayBackedSequence implements ISequence {
 	public value: IIterator<Value>;
@@ -55,7 +56,7 @@ export default class ArrayBackedSequence implements ISequence {
 	}
 
 	public getEffectiveBooleanValue(): boolean {
-		if (isSubtypeOf(this._values[0].type, { kind: BaseType.NODE })) {
+		if (isSubtypeOf(this._values[0].type.kind, BaseType.NODE)) {
 			return true;
 		}
 		// We always have a length > 1, or we'd be a singletonSequence

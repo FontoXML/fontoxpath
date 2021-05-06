@@ -4,7 +4,8 @@ import FunctionValue, { FunctionSignature } from '../dataTypes/FunctionValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value, { BaseType, ValueType } from '../dataTypes/Value';
+import Value, { SequenceType, ValueType } from '../dataTypes/Value';
+import { BaseType } from '../dataTypes/BaseType';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import { ARRAY_NAMESPACE_URI } from '../staticallyKnownNamespaces';
@@ -28,7 +29,10 @@ const arraySize: FunctionDefinitionType = (
 ) => {
 	return zipSingleton([arraySequence], ([array]) =>
 		sequenceFactory.singleton(
-			createAtomicValue((array as ArrayValue).members.length, { kind: BaseType.XSINTEGER })
+			createAtomicValue((array as ArrayValue).members.length, {
+				kind: BaseType.XSINTEGER,
+				seqType: SequenceType.EXACTLY_ONE,
+			})
 		)
 	);
 };
@@ -376,11 +380,11 @@ const arrayForEachPair: FunctionDefinitionType = (
 	);
 };
 
-const isString = (type: ValueType): boolean => {
+const isString = (type: BaseType): boolean => {
 	return (
-		isSubtypeOf(type, { kind: BaseType.XSSTRING }) ||
-		isSubtypeOf(type, { kind: BaseType.XSANYURI }) ||
-		isSubtypeOf(type, { kind: BaseType.XSUNTYPEDATOMIC })
+		isSubtypeOf(type, BaseType.XSSTRING) ||
+		isSubtypeOf(type, BaseType.XSANYURI) ||
+		isSubtypeOf(type, BaseType.XSUNTYPEDATOMIC)
 	);
 };
 
@@ -412,7 +416,11 @@ const deepLessThan = (
 		);
 	} else if (valuesA[0].value !== valuesA[0].value) {
 		return true;
-	} else if (isString(valuesA[0].type) && valuesB.length !== 0 && isString(valuesB[0].type)) {
+	} else if (
+		isString(valuesA[0].type.kind) &&
+		valuesB.length !== 0 &&
+		isString(valuesB[0].type.kind)
+	) {
 		return valuesA[0].value < valuesB[0].value;
 	} else {
 		return valuesB.length === 0 ? false : valuesA[0].value < valuesB[0].value;
@@ -461,7 +469,7 @@ const arraySort: FunctionDefinitionType = (
 };
 
 function flattenItem(flatteneditems: ISequence, item: Value) {
-	if (isSubtypeOf(item.type, { kind: BaseType.ARRAY, items: [] })) {
+	if (isSubtypeOf(item.type.kind, BaseType.ARRAY)) {
 		return (item as ArrayValue).members.reduce(
 			(flatteneditemsOfMember, member) =>
 				member().mapAll((allValues) =>
@@ -485,16 +493,19 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: ARRAY_NAMESPACE_URI,
 		localName: 'size',
-		argumentTypes: [{ kind: BaseType.ARRAY, items: [] }],
-		returnType: { kind: BaseType.XSINTEGER },
+		argumentTypes: [{ kind: BaseType.ARRAY, items: [], seqType: SequenceType.EXACTLY_ONE }],
+		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE },
 		callFunction: arraySize,
 	},
 
 	{
 		namespaceURI: ARRAY_NAMESPACE_URI,
 		localName: 'get',
-		argumentTypes: [{ kind: BaseType.ARRAY, items: [] }, { kind: BaseType.XSINTEGER }],
-		returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+		argumentTypes: [
+			{ kind: BaseType.ARRAY, items: [], seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE },
+		],
+		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 		callFunction: arrayGet,
 	},
 
@@ -502,11 +513,11 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: ARRAY_NAMESPACE_URI,
 		localName: 'put',
 		argumentTypes: [
-			{ kind: BaseType.ARRAY, items: [] },
-			{ kind: BaseType.XSINTEGER },
-			{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+			{ kind: BaseType.ARRAY, items: [], seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 		],
-		returnType: { kind: BaseType.ARRAY, items: [] },
+		returnType: { kind: BaseType.ARRAY, items: [], seqType: SequenceType.EXACTLY_ONE },
 		callFunction: arrayPut,
 	},
 
@@ -514,10 +525,10 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: ARRAY_NAMESPACE_URI,
 		localName: 'append',
 		argumentTypes: [
-			{ kind: BaseType.ARRAY, items: [] },
-			{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+			{ kind: BaseType.ARRAY, items: [], seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 		],
-		returnType: { kind: BaseType.ARRAY, items: [] },
+		returnType: { kind: BaseType.ARRAY, items: [], seqType: SequenceType.EXACTLY_ONE },
 		callFunction: arrayAppend,
 	},
 
@@ -525,19 +536,22 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: ARRAY_NAMESPACE_URI,
 		localName: 'subarray',
 		argumentTypes: [
-			{ kind: BaseType.ARRAY, items: [] },
-			{ kind: BaseType.XSINTEGER },
-			{ kind: BaseType.XSINTEGER },
+			{ kind: BaseType.ARRAY, items: [], seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE },
 		],
-		returnType: { kind: BaseType.ARRAY, items: [] },
+		returnType: { kind: BaseType.ARRAY, items: [], seqType: SequenceType.EXACTLY_ONE },
 		callFunction: arraySubarray,
 	},
 
 	{
 		namespaceURI: ARRAY_NAMESPACE_URI,
 		localName: 'subarray',
-		argumentTypes: [{ kind: BaseType.ARRAY, items: [] }, { kind: BaseType.XSINTEGER }],
-		returnType: { kind: BaseType.ARRAY, items: [] },
+		argumentTypes: [
+			{ kind: BaseType.ARRAY, items: [], seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE },
+		],
+		returnType: { kind: BaseType.ARRAY, items: [], seqType: SequenceType.EXACTLY_ONE },
 		callFunction(
 			dynamicContext,
 			executionParameters,
@@ -546,9 +560,13 @@ const declarations: BuiltinDeclarationType[] = [
 			startSequence
 		) {
 			const lengthSequence = sequenceFactory.singleton(
-				createAtomicValue(arraySequence.getLength() - startSequence.first().value + 1, {
-					kind: BaseType.XSINTEGER,
-				})
+				createAtomicValue(
+					arraySequence.first().value.length - startSequence.first().value + 1,
+					{
+						kind: BaseType.XSINTEGER,
+						seqType: SequenceType.EXACTLY_ONE,
+					}
+				)
 			);
 			return arraySubarray(
 				dynamicContext,
@@ -565,10 +583,10 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: ARRAY_NAMESPACE_URI,
 		localName: 'remove',
 		argumentTypes: [
-			{ kind: BaseType.ARRAY, items: [] },
-			{ kind: BaseType.ANY, item: { kind: BaseType.XSINTEGER } },
+			{ kind: BaseType.ARRAY, items: [], seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSINTEGER, seqType: SequenceType.ZERO_OR_MORE },
 		],
-		returnType: { kind: BaseType.ARRAY, items: [] },
+		returnType: { kind: BaseType.ARRAY, items: [], seqType: SequenceType.EXACTLY_ONE },
 		callFunction: arrayRemove,
 	},
 
@@ -576,26 +594,31 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: ARRAY_NAMESPACE_URI,
 		localName: 'insert-before',
 		argumentTypes: [
-			{ kind: BaseType.ARRAY, items: [] },
-			{ kind: BaseType.XSINTEGER },
-			{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+			{ kind: BaseType.ARRAY, items: [], seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 		],
-		returnType: { kind: BaseType.ARRAY, items: [] },
+		returnType: { kind: BaseType.ARRAY, items: [], seqType: SequenceType.EXACTLY_ONE },
 		callFunction: arrayInsertBefore,
 	},
 
 	{
 		namespaceURI: ARRAY_NAMESPACE_URI,
 		localName: 'head',
-		argumentTypes: [{ kind: BaseType.ARRAY, items: [] }],
-		returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+		argumentTypes: [{ kind: BaseType.ARRAY, items: [], seqType: SequenceType.EXACTLY_ONE }],
+		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 		callFunction(dynamicContext, executionParameters, _staticContext, arraySequence) {
 			return arrayGet(
 				dynamicContext,
 				executionParameters,
 				_staticContext,
 				arraySequence,
-				sequenceFactory.singleton(createAtomicValue(1, { kind: BaseType.XSINTEGER }))
+				sequenceFactory.singleton(
+					createAtomicValue(1, {
+						kind: BaseType.XSINTEGER,
+						seqType: SequenceType.EXACTLY_ONE,
+					})
+				)
 			);
 		},
 	},
@@ -603,15 +626,20 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: ARRAY_NAMESPACE_URI,
 		localName: 'tail',
-		argumentTypes: [{ kind: BaseType.ARRAY, items: [] }],
-		returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+		argumentTypes: [{ kind: BaseType.ARRAY, items: [], seqType: SequenceType.EXACTLY_ONE }],
+		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 		callFunction(dynamicContext, executionParameters, _staticContext, arraySequence) {
 			return arrayRemove(
 				dynamicContext,
 				executionParameters,
 				_staticContext,
 				arraySequence,
-				sequenceFactory.singleton(createAtomicValue(1, { kind: BaseType.XSINTEGER }))
+				sequenceFactory.singleton(
+					createAtomicValue(1, {
+						kind: BaseType.XSINTEGER,
+						seqType: SequenceType.EXACTLY_ONE,
+					})
+				)
 			);
 		},
 	},
@@ -619,16 +647,16 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: ARRAY_NAMESPACE_URI,
 		localName: 'reverse',
-		argumentTypes: [{ kind: BaseType.ARRAY, items: [] }],
-		returnType: { kind: BaseType.ARRAY, items: [] },
+		argumentTypes: [{ kind: BaseType.ARRAY, items: [], seqType: SequenceType.EXACTLY_ONE }],
+		returnType: { kind: BaseType.ARRAY, items: [], seqType: SequenceType.EXACTLY_ONE },
 		callFunction: arrayReverse,
 	},
 
 	{
 		namespaceURI: ARRAY_NAMESPACE_URI,
 		localName: 'join',
-		argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.ARRAY, items: [] } }],
-		returnType: { kind: BaseType.ARRAY, items: [] },
+		argumentTypes: [{ kind: BaseType.ARRAY, items: [], seqType: SequenceType.ZERO_OR_MORE }],
+		returnType: { kind: BaseType.ARRAY, items: [], seqType: SequenceType.EXACTLY_ONE },
 		callFunction: arrayJoin,
 	},
 
@@ -638,10 +666,15 @@ const declarations: BuiltinDeclarationType[] = [
 		// TODO: reimplement type checking by parsing the types
 		// argumentTypes: ['array(*)', '(item()*) as item()*)]
 		argumentTypes: [
-			{ kind: BaseType.ARRAY, items: [] },
-			{ kind: BaseType.FUNCTION, returnType: undefined, params: [] },
+			{ kind: BaseType.ARRAY, items: [], seqType: SequenceType.EXACTLY_ONE },
+			{
+				kind: BaseType.FUNCTION,
+				returnType: undefined,
+				params: [],
+				seqType: SequenceType.EXACTLY_ONE,
+			},
 		],
-		returnType: { kind: BaseType.ARRAY, items: [] },
+		returnType: { kind: BaseType.ARRAY, items: [], seqType: SequenceType.EXACTLY_ONE },
 		callFunction: arrayForEach,
 	},
 
@@ -651,10 +684,15 @@ const declarations: BuiltinDeclarationType[] = [
 		// TODO: reimplement type checking by parsing the types
 		// argumentTypes: ['array(*)', '(item()*) as xs:boolean)]
 		argumentTypes: [
-			{ kind: BaseType.ARRAY, items: [] },
-			{ kind: BaseType.FUNCTION, returnType: undefined, params: [] },
+			{ kind: BaseType.ARRAY, items: [], seqType: SequenceType.EXACTLY_ONE },
+			{
+				kind: BaseType.FUNCTION,
+				returnType: undefined,
+				params: [],
+				seqType: SequenceType.EXACTLY_ONE,
+			},
 		],
-		returnType: { kind: BaseType.ARRAY, items: [] },
+		returnType: { kind: BaseType.ARRAY, items: [], seqType: SequenceType.EXACTLY_ONE },
 		callFunction: arrayFilter,
 	},
 
@@ -664,11 +702,16 @@ const declarations: BuiltinDeclarationType[] = [
 		// TODO: reimplement type checking by parsing the types
 		// argumentTypes: ['array(*)', 'item()*', '(item()*, item()*) as item())]
 		argumentTypes: [
-			{ kind: BaseType.ARRAY, items: [] },
-			{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
-			{ kind: BaseType.FUNCTION, returnType: undefined, params: [] },
+			{ kind: BaseType.ARRAY, items: [], seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+			{
+				kind: BaseType.FUNCTION,
+				returnType: undefined,
+				params: [],
+				seqType: SequenceType.EXACTLY_ONE,
+			},
 		],
-		returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 		callFunction: arrayFoldLeft,
 	},
 
@@ -678,11 +721,16 @@ const declarations: BuiltinDeclarationType[] = [
 		// TODO: reimplement type checking by parsing the types
 		// argumentTypes: ['array(*)', 'item()*', '(item()*, item()*) as item())]
 		argumentTypes: [
-			{ kind: BaseType.ARRAY, items: [] },
-			{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
-			{ kind: BaseType.FUNCTION, returnType: undefined, params: [] },
+			{ kind: BaseType.ARRAY, items: [], seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+			{
+				kind: BaseType.FUNCTION,
+				returnType: undefined,
+				params: [],
+				seqType: SequenceType.EXACTLY_ONE,
+			},
 		],
-		returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 		callFunction: arrayFoldRight,
 	},
 
@@ -692,27 +740,32 @@ const declarations: BuiltinDeclarationType[] = [
 		// TODO: reimplement type checking by parsing the types
 		// argumentTypes: ['array(*)', 'item()*', '(item()*, item()*) as item())]
 		argumentTypes: [
-			{ kind: BaseType.ARRAY, items: [] },
-			{ kind: BaseType.ARRAY, items: [] },
-			{ kind: BaseType.FUNCTION, returnType: undefined, params: [] },
+			{ kind: BaseType.ARRAY, items: [], seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.ARRAY, items: [], seqType: SequenceType.EXACTLY_ONE },
+			{
+				kind: BaseType.FUNCTION,
+				returnType: undefined,
+				params: [],
+				seqType: SequenceType.EXACTLY_ONE,
+			},
 		],
-		returnType: { kind: BaseType.ARRAY, items: [] },
+		returnType: { kind: BaseType.ARRAY, items: [], seqType: SequenceType.EXACTLY_ONE },
 		callFunction: arrayForEachPair,
 	},
 
 	{
 		namespaceURI: ARRAY_NAMESPACE_URI,
 		localName: 'sort',
-		argumentTypes: [{ kind: BaseType.ARRAY, items: [] }],
-		returnType: { kind: BaseType.ARRAY, items: [] },
+		argumentTypes: [{ kind: BaseType.ARRAY, items: [], seqType: SequenceType.EXACTLY_ONE }],
+		returnType: { kind: BaseType.ARRAY, items: [], seqType: SequenceType.EXACTLY_ONE },
 		callFunction: arraySort,
 	},
 
 	{
 		namespaceURI: ARRAY_NAMESPACE_URI,
 		localName: 'flatten',
-		argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } }],
-		returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
+		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 		callFunction: arrayFlatten,
 	},
 ];

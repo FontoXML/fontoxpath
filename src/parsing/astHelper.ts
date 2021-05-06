@@ -1,4 +1,9 @@
-import { BaseType, stringToValueType, ValueType } from '../expressions/dataTypes/Value';
+import Value, {
+	SequenceType,
+	stringToValueType,
+	ValueType,
+} from '../expressions/dataTypes/Value';
+import { BaseType } from "../expressions/dataTypes/BaseType";
 import { SourceRange } from '../expressions/debug/StackTraceGenerator';
 
 type QName = { localName: string; namespaceURI: string | null; prefix: string };
@@ -74,39 +79,46 @@ function getTextContent(ast: IAST): string {
  * @return  The type declaration
  */
 function getTypeDeclaration(ast: IAST): ValueType {
+	const exactlyOne = SequenceType.EXACTLY_ONE;
+
 	const typeDeclarationAst = getFirstChild(ast, 'typeDeclaration');
 	if (!typeDeclarationAst || getFirstChild(typeDeclarationAst, 'voidSequenceType')) {
-		return { kind: BaseType.ANY, item: { kind: BaseType.ITEM } };
+		return { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE };
 	}
 
 	const determineType = (typeAst: IAST): ValueType => {
 		switch (typeAst[0]) {
 			case 'documentTest':
-				return { kind: BaseType.DOCUMENTNODE };
+				return { kind: BaseType.DOCUMENTNODE, seqType: exactlyOne };
 			case 'elementTest':
-				return { kind: BaseType.ELEMENT };
+				return { kind: BaseType.ELEMENT, seqType: exactlyOne };
 			case 'attributeTest':
-				return { kind: BaseType.ATTRIBUTE };
+				return { kind: BaseType.ATTRIBUTE, seqType: exactlyOne };
 			case 'piTest':
-				return { kind: BaseType.PROCESSINGINSTRUCTION };
+				return { kind: BaseType.PROCESSINGINSTRUCTION, seqType: exactlyOne };
 			case 'commentTest':
-				return { kind: BaseType.COMMENT };
+				return { kind: BaseType.COMMENT, seqType: exactlyOne };
 			case 'textTest':
-				return { kind: BaseType.TEXT };
+				return { kind: BaseType.TEXT, seqType: exactlyOne };
 			case 'anyKindTest':
-				return { kind: BaseType.NODE };
+				return { kind: BaseType.NODE, seqType: exactlyOne };
 			case 'anyItemType':
-				return { kind: BaseType.ITEM };
+				return { kind: BaseType.ITEM, seqType: exactlyOne };
 			case 'anyFunctionTest':
 			case 'functionTest':
 			case 'typedFunctionTest':
-				return { kind: BaseType.FUNCTION, returnType: undefined, params: [] };
+				return {
+					kind: BaseType.FUNCTION,
+					returnType: undefined,
+					params: [],
+					seqType: exactlyOne,
+				};
 			case 'anyMapTest':
 			case 'typedMapTest':
-				return { kind: BaseType.MAP, items: [] };
+				return { kind: BaseType.MAP, items: [], seqType: exactlyOne };
 			case 'anyArrayTest':
 			case 'typedArrayTest':
-				return { kind: BaseType.ARRAY, items: [] };
+				return { kind: BaseType.ARRAY, items: [], seqType: exactlyOne };
 			case 'atomicType':
 				return stringToValueType(
 					[getAttribute(typeAst, 'prefix'), getTextContent(typeAst)].join(':')
@@ -135,11 +147,14 @@ function getTypeDeclaration(ast: IAST): ValueType {
 
 	switch (occurrence) {
 		case '*':
-			return { kind: BaseType.ANY, item: type };
+			type.seqType = SequenceType.ZERO_OR_MORE;
+			return type;
 		case '?':
-			return { kind: BaseType.NULLABLE, item: type };
+			type.seqType = SequenceType.ZERO_OR_ONE;
+			return type;
 		case '+':
-			return { kind: BaseType.SOME, item: type };
+			type.seqType = SequenceType.ONE_OR_MORE;
+			return type;
 		case '':
 		case null:
 			return type;

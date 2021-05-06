@@ -1,7 +1,8 @@
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { BaseType } from '../dataTypes/Value';
+import { SequenceType } from '../dataTypes/Value';
+import { BaseType } from '../dataTypes/BaseType';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression from '../Expression';
@@ -45,7 +46,7 @@ class Filter extends Expression {
 			}
 
 			const resultValue = result.first();
-			if (isSubtypeOf(resultValue.type, { kind: BaseType.XSNUMERIC })) {
+			if (isSubtypeOf(resultValue.type.kind, BaseType.XSNUMERIC)) {
 				let requestedIndex: number = resultValue.value as number;
 				if (!Number.isInteger(requestedIndex)) {
 					// There are only values for integer positions
@@ -114,7 +115,7 @@ class Filter extends Expression {
 						// Actually empty, very falsy indeed
 						// Continue to next
 						shouldReturnCurrentValue = false;
-					} else if (isSubtypeOf(first.type, { kind: BaseType.XSNUMERIC })) {
+					} else if (isSubtypeOf(first.type.kind, BaseType.XSNUMERIC)) {
 						// Remember: XPath is one-based
 						shouldReturnCurrentValue = first.value === i + 1;
 					} else {

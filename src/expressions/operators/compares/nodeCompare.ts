@@ -2,7 +2,8 @@ import { compareNodePositions } from '../../dataTypes/documentOrderUtils';
 import ISequence from '../../dataTypes/ISequence';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import { BaseType } from '../../dataTypes/Value';
+import { SequenceType } from '../../dataTypes/Value';
+import { BaseType } from '../../dataTypes/BaseType';
 import zipSingleton from '../../util/zipSingleton';
 import arePointersEqual from './arePointersEqual';
 
@@ -25,8 +26,8 @@ export default function nodeCompare(
 				singleton: () => {
 					return zipSingleton([firstSequence, secondSequence], ([first, second]) => {
 						if (
-							!isSubtypeOf(first.type, { kind: BaseType.NODE }) ||
-							!isSubtypeOf(second.type, { kind: BaseType.NODE })
+							!isSubtypeOf(first.type.kind, BaseType.NODE) ||
+							!isSubtypeOf(second.type.kind, BaseType.NODE)
 						) {
 							throw new Error('XPTY0004: Sequences to compare are not nodes');
 						}

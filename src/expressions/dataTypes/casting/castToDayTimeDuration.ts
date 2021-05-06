@@ -1,30 +1,31 @@
 import createAtomicValue from '../createAtomicValue';
-import { BaseType, ValueType } from '../Value';
+import { SequenceType, ValueType } from '../Value';
+import { BaseType } from '../BaseType';
 import DayTimeDuration from '../valueTypes/DayTimeDuration';
 import CastResult from './CastResult';
 
 const createDayTimeDurationValue = (value) =>
-	createAtomicValue(value, { kind: BaseType.XSDAYTIMEDURATION });
+	createAtomicValue(value, {
+		kind: BaseType.XSDAYTIMEDURATION,
+		seqType: SequenceType.EXACTLY_ONE,
+	});
 
 export default function castToDayTimeDuration(
-	instanceOf: (typeName: ValueType) => boolean
+	instanceOf: (typeName: BaseType) => boolean
 ): (value) => CastResult {
-	if (
-		instanceOf({ kind: BaseType.XSDURATION }) &&
-		!instanceOf({ kind: BaseType.XSYEARMONTHDURATION })
-	) {
+	if (instanceOf(BaseType.XSDURATION) && !instanceOf(BaseType.XSYEARMONTHDURATION)) {
 		return (value) => ({
 			successful: true,
 			value: createDayTimeDurationValue(value.getDayTimeDuration()),
 		});
 	}
-	if (instanceOf({ kind: BaseType.XSYEARMONTHDURATION })) {
+	if (instanceOf(BaseType.XSYEARMONTHDURATION)) {
 		return () => ({
 			successful: true,
 			value: createDayTimeDurationValue(DayTimeDuration.fromString('PT0.0S')),
 		});
 	}
-	if (instanceOf({ kind: BaseType.XSUNTYPEDATOMIC }) || instanceOf({ kind: BaseType.XSSTRING })) {
+	if (instanceOf(BaseType.XSUNTYPEDATOMIC) || instanceOf(BaseType.XSSTRING)) {
 		return (value) => {
 			const parsedDuration = DayTimeDuration.fromString(value);
 			if (parsedDuration) {

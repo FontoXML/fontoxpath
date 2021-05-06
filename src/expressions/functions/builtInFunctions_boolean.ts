@@ -2,7 +2,8 @@ import sequenceFactory from '../dataTypes/sequenceFactory';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
-import { BaseType } from '../dataTypes/Value';
+import { SequenceType } from '../dataTypes/Value';
+import { BaseType } from '../dataTypes/BaseType';
 import { BuiltinDeclarationType } from './builtInFunctions';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
@@ -40,8 +41,8 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'boolean',
-		argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } }],
-		returnType: { kind: BaseType.XSBOOLEAN },
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
+		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
 		callFunction: fnBoolean,
 	},
 
@@ -49,15 +50,15 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'true',
 		argumentTypes: [],
-		returnType: { kind: BaseType.XSBOOLEAN },
+		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
 		callFunction: fnTrue,
 	},
 
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'not',
-		argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } }],
-		returnType: { kind: BaseType.XSBOOLEAN },
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
+		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
 		callFunction: fnNot,
 	},
 
@@ -65,7 +66,7 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'false',
 		argumentTypes: [],
-		returnType: { kind: BaseType.XSBOOLEAN },
+		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
 		callFunction: fnFalse,
 	},
 ];

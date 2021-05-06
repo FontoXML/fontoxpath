@@ -62,7 +62,8 @@ import RenameExpression from '../expressions/xquery-update/RenameExpression';
 import ReplaceExpression from '../expressions/xquery-update/ReplaceExpression';
 import TransformExpression from '../expressions/xquery-update/TransformExpression';
 
-import { BaseType, ValueType } from '../expressions/dataTypes/Value';
+import { SequenceType, ValueType } from '../expressions/dataTypes/Value';
+import { BaseType } from '../expressions/dataTypes/BaseType';
 import QName from '../expressions/dataTypes/valueTypes/QName';
 import FlworExpression from '../expressions/FlworExpression';
 import OrderByExpression from '../expressions/OrderByExpression';
@@ -376,6 +377,7 @@ function compileLookup(ast: IAST, compilationOptions: CompilationOptions): '*' |
 		case 'NCName':
 			return new Literal(astHelper.getTextContent(keyExpression), {
 				kind: BaseType.XSSTRING,
+				seqType: SequenceType.EXACTLY_ONE,
 			});
 		case 'star':
 			return '*';
@@ -719,24 +721,28 @@ function instanceOf(
 function integerConstantExpr(ast: IAST, _compilationOptions: CompilationOptions) {
 	return new Literal(astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')), {
 		kind: BaseType.XSINTEGER,
+		seqType: SequenceType.EXACTLY_ONE,
 	});
 }
 
 function stringConstantExpr(ast: IAST, _compilationOptions: CompilationOptions) {
 	return new Literal(astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')), {
 		kind: BaseType.XSSTRING,
+		seqType: SequenceType.EXACTLY_ONE,
 	});
 }
 
 function decimalConstantExpr(ast: IAST, _compilationOptions: CompilationOptions) {
 	return new Literal(astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')), {
 		kind: BaseType.XSDECIMAL,
+		seqType: SequenceType.EXACTLY_ONE,
 	});
 }
 
 function doubleConstantExpr(ast: IAST, _compilationOptions: CompilationOptions) {
 	return new Literal(astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')), {
 		kind: BaseType.XSDOUBLE,
+		seqType: SequenceType.EXACTLY_ONE,
 	});
 }
 
@@ -1151,7 +1157,10 @@ function dirElementConstructor(ast: IAST, compilationOptions: CompilationOptions
 
 function CDataSection(ast: IAST, _compilationOptions: CompilationOptions) {
 	// Walks like a stringliteral, talks like a stringliteral, it's a stringliteral
-	return new Literal(astHelper.getTextContent(ast), { kind: BaseType.XSSTRING });
+	return new Literal(astHelper.getTextContent(ast), {
+		kind: BaseType.XSSTRING,
+		seqType: SequenceType.EXACTLY_ONE,
+	});
 }
 
 function attributeConstructor(ast: IAST, compilationOptions: CompilationOptions) {

@@ -1,14 +1,18 @@
 import * as chai from 'chai';
-import { BaseType } from 'fontoxpath';
 import DomFacade from 'fontoxpath/domFacade/DomFacade';
 import { adaptJavaScriptValueToSequence } from 'fontoxpath/expressions/adaptJavaScriptValueToXPathValue';
+import { SequenceType } from 'fontoxpath/expressions/dataTypes/Value';
+import { BaseType } from 'fontoxpath/expressions/dataTypes/baseType';
 import DateTime from 'fontoxpath/expressions/dataTypes/valueTypes/DateTime';
 import * as slimdom from 'slimdom';
 import { domFacade as adaptingDomFacade } from '../../../src';
 
 describe('adaptJavaScriptValueToSequence', () => {
 	it('turns numbers into integers', () => {
-		const xpathSequence = adaptJavaScriptValueToSequence(null, 1, { kind: BaseType.XSINTEGER });
+		const xpathSequence = adaptJavaScriptValueToSequence(null, 1, {
+			kind: BaseType.XSINTEGER,
+			seqType: SequenceType.EXACTLY_ONE,
+		});
 		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 		chai.assert(xpathSequence.first().type.kind === BaseType.XSINTEGER, 'is an integer');
 		chai.assert.equal(xpathSequence.first().value, 1, 'is 1');
@@ -25,6 +29,7 @@ describe('adaptJavaScriptValueToSequence', () => {
 	it('turns numbers into doubles', () => {
 		const xpathSequence = adaptJavaScriptValueToSequence(null, 1.0, {
 			kind: BaseType.XSDOUBLE,
+			seqType: SequenceType.EXACTLY_ONE,
 		});
 		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 		chai.assert(xpathSequence.first().type.kind === BaseType.XSDOUBLE, 'is a double');
@@ -41,6 +46,7 @@ describe('adaptJavaScriptValueToSequence', () => {
 	it('turns numbers into decimals', () => {
 		const xpathSequence = adaptJavaScriptValueToSequence(null, 1.0, {
 			kind: BaseType.XSDECIMAL,
+			seqType: SequenceType.EXACTLY_ONE,
 		});
 		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 		chai.assert(xpathSequence.first().type.kind === BaseType.XSDECIMAL, 'is a decimal');
@@ -48,7 +54,10 @@ describe('adaptJavaScriptValueToSequence', () => {
 	});
 
 	it('turns numbers into floats', () => {
-		const xpathSequence = adaptJavaScriptValueToSequence(null, 1.0, { kind: BaseType.XSFLOAT });
+		const xpathSequence = adaptJavaScriptValueToSequence(null, 1.0, {
+			kind: BaseType.XSFLOAT,
+			seqType: SequenceType.EXACTLY_ONE,
+		});
 		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 		chai.assert(xpathSequence.first().type.kind === BaseType.XSFLOAT, 'is a float');
 		chai.assert.equal(xpathSequence.first().value, 1.0, 'is 1.0');
@@ -57,6 +66,7 @@ describe('adaptJavaScriptValueToSequence', () => {
 	it('turns booleans into booleans', () => {
 		const xpathSequence = adaptJavaScriptValueToSequence(null, false, {
 			kind: BaseType.XSBOOLEAN,
+			seqType: SequenceType.EXACTLY_ONE,
 		});
 		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 		chai.assert(xpathSequence.first().type.kind === BaseType.XSBOOLEAN, 'is a boolean');
@@ -65,8 +75,8 @@ describe('adaptJavaScriptValueToSequence', () => {
 
 	it('turns strings into xs:string?', () => {
 		const xpathSequence = adaptJavaScriptValueToSequence(null, 'a', {
-			kind: BaseType.NULLABLE,
-			item: { kind: BaseType.XSSTRING },
+			kind: BaseType.XSSTRING,
+			seqType: SequenceType.ZERO_OR_ONE,
 		});
 		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 		chai.assert(xpathSequence.first().type.kind === BaseType.XSSTRING, 'is a string');
@@ -75,8 +85,8 @@ describe('adaptJavaScriptValueToSequence', () => {
 
 	it('turns strings into xs:string+', () => {
 		const xpathSequence = adaptJavaScriptValueToSequence(null, ['a', 'b', 'c'], {
-			kind: BaseType.SOME,
-			item: { kind: BaseType.XSSTRING },
+			kind: BaseType.XSSTRING,
+			seqType: SequenceType.ONE_OR_MORE,
 		});
 		chai.assert.equal(xpathSequence.getLength(), 3, 'is a sequence with length 3');
 		const values = xpathSequence.getAllValues();
@@ -90,8 +100,8 @@ describe('adaptJavaScriptValueToSequence', () => {
 
 	it('turns strings into xs:string*', () => {
 		const xpathSequence = adaptJavaScriptValueToSequence(null, ['a', 'b', 'c'], {
-			kind: BaseType.ANY,
-			item: { kind: BaseType.XSSTRING },
+			kind: BaseType.XSSTRING,
+			seqType: SequenceType.ZERO_OR_MORE,
 		});
 		chai.assert.equal(xpathSequence.getLength(), 3, 'is a sequence with length 3');
 		const values = xpathSequence.getAllValues();
@@ -105,8 +115,8 @@ describe('adaptJavaScriptValueToSequence', () => {
 
 	it('turns null into string? (empty sequence)', () => {
 		const xpathSequence = adaptJavaScriptValueToSequence(null, null, {
-			kind: BaseType.NULLABLE,
-			item: { kind: BaseType.XSSTRING },
+			kind: BaseType.XSSTRING,
+			seqType: SequenceType.ZERO_OR_ONE,
 		});
 		chai.assert(xpathSequence.isEmpty(), 'is a singleton sequence');
 	});
@@ -117,6 +127,7 @@ describe('adaptJavaScriptValueToSequence', () => {
 			new Date(Date.UTC(2018, 5, 22, 9, 10, 20)),
 			{
 				kind: BaseType.XSDATE,
+				seqType: SequenceType.EXACTLY_ONE,
 			}
 		);
 		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
@@ -132,7 +143,7 @@ describe('adaptJavaScriptValueToSequence', () => {
 		const xpathSequence = adaptJavaScriptValueToSequence(
 			null,
 			new Date(Date.UTC(2018, 5, 22, 9, 10, 20)),
-			{ kind: BaseType.XSTIME }
+			{ kind: BaseType.XSTIME, seqType: SequenceType.EXACTLY_ONE }
 		);
 		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 		chai.assert(xpathSequence.first().type.kind === BaseType.XSTIME, 'is a time');
@@ -147,7 +158,7 @@ describe('adaptJavaScriptValueToSequence', () => {
 		const xpathSequence = adaptJavaScriptValueToSequence(
 			null,
 			new Date(Date.UTC(2018, 5, 22, 9, 10, 20)),
-			{ kind: BaseType.XSDATETIME }
+			{ kind: BaseType.XSDATETIME, seqType: SequenceType.EXACTLY_ONE }
 		);
 		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 		chai.assert(xpathSequence.first().type.kind === BaseType.XSDATETIME, 'is a dateTime');
@@ -162,7 +173,7 @@ describe('adaptJavaScriptValueToSequence', () => {
 		const xpathSequence = adaptJavaScriptValueToSequence(
 			null,
 			new Date(Date.UTC(2018, 5, 22, 9, 10, 20)),
-			{ kind: BaseType.XSGYEARMONTH }
+			{ kind: BaseType.XSGYEARMONTH, seqType: SequenceType.EXACTLY_ONE }
 		);
 		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 		chai.assert(xpathSequence.first().type.kind === BaseType.XSGYEARMONTH, 'is a gYearMonth');
@@ -177,7 +188,7 @@ describe('adaptJavaScriptValueToSequence', () => {
 		const xpathSequence = adaptJavaScriptValueToSequence(
 			null,
 			new Date(Date.UTC(2018, 5, 22, 9, 10, 20)),
-			{ kind: BaseType.XSGYEAR }
+			{ kind: BaseType.XSGYEAR, seqType: SequenceType.EXACTLY_ONE }
 		);
 		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 		chai.assert(xpathSequence.first().type.kind === BaseType.XSGYEAR, 'is a gYear');
@@ -188,7 +199,7 @@ describe('adaptJavaScriptValueToSequence', () => {
 		const xpathSequence = adaptJavaScriptValueToSequence(
 			null,
 			new Date(Date.UTC(2018, 5, 22, 9, 10, 20)),
-			{ kind: BaseType.XSGMONTHDAY }
+			{ kind: BaseType.XSGMONTHDAY, seqType: SequenceType.EXACTLY_ONE }
 		);
 		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 		chai.assert(xpathSequence.first().type.kind === BaseType.XSGMONTHDAY, 'is a gMonthDay');
@@ -203,7 +214,7 @@ describe('adaptJavaScriptValueToSequence', () => {
 		const xpathSequence = adaptJavaScriptValueToSequence(
 			null,
 			new Date(Date.UTC(2018, 5, 22, 9, 10, 20)),
-			{ kind: BaseType.XSGMONTH }
+			{ kind: BaseType.XSGMONTH, seqType: SequenceType.EXACTLY_ONE }
 		);
 		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 		chai.assert(xpathSequence.first().type.kind === BaseType.XSGMONTH, 'is a gMonth');
@@ -214,7 +225,7 @@ describe('adaptJavaScriptValueToSequence', () => {
 		const xpathSequence = adaptJavaScriptValueToSequence(
 			null,
 			new Date(Date.UTC(2018, 5, 22, 9, 10, 20)),
-			{ kind: BaseType.XSGDAY }
+			{ kind: BaseType.XSGDAY, seqType: SequenceType.EXACTLY_ONE }
 		);
 		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 		chai.assert(xpathSequence.first().type.kind === BaseType.XSGDAY, 'is a gDay');
@@ -229,6 +240,7 @@ describe('adaptJavaScriptValueToSequence', () => {
 		it('can automatically convert numbers', () => {
 			const xpathSequence = adaptJavaScriptValueToSequence(null, 1.0, {
 				kind: BaseType.ITEM,
+				seqType: SequenceType.EXACTLY_ONE,
 			});
 			chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 			chai.assert(xpathSequence.first().type.kind === BaseType.XSDOUBLE, 'is a double');
@@ -238,6 +250,7 @@ describe('adaptJavaScriptValueToSequence', () => {
 		it('can automatically convert strings', () => {
 			const xpathSequence = adaptJavaScriptValueToSequence(null, 'a', {
 				kind: BaseType.ITEM,
+				seqType: SequenceType.EXACTLY_ONE,
 			});
 			chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 			chai.assert(xpathSequence.first().type.kind === BaseType.XSSTRING, 'is a string');
@@ -247,6 +260,7 @@ describe('adaptJavaScriptValueToSequence', () => {
 		it('can automatically convert booleans', () => {
 			const xpathSequence = adaptJavaScriptValueToSequence(null, true, {
 				kind: BaseType.ITEM,
+				seqType: SequenceType.EXACTLY_ONE,
 			});
 			chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 			chai.assert(xpathSequence.first().type.kind === BaseType.XSBOOLEAN, 'is a boolean');
@@ -254,7 +268,11 @@ describe('adaptJavaScriptValueToSequence', () => {
 		});
 
 		it('can automatically convert objects', () => {
-			const xpathSequence = adaptJavaScriptValueToSequence(null, {}, { kind: BaseType.ITEM });
+			const xpathSequence = adaptJavaScriptValueToSequence(
+				null,
+				{},
+				{ kind: BaseType.ITEM, seqType: SequenceType.EXACTLY_ONE }
+			);
 			chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 			chai.assert(xpathSequence.first().type.kind === BaseType.MAP, 'is a map');
 		});
@@ -265,7 +283,10 @@ describe('adaptJavaScriptValueToSequence', () => {
 		});
 
 		it('can automatically convert arrays', () => {
-			const xpathSequence = adaptJavaScriptValueToSequence(null, [], { kind: BaseType.ITEM });
+			const xpathSequence = adaptJavaScriptValueToSequence(null, [], {
+				kind: BaseType.ITEM,
+				seqType: SequenceType.EXACTLY_ONE,
+			});
 			chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 			chai.assert(xpathSequence.first().type.kind === BaseType.ARRAY, 'is an array');
 		});

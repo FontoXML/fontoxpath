@@ -187,13 +187,13 @@ export default function processProlog(
 			throw errXQST0060();
 		}
 
-		const returnType = astHelper.getTypeDeclaration(declaration);
+		const returnType: ValueType = astHelper.getTypeDeclaration(declaration);
 		const params = astHelper.getChildren(
 			astHelper.getFirstChild(declaration, 'paramList'),
 			'param'
 		);
 		const paramNames = params.map((param) => astHelper.getFirstChild(param, 'varName'));
-		const paramTypes = params.map((param) => astHelper.getTypeDeclaration(param));
+		const paramTypes: ValueType[] = params.map((param) => astHelper.getTypeDeclaration(param));
 
 		let functionDefinition: GenericFunctionDefinition<any, any>;
 		const functionBody = astHelper.getFirstChild(declaration, 'functionBody');

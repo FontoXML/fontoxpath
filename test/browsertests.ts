@@ -1,5 +1,5 @@
 import * as chai from 'chai';
-import { BaseType, evaluateXPathToString, registerCustomXPathFunction } from 'fontoxpath';
+import { BaseType, evaluateXPathToString, registerCustomXPathFunction, SequenceType } from 'fontoxpath';
 import { slimdom, sync } from 'slimdom-sax-parser';
 
 describe('Browser tests', function () {
@@ -9,17 +9,32 @@ describe('Browser tests', function () {
 			const secondDocument = sync('<xml>2nd Document</xml>');
 			const thirdDocument = sync('<xml>3rd Document</xml>');
 
-			registerCustomXPathFunction('cf:firstDocument', [], { kind: BaseType.ITEM }, () => {
-				return firstDocument.documentElement;
-			});
+			registerCustomXPathFunction(
+				'cf:firstDocument',
+				[],
+				{ kind: BaseType.ITEM, seqType: SequenceType.EXACTLY_ONE },
+				() => {
+					return firstDocument.documentElement;
+				}
+			);
 
-			registerCustomXPathFunction('cf:secondDocument', [], { kind: BaseType.ITEM }, () => {
-				return secondDocument.documentElement;
-			});
+			registerCustomXPathFunction(
+				'cf:secondDocument',
+				[],
+				{ kind: BaseType.ITEM, seqType: SequenceType.EXACTLY_ONE },
+				() => {
+					return secondDocument.documentElement;
+				}
+			);
 
-			registerCustomXPathFunction('cf:thirdDocument', [], { kind: BaseType.ITEM }, () => {
-				return thirdDocument.documentElement;
-			});
+			registerCustomXPathFunction(
+				'cf:thirdDocument',
+				[],
+				{ kind: BaseType.ITEM, seqType: SequenceType.EXACTLY_ONE },
+				() => {
+					return thirdDocument.documentElement;
+				}
+			);
 
 			chai.assert.equal(
 				evaluateXPathToString(
