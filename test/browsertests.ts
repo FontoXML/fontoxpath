@@ -1,5 +1,5 @@
 import * as chai from 'chai';
-import { BaseType, evaluateXPathToString, registerCustomXPathFunction } from 'fontoxpath';
+import { BaseType, evaluateXPathToString, registerCustomXPathFunction, SequenceType } from 'fontoxpath';
 import { slimdom, sync } from 'slimdom-sax-parser';
 
 describe('Browser tests', function () {
