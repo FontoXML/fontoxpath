@@ -90,12 +90,17 @@ export const enum SequenceType {
 }
 
 /**
- * A superset of the SequenceType that also includes the ellipsis operator '...'
+ * A seperate enum for the ellipsis function parameter
  * @public
  */
 export const enum EllipsisType {
 	ELLIPSIS = 4,
 }
+
+/**
+ *  The combined parameter type which is either a value type or an ellipsis type.
+ */
+export type ParameterType = ValueType | EllipsisType;
 
 /**
  * A function to retrieve wether a type starts with xs.
