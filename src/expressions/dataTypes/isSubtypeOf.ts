@@ -13,7 +13,9 @@ function isSubtypeOfType(subType: TypeModel, superType: TypeModel) {
 			return true;
 		}
 		if (subType.variety === Variety.UNION) {
-			return !!subType.memberTypes.find((memberType) => isSubtypeOf(memberType.type.kind, superType.type.kind));
+			return !!subType.memberTypes.find((memberType) =>
+				isSubtypeOf(memberType.type.kind, superType.type.kind)
+			);
 		}
 		subType = subType.parent;
 	}
