@@ -26,7 +26,7 @@ import AtomicValue from '../../dataTypes/AtomicValue';
 import DynamicContext from '../../DynamicContext';
 
 // Use partial application to get to a comparer faster
-function areBothStringOrAnyURI(a, b) {
+function areBothStringOrAnyURI(a: BaseType, b: BaseType) {
 	return (
 		(isSubtypeOf(a, BaseType.XSSTRING) || isSubtypeOf(a, BaseType.XSANYURI)) &&
 		(isSubtypeOf(b, BaseType.XSSTRING) || isSubtypeOf(b, BaseType.XSANYURI))
@@ -39,8 +39,8 @@ function generateCompareFunction(
 	typeB: ValueType,
 	dynamicContext: DynamicContext
 ): (valA: any, valB: any) => boolean {
-	let castFunctionForValueA = null;
-	let castFunctionForValueB = null;
+	let castFunctionForValueA: (x: AtomicValue) => AtomicValue = null;
+	let castFunctionForValueB: (x: AtomicValue) => AtomicValue = null;
 
 	if (
 		isSubtypeOf(typeA.kind, BaseType.XSUNTYPEDATOMIC) &&
@@ -48,14 +48,14 @@ function generateCompareFunction(
 	) {
 		typeA = typeB = { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE };
 	} else if (isSubtypeOf(typeA.kind, BaseType.XSUNTYPEDATOMIC)) {
-		castFunctionForValueA = (val) => castToType(val, typeB);
+		castFunctionForValueA = (val: AtomicValue) => castToType(val, typeB);
 		typeA = typeB;
 	} else if (isSubtypeOf(typeB.kind, BaseType.XSUNTYPEDATOMIC)) {
-		castFunctionForValueB = (val) => castToType(val, typeA);
+		castFunctionForValueB = (val: AtomicValue) => castToType(val, typeA);
 		typeB = typeA;
 	}
 
-	function applyCastFunctions(valA, valB) {
+	function applyCastFunctions(valA: AtomicValue, valB: AtomicValue) {
 		return {
 			castA: castFunctionForValueA ? castFunctionForValueA(valA) : valA,
 			castB: castFunctionForValueB ? castFunctionForValueB(valB) : valB,
@@ -95,7 +95,7 @@ function generateCompareFunction(
 		areBothSubtypeOf(BaseType.XSANYURI) ||
 		areBothSubtypeOf(BaseType.XSHEXBINARY) ||
 		areBothSubtypeOf(BaseType.XSBASE64BINARY) ||
-		areBothStringOrAnyURI(typeA, typeB)
+		areBothStringOrAnyURI(typeA.kind, typeB.kind)
 	) {
 		switch (operator) {
 			case 'eqOp':
