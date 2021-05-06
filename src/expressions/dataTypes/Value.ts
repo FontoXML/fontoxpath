@@ -97,11 +97,16 @@ export const enum EllipsisType {
 	ELLIPSIS = 4,
 }
 
+/**
+ * A function to retrieve wether a type starts with xs.
+ * @param inType input type.
+ * @returns a boolean, true when the type starts with XS
+ */
 export function startWithXS(inType: BaseType): boolean {
-	return a[inType];
+	return xsMap[inType];
 }
 
-const a = new Map([
+const xsMap = new Map([
 	[BaseType.XSBOOLEAN, true],
 	[BaseType.XSSTRING, true],
 	[BaseType.XSNUMERIC, true],
