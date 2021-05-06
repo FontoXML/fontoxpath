@@ -1,8 +1,8 @@
 import * as chai from 'chai';
 import castToType from 'fontoxpath/expressions/dataTypes/castToType';
 import createAtomicValue from 'fontoxpath/expressions/dataTypes/createAtomicValue';
-import { BaseType, SequenceType } from 'fontoxpath/expressions/dataTypes/Value';
-
+import { SequenceType } from 'fontoxpath/expressions/dataTypes/Value';
+import { BaseType } from 'fontoxpath/expressions/dataTypes/baseType';
 import DateTime from 'fontoxpath/expressions/dataTypes/valueTypes/DateTime';
 import DayTimeDuration from 'fontoxpath/expressions/dataTypes/valueTypes/DayTimeDuration';
 import Duration from 'fontoxpath/expressions/dataTypes/valueTypes/Duration';

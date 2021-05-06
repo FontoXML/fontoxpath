@@ -13,7 +13,8 @@ import {
 
 import IDomFacade from 'fontoxpath/domFacade/IDomFacade';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
-import { BaseType, SequenceType } from 'fontoxpath/expressions/dataTypes/Value';
+import { SequenceType } from 'fontoxpath/expressions/dataTypes/Value';
+import { BaseType } from 'fontoxpath/expressions/dataTypes/baseType';
 
 describe('registerCustomXPathFunction', () => {
 	function identityNamespaceResolver(prefix) {

@@ -1,7 +1,8 @@
 import * as chai from 'chai';
 import DomFacade from 'fontoxpath/domFacade/DomFacade';
 import { adaptJavaScriptValueToSequence } from 'fontoxpath/expressions/adaptJavaScriptValueToXPathValue';
-import { BaseType, SequenceType } from 'fontoxpath/expressions/dataTypes/Value';
+import { SequenceType } from 'fontoxpath/expressions/dataTypes/Value';
+import { BaseType } from 'fontoxpath/expressions/dataTypes/baseType';
 import DateTime from 'fontoxpath/expressions/dataTypes/valueTypes/DateTime';
 import * as slimdom from 'slimdom';
 import { domFacade as adaptingDomFacade } from '../../../src';

@@ -1,5 +1,6 @@
 import * as chai from 'chai';
-import { BaseType, SequenceType } from 'fontoxpath/expressions/dataTypes/Value';
+import { SequenceType } from 'fontoxpath/expressions/dataTypes/Value';
+import { BaseType } from 'fontoxpath/expressions/dataTypes/baseType';
 import functionRegistry from 'fontoxpath/expressions/functions/functionRegistry';
 import registerCustomXPathFunction from 'fontoxpath/registerCustomXPathFunction';
 
