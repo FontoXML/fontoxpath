@@ -2,24 +2,24 @@ import { BaseType, SequenceType, ValueType } from '../Value';
 import QName from '../valueTypes/QName';
 
 export default function castToStringLikeType(
-	instanceOf: (t: ValueType) => boolean
+	instanceOf: (t: BaseType) => boolean
 ): (value: any) => { successful: true; value: any } | { error: Error; successful: false } {
 	if (
-		instanceOf({ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE }) ||
-		instanceOf({ kind: BaseType.XSUNTYPEDATOMIC, seqType: SequenceType.EXACTLY_ONE })
+		instanceOf(BaseType.XSSTRING) ||
+		instanceOf(BaseType.XSUNTYPEDATOMIC)
 	) {
 		return (value) => ({
 			successful: true,
 			value: value + '',
 		});
 	}
-	if (instanceOf({ kind: BaseType.XSANYURI, seqType: SequenceType.EXACTLY_ONE })) {
+	if (instanceOf(BaseType.XSANYURI)) {
 		return (value) => ({
 			successful: true,
 			value,
 		});
 	}
-	if (instanceOf({ kind: BaseType.XSQNAME, seqType: SequenceType.EXACTLY_ONE })) {
+	if (instanceOf(BaseType.XSQNAME)) {
 		return (value: QName) => {
 			return {
 				successful: true,
@@ -27,16 +27,16 @@ export default function castToStringLikeType(
 			};
 		};
 	}
-	if (instanceOf({ kind: BaseType.XSNOTATION, seqType: SequenceType.EXACTLY_ONE })) {
+	if (instanceOf(BaseType.XSNOTATION)) {
 		return (value) => ({
 			successful: true,
 			value: value.toString(),
 		});
 	}
-	if (instanceOf({ kind: BaseType.XSNUMERIC, seqType: SequenceType.EXACTLY_ONE })) {
+	if (instanceOf(BaseType.XSNUMERIC)) {
 		if (
-			instanceOf({ kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE }) ||
-			instanceOf({ kind: BaseType.XSDECIMAL, seqType: SequenceType.EXACTLY_ONE })
+			instanceOf(BaseType.XSINTEGER) ||
+			instanceOf(BaseType.XSDECIMAL)
 		) {
 			return (value) => ({
 				successful: true,
@@ -44,8 +44,8 @@ export default function castToStringLikeType(
 			});
 		}
 		if (
-			instanceOf({ kind: BaseType.XSFLOAT, seqType: SequenceType.EXACTLY_ONE }) ||
-			instanceOf({ kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE })
+			instanceOf(BaseType.XSFLOAT) ||
+			instanceOf(BaseType.XSDOUBLE)
 		) {
 			return (value) => {
 				if (isNaN(value)) {
@@ -76,39 +76,39 @@ export default function castToStringLikeType(
 		}
 	}
 	if (
-		instanceOf({ kind: BaseType.XSDATETIME, seqType: SequenceType.EXACTLY_ONE }) ||
-		instanceOf({ kind: BaseType.XSDATE, seqType: SequenceType.EXACTLY_ONE }) ||
-		instanceOf({ kind: BaseType.XSTIME, seqType: SequenceType.EXACTLY_ONE }) ||
-		instanceOf({ kind: BaseType.XSGDAY, seqType: SequenceType.EXACTLY_ONE }) ||
-		instanceOf({ kind: BaseType.XSGMONTH, seqType: SequenceType.EXACTLY_ONE }) ||
-		instanceOf({ kind: BaseType.XSGMONTHDAY, seqType: SequenceType.EXACTLY_ONE }) ||
-		instanceOf({ kind: BaseType.XSGYEAR, seqType: SequenceType.EXACTLY_ONE }) ||
-		instanceOf({ kind: BaseType.XSGYEARMONTH, seqType: SequenceType.EXACTLY_ONE })
+		instanceOf(BaseType.XSDATETIME) ||
+		instanceOf(BaseType.XSDATE) ||
+		instanceOf(BaseType.XSTIME) ||
+		instanceOf(BaseType.XSGDAY) ||
+		instanceOf(BaseType.XSGMONTH) ||
+		instanceOf(BaseType.XSGMONTHDAY) ||
+		instanceOf(BaseType.XSGYEAR) ||
+		instanceOf(BaseType.XSGYEARMONTH)
 	) {
 		return (value) => ({
 			successful: true,
 			value: value.toString(),
 		});
 	}
-	if (instanceOf({ kind: BaseType.XSYEARMONTHDURATION, seqType: SequenceType.EXACTLY_ONE })) {
+	if (instanceOf(BaseType.XSYEARMONTHDURATION)) {
 		return (value) => ({
 			successful: true,
 			value: value.toString(),
 		});
 	}
-	if (instanceOf({ kind: BaseType.XSDAYTIMEDURATION, seqType: SequenceType.EXACTLY_ONE })) {
+	if (instanceOf(BaseType.XSDAYTIMEDURATION)) {
 		return (value) => ({
 			successful: true,
 			value: value.toString(),
 		});
 	}
-	if (instanceOf({ kind: BaseType.XSDURATION, seqType: SequenceType.EXACTLY_ONE })) {
+	if (instanceOf(BaseType.XSDURATION)) {
 		return (value) => ({
 			successful: true,
 			value: value.toString(),
 		});
 	}
-	if (instanceOf({ kind: BaseType.XSHEXBINARY, seqType: SequenceType.EXACTLY_ONE })) {
+	if (instanceOf(BaseType.XSHEXBINARY)) {
 		return (value) => ({
 			successful: true,
 			value: value.toUpperCase(),

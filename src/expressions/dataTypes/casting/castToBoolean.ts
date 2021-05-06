@@ -1,19 +1,19 @@
 import { falseBoolean, trueBoolean } from '../createAtomicValue';
-import { BaseType, SequenceType, ValueType } from '../Value';
+import { BaseType, SequenceType } from '../Value';
 import CastResult from './CastResult';
 
 export default function castToBoolean(
-	instanceOf: (typeName: ValueType) => boolean
-): (value) => CastResult {
-	if (instanceOf({ kind: BaseType.XSNUMERIC, seqType: SequenceType.EXACTLY_ONE })) {
+	instanceOf: (typeName: BaseType) => boolean
+): (value: any) => CastResult {
+	if (instanceOf(BaseType.XSNUMERIC)) {
 		return (value) => ({
 			successful: true,
 			value: value === 0 || isNaN(value) ? falseBoolean : trueBoolean,
 		});
 	}
 	if (
-		instanceOf({ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE }) ||
-		instanceOf({ kind: BaseType.XSUNTYPEDATOMIC, seqType: SequenceType.EXACTLY_ONE })
+		instanceOf(BaseType.XSSTRING) ||
+		instanceOf(BaseType.XSUNTYPEDATOMIC)
 	) {
 		return (value) => {
 			switch (value) {

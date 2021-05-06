@@ -1,24 +1,24 @@
-import { BaseType, SequenceType, ValueType } from '../Value';
+import { BaseType } from '../Value';
 
 export default function castToFloatLikeType(
-	instanceOf: (typeName: ValueType) => boolean,
-	to: ValueType
-): (value) => { successful: true; value: number } | { error: Error; successful: false } {
-	if (instanceOf({ kind: BaseType.XSNUMERIC, seqType: SequenceType.EXACTLY_ONE })) {
+	instanceOf: (typeName: BaseType) => boolean,
+	to: BaseType
+): (value: any) => { successful: true; value: number } | { error: Error; successful: false } {
+	if (instanceOf(BaseType.XSNUMERIC)) {
 		return (value) => ({
 			successful: true,
 			value,
 		});
 	}
-	if (instanceOf({ kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE })) {
+	if (instanceOf(BaseType.XSBOOLEAN)) {
 		return (value) => ({
 			successful: true,
 			value: value ? 1 : 0,
 		});
 	}
 	if (
-		instanceOf({ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE }) ||
-		instanceOf({ kind: BaseType.XSUNTYPEDATOMIC, seqType: SequenceType.EXACTLY_ONE })
+		instanceOf(BaseType.XSSTRING) ||
+		instanceOf(BaseType.XSUNTYPEDATOMIC)
 	) {
 		return (value) => {
 			switch (value) {

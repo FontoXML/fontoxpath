@@ -38,7 +38,7 @@ const TREAT_AS_PRIMITIVE = [
 ];
 
 function castToPrimitiveType(from: BaseType, to: BaseType): (value) => CastResult {
-	const instanceOf = (type: ValueType) => isSubtypeOf(from, type.kind);
+	const instanceOf = (type: BaseType) => isSubtypeOf(from, type);
 
 	if (to === BaseType.XSERROR) {
 		return () => ({

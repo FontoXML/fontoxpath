@@ -8,7 +8,7 @@ export default function createAtomicValue(value: any, type: ValueType): AtomicVa
 		throw new Error('Unknown type');
 	}
 
-	return {
+	return <AtomicValue>{
 		type,
 		value,
 	};

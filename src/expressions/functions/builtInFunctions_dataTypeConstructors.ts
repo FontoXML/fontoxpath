@@ -1,9 +1,10 @@
 import castToType from '../dataTypes/castToType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
+import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { normalizeWhitespace, validatePattern } from '../dataTypes/typeHelpers';
-import { BaseType, SequenceType } from '../dataTypes/Value';
+import { BaseType, SequenceType, ValueType } from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
 
 import { XMLSCHEMA_NAMESPACE_URI } from '../staticallyKnownNamespaces';
@@ -12,11 +13,11 @@ import { BuiltinDeclarationType } from './builtInFunctions';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
 function genericDataTypeConstructor(
-	dataType,
+	dataType: ValueType,
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence: ISequence
 ) {
 	if (sequence.isEmpty()) {
 		return sequence;

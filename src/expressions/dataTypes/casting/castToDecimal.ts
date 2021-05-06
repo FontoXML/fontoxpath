@@ -1,11 +1,11 @@
 import createAtomicValue from '../createAtomicValue';
-import { BaseType, SequenceType, ValueType } from '../Value';
+import { BaseType, SequenceType } from '../Value';
 import CastResult from './CastResult';
 
 export default function castToDecimal(
-	instanceOf: (typeName: ValueType) => boolean
-): (value) => CastResult {
-	if (instanceOf({ kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE })) {
+	instanceOf: (typeName: BaseType) => boolean
+): (value: any) => CastResult {
+	if (instanceOf(BaseType.XSINTEGER)) {
 		return (value) => ({
 			successful: true,
 			value: createAtomicValue(value, {
@@ -15,8 +15,8 @@ export default function castToDecimal(
 		});
 	}
 	if (
-		instanceOf({ kind: BaseType.XSFLOAT, seqType: SequenceType.EXACTLY_ONE }) ||
-		instanceOf({ kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE })
+		instanceOf(BaseType.XSFLOAT) ||
+		instanceOf(BaseType.XSDOUBLE)
 	) {
 		return (value) => {
 			if (isNaN(value) || !isFinite(value)) {
@@ -42,7 +42,7 @@ export default function castToDecimal(
 			};
 		};
 	}
-	if (instanceOf({ kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE })) {
+	if (instanceOf(BaseType.XSBOOLEAN)) {
 		return (value) => ({
 			successful: true,
 			value: createAtomicValue(value ? 1 : 0, {
@@ -53,8 +53,8 @@ export default function castToDecimal(
 	}
 
 	if (
-		instanceOf({ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE }) ||
-		instanceOf({ kind: BaseType.XSUNTYPEDATOMIC, seqType: SequenceType.EXACTLY_ONE })
+		instanceOf(BaseType.XSSTRING) ||
+		instanceOf(BaseType.XSUNTYPEDATOMIC)
 	) {
 		return (value) => {
 			const decimalValue = parseFloat(value);

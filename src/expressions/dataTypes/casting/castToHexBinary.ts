@@ -1,8 +1,9 @@
+import AtomicValue from '../AtomicValue';
 import createAtomicValue from '../createAtomicValue';
-import { BaseType, SequenceType, ValueType } from '../Value';
+import { BaseType, SequenceType } from '../Value';
 import CastResult from './CastResult';
 
-const createHexBinaryValue = (value) =>
+const createHexBinaryValue = (value: any): AtomicValue =>
 	createAtomicValue(value, { kind: BaseType.XSHEXBINARY, seqType: SequenceType.EXACTLY_ONE });
 
 function stringToHex(s: string) {
@@ -17,17 +18,17 @@ function stringToHex(s: string) {
 declare var atob: (s: string) => string;
 
 export default function castToHexBinary(
-	instanceOf: (typeName: ValueType) => boolean
-): (value) => CastResult {
-	if (instanceOf({ kind: BaseType.XSBASE64BINARY, seqType: SequenceType.EXACTLY_ONE })) {
+	instanceOf: (typeName: BaseType) => boolean
+): (value: any) => CastResult {
+	if (instanceOf(BaseType.XSBASE64BINARY)) {
 		return (value) => ({
 			successful: true,
 			value: createHexBinaryValue(stringToHex(atob(value))),
 		});
 	}
 	if (
-		instanceOf({ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE }) ||
-		instanceOf({ kind: BaseType.XSUNTYPEDATOMIC, seqType: SequenceType.EXACTLY_ONE })
+		instanceOf(BaseType.XSSTRING) ||
+		instanceOf(BaseType.XSUNTYPEDATOMIC)
 	) {
 		return (value) => ({
 			successful: true,

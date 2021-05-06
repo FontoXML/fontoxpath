@@ -4,7 +4,7 @@ import CastResult from './CastResult';
 import castToStringLikeType from './castToStringLikeType';
 
 export default function castToUntypedAtomic(
-	instanceOf: (typeName: ValueType) => boolean
+	instanceOf: (typeName: BaseType) => boolean
 ): (value) => CastResult {
 	const caster = castToStringLikeType(instanceOf);
 	return (value) => {
