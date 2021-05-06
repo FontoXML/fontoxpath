@@ -562,7 +562,7 @@ describe('registerCustomXPathFunction', () => {
 			registerCustomXPathFunction(
 				{ namespaceURI: 'test', localName: 'custom-date-function-optional-param' },
 				[{ kind: BaseType.XSDATE, seqType: SequenceType.ZERO_OR_ONE }],
-				{ kind: BaseType.XSDATE, seqType: SequenceType.ZERO_OR_MORE },
+				{ kind: BaseType.XSDATE, seqType: SequenceType.ZERO_OR_ONE },
 				(dynamicContext, date) => {
 					chai.assert.isTrue(
 						date === null || date instanceof Date,
