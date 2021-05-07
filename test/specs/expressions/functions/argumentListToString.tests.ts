@@ -1,5 +1,5 @@
 import * as chai from 'chai';
-import { BaseType, SequenceType } from 'fontoxpath';
+import { ValueType, SequenceMultiplicity } from 'fontoxpath';
 import sequenceFactory from 'fontoxpath/expressions/dataTypes/sequenceFactory';
 import argumentListToString from 'fontoxpath/expressions/functions/argumentListToString';
 
@@ -13,7 +13,7 @@ describe('argumentListToString()', () => {
 		const argumentList = [
 			sequenceFactory.create([
 				{
-					type: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
+					type: ValueType.XSANYATOMICTYPE,
 					value: null,
 				},
 			]),
@@ -25,11 +25,11 @@ describe('argumentListToString()', () => {
 		const argumentList = [
 			sequenceFactory.create([
 				{
-					type: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
+					type: ValueType.XSANYATOMICTYPE,
 					value: null,
 				},
 				{
-					type: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
+					type: ValueType.XSANYATOMICTYPE,
 					value: null,
 				},
 			]),
@@ -42,17 +42,17 @@ describe('argumentListToString()', () => {
 			sequenceFactory.create([]),
 			sequenceFactory.create([
 				{
-					type: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
+					type: ValueType.XSANYATOMICTYPE,
 					value: null,
 				},
 			]),
 			sequenceFactory.create([
 				{
-					type: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
+					type: ValueType.XSANYATOMICTYPE,
 					value: null,
 				},
 				{
-					type: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
+					type: ValueType.XSANYATOMICTYPE,
 					value: null,
 				},
 			]),
