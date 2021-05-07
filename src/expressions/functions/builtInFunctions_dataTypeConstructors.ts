@@ -73,9 +73,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSUNTYPEDATOMIC, mult: SequenceMultiplicity.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSUNTYPEDATOMIC,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSUNTYPEDATOMIC
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -87,9 +88,10 @@ const declarations: BuiltinDeclarationType[] = [
 			type: ValueType.XSERROR,
 			mult: SequenceMultiplicity.ZERO_OR_ONE,
 		},
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSERROR,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSERROR
+		) as FunctionDefinitionType,
 	},
 	// AnySimpleType cannot be instantiated
 	// AnyAtomicType cannot be instantiated
@@ -100,9 +102,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSSTRING, mult: SequenceMultiplicity.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSSTRING,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSSTRING
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -111,9 +114,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSBOOLEAN,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSBOOLEAN
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -122,9 +126,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSDECIMAL, mult: SequenceMultiplicity.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSDECIMAL,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSDECIMAL
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -133,9 +138,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSFLOAT, mult: SequenceMultiplicity.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSFLOAT,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSFLOAT
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -144,9 +150,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSDOUBLE, mult: SequenceMultiplicity.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSDOUBLE,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSDOUBLE
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -155,9 +162,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSDURATION, mult: SequenceMultiplicity.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSDURATION,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSDURATION
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -166,9 +174,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSDATETIME, mult: SequenceMultiplicity.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSDATETIME,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSDATETIME
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -178,9 +187,10 @@ const declarations: BuiltinDeclarationType[] = [
 		],
 		// TODO: this seems like a bug not sure though: xs:datetime instead of xs:datetimestamp
 		returnType: { type: ValueType.XSDATETIME, mult: SequenceMultiplicity.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSDATETIMESTAMP,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSDATETIMESTAMP
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -189,9 +199,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSTIME, mult: SequenceMultiplicity.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSTIME,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSTIME
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -200,9 +211,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSDATE, mult: SequenceMultiplicity.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSDATE,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSDATE
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -211,9 +223,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSGYEARMONTH, mult: SequenceMultiplicity.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSGYEARMONTH,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSGYEARMONTH
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -222,9 +235,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSGYEAR, mult: SequenceMultiplicity.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSGYEAR,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSGYEAR
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -233,9 +247,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSGMONTHDAY, mult: SequenceMultiplicity.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSGMONTHDAY,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSGMONTHDAY
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -244,9 +259,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSGDAY, mult: SequenceMultiplicity.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSGDAY,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSGDAY
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -255,9 +271,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSGMONTH, mult: SequenceMultiplicity.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSGMONTH,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSGMONTH
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -266,9 +283,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSHEXBINARY, mult: SequenceMultiplicity.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSHEXBINARY,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSHEXBINARY
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -277,9 +295,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSBASE64BINARY, mult: SequenceMultiplicity.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSBASE64BINARY,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSBASE64BINARY
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -297,9 +316,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSANYURI, mult: SequenceMultiplicity.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSANYURI,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSANYURI
+		) as FunctionDefinitionType,
 	},
 	// NOTATION cannot be instantiated
 	{
@@ -312,9 +332,10 @@ const declarations: BuiltinDeclarationType[] = [
 			type: ValueType.XSNORMALIZEDSTRING,
 			mult: SequenceMultiplicity.ZERO_OR_ONE,
 		},
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSNORMALIZEDSTRING,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSNORMALIZEDSTRING
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -323,9 +344,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSTOKEN, mult: SequenceMultiplicity.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSTOKEN,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSTOKEN
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -334,9 +356,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSLANGUAGE, mult: SequenceMultiplicity.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSLANGUAGE,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSLANGUAGE
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -345,9 +368,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSNMTOKEN, mult: SequenceMultiplicity.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSNMTOKEN,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSNMTOKEN
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -356,9 +380,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSNMTOKENS, mult: SequenceMultiplicity.ZERO_OR_MORE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSNMTOKENS,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSNMTOKENS
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -367,9 +392,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSNAME, mult: SequenceMultiplicity.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSNAME,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSNAME
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -378,9 +404,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSNCNAME, mult: SequenceMultiplicity.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSNCNAME,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSNCNAME
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -389,9 +416,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSID, mult: SequenceMultiplicity.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSID,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSID
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -400,9 +428,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSIDREF, mult: SequenceMultiplicity.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSIDREF,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSIDREF
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -411,9 +440,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSIDREFS, mult: SequenceMultiplicity.ZERO_OR_MORE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSIDREFS,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSIDREFS
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -422,9 +452,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSENTITY, mult: SequenceMultiplicity.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSENTITY,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSENTITY
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -433,9 +464,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSENTITIES, mult: SequenceMultiplicity.ZERO_OR_MORE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSENTITIES,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSENTITIES
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -444,9 +476,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSINTEGER,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSINTEGER
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -458,9 +491,10 @@ const declarations: BuiltinDeclarationType[] = [
 			type: ValueType.XSNONPOSITIVEINTEGER,
 			mult: SequenceMultiplicity.ZERO_OR_ONE,
 		},
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSNONPOSITIVEINTEGER,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSNONPOSITIVEINTEGER
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -472,9 +506,10 @@ const declarations: BuiltinDeclarationType[] = [
 			type: ValueType.XSNEGATIVEINTEGER,
 			mult: SequenceMultiplicity.ZERO_OR_ONE,
 		},
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSNEGATIVEINTEGER,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSNEGATIVEINTEGER
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -483,9 +518,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSLONG, mult: SequenceMultiplicity.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSLONG,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSLONG
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -494,9 +530,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSINT, mult: SequenceMultiplicity.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSINT,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSINT
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -505,9 +542,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSSHORT, mult: SequenceMultiplicity.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSSHORT,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSSHORT
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -516,9 +554,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSBYTE, mult: SequenceMultiplicity.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSBYTE,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSBYTE
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -530,9 +569,10 @@ const declarations: BuiltinDeclarationType[] = [
 			type: ValueType.XSNONNEGATIVEINTEGER,
 			mult: SequenceMultiplicity.ZERO_OR_ONE,
 		},
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSNONNEGATIVEINTEGER,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSNONNEGATIVEINTEGER
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -541,9 +581,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSUNSIGNEDLONG, mult: SequenceMultiplicity.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSUNSIGNEDLONG,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSUNSIGNEDLONG
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -552,9 +593,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSUNSIGNEDINT, mult: SequenceMultiplicity.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSUNSIGNEDINT,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSUNSIGNEDINT
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -563,9 +605,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSUNSIGNEDSHORT, mult: SequenceMultiplicity.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSUNSIGNEDSHORT,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSUNSIGNEDSHORT
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -574,9 +617,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSUNSIGNEDBYTE, mult: SequenceMultiplicity.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSUNSIGNEDBYTE,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSUNSIGNEDBYTE
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -588,9 +632,10 @@ const declarations: BuiltinDeclarationType[] = [
 			type: ValueType.XSPOSITIVEINTEGER,
 			mult: SequenceMultiplicity.ZERO_OR_ONE,
 		},
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSPOSITIVEINTEGER,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSPOSITIVEINTEGER
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -602,9 +647,10 @@ const declarations: BuiltinDeclarationType[] = [
 			type: ValueType.XSYEARMONTHDURATION,
 			mult: SequenceMultiplicity.ZERO_OR_ONE,
 		},
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSYEARMONTHDURATION,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSYEARMONTHDURATION
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -616,9 +662,10 @@ const declarations: BuiltinDeclarationType[] = [
 			type: ValueType.XSDAYTIMEDURATION,
 			mult: SequenceMultiplicity.ZERO_OR_ONE,
 		},
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSDAYTIMEDURATION,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSDAYTIMEDURATION
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -627,9 +674,10 @@ const declarations: BuiltinDeclarationType[] = [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		returnType: { type: ValueType.XSDATETIMESTAMP, mult: SequenceMultiplicity.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			type: ValueType.XSDATETIMESTAMP,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSDATETIMESTAMP
+		) as FunctionDefinitionType,
 	},
 ];
 
