@@ -8,7 +8,7 @@ import {
 	validatePattern,
 	validateRestrictions,
 } from '../typeHelpers';
-import { SequenceType, ValueType, valueTypeHash, valueTypeToString } from '../Value';
+import { SequenceMultiplicity, ValueType, valueTypeHash, sequenceTypeToString } from '../Value';
 import CastResult from './CastResult';
 import castToAnyURI from './castToAnyURI';
 import castToBase64Binary from './castToBase64Binary';
@@ -108,7 +108,7 @@ function createCastingFunction(from: ValueType, to: ValueType) {
 			successful: true,
 			value: createAtomicValue(val, {
 				kind: BaseType.XSSTRING,
-				seqType: SequenceType.EXACTLY_ONE,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
 			}),
 		});
 	}
@@ -159,7 +159,7 @@ function createCastingFunction(from: ValueType, to: ValueType) {
 			successful: false,
 			error: new Error(
 				`XPST0081: Can not cast: type ${
-					primitiveTo ? valueTypeToString(from) : valueTypeToString(to)
+					primitiveTo ? sequenceTypeToString(from) : sequenceTypeToString(to)
 				} is unknown.`
 			),
 		});

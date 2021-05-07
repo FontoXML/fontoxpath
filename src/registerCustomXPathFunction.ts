@@ -5,7 +5,7 @@ import { BaseType } from './expressions/dataTypes/BaseType';
 import ISequence from './expressions/dataTypes/ISequence';
 import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
 import sequenceFactory from './expressions/dataTypes/sequenceFactory';
-import { SequenceType, ValueType } from './expressions/dataTypes/Value';
+import { SequenceMultiplicity, ValueType } from './expressions/dataTypes/Value';
 import DynamicContext from './expressions/DynamicContext';
 import ExecutionParameters from './expressions/ExecutionParameters';
 import { registerFunction } from './expressions/functions/functionRegistry';
@@ -63,7 +63,7 @@ function adaptXPathValueToJavascriptValue(
 	sequenceType: ValueType,
 	executionParameters: ExecutionParameters
 ): any | null | any[] {
-	if (sequenceType.seqType === SequenceType.ZERO_OR_ONE) {
+	if (sequenceType.seqType === SequenceMultiplicity.ZERO_OR_ONE) {
 		if (valueSequence.isEmpty()) {
 			return null;
 		}
@@ -74,8 +74,8 @@ function adaptXPathValueToJavascriptValue(
 	}
 
 	if (
-		sequenceType.seqType === SequenceType.ZERO_OR_MORE ||
-		sequenceType.seqType === SequenceType.ONE_OR_MORE
+		sequenceType.seqType === SequenceMultiplicity.ZERO_OR_MORE ||
+		sequenceType.seqType === SequenceMultiplicity.ONE_OR_MORE
 	) {
 		return valueSequence.getAllValues().map((value) => {
 			if (isSubtypeOf(value.type.kind, BaseType.ATTRIBUTE)) {

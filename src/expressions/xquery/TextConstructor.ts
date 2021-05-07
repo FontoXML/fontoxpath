@@ -5,7 +5,7 @@ import { BaseType } from '../dataTypes/BaseType';
 import castToType from '../dataTypes/castToType';
 import createPointerValue from '../dataTypes/createPointerValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { SequenceType } from '../dataTypes/Value';
+import { SequenceMultiplicity } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
@@ -36,7 +36,7 @@ class TextConstructor extends Expression {
 					(item) =>
 						castToType(item, {
 							kind: BaseType.XSSTRING,
-							seqType: SequenceType.EXACTLY_ONE,
+							seqType: SequenceMultiplicity.EXACTLY_ONE,
 						}).value
 				)
 				.join(' ');

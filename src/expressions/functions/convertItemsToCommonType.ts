@@ -2,7 +2,7 @@ import { BaseType } from '../dataTypes/BaseType';
 import castToType from '../dataTypes/castToType';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import { getPrimitiveTypeName } from '../dataTypes/typeHelpers';
-import Value, { SequenceType } from '../dataTypes/Value';
+import Value, { SequenceMultiplicity } from '../dataTypes/Value';
 
 /**
  * Promote all given (numeric) items to single common type
@@ -48,7 +48,10 @@ export default function convertItemsToCommonType(items: (Value | null)[]): (Valu
 	) {
 		return items.map((item) =>
 			item
-				? castToType(item, { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE })
+				? castToType(item, {
+						kind: BaseType.XSSTRING,
+						seqType: SequenceMultiplicity.EXACTLY_ONE,
+				  })
 				: null
 		);
 	}
@@ -65,7 +68,10 @@ export default function convertItemsToCommonType(items: (Value | null)[]): (Valu
 	) {
 		return items.map((item) =>
 			item
-				? castToType(item, { kind: BaseType.XSFLOAT, seqType: SequenceType.EXACTLY_ONE })
+				? castToType(item, {
+						kind: BaseType.XSFLOAT,
+						seqType: SequenceMultiplicity.EXACTLY_ONE,
+				  })
 				: item
 		);
 	}
@@ -82,7 +88,10 @@ export default function convertItemsToCommonType(items: (Value | null)[]): (Valu
 	) {
 		return items.map((item) =>
 			item
-				? castToType(item, { kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE })
+				? castToType(item, {
+						kind: BaseType.XSDOUBLE,
+						seqType: SequenceMultiplicity.EXACTLY_ONE,
+				  })
 				: item
 		);
 	}

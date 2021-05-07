@@ -4,7 +4,7 @@ import createAtomicValue from '../dataTypes/createAtomicValue';
 import ISequence from '../dataTypes/ISequence';
 import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { SequenceType } from '../dataTypes/Value';
+import { SequenceMultiplicity } from '../dataTypes/Value';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import { BuiltinDeclarationType } from './builtInFunctions';
@@ -30,7 +30,7 @@ function convert(obj: any): ISequence {
 						return {
 							key: createAtomicValue(key, {
 								kind: BaseType.XSSTRING,
-								seqType: SequenceType.EXACTLY_ONE,
+								seqType: SequenceMultiplicity.EXACTLY_ONE,
 							}),
 							value: createDoublyIterableSequence(convert((obj as object)[key])),
 						};
@@ -41,14 +41,14 @@ function convert(obj: any): ISequence {
 			return sequenceFactory.singleton(
 				createAtomicValue(obj, {
 					kind: BaseType.XSDOUBLE,
-					seqType: SequenceType.EXACTLY_ONE,
+					seqType: SequenceMultiplicity.EXACTLY_ONE,
 				})
 			);
 		case 'string':
 			return sequenceFactory.singleton(
 				createAtomicValue(obj, {
 					kind: BaseType.XSSTRING,
-					seqType: SequenceType.EXACTLY_ONE,
+					seqType: SequenceMultiplicity.EXACTLY_ONE,
 				})
 			);
 		case 'boolean':
@@ -80,8 +80,8 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'parse-json',
-		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE }],
-		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_ONE },
+		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE }],
+		returnType: { kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: fnParseJson,
 	},
 ];

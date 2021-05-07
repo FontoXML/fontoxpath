@@ -9,7 +9,7 @@ import createPointerValue from './dataTypes/createPointerValue';
 import ISequence from './dataTypes/ISequence';
 import MapValue from './dataTypes/MapValue';
 import sequenceFactory from './dataTypes/sequenceFactory';
-import Value, { SequenceType, ValueType, valueTypeToString } from './dataTypes/Value';
+import Value, { SequenceMultiplicity, ValueType, sequenceTypeToString } from './dataTypes/Value';
 import DateTime from './dataTypes/valueTypes/DateTime';
 import createDoublyIterableSequence from './util/createDoublyIterableSequence';
 
@@ -31,12 +31,12 @@ function adaptSingleJavaScriptValue(value: ValidValue, domFacade: DomFacade): Va
 		case 'number':
 			return createAtomicValue(value, {
 				kind: BaseType.XSDOUBLE,
-				seqType: SequenceType.EXACTLY_ONE,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
 			});
 		case 'string':
 			return createAtomicValue(value, {
 				kind: BaseType.XSSTRING,
-				seqType: SequenceType.EXACTLY_ONE,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
 			});
 		case 'object':
 			// Test if it is a node
@@ -74,7 +74,7 @@ function adaptSingleJavaScriptValue(value: ValidValue, domFacade: DomFacade): Va
 						return {
 							key: createAtomicValue(key, {
 								kind: BaseType.XSSTRING,
-								seqType: SequenceType.EXACTLY_ONE,
+								seqType: SequenceMultiplicity.EXACTLY_ONE,
 							}),
 							value: createDoublyIterableSequence(adaptedSequence),
 						};
@@ -125,32 +125,32 @@ function adaptJavaScriptValueToXPath(
 		case BaseType.XSSTRING:
 			return createAtomicValue(value + '', {
 				kind: BaseType.XSSTRING,
-				seqType: SequenceType.EXACTLY_ONE,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
 			});
 		case BaseType.XSDOUBLE:
 		case BaseType.XSNUMERIC:
 			checkNumericType(value, BaseType.XSDOUBLE);
 			return createAtomicValue(+value, {
 				kind: BaseType.XSDOUBLE,
-				seqType: SequenceType.EXACTLY_ONE,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
 			});
 		case BaseType.XSDECIMAL:
 			checkNumericType(value, type.kind);
 			return createAtomicValue(+value, {
 				kind: BaseType.XSDECIMAL,
-				seqType: SequenceType.EXACTLY_ONE,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
 			});
 		case BaseType.XSINTEGER:
 			checkNumericType(value, type.kind);
 			return createAtomicValue(value | 0, {
 				kind: BaseType.XSINTEGER,
-				seqType: SequenceType.EXACTLY_ONE,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
 			});
 		case BaseType.XSFLOAT:
 			checkNumericType(value, type.kind);
 			return createAtomicValue(+value, {
 				kind: BaseType.XSFLOAT,
-				seqType: SequenceType.EXACTLY_ONE,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
 			});
 		case BaseType.XSDATE:
 		case BaseType.XSTIME:
@@ -162,7 +162,7 @@ function adaptJavaScriptValueToXPath(
 		case BaseType.XSGDAY:
 			if (!(value instanceof Date)) {
 				throw new Error(
-					`The JavaScript value ${value} with type ${typeof value} is not a valid type to be converted to an XPath ${valueTypeToString(
+					`The JavaScript value ${value} with type ${typeof value} is not a valid type to be converted to an XPath ${sequenceTypeToString(
 						type
 					)}.`
 				);
@@ -180,7 +180,7 @@ function adaptJavaScriptValueToXPath(
 		case BaseType.COMMENT:
 			if (!(typeof value === 'object') || !('nodeType' in value)) {
 				throw new Error(
-					`The JavaScript value ${value} with type ${typeof value} is not a valid type to be converted to an XPath ${valueTypeToString(
+					`The JavaScript value ${value} with type ${typeof value} is not a valid type to be converted to an XPath ${sequenceTypeToString(
 						type
 					)}.`
 				);
@@ -201,18 +201,18 @@ export function adaptJavaScriptValueToArrayOfXPathValues(
 	value: UntypedExternalValue,
 	expectedType: ValueType
 ): Value[] {
-	if (expectedType.seqType === SequenceType.ZERO_OR_ONE) {
+	if (expectedType.seqType === SequenceMultiplicity.ZERO_OR_ONE) {
 		const converted = adaptJavaScriptValueToXPath(expectedType, value, domFacade);
 		return converted === null ? [] : [converted];
 	}
 
 	if (
-		expectedType.seqType === SequenceType.ZERO_OR_MORE ||
-		expectedType.seqType === SequenceType.ONE_OR_MORE
+		expectedType.seqType === SequenceMultiplicity.ZERO_OR_MORE ||
+		expectedType.seqType === SequenceMultiplicity.ONE_OR_MORE
 	) {
 		if (!Array.isArray(value)) {
 			throw new Error(
-				`The JavaScript value ${value} should be an array if it is to be converted to ${valueTypeToString(
+				`The JavaScript value ${value} should be an array if it is to be converted to ${sequenceTypeToString(
 					expectedType
 				)}.`
 			);
@@ -225,7 +225,7 @@ export function adaptJavaScriptValueToArrayOfXPathValues(
 	const adaptedValue = adaptJavaScriptValueToXPath(expectedType, value, domFacade);
 	if (adaptedValue === null) {
 		throw new Error(
-			`The JavaScript value ${value} should be an single entry if it is to be converted to ${valueTypeToString(
+			`The JavaScript value ${value} should be an single entry if it is to be converted to ${sequenceTypeToString(
 				expectedType
 			)}.`
 		);
@@ -246,7 +246,7 @@ export function adaptJavaScriptValueToArrayOfXPathValues(
 export function adaptJavaScriptValueToSequence(
 	domFacade: DomFacade,
 	value: UntypedExternalValue,
-	expectedType: ValueType = { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_ONE }
+	expectedType: ValueType = { kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_ONE }
 ): ISequence {
 	return sequenceFactory.create(
 		adaptJavaScriptValueToArrayOfXPathValues(domFacade, value, expectedType)

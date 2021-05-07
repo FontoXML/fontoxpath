@@ -1,6 +1,6 @@
 import { BaseType } from '../BaseType';
 import createAtomicValue from '../createAtomicValue';
-import { SequenceType } from '../Value';
+import { SequenceMultiplicity } from '../Value';
 import CastResult from './CastResult';
 import castToFloatLikeType from './castToFloatLikeType';
 
@@ -17,7 +17,7 @@ export default function castToDouble(
 			successful: true,
 			value: createAtomicValue(castResult.value, {
 				kind: BaseType.XSDOUBLE,
-				seqType: SequenceType.EXACTLY_ONE,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
 			}),
 		};
 	};

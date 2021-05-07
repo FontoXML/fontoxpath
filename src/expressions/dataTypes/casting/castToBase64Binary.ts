@@ -1,11 +1,14 @@
 import AtomicValue from '../AtomicValue';
 import { BaseType } from '../BaseType';
 import createAtomicValue from '../createAtomicValue';
-import { SequenceType } from '../Value';
+import { SequenceMultiplicity } from '../Value';
 import CastResult from './CastResult';
 
 const createBase64BinaryValue = (value: any): AtomicValue =>
-	createAtomicValue(value, { kind: BaseType.XSBASE64BINARY, seqType: SequenceType.EXACTLY_ONE });
+	createAtomicValue(value, {
+		kind: BaseType.XSBASE64BINARY,
+		seqType: SequenceMultiplicity.EXACTLY_ONE,
+	});
 
 function hexToString(hex: string) {
 	let text = '';

@@ -4,14 +4,14 @@ import { BaseType } from './BaseType';
 import FunctionValue from './FunctionValue';
 import ISequence from './ISequence';
 import sequenceFactory from './sequenceFactory';
-import Value, { SequenceType } from './Value';
+import Value, { SequenceMultiplicity } from './Value';
 
 class MapValue extends FunctionValue<ISequence> {
 	public keyValuePairs: { key: Value; value: () => ISequence }[];
 	constructor(keyValuePairs: { key: Value; value: () => ISequence }[]) {
 		super({
 			// argumentTypes: [{ type: 'item()', isRestArgument: false }],
-			argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.EXACTLY_ONE }],
+			argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceMultiplicity.EXACTLY_ONE }],
 			arity: 1,
 			localName: 'get',
 			namespaceURI: MAP_NAMESPACE_URI,
@@ -23,9 +23,9 @@ class MapValue extends FunctionValue<ISequence> {
 					sequenceFactory.singleton(this),
 					key
 				),
-			returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+			returnType: { kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
 		});
-		this.type = { kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE };
+		this.type = { kind: BaseType.MAP, items: [], seqType: SequenceMultiplicity.EXACTLY_ONE };
 		this.keyValuePairs = keyValuePairs;
 	}
 }

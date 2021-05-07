@@ -3,7 +3,7 @@ import { BaseType } from '../../dataTypes/BaseType';
 import canCastToType from '../../dataTypes/canCastToType';
 import { falseBoolean, trueBoolean } from '../../dataTypes/createAtomicValue';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import { stringToValueType, ValueType } from '../../dataTypes/Value';
+import { stringToSequenceType, ValueType } from '../../dataTypes/Value';
 import Expression from '../../Expression';
 
 class CastableAsOperator extends Expression {
@@ -18,7 +18,7 @@ class CastableAsOperator extends Expression {
 	) {
 		super(expression.specificity, [expression], { canBeStaticallyEvaluated: false });
 
-		this._targetType = stringToValueType(
+		this._targetType = stringToSequenceType(
 			targetType.prefix
 				? `${targetType.prefix}:${targetType.localName}`
 				: targetType.localName

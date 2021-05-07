@@ -6,7 +6,7 @@ import { BaseType } from './BaseType';
 import ISequence from './ISequence';
 import RestArgument from './RestArgument';
 import sequenceFactory from './sequenceFactory';
-import Value, { SequenceType, ValueType } from './Value';
+import Value, { SequenceMultiplicity, ValueType } from './Value';
 import QName from './valueTypes/QName';
 
 export type FunctionSignature<T> = (
@@ -66,7 +66,7 @@ class FunctionValue<T = ISequence> extends Value {
 		super(
 			{
 				kind: BaseType.FUNCTION,
-				seqType: SequenceType.EXACTLY_ONE,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
 				returnType: undefined,
 				params: [],
 			},

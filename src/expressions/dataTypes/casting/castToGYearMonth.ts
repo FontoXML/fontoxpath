@@ -1,12 +1,15 @@
 import AtomicValue from '../AtomicValue';
 import { BaseType } from '../BaseType';
 import createAtomicValue from '../createAtomicValue';
-import { SequenceType } from '../Value';
+import { SequenceMultiplicity } from '../Value';
 import DateTime from '../valueTypes/DateTime';
 import CastResult from './CastResult';
 
 const createGYearMonthValue = (value: any): AtomicValue =>
-	createAtomicValue(value, { kind: BaseType.XSGYEARMONTH, seqType: SequenceType.EXACTLY_ONE });
+	createAtomicValue(value, {
+		kind: BaseType.XSGYEARMONTH,
+		seqType: SequenceMultiplicity.EXACTLY_ONE,
+	});
 
 export default function castToGYearMonth(
 	instanceOf: (typeName: BaseType) => boolean
@@ -17,7 +20,7 @@ export default function castToGYearMonth(
 			value: createGYearMonthValue(
 				value.convertToType({
 					kind: BaseType.XSGYEARMONTH,
-					seqType: SequenceType.EXACTLY_ONE,
+					seqType: SequenceMultiplicity.EXACTLY_ONE,
 				})
 			),
 		});

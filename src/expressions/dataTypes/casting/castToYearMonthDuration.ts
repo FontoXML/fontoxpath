@@ -1,13 +1,13 @@
 import { BaseType } from '../BaseType';
 import createAtomicValue from '../createAtomicValue';
-import { SequenceType } from '../Value';
+import { SequenceMultiplicity } from '../Value';
 import YearMonthDuration from '../valueTypes/YearMonthDuration';
 import CastResult from './CastResult';
 
 const createYearMonthDurationValue = (value) =>
 	createAtomicValue(value, {
 		kind: BaseType.XSYEARMONTHDURATION,
-		seqType: SequenceType.EXACTLY_ONE,
+		seqType: SequenceMultiplicity.EXACTLY_ONE,
 	});
 
 export default function castToYearMonthDuration(

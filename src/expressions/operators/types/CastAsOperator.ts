@@ -2,7 +2,7 @@ import atomize from '../../dataTypes/atomize';
 import { BaseType } from '../../dataTypes/BaseType';
 import castToType from '../../dataTypes/castToType';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import { stringToValueType, ValueType } from '../../dataTypes/Value';
+import { stringToSequenceType, ValueType } from '../../dataTypes/Value';
 import Expression from '../../Expression';
 
 class CastAsOperator extends Expression {
@@ -16,7 +16,7 @@ class CastAsOperator extends Expression {
 		allowsEmptySequence: boolean
 	) {
 		super(expression.specificity, [expression], { canBeStaticallyEvaluated: false });
-		this._targetType = stringToValueType(
+		this._targetType = stringToSequenceType(
 			targetType.prefix
 				? `${targetType.prefix}:${targetType.localName}`
 				: targetType.localName

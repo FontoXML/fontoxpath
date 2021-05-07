@@ -10,7 +10,7 @@ import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value, { SequenceType, ValueType } from '../dataTypes/Value';
+import Value, { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
 import { equal } from '../dataTypes/valueTypes/DateTime';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
@@ -72,11 +72,11 @@ function anyAtomicTypeDeepEqual(
 	) {
 		const temp1 = castToType(item1, {
 			kind: BaseType.XSFLOAT,
-			seqType: SequenceType.EXACTLY_ONE,
+			seqType: SequenceMultiplicity.EXACTLY_ONE,
 		});
 		const temp2 = castToType(item2, {
 			kind: BaseType.XSFLOAT,
-			seqType: SequenceType.EXACTLY_ONE,
+			seqType: SequenceMultiplicity.EXACTLY_ONE,
 		});
 		return temp1.value === temp2.value || (isNaN(item1.value) && isNaN(item2.value));
 	}
@@ -90,11 +90,11 @@ function anyAtomicTypeDeepEqual(
 	) {
 		const temp1 = castToType(item1, {
 			kind: BaseType.XSDOUBLE,
-			seqType: SequenceType.EXACTLY_ONE,
+			seqType: SequenceMultiplicity.EXACTLY_ONE,
 		});
 		const temp2 = castToType(item2, {
 			kind: BaseType.XSDOUBLE,
-			seqType: SequenceType.EXACTLY_ONE,
+			seqType: SequenceMultiplicity.EXACTLY_ONE,
 		});
 		return temp1.value === temp2.value || (isNaN(item1.value) && isNaN(item2.value));
 	}
@@ -147,7 +147,10 @@ function compareNormalizedTextNodes(
 			return wholeValue;
 		}, '');
 
-		const type: ValueType = { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE };
+		const type: ValueType = {
+			kind: BaseType.XSSTRING,
+			seqType: SequenceMultiplicity.EXACTLY_ONE,
+		};
 
 		return {
 			type,

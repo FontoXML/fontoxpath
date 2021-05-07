@@ -3,7 +3,7 @@ import { BaseType } from '../dataTypes/BaseType';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value, { SequenceType } from '../dataTypes/Value';
+import Value, { SequenceMultiplicity } from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
 import ExecutionParameters from '../ExecutionParameters';
 import StaticContext from '../StaticContext';
@@ -85,7 +85,7 @@ export function evaluateQNameExpression(
 					throw errXQDY0074(`${prefix}:${localName}`);
 				}
 				return sequenceFactory.singleton({
-					type: { kind: BaseType.XSQNAME, seqType: SequenceType.EXACTLY_ONE },
+					type: { kind: BaseType.XSQNAME, seqType: SequenceMultiplicity.EXACTLY_ONE },
 					value: new QName(prefix, namespaceURI, localName),
 				});
 			}

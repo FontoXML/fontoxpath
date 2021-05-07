@@ -16,7 +16,7 @@ import { sortNodeValues } from '../dataTypes/documentOrderUtils';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value, { SequenceType } from '../dataTypes/Value';
+import Value, { SequenceMultiplicity } from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
@@ -80,7 +80,7 @@ const fnNodeName: FunctionDefinitionType = (
 								pointer as AttributeNodePointer | ElementNodePointer
 							)
 						),
-						{ kind: BaseType.XSQNAME, seqType: SequenceType.EXACTLY_ONE }
+						{ kind: BaseType.XSQNAME, seqType: SequenceMultiplicity.EXACTLY_ONE }
 					)
 				);
 			case NODE_TYPES.PROCESSING_INSTRUCTION_NODE:
@@ -89,7 +89,7 @@ const fnNodeName: FunctionDefinitionType = (
 				return sequenceFactory.singleton(
 					createAtomicValue(
 						new QName('', '', domFacade.getTarget(processingInstruction)),
-						{ kind: BaseType.XSQNAME, seqType: SequenceType.EXACTLY_ONE }
+						{ kind: BaseType.XSQNAME, seqType: SequenceMultiplicity.EXACTLY_ONE }
 					)
 				);
 			default:
@@ -236,7 +236,7 @@ const fnPath: FunctionDefinitionType = (
 			return sequenceFactory.create(
 				createAtomicValue(result || '/', {
 					kind: BaseType.XSSTRING,
-					seqType: SequenceType.EXACTLY_ONE,
+					seqType: SequenceMultiplicity.EXACTLY_ONE,
 				})
 			);
 		}
@@ -244,7 +244,7 @@ const fnPath: FunctionDefinitionType = (
 		return sequenceFactory.create(
 			createAtomicValue(result, {
 				kind: BaseType.XSSTRING,
-				seqType: SequenceType.EXACTLY_ONE,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
 			})
 		);
 	});
@@ -259,7 +259,7 @@ const fnNamespaceURI: FunctionDefinitionType = (
 	return sequence.map((node) =>
 		createAtomicValue(executionParameters.domFacade.getNamespaceURI(node.value) || '', {
 			kind: BaseType.XSANYURI,
-			seqType: SequenceType.EXACTLY_ONE,
+			seqType: SequenceMultiplicity.EXACTLY_ONE,
 		})
 	);
 };
@@ -278,13 +278,13 @@ const fnLocalName: FunctionDefinitionType = (
 					const pi: ProcessingInstructionNodePointer = node.value;
 					return createAtomicValue(domFacade.getTarget(pi), {
 						kind: BaseType.XSSTRING,
-						seqType: SequenceType.EXACTLY_ONE,
+						seqType: SequenceMultiplicity.EXACTLY_ONE,
 					});
 				}
 
 				return createAtomicValue(domFacade.getLocalName(node.value) || '', {
 					kind: BaseType.XSSTRING,
-					seqType: SequenceType.EXACTLY_ONE,
+					seqType: SequenceMultiplicity.EXACTLY_ONE,
 				});
 			});
 		},
@@ -292,7 +292,7 @@ const fnLocalName: FunctionDefinitionType = (
 			sequenceFactory.singleton(
 				createAtomicValue('', {
 					kind: BaseType.XSSTRING,
-					seqType: SequenceType.EXACTLY_ONE,
+					seqType: SequenceMultiplicity.EXACTLY_ONE,
 				})
 			),
 	});
@@ -409,11 +409,11 @@ const fnRoot: FunctionDefinitionType = (
 
 const declarations: BuiltinDeclarationType[] = [
 	{
-		argumentTypes: [{ kind: BaseType.NODE, seqType: SequenceType.ZERO_OR_ONE }],
+		argumentTypes: [{ kind: BaseType.NODE, seqType: SequenceMultiplicity.ZERO_OR_ONE }],
 		callFunction: fnName,
 		localName: 'name',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
+		returnType: { kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE },
 	},
 
 	{
@@ -421,15 +421,15 @@ const declarations: BuiltinDeclarationType[] = [
 		callFunction: contextItemAsFirstArgument.bind(null, fnName),
 		localName: 'name',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE },
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.NODE, seqType: SequenceType.EXACTLY_ONE }],
+		argumentTypes: [{ kind: BaseType.NODE, seqType: SequenceMultiplicity.EXACTLY_ONE }],
 		callFunction: fnNamespaceURI,
 		localName: 'namespace-uri',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSANYURI, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSANYURI, seqType: SequenceMultiplicity.EXACTLY_ONE },
 	},
 
 	{
@@ -437,33 +437,33 @@ const declarations: BuiltinDeclarationType[] = [
 		callFunction: contextItemAsFirstArgument.bind(null, fnNamespaceURI),
 		localName: 'namespace-uri',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSANYURI, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSANYURI, seqType: SequenceMultiplicity.EXACTLY_ONE },
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.NODE, seqType: SequenceType.ZERO_OR_MORE }],
+		argumentTypes: [{ kind: BaseType.NODE, seqType: SequenceMultiplicity.ZERO_OR_MORE }],
 		callFunction: fnInnermost,
 		localName: 'innermost',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.NODE, seqType: SequenceType.ZERO_OR_MORE },
+		returnType: { kind: BaseType.NODE, seqType: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.NODE, seqType: SequenceType.ZERO_OR_MORE }],
+		argumentTypes: [{ kind: BaseType.NODE, seqType: SequenceMultiplicity.ZERO_OR_MORE }],
 		callFunction: fnOutermost,
 		localName: 'outermost',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.NODE, seqType: SequenceType.ZERO_OR_MORE },
+		returnType: { kind: BaseType.NODE, seqType: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.NODE, seqType: SequenceType.ZERO_OR_ONE }],
+		argumentTypes: [{ kind: BaseType.NODE, seqType: SequenceMultiplicity.ZERO_OR_ONE }],
 		callFunction: fnHasChildren,
 		localName: 'has-children',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		returnType: {
 			kind: BaseType.XSBOOLEAN,
-			seqType: SequenceType.EXACTLY_ONE,
+			seqType: SequenceMultiplicity.EXACTLY_ONE,
 		},
 	},
 
@@ -472,15 +472,15 @@ const declarations: BuiltinDeclarationType[] = [
 		callFunction: contextItemAsFirstArgument.bind(null, fnHasChildren),
 		localName: 'has-children',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceMultiplicity.EXACTLY_ONE },
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.NODE, seqType: SequenceType.ZERO_OR_ONE }],
+		argumentTypes: [{ kind: BaseType.NODE, seqType: SequenceMultiplicity.ZERO_OR_ONE }],
 		callFunction: fnPath,
 		localName: 'path',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
+		returnType: { kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE },
 	},
 
 	{
@@ -488,15 +488,15 @@ const declarations: BuiltinDeclarationType[] = [
 		callFunction: contextItemAsFirstArgument.bind(null, fnPath),
 		localName: 'path',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
+		returnType: { kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE },
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.NODE, seqType: SequenceType.ZERO_OR_ONE }],
+		argumentTypes: [{ kind: BaseType.NODE, seqType: SequenceMultiplicity.ZERO_OR_ONE }],
 		callFunction: fnNodeName,
 		localName: 'node-name',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSQNAME, seqType: SequenceType.ZERO_OR_ONE },
+		returnType: { kind: BaseType.XSQNAME, seqType: SequenceMultiplicity.ZERO_OR_ONE },
 	},
 
 	{
@@ -504,15 +504,15 @@ const declarations: BuiltinDeclarationType[] = [
 		callFunction: contextItemAsFirstArgument.bind(null, fnNodeName),
 		localName: 'node-name',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSQNAME, seqType: SequenceType.ZERO_OR_ONE },
+		returnType: { kind: BaseType.XSQNAME, seqType: SequenceMultiplicity.ZERO_OR_ONE },
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.NODE, seqType: SequenceType.ZERO_OR_ONE }],
+		argumentTypes: [{ kind: BaseType.NODE, seqType: SequenceMultiplicity.ZERO_OR_ONE }],
 		callFunction: fnLocalName,
 		localName: 'local-name',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE },
 	},
 
 	{
@@ -520,15 +520,15 @@ const declarations: BuiltinDeclarationType[] = [
 		callFunction: contextItemAsFirstArgument.bind(null, fnLocalName),
 		localName: 'local-name',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE },
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.NODE, seqType: SequenceType.ZERO_OR_ONE }],
+		argumentTypes: [{ kind: BaseType.NODE, seqType: SequenceMultiplicity.ZERO_OR_ONE }],
 		callFunction: fnRoot,
 		localName: 'root',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.NODE, seqType: SequenceType.ZERO_OR_ONE },
+		returnType: { kind: BaseType.NODE, seqType: SequenceMultiplicity.ZERO_OR_ONE },
 	},
 
 	{
@@ -536,7 +536,7 @@ const declarations: BuiltinDeclarationType[] = [
 		callFunction: contextItemAsFirstArgument.bind(null, fnRoot),
 		localName: 'root',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.NODE, seqType: SequenceType.ZERO_OR_ONE },
+		returnType: { kind: BaseType.NODE, seqType: SequenceMultiplicity.ZERO_OR_ONE },
 	},
 
 	{
@@ -544,14 +544,14 @@ const declarations: BuiltinDeclarationType[] = [
 		callFunction: contextItemAsFirstArgument.bind(null, fnData),
 		localName: 'data',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_MORE },
+		returnType: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 	{
-		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE }],
 		callFunction: fnData,
 		localName: 'data',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_MORE },
+		returnType: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 ];
 

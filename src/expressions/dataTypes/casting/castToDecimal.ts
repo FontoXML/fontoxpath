@@ -1,6 +1,6 @@
 import { BaseType } from '../BaseType';
 import createAtomicValue from '../createAtomicValue';
-import { SequenceType } from '../Value';
+import { SequenceMultiplicity } from '../Value';
 import CastResult from './CastResult';
 
 export default function castToDecimal(
@@ -11,7 +11,7 @@ export default function castToDecimal(
 			successful: true,
 			value: createAtomicValue(value, {
 				kind: BaseType.XSDECIMAL,
-				seqType: SequenceType.EXACTLY_ONE,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
 			}),
 		});
 	}
@@ -35,7 +35,7 @@ export default function castToDecimal(
 				successful: true,
 				value: createAtomicValue(value, {
 					kind: BaseType.XSDECIMAL,
-					seqType: SequenceType.EXACTLY_ONE,
+					seqType: SequenceMultiplicity.EXACTLY_ONE,
 				}),
 			};
 		};
@@ -45,7 +45,7 @@ export default function castToDecimal(
 			successful: true,
 			value: createAtomicValue(value ? 1 : 0, {
 				kind: BaseType.XSDECIMAL,
-				seqType: SequenceType.EXACTLY_ONE,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
 			}),
 		});
 	}
@@ -58,7 +58,7 @@ export default function castToDecimal(
 					successful: true,
 					value: createAtomicValue(decimalValue, {
 						kind: BaseType.XSDECIMAL,
-						seqType: SequenceType.EXACTLY_ONE,
+						seqType: SequenceMultiplicity.EXACTLY_ONE,
 					}),
 				};
 			}

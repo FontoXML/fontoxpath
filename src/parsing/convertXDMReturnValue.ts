@@ -9,7 +9,7 @@ import ISequence from '../expressions/dataTypes/ISequence';
 import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
 import MapValue from '../expressions/dataTypes/MapValue';
 import sequenceFactory from '../expressions/dataTypes/sequenceFactory';
-import { SequenceType } from '../expressions/dataTypes/Value';
+import { SequenceMultiplicity } from '../expressions/dataTypes/Value';
 import ExecutionParameters from '../expressions/ExecutionParameters';
 import { IterationHint } from '../expressions/util/iterators';
 import transformXPathItemToJavascriptObject, {
@@ -78,7 +78,7 @@ export default function convertXDMReturnValue<
 					(value) =>
 						castToType(value, {
 							kind: BaseType.XSSTRING,
-							seqType: SequenceType.EXACTLY_ONE,
+							seqType: SequenceMultiplicity.EXACTLY_ONE,
 						}).value
 				)
 				.join(' ') as IReturnTypes<TNode>[TReturnType];

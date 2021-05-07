@@ -1,7 +1,7 @@
 import { BaseType } from '../dataTypes/BaseType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { SequenceType } from '../dataTypes/Value';
+import { SequenceMultiplicity } from '../dataTypes/Value';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { DONE_TOKEN, ready } from '../util/iterators';
 import { BuiltinDeclarationType } from './builtInFunctions';
@@ -26,7 +26,7 @@ const fnLast: FunctionDefinitionType = (dynamicContext) => {
 				return ready(
 					createAtomicValue(length, {
 						kind: BaseType.XSINTEGER,
-						seqType: SequenceType.EXACTLY_ONE,
+						seqType: SequenceMultiplicity.EXACTLY_ONE,
 					})
 				);
 			},
@@ -45,7 +45,7 @@ const fnPosition: FunctionDefinitionType = (dynamicContext) => {
 	return sequenceFactory.singleton(
 		createAtomicValue(dynamicContext.contextItemIndex + 1, {
 			kind: BaseType.XSINTEGER,
-			seqType: SequenceType.EXACTLY_ONE,
+			seqType: SequenceMultiplicity.EXACTLY_ONE,
 		})
 	);
 };
@@ -54,7 +54,7 @@ const fnCurrentDateTime: FunctionDefinitionType = (dynamicContext) => {
 	return sequenceFactory.singleton(
 		createAtomicValue(dynamicContext.getCurrentDateTime(), {
 			kind: BaseType.XSDATETIMESTAMP,
-			seqType: SequenceType.EXACTLY_ONE,
+			seqType: SequenceMultiplicity.EXACTLY_ONE,
 		})
 	);
 };
@@ -64,10 +64,13 @@ const fnCurrentDate: FunctionDefinitionType = (dynamicContext) => {
 		createAtomicValue(
 			dynamicContext
 				.getCurrentDateTime()
-				.convertToType({ kind: BaseType.XSDATE, seqType: SequenceType.EXACTLY_ONE }),
+				.convertToType({
+					kind: BaseType.XSDATE,
+					seqType: SequenceMultiplicity.EXACTLY_ONE,
+				}),
 			{
 				kind: BaseType.XSDATE,
-				seqType: SequenceType.EXACTLY_ONE,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
 			}
 		)
 	);
@@ -78,8 +81,11 @@ const fnCurrentTime: FunctionDefinitionType = (dynamicContext) => {
 		createAtomicValue(
 			dynamicContext
 				.getCurrentDateTime()
-				.convertToType({ kind: BaseType.XSTIME, seqType: SequenceType.EXACTLY_ONE }),
-			{ kind: BaseType.XSTIME, seqType: SequenceType.EXACTLY_ONE }
+				.convertToType({
+					kind: BaseType.XSTIME,
+					seqType: SequenceMultiplicity.EXACTLY_ONE,
+				}),
+			{ kind: BaseType.XSTIME, seqType: SequenceMultiplicity.EXACTLY_ONE }
 		)
 	);
 };
@@ -88,7 +94,7 @@ const fnImplicitTimezone: FunctionDefinitionType = (dynamicContext) => {
 	return sequenceFactory.singleton(
 		createAtomicValue(dynamicContext.getImplicitTimezone(), {
 			kind: BaseType.XSDAYTIMEDURATION,
-			seqType: SequenceType.EXACTLY_ONE,
+			seqType: SequenceMultiplicity.EXACTLY_ONE,
 		})
 	);
 };
@@ -98,7 +104,7 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'last',
 		argumentTypes: [],
-		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: fnLast,
 	},
 
@@ -106,7 +112,7 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'position',
 		argumentTypes: [],
-		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: fnPosition,
 	},
 
@@ -114,7 +120,7 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'current-dateTime',
 		argumentTypes: [],
-		returnType: { kind: BaseType.XSDATETIMESTAMP, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSDATETIMESTAMP, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: fnCurrentDateTime,
 	},
 
@@ -122,7 +128,7 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'current-date',
 		argumentTypes: [],
-		returnType: { kind: BaseType.XSDATE, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSDATE, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: fnCurrentDate,
 	},
 
@@ -130,14 +136,14 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'current-time',
 		argumentTypes: [],
-		returnType: { kind: BaseType.XSTIME, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSTIME, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: fnCurrentTime,
 	},
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'implicit-timezone',
 		argumentTypes: [],
-		returnType: { kind: BaseType.XSDAYTIMEDURATION, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSDAYTIMEDURATION, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: fnImplicitTimezone,
 	},
 ];

@@ -1,11 +1,14 @@
 import AtomicValue from '../AtomicValue';
 import { BaseType } from '../BaseType';
 import createAtomicValue from '../createAtomicValue';
-import { SequenceType } from '../Value';
+import { SequenceMultiplicity } from '../Value';
 import CastResult from './CastResult';
 
 const createAnyURIValue = (value: any): AtomicValue =>
-	createAtomicValue(value, { kind: BaseType.XSANYURI, seqType: SequenceType.EXACTLY_ONE });
+	createAtomicValue(value, {
+		kind: BaseType.XSANYURI,
+		seqType: SequenceMultiplicity.EXACTLY_ONE,
+	});
 
 export default function castToAnyURI(
 	instanceOf: (typeName: BaseType) => boolean

@@ -6,7 +6,7 @@ import createAtomicValue from '../dataTypes/createAtomicValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value, { EllipsisType, SequenceType } from '../dataTypes/Value';
+import Value, { EllipsisType, SequenceMultiplicity } from '../dataTypes/Value';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { DONE_TOKEN, ready } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
@@ -50,18 +50,27 @@ const fnCompare: FunctionDefinitionType = (
 
 	if (arg1Value > arg2Value) {
 		return sequenceFactory.singleton(
-			createAtomicValue(1, { kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE })
+			createAtomicValue(1, {
+				kind: BaseType.XSINTEGER,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
+			})
 		);
 	}
 
 	if (arg1Value < arg2Value) {
 		return sequenceFactory.singleton(
-			createAtomicValue(-1, { kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE })
+			createAtomicValue(-1, {
+				kind: BaseType.XSINTEGER,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
+			})
 		);
 	}
 
 	return sequenceFactory.singleton(
-		createAtomicValue(0, { kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE })
+		createAtomicValue(0, {
+			kind: BaseType.XSINTEGER,
+			seqType: SequenceMultiplicity.EXACTLY_ONE,
+		})
 	);
 };
 
@@ -81,11 +90,11 @@ const fnConcat: FunctionDefinitionType = (
 								? ''
 								: castToType(stringValue, {
 										kind: BaseType.XSSTRING,
-										seqType: SequenceType.EXACTLY_ONE,
+										seqType: SequenceMultiplicity.EXACTLY_ONE,
 								  }).value
 						)
 						.join(''),
-					{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE }
+					{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE }
 				)
 			);
 		});
@@ -95,7 +104,7 @@ const fnConcat: FunctionDefinitionType = (
 		return sequenceFactory.singleton(
 			createAtomicValue(stringValues.map((stringValue) => stringValue.value).join(''), {
 				kind: BaseType.XSSTRING,
-				seqType: SequenceType.EXACTLY_ONE,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
 			})
 		);
 	});
@@ -180,7 +189,7 @@ const fnString: FunctionDefinitionType = (
 			sequenceFactory.singleton(
 				createAtomicValue('', {
 					kind: BaseType.XSSTRING,
-					seqType: SequenceType.EXACTLY_ONE,
+					seqType: SequenceMultiplicity.EXACTLY_ONE,
 				})
 			),
 		default: () =>
@@ -193,14 +202,14 @@ const fnString: FunctionDefinitionType = (
 					if (isSubtypeOf(value.type.kind, BaseType.ATTRIBUTE)) {
 						return castToType(stringValue, {
 							kind: BaseType.XSSTRING,
-							seqType: SequenceType.EXACTLY_ONE,
+							seqType: SequenceMultiplicity.EXACTLY_ONE,
 						});
 					}
 					return stringValue;
 				}
 				return castToType(value, {
 					kind: BaseType.XSSTRING,
-					seqType: SequenceType.EXACTLY_ONE,
+					seqType: SequenceMultiplicity.EXACTLY_ONE,
 				});
 			}),
 	});
@@ -220,14 +229,14 @@ const fnStringJoin: FunctionDefinitionType = (
 					(stringValue) =>
 						castToType(stringValue, {
 							kind: BaseType.XSSTRING,
-							seqType: SequenceType.EXACTLY_ONE,
+							seqType: SequenceMultiplicity.EXACTLY_ONE,
 						}).value
 				)
 				.join(separatorString.value);
 			return sequenceFactory.singleton(
 				createAtomicValue(joinedString, {
 					kind: BaseType.XSSTRING,
-					seqType: SequenceType.EXACTLY_ONE,
+					seqType: SequenceMultiplicity.EXACTLY_ONE,
 				})
 			);
 		})
@@ -242,7 +251,10 @@ const fnStringLength: FunctionDefinitionType = (
 ) => {
 	if (sequence.isEmpty()) {
 		return sequenceFactory.singleton(
-			createAtomicValue(0, { kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE })
+			createAtomicValue(0, {
+				kind: BaseType.XSINTEGER,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
+			})
 		);
 	}
 	const stringValue = sequence.first().value;
@@ -250,7 +262,7 @@ const fnStringLength: FunctionDefinitionType = (
 	return sequenceFactory.singleton(
 		createAtomicValue(Array.from(stringValue).length, {
 			kind: BaseType.XSINTEGER,
-			seqType: SequenceType.EXACTLY_ONE,
+			seqType: SequenceMultiplicity.EXACTLY_ONE,
 		})
 	);
 };
@@ -268,19 +280,25 @@ const fnSubstringBefore: FunctionDefinitionType = (
 
 	if (strArg2 === '') {
 		return sequenceFactory.singleton(
-			createAtomicValue('', { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE })
+			createAtomicValue('', {
+				kind: BaseType.XSSTRING,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
+			})
 		);
 	}
 	const startIndex = strArg1.indexOf(strArg2);
 	if (startIndex === -1) {
 		return sequenceFactory.singleton(
-			createAtomicValue('', { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE })
+			createAtomicValue('', {
+				kind: BaseType.XSSTRING,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
+			})
 		);
 	}
 	return sequenceFactory.singleton(
 		createAtomicValue(strArg1.substring(0, startIndex), {
 			kind: BaseType.XSSTRING,
-			seqType: SequenceType.EXACTLY_ONE,
+			seqType: SequenceMultiplicity.EXACTLY_ONE,
 		})
 	);
 };
@@ -300,20 +318,23 @@ const fnSubstringAfter: FunctionDefinitionType = (
 		return sequenceFactory.singleton(
 			createAtomicValue(strArg1, {
 				kind: BaseType.XSSTRING,
-				seqType: SequenceType.EXACTLY_ONE,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
 			})
 		);
 	}
 	const startIndex = strArg1.indexOf(strArg2);
 	if (startIndex === -1) {
 		return sequenceFactory.singleton(
-			createAtomicValue('', { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE })
+			createAtomicValue('', {
+				kind: BaseType.XSSTRING,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
+			})
 		);
 	}
 	return sequenceFactory.singleton(
 		createAtomicValue(strArg1.substring(startIndex + strArg2.length), {
 			kind: BaseType.XSSTRING,
-			seqType: SequenceType.EXACTLY_ONE,
+			seqType: SequenceMultiplicity.EXACTLY_ONE,
 		})
 	);
 };
@@ -357,7 +378,7 @@ const fnSubstring: FunctionDefinitionType = (
 					return ready(
 						createAtomicValue('', {
 							kind: BaseType.XSSTRING,
-							seqType: SequenceType.EXACTLY_ONE,
+							seqType: SequenceMultiplicity.EXACTLY_ONE,
 						})
 					);
 				}
@@ -385,7 +406,7 @@ const fnSubstring: FunctionDefinitionType = (
 								: undefined
 						)
 						.join(''),
-					{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE }
+					{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE }
 				)
 			);
 		},
@@ -408,7 +429,7 @@ const fnTokenize: FunctionDefinitionType = (
 		inputString.split(new RegExp(patternString)).map((token: string) =>
 			createAtomicValue(token, {
 				kind: BaseType.XSSTRING,
-				seqType: SequenceType.EXACTLY_ONE,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
 			})
 		)
 	);
@@ -422,13 +443,16 @@ const fnUpperCase: FunctionDefinitionType = (
 ) => {
 	if (stringSequence.isEmpty()) {
 		return sequenceFactory.singleton(
-			createAtomicValue('', { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE })
+			createAtomicValue('', {
+				kind: BaseType.XSSTRING,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
+			})
 		);
 	}
 	return stringSequence.map((stringValue) =>
 		createAtomicValue(stringValue.value.toUpperCase(), {
 			kind: BaseType.XSSTRING,
-			seqType: SequenceType.EXACTLY_ONE,
+			seqType: SequenceMultiplicity.EXACTLY_ONE,
 		})
 	);
 };
@@ -441,13 +465,16 @@ const fnLowerCase: FunctionDefinitionType = (
 ) => {
 	if (stringSequence.isEmpty()) {
 		return sequenceFactory.singleton(
-			createAtomicValue('', { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE })
+			createAtomicValue('', {
+				kind: BaseType.XSSTRING,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
+			})
 		);
 	}
 	return stringSequence.map((stringValue) =>
 		createAtomicValue(stringValue.value.toLowerCase(), {
 			kind: BaseType.XSSTRING,
-			seqType: SequenceType.EXACTLY_ONE,
+			seqType: SequenceMultiplicity.EXACTLY_ONE,
 		})
 	);
 };
@@ -460,14 +487,17 @@ const fnNormalizeSpace: FunctionDefinitionType = (
 ) => {
 	if (arg.isEmpty()) {
 		return sequenceFactory.singleton(
-			createAtomicValue('', { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE })
+			createAtomicValue('', {
+				kind: BaseType.XSSTRING,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
+			})
 		);
 	}
 	const stringValue = arg.first().value.trim();
 	return sequenceFactory.singleton(
 		createAtomicValue(stringValue.replace(/\s+/g, ' '), {
 			kind: BaseType.XSSTRING,
-			seqType: SequenceType.EXACTLY_ONE,
+			seqType: SequenceMultiplicity.EXACTLY_ONE,
 		})
 	);
 };
@@ -500,7 +530,7 @@ const fnTranslate: FunctionDefinitionType = (
 			return sequenceFactory.singleton(
 				createAtomicValue(result.join(''), {
 					kind: BaseType.XSSTRING,
-					seqType: SequenceType.EXACTLY_ONE,
+					seqType: SequenceMultiplicity.EXACTLY_ONE,
 				})
 			);
 		}
@@ -532,7 +562,10 @@ const fnCodepointsToString: FunctionDefinitionType = (
 			})
 			.join('');
 		return sequenceFactory.singleton(
-			createAtomicValue(str, { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE })
+			createAtomicValue(str, {
+				kind: BaseType.XSSTRING,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
+			})
 		);
 	});
 };
@@ -553,7 +586,7 @@ const fnStringToCodepoints: FunctionDefinitionType = (
 			characters.map((character) =>
 				createAtomicValue(character.codePointAt(0), {
 					kind: BaseType.XSINTEGER,
-					seqType: SequenceType.EXACTLY_ONE,
+					seqType: SequenceMultiplicity.EXACTLY_ONE,
 				})
 			)
 		);
@@ -571,7 +604,7 @@ const fnEncodeForUri: FunctionDefinitionType = (
 			return sequenceFactory.create(
 				createAtomicValue('', {
 					kind: BaseType.XSSTRING,
-					seqType: SequenceType.EXACTLY_ONE,
+					seqType: SequenceMultiplicity.EXACTLY_ONE,
 				})
 			);
 		}
@@ -582,7 +615,7 @@ const fnEncodeForUri: FunctionDefinitionType = (
 				encodeURIComponent(str.value).replace(/[!'()*]/g, (c) => {
 					return '%' + c.charCodeAt(0).toString(16).toUpperCase();
 				}),
-				{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE }
+				{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE }
 			)
 		);
 	});
@@ -599,7 +632,7 @@ const fnIriToUri: FunctionDefinitionType = (
 			return sequenceFactory.create(
 				createAtomicValue('', {
 					kind: BaseType.XSSTRING,
-					seqType: SequenceType.EXACTLY_ONE,
+					seqType: SequenceMultiplicity.EXACTLY_ONE,
 				})
 			);
 		}
@@ -610,7 +643,7 @@ const fnIriToUri: FunctionDefinitionType = (
 					/([\u00A0-\uD7FF\uE000-\uFDCF\uFDF0-\uFFEF "<>{}|\\^`/\n\u007f\u0080-\u009f]|[\uD800-\uDBFF][\uDC00-\uDFFF])/g,
 					(a) => encodeURI(a)
 				),
-				{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE }
+				{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE }
 			)
 		);
 	});
@@ -679,10 +712,10 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'compare',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE },
 		],
-		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.ZERO_OR_ONE },
+		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: fnCompare,
 	},
 
@@ -690,11 +723,11 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'compare',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		],
-		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.ZERO_OR_ONE },
+		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: collationError,
 	},
 
@@ -702,11 +735,11 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'concat',
 		argumentTypes: [
-			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE },
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceMultiplicity.ZERO_OR_ONE },
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceMultiplicity.ZERO_OR_ONE },
 			EllipsisType.ELLIPSIS,
 		],
-		returnType: { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: fnConcat,
 	},
 
@@ -714,11 +747,11 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'contains',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE },
 		],
-		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: collationError,
 	},
 
@@ -726,10 +759,10 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'contains',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE },
 		],
-		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: fnContains,
 	},
 
@@ -737,10 +770,10 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'ends-with',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE },
 		],
-		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: fnEndsWith,
 	},
 
@@ -748,19 +781,19 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'ends-with',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		],
-		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: collationError,
 	},
 
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'normalize-space',
-		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: fnNormalizeSpace,
 	},
 
@@ -768,7 +801,7 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'normalize-space',
 		argumentTypes: [],
-		returnType: { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: contextItemAsFirstArgument.bind(
 			null,
 			(dynamicContext, executionParameters, staticContext, contextItem) =>
@@ -785,10 +818,10 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'starts-with',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE },
 		],
-		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: fnStartsWith,
 	},
 
@@ -796,19 +829,19 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'starts-with',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		],
-		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: collationError,
 	},
 
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'string',
-		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: fnString,
 	},
 
@@ -816,7 +849,7 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'string',
 		argumentTypes: [],
-		returnType: { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: contextItemAsFirstArgument.bind(null, fnString),
 	},
 
@@ -824,10 +857,10 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'substring-before',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE },
 		],
-		returnType: { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: fnSubstringBefore,
 	},
 
@@ -835,10 +868,10 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'substring-after',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE },
 		],
-		returnType: { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: fnSubstringAfter,
 	},
 
@@ -846,10 +879,10 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'substring',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE },
+			{ kind: BaseType.XSDOUBLE, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		],
-		returnType: { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: fnSubstring,
 	},
 
@@ -857,27 +890,27 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'substring',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE },
-			{ kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE },
+			{ kind: BaseType.XSDOUBLE, seqType: SequenceMultiplicity.EXACTLY_ONE },
+			{ kind: BaseType.XSDOUBLE, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		],
-		returnType: { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: fnSubstring,
 	},
 
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'upper-case',
-		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: fnUpperCase,
 	},
 
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'lower-case',
-		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: fnLowerCase,
 	},
 
@@ -885,18 +918,20 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'string-join',
 		argumentTypes: [
-			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_MORE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceMultiplicity.ZERO_OR_MORE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		],
-		returnType: { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: fnStringJoin,
 	},
 
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'string-join',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_MORE }],
-		returnType: { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceMultiplicity.ZERO_OR_MORE },
+		],
+		returnType: { kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction(dynamicContext, executionParameters, staticContext, arg1) {
 			return fnStringJoin(
 				dynamicContext,
@@ -906,7 +941,7 @@ const declarations: BuiltinDeclarationType[] = [
 				sequenceFactory.singleton(
 					createAtomicValue('', {
 						kind: BaseType.XSSTRING,
-						seqType: SequenceType.EXACTLY_ONE,
+						seqType: SequenceMultiplicity.EXACTLY_ONE,
 					})
 				)
 			);
@@ -916,8 +951,8 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'string-length',
-		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE },
+		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: fnStringLength,
 	},
 
@@ -925,7 +960,7 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'string-length',
 		argumentTypes: [],
-		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: contextItemAsFirstArgument.bind(
 			null,
 			(dynamicContext, executionParameters, staticContext, contextItem) =>
@@ -942,13 +977,13 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'tokenize',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		],
 		returnType: {
 			kind: BaseType.XSSTRING,
-			seqType: SequenceType.ZERO_OR_MORE,
+			seqType: SequenceMultiplicity.ZERO_OR_MORE,
 		},
 		callFunction(
 			_dynamicContext,
@@ -966,12 +1001,12 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'tokenize',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		],
 		returnType: {
 			kind: BaseType.XSSTRING,
-			seqType: SequenceType.ZERO_OR_MORE,
+			seqType: SequenceMultiplicity.ZERO_OR_MORE,
 		},
 		callFunction: fnTokenize,
 	},
@@ -979,10 +1014,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'tokenize',
-		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE }],
+		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: {
 			kind: BaseType.XSSTRING,
-			seqType: SequenceType.ZERO_OR_MORE,
+			seqType: SequenceMultiplicity.ZERO_OR_MORE,
 		},
 		callFunction(dynamicContext, executionParameters, staticContext, input) {
 			return fnTokenize(
@@ -993,7 +1028,7 @@ const declarations: BuiltinDeclarationType[] = [
 				sequenceFactory.singleton(
 					createAtomicValue(' ', {
 						kind: BaseType.XSSTRING,
-						seqType: SequenceType.EXACTLY_ONE,
+						seqType: SequenceMultiplicity.EXACTLY_ONE,
 					})
 				)
 			);
@@ -1002,79 +1037,79 @@ const declarations: BuiltinDeclarationType[] = [
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		],
 		callFunction: fnTranslate,
 		localName: 'translate',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE },
 	},
 
 	{
 		argumentTypes: [
 			{
 				kind: BaseType.XSINTEGER,
-				seqType: SequenceType.ZERO_OR_MORE,
+				seqType: SequenceMultiplicity.ZERO_OR_MORE,
 			},
 		],
 		callFunction: fnCodepointsToString,
 		localName: 'codepoints-to-string',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE },
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE }],
+		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE }],
 		callFunction: fnStringToCodepoints,
 		localName: 'string-to-codepoints',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		returnType: {
 			kind: BaseType.XSINTEGER,
-			seqType: SequenceType.ZERO_OR_MORE,
+			seqType: SequenceMultiplicity.ZERO_OR_MORE,
 		},
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE }],
+		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE }],
 		callFunction: fnEncodeForUri,
 		localName: 'encode-for-uri',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE },
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE }],
+		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE }],
 		callFunction: fnIriToUri,
 		localName: 'iri-to-uri',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE },
 	},
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		callFunction: fnCodepointEqual,
 		localName: 'codepoint-equal',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		returnType: {
 			kind: BaseType.XSBOOLEAN,
-			seqType: SequenceType.ZERO_OR_ONE,
+			seqType: SequenceMultiplicity.ZERO_OR_ONE,
 		},
 	},
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		],
 		callFunction: fnMatches,
 		localName: 'matches',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceMultiplicity.EXACTLY_ONE },
 	},
 ];
 

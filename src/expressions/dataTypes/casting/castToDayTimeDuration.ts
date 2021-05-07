@@ -1,13 +1,13 @@
 import { BaseType } from '../BaseType';
 import createAtomicValue from '../createAtomicValue';
-import { SequenceType } from '../Value';
+import { SequenceMultiplicity } from '../Value';
 import DayTimeDuration from '../valueTypes/DayTimeDuration';
 import CastResult from './CastResult';
 
 const createDayTimeDurationValue = (value) =>
 	createAtomicValue(value, {
 		kind: BaseType.XSDAYTIMEDURATION,
-		seqType: SequenceType.EXACTLY_ONE,
+		seqType: SequenceMultiplicity.EXACTLY_ONE,
 	});
 
 export default function castToDayTimeDuration(

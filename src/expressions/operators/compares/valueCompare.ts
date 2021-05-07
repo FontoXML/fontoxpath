@@ -1,9 +1,9 @@
 import { BaseType } from '../../../expressions/dataTypes/BaseType';
 import {
-	SequenceType,
+	SequenceMultiplicity,
 	ValueType,
 	valueTypeHash,
-	valueTypeToString,
+	sequenceTypeToString,
 } from '../../../expressions/dataTypes/Value';
 import AtomicValue from '../../dataTypes/AtomicValue';
 import castToType from '../../dataTypes/castToType';
@@ -44,7 +44,7 @@ function generateCompareFunction(
 		isSubtypeOf(typeA.kind, BaseType.XSUNTYPEDATOMIC) &&
 		isSubtypeOf(typeB.kind, BaseType.XSUNTYPEDATOMIC)
 	) {
-		typeA = typeB = { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE };
+		typeA = typeB = { kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE };
 	} else if (isSubtypeOf(typeA.kind, BaseType.XSUNTYPEDATOMIC)) {
 		castFunctionForValueA = (val: AtomicValue) => castToType(val, typeB);
 		typeA = typeB;
@@ -321,9 +321,9 @@ function generateCompareFunction(
 	}
 
 	throw new Error(
-		`XPTY0004: ${operator} not available for ${valueTypeToString(
+		`XPTY0004: ${operator} not available for ${sequenceTypeToString(
 			typeA
-		)} and ${valueTypeToString(typeB)}`
+		)} and ${sequenceTypeToString(typeB)}`
 	);
 }
 

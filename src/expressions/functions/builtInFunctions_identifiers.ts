@@ -5,7 +5,7 @@ import { BaseType } from '../dataTypes/BaseType';
 import createPointerValue from '../dataTypes/createPointerValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { SequenceType } from '../dataTypes/Value';
+import { SequenceMultiplicity } from '../dataTypes/Value';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { errXPTY0004, XPDY0002 } from '../XPathErrors';
 import { BuiltinDeclarationType } from './builtInFunctions';
@@ -150,18 +150,18 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'id',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_MORE },
-			{ kind: BaseType.NODE, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_MORE },
+			{ kind: BaseType.NODE, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		],
-		returnType: { kind: BaseType.ELEMENT, seqType: SequenceType.ZERO_OR_MORE },
+		returnType: { kind: BaseType.ELEMENT, seqType: SequenceMultiplicity.ZERO_OR_MORE },
 		callFunction: fnId,
 	},
 
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'id',
-		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_MORE }],
-		returnType: { kind: BaseType.ELEMENT, seqType: SequenceType.ZERO_OR_MORE },
+		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_MORE }],
+		returnType: { kind: BaseType.ELEMENT, seqType: SequenceMultiplicity.ZERO_OR_MORE },
 		callFunction(dynamicContext, executionParameters, _staticContext, strings) {
 			return fnId(
 				dynamicContext,
@@ -177,18 +177,18 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'idref',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_MORE },
-			{ kind: BaseType.NODE, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_MORE },
+			{ kind: BaseType.NODE, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		],
-		returnType: { kind: BaseType.NODE, seqType: SequenceType.ZERO_OR_MORE },
+		returnType: { kind: BaseType.NODE, seqType: SequenceMultiplicity.ZERO_OR_MORE },
 		callFunction: fnIdref,
 	},
 
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'idref',
-		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_MORE }],
-		returnType: { kind: BaseType.NODE, seqType: SequenceType.ZERO_OR_MORE },
+		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_MORE }],
+		returnType: { kind: BaseType.NODE, seqType: SequenceMultiplicity.ZERO_OR_MORE },
 		callFunction(dynamicContext, executionParameters, _staticContext, strings) {
 			return fnIdref(
 				dynamicContext,

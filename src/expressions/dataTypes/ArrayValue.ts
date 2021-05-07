@@ -4,7 +4,7 @@ import { BaseType } from './BaseType';
 import FunctionValue from './FunctionValue';
 import ISequence from './ISequence';
 import sequenceFactory from './sequenceFactory';
-import { SequenceType } from './Value';
+import { SequenceMultiplicity } from './Value';
 
 class ArrayValue extends FunctionValue {
 	public members: (() => ISequence)[];
@@ -21,11 +21,13 @@ class ArrayValue extends FunctionValue {
 			localName: 'get',
 			namespaceURI: ARRAY_NAMESPACE_URI,
 			// argumentTypes: [{ type: { kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE }, isRestArgument: false }],
-			argumentTypes: [{ kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE }],
+			argumentTypes: [
+				{ kind: BaseType.XSINTEGER, seqType: SequenceMultiplicity.EXACTLY_ONE },
+			],
 			arity: 1,
-			returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+			returnType: { kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
 		});
-		this.type = { kind: BaseType.ARRAY, items: [], seqType: SequenceType.EXACTLY_ONE };
+		this.type = { kind: BaseType.ARRAY, items: [], seqType: SequenceMultiplicity.EXACTLY_ONE };
 		this.members = members;
 	}
 }

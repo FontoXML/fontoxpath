@@ -1,10 +1,13 @@
 import { BaseType } from '../BaseType';
 import createAtomicValue from '../createAtomicValue';
-import { SequenceType } from '../Value';
+import { SequenceMultiplicity } from '../Value';
 import CastResult from './CastResult';
 
 const createIntegerValue = (value) =>
-	createAtomicValue(value, { kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE });
+	createAtomicValue(value, {
+		kind: BaseType.XSINTEGER,
+		seqType: SequenceMultiplicity.EXACTLY_ONE,
+	});
 
 export default function castToInteger(
 	instanceOf: (typeName: BaseType) => boolean

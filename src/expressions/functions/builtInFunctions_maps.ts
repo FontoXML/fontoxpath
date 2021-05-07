@@ -2,7 +2,7 @@ import { BaseType } from '../dataTypes/BaseType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { SequenceType } from '../dataTypes/Value';
+import { SequenceMultiplicity } from '../dataTypes/Value';
 import { MAP_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import concatSequences from '../util/concatSequences';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
@@ -22,7 +22,7 @@ const mapMerge: FunctionDefinitionType = (
 	const duplicateKey = sequenceFactory.singleton(
 		createAtomicValue('duplicates', {
 			kind: BaseType.XSSTRING,
-			seqType: SequenceType.EXACTLY_ONE,
+			seqType: SequenceMultiplicity.EXACTLY_ONE,
 		})
 	);
 	const duplicationHandlingValueSequence = mapGet(
@@ -138,7 +138,7 @@ const mapSize: FunctionDefinitionType = (
 	return mapSequence.map((onlyMap) =>
 		createAtomicValue((onlyMap as MapValue).keyValuePairs.length, {
 			kind: BaseType.XSINTEGER,
-			seqType: SequenceType.EXACTLY_ONE,
+			seqType: SequenceMultiplicity.EXACTLY_ONE,
 		})
 	);
 };
@@ -222,10 +222,10 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: MAP_NAMESPACE_URI,
 		localName: 'contains',
 		argumentTypes: [
-			{ kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE },
-			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.MAP, items: [], seqType: SequenceMultiplicity.EXACTLY_ONE },
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		],
-		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: mapContains,
 	},
 
@@ -233,10 +233,10 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: MAP_NAMESPACE_URI,
 		localName: 'entry',
 		argumentTypes: [
-			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
-			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceMultiplicity.EXACTLY_ONE },
+			{ kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
 		],
-		returnType: { kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.MAP, items: [], seqType: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: mapEntry,
 	},
 
@@ -245,10 +245,10 @@ const declarations: BuiltinDeclarationType[] = [
 		localName: 'for-each',
 		// TODO: reimplement type checking by parsing the types
 		argumentTypes: [
-			{ kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE },
-			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+			{ kind: BaseType.MAP, items: [], seqType: SequenceMultiplicity.EXACTLY_ONE },
+			{ kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
 		],
-		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
 		callFunction: mapForEach,
 	},
 
@@ -256,18 +256,20 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: MAP_NAMESPACE_URI,
 		localName: 'get',
 		argumentTypes: [
-			{ kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE },
-			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.MAP, items: [], seqType: SequenceMultiplicity.EXACTLY_ONE },
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		],
-		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
 		callFunction: mapGet,
 	},
 
 	{
 		namespaceURI: MAP_NAMESPACE_URI,
 		localName: 'keys',
-		argumentTypes: [{ kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE }],
-		returnType: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_MORE },
+		argumentTypes: [
+			{ kind: BaseType.MAP, items: [], seqType: SequenceMultiplicity.EXACTLY_ONE },
+		],
+		returnType: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceMultiplicity.ZERO_OR_MORE },
 		callFunction: mapKeys,
 	},
 
@@ -275,18 +277,20 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: MAP_NAMESPACE_URI,
 		localName: 'merge',
 		argumentTypes: [
-			{ kind: BaseType.MAP, items: [], seqType: SequenceType.ZERO_OR_MORE },
-			{ kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.MAP, items: [], seqType: SequenceMultiplicity.ZERO_OR_MORE },
+			{ kind: BaseType.MAP, items: [], seqType: SequenceMultiplicity.EXACTLY_ONE },
 		],
-		returnType: { kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.MAP, items: [], seqType: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: mapMerge,
 	},
 
 	{
 		namespaceURI: MAP_NAMESPACE_URI,
 		localName: 'merge',
-		argumentTypes: [{ kind: BaseType.MAP, items: [], seqType: SequenceType.ZERO_OR_MORE }],
-		returnType: { kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE },
+		argumentTypes: [
+			{ kind: BaseType.MAP, items: [], seqType: SequenceMultiplicity.ZERO_OR_MORE },
+		],
+		returnType: { kind: BaseType.MAP, items: [], seqType: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction(dynamicContext, executionParameters, staticContext, maps) {
 			return mapMerge(
 				dynamicContext,
@@ -298,13 +302,13 @@ const declarations: BuiltinDeclarationType[] = [
 						{
 							key: createAtomicValue('duplicates', {
 								kind: BaseType.XSSTRING,
-								seqType: SequenceType.EXACTLY_ONE,
+								seqType: SequenceMultiplicity.EXACTLY_ONE,
 							}),
 							value: () =>
 								sequenceFactory.singleton(
 									createAtomicValue('use-first', {
 										kind: BaseType.XSSTRING,
-										seqType: SequenceType.EXACTLY_ONE,
+										seqType: SequenceMultiplicity.EXACTLY_ONE,
 									})
 								),
 						},
@@ -318,11 +322,11 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: MAP_NAMESPACE_URI,
 		localName: 'put',
 		argumentTypes: [
-			{ kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE },
-			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
-			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+			{ kind: BaseType.MAP, items: [], seqType: SequenceMultiplicity.EXACTLY_ONE },
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceMultiplicity.EXACTLY_ONE },
+			{ kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
 		],
-		returnType: { kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.MAP, items: [], seqType: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: mapPut,
 	},
 
@@ -330,18 +334,20 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: MAP_NAMESPACE_URI,
 		localName: 'remove',
 		argumentTypes: [
-			{ kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE },
-			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_MORE },
+			{ kind: BaseType.MAP, items: [], seqType: SequenceMultiplicity.EXACTLY_ONE },
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceMultiplicity.ZERO_OR_MORE },
 		],
-		returnType: { kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.MAP, items: [], seqType: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: mapRemove,
 	},
 
 	{
 		namespaceURI: MAP_NAMESPACE_URI,
 		localName: 'size',
-		argumentTypes: [{ kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE }],
-		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE },
+		argumentTypes: [
+			{ kind: BaseType.MAP, items: [], seqType: SequenceMultiplicity.EXACTLY_ONE },
+		],
+		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: mapSize,
 	},
 ];

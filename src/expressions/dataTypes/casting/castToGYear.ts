@@ -1,12 +1,12 @@
 import AtomicValue from '../AtomicValue';
 import { BaseType } from '../BaseType';
 import createAtomicValue from '../createAtomicValue';
-import { SequenceType } from '../Value';
+import { SequenceMultiplicity } from '../Value';
 import DateTime from '../valueTypes/DateTime';
 import CastResult from './CastResult';
 
 const createGYearValue = (value: any): AtomicValue =>
-	createAtomicValue(value, { kind: BaseType.XSGYEAR, seqType: SequenceType.EXACTLY_ONE });
+	createAtomicValue(value, { kind: BaseType.XSGYEAR, seqType: SequenceMultiplicity.EXACTLY_ONE });
 
 export default function castToGYear(
 	instanceOf: (typeName: BaseType) => boolean
@@ -15,7 +15,10 @@ export default function castToGYear(
 		return (value) => ({
 			successful: true,
 			value: createGYearValue(
-				value.convertToType({ kind: BaseType.XSGYEAR, seqType: SequenceType.EXACTLY_ONE })
+				value.convertToType({
+					kind: BaseType.XSGYEAR,
+					seqType: SequenceMultiplicity.EXACTLY_ONE,
+				})
 			),
 		});
 	}

@@ -2,7 +2,7 @@ import atomize from '../dataTypes/atomize';
 import { BaseType } from '../dataTypes/BaseType';
 import castToType from '../dataTypes/castToType';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { SequenceType } from '../dataTypes/Value';
+import { SequenceMultiplicity } from '../dataTypes/Value';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { BuiltinDeclarationType } from './builtInFunctions';
 import FunctionDefinitionType from './FunctionDefinitionType';
@@ -17,7 +17,10 @@ const fnTrace: FunctionDefinitionType = (
 	return arg.mapAll((allItems) => {
 		const argumentAsStrings = atomize(sequenceFactory.create(allItems), executionParameters)
 			.map((value) =>
-				castToType(value, { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE })
+				castToType(value, {
+					kind: BaseType.XSSTRING,
+					seqType: SequenceMultiplicity.EXACTLY_ONE,
+				})
 			)
 			.getAllValues();
 
@@ -41,21 +44,21 @@ const fnTrace: FunctionDefinitionType = (
 
 const declarations: BuiltinDeclarationType[] = [
 	{
-		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE }],
 		callFunction: fnTrace,
 		localName: 'trace',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 	{
 		argumentTypes: [
-			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		],
 		callFunction: fnTrace,
 		localName: 'trace',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 ];
 

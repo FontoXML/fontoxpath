@@ -1,12 +1,12 @@
 import AtomicValue from '../AtomicValue';
 import { BaseType } from '../BaseType';
 import createAtomicValue from '../createAtomicValue';
-import { SequenceType } from '../Value';
+import { SequenceMultiplicity } from '../Value';
 import DateTime from '../valueTypes/DateTime';
 import CastResult from './CastResult';
 
 const createTimeValue = (value: any): AtomicValue =>
-	createAtomicValue(value, { kind: BaseType.XSTIME, seqType: SequenceType.EXACTLY_ONE });
+	createAtomicValue(value, { kind: BaseType.XSTIME, seqType: SequenceMultiplicity.EXACTLY_ONE });
 
 export default function castToTime(
 	instanceOf: (typeName: BaseType) => boolean
@@ -15,7 +15,10 @@ export default function castToTime(
 		return (value) => ({
 			successful: true,
 			value: createTimeValue(
-				value.convertToType({ kind: BaseType.XSTIME, seqType: SequenceType.EXACTLY_ONE })
+				value.convertToType({
+					kind: BaseType.XSTIME,
+					seqType: SequenceMultiplicity.EXACTLY_ONE,
+				})
 			),
 		});
 	}

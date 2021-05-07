@@ -6,7 +6,7 @@ import FunctionValue from '../dataTypes/FunctionValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value, { SequenceType, ValueType } from '../dataTypes/Value';
+import Value, { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
 import valueCompare from '../operators/compares/valueCompare';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { DONE_TOKEN, IIterator, IterationHint, ready } from '../util/iterators';
@@ -56,7 +56,10 @@ function subSequence(sequence: ISequence, start: number, length: number) {
 function castUntypedItemsToDouble(items: Value[]) {
 	return items.map((item) => {
 		if (isSubtypeOf(item.type.kind, BaseType.XSUNTYPEDATOMIC)) {
-			return castToType(item, { kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE });
+			return castToType(item, {
+				kind: BaseType.XSDOUBLE,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
+			});
 		}
 		return item;
 	});
@@ -72,7 +75,10 @@ function castItemsForMinMax(items: Value[]) {
 		})
 	) {
 		return [
-			createAtomicValue(NaN, { kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE }),
+			createAtomicValue(NaN, {
+				kind: BaseType.XSDOUBLE,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
+			}),
 		];
 	}
 
@@ -248,11 +254,11 @@ const fnIndexOf: FunctionDefinitionType = (
 				return valueCompare('eqOp', element, onlySearchValue, dynamicContext)
 					? createAtomicValue(i + 1, {
 							kind: BaseType.XSINTEGER,
-							seqType: SequenceType.EXACTLY_ONE,
+							seqType: SequenceMultiplicity.EXACTLY_ONE,
 					  })
 					: createAtomicValue(-1, {
 							kind: BaseType.XSINTEGER,
-							seqType: SequenceType.EXACTLY_ONE,
+							seqType: SequenceMultiplicity.EXACTLY_ONE,
 					  });
 			})
 			.filter((indexValue) => {
@@ -290,7 +296,7 @@ const fnDeepEqual: FunctionDefinitionType = (
 			return ready(
 				createAtomicValue(result.value, {
 					kind: BaseType.XSBOOLEAN,
-					seqType: SequenceType.EXACTLY_ONE,
+					seqType: SequenceMultiplicity.EXACTLY_ONE,
 				})
 			);
 		},
@@ -314,7 +320,7 @@ const fnCount: FunctionDefinitionType = (
 			return ready(
 				createAtomicValue(length, {
 					kind: BaseType.XSINTEGER,
-					seqType: SequenceType.EXACTLY_ONE,
+					seqType: SequenceMultiplicity.EXACTLY_ONE,
 				})
 			);
 		},
@@ -358,7 +364,7 @@ const fnAvg: FunctionDefinitionType = (
 		return sequenceFactory.singleton(
 			createAtomicValue(resultValue, {
 				kind: BaseType.XSDOUBLE,
-				seqType: SequenceType.EXACTLY_ONE,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
 			})
 		);
 	}
@@ -371,7 +377,7 @@ const fnAvg: FunctionDefinitionType = (
 		return sequenceFactory.singleton(
 			createAtomicValue(resultValue, {
 				kind: BaseType.XSDECIMAL,
-				seqType: SequenceType.EXACTLY_ONE,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
 			})
 		);
 	}
@@ -379,7 +385,7 @@ const fnAvg: FunctionDefinitionType = (
 	return sequenceFactory.singleton(
 		createAtomicValue(resultValue, {
 			kind: BaseType.XSFLOAT,
-			seqType: SequenceType.EXACTLY_ONE,
+			seqType: SequenceMultiplicity.EXACTLY_ONE,
 		})
 	);
 };
@@ -458,7 +464,7 @@ const fnSum: FunctionDefinitionType = (
 		return sequenceFactory.singleton(
 			createAtomicValue(resultValue, {
 				kind: BaseType.XSINTEGER,
-				seqType: SequenceType.EXACTLY_ONE,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
 			})
 		);
 	}
@@ -471,7 +477,7 @@ const fnSum: FunctionDefinitionType = (
 		return sequenceFactory.singleton(
 			createAtomicValue(resultValue, {
 				kind: BaseType.XSDOUBLE,
-				seqType: SequenceType.EXACTLY_ONE,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
 			})
 		);
 	}
@@ -484,7 +490,7 @@ const fnSum: FunctionDefinitionType = (
 		return sequenceFactory.singleton(
 			createAtomicValue(resultValue, {
 				kind: BaseType.XSDECIMAL,
-				seqType: SequenceType.EXACTLY_ONE,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
 			})
 		);
 	}
@@ -492,7 +498,7 @@ const fnSum: FunctionDefinitionType = (
 	return sequenceFactory.singleton(
 		createAtomicValue(resultValue, {
 			kind: BaseType.XSFLOAT,
-			seqType: SequenceType.EXACTLY_ONE,
+			seqType: SequenceMultiplicity.EXACTLY_ONE,
 		})
 	);
 };
@@ -731,72 +737,72 @@ const fnFoldRight: FunctionDefinitionType = (
 
 const declarations: BuiltinDeclarationType[] = [
 	{
-		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE }],
 		callFunction: fnEmpty,
 		localName: 'empty',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceMultiplicity.EXACTLY_ONE },
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE }],
 		callFunction: fnExists,
 		localName: 'exists',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceMultiplicity.EXACTLY_ONE },
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE }],
 		callFunction: fnHead,
 		localName: 'head',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_ONE },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_ONE },
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE }],
 		callFunction: fnTail,
 		localName: 'tail',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
-			{ kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE },
-			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+			{ kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
+			{ kind: BaseType.XSINTEGER, seqType: SequenceMultiplicity.EXACTLY_ONE },
+			{ kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
 		],
 		callFunction: fnInsertBefore,
 		localName: 'insert-before',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
-			{ kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
+			{ kind: BaseType.XSINTEGER, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		],
 		callFunction: fnRemove,
 		localName: 'remove',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE }],
 		callFunction: fnReverse,
 		localName: 'reverse',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
-			{ kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
+			{ kind: BaseType.XSDOUBLE, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		],
 		callFunction: ((dynamicContext, executionParameters, _staticContext, sequence, start) =>
 			fnSubsequence(
@@ -809,139 +815,147 @@ const declarations: BuiltinDeclarationType[] = [
 			)) as FunctionDefinitionType,
 		localName: 'subsequence',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
-			{ kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE },
-			{ kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
+			{ kind: BaseType.XSDOUBLE, seqType: SequenceMultiplicity.EXACTLY_ONE },
+			{ kind: BaseType.XSDOUBLE, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		],
 		callFunction: fnSubsequence,
 		localName: 'subsequence',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE }],
 		callFunction: fnUnordered,
 		localName: 'unordered',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_MORE },
-			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceMultiplicity.ZERO_OR_MORE },
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		],
 		callFunction: fnIndexOf,
 		localName: 'index-of',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.ZERO_OR_MORE },
+		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_MORE },
-			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceMultiplicity.ZERO_OR_MORE },
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceMultiplicity.EXACTLY_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		],
 		callFunction() {
 			throw new Error('FOCH0002: No collations are supported');
 		},
 		localName: 'index-of',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.ZERO_OR_MORE },
+		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
-			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+			{ kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
+			{ kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
 		],
 		callFunction: fnDeepEqual,
 		localName: 'deep-equal',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceMultiplicity.EXACTLY_ONE },
 	},
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
-			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
+			{ kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		],
 		callFunction() {
 			throw new Error('FOCH0002: No collations are supported');
 		},
 		localName: 'deep-equal',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceMultiplicity.EXACTLY_ONE },
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE }],
 		callFunction: fnCount,
 		localName: 'count',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceMultiplicity.EXACTLY_ONE },
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_MORE }],
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceMultiplicity.ZERO_OR_MORE },
+		],
 		callFunction: fnAvg,
 		localName: 'avg',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE },
+		returnType: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceMultiplicity.ZERO_OR_ONE },
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_MORE }],
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceMultiplicity.ZERO_OR_MORE },
+		],
 		callFunction: fnMax,
 		localName: 'max',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE },
+		returnType: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceMultiplicity.ZERO_OR_ONE },
 	},
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_MORE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceMultiplicity.ZERO_OR_MORE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		],
 		callFunction() {
 			throw new Error('FOCH0002: No collations are supported');
 		},
 		localName: 'max',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE },
-	},
-
-	{
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_MORE }],
-		callFunction: fnMin,
-		localName: 'min',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE },
+		returnType: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceMultiplicity.ZERO_OR_ONE },
 	},
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_MORE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceMultiplicity.ZERO_OR_MORE },
+		],
+		callFunction: fnMin,
+		localName: 'min',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceMultiplicity.ZERO_OR_ONE },
+	},
+
+	{
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceMultiplicity.ZERO_OR_MORE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		],
 		callFunction() {
 			throw new Error('FOCH0002: No collations are supported');
 		},
 		localName: 'min',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE },
+		returnType: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceMultiplicity.ZERO_OR_ONE },
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_MORE }],
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceMultiplicity.ZERO_OR_MORE },
+		],
 		callFunction: ((dynamicContext, executionParameters, _staticContext, sequence) => {
 			return fnSum(
 				dynamicContext,
@@ -951,115 +965,115 @@ const declarations: BuiltinDeclarationType[] = [
 				sequenceFactory.singleton(
 					createAtomicValue(0, {
 						kind: BaseType.XSINTEGER,
-						seqType: SequenceType.EXACTLY_ONE,
+						seqType: SequenceMultiplicity.EXACTLY_ONE,
 					})
 				)
 			);
 		}) as FunctionDefinitionType,
 		localName: 'sum',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceMultiplicity.EXACTLY_ONE },
 	},
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_MORE },
-			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE },
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceMultiplicity.ZERO_OR_MORE },
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceMultiplicity.ZERO_OR_ONE },
 		],
 		callFunction: fnSum,
 		localName: 'sum',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE },
+		returnType: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceMultiplicity.ZERO_OR_ONE },
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE }],
 		callFunction: fnZeroOrOne,
 		localName: 'zero-or-one',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_ONE },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_ONE },
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE }],
 		callFunction: fnOneOrMore,
 		localName: 'one-or-more',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ONE_OR_MORE },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceMultiplicity.ONE_OR_MORE },
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE }],
 		callFunction: fnExactlyOne,
 		localName: 'exactly-one',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceMultiplicity.EXACTLY_ONE },
 	},
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+			{ kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
 			{
 				kind: BaseType.FUNCTION,
 				returnType: undefined,
 				params: [],
-				seqType: SequenceType.EXACTLY_ONE,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
 			},
 		],
 		callFunction: fnFilter,
 		localName: 'filter',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+			{ kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
 			{
 				kind: BaseType.FUNCTION,
 				returnType: undefined,
 				params: [],
-				seqType: SequenceType.EXACTLY_ONE,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
 			},
 		],
 		callFunction: fnForEach,
 		localName: 'for-each',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
-			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+			{ kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
+			{ kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
 			{
 				kind: BaseType.FUNCTION,
 				returnType: undefined,
 				params: [],
-				seqType: SequenceType.EXACTLY_ONE,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
 			},
 		],
 		callFunction: fnFoldLeft,
 		localName: 'fold-left',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 
 	{
 		argumentTypes: [
-			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
-			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+			{ kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
+			{ kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
 			{
 				kind: BaseType.FUNCTION,
 				returnType: undefined,
 				params: [],
-				seqType: SequenceType.EXACTLY_ONE,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
 			},
 		],
 		callFunction: fnFoldRight,
 		localName: 'fold-right',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+		returnType: { kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 ];
 

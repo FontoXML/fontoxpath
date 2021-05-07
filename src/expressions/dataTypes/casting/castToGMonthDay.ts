@@ -1,12 +1,15 @@
 import AtomicValue from '../AtomicValue';
 import { BaseType } from '../BaseType';
 import createAtomicValue from '../createAtomicValue';
-import { SequenceType } from '../Value';
+import { SequenceMultiplicity } from '../Value';
 import DateTime from '../valueTypes/DateTime';
 import CastResult from './CastResult';
 
 const createGMonthDayValue = (value: any): AtomicValue =>
-	createAtomicValue(value, { kind: BaseType.XSGMONTHDAY, seqType: SequenceType.EXACTLY_ONE });
+	createAtomicValue(value, {
+		kind: BaseType.XSGMONTHDAY,
+		seqType: SequenceMultiplicity.EXACTLY_ONE,
+	});
 
 export default function castToGMonthDay(
 	instanceOf: (typeName: BaseType) => boolean
@@ -17,7 +20,7 @@ export default function castToGMonthDay(
 			value: createGMonthDayValue(
 				value.convertToType({
 					kind: BaseType.XSGMONTHDAY,
-					seqType: SequenceType.EXACTLY_ONE,
+					seqType: SequenceMultiplicity.EXACTLY_ONE,
 				})
 			),
 		});

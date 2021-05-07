@@ -6,7 +6,7 @@ import { BaseType } from '../dataTypes/BaseType';
 import castToType from '../dataTypes/castToType';
 import createPointerValue from '../dataTypes/createPointerValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import Value, { SequenceType } from '../dataTypes/Value';
+import Value, { SequenceMultiplicity } from '../dataTypes/Value';
 import ExecutionParameters from '../ExecutionParameters';
 function createTinyTextNode(content): TinyTextNode {
 	const tinyTextNode: TinyTextNode = {
@@ -59,7 +59,7 @@ function parseChildNodes(
 				const atomizedValue = isSubtypeOf(childNode.type.kind, BaseType.XSANYATOMICTYPE)
 					? castToType(atomizeSingleValue(childNode, executionParameters).first(), {
 							kind: BaseType.XSSTRING,
-							seqType: SequenceType.EXACTLY_ONE,
+							seqType: SequenceMultiplicity.EXACTLY_ONE,
 					  }).value
 					: domFacade.getDataFromPointer(childNode.value);
 				if (

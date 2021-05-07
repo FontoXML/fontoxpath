@@ -4,7 +4,7 @@ import castToType from '../dataTypes/castToType';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import promoteToType from '../dataTypes/promoteToType';
-import Value, { SequenceType, ValueType, valueTypeToString } from '../dataTypes/Value';
+import Value, { SequenceMultiplicity, ValueType, sequenceTypeToString } from '../dataTypes/Value';
 import ExecutionParameters from '../ExecutionParameters';
 
 function mapItem(
@@ -43,7 +43,7 @@ function mapItem(
 			throw new Error(
 				`XPTY0004 Unable to convert ${
 					isReturn ? 'return' : 'argument'
-				} of type ${valueTypeToString(argumentItem.type)} to type ${valueTypeToString(
+				} of type ${sequenceTypeToString(argumentItem.type)} to type ${sequenceTypeToString(
 					type
 				)} while calling ${functionName}`
 			);
@@ -57,7 +57,7 @@ function mapItem(
 		throw new Error(
 			`XPTY0004 Unable to cast ${
 				isReturn ? 'return' : 'argument'
-			} of type ${valueTypeToString(argumentItem.type)} to type ${valueTypeToString(
+			} of type ${sequenceTypeToString(argumentItem.type)} to type ${sequenceTypeToString(
 				type
 			)} while calling ${functionName}`
 		);
@@ -75,7 +75,7 @@ export const performFunctionConversion = (
 	functionName: string,
 	isReturn: boolean
 ): ISequence => {
-	if (argumentType.seqType === SequenceType.ZERO_OR_ONE) {
+	if (argumentType.seqType === SequenceMultiplicity.ZERO_OR_ONE) {
 		return argument.switchCases({
 			default: () =>
 				argument.map((value) =>
@@ -92,7 +92,7 @@ export const performFunctionConversion = (
 			},
 		});
 	}
-	if (argumentType.seqType === SequenceType.ONE_OR_MORE) {
+	if (argumentType.seqType === SequenceMultiplicity.ONE_OR_MORE) {
 		return argument.switchCases({
 			empty: () => {
 				throw new Error(
@@ -109,7 +109,7 @@ export const performFunctionConversion = (
 				),
 		});
 	}
-	if (argumentType.seqType === SequenceType.ZERO_OR_MORE) {
+	if (argumentType.seqType === SequenceMultiplicity.ZERO_OR_MORE) {
 		return argument.map((value) =>
 			mapItem(value, argumentType, executionParameters, functionName, isReturn)
 		);

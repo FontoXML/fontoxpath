@@ -1,5 +1,5 @@
 import { BaseType } from '../BaseType';
-import { SequenceType, ValueType } from '../Value';
+import { SequenceMultiplicity, ValueType } from '../Value';
 import AbstractDuration from './AbstractDuration';
 import DayTimeDuration from './DayTimeDuration';
 
@@ -66,7 +66,7 @@ class DateTime {
 		seconds: number,
 		secondFraction: number,
 		timezone: DayTimeDuration,
-		type: ValueType = { kind: BaseType.XSDATETIME, seqType: SequenceType.EXACTLY_ONE }
+		type: ValueType = { kind: BaseType.XSDATETIME, seqType: SequenceMultiplicity.EXACTLY_ONE }
 	) {
 		this._years = years;
 		this._months = months;
@@ -92,27 +92,27 @@ class DateTime {
 			case BaseType.XSGDAY:
 				return new DateTime(1972, 12, this._days, 0, 0, 0, 0, this._timezone, {
 					kind: BaseType.XSGDAY,
-					seqType: SequenceType.EXACTLY_ONE,
+					seqType: SequenceMultiplicity.EXACTLY_ONE,
 				});
 			case BaseType.XSGMONTH:
 				return new DateTime(1972, this._months, 1, 0, 0, 0, 0, this._timezone, {
 					kind: BaseType.XSGMONTH,
-					seqType: SequenceType.EXACTLY_ONE,
+					seqType: SequenceMultiplicity.EXACTLY_ONE,
 				});
 			case BaseType.XSGYEAR:
 				return new DateTime(this._years, 1, 1, 0, 0, 0, 0, this._timezone, {
 					kind: BaseType.XSGYEAR,
-					seqType: SequenceType.EXACTLY_ONE,
+					seqType: SequenceMultiplicity.EXACTLY_ONE,
 				});
 			case BaseType.XSGMONTHDAY:
 				return new DateTime(1972, this._months, this._days, 0, 0, 0, 0, this._timezone, {
 					kind: BaseType.XSGMONTHDAY,
-					seqType: SequenceType.EXACTLY_ONE,
+					seqType: SequenceMultiplicity.EXACTLY_ONE,
 				});
 			case BaseType.XSGYEARMONTH:
 				return new DateTime(this._years, this._months, 1, 0, 0, 0, 0, this._timezone, {
 					kind: BaseType.XSGYEARMONTH,
-					seqType: SequenceType.EXACTLY_ONE,
+					seqType: SequenceMultiplicity.EXACTLY_ONE,
 				});
 			case BaseType.XSTIME:
 				return new DateTime(
@@ -124,7 +124,7 @@ class DateTime {
 					this._seconds,
 					this.secondFraction,
 					this._timezone,
-					{ kind: BaseType.XSTIME, seqType: SequenceType.EXACTLY_ONE }
+					{ kind: BaseType.XSTIME, seqType: SequenceMultiplicity.EXACTLY_ONE }
 				);
 			case BaseType.XSDATE:
 				return new DateTime(
@@ -136,7 +136,7 @@ class DateTime {
 					0,
 					0,
 					this._timezone,
-					{ kind: BaseType.XSDATE, seqType: SequenceType.EXACTLY_ONE }
+					{ kind: BaseType.XSDATE, seqType: SequenceMultiplicity.EXACTLY_ONE }
 				);
 			case BaseType.XSDATETIME:
 			default:
@@ -149,7 +149,7 @@ class DateTime {
 					this._seconds,
 					this.secondFraction,
 					this._timezone,
-					{ kind: BaseType.XSDATETIME, seqType: SequenceType.EXACTLY_ONE }
+					{ kind: BaseType.XSDATETIME, seqType: SequenceMultiplicity.EXACTLY_ONE }
 				);
 		}
 	}
@@ -319,7 +319,7 @@ DateTime.fromString = (dateString: string): DateTime => {
 			seconds,
 			secondFraction,
 			timezone,
-			{ kind: BaseType.XSDATETIME, seqType: SequenceType.EXACTLY_ONE }
+			{ kind: BaseType.XSDATETIME, seqType: SequenceMultiplicity.EXACTLY_ONE }
 		);
 	}
 
@@ -327,7 +327,7 @@ DateTime.fromString = (dateString: string): DateTime => {
 		// There is no T separator, but there is a time component -> time
 		return new DateTime(1972, 12, 31, hours, minutes, seconds, secondFraction, timezone, {
 			kind: BaseType.XSTIME,
-			seqType: SequenceType.EXACTLY_ONE,
+			seqType: SequenceMultiplicity.EXACTLY_ONE,
 		});
 	}
 
@@ -335,7 +335,7 @@ DateTime.fromString = (dateString: string): DateTime => {
 		// There is no T separator, but there is a complete date component -> date
 		return new DateTime(years, months, days, 0, 0, 0, 0, timezone, {
 			kind: BaseType.XSDATE,
-			seqType: SequenceType.EXACTLY_ONE,
+			seqType: SequenceMultiplicity.EXACTLY_ONE,
 		});
 	}
 
@@ -343,7 +343,7 @@ DateTime.fromString = (dateString: string): DateTime => {
 		// There is no complete date component, but there is a year and a month -> gYearMonth
 		return new DateTime(years, months, 1, 0, 0, 0, 0, timezone, {
 			kind: BaseType.XSGYEARMONTH,
-			seqType: SequenceType.EXACTLY_ONE,
+			seqType: SequenceMultiplicity.EXACTLY_ONE,
 		});
 	}
 
@@ -351,7 +351,7 @@ DateTime.fromString = (dateString: string): DateTime => {
 		// There is no complete date component, but there is a month and a day -> gMonthDay
 		return new DateTime(1972, months, days, 0, 0, 0, 0, timezone, {
 			kind: BaseType.XSGMONTHDAY,
-			seqType: SequenceType.EXACTLY_ONE,
+			seqType: SequenceMultiplicity.EXACTLY_ONE,
 		});
 	}
 
@@ -359,7 +359,7 @@ DateTime.fromString = (dateString: string): DateTime => {
 		// There is only a year -> gYear
 		return new DateTime(years, 1, 1, 0, 0, 0, 0, timezone, {
 			kind: BaseType.XSGYEAR,
-			seqType: SequenceType.EXACTLY_ONE,
+			seqType: SequenceMultiplicity.EXACTLY_ONE,
 		});
 	}
 
@@ -367,14 +367,14 @@ DateTime.fromString = (dateString: string): DateTime => {
 		// There is only a month -> gMonth
 		return new DateTime(1972, months, 1, 0, 0, 0, 0, timezone, {
 			kind: BaseType.XSGMONTH,
-			seqType: SequenceType.EXACTLY_ONE,
+			seqType: SequenceMultiplicity.EXACTLY_ONE,
 		});
 	}
 
 	// There is only one option left -> gDay
 	return new DateTime(1972, 12, days, 0, 0, 0, 0, timezone, {
 		kind: BaseType.XSGDAY,
-		seqType: SequenceType.EXACTLY_ONE,
+		seqType: SequenceMultiplicity.EXACTLY_ONE,
 	});
 };
 

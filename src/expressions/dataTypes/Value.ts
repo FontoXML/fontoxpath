@@ -1,10 +1,79 @@
-import { BaseType, baseTypeToString } from './BaseType';
-
 // The actual type is type ValueValue = NodePointer | Function | string | number | boolean | QName | Duration | DateTime; but doing that gives us thousands of errors.
 type ValueValue = any;
 
 export default class Value {
 	constructor(public type: ValueType, readonly value: ValueValue) {}
+}
+
+/**
+ * The ValueTypes;
+ * Previously represented by strings.
+ * @public
+ */
+export const enum ValueType {
+	XSBOOLEAN,
+	XSSTRING,
+	XSNUMERIC,
+	XSDOUBLE,
+	XSDECIMAL,
+	XSINTEGER,
+	XSFLOAT,
+	XSDATE,
+	XSTIME,
+	XSDATETIME,
+	XSDATETIMESTAMP,
+	XSGYEARMONTH,
+	XSGYEAR,
+	XSGMONTHDAY,
+	XSGMONTH,
+	XSGDAY,
+	XSYEARMONTHDURATION,
+	XSDAYTIMEDURATION,
+	XSDURATION,
+	XSUNTYPEDATOMIC,
+	XSANYURI,
+	XSBASE64BINARY,
+	XSHEXBINARY,
+	XSQNAME,
+	XSNCNAME,
+	XSNAME,
+	XSENTITY,
+	XSNONPOSITIVEINTEGER,
+	XSNEGATIVEINTEGER,
+	XSPOSITIVEINTEGER,
+	XSNONNEGATIVEINTEGER,
+	XSLONG,
+	XSINT,
+	XSSHORT,
+	XSBYTE,
+	XSUNSIGNEDINT,
+	XSUNSIGNEDLONG,
+	XSUNSIGNEDBYTE,
+	XSUNSIGNEDSHORT,
+	XSERROR,
+	XSENTITIES,
+	XSIDREF,
+	XSID,
+	XSIDREFS,
+	XSNOTATION,
+	XSANYSIMPLETYPE,
+	XSANYATOMICTYPE,
+	ATTRIBUTE,
+	XSNORMALIZEDSTRING,
+	XSNMTOKENS,
+	XSNMTOKEN,
+	XSLANGUAGE,
+	XSTOKEN,
+	NODE,
+	ELEMENT,
+	DOCUMENTNODE,
+	TEXT,
+	PROCESSINGINSTRUCTION,
+	COMMENT,
+	ITEM,
+	FUNCTION,
+	MAP,
+	ARRAY,
 }
 
 /**
@@ -14,7 +83,7 @@ export default class Value {
  * Zero or more matches to '*'
  * @public
  */
-export const enum SequenceType {
+export const enum SequenceMultiplicity {
 	ZERO_OR_ONE = 0,
 	ONE_OR_MORE = 1,
 	ZERO_OR_MORE = 2,
@@ -34,117 +103,164 @@ export const enum EllipsisType {
  */
 export type ParameterType = ValueType | EllipsisType;
 
-/**
- * The composite type which containing BaseType under the filed kind
- * and OccurrenceIndicator under the optional field occurrence.
- * @public
- */
-export type ValueType =
-	| { kind: BaseType.XSBOOLEAN; seqType: SequenceType }
-	| { kind: BaseType.XSSTRING; seqType: SequenceType }
-	| { kind: BaseType.XSNUMERIC; seqType: SequenceType }
-	| { kind: BaseType.XSDOUBLE; seqType: SequenceType }
-	| { kind: BaseType.XSDECIMAL; seqType: SequenceType }
-	| { kind: BaseType.XSINTEGER; seqType: SequenceType }
-	| { kind: BaseType.XSFLOAT; seqType: SequenceType }
-	| { kind: BaseType.XSDATE; seqType: SequenceType }
-	| { kind: BaseType.XSTIME; seqType: SequenceType }
-	| { kind: BaseType.XSDATETIME; seqType: SequenceType }
-	| { kind: BaseType.XSDATETIMESTAMP; seqType: SequenceType }
-	| { kind: BaseType.XSGYEARMONTH; seqType: SequenceType }
-	| { kind: BaseType.XSGYEAR; seqType: SequenceType }
-	| { kind: BaseType.XSGMONTHDAY; seqType: SequenceType }
-	| { kind: BaseType.XSGMONTH; seqType: SequenceType }
-	| { kind: BaseType.XSGDAY; seqType: SequenceType }
-	| { kind: BaseType.XSYEARMONTHDURATION; seqType: SequenceType }
-	| { kind: BaseType.XSDAYTIMEDURATION; seqType: SequenceType }
-	| { kind: BaseType.XSDURATION; seqType: SequenceType }
-	| { kind: BaseType.XSUNTYPEDATOMIC; seqType: SequenceType }
-	| { kind: BaseType.XSANYURI; seqType: SequenceType }
-	| { kind: BaseType.XSBASE64BINARY; seqType: SequenceType }
-	| { kind: BaseType.XSHEXBINARY; seqType: SequenceType }
-	| { kind: BaseType.XSQNAME; seqType: SequenceType }
-	| { kind: BaseType.XSNCNAME; seqType: SequenceType }
-	| { kind: BaseType.XSNAME; seqType: SequenceType }
-	| { kind: BaseType.XSENTITY; seqType: SequenceType }
-	| { kind: BaseType.XSNONPOSITIVEINTEGER; seqType: SequenceType }
-	| { kind: BaseType.XSNEGATIVEINTEGER; seqType: SequenceType }
-	| { kind: BaseType.XSPOSITIVEINTEGER; seqType: SequenceType }
-	| { kind: BaseType.XSNONNEGATIVEINTEGER; seqType: SequenceType }
-	| { kind: BaseType.XSLONG; seqType: SequenceType }
-	| { kind: BaseType.XSINT; seqType: SequenceType }
-	| { kind: BaseType.XSSHORT; seqType: SequenceType }
-	| { kind: BaseType.XSBYTE; seqType: SequenceType }
-	| { kind: BaseType.XSUNSIGNEDINT; seqType: SequenceType }
-	| { kind: BaseType.XSUNSIGNEDLONG; seqType: SequenceType }
-	| { kind: BaseType.XSUNSIGNEDBYTE; seqType: SequenceType }
-	| { kind: BaseType.XSUNSIGNEDSHORT; seqType: SequenceType }
-	| { kind: BaseType.XSERROR; seqType: SequenceType }
-	| { kind: BaseType.XSENTITIES; seqType: SequenceType }
-	| { kind: BaseType.XSIDREF; seqType: SequenceType }
-	| { kind: BaseType.XSID; seqType: SequenceType }
-	| { kind: BaseType.XSIDREFS; seqType: SequenceType }
-	| { kind: BaseType.XSNOTATION; seqType: SequenceType }
-	| { kind: BaseType.XSANYSIMPLETYPE; seqType: SequenceType }
-	| { kind: BaseType.XSANYATOMICTYPE; seqType: SequenceType }
-	| { kind: BaseType.ATTRIBUTE; seqType: SequenceType }
-	| { kind: BaseType.XSNORMALIZEDSTRING; seqType: SequenceType }
-	| { kind: BaseType.XSNMTOKENS; seqType: SequenceType }
-	| { kind: BaseType.XSNMTOKEN; seqType: SequenceType }
-	| { kind: BaseType.XSLANGUAGE; seqType: SequenceType }
-	| { kind: BaseType.XSTOKEN; seqType: SequenceType }
-	| { kind: BaseType.NODE; seqType: SequenceType }
-	| { kind: BaseType.ELEMENT; seqType: SequenceType }
-	| { kind: BaseType.DOCUMENTNODE; seqType: SequenceType }
-	| { kind: BaseType.TEXT; seqType: SequenceType }
-	| { kind: BaseType.PROCESSINGINSTRUCTION; seqType: SequenceType }
-	| { kind: BaseType.COMMENT; seqType: SequenceType }
-	| { kind: BaseType.ITEM; seqType: SequenceType }
-	| {
-			kind: BaseType.FUNCTION;
-			params: ValueType[];
-			returnType: ValueType | undefined;
-			seqType: SequenceType;
-	  }
-	| {
-			items: [ValueType, ValueType][];
-			kind: BaseType.MAP;
-			seqType: SequenceType;
-	  }
-	| { items: ValueType[]; kind: BaseType.ARRAY; seqType: SequenceType };
+export type SequenceType = {
+	type: ValueType;
+	mult: SequenceMultiplicity;
+};
 
 /**
- * Recursively creates a hash for a type and its potential subtypes
- * @param type Input type to get the hash from
- * @returns A hash number
+ * A function to retrieve wether a type starts with xs.
+ * @param inType input type.
+ * @returns a boolean, true when the type starts with XS
  */
-export function valueTypeHash(type: ValueType): number {
-	const prime = 31;
-	let result = type.kind as number;
+export function startWithXS(inType: ValueType): boolean {
+	return startWithXSLookupTable[inType];
+}
 
-	switch (type.kind) {
-		case BaseType.FUNCTION:
-			result =
-				prime * result +
-				(type.returnType === undefined ? 0 : valueTypeHash(type.returnType));
-			for (const param of type.params) {
-				result = prime * result + valueTypeHash(param);
-			}
-			break;
-		case BaseType.MAP:
-			for (const keyVal of type.items) {
-				result = prime * result + valueTypeHash(keyVal[0]);
-				result = prime * result + valueTypeHash(keyVal[1]);
-			}
-			break;
-		case BaseType.ARRAY:
-			for (const item of type.items) {
-				result = prime * result + valueTypeHash(item);
-			}
-			break;
+const startWithXSLookupTable = new Map([
+	[ValueType.XSBOOLEAN, true],
+	[ValueType.XSSTRING, true],
+	[ValueType.XSNUMERIC, true],
+	[ValueType.XSDOUBLE, true],
+	[ValueType.XSDECIMAL, true],
+	[ValueType.XSINTEGER, true],
+	[ValueType.XSFLOAT, true],
+	[ValueType.XSDATE, true],
+	[ValueType.XSTIME, true],
+	[ValueType.XSDATETIME, true],
+	[ValueType.XSDATETIMESTAMP, true],
+	[ValueType.XSGYEARMONTH, true],
+	[ValueType.XSGYEAR, true],
+	[ValueType.XSGMONTHDAY, true],
+	[ValueType.XSGMONTH, true],
+	[ValueType.XSGDAY, true],
+	[ValueType.XSYEARMONTHDURATION, true],
+	[ValueType.XSDAYTIMEDURATION, true],
+	[ValueType.XSDURATION, true],
+	[ValueType.XSUNTYPEDATOMIC, true],
+	[ValueType.XSANYURI, true],
+	[ValueType.XSBASE64BINARY, true],
+	[ValueType.XSHEXBINARY, true],
+	[ValueType.XSQNAME, true],
+	[ValueType.XSNCNAME, true],
+	[ValueType.XSNAME, true],
+	[ValueType.XSENTITY, true],
+	[ValueType.XSNONPOSITIVEINTEGER, true],
+	[ValueType.XSNEGATIVEINTEGER, true],
+	[ValueType.XSPOSITIVEINTEGER, true],
+	[ValueType.XSNONNEGATIVEINTEGER, true],
+	[ValueType.XSLONG, true],
+	[ValueType.XSINT, true],
+	[ValueType.XSSHORT, true],
+	[ValueType.XSBYTE, true],
+	[ValueType.XSUNSIGNEDINT, true],
+	[ValueType.XSUNSIGNEDLONG, true],
+	[ValueType.XSUNSIGNEDBYTE, true],
+	[ValueType.XSUNSIGNEDSHORT, true],
+	[ValueType.XSERROR, true],
+	[ValueType.XSENTITIES, true],
+	[ValueType.XSIDREF, true],
+	[ValueType.XSID, true],
+	[ValueType.XSIDREFS, true],
+	[ValueType.XSNOTATION, true],
+	[ValueType.XSANYSIMPLETYPE, true],
+	[ValueType.XSANYATOMICTYPE, true],
+	[ValueType.ATTRIBUTE, false],
+	[ValueType.XSNORMALIZEDSTRING, true],
+	[ValueType.XSNMTOKENS, true],
+	[ValueType.XSNMTOKEN, true],
+	[ValueType.XSLANGUAGE, true],
+	[ValueType.XSTOKEN, true],
+	[ValueType.NODE, false],
+	[ValueType.ELEMENT, false],
+	[ValueType.DOCUMENTNODE, false],
+	[ValueType.TEXT, false],
+	[ValueType.PROCESSINGINSTRUCTION, false],
+	[ValueType.COMMENT, false],
+	[ValueType.ITEM, false],
+	[ValueType.FUNCTION, false],
+	[ValueType.MAP, false],
+	[ValueType.ARRAY, false],
+]);
+
+/**
+ * Creates a string value from a base type, generally follows the 'xs:type' notation, where
+ * xs stands for XML Schema
+ * @param input The base type to get the string of
+ * @returns A string corresponding to that base type.
+ */
+export function valueTypeToString(input: ValueType): string {
+	const typeToStringMap: Record<ValueType, string> = {
+		[ValueType.XSBOOLEAN]: 'xs:boolean',
+		[ValueType.XSSTRING]: 'xs:string',
+		[ValueType.XSNUMERIC]: 'xs:numeric',
+		[ValueType.XSDOUBLE]: 'xs:double',
+		[ValueType.XSDECIMAL]: 'xs:decimal',
+		[ValueType.XSINTEGER]: 'xs:integer',
+		[ValueType.XSFLOAT]: 'xs:float',
+		[ValueType.XSDATE]: 'xs:date',
+		[ValueType.XSTIME]: 'xs:time',
+		[ValueType.XSDATETIME]: 'xs:dateTime',
+		[ValueType.XSDATETIMESTAMP]: 'xs:dateTimeStamp',
+		[ValueType.XSGYEARMONTH]: 'xs:gYearMonth',
+		[ValueType.XSGYEAR]: 'xs:gYear',
+		[ValueType.XSGMONTHDAY]: 'xs:gMonthDay',
+		[ValueType.XSGMONTH]: 'xs:gMonth',
+		[ValueType.XSGDAY]: 'xs:gDay',
+		[ValueType.XSYEARMONTHDURATION]: 'xs:yearMonthDuration',
+		[ValueType.XSDAYTIMEDURATION]: 'xs:dayTimeDuration',
+		[ValueType.XSDURATION]: 'xs:duration',
+		[ValueType.XSUNTYPEDATOMIC]: 'xs:untypedAtomic',
+		[ValueType.XSANYURI]: 'xs:anyURI',
+		[ValueType.XSBASE64BINARY]: 'xs:base64Binary',
+		[ValueType.XSHEXBINARY]: 'xs:hexBinary',
+		[ValueType.XSQNAME]: 'xs:QName',
+		[ValueType.XSNCNAME]: 'xs:NCName',
+		[ValueType.XSNAME]: 'xs:Name',
+		[ValueType.XSENTITY]: 'xs:ENTITY',
+		[ValueType.XSNONPOSITIVEINTEGER]: 'xs:nonPositiveInteger',
+		[ValueType.XSNEGATIVEINTEGER]: 'xs:negativeInteger',
+		[ValueType.XSPOSITIVEINTEGER]: 'xs:positiveInteger',
+		[ValueType.XSNONNEGATIVEINTEGER]: 'xs:nonNegativeInteger',
+		[ValueType.XSLONG]: 'xs:long',
+		[ValueType.XSINT]: 'xs:int',
+		[ValueType.XSSHORT]: 'xs:short',
+		[ValueType.XSBYTE]: 'xs:byte',
+		[ValueType.XSUNSIGNEDINT]: 'xs:unsignedInt',
+		[ValueType.XSUNSIGNEDLONG]: 'xs:unsignedLong',
+		[ValueType.XSUNSIGNEDBYTE]: 'xs:unsignedByte',
+		[ValueType.XSUNSIGNEDSHORT]: 'xs:unsignedShort',
+		[ValueType.XSERROR]: 'xs:error',
+		[ValueType.XSENTITIES]: 'xs:ENTITIES',
+		[ValueType.XSIDREF]: 'xs:IDREF',
+		[ValueType.XSID]: 'xs:ID',
+		[ValueType.XSIDREFS]: 'xs:IDFREFS',
+		[ValueType.XSNOTATION]: 'xs:NOTATION',
+		[ValueType.XSANYSIMPLETYPE]: 'xs:anySimpleType',
+		[ValueType.XSANYATOMICTYPE]: 'xs:anyAtomicType',
+		[ValueType.ATTRIBUTE]: 'attribute()',
+		[ValueType.XSNORMALIZEDSTRING]: 'xs:normalizedString',
+		[ValueType.XSNMTOKENS]: 'xs:NMTOKENS',
+		[ValueType.XSNMTOKEN]: 'xs:NMTOKEN',
+		[ValueType.XSLANGUAGE]: 'xs:language',
+		[ValueType.XSTOKEN]: 'xs:token',
+		[ValueType.NODE]: 'node()',
+		[ValueType.ELEMENT]: 'element()',
+		[ValueType.DOCUMENTNODE]: 'document-node()',
+		[ValueType.TEXT]: 'text()',
+		[ValueType.PROCESSINGINSTRUCTION]: 'processing-instruction()',
+		[ValueType.COMMENT]: 'comment()',
+		[ValueType.ITEM]: 'item()',
+		[ValueType.FUNCTION]: 'function(*)',
+		[ValueType.MAP]: 'map(*)',
+		[ValueType.ARRAY]: 'array(*)',
+	};
+
+	const stringVal = typeToStringMap[input];
+	if (stringVal === undefined || stringVal === null) {
+		throw new Error(`Cannot convert ValueType of type "${input}" to a string`);
 	}
-
-	return result;
+	return stringVal;
 }
 
 /**
@@ -153,132 +269,96 @@ export function valueTypeHash(type: ValueType): number {
  * @param input the ValueType
  * @returns the correct string representation of the type
  */
-export function valueTypeToString(input: ValueType): string {
-	if (input.seqType === SequenceType.ZERO_OR_MORE) {
-		return baseTypeToString(input.kind) + '*';
+export function sequenceTypeToString(input: SequenceType): string {
+	if (input.mult === SequenceMultiplicity.ZERO_OR_MORE) {
+		return valueTypeToString(input.type) + '*';
 	}
-	if (input.seqType === SequenceType.ONE_OR_MORE) {
-		return baseTypeToString(input.kind) + '+';
+	if (input.mult === SequenceMultiplicity.ONE_OR_MORE) {
+		return valueTypeToString(input.type) + '+';
 	}
-	if (input.seqType === SequenceType.ZERO_OR_ONE) {
-		return baseTypeToString(input.kind) + '?';
+	if (input.mult === SequenceMultiplicity.ZERO_OR_ONE) {
+		return valueTypeToString(input.type) + '?';
 	}
 
-	return baseTypeToString(input.kind);
+	return valueTypeToString(input.type);
 }
 
-/**
- * Maps the string representation of the types to the ValueType object.
- *
- * @param input type string of the form "xs:<type>".
- * @returns the corresponding ValueType object.
- * @throws Error if the type cannot be mapped from string to ValueType.
- */
 export function stringToValueType(input: string): ValueType {
 	if (!input.startsWith('xs:') && input.indexOf(':') >= 0) {
 		throw new Error('XPST0081: Invalid prefix for input ' + input);
 	}
 
-	const seqType = SequenceType.EXACTLY_ONE;
-
-	const stringToTypeMap: { [key: string]: ValueType } = {
-		'xs:boolean': { kind: BaseType.XSBOOLEAN, seqType },
-		'xs:string': { kind: BaseType.XSSTRING, seqType },
-		'xs:numeric': { kind: BaseType.XSNUMERIC, seqType },
-		'xs:double': { kind: BaseType.XSDOUBLE, seqType },
-		'xs:decimal': { kind: BaseType.XSDECIMAL, seqType },
-		'xs:integer': { kind: BaseType.XSINTEGER, seqType },
-		'xs:float': { kind: BaseType.XSFLOAT, seqType },
-		'xs:date': { kind: BaseType.XSDATE, seqType },
-		'xs:time': { kind: BaseType.XSTIME, seqType },
-		'xs:dateTime': { kind: BaseType.XSDATETIME, seqType },
-		'xs:dateTimeStamp': { kind: BaseType.XSDATETIMESTAMP, seqType },
-		'xs:gYearMonth': { kind: BaseType.XSGYEARMONTH, seqType },
-		'xs:gYear': { kind: BaseType.XSGYEAR, seqType },
-		'xs:gMonthDay': { kind: BaseType.XSGMONTHDAY, seqType },
-		'xs:gMonth': { kind: BaseType.XSGMONTH, seqType },
-		'xs:gDay': { kind: BaseType.XSGDAY, seqType },
-		'xs:yearMonthDuration': {
-			kind: BaseType.XSYEARMONTHDURATION,
-			seqType,
-		},
-		'xs:dayTimeDuration': {
-			kind: BaseType.XSDAYTIMEDURATION,
-			seqType,
-		},
-		'xs:duration': { kind: BaseType.XSDURATION, seqType },
-		'xs:untypedAtomic': { kind: BaseType.XSUNTYPEDATOMIC, seqType },
-		'xs:anyURI': { kind: BaseType.XSANYURI, seqType },
-		'xs:base64Binary': { kind: BaseType.XSBASE64BINARY, seqType },
-		'xs:hexBinary': { kind: BaseType.XSHEXBINARY, seqType },
-		'xs:QName': { kind: BaseType.XSQNAME, seqType },
-		'xs:NCName': { kind: BaseType.XSNCNAME, seqType },
-		'xs:Name': { kind: BaseType.XSNAME, seqType },
-		'xs:ENTITY': { kind: BaseType.XSENTITY, seqType },
-		'xs:nonPositiveInteger': {
-			kind: BaseType.XSNONPOSITIVEINTEGER,
-			seqType,
-		},
-		'xs:negativeInteger': {
-			kind: BaseType.XSNEGATIVEINTEGER,
-			seqType,
-		},
-		'xs:positiveInteger': {
-			kind: BaseType.XSPOSITIVEINTEGER,
-			seqType,
-		},
-		'xs:nonNegativeInteger': {
-			kind: BaseType.XSNONNEGATIVEINTEGER,
-			seqType,
-		},
-		'xs:long': { kind: BaseType.XSLONG, seqType },
-		'xs:int': { kind: BaseType.XSINT, seqType },
-		'xs:short': { kind: BaseType.XSSHORT, seqType },
-		'xs:byte': { kind: BaseType.XSBYTE, seqType },
-		'xs:unsignedInt': { kind: BaseType.XSUNSIGNEDINT, seqType },
-		'xs:unsignedLong': { kind: BaseType.XSUNSIGNEDLONG, seqType },
-		'xs:unsignedByte': { kind: BaseType.XSUNSIGNEDBYTE, seqType },
-		'xs:unsignedShort': { kind: BaseType.XSUNSIGNEDSHORT, seqType },
-		'xs:error': { kind: BaseType.XSERROR, seqType },
-		'xs:ENTITIES': { kind: BaseType.XSENTITIES, seqType },
-		'xs:IDREF': { kind: BaseType.XSIDREF, seqType },
-		'xs:ID': { kind: BaseType.XSID, seqType },
-		'xs:IDREFS': { kind: BaseType.XSIDREFS, seqType },
-		'xs:NOTATION': { kind: BaseType.XSNOTATION, seqType },
-		'xs:anySimpleType': { kind: BaseType.XSANYSIMPLETYPE, seqType },
-		'xs:anyAtomicType': { kind: BaseType.XSANYATOMICTYPE, seqType },
-		'attribute()': { kind: BaseType.ATTRIBUTE, seqType },
-		'xs:normalizedString': {
-			kind: BaseType.XSNORMALIZEDSTRING,
-			seqType,
-		},
-		'xs:NMTOKENS': { kind: BaseType.XSNMTOKENS, seqType },
-		'xs:NMTOKEN': { kind: BaseType.XSNMTOKEN, seqType },
-		'xs:language': { kind: BaseType.XSLANGUAGE, seqType },
-		'xs:token': { kind: BaseType.XSTOKEN, seqType },
-		'node()': { kind: BaseType.NODE, seqType },
-		'element()': { kind: BaseType.ELEMENT, seqType },
-		'document-node()': { kind: BaseType.DOCUMENTNODE, seqType },
-		'text()': { kind: BaseType.TEXT, seqType },
-		'processing-instruction()': {
-			kind: BaseType.PROCESSINGINSTRUCTION,
-			seqType,
-		},
-		'comment()': { kind: BaseType.COMMENT, seqType },
-		'item()': { kind: BaseType.ITEM, seqType },
-		'function(*)': {
-			kind: BaseType.FUNCTION,
-			returnType: undefined,
-			params: [],
-			seqType,
-		},
-		'map(*)': { kind: BaseType.MAP, items: [], seqType },
-		'array(*)': { kind: BaseType.ARRAY, items: [], seqType },
+	const stringToValueTypeMap: { [key: string]: ValueType } = {
+		'xs:boolean': ValueType.XSBOOLEAN,
+		'xs:string': ValueType.XSSTRING,
+		'xs:numeric': ValueType.XSNUMERIC,
+		'xs:double': ValueType.XSDOUBLE,
+		'xs:decimal': ValueType.XSDECIMAL,
+		'xs:integer': ValueType.XSINTEGER,
+		'xs:float': ValueType.XSFLOAT,
+		'xs:date': ValueType.XSDATE,
+		'xs:time': ValueType.XSTIME,
+		'xs:dateTime': ValueType.XSDATETIME,
+		'xs:dateTimeStamp': ValueType.XSDATETIMESTAMP,
+		'xs:gYearMonth': ValueType.XSGYEARMONTH,
+		'xs:gYear': ValueType.XSGYEAR,
+		'xs:gMonthDay': ValueType.XSGMONTHDAY,
+		'xs:gMonth': ValueType.XSGMONTH,
+		'xs:gDay': ValueType.XSGDAY,
+		'xs:yearMonthDuration': ValueType.XSYEARMONTHDURATION,
+		'xs:dayTimeDuration': ValueType.XSDAYTIMEDURATION,
+		'xs:duration': ValueType.XSDURATION,
+		'xs:untypedAtomic': ValueType.XSUNTYPEDATOMIC,
+		'xs:anyURI': ValueType.XSANYURI,
+		'xs:base64Binary': ValueType.XSBASE64BINARY,
+		'xs:hexBinary': ValueType.XSHEXBINARY,
+		'xs:QName': ValueType.XSQNAME,
+		'xs:NCName': ValueType.XSNCNAME,
+		'xs:Name': ValueType.XSNAME,
+		'xs:ENTITY': ValueType.XSENTITY,
+		'xs:nonPositiveInteger': ValueType.XSNONPOSITIVEINTEGER,
+		'xs:negativeInteger': ValueType.XSNEGATIVEINTEGER,
+		'xs:positiveInteger': ValueType.XSPOSITIVEINTEGER,
+		'xs:nonNegativeInteger': ValueType.XSNONNEGATIVEINTEGER,
+		'xs:long': ValueType.XSLONG,
+		'xs:int': ValueType.XSINT,
+		'xs:short': ValueType.XSSHORT,
+		'xs:byte': ValueType.XSBYTE,
+		'xs:unsignedInt': ValueType.XSUNSIGNEDINT,
+		'xs:unsignedLong': ValueType.XSUNSIGNEDLONG,
+		'xs:unsignedByte': ValueType.XSUNSIGNEDBYTE,
+		'xs:unsignedShort': ValueType.XSUNSIGNEDSHORT,
+		'xs:error': ValueType.XSERROR,
+		'xs:ENTITIES': ValueType.XSENTITIES,
+		'xs:IDREF': ValueType.XSIDREF,
+		'xs:ID': ValueType.XSID,
+		'xs:IDREFS': ValueType.XSIDREFS,
+		'xs:NOTATION': ValueType.XSNOTATION,
+		'xs:anySimpleType': ValueType.XSANYSIMPLETYPE,
+		'xs:anyAtomicType': ValueType.XSANYATOMICTYPE,
+		'attribute()': ValueType.ATTRIBUTE,
+		'xs:normalizedString': ValueType.XSNORMALIZEDSTRING,
+		'xs:NMTOKENS': ValueType.XSNMTOKENS,
+		'xs:NMTOKEN': ValueType.XSNMTOKEN,
+		'xs:language': ValueType.XSLANGUAGE,
+		'xs:token': ValueType.XSTOKEN,
+		'node()': ValueType.NODE,
+		'element()': ValueType.ELEMENT,
+		'document-node()': ValueType.DOCUMENTNODE,
+		'text()': ValueType.TEXT,
+		'processing-instruction()': ValueType.PROCESSINGINSTRUCTION,
+		'comment()': ValueType.COMMENT,
+		'item()': ValueType.ITEM,
+		'function(*)': ValueType.FUNCTION,
+		'map(*)': ValueType.MAP,
+		'array(*)': ValueType.ARRAY,
 	};
 
-	const typeVal = stringToTypeMap[input];
-	if (typeVal === undefined || typeVal === null) {
+	let type = stringToValueTypeMap[input];
+
+	if (type === undefined || type === null) {
 		throw new Error(`XPST0051: Cannot convert String of type "${input}" to ValueType`);
 	}
-	return typeVal;
+
+	return type;
 }

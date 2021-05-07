@@ -1,11 +1,14 @@
 import { BaseType } from '../BaseType';
 import createAtomicValue from '../createAtomicValue';
-import { SequenceType } from '../Value';
+import { SequenceMultiplicity } from '../Value';
 import Duration from '../valueTypes/Duration';
 import CastResult from './CastResult';
 
 const createDurationValue = (value) =>
-	createAtomicValue(value, { kind: BaseType.XSDURATION, seqType: SequenceType.EXACTLY_ONE });
+	createAtomicValue(value, {
+		kind: BaseType.XSDURATION,
+		seqType: SequenceMultiplicity.EXACTLY_ONE,
+	});
 
 export default function castToDuration(
 	instanceOf: (typeName: BaseType) => boolean

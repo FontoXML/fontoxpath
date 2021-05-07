@@ -2,7 +2,7 @@ import { BaseType } from '../dataTypes/BaseType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { validatePattern } from '../dataTypes/typeHelpers';
-import { SequenceType } from '../dataTypes/Value';
+import { SequenceMultiplicity } from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import zipSingleton from '../util/zipSingleton';
@@ -33,7 +33,7 @@ const fnQName: FunctionDefinitionType = (
 			return sequenceFactory.singleton(
 				createAtomicValue(new QName('', null, lexicalQName), {
 					kind: BaseType.XSQNAME,
-					seqType: SequenceType.EXACTLY_ONE,
+					seqType: SequenceMultiplicity.EXACTLY_ONE,
 				})
 			);
 		}
@@ -42,7 +42,7 @@ const fnQName: FunctionDefinitionType = (
 			return sequenceFactory.singleton(
 				createAtomicValue(new QName('', uri, lexicalQName), {
 					kind: BaseType.XSQNAME,
-					seqType: SequenceType.EXACTLY_ONE,
+					seqType: SequenceMultiplicity.EXACTLY_ONE,
 				})
 			);
 		}
@@ -50,7 +50,7 @@ const fnQName: FunctionDefinitionType = (
 		return sequenceFactory.singleton(
 			createAtomicValue(new QName(prefix, uri, localName), {
 				kind: BaseType.XSQNAME,
-				seqType: SequenceType.EXACTLY_ONE,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
 			})
 		);
 	});
@@ -73,7 +73,7 @@ const fnPrefixFromQName: FunctionDefinitionType = (
 		return sequenceFactory.singleton(
 			createAtomicValue(qnameValue.prefix, {
 				kind: BaseType.XSNCNAME,
-				seqType: SequenceType.EXACTLY_ONE,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
 			})
 		);
 	});
@@ -89,7 +89,7 @@ const fnNamespaceURIFromQName: FunctionDefinitionType = (
 		const qnameValue = qname.value;
 		return createAtomicValue(qnameValue.namespaceURI || '', {
 			kind: BaseType.XSANYURI,
-			seqType: SequenceType.EXACTLY_ONE,
+			seqType: SequenceMultiplicity.EXACTLY_ONE,
 		});
 	});
 };
@@ -104,7 +104,7 @@ const fnLocalNameFromQName: FunctionDefinitionType = (
 		const qnameValue = qname.value;
 		return createAtomicValue(qnameValue.localName, {
 			kind: BaseType.XSNCNAME,
-			seqType: SequenceType.EXACTLY_ONE,
+			seqType: SequenceMultiplicity.EXACTLY_ONE,
 		});
 	});
 };
@@ -114,31 +114,31 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'QName',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.ZERO_OR_ONE },
+			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		],
-		returnType: { kind: BaseType.XSQNAME, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { kind: BaseType.XSQNAME, seqType: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: fnQName,
 	},
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'prefix-from-QName',
-		argumentTypes: [{ kind: BaseType.XSQNAME, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSNCNAME, seqType: SequenceType.ZERO_OR_ONE },
+		argumentTypes: [{ kind: BaseType.XSQNAME, seqType: SequenceMultiplicity.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSNCNAME, seqType: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: fnPrefixFromQName,
 	},
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'local-name-from-QName',
-		argumentTypes: [{ kind: BaseType.XSQNAME, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSNCNAME, seqType: SequenceType.ZERO_OR_ONE },
+		argumentTypes: [{ kind: BaseType.XSQNAME, seqType: SequenceMultiplicity.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSNCNAME, seqType: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: fnLocalNameFromQName,
 	},
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'namespace-uri-from-QName',
-		argumentTypes: [{ kind: BaseType.XSQNAME, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSANYURI, seqType: SequenceType.ZERO_OR_ONE },
+		argumentTypes: [{ kind: BaseType.XSQNAME, seqType: SequenceMultiplicity.ZERO_OR_ONE }],
+		returnType: { kind: BaseType.XSANYURI, seqType: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: fnNamespaceURIFromQName,
 	},
 ];

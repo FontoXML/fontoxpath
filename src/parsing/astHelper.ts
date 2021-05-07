@@ -1,5 +1,9 @@
 import { BaseType } from '../expressions/dataTypes/BaseType';
-import { SequenceType, stringToValueType, ValueType } from '../expressions/dataTypes/Value';
+import {
+	SequenceMultiplicity,
+	stringToSequenceType,
+	ValueType,
+} from '../expressions/dataTypes/Value';
 import { SourceRange } from '../expressions/debug/StackTraceGenerator';
 
 type QName = { localName: string; namespaceURI: string | null; prefix: string };
@@ -75,11 +79,11 @@ function getTextContent(ast: IAST): string {
  * @return  The type declaration
  */
 function getTypeDeclaration(ast: IAST): ValueType {
-	const exactlyOne = SequenceType.EXACTLY_ONE;
+	const exactlyOne = SequenceMultiplicity.EXACTLY_ONE;
 
 	const typeDeclarationAst = getFirstChild(ast, 'typeDeclaration');
 	if (!typeDeclarationAst || getFirstChild(typeDeclarationAst, 'voidSequenceType')) {
-		return { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE };
+		return { kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE };
 	}
 
 	const determineType = (typeAst: IAST): ValueType => {
@@ -116,7 +120,7 @@ function getTypeDeclaration(ast: IAST): ValueType {
 			case 'typedArrayTest':
 				return { kind: BaseType.ARRAY, items: [], seqType: exactlyOne };
 			case 'atomicType':
-				return stringToValueType(
+				return stringToSequenceType(
 					[getAttribute(typeAst, 'prefix'), getTextContent(typeAst)].join(':')
 				);
 			case 'parenthesizedItemType':
@@ -143,13 +147,13 @@ function getTypeDeclaration(ast: IAST): ValueType {
 
 	switch (occurrence) {
 		case '*':
-			type.seqType = SequenceType.ZERO_OR_MORE;
+			type.seqType = SequenceMultiplicity.ZERO_OR_MORE;
 			return type;
 		case '?':
-			type.seqType = SequenceType.ZERO_OR_ONE;
+			type.seqType = SequenceMultiplicity.ZERO_OR_ONE;
 			return type;
 		case '+':
-			type.seqType = SequenceType.ONE_OR_MORE;
+			type.seqType = SequenceMultiplicity.ONE_OR_MORE;
 			return type;
 		case '':
 		case null:

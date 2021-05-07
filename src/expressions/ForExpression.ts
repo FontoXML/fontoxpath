@@ -1,7 +1,7 @@
 import { BaseType } from './dataTypes/BaseType';
 import ISequence from './dataTypes/ISequence';
 import sequenceFactory from './dataTypes/sequenceFactory';
-import Value, { SequenceType } from './dataTypes/Value';
+import Value, { SequenceMultiplicity } from './dataTypes/Value';
 import DynamicContext from './DynamicContext';
 import ExecutionParameters from './ExecutionParameters';
 import Expression from './Expression';
@@ -100,7 +100,10 @@ class ForExpression extends FlworExpression {
 						variables[this._positionalVariableBindingKey] = () =>
 							sequenceFactory.singleton(
 								new Value(
-									{ kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE },
+									{
+										kind: BaseType.XSINTEGER,
+										seqType: SequenceMultiplicity.EXACTLY_ONE,
+									},
 									position
 								)
 							);

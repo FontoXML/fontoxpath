@@ -20,7 +20,7 @@ import createAtomicValue from './createAtomicValue';
 import ISequence from './ISequence';
 import isSubtypeOf from './isSubtypeOf';
 import sequenceFactory from './sequenceFactory';
-import Value, { SequenceType } from './Value';
+import Value, { SequenceMultiplicity } from './Value';
 export function atomizeSingleValue(
 	value: Value,
 	executionParameters: ExecutionParameters
@@ -55,7 +55,7 @@ export function atomizeSingleValue(
 			return sequenceFactory.create(
 				createAtomicValue(domFacade.getDataFromPointer(pointer), {
 					kind: BaseType.XSUNTYPEDATOMIC,
-					seqType: SequenceType.EXACTLY_ONE,
+					seqType: SequenceMultiplicity.EXACTLY_ONE,
 				})
 			);
 		}
@@ -68,7 +68,7 @@ export function atomizeSingleValue(
 			return sequenceFactory.create(
 				createAtomicValue(domFacade.getDataFromPointer(pointer), {
 					kind: BaseType.XSSTRING,
-					seqType: SequenceType.EXACTLY_ONE,
+					seqType: SequenceMultiplicity.EXACTLY_ONE,
 				})
 			);
 		}
@@ -103,7 +103,7 @@ export function atomizeSingleValue(
 		return sequenceFactory.create(
 			createAtomicValue(allTexts.join(''), {
 				kind: BaseType.XSUNTYPEDATOMIC,
-				seqType: SequenceType.EXACTLY_ONE,
+				seqType: SequenceMultiplicity.EXACTLY_ONE,
 			})
 		);
 	}
