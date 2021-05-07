@@ -39,7 +39,7 @@ function emitNameTestFromQName(
 		return acceptAst(conditionCode);
 	}
 
-	return acceptAst(`${conditionCode} && ${identifier}.localName === "${localName}"`);
+	return acceptAst(`${conditionCode} && ${identifier}.localName === ${JSON.stringify(localName)}`);
 }
 
 // element() and element(*) match any single element node, regardless of its name or type annotation.
