@@ -1,6 +1,6 @@
+import { BaseType } from '../BaseType';
 import createAtomicValue from '../createAtomicValue';
 import { SequenceType } from '../Value';
-import { BaseType } from '../BaseType';
 import YearMonthDuration from '../valueTypes/YearMonthDuration';
 import CastResult from './CastResult';
 

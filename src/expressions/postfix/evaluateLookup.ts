@@ -1,10 +1,10 @@
 import ArrayValue from '../dataTypes/ArrayValue';
+import { BaseType } from '../dataTypes/BaseType';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import MapValue from '../dataTypes/MapValue';
 import EmptySequence from '../dataTypes/Sequences/EmptySequence';
-import Value, { SequenceType } from '../dataTypes/Value';
-import { BaseType } from '../dataTypes/BaseType';
+import Value from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression from '../Expression';

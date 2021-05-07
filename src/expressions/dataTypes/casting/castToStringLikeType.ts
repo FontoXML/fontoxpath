@@ -1,4 +1,3 @@
-import { SequenceType, ValueType } from '../Value';
 import { BaseType } from '../BaseType';
 import QName from '../valueTypes/QName';
 

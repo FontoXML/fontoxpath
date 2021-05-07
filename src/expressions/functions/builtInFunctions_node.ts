@@ -7,9 +7,9 @@ import {
 	ProcessingInstructionNodePointer,
 } from '../../domClone/Pointer';
 import { NODE_TYPES } from '../../domFacade/ConcreteNode';
-
 import DomFacade from '../../domFacade/DomFacade';
 import atomize from '../dataTypes/atomize';
+import { BaseType } from '../dataTypes/BaseType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import createPointerValue from '../dataTypes/createPointerValue';
 import { sortNodeValues } from '../dataTypes/documentOrderUtils';
@@ -17,7 +17,6 @@ import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value, { SequenceType } from '../dataTypes/Value';
-import { BaseType } from '../dataTypes/BaseType';
 import QName from '../dataTypes/valueTypes/QName';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';

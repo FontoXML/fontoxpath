@@ -1,12 +1,10 @@
-import Expression, { RESULT_ORDERINGS } from '../Expression';
-
 import DomFacade from '../../domFacade/DomFacade';
+import { BaseType } from '../dataTypes/BaseType';
 import { compareNodePositions, sortNodeValues } from '../dataTypes/documentOrderUtils';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { SequenceType } from '../dataTypes/Value';
-import { BaseType } from '../dataTypes/BaseType';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
 import { DONE_TOKEN, IterationHint, ready } from '../util/iterators';
 import arePointersEqual from './compares/arePointersEqual';
 

@@ -1,10 +1,8 @@
-import Expression from '../Expression';
-
-import sequenceFactory from '../dataTypes/sequenceFactory';
-
 import AtomicValue from '../dataTypes/AtomicValue';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
+import Expression from '../Expression';
 
 abstract class TestAbstractExpression extends Expression {
 	constructor(specificity) {

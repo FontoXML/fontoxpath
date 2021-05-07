@@ -1,6 +1,13 @@
+import { BaseType } from '../../../expressions/dataTypes/BaseType';
+import {
+	SequenceType,
+	ValueType,
+	valueTypeHash,
+	valueTypeToString,
+} from '../../../expressions/dataTypes/Value';
+import AtomicValue from '../../dataTypes/AtomicValue';
 import castToType from '../../dataTypes/castToType';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
-
 import {
 	equal as dateTimeEqual,
 	greaterThan as dateTimeGreaterThan,
@@ -14,15 +21,6 @@ import {
 	greaterThan as yearMonthDurationGreaterThan,
 	lessThan as yearMonthDurationLessThan,
 } from '../../dataTypes/valueTypes/YearMonthDuration';
-
-import {
-	SequenceType,
-	ValueType,
-	valueTypeHash,
-	valueTypeToString,
-} from '../../../expressions/dataTypes/Value';
-import { BaseType } from '../../../expressions/dataTypes/BaseType';
-import AtomicValue from '../../dataTypes/AtomicValue';
 import DynamicContext from '../../DynamicContext';
 
 // Use partial application to get to a comparer faster

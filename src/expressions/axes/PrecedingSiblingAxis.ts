@@ -1,9 +1,8 @@
-import DomFacade from '../../domFacade/DomFacade';
-import Expression, { RESULT_ORDERINGS } from '../Expression';
-
 import { ChildNodePointer, NodePointer } from '../../domClone/Pointer';
+import DomFacade from '../../domFacade/DomFacade';
 import createPointerValue from '../dataTypes/createPointerValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 import { DONE_TOKEN, ready } from '../util/iterators';
 

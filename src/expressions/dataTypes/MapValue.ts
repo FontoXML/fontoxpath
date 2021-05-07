@@ -1,10 +1,10 @@
 import mapGet from '../functions/builtInFunctions_maps_get';
 import { MAP_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import { BaseType } from './BaseType';
 import FunctionValue from './FunctionValue';
 import ISequence from './ISequence';
 import sequenceFactory from './sequenceFactory';
 import Value, { SequenceType } from './Value';
-import { BaseType } from './BaseType';
 
 class MapValue extends FunctionValue<ISequence> {
 	public keyValuePairs: { key: Value; value: () => ISequence }[];

@@ -1,5 +1,5 @@
-import { SequenceType, ValueType } from '../Value';
 import { BaseType } from '../BaseType';
+import { SequenceType, ValueType } from '../Value';
 import AbstractDuration from './AbstractDuration';
 import DayTimeDuration from './DayTimeDuration';
 

@@ -1,9 +1,9 @@
 import atomize from '../dataTypes/atomize';
+import { BaseType } from '../dataTypes/BaseType';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value, { SequenceType } from '../dataTypes/Value';
-import { BaseType } from '../dataTypes/BaseType';
 import QName from '../dataTypes/valueTypes/QName';
 import ExecutionParameters from '../ExecutionParameters';
 import StaticContext from '../StaticContext';

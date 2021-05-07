@@ -1,13 +1,12 @@
+import { ChildNodePointer, ParentNodePointer } from '../../domClone/Pointer';
+import { NODE_TYPES } from '../../domFacade/ConcreteNode';
+import DomFacade from '../../domFacade/DomFacade';
 import createPointerValue from '../dataTypes/createPointerValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
-import { DONE_TOKEN, IterationHint, ready } from '../util/iterators';
-
-import { ChildNodePointer, ParentNodePointer } from '../../domClone/Pointer';
-import { NODE_TYPES } from '../../domFacade/ConcreteNode';
-import DomFacade from '../../domFacade/DomFacade';
 import createDescendantGenerator from '../util/createDescendantGenerator';
+import { DONE_TOKEN, IterationHint, ready } from '../util/iterators';
 
 function createFollowingGenerator(
 	domFacade: DomFacade,

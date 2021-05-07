@@ -1,7 +1,6 @@
-import Expression, { RESULT_ORDERINGS } from '../Expression';
-
 import createPointerValue from '../dataTypes/createPointerValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 
 class ParentAxis extends Expression {

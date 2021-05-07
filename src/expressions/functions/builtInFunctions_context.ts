@@ -1,10 +1,9 @@
+import { BaseType } from '../dataTypes/BaseType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { DONE_TOKEN, ready } from '../util/iterators';
-
 import { SequenceType } from '../dataTypes/Value';
-import { BaseType } from '../dataTypes/BaseType';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import { DONE_TOKEN, ready } from '../util/iterators';
 import { BuiltinDeclarationType } from './builtInFunctions';
 import FunctionDefinitionType from './FunctionDefinitionType';
 

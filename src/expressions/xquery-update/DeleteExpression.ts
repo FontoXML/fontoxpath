@@ -1,20 +1,16 @@
-import Expression, { RESULT_ORDERINGS } from '../Expression';
-
-import Specificity from '../Specificity';
-import UpdatingExpression from './UpdatingExpression';
-
-import { deletePu } from './pulPrimitives';
-import { mergeUpdates } from './pulRoutines';
-
-import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import { IIterator, IterationHint, ready } from '../util/iterators';
-
-import Value, { SequenceType } from '../dataTypes/Value';
 import { BaseType } from '../dataTypes/BaseType';
+import isSubtypeOf from '../dataTypes/isSubtypeOf';
+import Value from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
+import Specificity from '../Specificity';
 import UpdatingExpressionResult from '../UpdatingExpressionResult';
+import { IIterator, IterationHint, ready } from '../util/iterators';
 import { IPendingUpdate } from './IPendingUpdate';
+import { deletePu } from './pulPrimitives';
+import { mergeUpdates } from './pulRoutines';
+import UpdatingExpression from './UpdatingExpression';
 import { errXUTY0007 } from './XQueryUpdateFacilityErrors';
 
 class DeleteExpression extends UpdatingExpression {

@@ -1,22 +1,18 @@
-import Expression, { RESULT_ORDERINGS } from '../Expression';
-
-import Specificity from '../Specificity';
-import UpdatingExpression from './UpdatingExpression';
-
-import { rename } from './pulPrimitives';
-import { mergeUpdates } from './pulRoutines';
-
-import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import Value, { SequenceType } from '../dataTypes/Value';
 import { BaseType } from '../dataTypes/BaseType';
-import QName from '../dataTypes/valueTypes/QName';
-import { IIterator, IterationHint, ready } from '../util/iterators';
-import { evaluateNCNameExpression, evaluateQNameExpression } from '../xquery/nameExpression';
-
+import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import Value from '../dataTypes/Value';
+import QName from '../dataTypes/valueTypes/QName';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
+import Specificity from '../Specificity';
 import UpdatingExpressionResult from '../UpdatingExpressionResult';
+import { IIterator, IterationHint, ready } from '../util/iterators';
+import { evaluateNCNameExpression, evaluateQNameExpression } from '../xquery/nameExpression';
+import { rename } from './pulPrimitives';
+import { mergeUpdates } from './pulRoutines';
+import UpdatingExpression from './UpdatingExpression';
 import { errXUDY0023, errXUDY0027, errXUTY0012 } from './XQueryUpdateFacilityErrors';
 
 function evaluateTarget(targetXdmValue) {

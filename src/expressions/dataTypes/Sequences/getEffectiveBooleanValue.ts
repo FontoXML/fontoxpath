@@ -1,7 +1,7 @@
 import { errFORG0006 } from '../../functions/FunctionOperationErrors';
-import isSubtypeOf from '../isSubtypeOf';
-import Value, { SequenceType } from '../Value';
 import { BaseType } from '../BaseType';
+import isSubtypeOf from '../isSubtypeOf';
+import Value from '../Value';
 
 export default function getEffectiveBooleanValue(value: Value): boolean {
 	const jsValue = value.value;

@@ -1,11 +1,11 @@
 import IDomFacade from './domFacade/IDomFacade';
 import { PositionedError } from './evaluationUtils/PositionedError';
 import { adaptJavaScriptValueToSequence } from './expressions/adaptJavaScriptValueToXPathValue';
+import { BaseType } from './expressions/dataTypes/BaseType';
 import ISequence from './expressions/dataTypes/ISequence';
 import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
 import sequenceFactory from './expressions/dataTypes/sequenceFactory';
-import Value, { SequenceType, ValueType } from './expressions/dataTypes/Value';
-import { BaseType } from './expressions/dataTypes/BaseType';
+import { SequenceType, ValueType } from './expressions/dataTypes/Value';
 import DynamicContext from './expressions/DynamicContext';
 import ExecutionParameters from './expressions/ExecutionParameters';
 import { registerFunction } from './expressions/functions/functionRegistry';

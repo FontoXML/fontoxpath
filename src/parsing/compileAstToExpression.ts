@@ -1,8 +1,3 @@
-import Expression, { RESULT_ORDERINGS } from '../expressions/Expression';
-import TestAbstractExpression from '../expressions/tests/TestAbstractExpression';
-
-import astHelper, { IAST } from './astHelper';
-
 import CurlyArrayConstructor from '../expressions/arrays/CurlyArrayConstructor';
 import SquareArrayConstructor from '../expressions/arrays/SquareArrayConstructor';
 import AncestorAxis from '../expressions/axes/AncestorAxis';
@@ -16,7 +11,12 @@ import PrecedingAxis from '../expressions/axes/PrecedingAxis';
 import PrecedingSiblingAxis from '../expressions/axes/PrecedingSiblingAxis';
 import SelfAxis from '../expressions/axes/SelfAxis';
 import IfExpression from '../expressions/conditional/IfExpression';
+import { BaseType } from '../expressions/dataTypes/BaseType';
+import { SequenceType, ValueType } from '../expressions/dataTypes/Value';
+import QName from '../expressions/dataTypes/valueTypes/QName';
 import StackTraceGenerator, { SourceRange } from '../expressions/debug/StackTraceGenerator';
+import Expression, { RESULT_ORDERINGS } from '../expressions/Expression';
+import FlworExpression from '../expressions/FlworExpression';
 import ForExpression from '../expressions/ForExpression';
 import FunctionCall from '../expressions/functions/FunctionCall';
 import InlineFunction from '../expressions/functions/InlineFunction';
@@ -36,9 +36,11 @@ import CastableAsOperator from '../expressions/operators/types/CastableAsOperato
 import CastAsOperator from '../expressions/operators/types/CastAsOperator';
 import InstanceOfOperator from '../expressions/operators/types/InstanceOfOperator';
 import Union from '../expressions/operators/Union';
+import OrderByExpression from '../expressions/OrderByExpression';
 import AbsolutePathExpression from '../expressions/path/AbsolutePathExpression';
 import ContextItemExpression from '../expressions/path/ContextItemExpression';
 import PathExpression from '../expressions/path/PathExpression';
+import PossiblyUpdatingExpression from '../expressions/PossiblyUpdatingExpression';
 import Filter from '../expressions/postfix/Filter';
 import Lookup from '../expressions/postfix/Lookup';
 import UnaryLookup from '../expressions/postfix/UnaryLookup';
@@ -46,29 +48,22 @@ import QuantifiedExpression from '../expressions/quantified/QuantifiedExpression
 import KindTest from '../expressions/tests/KindTest';
 import NameTest from '../expressions/tests/NameTest';
 import PITest from '../expressions/tests/PITest';
+import TestAbstractExpression from '../expressions/tests/TestAbstractExpression';
 import TypeTest from '../expressions/tests/TypeTest';
 import VarRef from '../expressions/VarRef';
-
+import WhereExpression from '../expressions/WhereExpression';
+import DeleteExpression from '../expressions/xquery-update/DeleteExpression';
+import InsertExpression, { TargetChoice } from '../expressions/xquery-update/InsertExpression';
+import RenameExpression from '../expressions/xquery-update/RenameExpression';
+import ReplaceExpression from '../expressions/xquery-update/ReplaceExpression';
+import TransformExpression from '../expressions/xquery-update/TransformExpression';
 import AttributeConstructor from '../expressions/xquery/AttributeConstructor';
 import CommentConstructor from '../expressions/xquery/CommentConstructor';
 import ElementConstructor from '../expressions/xquery/ElementConstructor';
 import PIConstructor from '../expressions/xquery/PIConstructor';
 import TextConstructor from '../expressions/xquery/TextConstructor';
 import TypeSwitchExpression from '../expressions/xquery/TypeSwitchExpression';
-
-import DeleteExpression from '../expressions/xquery-update/DeleteExpression';
-import InsertExpression, { TargetChoice } from '../expressions/xquery-update/InsertExpression';
-import RenameExpression from '../expressions/xquery-update/RenameExpression';
-import ReplaceExpression from '../expressions/xquery-update/ReplaceExpression';
-import TransformExpression from '../expressions/xquery-update/TransformExpression';
-
-import { SequenceType, ValueType } from '../expressions/dataTypes/Value';
-import { BaseType } from '../expressions/dataTypes/BaseType';
-import QName from '../expressions/dataTypes/valueTypes/QName';
-import FlworExpression from '../expressions/FlworExpression';
-import OrderByExpression from '../expressions/OrderByExpression';
-import PossiblyUpdatingExpression from '../expressions/PossiblyUpdatingExpression';
-import WhereExpression from '../expressions/WhereExpression';
+import astHelper, { IAST } from './astHelper';
 
 const COMPILATION_OPTIONS = {
 	XPATH_MODE: { allowXQuery: false, allowUpdating: false },

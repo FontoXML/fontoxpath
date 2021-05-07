@@ -1,5 +1,5 @@
-import { SequenceType, ValueType } from '../Value';
 import { BaseType } from '../BaseType';
+import { SequenceType, ValueType } from '../Value';
 import { Variety } from '../Variety';
 
 type BuildinModelTypeDeclaration = {

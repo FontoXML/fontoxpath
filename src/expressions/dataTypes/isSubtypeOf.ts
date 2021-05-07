@@ -1,6 +1,5 @@
+import { BaseType, startWithXS } from './BaseType';
 import builtinDataTypesByType, { TypeModel } from './builtins/builtinDataTypesByType';
-import { startWithXS } from './BaseType';
-import { BaseType } from './BaseType';
 import { Variety } from './Variety';
 
 function isSubtypeOfType(subType: TypeModel, superType: TypeModel) {

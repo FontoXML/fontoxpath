@@ -1,5 +1,5 @@
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import Value, { SequenceType, stringToValueType, ValueType } from '../dataTypes/Value';
+import Value, { stringToValueType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Specificity from '../Specificity';

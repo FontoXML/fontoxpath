@@ -1,10 +1,10 @@
 import { NodePointer } from './domClone/Pointer';
 import realizeDom from './domClone/realizeDom';
 import ArrayValue from './expressions/dataTypes/ArrayValue';
+import { BaseType } from './expressions/dataTypes/BaseType';
 import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
 import MapValue from './expressions/dataTypes/MapValue';
-import Value, { SequenceType } from './expressions/dataTypes/Value';
-import { BaseType } from './expressions/dataTypes/BaseType';
+import Value from './expressions/dataTypes/Value';
 import DateTime from './expressions/dataTypes/valueTypes/DateTime';
 import QName from './expressions/dataTypes/valueTypes/QName';
 import ExecutionParameters from './expressions/ExecutionParameters';

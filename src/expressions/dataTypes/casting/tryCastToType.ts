@@ -1,4 +1,5 @@
 import AtomicValue from '../AtomicValue';
+import { BaseType } from '../BaseType';
 import createAtomicValue from '../createAtomicValue';
 import isSubtypeOf from '../isSubtypeOf';
 import {
@@ -8,7 +9,6 @@ import {
 	validateRestrictions,
 } from '../typeHelpers';
 import { SequenceType, ValueType, valueTypeHash, valueTypeToString } from '../Value';
-import { BaseType } from '../BaseType';
 import CastResult from './CastResult';
 import castToAnyURI from './castToAnyURI';
 import castToBase64Binary from './castToBase64Binary';

@@ -1,13 +1,3 @@
-import {
-	AttributeNodePointer,
-	ChildNodePointer,
-	DocumentNodePointer,
-	ElementNodePointer,
-	NodePointer,
-	TextNodePointer,
-	TinyNode,
-} from '../../domClone/Pointer';
-import { ConcreteNode } from '../../domFacade/ConcreteNode';
 import { IPendingUpdate } from './IPendingUpdate';
 import { DeletePendingUpdate } from './pendingUpdates/DeletePendingUpdate';
 import { InsertAfterPendingUpdate } from './pendingUpdates/InsertAfterPendingUpdate';
