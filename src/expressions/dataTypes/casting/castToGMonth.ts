@@ -1,31 +1,26 @@
 import AtomicValue from '../AtomicValue';
-import { BaseType } from '../BaseType';
 import createAtomicValue from '../createAtomicValue';
-import { SequenceMultiplicity } from '../Value';
+import { SequenceMultiplicity, ValueType } from '../Value';
 import DateTime from '../valueTypes/DateTime';
 import CastResult from './CastResult';
 
-const createGMonthValue = (value: any): AtomicValue =>
-	createAtomicValue(value, {
-		kind: BaseType.XSGMONTH,
-		seqType: SequenceMultiplicity.EXACTLY_ONE,
-	});
+const createGMonthValue = (value: any): AtomicValue => createAtomicValue(value, ValueType.XSGMONTH);
 
 export default function castToGMonth(
-	instanceOf: (typeName: BaseType) => boolean
+	instanceOf: (typeName: ValueType) => boolean
 ): (value: any) => CastResult {
-	if (instanceOf(BaseType.XSDATE) || instanceOf(BaseType.XSDATETIME)) {
+	if (instanceOf(ValueType.XSDATE) || instanceOf(ValueType.XSDATETIME)) {
 		return (value) => ({
 			successful: true,
 			value: createGMonthValue(
 				value.convertToType({
-					kind: BaseType.XSGMONTH,
+					kind: ValueType.XSGMONTH,
 					seqType: SequenceMultiplicity.EXACTLY_ONE,
 				})
 			),
 		});
 	}
-	if (instanceOf(BaseType.XSUNTYPEDATOMIC) || instanceOf(BaseType.XSSTRING)) {
+	if (instanceOf(ValueType.XSUNTYPEDATOMIC) || instanceOf(ValueType.XSSTRING)) {
 		return (value) => ({
 			successful: true,
 			value: createGMonthValue(DateTime.fromString(value)),

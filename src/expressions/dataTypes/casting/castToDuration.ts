@@ -1,37 +1,32 @@
-import { BaseType } from '../BaseType';
 import createAtomicValue from '../createAtomicValue';
-import { SequenceMultiplicity } from '../Value';
+import { SequenceMultiplicity, ValueType } from '../Value';
 import Duration from '../valueTypes/Duration';
 import CastResult from './CastResult';
 
-const createDurationValue = (value) =>
-	createAtomicValue(value, {
-		kind: BaseType.XSDURATION,
-		seqType: SequenceMultiplicity.EXACTLY_ONE,
-	});
+const createDurationValue = (value) => createAtomicValue(value, ValueType.XSDURATION);
 
 export default function castToDuration(
-	instanceOf: (typeName: BaseType) => boolean
+	instanceOf: (typeName: ValueType) => boolean
 ): (value: any) => CastResult {
-	if (instanceOf(BaseType.XSYEARMONTHDURATION)) {
+	if (instanceOf(ValueType.XSYEARMONTHDURATION)) {
 		return (value) => ({
 			successful: true,
 			value: createDurationValue(Duration.fromYearMonthDuration(value)),
 		});
 	}
-	if (instanceOf(BaseType.XSDAYTIMEDURATION)) {
+	if (instanceOf(ValueType.XSDAYTIMEDURATION)) {
 		return (value) => ({
 			successful: true,
 			value: createDurationValue(Duration.fromDayTimeDuration(value)),
 		});
 	}
-	if (instanceOf(BaseType.XSDURATION)) {
+	if (instanceOf(ValueType.XSDURATION)) {
 		return (value) => ({
 			successful: true,
 			value: createDurationValue(value),
 		});
 	}
-	if (instanceOf(BaseType.XSUNTYPEDATOMIC) || instanceOf(BaseType.XSSTRING)) {
+	if (instanceOf(ValueType.XSUNTYPEDATOMIC) || instanceOf(ValueType.XSSTRING)) {
 		return (value) => {
 			const parsedDuration = Duration.fromString(value);
 			if (parsedDuration) {

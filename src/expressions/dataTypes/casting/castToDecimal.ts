@@ -1,21 +1,17 @@
-import { BaseType } from '../BaseType';
 import createAtomicValue from '../createAtomicValue';
-import { SequenceMultiplicity } from '../Value';
+import { SequenceMultiplicity, ValueType } from '../Value';
 import CastResult from './CastResult';
 
 export default function castToDecimal(
-	instanceOf: (typeName: BaseType) => boolean
+	instanceOf: (typeName: ValueType) => boolean
 ): (value: any) => CastResult {
-	if (instanceOf(BaseType.XSINTEGER)) {
+	if (instanceOf(ValueType.XSINTEGER)) {
 		return (value) => ({
 			successful: true,
-			value: createAtomicValue(value, {
-				kind: BaseType.XSDECIMAL,
-				seqType: SequenceMultiplicity.EXACTLY_ONE,
-			}),
+			value: createAtomicValue(value,  ValueType.XSDECIMAL),
 		});
 	}
-	if (instanceOf(BaseType.XSFLOAT) || instanceOf(BaseType.XSDOUBLE)) {
+	if (instanceOf(ValueType.XSFLOAT) || instanceOf(ValueType.XSDOUBLE)) {
 		return (value) => {
 			if (isNaN(value) || !isFinite(value)) {
 				return {
@@ -33,33 +29,24 @@ export default function castToDecimal(
 			}
 			return {
 				successful: true,
-				value: createAtomicValue(value, {
-					kind: BaseType.XSDECIMAL,
-					seqType: SequenceMultiplicity.EXACTLY_ONE,
-				}),
+				value: createAtomicValue(value, ValueType.XSDECIMAL),
 			};
 		};
 	}
-	if (instanceOf(BaseType.XSBOOLEAN)) {
+	if (instanceOf(ValueType.XSBOOLEAN)) {
 		return (value) => ({
 			successful: true,
-			value: createAtomicValue(value ? 1 : 0, {
-				kind: BaseType.XSDECIMAL,
-				seqType: SequenceMultiplicity.EXACTLY_ONE,
-			}),
+			value: createAtomicValue(value ? 1 : 0, ValueType.XSDECIMAL),
 		});
 	}
 
-	if (instanceOf(BaseType.XSSTRING) || instanceOf(BaseType.XSUNTYPEDATOMIC)) {
+	if (instanceOf(ValueType.XSSTRING) || instanceOf(ValueType.XSUNTYPEDATOMIC)) {
 		return (value) => {
 			const decimalValue = parseFloat(value);
 			if (!isNaN(decimalValue) || isFinite(decimalValue)) {
 				return {
 					successful: true,
-					value: createAtomicValue(decimalValue, {
-						kind: BaseType.XSDECIMAL,
-						seqType: SequenceMultiplicity.EXACTLY_ONE,
-					}),
+					value: createAtomicValue(decimalValue, ValueType.XSDECIMAL),
 				};
 			}
 			return {
