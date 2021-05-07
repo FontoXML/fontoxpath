@@ -1,10 +1,10 @@
 import DomFacade from '../../domFacade/DomFacade';
+import { BaseType } from '../dataTypes/BaseType';
 import { sortNodeValues } from '../dataTypes/documentOrderUtils';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value, { SequenceType } from '../dataTypes/Value';
-import { BaseType } from '../dataTypes/BaseType';
+import Value from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';

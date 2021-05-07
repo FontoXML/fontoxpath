@@ -1,4 +1,5 @@
 import atomize from '../dataTypes/atomize';
+import { BaseType } from '../dataTypes/BaseType';
 import castToType from '../dataTypes/castToType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import FunctionValue from '../dataTypes/FunctionValue';
@@ -6,7 +7,6 @@ import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value, { SequenceType, ValueType } from '../dataTypes/Value';
-import { BaseType } from '../dataTypes/BaseType';
 import valueCompare from '../operators/compares/valueCompare';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { DONE_TOKEN, IIterator, IterationHint, ready } from '../util/iterators';

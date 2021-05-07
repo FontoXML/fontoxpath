@@ -1,6 +1,5 @@
-import Expression from '../Expression';
-
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import Expression from '../Expression';
 
 type InClause = {
 	name: { localName: string; namespaceURI: string; prefix: string };

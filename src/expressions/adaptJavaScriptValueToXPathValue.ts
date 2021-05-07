@@ -2,6 +2,7 @@ import { NodePointer } from '../domClone/Pointer';
 import DomFacade from '../domFacade/DomFacade';
 import { UntypedExternalValue, ValidValue } from '../types/createTypedValueFactory';
 import ArrayValue from './dataTypes/ArrayValue';
+import { BaseType, baseTypeToString } from './dataTypes/BaseType';
 import { getValidatorForType } from './dataTypes/builtins/dataTypeValidatorByType';
 import createAtomicValue, { falseBoolean, trueBoolean } from './dataTypes/createAtomicValue';
 import createPointerValue from './dataTypes/createPointerValue';
@@ -9,7 +10,6 @@ import ISequence from './dataTypes/ISequence';
 import MapValue from './dataTypes/MapValue';
 import sequenceFactory from './dataTypes/sequenceFactory';
 import Value, { SequenceType, ValueType, valueTypeToString } from './dataTypes/Value';
-import { BaseType, baseTypeToString } from './dataTypes/BaseType';
 import DateTime from './dataTypes/valueTypes/DateTime';
 import createDoublyIterableSequence from './util/createDoublyIterableSequence';
 

@@ -3,13 +3,13 @@ import realizeDom from '../domClone/realizeDom';
 import { printAndRethrowError } from '../evaluationUtils/printAndRethrowError';
 import ArrayValue from '../expressions/dataTypes/ArrayValue';
 import atomize, { atomizeSingleValue } from '../expressions/dataTypes/atomize';
+import { BaseType } from '../expressions/dataTypes/BaseType';
 import castToType from '../expressions/dataTypes/castToType';
 import ISequence from '../expressions/dataTypes/ISequence';
 import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
 import MapValue from '../expressions/dataTypes/MapValue';
 import sequenceFactory from '../expressions/dataTypes/sequenceFactory';
 import { SequenceType } from '../expressions/dataTypes/Value';
-import { BaseType } from '../expressions/dataTypes/BaseType';
 import ExecutionParameters from '../expressions/ExecutionParameters';
 import { IterationHint } from '../expressions/util/iterators';
 import transformXPathItemToJavascriptObject, {

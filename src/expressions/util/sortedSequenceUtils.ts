@@ -1,10 +1,10 @@
 import DomFacade from '../../domFacade/DomFacade';
+import { BaseType } from '../dataTypes/BaseType';
 import { compareNodePositions } from '../dataTypes/documentOrderUtils';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value, { SequenceType } from '../dataTypes/Value';
-import { BaseType } from '../dataTypes/BaseType';
+import Value from '../dataTypes/Value';
 import arePointersEqual from '../operators/compares/arePointersEqual';
 import { DONE_TOKEN, IIterator, IterationHint, IterationResult } from './iterators';
 

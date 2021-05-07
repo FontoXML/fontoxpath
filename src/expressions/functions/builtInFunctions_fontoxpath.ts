@@ -1,23 +1,21 @@
+import { printAndRethrowError } from '../../evaluationUtils/printAndRethrowError';
 import astHelper from '../../parsing/astHelper';
 import compileAstToExpression from '../../parsing/compileAstToExpression';
 import parseExpression from '../../parsing/parseExpression';
 import processProlog from '../../parsing/processProlog';
+import { BaseType } from '../dataTypes/BaseType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
-import createPointerValue from '../dataTypes/createPointerValue';
 import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value, { SequenceType } from '../dataTypes/Value';
-import { BaseType } from '../dataTypes/BaseType';
 import DynamicContext from '../DynamicContext';
 import ExecutionSpecificStaticContext from '../ExecutionSpecificStaticContext';
 import { FONTOXPATH_NAMESPACE_URI, FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import StaticContext from '../StaticContext';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
-import { DONE_TOKEN, IIterator, IterationHint, ready } from '../util/iterators';
-import FunctionDefinitionType from './FunctionDefinitionType';
-
-import { printAndRethrowError } from '../../evaluationUtils/printAndRethrowError';
+import { IIterator, IterationHint } from '../util/iterators';
 import { BuiltinDeclarationType } from './builtInFunctions';
+import FunctionDefinitionType from './FunctionDefinitionType';
 
 const fontoxpathEvaluate: FunctionDefinitionType = (
 	_dynamicContext,

@@ -1,8 +1,7 @@
+import { BaseType } from '../dataTypes/BaseType';
 import { sortNodeValues } from '../dataTypes/documentOrderUtils';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { SequenceType, ValueType } from '../dataTypes/Value';
-import { BaseType } from '../dataTypes/BaseType';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';

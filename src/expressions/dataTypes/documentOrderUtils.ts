@@ -7,9 +7,9 @@ import {
 import { ConcreteChildNode, ConcreteNode, ConcreteParentNode } from '../../domFacade/ConcreteNode';
 import DomFacade from '../../domFacade/DomFacade';
 import arePointersEqual from '../operators/compares/arePointersEqual';
-import isSubtypeOf from './isSubtypeOf';
-import Value, { SequenceType } from './Value';
 import { BaseType } from './BaseType';
+import isSubtypeOf from './isSubtypeOf';
+import Value from './Value';
 
 /**
  * Compares positions of given nodes in the given state, assuming they share a common parent

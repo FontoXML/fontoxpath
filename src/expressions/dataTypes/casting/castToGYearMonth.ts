@@ -1,7 +1,7 @@
 import AtomicValue from '../AtomicValue';
+import { BaseType } from '../BaseType';
 import createAtomicValue from '../createAtomicValue';
 import { SequenceType } from '../Value';
-import { BaseType } from '../BaseType';
 import DateTime from '../valueTypes/DateTime';
 import CastResult from './CastResult';
 

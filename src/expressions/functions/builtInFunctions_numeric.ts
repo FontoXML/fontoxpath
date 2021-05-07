@@ -1,4 +1,5 @@
 import atomize from '../dataTypes/atomize';
+import { BaseType } from '../dataTypes/BaseType';
 import tryCastToType from '../dataTypes/casting/tryCastToType';
 import castToType from '../dataTypes/castToType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
@@ -8,7 +9,6 @@ import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { SequenceType, ValueType } from '../dataTypes/Value';
-import { BaseType } from '../dataTypes/BaseType';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';

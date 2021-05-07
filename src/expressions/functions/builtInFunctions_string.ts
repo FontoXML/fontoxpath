@@ -1,12 +1,12 @@
 import { compile, MatchFn } from 'xspattern';
 import atomize, { atomizeSingleValue } from '../dataTypes/atomize';
+import { BaseType } from '../dataTypes/BaseType';
 import castToType from '../dataTypes/castToType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value, { EllipsisType, SequenceType } from '../dataTypes/Value';
-import { BaseType } from '../dataTypes/BaseType';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { DONE_TOKEN, ready } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';

@@ -1,11 +1,11 @@
 import { ElementNodePointer, NodePointer, ParentNodePointer } from '../../domClone/Pointer';
 import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import DomFacade from '../../domFacade/DomFacade';
+import { BaseType } from '../dataTypes/BaseType';
 import createPointerValue from '../dataTypes/createPointerValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { SequenceType } from '../dataTypes/Value';
-import { BaseType } from '../dataTypes/BaseType';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { errXPTY0004, XPDY0002 } from '../XPathErrors';
 import { BuiltinDeclarationType } from './builtInFunctions';

@@ -15,7 +15,6 @@ import {
 	TinyNode,
 	TinyParentNode,
 } from '../domClone/Pointer';
-import { Node } from '../types/Types';
 import {
 	ConcreteAttributeNode,
 	ConcreteCharacterDataNode,

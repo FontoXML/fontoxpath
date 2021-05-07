@@ -1,10 +1,8 @@
-import sequenceFactory from '../dataTypes/sequenceFactory';
-import isSameMapKey from './isSameMapKey';
-
-import zipSingleton from '../util/zipSingleton';
-
 import MapValue from '../dataTypes/MapValue';
+import sequenceFactory from '../dataTypes/sequenceFactory';
+import zipSingleton from '../util/zipSingleton';
 import FunctionDefinitionType from './FunctionDefinitionType';
+import isSameMapKey from './isSameMapKey';
 
 const mapGet: FunctionDefinitionType = (
 	_dynamicContext,

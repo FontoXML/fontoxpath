@@ -15,12 +15,12 @@ import ExecutionParameters from '../ExecutionParameters';
 import concatSequences from '../util/concatSequences';
 import { DONE_TOKEN, IIterator, IterationHint } from '../util/iterators';
 import ArrayValue from './ArrayValue';
+import { BaseType } from './BaseType';
 import createAtomicValue from './createAtomicValue';
 import ISequence from './ISequence';
 import isSubtypeOf from './isSubtypeOf';
 import sequenceFactory from './sequenceFactory';
 import Value, { SequenceType } from './Value';
-import { BaseType } from './BaseType';
 export function atomizeSingleValue(
 	value: Value,
 	executionParameters: ExecutionParameters

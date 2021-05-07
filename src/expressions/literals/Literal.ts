@@ -1,12 +1,10 @@
-import Expression, { RESULT_ORDERINGS } from '../Expression';
-import Specificity from '../Specificity';
-
-import sequenceFactory from '../dataTypes/sequenceFactory';
-
+import { BaseType } from '../dataTypes/BaseType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import ISequence from '../dataTypes/ISequence';
-import { SequenceType, ValueType } from '../dataTypes/Value';
-import { BaseType } from '../dataTypes/BaseType';
+import sequenceFactory from '../dataTypes/sequenceFactory';
+import { ValueType } from '../dataTypes/Value';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
+import Specificity from '../Specificity';
 
 class Literal extends Expression {
 	private _createValueSequence: () => ISequence;

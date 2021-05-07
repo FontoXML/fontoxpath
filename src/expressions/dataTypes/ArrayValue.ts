@@ -1,10 +1,10 @@
 import arrayGet from '../functions/builtInFunctions_arrays_get';
 import { ARRAY_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import { BaseType } from './BaseType';
 import FunctionValue from './FunctionValue';
 import ISequence from './ISequence';
 import sequenceFactory from './sequenceFactory';
 import { SequenceType } from './Value';
-import { BaseType } from './BaseType';
 
 class ArrayValue extends FunctionValue {
 	public members: (() => ISequence)[];

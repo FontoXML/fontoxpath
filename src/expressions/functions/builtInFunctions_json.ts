@@ -1,11 +1,10 @@
 import ArrayValue from '../dataTypes/ArrayValue';
+import { BaseType } from '../dataTypes/BaseType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
+import ISequence from '../dataTypes/ISequence';
 import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-
-import ISequence from '../dataTypes/ISequence';
 import { SequenceType } from '../dataTypes/Value';
-import { BaseType } from '../dataTypes/BaseType';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import { BuiltinDeclarationType } from './builtInFunctions';

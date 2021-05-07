@@ -4,7 +4,6 @@ import {
 	Comment,
 	Document,
 	Element,
-	Node,
 	ProcessingInstruction,
 	Text,
 } from '../types/Types';

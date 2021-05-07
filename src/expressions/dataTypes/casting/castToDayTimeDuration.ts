@@ -1,6 +1,6 @@
-import createAtomicValue from '../createAtomicValue';
-import { SequenceType, ValueType } from '../Value';
 import { BaseType } from '../BaseType';
+import createAtomicValue from '../createAtomicValue';
+import { SequenceType } from '../Value';
 import DayTimeDuration from '../valueTypes/DayTimeDuration';
 import CastResult from './CastResult';
 
