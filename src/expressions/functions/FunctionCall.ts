@@ -96,7 +96,7 @@ function callFunction(
 		return functionItem.applyArguments(transformedArguments);
 	}
 
-	const toReturn = functionCall.apply(undefined, [
+	const toReturn: ISequence = functionCall.apply(undefined, [
 		dynamicContext,
 		executionParameters,
 		staticContext,
