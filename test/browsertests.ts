@@ -1,5 +1,5 @@
 import * as chai from 'chai';
-import { BaseType, evaluateXPathToString, registerCustomXPathFunction, SequenceType } from 'fontoxpath';
+import { ValueType, evaluateXPathToString, registerCustomXPathFunction, SequenceMultiplicity } from 'fontoxpath';
 import { slimdom, sync } from 'slimdom-sax-parser';
 
 describe('Browser tests', function () {
@@ -12,7 +12,7 @@ describe('Browser tests', function () {
 			registerCustomXPathFunction(
 				'cf:firstDocument',
 				[],
-				{ kind: BaseType.ITEM, seqType: SequenceType.EXACTLY_ONE },
+				{ type: ValueType.ITEM, mult: SequenceMultiplicity.EXACTLY_ONE },
 				() => {
 					return firstDocument.documentElement;
 				}
@@ -21,7 +21,7 @@ describe('Browser tests', function () {
 			registerCustomXPathFunction(
 				'cf:secondDocument',
 				[],
-				{ kind: BaseType.ITEM, seqType: SequenceType.EXACTLY_ONE },
+				{ type: ValueType.ITEM, mult: SequenceMultiplicity.EXACTLY_ONE },
 				() => {
 					return secondDocument.documentElement;
 				}
@@ -30,7 +30,7 @@ describe('Browser tests', function () {
 			registerCustomXPathFunction(
 				'cf:thirdDocument',
 				[],
-				{ kind: BaseType.ITEM, seqType: SequenceType.EXACTLY_ONE },
+				{ type: ValueType.ITEM, mult: SequenceMultiplicity.EXACTLY_ONE },
 				() => {
 					return thirdDocument.documentElement;
 				}
