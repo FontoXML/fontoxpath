@@ -10,14 +10,9 @@ export default function castToGMonth(
 	instanceOf: (typeName: ValueType) => boolean
 ): (value: any) => CastResult {
 	if (instanceOf(ValueType.XSDATE) || instanceOf(ValueType.XSDATETIME)) {
-		return (value) => ({
+		return (value: DateTime) => ({
 			successful: true,
-			value: createGMonthValue(
-				value.convertToType({
-					kind: ValueType.XSGMONTH,
-					seqType: SequenceMultiplicity.EXACTLY_ONE,
-				})
-			),
+			value: createGMonthValue(value.convertToType(ValueType.XSGMONTH)),
 		});
 	}
 	if (instanceOf(ValueType.XSUNTYPEDATOMIC) || instanceOf(ValueType.XSSTRING)) {

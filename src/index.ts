@@ -24,6 +24,7 @@ import {
 	SequenceType,
 	ValueType,
 } from './expressions/dataTypes/Value';
+import DateTime from './expressions/dataTypes/valueTypes/DateTime';
 import { getBucketsForNode } from './getBuckets';
 import INodesFactory from './nodesFactory/INodesFactory';
 import ISimpleNodesFactory from './nodesFactory/ISimpleNodesFactory';
@@ -156,8 +157,6 @@ if (typeof fontoxpathGlobal !== 'undefined') {
 	fontoxpathGlobal['profiler'] = profiler;
 	fontoxpathGlobal['createTypedValueFactory'] = internalCreateTypedValueFactory;
 }
-
-castToType(createAtomicValue(1010, ValueType.XSINTEGER), ValueType.XSINTEGER);
 
 /**
  * Creates a factory to convert values into a specific type.

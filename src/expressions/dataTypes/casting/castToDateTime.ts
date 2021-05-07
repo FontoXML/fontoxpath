@@ -11,14 +11,9 @@ export default function castToDateTime(
 	instanceOf: (typeName: ValueType) => boolean
 ): (value: any) => CastResult {
 	if (instanceOf(ValueType.XSDATE)) {
-		return (value) => ({
+		return (value: DateTime) => ({
 			successful: true,
-			value: createDateTimeValue(
-				value.convertToType({
-					kind: ValueType.XSDATETIME,
-					seqType: SequenceMultiplicity.EXACTLY_ONE,
-				})
-			),
+			value: createDateTimeValue(value.convertToType(ValueType.XSDATETIME)),
 		});
 	}
 	if (instanceOf(ValueType.XSUNTYPEDATOMIC) || instanceOf(ValueType.XSSTRING)) {
