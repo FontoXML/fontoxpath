@@ -1,10 +1,9 @@
 import ArrayValue from '../dataTypes/ArrayValue';
-import { BaseType } from '../dataTypes/BaseType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import ISequence from '../dataTypes/ISequence';
 import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { SequenceMultiplicity } from '../dataTypes/Value';
+import { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import { BuiltinDeclarationType } from './builtInFunctions';
@@ -28,29 +27,16 @@ function convert(obj: any): ISequence {
 				new MapValue(
 					Object.keys(obj as object).map((key) => {
 						return {
-							key: createAtomicValue(key, {
-								kind: BaseType.XSSTRING,
-								seqType: SequenceMultiplicity.EXACTLY_ONE,
-							}),
+							key: createAtomicValue(key, ValueType.XSSTRING),
 							value: createDoublyIterableSequence(convert((obj as object)[key])),
 						};
 					})
 				)
 			);
 		case 'number':
-			return sequenceFactory.singleton(
-				createAtomicValue(obj, {
-					kind: BaseType.XSDOUBLE,
-					seqType: SequenceMultiplicity.EXACTLY_ONE,
-				})
-			);
+			return sequenceFactory.singleton(createAtomicValue(obj, ValueType.XSDOUBLE));
 		case 'string':
-			return sequenceFactory.singleton(
-				createAtomicValue(obj, {
-					kind: BaseType.XSSTRING,
-					seqType: SequenceMultiplicity.EXACTLY_ONE,
-				})
-			);
+			return sequenceFactory.singleton(createAtomicValue(obj, ValueType.XSSTRING));
 		case 'boolean':
 			return obj
 				? sequenceFactory.singletonTrueSequence()
@@ -80,8 +66,8 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'parse-json',
-		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE }],
-		returnType: { kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_ONE },
+		argumentTypes: [{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE }],
+		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: fnParseJson,
 	},
 ];

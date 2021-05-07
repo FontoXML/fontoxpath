@@ -1,6 +1,5 @@
 import * as chai from 'chai';
-import { SequenceType } from 'fontoxpath/expressions/dataTypes/Value';
-import { BaseType } from 'fontoxpath/expressions/dataTypes/BaseType';
+import { SequenceMultiplicity, ValueType } from 'fontoxpath/expressions/dataTypes/Value';
 import functionRegistry from 'fontoxpath/expressions/functions/functionRegistry';
 import registerCustomXPathFunction from 'fontoxpath/registerCustomXPathFunction';
 
@@ -9,21 +8,21 @@ describe('functionRegistry.getFunctionByArity', () => {
 		registerCustomXPathFunction(
 			'fonto:functionName',
 			[],
-			{ kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
+			{ type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE },
 			function () {}
 		);
 
 		registerCustomXPathFunction(
 			'fonto:functionName',
-			[{ kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE }],
-			{ kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
+			[{ type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE }],
+			{ type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE },
 			function () {}
 		);
 
 		registerCustomXPathFunction(
 			'fonto:otherFunctionName',
 			[],
-			{ kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
+			{ type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE },
 			function () {}
 		);
 	});

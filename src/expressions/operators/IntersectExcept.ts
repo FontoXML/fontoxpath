@@ -1,4 +1,4 @@
-import { ValueType } from 'src';
+import { ValueType } from '../dataTypes/Value';
 import DomFacade from '../../domFacade/DomFacade';
 import { compareNodePositions, sortNodeValues } from '../dataTypes/documentOrderUtils';
 import ISequence from '../dataTypes/ISequence';

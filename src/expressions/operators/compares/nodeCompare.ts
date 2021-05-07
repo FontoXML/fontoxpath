@@ -1,4 +1,4 @@
-import { BaseType } from '../../dataTypes/BaseType';
+import { ValueType } from '../../dataTypes/Value';
 import { compareNodePositions } from '../../dataTypes/documentOrderUtils';
 import ISequence from '../../dataTypes/ISequence';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
@@ -25,22 +25,22 @@ export default function nodeCompare(
 				singleton: () => {
 					return zipSingleton([firstSequence, secondSequence], ([first, second]) => {
 						if (
-							!isSubtypeOf(first.type.kind, BaseType.NODE) ||
-							!isSubtypeOf(second.type.kind, BaseType.NODE)
+							!isSubtypeOf(first.type, ValueType.NODE) ||
+							!isSubtypeOf(second.type, ValueType.NODE)
 						) {
 							throw new Error('XPTY0004: Sequences to compare are not nodes');
 						}
 						switch (operator) {
 							case 'isOp':
 								return first === second ||
-									(first.type.kind === second.type.kind &&
-										(first.type.kind === BaseType.ATTRIBUTE ||
-											first.type.kind === BaseType.NODE ||
-											first.type.kind === BaseType.ELEMENT ||
-											first.type.kind === BaseType.DOCUMENTNODE ||
-											first.type.kind === BaseType.TEXT ||
-											first.type.kind === BaseType.PROCESSINGINSTRUCTION ||
-											first.type.kind === BaseType.COMMENT) &&
+									(first.type === second.type &&
+										(first.type === ValueType.ATTRIBUTE ||
+											first.type === ValueType.NODE ||
+											first.type === ValueType.ELEMENT ||
+											first.type === ValueType.DOCUMENTNODE ||
+											first.type === ValueType.TEXT ||
+											first.type === ValueType.PROCESSINGINSTRUCTION ||
+											first.type === ValueType.COMMENT) &&
 										arePointersEqual(first.value, second.value))
 									? sequenceFactory.singletonTrueSequence()
 									: sequenceFactory.singletonFalseSequence();

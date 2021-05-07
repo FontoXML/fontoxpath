@@ -99,10 +99,15 @@ export const enum EllipsisType {
 }
 
 /**
- *  The combined parameter type which is either a value type or an ellipsis type.
+ * The combined parameter type which is either a value type or an ellipsis type.
+ * @public
  */
 export type ParameterType = SequenceType | EllipsisType;
 
+/**
+ * The type of a sequence, it contains the ValueType and the multiplicity of the sequence.
+ * @public
+ */
 export type SequenceType = {
 	type: ValueType;
 	mult: SequenceMultiplicity;

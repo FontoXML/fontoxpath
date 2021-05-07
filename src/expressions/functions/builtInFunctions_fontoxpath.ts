@@ -3,11 +3,10 @@ import astHelper from '../../parsing/astHelper';
 import compileAstToExpression from '../../parsing/compileAstToExpression';
 import parseExpression from '../../parsing/parseExpression';
 import processProlog from '../../parsing/processProlog';
-import { BaseType } from '../dataTypes/BaseType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value, { SequenceMultiplicity } from '../dataTypes/Value';
+import Value, { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionSpecificStaticContext from '../ExecutionSpecificStaticContext';
 import { FONTOXPATH_NAMESPACE_URI, FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
@@ -131,31 +130,26 @@ const fontoxpathVersion: FunctionDefinitionType = () => {
 	let version: string;
 	// TODO: Refactor when https://github.com/google/closure-compiler/issues/1601 is fixed
 	version = typeof VERSION === 'undefined' ? 'devbuild' : VERSION;
-	return sequenceFactory.singleton(
-		createAtomicValue(version, {
-			kind: BaseType.XSSTRING,
-			seqType: SequenceMultiplicity.EXACTLY_ONE,
-		})
-	);
+	return sequenceFactory.singleton(createAtomicValue(version, ValueType.XSSTRING));
 };
 
 const declarations: BuiltinDeclarationType[] = [
 	{
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE },
-			{ kind: BaseType.MAP, items: [], seqType: SequenceMultiplicity.EXACTLY_ONE },
+			{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
+			{ type: ValueType.MAP, mult: SequenceMultiplicity.EXACTLY_ONE },
 		],
 		callFunction: fontoxpathEvaluate,
 		localName: 'evaluate',
 		namespaceURI: FONTOXPATH_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
+		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 	{
 		argumentTypes: [],
 		callFunction: fontoxpathVersion,
 		localName: 'version',
 		namespaceURI: FONTOXPATH_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSSTRING, seqType: SequenceMultiplicity.EXACTLY_ONE },
+		returnType: { type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
 	},
 ];
 

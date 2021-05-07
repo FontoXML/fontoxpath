@@ -10,7 +10,7 @@ class MapValue extends FunctionValue<ISequence> {
 	constructor(keyValuePairs: { key: Value; value: () => ISequence }[]) {
 		super({
 			// argumentTypes: [{ type: 'item()', isRestArgument: false }],
-			argumentTypes: [ValueType.ITEM],
+			argumentTypes: [{ type: ValueType.ITEM, mult: SequenceMultiplicity.EXACTLY_ONE }],
 			arity: 1,
 			localName: 'get',
 			namespaceURI: MAP_NAMESPACE_URI,
@@ -22,7 +22,7 @@ class MapValue extends FunctionValue<ISequence> {
 					sequenceFactory.singleton(this),
 					key
 				),
-			returnType: ValueType.ITEM,
+			returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.EXACTLY_ONE },
 		});
 		this.type = ValueType.MAP;
 		this.keyValuePairs = keyValuePairs;

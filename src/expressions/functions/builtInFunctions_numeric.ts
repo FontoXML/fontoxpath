@@ -1,5 +1,4 @@
 import atomize from '../dataTypes/atomize';
-import { BaseType } from '../dataTypes/BaseType';
 import tryCastToType from '../dataTypes/casting/tryCastToType';
 import castToType from '../dataTypes/castToType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
@@ -19,29 +18,17 @@ import { BuiltinDeclarationType } from './builtInFunctions';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
 function createValidNumericType(type: ValueType, transformedValue: number) {
-	if (isSubtypeOf(type.kind, BaseType.XSINTEGER)) {
-		return createAtomicValue(transformedValue, {
-			kind: BaseType.XSINTEGER,
-			seqType: SequenceMultiplicity.EXACTLY_ONE,
-		});
+	if (isSubtypeOf(type, ValueType.XSINTEGER)) {
+		return createAtomicValue(transformedValue, ValueType.XSINTEGER);
 	}
-	if (isSubtypeOf(type.kind, BaseType.XSFLOAT)) {
-		return createAtomicValue(transformedValue, {
-			kind: BaseType.XSFLOAT,
-			seqType: SequenceMultiplicity.EXACTLY_ONE,
-		});
+	if (isSubtypeOf(type, ValueType.XSFLOAT)) {
+		return createAtomicValue(transformedValue, ValueType.XSFLOAT);
 	}
-	if (isSubtypeOf(type.kind, BaseType.XSDOUBLE)) {
-		return createAtomicValue(transformedValue, {
-			kind: BaseType.XSDOUBLE,
-			seqType: SequenceMultiplicity.EXACTLY_ONE,
-		});
+	if (isSubtypeOf(type, ValueType.XSDOUBLE)) {
+		return createAtomicValue(transformedValue, ValueType.XSDOUBLE);
 	}
 	// It must be a decimal, only four numeric types
-	return createAtomicValue(transformedValue, {
-		kind: BaseType.XSDECIMAL,
-		seqType: SequenceMultiplicity.EXACTLY_ONE,
-	});
+	return createAtomicValue(transformedValue, ValueType.XSDECIMAL);
 }
 
 const fnAbs: FunctionDefinitionType = (
@@ -131,8 +118,8 @@ function fnRound(
 			}
 
 			if (
-				(isSubtypeOf(firstValue.type.kind, BaseType.XSFLOAT) ||
-					isSubtypeOf(firstValue.type.kind, BaseType.XSDOUBLE)) &&
+				(isSubtypeOf(firstValue.type, ValueType.XSFLOAT) ||
+					isSubtypeOf(firstValue.type, ValueType.XSDOUBLE)) &&
 				(firstValue.value === 0 ||
 					isNaN(firstValue.value as number) ||
 					firstValue.value === +Infinity ||
@@ -155,48 +142,25 @@ function fnRound(
 			}
 
 			const originalType = [
-				{ kind: BaseType.XSINTEGER, seqType: SequenceMultiplicity.EXACTLY_ONE },
-				{ kind: BaseType.XSDECIMAL, seqType: SequenceMultiplicity.EXACTLY_ONE },
-				{ kind: BaseType.XSDOUBLE, seqType: SequenceMultiplicity.EXACTLY_ONE },
-				{ kind: BaseType.XSFLOAT, seqType: SequenceMultiplicity.EXACTLY_ONE },
+				ValueType.XSINTEGER,
+				ValueType.XSDECIMAL,
+				ValueType.XSDOUBLE,
+				ValueType.XSFLOAT,
 			].find((type: ValueType) => {
-				return isSubtypeOf(firstValue.type.kind, type.kind);
+				return isSubtypeOf(firstValue.type, type);
 			});
-			const itemAsDecimal = castToType(firstValue, {
-				kind: BaseType.XSDECIMAL,
-				seqType: SequenceMultiplicity.EXACTLY_ONE,
-			});
+			const itemAsDecimal = castToType(firstValue, ValueType.XSDECIMAL);
 			const scaling = Math.pow(10, scalingPrecision);
 			const roundedNumber = determineRoundedNumber(itemAsDecimal.value, halfToEven, scaling);
-			switch (originalType.kind) {
-				case BaseType.XSDECIMAL:
-					return ready(
-						createAtomicValue(roundedNumber, {
-							kind: BaseType.XSDECIMAL,
-							seqType: SequenceMultiplicity.EXACTLY_ONE,
-						})
-					);
-				case BaseType.XSDOUBLE:
-					return ready(
-						createAtomicValue(roundedNumber, {
-							kind: BaseType.XSDOUBLE,
-							seqType: SequenceMultiplicity.EXACTLY_ONE,
-						})
-					);
-				case BaseType.XSFLOAT:
-					return ready(
-						createAtomicValue(roundedNumber, {
-							kind: BaseType.XSFLOAT,
-							seqType: SequenceMultiplicity.EXACTLY_ONE,
-						})
-					);
-				case BaseType.XSINTEGER:
-					return ready(
-						createAtomicValue(roundedNumber, {
-							kind: BaseType.XSINTEGER,
-							seqType: SequenceMultiplicity.EXACTLY_ONE,
-						})
-					);
+			switch (originalType) {
+				case ValueType.XSDECIMAL:
+					return ready(createAtomicValue(roundedNumber, ValueType.XSDECIMAL));
+				case ValueType.XSDOUBLE:
+					return ready(createAtomicValue(roundedNumber, ValueType.XSDOUBLE));
+				case ValueType.XSFLOAT:
+					return ready(createAtomicValue(roundedNumber, ValueType.XSFLOAT));
+				case ValueType.XSINTEGER:
+					return ready(createAtomicValue(roundedNumber, ValueType.XSINTEGER));
 			}
 		},
 	});
@@ -209,27 +173,13 @@ const fnNumber: FunctionDefinitionType = (
 	sequence
 ) => {
 	return atomize(sequence, executionParameters).switchCases({
-		empty: () =>
-			sequenceFactory.singleton(
-				createAtomicValue(NaN, {
-					kind: BaseType.XSDOUBLE,
-					seqType: SequenceMultiplicity.EXACTLY_ONE,
-				})
-			),
+		empty: () => sequenceFactory.singleton(createAtomicValue(NaN, ValueType.XSDOUBLE)),
 		singleton: () => {
-			const castResult = tryCastToType(sequence.first(), {
-				kind: BaseType.XSDOUBLE,
-				seqType: SequenceMultiplicity.EXACTLY_ONE,
-			});
+			const castResult = tryCastToType(sequence.first(), ValueType.XSDOUBLE);
 			if (castResult.successful) {
 				return sequenceFactory.singleton(castResult.value);
 			}
-			return sequenceFactory.singleton(
-				createAtomicValue(NaN, {
-					kind: BaseType.XSDOUBLE,
-					seqType: SequenceMultiplicity.EXACTLY_ONE,
-				})
-			);
+			return sequenceFactory.singleton(createAtomicValue(NaN, ValueType.XSDOUBLE));
 		},
 		multiple: () => {
 			throw new Error('fn:number may only be called with zero or one values');
@@ -262,23 +212,12 @@ const fnRandomNumberGenerator: FunctionDefinitionType = (
 	return sequenceFactory.singleton(
 		new MapValue([
 			{
-				key: createAtomicValue('number', {
-					kind: BaseType.XSSTRING,
-					seqType: SequenceMultiplicity.EXACTLY_ONE,
-				}),
+				key: createAtomicValue('number', ValueType.XSSTRING),
 				value: () =>
-					sequenceFactory.singleton(
-						createAtomicValue(Math.random(), {
-							kind: BaseType.XSDOUBLE,
-							seqType: SequenceMultiplicity.EXACTLY_ONE,
-						})
-					),
+					sequenceFactory.singleton(createAtomicValue(Math.random(), ValueType.XSDOUBLE)),
 			},
 			{
-				key: createAtomicValue('next', {
-					kind: BaseType.XSSTRING,
-					seqType: SequenceMultiplicity.EXACTLY_ONE,
-				}),
+				key: createAtomicValue('next', ValueType.XSSTRING),
 				value: () =>
 					sequenceFactory.singleton(
 						new FunctionValue({
@@ -289,18 +228,14 @@ const fnRandomNumberGenerator: FunctionDefinitionType = (
 							argumentTypes: [],
 							arity: 0,
 							returnType: {
-								kind: BaseType.MAP,
-								items: [],
-								seqType: SequenceMultiplicity.EXACTLY_ONE,
+								type: ValueType.MAP,
+								mult: SequenceMultiplicity.EXACTLY_ONE,
 							},
 						})
 					),
 			},
 			{
-				key: createAtomicValue('permute', {
-					kind: BaseType.XSSTRING,
-					seqType: SequenceMultiplicity.EXACTLY_ONE,
-				}),
+				key: createAtomicValue('permute', ValueType.XSSTRING),
 				value: () =>
 					sequenceFactory.singleton(
 						new FunctionValue({
@@ -309,12 +244,15 @@ const fnRandomNumberGenerator: FunctionDefinitionType = (
 							localName: '',
 							namespaceURI: '',
 							argumentTypes: [
-								{ kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
+								{
+									type: ValueType.ITEM,
+									mult: SequenceMultiplicity.ZERO_OR_MORE,
+								},
 							],
 							arity: 1,
 							returnType: {
-								kind: BaseType.ITEM,
-								seqType: SequenceMultiplicity.ZERO_OR_MORE,
+								type: ValueType.ITEM,
+								mult: SequenceMultiplicity.ZERO_OR_MORE,
 							},
 						})
 					),
@@ -327,32 +265,32 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'abs',
-		argumentTypes: [{ kind: BaseType.XSNUMERIC, seqType: SequenceMultiplicity.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSNUMERIC, seqType: SequenceMultiplicity.ZERO_OR_ONE },
+		argumentTypes: [{ type: ValueType.XSNUMERIC, mult: SequenceMultiplicity.ZERO_OR_ONE }],
+		returnType: { type: ValueType.XSNUMERIC, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: fnAbs,
 	},
 
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'ceiling',
-		argumentTypes: [{ kind: BaseType.XSNUMERIC, seqType: SequenceMultiplicity.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSNUMERIC, seqType: SequenceMultiplicity.ZERO_OR_ONE },
+		argumentTypes: [{ type: ValueType.XSNUMERIC, mult: SequenceMultiplicity.ZERO_OR_ONE }],
+		returnType: { type: ValueType.XSNUMERIC, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: fnCeiling,
 	},
 
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'floor',
-		argumentTypes: [{ kind: BaseType.XSNUMERIC, seqType: SequenceMultiplicity.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSNUMERIC, seqType: SequenceMultiplicity.ZERO_OR_ONE },
+		argumentTypes: [{ type: ValueType.XSNUMERIC, mult: SequenceMultiplicity.ZERO_OR_ONE }],
+		returnType: { type: ValueType.XSNUMERIC, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: fnFloor,
 	},
 
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'round',
-		argumentTypes: [{ kind: BaseType.XSNUMERIC, seqType: SequenceMultiplicity.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSNUMERIC, seqType: SequenceMultiplicity.ZERO_OR_ONE },
+		argumentTypes: [{ type: ValueType.XSNUMERIC, mult: SequenceMultiplicity.ZERO_OR_ONE }],
+		returnType: { type: ValueType.XSNUMERIC, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: fnRound.bind(null, false),
 	},
 
@@ -360,18 +298,18 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'round',
 		argumentTypes: [
-			{ kind: BaseType.XSNUMERIC, seqType: SequenceMultiplicity.ZERO_OR_ONE },
-			{ kind: BaseType.XSINTEGER, seqType: SequenceMultiplicity.EXACTLY_ONE },
+			{ type: ValueType.XSNUMERIC, mult: SequenceMultiplicity.ZERO_OR_ONE },
+			{ type: ValueType.XSINTEGER, mult: SequenceMultiplicity.EXACTLY_ONE },
 		],
-		returnType: { kind: BaseType.XSNUMERIC, seqType: SequenceMultiplicity.ZERO_OR_ONE },
+		returnType: { type: ValueType.XSNUMERIC, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: fnRound.bind(null, false),
 	},
 
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'round-half-to-even',
-		argumentTypes: [{ kind: BaseType.XSNUMERIC, seqType: SequenceMultiplicity.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSNUMERIC, seqType: SequenceMultiplicity.ZERO_OR_ONE },
+		argumentTypes: [{ type: ValueType.XSNUMERIC, mult: SequenceMultiplicity.ZERO_OR_ONE }],
+		returnType: { type: ValueType.XSNUMERIC, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: fnRound.bind(null, true),
 	},
 
@@ -379,10 +317,10 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'round-half-to-even',
 		argumentTypes: [
-			{ kind: BaseType.XSNUMERIC, seqType: SequenceMultiplicity.ZERO_OR_ONE },
-			{ kind: BaseType.XSINTEGER, seqType: SequenceMultiplicity.EXACTLY_ONE },
+			{ type: ValueType.XSNUMERIC, mult: SequenceMultiplicity.ZERO_OR_ONE },
+			{ type: ValueType.XSINTEGER, mult: SequenceMultiplicity.EXACTLY_ONE },
 		],
-		returnType: { kind: BaseType.XSNUMERIC, seqType: SequenceMultiplicity.ZERO_OR_ONE },
+		returnType: { type: ValueType.XSNUMERIC, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: fnRound.bind(null, true),
 	},
 
@@ -390,9 +328,9 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'number',
 		argumentTypes: [
-			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceMultiplicity.ZERO_OR_ONE },
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
-		returnType: { kind: BaseType.XSDOUBLE, seqType: SequenceMultiplicity.EXACTLY_ONE },
+		returnType: { type: ValueType.XSDOUBLE, mult: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: fnNumber,
 	},
 
@@ -400,12 +338,12 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'number',
 		argumentTypes: [],
-		returnType: { kind: BaseType.XSDOUBLE, seqType: SequenceMultiplicity.EXACTLY_ONE },
+		returnType: { type: ValueType.XSDOUBLE, mult: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: (dynamicContext, executionParameters, staticContext) => {
 			const atomizedContextItem =
 				dynamicContext.contextItem &&
 				performFunctionConversion(
-					{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceMultiplicity.ZERO_OR_ONE },
+					{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 					sequenceFactory.singleton(dynamicContext.contextItem),
 					executionParameters,
 					'fn:number',
@@ -427,7 +365,7 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'random-number-generator',
 		argumentTypes: [],
-		returnType: { kind: BaseType.MAP, items: [], seqType: SequenceMultiplicity.EXACTLY_ONE },
+		returnType: { type: ValueType.MAP, mult: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: fnRandomNumberGenerator,
 	},
 
@@ -436,11 +374,11 @@ const declarations: BuiltinDeclarationType[] = [
 		localName: 'random-number-generator',
 		argumentTypes: [
 			{
-				kind: BaseType.XSANYATOMICTYPE,
-				seqType: SequenceMultiplicity.ZERO_OR_ONE,
+				type: ValueType.XSANYATOMICTYPE,
+				mult: SequenceMultiplicity.ZERO_OR_ONE,
 			},
 		],
-		returnType: { kind: BaseType.MAP, items: [], seqType: SequenceMultiplicity.EXACTLY_ONE },
+		returnType: { type: ValueType.MAP, mult: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: () => {
 			throw new Error('Not implemented: Specifying a seed is not supported');
 		},

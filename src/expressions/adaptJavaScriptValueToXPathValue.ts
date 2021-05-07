@@ -182,6 +182,8 @@ export function adaptJavaScriptValueToArrayOfXPathValues(
 	value: UntypedExternalValue,
 	expectedType: SequenceType
 ): Value[] {
+	console.log(value);
+	console.log(expectedType);
 	if (expectedType.mult === SequenceMultiplicity.ZERO_OR_ONE) {
 		const converted = adaptJavaScriptValueToXPath(expectedType.type, value, domFacade);
 		return converted === null ? [] : [converted];
@@ -227,7 +229,7 @@ export function adaptJavaScriptValueToArrayOfXPathValues(
 export function adaptJavaScriptValueToSequence(
 	domFacade: DomFacade,
 	value: UntypedExternalValue,
-	expectedType: SequenceType = { type: ValueType.ITEM, mult: SequenceMultiplicity.EXACTLY_ONE }
+	expectedType: SequenceType = { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_ONE }
 ): ISequence {
 	return sequenceFactory.create(
 		adaptJavaScriptValueToArrayOfXPathValues(domFacade, value, expectedType)

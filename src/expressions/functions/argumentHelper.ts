@@ -1,26 +1,31 @@
 import { atomizeSingleValue } from '../dataTypes/atomize';
-import { BaseType } from '../dataTypes/BaseType';
 import castToType from '../dataTypes/castToType';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import promoteToType from '../dataTypes/promoteToType';
-import Value, { SequenceMultiplicity, ValueType, sequenceTypeToString } from '../dataTypes/Value';
+import Value, {
+	SequenceMultiplicity,
+	ValueType,
+	sequenceTypeToString,
+	SequenceType,
+	valueTypeToString,
+} from '../dataTypes/Value';
 import ExecutionParameters from '../ExecutionParameters';
 
 function mapItem(
 	argumentItem: Value,
-	type: ValueType,
+	type: SequenceType,
 	executionParameters: ExecutionParameters,
 	functionName: string,
 	isReturn: boolean
 ) {
-	if (isSubtypeOf(argumentItem.type.kind, type.kind)) {
+	if (isSubtypeOf(argumentItem.type, type.type)) {
 		return argumentItem;
 	}
 
 	if (
-		isSubtypeOf(type.kind, BaseType.XSANYATOMICTYPE) &&
-		isSubtypeOf(argumentItem.type.kind, BaseType.NODE)
+		isSubtypeOf(type.type, ValueType.XSANYATOMICTYPE) &&
+		isSubtypeOf(argumentItem.type, ValueType.NODE)
 	) {
 		// Assume here that a node always atomizes to a singlevalue. This will not work
 		// anymore when schema support will be imlemented.
@@ -28,22 +33,22 @@ function mapItem(
 	}
 
 	// Maybe after atomization, we have the correct type
-	if (isSubtypeOf(argumentItem.type.kind, type.kind)) {
+	if (isSubtypeOf(argumentItem.type, type.type)) {
 		return argumentItem;
 	}
 
 	// Everything is an anyAtomicType, so no casting necessary.
-	if (type.kind === BaseType.XSANYATOMICTYPE) {
+	if (type.type === ValueType.XSANYATOMICTYPE) {
 		return argumentItem;
 	}
-	if (isSubtypeOf(argumentItem.type.kind, BaseType.XSUNTYPEDATOMIC)) {
+	if (isSubtypeOf(argumentItem.type, ValueType.XSUNTYPEDATOMIC)) {
 		// We might be able to cast this to the wished type
-		const convertedItem = castToType(argumentItem, type);
+		const convertedItem = castToType(argumentItem, type.type);
 		if (!convertedItem) {
 			throw new Error(
 				`XPTY0004 Unable to convert ${
 					isReturn ? 'return' : 'argument'
-				} of type ${sequenceTypeToString(argumentItem.type)} to type ${sequenceTypeToString(
+				} of type ${valueTypeToString(argumentItem.type)} to type ${sequenceTypeToString(
 					type
 				)} while calling ${functionName}`
 			);
@@ -52,12 +57,12 @@ function mapItem(
 	}
 
 	// We need to promote this
-	const item = promoteToType(argumentItem, type.kind);
+	const item = promoteToType(argumentItem, type.type);
 	if (!item) {
 		throw new Error(
 			`XPTY0004 Unable to cast ${
 				isReturn ? 'return' : 'argument'
-			} of type ${sequenceTypeToString(argumentItem.type)} to type ${sequenceTypeToString(
+			} of type ${valueTypeToString(argumentItem.type)} to type ${sequenceTypeToString(
 				type
 			)} while calling ${functionName}`
 		);
@@ -69,13 +74,13 @@ function mapItem(
  * Test whether the provided argument is valid to be used as an function argument of the given type
  */
 export const performFunctionConversion = (
-	argumentType: ValueType,
+	argumentType: SequenceType,
 	argument: ISequence,
 	executionParameters: ExecutionParameters,
 	functionName: string,
 	isReturn: boolean
 ): ISequence => {
-	if (argumentType.seqType === SequenceMultiplicity.ZERO_OR_ONE) {
+	if (argumentType.mult === SequenceMultiplicity.ZERO_OR_ONE) {
 		return argument.switchCases({
 			default: () =>
 				argument.map((value) =>
@@ -86,20 +91,20 @@ export const performFunctionConversion = (
 					`XPTY0004: Multiplicity of ${
 						isReturn ? 'function return value' : 'function argument'
 					} of type ${argumentType}${
-						argumentType.kind || ''
+						argumentType.type || ''
 					} for ${functionName} is incorrect. Expected "?", but got "+".`
 				);
 			},
 		});
 	}
-	if (argumentType.seqType === SequenceMultiplicity.ONE_OR_MORE) {
+	if (argumentType.mult === SequenceMultiplicity.ONE_OR_MORE) {
 		return argument.switchCases({
 			empty: () => {
 				throw new Error(
 					`XPTY0004: Multiplicity of ${
 						isReturn ? 'function return value' : 'function argument'
 					} of type ${argumentType}${
-						argumentType.kind || ''
+						argumentType.type || ''
 					} for ${functionName} is incorrect. Expected "+", but got "empty-sequence()"`
 				);
 			},
@@ -109,7 +114,7 @@ export const performFunctionConversion = (
 				),
 		});
 	}
-	if (argumentType.seqType === SequenceMultiplicity.ZERO_OR_MORE) {
+	if (argumentType.mult === SequenceMultiplicity.ZERO_OR_MORE) {
 		return argument.map((value) =>
 			mapItem(value, argumentType, executionParameters, functionName, isReturn)
 		);
@@ -125,7 +130,7 @@ export const performFunctionConversion = (
 				`XPTY0004: Multiplicity of ${
 					isReturn ? 'function return value' : 'function argument'
 				} of type ${argumentType}${
-					argumentType.kind || ''
+					argumentType.type || ''
 				} for ${functionName} is incorrect. Expected exactly one`
 			);
 		},

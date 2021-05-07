@@ -4,7 +4,7 @@ import FunctionValue, { FunctionSignature } from '../dataTypes/FunctionValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value, { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
+import Value, { SequenceMultiplicity, SequenceType, ValueType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import { ARRAY_NAMESPACE_URI } from '../staticallyKnownNamespaces';
@@ -198,7 +198,7 @@ const arrayForEach: FunctionDefinitionType = (
 					executionParameters,
 					staticContext,
 					transformArgumentList(
-						itemFunctionValue.getArgumentTypes() as ValueType[],
+						itemFunctionValue.getArgumentTypes() as SequenceType[],
 						[member()],
 						executionParameters,
 						'array:for-each'
@@ -224,7 +224,7 @@ const arrayFilter: FunctionDefinitionType = (
 		}
 		const filterResultSequences: ISequence[] = (array as ArrayValue).members.map((member) => {
 			const castArgument = transformArgumentList(
-				itemFunctionValue.getArgumentTypes() as ValueType[],
+				itemFunctionValue.getArgumentTypes() as SequenceType[],
 				[member()],
 				executionParameters,
 				'array:filter'
@@ -272,7 +272,7 @@ const arrayFoldLeft: FunctionDefinitionType = (
 
 		return (array as ArrayValue).members.reduce((accum, member) => {
 			const castMember = transformArgumentList(
-				itemFunctionValue.getArgumentTypes() as ValueType[],
+				itemFunctionValue.getArgumentTypes() as SequenceType[],
 				[member()],
 				executionParameters,
 				'array:fold-left'
@@ -306,7 +306,7 @@ const arrayFoldRight: FunctionDefinitionType = (
 
 		return (array as ArrayValue).members.reduceRight((accum, member) => {
 			const castMember = transformArgumentList(
-				itemFunctionValue.getArgumentTypes() as ValueType[],
+				itemFunctionValue.getArgumentTypes() as SequenceType[],
 				[member()],
 				executionParameters,
 				'array:fold-right'
@@ -353,7 +353,7 @@ const arrayForEachPair: FunctionDefinitionType = (
 				++i
 			) {
 				const [argumentA, argumentB] = transformArgumentList(
-					itemFunctionValue.getArgumentTypes() as ValueType[],
+					itemFunctionValue.getArgumentTypes() as SequenceType[],
 					[(arrayA as ArrayValue).members[i](), (arrayB as ArrayValue).members[i]()],
 					executionParameters,
 					'array:for-each-pair'

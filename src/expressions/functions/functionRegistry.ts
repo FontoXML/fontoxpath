@@ -4,7 +4,6 @@ import RestArgument, { REST_ARGUMENT_INSTANCE } from '../dataTypes/RestArgument'
 import {
 	EllipsisType,
 	ParameterType,
-	ValueType,
 	sequenceTypeToString,
 	SequenceType,
 } from '../dataTypes/Value';

@@ -163,7 +163,7 @@ if (typeof fontoxpathGlobal !== 'undefined') {
  * @public
  */
 type ExternalTypedValueFactory = (
-	type: ValueType
+	type: SequenceType
 ) => (value: UntypedExternalValue, domFacade: IDomFacade) => unknown;
 
 /**

@@ -1,8 +1,7 @@
-import { BaseType } from '../dataTypes/BaseType';
 import FunctionValue from '../dataTypes/FunctionValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import Value, { ValueType } from '../dataTypes/Value';
+import Value, { SequenceType, ValueType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
@@ -26,7 +25,7 @@ const functionXPTY0004 = () =>
 	);
 
 export function transformArgumentList(
-	argumentTypes: ValueType[],
+	argumentTypes: SequenceType[],
 	argumentList: ISequence[],
 	executionParameters: ExecutionParameters,
 	functionItem: string
@@ -51,7 +50,7 @@ export function transformArgumentList(
 }
 
 function validateFunctionItem(item: Value, callArity: number): FunctionValue {
-	if (!isSubtypeOf(item.type.kind, BaseType.FUNCTION)) {
+	if (!isSubtypeOf(item.type, ValueType.FUNCTION)) {
 		throw errXPTY0004('Expected base expression to evaluate to a function item');
 	}
 
@@ -87,7 +86,7 @@ function callFunction(
 
 	// Test if we have the correct arguments, and pre-convert the ones we can pre-convert
 	const transformedArguments = transformArgumentList(
-		functionItem.getArgumentTypes() as ValueType[],
+		functionItem.getArgumentTypes() as SequenceType[],
 		evaluatedArgs,
 		executionParameters,
 		functionItem.getName()

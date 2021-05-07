@@ -1,7 +1,6 @@
-import { BaseType } from '../dataTypes/BaseType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { SequenceMultiplicity } from '../dataTypes/Value';
+import { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
 import { ready } from '../util/iterators';
 import { BuiltinDeclarationType } from './builtInFunctions';
 import FunctionDefinitionType from './FunctionDefinitionType';
@@ -28,13 +27,7 @@ const opTo: FunctionDefinitionType = (
 	// By providing a length, we do not have to hold an end condition into account
 	return sequenceFactory.create(
 		{
-			next: () =>
-				ready(
-					createAtomicValue(fromValue++, {
-						kind: BaseType.XSINTEGER,
-						seqType: SequenceMultiplicity.EXACTLY_ONE,
-					})
-				),
+			next: () => ready(createAtomicValue(fromValue++, ValueType.XSINTEGER)),
 		},
 		toValue - fromValue + 1
 	);
@@ -45,10 +38,10 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: 'http://fontoxpath/operators',
 		localName: 'to',
 		argumentTypes: [
-			{ kind: BaseType.XSINTEGER, seqType: SequenceMultiplicity.ZERO_OR_ONE },
-			{ kind: BaseType.XSINTEGER, seqType: SequenceMultiplicity.ZERO_OR_ONE },
+			{ type: ValueType.XSINTEGER, mult: SequenceMultiplicity.ZERO_OR_ONE },
+			{ type: ValueType.XSINTEGER, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
-		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceMultiplicity.ZERO_OR_MORE },
+		returnType: { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.ZERO_OR_MORE },
 		callFunction: opTo,
 	},
 ];

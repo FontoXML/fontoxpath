@@ -1,5 +1,5 @@
 import ISequence from '../dataTypes/ISequence';
-import { sequenceTypeToString } from '../dataTypes/Value';
+import { valueTypeToString } from '../dataTypes/Value';
 
 export default function argumentListToString(argumentList: ISequence[]) {
 	return argumentList
@@ -12,9 +12,9 @@ export default function argumentListToString(argumentList: ISequence[]) {
 			}
 
 			if (argument.isSingleton()) {
-				return sequenceTypeToString(argument.first().type) || 'item()';
+				return valueTypeToString(argument.first().type) || 'item()';
 			}
-			return sequenceTypeToString(argument.first().type) + '+';
+			return valueTypeToString(argument.first().type) + '+';
 		})
 		.map((types) => `${types}`)
 		.join(', ');
