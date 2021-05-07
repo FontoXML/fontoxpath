@@ -21,10 +21,10 @@ class ArrayValue extends FunctionValue {
 			namespaceURI: ARRAY_NAMESPACE_URI,
 			// argumentTypes: [{ type: { kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE }, isRestArgument: false }],
 			argumentTypes: [
-				ValueType.XSINTEGER,
+				{ type: ValueType.XSINTEGER, mult: SequenceMultiplicity.EXACTLY_ONE }
 			],
 			arity: 1,
-			returnType: ValueType.ITEM,
+			returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.EXACTLY_ONE }
 		});
 		this.type = ValueType.ARRAY;
 		this.members = members;
