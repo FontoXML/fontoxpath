@@ -1,10 +1,9 @@
 import atomize from '../../dataTypes/atomize';
-import { BaseType } from '../../dataTypes/BaseType';
 import castToType from '../../dataTypes/castToType';
 import createAtomicValue from '../../dataTypes/createAtomicValue';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import { SequenceMultiplicity, ValueType, valueTypeHash } from '../../dataTypes/Value';
+import { SequenceMultiplicity, ValueType } from '../../dataTypes/Value';
 import {
 	addDuration as addDurationToDateTime,
 	subtract as dateTimeSubtract,
@@ -26,38 +25,30 @@ import {
 } from '../../dataTypes/valueTypes/YearMonthDuration';
 import Expression from '../../Expression';
 
-function determineReturnType(typeA: BaseType, typeB: BaseType): ValueType {
-	if (isSubtypeOf(typeA, BaseType.XSINTEGER) && isSubtypeOf(typeB, BaseType.XSINTEGER)) {
-		return { kind: BaseType.XSINTEGER, seqType: SequenceMultiplicity.EXACTLY_ONE };
+function determineReturnType(typeA: ValueType, typeB: ValueType): ValueType {
+	if (isSubtypeOf(typeA, ValueType.XSINTEGER) && isSubtypeOf(typeB, ValueType.XSINTEGER)) {
+		return ValueType.XSINTEGER;
 	}
-	if (isSubtypeOf(typeA, BaseType.XSDECIMAL) && isSubtypeOf(typeB, BaseType.XSDECIMAL)) {
-		return { kind: BaseType.XSDECIMAL, seqType: SequenceMultiplicity.EXACTLY_ONE };
+	if (isSubtypeOf(typeA, ValueType.XSDECIMAL) && isSubtypeOf(typeB, ValueType.XSDECIMAL)) {
+		return ValueType.XSDECIMAL;
 	}
-	if (isSubtypeOf(typeA, BaseType.XSFLOAT) && isSubtypeOf(typeB, BaseType.XSFLOAT)) {
-		return { kind: BaseType.XSFLOAT, seqType: SequenceMultiplicity.EXACTLY_ONE };
+	if (isSubtypeOf(typeA, ValueType.XSFLOAT) && isSubtypeOf(typeB, ValueType.XSFLOAT)) {
+		return ValueType.XSFLOAT;
 	}
-	return { kind: BaseType.XSDOUBLE, seqType: SequenceMultiplicity.EXACTLY_ONE };
+	return ValueType.XSDOUBLE;
 }
 
-function generateBinaryOperatorFunction(operator, typeA: BaseType, typeB: BaseType) {
+function generateBinaryOperatorFunction(operator, typeA: ValueType, typeB: ValueType) {
 	let castFunctionForValueA = null;
 	let castFunctionForValueB = null;
 
-	if (isSubtypeOf(typeA, BaseType.XSUNTYPEDATOMIC)) {
-		castFunctionForValueA = (value) =>
-			castToType(value, {
-				kind: BaseType.XSDOUBLE,
-				seqType: SequenceMultiplicity.EXACTLY_ONE,
-			});
-		typeA = BaseType.XSDOUBLE;
+	if (isSubtypeOf(typeA, ValueType.XSUNTYPEDATOMIC)) {
+		castFunctionForValueA = (value) => castToType(value, ValueType.XSDOUBLE);
+		typeA = ValueType.XSDOUBLE;
 	}
-	if (isSubtypeOf(typeB, BaseType.XSUNTYPEDATOMIC)) {
-		castFunctionForValueB = (value) =>
-			castToType(value, {
-				kind: BaseType.XSDOUBLE,
-				seqType: SequenceMultiplicity.EXACTLY_ONE,
-			});
-		typeB = BaseType.XSDOUBLE;
+	if (isSubtypeOf(typeB, ValueType.XSUNTYPEDATOMIC)) {
+		castFunctionForValueB = (value) => castToType(value, ValueType.XSDOUBLE);
+		typeB = ValueType.XSDOUBLE;
 	}
 
 	function applyCastFunctions(valueA, valueB) {
@@ -67,7 +58,7 @@ function generateBinaryOperatorFunction(operator, typeA: BaseType, typeB: BaseTy
 		};
 	}
 
-	if (isSubtypeOf(typeA, BaseType.XSNUMERIC) && isSubtypeOf(typeB, BaseType.XSNUMERIC)) {
+	if (isSubtypeOf(typeA, ValueType.XSNUMERIC) && isSubtypeOf(typeB, ValueType.XSNUMERIC)) {
 		switch (operator) {
 			case 'addOp': {
 				const returnType = determineReturnType(typeA, typeB);
@@ -92,11 +83,8 @@ function generateBinaryOperatorFunction(operator, typeA: BaseType, typeB: BaseTy
 			}
 			case 'divOp': {
 				let returnType = determineReturnType(typeA, typeB);
-				if (returnType.kind === BaseType.XSINTEGER) {
-					returnType = {
-						kind: BaseType.XSDECIMAL,
-						seqType: SequenceMultiplicity.EXACTLY_ONE,
-					};
+				if (returnType === ValueType.XSINTEGER) {
+					returnType = ValueType.XSDECIMAL;
 				}
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
@@ -119,15 +107,12 @@ function generateBinaryOperatorFunction(operator, typeA: BaseType, typeB: BaseTy
 						);
 					}
 					if (Number.isFinite(castA.value) && !Number.isFinite(castB.value)) {
-						return createAtomicValue(0, {
-							kind: BaseType.XSINTEGER,
-							seqType: SequenceMultiplicity.EXACTLY_ONE,
-						});
+						return createAtomicValue(0, ValueType.XSINTEGER);
 					}
-					return createAtomicValue(Math.trunc(castA.value / castB.value), {
-						kind: BaseType.XSINTEGER,
-						seqType: SequenceMultiplicity.EXACTLY_ONE,
-					});
+					return createAtomicValue(
+						Math.trunc(castA.value / castB.value),
+						ValueType.XSINTEGER
+					);
 				};
 			case 'modOp': {
 				const returnType = determineReturnType(typeA, typeB);
@@ -141,154 +126,157 @@ function generateBinaryOperatorFunction(operator, typeA: BaseType, typeB: BaseTy
 	}
 
 	if (
-		isSubtypeOf(typeA, BaseType.XSYEARMONTHDURATION) &&
-		isSubtypeOf(typeB, BaseType.XSYEARMONTHDURATION)
+		isSubtypeOf(typeA, ValueType.XSYEARMONTHDURATION) &&
+		isSubtypeOf(typeB, ValueType.XSYEARMONTHDURATION)
 	) {
 		switch (operator) {
 			case 'addOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
-					return createAtomicValue(yearMonthDurationAdd(castA.value, castB.value), {
-						kind: BaseType.XSYEARMONTHDURATION,
-						seqType: SequenceMultiplicity.EXACTLY_ONE,
-					});
+					return createAtomicValue(
+						yearMonthDurationAdd(castA.value, castB.value),
+						ValueType.XSYEARMONTHDURATION
+					);
 				};
 			case 'subtractOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
-					return createAtomicValue(yearMonthDurationSubtract(castA.value, castB.value), {
-						kind: BaseType.XSYEARMONTHDURATION,
-						seqType: SequenceMultiplicity.EXACTLY_ONE,
-					});
+					return createAtomicValue(
+						yearMonthDurationSubtract(castA.value, castB.value),
+						ValueType.XSYEARMONTHDURATION
+					);
 				};
 			case 'divOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return createAtomicValue(
 						yearMonthDurationDivideByYearMonthDuration(castA.value, castB.value),
-						{
-							kind: BaseType.XSDECIMAL,
-							seqType: SequenceMultiplicity.EXACTLY_ONE,
-						}
+						ValueType.XSDECIMAL
 					);
 				};
 		}
 	}
 
 	if (
-		isSubtypeOf(typeA, BaseType.XSYEARMONTHDURATION) &&
-		isSubtypeOf(typeB, BaseType.XSNUMERIC)
+		isSubtypeOf(typeA, ValueType.XSYEARMONTHDURATION) &&
+		isSubtypeOf(typeB, ValueType.XSNUMERIC)
 	) {
 		switch (operator) {
 			case 'multiplyOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
-					return createAtomicValue(yearMonthDurationMultiply(castA.value, castB.value), {
-						kind: BaseType.XSYEARMONTHDURATION,
-						seqType: SequenceMultiplicity.EXACTLY_ONE,
-					});
+					return createAtomicValue(
+						yearMonthDurationMultiply(castA.value, castB.value),
+						ValueType.XSYEARMONTHDURATION
+					);
 				};
 			case 'divOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
-					return createAtomicValue(yearMonthDurationDivide(castA.value, castB.value), {
-						kind: BaseType.XSYEARMONTHDURATION,
-						seqType: SequenceMultiplicity.EXACTLY_ONE,
-					});
+					return createAtomicValue(
+						yearMonthDurationDivide(castA.value, castB.value),
+						ValueType.XSYEARMONTHDURATION
+					);
 				};
 		}
 	}
 
 	if (
-		isSubtypeOf(typeA, BaseType.XSNUMERIC) &&
-		isSubtypeOf(typeB, BaseType.XSYEARMONTHDURATION)
+		isSubtypeOf(typeA, ValueType.XSNUMERIC) &&
+		isSubtypeOf(typeB, ValueType.XSYEARMONTHDURATION)
 	) {
 		if (operator === 'multiplyOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
-				return createAtomicValue(yearMonthDurationMultiply(castB.value, castA.value), {
-					kind: BaseType.XSYEARMONTHDURATION,
-					seqType: SequenceMultiplicity.EXACTLY_ONE,
-				});
+				return createAtomicValue(
+					yearMonthDurationMultiply(castB.value, castA.value),
+					ValueType.XSYEARMONTHDURATION
+				);
 			};
 		}
 	}
 
 	if (
-		isSubtypeOf(typeA, BaseType.XSDAYTIMEDURATION) &&
-		isSubtypeOf(typeB, BaseType.XSDAYTIMEDURATION)
+		isSubtypeOf(typeA, ValueType.XSDAYTIMEDURATION) &&
+		isSubtypeOf(typeB, ValueType.XSDAYTIMEDURATION)
 	) {
 		switch (operator) {
 			case 'addOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
-					return createAtomicValue(dayTimeDurationAdd(castA.value, castB.value), {
-						kind: BaseType.XSDAYTIMEDURATION,
-						seqType: SequenceMultiplicity.EXACTLY_ONE,
-					});
+					return createAtomicValue(
+						dayTimeDurationAdd(castA.value, castB.value),
+						ValueType.XSDAYTIMEDURATION
+					);
 				};
 			case 'subtractOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
-					return createAtomicValue(dayTimeDurationSubtract(castA.value, castB.value), {
-						kind: BaseType.XSDAYTIMEDURATION,
-						seqType: SequenceMultiplicity.EXACTLY_ONE,
-					});
+					return createAtomicValue(
+						dayTimeDurationSubtract(castA.value, castB.value),
+						ValueType.XSDAYTIMEDURATION
+					);
 				};
 			case 'divOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return createAtomicValue(
 						dayTimeDurationDivideByDayTimeDuration(castA.value, castB.value),
-						{ kind: BaseType.XSDECIMAL, seqType: SequenceMultiplicity.EXACTLY_ONE }
+						ValueType.XSDECIMAL
 					);
 				};
 		}
 	}
-	if (isSubtypeOf(typeA, BaseType.XSDAYTIMEDURATION) && isSubtypeOf(typeB, BaseType.XSNUMERIC)) {
+	if (
+		isSubtypeOf(typeA, ValueType.XSDAYTIMEDURATION) &&
+		isSubtypeOf(typeB, ValueType.XSNUMERIC)
+	) {
 		switch (operator) {
 			case 'multiplyOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
-					return createAtomicValue(dayTimeDurationMultiply(castA.value, castB.value), {
-						kind: BaseType.XSDAYTIMEDURATION,
-						seqType: SequenceMultiplicity.EXACTLY_ONE,
-					});
+					return createAtomicValue(
+						dayTimeDurationMultiply(castA.value, castB.value),
+						ValueType.XSDAYTIMEDURATION
+					);
 				};
 			case 'divOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
-					return createAtomicValue(dayTimeDurationDivide(castA.value, castB.value), {
-						kind: BaseType.XSDAYTIMEDURATION,
-						seqType: SequenceMultiplicity.EXACTLY_ONE,
-					});
+					return createAtomicValue(
+						dayTimeDurationDivide(castA.value, castB.value),
+						ValueType.XSDAYTIMEDURATION
+					);
 				};
 		}
 	}
-	if (isSubtypeOf(typeA, BaseType.XSNUMERIC) && isSubtypeOf(typeB, BaseType.XSDAYTIMEDURATION)) {
+	if (
+		isSubtypeOf(typeA, ValueType.XSNUMERIC) &&
+		isSubtypeOf(typeB, ValueType.XSDAYTIMEDURATION)
+	) {
 		if (operator === 'multiplyOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
-				return createAtomicValue(dayTimeDurationMultiply(castB.value, castA.value), {
-					kind: BaseType.XSDAYTIMEDURATION,
-					seqType: SequenceMultiplicity.EXACTLY_ONE,
-				});
+				return createAtomicValue(
+					dayTimeDurationMultiply(castB.value, castA.value),
+					ValueType.XSDAYTIMEDURATION
+				);
 			};
 		}
 	}
 
 	if (
-		(isSubtypeOf(typeA, BaseType.XSDATETIME) && isSubtypeOf(typeB, BaseType.XSDATETIME)) ||
-		(isSubtypeOf(typeA, BaseType.XSDATE) && isSubtypeOf(typeB, BaseType.XSDATE)) ||
-		(isSubtypeOf(typeA, BaseType.XSTIME) && isSubtypeOf(typeB, BaseType.XSTIME))
+		(isSubtypeOf(typeA, ValueType.XSDATETIME) && isSubtypeOf(typeB, ValueType.XSDATETIME)) ||
+		(isSubtypeOf(typeA, ValueType.XSDATE) && isSubtypeOf(typeB, ValueType.XSDATE)) ||
+		(isSubtypeOf(typeA, ValueType.XSTIME) && isSubtypeOf(typeB, ValueType.XSTIME))
 	) {
 		if (operator === 'subtractOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
-				return createAtomicValue(dateTimeSubtract(castA.value, castB.value), {
-					kind: BaseType.XSDAYTIMEDURATION,
-					seqType: SequenceMultiplicity.EXACTLY_ONE,
-				});
+				return createAtomicValue(
+					dateTimeSubtract(castA.value, castB.value),
+					ValueType.XSDAYTIMEDURATION
+				);
 			};
 		}
 
@@ -296,141 +284,144 @@ function generateBinaryOperatorFunction(operator, typeA: BaseType, typeB: BaseTy
 	}
 
 	if (
-		(isSubtypeOf(typeA, BaseType.XSDATETIME) &&
-			isSubtypeOf(typeB, BaseType.XSYEARMONTHDURATION)) ||
-		(isSubtypeOf(typeA, BaseType.XSDATETIME) && isSubtypeOf(typeB, BaseType.XSDAYTIMEDURATION))
+		(isSubtypeOf(typeA, ValueType.XSDATETIME) &&
+			isSubtypeOf(typeB, ValueType.XSYEARMONTHDURATION)) ||
+		(isSubtypeOf(typeA, ValueType.XSDATETIME) &&
+			isSubtypeOf(typeB, ValueType.XSDAYTIMEDURATION))
 	) {
 		if (operator === 'addOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
-				return createAtomicValue(addDurationToDateTime(castA.value, castB.value), {
-					kind: BaseType.XSDATETIME,
-					seqType: SequenceMultiplicity.EXACTLY_ONE,
-				});
+				return createAtomicValue(
+					addDurationToDateTime(castA.value, castB.value),
+					ValueType.XSDATETIME
+				);
 			};
 		}
 		if (operator === 'subtractOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
-				return createAtomicValue(subtractDurationFromDateTime(castA.value, castB.value), {
-					kind: BaseType.XSDATETIME,
-					seqType: SequenceMultiplicity.EXACTLY_ONE,
-				});
+				return createAtomicValue(
+					subtractDurationFromDateTime(castA.value, castB.value),
+					ValueType.XSDATETIME
+				);
 			};
 		}
 	}
 
 	if (
-		(isSubtypeOf(typeA, BaseType.XSDATE) && isSubtypeOf(typeB, BaseType.XSYEARMONTHDURATION)) ||
-		(isSubtypeOf(typeA, BaseType.XSDATE) && isSubtypeOf(typeB, BaseType.XSDAYTIMEDURATION))
+		(isSubtypeOf(typeA, ValueType.XSDATE) &&
+			isSubtypeOf(typeB, ValueType.XSYEARMONTHDURATION)) ||
+		(isSubtypeOf(typeA, ValueType.XSDATE) && isSubtypeOf(typeB, ValueType.XSDAYTIMEDURATION))
 	) {
 		if (operator === 'addOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
-				return createAtomicValue(addDurationToDateTime(castA.value, castB.value), {
-					kind: BaseType.XSDATE,
-					seqType: SequenceMultiplicity.EXACTLY_ONE,
-				});
+				return createAtomicValue(
+					addDurationToDateTime(castA.value, castB.value),
+					ValueType.XSDATE
+				);
 			};
 		}
 		if (operator === 'subtractOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
-				return createAtomicValue(subtractDurationFromDateTime(castA.value, castB.value), {
-					kind: BaseType.XSDATE,
-					seqType: SequenceMultiplicity.EXACTLY_ONE,
-				});
+				return createAtomicValue(
+					subtractDurationFromDateTime(castA.value, castB.value),
+					ValueType.XSDATE
+				);
 			};
 		}
 	}
 
-	if (isSubtypeOf(typeA, BaseType.XSTIME) && isSubtypeOf(typeB, BaseType.XSDAYTIMEDURATION)) {
+	if (isSubtypeOf(typeA, ValueType.XSTIME) && isSubtypeOf(typeB, ValueType.XSDAYTIMEDURATION)) {
 		if (operator === 'addOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
-				return createAtomicValue(addDurationToDateTime(castA.value, castB.value), {
-					kind: BaseType.XSTIME,
-					seqType: SequenceMultiplicity.EXACTLY_ONE,
-				});
+				return createAtomicValue(
+					addDurationToDateTime(castA.value, castB.value),
+					ValueType.XSTIME
+				);
 			};
 		}
 		if (operator === 'subtractOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
-				return createAtomicValue(subtractDurationFromDateTime(castA.value, castB.value), {
-					kind: BaseType.XSTIME,
-					seqType: SequenceMultiplicity.EXACTLY_ONE,
-				});
+				return createAtomicValue(
+					subtractDurationFromDateTime(castA.value, castB.value),
+					ValueType.XSTIME
+				);
 			};
 		}
 	}
 
 	if (
-		(isSubtypeOf(typeB, BaseType.XSYEARMONTHDURATION) &&
-			isSubtypeOf(typeA, BaseType.XSDATETIME)) ||
-		(isSubtypeOf(typeB, BaseType.XSDAYTIMEDURATION) && isSubtypeOf(typeA, BaseType.XSDATETIME))
+		(isSubtypeOf(typeB, ValueType.XSYEARMONTHDURATION) &&
+			isSubtypeOf(typeA, ValueType.XSDATETIME)) ||
+		(isSubtypeOf(typeB, ValueType.XSDAYTIMEDURATION) &&
+			isSubtypeOf(typeA, ValueType.XSDATETIME))
 	) {
 		if (operator === 'addOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
-				return createAtomicValue(addDurationToDateTime(castB.value, castA.value), {
-					kind: BaseType.XSDATETIME,
-					seqType: SequenceMultiplicity.EXACTLY_ONE,
-				});
+				return createAtomicValue(
+					addDurationToDateTime(castB.value, castA.value),
+					ValueType.XSDATETIME
+				);
 			};
 		}
 		if (operator === 'subtractOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
-				return createAtomicValue(subtractDurationFromDateTime(castB.value, castA.value), {
-					kind: BaseType.XSDATETIME,
-					seqType: SequenceMultiplicity.EXACTLY_ONE,
-				});
+				return createAtomicValue(
+					subtractDurationFromDateTime(castB.value, castA.value),
+					ValueType.XSDATETIME
+				);
 			};
 		}
 	}
 
 	if (
-		(isSubtypeOf(typeB, BaseType.XSDAYTIMEDURATION) && isSubtypeOf(typeA, BaseType.XSDATE)) ||
-		(isSubtypeOf(typeB, BaseType.XSYEARMONTHDURATION) && isSubtypeOf(typeA, BaseType.XSDATE))
+		(isSubtypeOf(typeB, ValueType.XSDAYTIMEDURATION) && isSubtypeOf(typeA, ValueType.XSDATE)) ||
+		(isSubtypeOf(typeB, ValueType.XSYEARMONTHDURATION) && isSubtypeOf(typeA, ValueType.XSDATE))
 	) {
 		if (operator === 'addOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
-				return createAtomicValue(addDurationToDateTime(castB.value, castA.value), {
-					kind: BaseType.XSDATE,
-					seqType: SequenceMultiplicity.EXACTLY_ONE,
-				});
+				return createAtomicValue(
+					addDurationToDateTime(castB.value, castA.value),
+					ValueType.XSDATE
+				);
 			};
 		}
 		if (operator === 'subtractOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
-				return createAtomicValue(subtractDurationFromDateTime(castB.value, castA.value), {
-					kind: BaseType.XSDATE,
-					seqType: SequenceMultiplicity.EXACTLY_ONE,
-				});
+				return createAtomicValue(
+					subtractDurationFromDateTime(castB.value, castA.value),
+					ValueType.XSDATE
+				);
 			};
 		}
 	}
 
-	if (isSubtypeOf(typeB, BaseType.XSDAYTIMEDURATION) && isSubtypeOf(typeA, BaseType.XSTIME)) {
+	if (isSubtypeOf(typeB, ValueType.XSDAYTIMEDURATION) && isSubtypeOf(typeA, ValueType.XSTIME)) {
 		if (operator === 'addOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
-				return createAtomicValue(addDurationToDateTime(castB.value, castA.value), {
-					kind: BaseType.XSTIME,
-					seqType: SequenceMultiplicity.EXACTLY_ONE,
-				});
+				return createAtomicValue(
+					addDurationToDateTime(castB.value, castA.value),
+					ValueType.XSTIME
+				);
 			};
 		}
 		if (operator === 'subtractOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
-				return createAtomicValue(subtractDurationFromDateTime(castB.value, castA.value), {
-					kind: BaseType.XSTIME,
-					seqType: SequenceMultiplicity.EXACTLY_ONE,
-				});
+				return createAtomicValue(
+					subtractDurationFromDateTime(castB.value, castA.value),
+					ValueType.XSTIME
+				);
 			};
 		}
 	}
@@ -495,17 +486,15 @@ class BinaryOperator extends Expression {
 				const firstValue = firstValues[0];
 				const secondValue = secondValues[0];
 				// TODO: Find a more errorproof solution, hash collisions can occur here
-				const typingKey = `${valueTypeHash(firstValue.type)}~${valueTypeHash(
-					secondValue.type
-				)}~${this._operator}`;
+				const typingKey = `${firstValue.type}~${secondValue.type}~${this._operator}`;
 				let prefabOperator = operatorsByTypingKey[typingKey];
 				if (!prefabOperator) {
 					prefabOperator = operatorsByTypingKey[
 						typingKey
 					] = generateBinaryOperatorFunction(
 						this._operator,
-						firstValue.type.kind,
-						secondValue.type.kind
+						firstValue.type,
+						secondValue.type
 					);
 				}
 

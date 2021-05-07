@@ -227,7 +227,7 @@ export function adaptJavaScriptValueToArrayOfXPathValues(
 export function adaptJavaScriptValueToSequence(
 	domFacade: DomFacade,
 	value: UntypedExternalValue,
-	expectedType: SequenceType = { type: ValueType.ITEM,  mult: SequenceMultiplicity.EXACTLY_ONE}
+	expectedType: SequenceType = { type: ValueType.ITEM, mult: SequenceMultiplicity.EXACTLY_ONE }
 ): ISequence {
 	return sequenceFactory.create(
 		adaptJavaScriptValueToArrayOfXPathValues(domFacade, value, expectedType)

@@ -1,11 +1,10 @@
 import { TinyTextNode } from '../../domClone/Pointer';
 import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import atomize from '../dataTypes/atomize';
-import { BaseType } from '../dataTypes/BaseType';
 import castToType from '../dataTypes/castToType';
 import createPointerValue from '../dataTypes/createPointerValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { SequenceMultiplicity } from '../dataTypes/Value';
+import { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
@@ -32,13 +31,7 @@ class TextConstructor extends Expression {
 				return sequenceFactory.empty();
 			}
 			const content = items
-				.map(
-					(item) =>
-						castToType(item, {
-							kind: BaseType.XSSTRING,
-							seqType: SequenceMultiplicity.EXACTLY_ONE,
-						}).value
-				)
+				.map((item) => castToType(item, ValueType.XSSTRING).value)
 				.join(' ');
 
 			const tinyTextNode: TinyTextNode = {

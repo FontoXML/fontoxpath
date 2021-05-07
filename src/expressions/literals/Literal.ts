@@ -1,4 +1,4 @@
-import { BaseType } from '../dataTypes/BaseType';
+import AtomicValue from '../dataTypes/AtomicValue';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import ISequence from '../dataTypes/ISequence';
 import sequenceFactory from '../dataTypes/sequenceFactory';
@@ -17,16 +17,16 @@ class Literal extends Expression {
 		});
 		this._type = type;
 
-		let value;
-		switch (type.kind) {
-			case BaseType.XSINTEGER:
+		let value: AtomicValue;
+		switch (type) {
+			case ValueType.XSINTEGER:
 				value = createAtomicValue(parseInt(jsValue, 10), type);
 				break;
-			case BaseType.XSSTRING:
+			case ValueType.XSSTRING:
 				value = createAtomicValue(jsValue + '', type);
 				break;
-			case BaseType.XSDECIMAL:
-			case BaseType.XSDOUBLE:
+			case ValueType.XSDECIMAL:
+			case ValueType.XSDOUBLE:
 				value = createAtomicValue(parseFloat(jsValue), type);
 				break;
 			default:

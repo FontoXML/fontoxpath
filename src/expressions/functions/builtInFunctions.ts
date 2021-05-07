@@ -1,4 +1,4 @@
-import { ParameterType, ValueType } from '../dataTypes/Value';
+import { ParameterType, SequenceType, ValueType } from '../dataTypes/Value';
 import builtInArrayFunctions from './builtInFunctions_arrays';
 import builtInBooleanFunctions from './builtInFunctions_boolean';
 import builtInContextFunctions from './builtInFunctions_context';
@@ -25,7 +25,7 @@ export type BuiltinDeclarationType = {
 	callFunction: FunctionDefinitionType;
 	localName: string;
 	namespaceURI: string;
-	returnType: ValueType;
+	returnType: SequenceType;
 };
 
 const builtInFunctions: BuiltinDeclarationType[] = [].concat(

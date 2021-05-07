@@ -5,7 +5,7 @@ import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import ISequence from './ISequence';
 import RestArgument from './RestArgument';
 import sequenceFactory from './sequenceFactory';
-import Value, { SequenceMultiplicity, ValueType } from './Value';
+import Value, { SequenceType, ValueType } from './Value';
 import QName from './valueTypes/QName';
 
 export type FunctionSignature<T> = (
@@ -15,7 +15,10 @@ export type FunctionSignature<T> = (
 	...args: ISequence[]
 ) => T;
 
-function expandRestArgumentToArity(argumentTypes: (ValueType | RestArgument)[], arity: number) {
+function expandRestArgumentToArity(
+	argumentTypes: (SequenceType | RestArgument)[],
+	arity: number
+): (SequenceType | RestArgument)[] {
 	let indexOfRest = -1;
 	for (let i = 0; i < argumentTypes.length; i++) {
 		if ((argumentTypes[i] as RestArgument).isRestArgument) {
@@ -36,12 +39,12 @@ function expandRestArgumentToArity(argumentTypes: (ValueType | RestArgument)[], 
 class FunctionValue<T = ISequence> extends Value {
 	public readonly isUpdating: boolean;
 	public readonly value: FunctionSignature<T>;
-	private readonly _argumentTypes: (ValueType | RestArgument)[];
+	private readonly _argumentTypes: (SequenceType | RestArgument)[];
 	private readonly _arity: number;
 	private readonly _isAnonymous: boolean;
 	private readonly _localName: string;
 	private readonly _namespaceURI: string;
-	private readonly _returnType: ValueType;
+	private readonly _returnType: SequenceType;
 
 	constructor({
 		argumentTypes,
@@ -53,13 +56,13 @@ class FunctionValue<T = ISequence> extends Value {
 		returnType,
 		value,
 	}: {
-		argumentTypes: (ValueType | RestArgument)[];
+		argumentTypes: (SequenceType | RestArgument)[];
 		arity: number;
 		isAnonymous?: boolean;
 		isUpdating?: boolean;
 		localName: string;
 		namespaceURI: string;
-		returnType: ValueType;
+		returnType: SequenceType;
 		value: FunctionSignature<T>;
 	}) {
 		super(ValueType.FUNCTION, null);
@@ -107,7 +110,7 @@ class FunctionValue<T = ISequence> extends Value {
 			);
 		}
 		const argumentTypes = appliedArguments.reduce(
-			(indices: (ValueType | RestArgument)[], arg: ISequence | null, index: number) => {
+			(indices: (SequenceType | RestArgument)[], arg: ISequence | null, index: number) => {
 				if (arg === null) {
 					indices.push(this._argumentTypes[index]);
 				}

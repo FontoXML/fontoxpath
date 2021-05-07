@@ -340,10 +340,7 @@ describe('castToType()', () => {
 					}),
 					{ kind: BaseType.XSUNTYPEDATOMIC, seqType: SequenceType.EXACTLY_ONE }
 				),
-				createAtomicValue('--10-10+10:30', {
-					kind: BaseType.XSUNTYPEDATOMIC,
-					seqType: SequenceType.EXACTLY_ONE,
-				})
+				createAtomicValue('--10-10+10:30', ValueType.XSUNTYPEDATOMIC)
 			));
 		it('from xs:gDay', () =>
 			chai.assert.deepEqual(

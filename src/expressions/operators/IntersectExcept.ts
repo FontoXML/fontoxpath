@@ -1,5 +1,5 @@
+import { ValueType } from 'src';
 import DomFacade from '../../domFacade/DomFacade';
-import { BaseType } from '../dataTypes/BaseType';
 import { compareNodePositions, sortNodeValues } from '../dataTypes/documentOrderUtils';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
@@ -15,7 +15,7 @@ function ensureSortedSequence(
 	expectedResultOrder: any
 ): ISequence {
 	return sequence.mapAll((values) => {
-		if (values.some((value) => !isSubtypeOf(value.type.kind, BaseType.NODE))) {
+		if (values.some((value) => !isSubtypeOf(value.type, ValueType.NODE))) {
 			throw new Error(
 				`XPTY0004: Sequences given to ${intersectOrExcept} should only contain nodes.`
 			);

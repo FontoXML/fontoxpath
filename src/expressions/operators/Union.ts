@@ -1,7 +1,7 @@
-import { BaseType } from '../dataTypes/BaseType';
 import { sortNodeValues } from '../dataTypes/documentOrderUtils';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import { ValueType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
@@ -54,7 +54,7 @@ class Union extends Expression {
 					);
 				},
 			}).map((value) => {
-				if (!isSubtypeOf(value.type.kind, BaseType.NODE)) {
+				if (!isSubtypeOf(value.type, ValueType.NODE)) {
 					throw new Error('XPTY0004: The sequences to union are not of type node()*');
 				}
 				return value;
@@ -65,7 +65,7 @@ class Union extends Expression {
 				expression.evaluateMaybeStatically(dynamicContext, executionParameters)
 			)
 		).mapAll((allValues) => {
-			if (allValues.some((nodeValue) => !isSubtypeOf(nodeValue.type.kind, BaseType.NODE))) {
+			if (allValues.some((nodeValue) => !isSubtypeOf(nodeValue.type, ValueType.NODE))) {
 				throw new Error('XPTY0004: The sequences to union are not of type node()*');
 			}
 

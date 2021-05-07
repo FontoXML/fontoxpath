@@ -1,6 +1,6 @@
 import ISequence from '../expressions/dataTypes/ISequence';
 import sequenceFactory from '../expressions/dataTypes/sequenceFactory';
-import { ValueType } from '../expressions/dataTypes/Value';
+import { SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import DynamicContext from '../expressions/DynamicContext';
 import ExecutionParameters from '../expressions/ExecutionParameters';
 import Expression from '../expressions/Expression';
@@ -187,13 +187,15 @@ export default function processProlog(
 			throw errXQST0060();
 		}
 
-		const returnType: ValueType = astHelper.getTypeDeclaration(declaration);
+		const returnType: SequenceType = astHelper.getTypeDeclaration(declaration);
 		const params = astHelper.getChildren(
 			astHelper.getFirstChild(declaration, 'paramList'),
 			'param'
 		);
 		const paramNames = params.map((param) => astHelper.getFirstChild(param, 'varName'));
-		const paramTypes: ValueType[] = params.map((param) => astHelper.getTypeDeclaration(param));
+		const paramTypes: SequenceType[] = params.map((param) =>
+			astHelper.getTypeDeclaration(param)
+		);
 
 		let functionDefinition: GenericFunctionDefinition<any, any>;
 		const functionBody = astHelper.getFirstChild(declaration, 'functionBody');
@@ -342,11 +344,11 @@ export default function processProlog(
 				}
 
 				if (
-					actualFunctionProperties.returnType.kind !== returnType.kind ||
+					actualFunctionProperties.returnType.type !== returnType.type ||
 					actualFunctionProperties.argumentTypes.some(
 						// TODO: what do we do with any RestArguments here?
 						// It seems that callFunction in FunctionCall.ts performs a similar cast...
-						(type, i) => (type as ValueType).kind !== paramTypes[i].kind
+						(type, i) => (type as SequenceType).type !== paramTypes[i].type
 					)
 				) {
 					throw new Error(

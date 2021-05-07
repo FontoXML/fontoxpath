@@ -101,7 +101,7 @@ export const enum EllipsisType {
 /**
  *  The combined parameter type which is either a value type or an ellipsis type.
  */
-export type ParameterType = ValueType | EllipsisType;
+export type ParameterType = SequenceType | EllipsisType;
 
 export type SequenceType = {
 	type: ValueType;

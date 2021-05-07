@@ -13,5 +13,5 @@ export default function createAtomicValue(value: any, type: ValueType): AtomicVa
 	};
 }
 
-export const trueBoolean = createAtomicValue(true, BaseType.XSBOOLEAN);
-export const falseBoolean = createAtomicValue(false, BaseType.XSBOOLEAN);
+export const trueBoolean = createAtomicValue(true, ValueType.XSBOOLEAN);
+export const falseBoolean = createAtomicValue(false, ValueType.XSBOOLEAN);
