@@ -1,0 +1,20 @@
+{
+	"baseDir": "./dist",
+	"files": [
+		{
+			"path": "fontoxpath.js"
+		},
+		{
+			"path": "fontoxpath.esm.js"
+		}
+	],
+	"reportOutput": [
+		[
+			"github-pr",
+			{
+				"statusCheck": true,
+				"prComment": true
+			}
+		]
+	]
+}

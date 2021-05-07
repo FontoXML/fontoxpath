@@ -199,6 +199,18 @@ storing these in a file you can run the same set even when switching between dif
 the generated file present you can run the tests using `npm run qt3performance`, this will run a
 benchmark for each qt3 test using [benchmarkjs](https://benchmarkjs.com/).
 
+### Running the fuzzer
+
+FontoXPath comes with a fuzzer that can find bugs automatically. The fuzzer has a corpus of ~200 XPath expressions which are randomly mutated.
+
+To run the fuzzer, run the following command in the root of this repository:
+
+```
+npm run fuzzer
+```
+
+The fuzzer is located in the `fuzzzer/` directory, take a look at the source code for more details.
+
 ### Building
 
 When the new function seems to work, you can make a build of
