@@ -2,7 +2,6 @@ import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import StaticContext from '../StaticContext';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
-import { BaseType } from './BaseType';
 import ISequence from './ISequence';
 import RestArgument from './RestArgument';
 import sequenceFactory from './sequenceFactory';
@@ -63,15 +62,7 @@ class FunctionValue<T = ISequence> extends Value {
 		returnType: ValueType;
 		value: FunctionSignature<T>;
 	}) {
-		super(
-			{
-				kind: BaseType.FUNCTION,
-				seqType: SequenceMultiplicity.EXACTLY_ONE,
-				returnType: undefined,
-				params: [],
-			},
-			null
-		);
+		super(ValueType.FUNCTION, null);
 
 		this.value = value;
 		this.isUpdating = isUpdating;

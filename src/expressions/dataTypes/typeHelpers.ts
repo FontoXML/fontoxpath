@@ -1,23 +1,23 @@
-import { BaseType } from './BaseType';
 import builtinDataTypesByType, { TypeModel } from './builtins/builtinDataTypesByType';
+import { ValueType } from './Value';
 import { Variety } from './Variety';
 
-export function getPrimitiveTypeName(typeName: BaseType): BaseType | null {
+export function getPrimitiveTypeName(typeName: ValueType): ValueType | null {
 	let type = builtinDataTypesByType[typeName];
 	while (type && type.variety !== Variety.PRIMITIVE) {
 		type = type.parent;
 	}
-	return !type ? null : type.type.kind;
+	return !type ? null : type.type;
 }
 
-export function normalizeWhitespace(input: string, typeName: BaseType): string {
+export function normalizeWhitespace(input: string, typeName: ValueType): string {
 	const type = builtinDataTypesByType[typeName];
 	const restrictionsByName = type.restrictionsByName;
 	if (!restrictionsByName || !restrictionsByName.whiteSpace) {
 		if (!type.parent) {
 			return input;
 		}
-		return normalizeWhitespace(input, type.parent.type.kind);
+		return normalizeWhitespace(input, type.parent.type);
 	}
 	const whiteSpaceType = type.restrictionsByName.whiteSpace;
 	switch (whiteSpaceType) {
@@ -35,7 +35,7 @@ export function normalizeWhitespace(input: string, typeName: BaseType): string {
 	return input;
 }
 
-export function validatePattern(input: string, type: BaseType): boolean {
+export function validatePattern(input: string, type: ValueType): boolean {
 	let typeModel = builtinDataTypesByType[type];
 	while (typeModel && typeModel.validator === null) {
 		if (typeModel.variety === Variety.LIST || typeModel.variety === Variety.UNION) {
@@ -59,8 +59,8 @@ function getHandlerForFacet(typeModel: TypeModel, facetName: string) {
 	return () => true;
 }
 
-export function validateRestrictions(value: string, baseType: BaseType): boolean {
-	let type = builtinDataTypesByType[baseType];
+export function validateRestrictions(value: string, ValueType: ValueType): boolean {
+	let type = builtinDataTypesByType[ValueType];
 	while (type) {
 		if (!type.restrictionsByName) {
 			type = type.parent;

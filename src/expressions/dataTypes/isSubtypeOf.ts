@@ -1,5 +1,5 @@
-import { BaseType, startWithXS } from './BaseType';
 import builtinDataTypesByType, { TypeModel } from './builtins/builtinDataTypesByType';
+import { startWithXS, ValueType } from './Value';
 import { Variety } from './Variety';
 
 function isSubtypeOfType(subType: TypeModel, superType: TypeModel) {
@@ -9,12 +9,12 @@ function isSubtypeOfType(subType: TypeModel, superType: TypeModel) {
 	}
 
 	while (subType) {
-		if (subType.type.kind === superType.type.kind) {
+		if (subType.type === superType.type) {
 			return true;
 		}
 		if (subType.variety === Variety.UNION) {
 			return !!subType.memberTypes.find((memberType) =>
-				isSubtypeOf(memberType.type.kind, superType.type.kind)
+				isSubtypeOf(memberType.type, superType.type)
 			);
 		}
 		subType = subType.parent;
@@ -27,7 +27,7 @@ function isSubtypeOfType(subType: TypeModel, superType: TypeModel) {
  * xs:decimal is a subtype of xs:numeric
  * xs:NMTOKENS is a subtype of xs:NM TOKEN
  */
-export default function isSubtypeOf(baseSubType: BaseType, baseSuperType: BaseType): boolean {
+export default function isSubtypeOf(baseSubType: ValueType, baseSuperType: ValueType): boolean {
 	if (baseSubType === baseSuperType) {
 		return true;
 	}

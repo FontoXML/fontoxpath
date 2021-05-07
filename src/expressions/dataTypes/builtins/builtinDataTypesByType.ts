@@ -1,4 +1,3 @@
-import { BaseType } from '../BaseType';
 import facetHandlersByDataTypeName from '../facets/facetsByDataType';
 import { ValueType } from '../Value';
 import { Variety } from '../Variety';
@@ -15,17 +14,17 @@ export type TypeModel = {
 	variety: Variety;
 };
 
-const builtinDataTypesByType: { [typeName in BaseType]: TypeModel } = Object.create(null);
+const builtinDataTypesByType: { [typeName in ValueType]: TypeModel } = Object.create(null);
 
 builtinModels.forEach((model) => {
 	const name = model.name;
 	const restrictionsByName = model.restrictions || {};
 
 	if (model.variety === Variety.PRIMITIVE) {
-		const parent = model.parent ? builtinDataTypesByType[model.parent.kind] : null;
-		const validator = getValidatorForType(name.kind) || null;
-		const facetHandlers = facetHandlersByDataTypeName.getFacetByDataType(name.kind);
-		builtinDataTypesByType[name.kind] = {
+		const parent = model.parent ? builtinDataTypesByType[model.parent] : null;
+		const validator = getValidatorForType(name) || null;
+		const facetHandlers = facetHandlersByDataTypeName.getFacetByDataType(name);
+		builtinDataTypesByType[name] = {
 			variety: Variety.PRIMITIVE,
 			type: name,
 			restrictionsByName,
@@ -35,9 +34,9 @@ builtinModels.forEach((model) => {
 			memberTypes: [],
 		};
 	} else if (model.variety === Variety.DERIVED) {
-		const base = builtinDataTypesByType[model.base.kind];
-		const validator = getValidatorForType(name.kind) || null;
-		builtinDataTypesByType[name.kind] = {
+		const base = builtinDataTypesByType[model.base];
+		const validator = getValidatorForType(name) || null;
+		builtinDataTypesByType[name] = {
 			variety: Variety.DERIVED,
 			type: name,
 			restrictionsByName,
@@ -47,8 +46,8 @@ builtinModels.forEach((model) => {
 			memberTypes: [],
 		};
 	} else if (model.variety === Variety.LIST) {
-		const type = builtinDataTypesByType[model.type.kind];
-		builtinDataTypesByType[name.kind] = {
+		const type = builtinDataTypesByType[model.type];
+		builtinDataTypesByType[name] = {
 			variety: Variety.LIST,
 			type: name,
 			restrictionsByName,
@@ -59,9 +58,9 @@ builtinModels.forEach((model) => {
 		};
 	} else {
 		const memberTypes = model.memberTypes.map(
-			(memberTypeRef) => builtinDataTypesByType[memberTypeRef.kind]
+			(memberTypeRef) => builtinDataTypesByType[memberTypeRef]
 		);
-		builtinDataTypesByType[name.kind] = {
+		builtinDataTypesByType[name] = {
 			variety: Variety.UNION,
 			type: name,
 			restrictionsByName,

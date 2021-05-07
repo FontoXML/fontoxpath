@@ -1,7 +1,7 @@
 // Validators for all XML-schema built-in types.
 // Implemented by spec: http://www.w3.org/TR/xmlschema-2/
 
-import { BaseType } from '../BaseType';
+import { ValueType } from '../Value';
 
 function isValidAnySimpleType(_value: string): boolean {
 	return true;
@@ -158,41 +158,41 @@ function isValidDayTimeDuration(value: string): boolean {
 	return /^-?P([0-9]+D)?(T([0-9]+H)?([0-9]+M)?([0-9]+(\.[0-9]+)?S)?)?$/.test(value);
 }
 
-export function getValidatorForType(type: BaseType): (value: string) => boolean {
-	const validatorToType: Map<BaseType, (value: string) => boolean> = new Map([
-		[BaseType.XSANYSIMPLETYPE, isValidAnySimpleType],
-		[BaseType.XSANYATOMICTYPE, isValidAnyAtomicType],
-		[BaseType.XSSTRING, isValidString],
-		[BaseType.XSBOOLEAN, isValidBoolean],
-		[BaseType.XSFLOAT, isValidFloat],
-		[BaseType.XSDOUBLE, isValidDouble],
-		[BaseType.XSDECIMAL, isValidDecimal],
-		[BaseType.XSDURATION, isValidDuration],
-		[BaseType.XSDATETIME, isValidDateTime],
-		[BaseType.XSTIME, isValidTime],
-		[BaseType.XSDATE, isValidDate],
-		[BaseType.XSGYEARMONTH, isValidGYearMonth],
-		[BaseType.XSGYEAR, isValidGYear],
-		[BaseType.XSGMONTHDAY, isValidGMonthDay],
-		[BaseType.XSGDAY, isValidGDay],
-		[BaseType.XSGMONTH, isValidGMonth],
-		[BaseType.XSHEXBINARY, isValidHexBinary],
-		[BaseType.XSBASE64BINARY, isValidBase64Binary],
-		[BaseType.XSANYURI, isValidAnyURI],
-		[BaseType.XSNOTATION, isValidQName],
-		[BaseType.XSNORMALIZEDSTRING, isValidNormalizedString],
-		[BaseType.XSTOKEN, isValidToken],
-		[BaseType.XSLANGUAGE, isValidLanguage],
-		[BaseType.XSNMTOKEN, isValidNMTOKEN],
-		[BaseType.XSNAME, isValidName],
-		[BaseType.XSQNAME, isValidQName],
-		[BaseType.XSNCNAME, isValidNCName],
-		[BaseType.XSID, isValidID],
-		[BaseType.XSIDREF, isValidID],
-		[BaseType.XSENTITY, isValidENTITY],
-		[BaseType.XSINTEGER, isValidInteger],
-		[BaseType.XSYEARMONTHDURATION, isValidYearMonthDuration],
-		[BaseType.XSDAYTIMEDURATION, isValidDayTimeDuration],
+export function getValidatorForType(type: ValueType): (value: string) => boolean {
+	const validatorToType: Map<ValueType, (value: string) => boolean> = new Map([
+		[ValueType.XSANYSIMPLETYPE, isValidAnySimpleType],
+		[ValueType.XSANYATOMICTYPE, isValidAnyAtomicType],
+		[ValueType.XSSTRING, isValidString],
+		[ValueType.XSBOOLEAN, isValidBoolean],
+		[ValueType.XSFLOAT, isValidFloat],
+		[ValueType.XSDOUBLE, isValidDouble],
+		[ValueType.XSDECIMAL, isValidDecimal],
+		[ValueType.XSDURATION, isValidDuration],
+		[ValueType.XSDATETIME, isValidDateTime],
+		[ValueType.XSTIME, isValidTime],
+		[ValueType.XSDATE, isValidDate],
+		[ValueType.XSGYEARMONTH, isValidGYearMonth],
+		[ValueType.XSGYEAR, isValidGYear],
+		[ValueType.XSGMONTHDAY, isValidGMonthDay],
+		[ValueType.XSGDAY, isValidGDay],
+		[ValueType.XSGMONTH, isValidGMonth],
+		[ValueType.XSHEXBINARY, isValidHexBinary],
+		[ValueType.XSBASE64BINARY, isValidBase64Binary],
+		[ValueType.XSANYURI, isValidAnyURI],
+		[ValueType.XSNOTATION, isValidQName],
+		[ValueType.XSNORMALIZEDSTRING, isValidNormalizedString],
+		[ValueType.XSTOKEN, isValidToken],
+		[ValueType.XSLANGUAGE, isValidLanguage],
+		[ValueType.XSNMTOKEN, isValidNMTOKEN],
+		[ValueType.XSNAME, isValidName],
+		[ValueType.XSQNAME, isValidQName],
+		[ValueType.XSNCNAME, isValidNCName],
+		[ValueType.XSID, isValidID],
+		[ValueType.XSIDREF, isValidID],
+		[ValueType.XSENTITY, isValidENTITY],
+		[ValueType.XSINTEGER, isValidInteger],
+		[ValueType.XSYEARMONTHDURATION, isValidYearMonthDuration],
+		[ValueType.XSDAYTIMEDURATION, isValidDayTimeDuration],
 	]);
 
 	return validatorToType.get(type);

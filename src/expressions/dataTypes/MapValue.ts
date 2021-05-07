@@ -1,17 +1,16 @@
 import mapGet from '../functions/builtInFunctions_maps_get';
 import { MAP_NAMESPACE_URI } from '../staticallyKnownNamespaces';
-import { BaseType } from './BaseType';
 import FunctionValue from './FunctionValue';
 import ISequence from './ISequence';
 import sequenceFactory from './sequenceFactory';
-import Value, { SequenceMultiplicity } from './Value';
+import Value, { SequenceMultiplicity, ValueType } from './Value';
 
 class MapValue extends FunctionValue<ISequence> {
 	public keyValuePairs: { key: Value; value: () => ISequence }[];
 	constructor(keyValuePairs: { key: Value; value: () => ISequence }[]) {
 		super({
 			// argumentTypes: [{ type: 'item()', isRestArgument: false }],
-			argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceMultiplicity.EXACTLY_ONE }],
+			argumentTypes: [ValueType.ITEM],
 			arity: 1,
 			localName: 'get',
 			namespaceURI: MAP_NAMESPACE_URI,
@@ -23,9 +22,9 @@ class MapValue extends FunctionValue<ISequence> {
 					sequenceFactory.singleton(this),
 					key
 				),
-			returnType: { kind: BaseType.ITEM, seqType: SequenceMultiplicity.ZERO_OR_MORE },
+			returnType: ValueType.ITEM,
 		});
-		this.type = { kind: BaseType.MAP, items: [], seqType: SequenceMultiplicity.EXACTLY_ONE };
+		this.type = ValueType.MAP;
 		this.keyValuePairs = keyValuePairs;
 	}
 }
