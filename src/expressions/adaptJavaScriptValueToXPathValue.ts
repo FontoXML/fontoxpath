@@ -182,8 +182,6 @@ export function adaptJavaScriptValueToArrayOfXPathValues(
 	value: UntypedExternalValue,
 	expectedType: SequenceType
 ): Value[] {
-	console.log(value);
-	console.log(expectedType);
 	if (expectedType.mult === SequenceMultiplicity.ZERO_OR_ONE) {
 		const converted = adaptJavaScriptValueToXPath(expectedType.type, value, domFacade);
 		return converted === null ? [] : [converted];

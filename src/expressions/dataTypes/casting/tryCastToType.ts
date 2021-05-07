@@ -241,7 +241,7 @@ function createCastingFunction(from: ValueType, to: ValueType) {
 }
 
 export default function tryCastToType(valueTuple: AtomicValue, type: ValueType): CastResult {
-	const index = (((valueTuple.type as number) + type) as number) * 10000;
+	const index = (valueTuple.type as number) + (type as number) * 10000;
 	let prefabConverter = precomputedCastFunctorsByTypeString[index];
 
 	if (!prefabConverter) {
