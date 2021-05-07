@@ -247,7 +247,7 @@ function evaluateReplaceNodeValue(
 			// expression following the keyword with with the
 			// following update primitives using upd:mergeUpdates:
 			// upd:replaceElementContent($target, $text)
-			if (isSubtypeOf(target.type.kind, ValueType.ELEMENT)) {
+			if (isSubtypeOf(target.type, ValueType.ELEMENT)) {
 				done = true;
 				return ready({
 					xdmValue: [],
@@ -265,10 +265,10 @@ function evaluateReplaceNodeValue(
 			// 1 did not construct a text node, let $string be a
 			// zero-length string. Then:
 			if (
-				isSubtypeOf(target.type.kind, ValueType.ATTRIBUTE) ||
-				isSubtypeOf(target.type.kind, ValueType.TEXT) ||
-				isSubtypeOf(target.type.kind, ValueType.COMMENT) ||
-				isSubtypeOf(target.type.kind, ValueType.PROCESSINGINSTRUCTION)
+				isSubtypeOf(target.type, ValueType.ATTRIBUTE) ||
+				isSubtypeOf(target.type, ValueType.TEXT) ||
+				isSubtypeOf(target.type, ValueType.COMMENT) ||
+				isSubtypeOf(target.type, ValueType.PROCESSINGINSTRUCTION)
 			) {
 				const stringValue = text
 					? executionParameters.domFacade.getDataFromPointer(text)
@@ -278,7 +278,7 @@ function evaluateReplaceNodeValue(
 				// two adjacent hyphens or ends with a hyphen, a
 				// dynamic error is raised [err:XQDY0072].
 				if (
-					isSubtypeOf(target.type.kind, ValueType.COMMENT) &&
+					isSubtypeOf(target.type, ValueType.COMMENT) &&
 					(stringValue.includes('--') || stringValue.endsWith('-'))
 				) {
 					throw errXQDY0072(stringValue);
@@ -288,7 +288,7 @@ function evaluateReplaceNodeValue(
 				// $string contains the substring "?>", a dynamic
 				// error is raised [err:XQDY0026].
 				if (
-					isSubtypeOf(target.type.kind, ValueType.PROCESSINGINSTRUCTION) &&
+					isSubtypeOf(target.type, ValueType.PROCESSINGINSTRUCTION) &&
 					stringValue.includes('?>')
 				) {
 					throw errXQDY0026(stringValue);
