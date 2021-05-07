@@ -1,13 +1,16 @@
+import AtomicValue from '../AtomicValue';
+import { BaseType } from '../BaseType';
 import createAtomicValue from '../createAtomicValue';
-import { ValueType } from '../Value';
+import { SequenceType } from '../Value';
 import CastResult from './CastResult';
 
-const createAnyURIValue = (value) => createAtomicValue(value, 'xs:anyURI');
+const createAnyURIValue = (value: any): AtomicValue =>
+	createAtomicValue(value, { kind: BaseType.XSANYURI, seqType: SequenceType.EXACTLY_ONE });
 
 export default function castToAnyURI(
-	instanceOf: (typeName: ValueType) => boolean
-): (value) => CastResult {
-	if (instanceOf('xs:string') || instanceOf('xs:untypedAtomic')) {
+	instanceOf: (typeName: BaseType) => boolean
+): (value: any) => CastResult {
+	if (instanceOf(BaseType.XSSTRING) || instanceOf(BaseType.XSUNTYPEDATOMIC)) {
 		return (value) => ({
 			successful: true,
 			value: createAnyURIValue(value),

@@ -1,11 +1,13 @@
 import * as chai from 'chai';
 import {
+	BaseType,
 	domFacade,
 	evaluateXPath,
 	evaluateXPathToBoolean,
 	evaluateXPathToNumber,
 	evaluateXPathToString,
 	registerCustomXPathFunction,
+	SequenceType,
 } from 'fontoxpath';
 import * as slimdom from 'slimdom';
 
@@ -35,7 +37,7 @@ describe('extension functions', () => {
 			registerCustomXPathFunction(
 				{ namespaceURI: 'test', localName: 'custom-function-static-string-func-error' },
 				[],
-				'xs:string',
+				{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
 				(_dynamicContext) => {
 					// This query will throw an error during static evaluation
 					return '"prefix-" || string("bla", "bliep") || "-postfix"';
@@ -48,7 +50,7 @@ describe('extension functions', () => {
 					localName: 'custom-function-dynamic-string-func-error',
 				},
 				[],
-				'xs:string',
+				{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
 				(_dynamicContext) => {
 					// This query will throw an error immediately during evaluation
 					return '"prefix-" || string(./descendant::text()) || "-postfix"';
@@ -61,7 +63,7 @@ describe('extension functions', () => {
 					localName: 'custom-function-lazy-dynamic-string-func-error',
 				},
 				[],
-				'xs:string',
+				{ kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
 				(_dynamicContext) => {
 					// This query will throw an error during evaluation when advancing the iterator
 					return 'string(./descendant::text())';

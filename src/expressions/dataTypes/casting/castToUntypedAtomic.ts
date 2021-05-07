@@ -1,10 +1,11 @@
+import { BaseType } from '../BaseType';
 import createAtomicValue from '../createAtomicValue';
-import { ValueType } from '../Value';
+import { SequenceType } from '../Value';
 import CastResult from './CastResult';
 import castToStringLikeType from './castToStringLikeType';
 
 export default function castToUntypedAtomic(
-	instanceOf: (typeName: ValueType) => boolean
+	instanceOf: (typeName: BaseType) => boolean
 ): (value) => CastResult {
 	const caster = castToStringLikeType(instanceOf);
 	return (value) => {
@@ -15,7 +16,10 @@ export default function castToUntypedAtomic(
 
 		return {
 			successful: true,
-			value: createAtomicValue(castResult.value, 'xs:untypedAtomic'),
+			value: createAtomicValue(castResult.value, {
+				kind: BaseType.XSUNTYPEDATOMIC,
+				seqType: SequenceType.EXACTLY_ONE,
+			}),
 		};
 	};
 }

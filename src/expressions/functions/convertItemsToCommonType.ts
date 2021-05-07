@@ -1,20 +1,21 @@
+import { BaseType } from '../dataTypes/BaseType';
 import castToType from '../dataTypes/castToType';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import { getPrimitiveTypeName } from '../dataTypes/typeHelpers';
-import Value from '../dataTypes/Value';
+import Value, { SequenceType } from '../dataTypes/Value';
 
 /**
  * Promote all given (numeric) items to single common type
  * https://www.w3.org/TR/xpath-31/#promotion
  */
-export default function convertItemsToCommonType(items: (Value | null)[]) {
+export default function convertItemsToCommonType(items: (Value | null)[]): (Value | null)[] {
 	if (
 		items.every((item) => {
 			// xs:integer is the only numeric type with inherits from another numeric type
 			return (
 				item === null ||
-				isSubtypeOf(item.type, 'xs:integer') ||
-				isSubtypeOf(item.type, 'xs:decimal')
+				isSubtypeOf(item.type.kind, BaseType.XSINTEGER) ||
+				isSubtypeOf(item.type.kind, BaseType.XSDECIMAL)
 			);
 		})
 	) {
@@ -22,7 +23,7 @@ export default function convertItemsToCommonType(items: (Value | null)[]) {
 		return items;
 	}
 	const commonTypeName = items
-		.map((item) => (item ? getPrimitiveTypeName(item.type) : null))
+		.map((item) => (item ? getPrimitiveTypeName(item.type.kind) : null))
 		.reduce((typeName, itemType) => {
 			if (itemType === null) {
 				return typeName;
@@ -40,12 +41,16 @@ export default function convertItemsToCommonType(items: (Value | null)[]) {
 		items.every((item) => {
 			return (
 				item === null ||
-				isSubtypeOf(item.type, 'xs:string') ||
-				isSubtypeOf(item.type, 'xs:anyURI')
+				isSubtypeOf(item.type.kind, BaseType.XSSTRING) ||
+				isSubtypeOf(item.type.kind, BaseType.XSANYURI)
 			);
 		})
 	) {
-		return items.map((item) => (item ? castToType(item, 'xs:string') : null));
+		return items.map((item) =>
+			item
+				? castToType(item, { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE })
+				: null
+		);
 	}
 
 	// If each value is an instance of one of the types xs:decimal or xs:float, then all the values are cast to type xs:float.
@@ -53,25 +58,33 @@ export default function convertItemsToCommonType(items: (Value | null)[]) {
 		items.every((item) => {
 			return (
 				item === null ||
-				isSubtypeOf(item.type, 'xs:decimal') ||
-				isSubtypeOf(item.type, 'xs:float')
+				isSubtypeOf(item.type.kind, BaseType.XSDECIMAL) ||
+				isSubtypeOf(item.type.kind, BaseType.XSFLOAT)
 			);
 		})
 	) {
-		return items.map((item) => (item ? castToType(item, 'xs:float') : item));
+		return items.map((item) =>
+			item
+				? castToType(item, { kind: BaseType.XSFLOAT, seqType: SequenceType.EXACTLY_ONE })
+				: item
+		);
 	}
 	// If each value is an instance of one of the types xs:decimal, xs:float, or xs:double, then all the values are cast to type xs:double.
 	if (
 		items.every((item) => {
 			return (
 				item === null ||
-				isSubtypeOf(item.type, 'xs:decimal') ||
-				isSubtypeOf(item.type, 'xs:float') ||
-				isSubtypeOf(item.type, 'xs:double')
+				isSubtypeOf(item.type.kind, BaseType.XSDECIMAL) ||
+				isSubtypeOf(item.type.kind, BaseType.XSFLOAT) ||
+				isSubtypeOf(item.type.kind, BaseType.XSDOUBLE)
 			);
 		})
 	) {
-		return items.map((item) => (item ? castToType(item, 'xs:double') : item));
+		return items.map((item) =>
+			item
+				? castToType(item, { kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE })
+				: item
+		);
 	}
 
 	// Otherwise, a type error is raised. The exact error type is determined by the caller.

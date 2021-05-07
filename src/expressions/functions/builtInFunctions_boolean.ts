@@ -1,10 +1,10 @@
-import { falseBoolean, trueBoolean } from '../dataTypes/createAtomicValue';
+import { BaseType } from '../dataTypes/BaseType';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { DONE_TOKEN, ready } from '../util/iterators';
-
+import { SequenceType } from '../dataTypes/Value';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
-
+import { BuiltinDeclarationType } from './builtInFunctions';
 import FunctionDefinitionType from './FunctionDefinitionType';
+
 const fnNot: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
@@ -35,40 +35,42 @@ const fnFalse: FunctionDefinitionType = () => {
 	return sequenceFactory.singletonFalseSequence();
 };
 
+const declarations: BuiltinDeclarationType[] = [
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'boolean',
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
+		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
+		callFunction: fnBoolean,
+	},
+
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'true',
+		argumentTypes: [],
+		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
+		callFunction: fnTrue,
+	},
+
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'not',
+		argumentTypes: [{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE }],
+		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
+		callFunction: fnNot,
+	},
+
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'false',
+		argumentTypes: [],
+		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
+		callFunction: fnFalse,
+	},
+];
+
 export default {
-	declarations: [
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'boolean',
-			argumentTypes: ['item()*'],
-			returnType: 'xs:boolean',
-			callFunction: fnBoolean,
-		},
-
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'true',
-			argumentTypes: [],
-			returnType: 'xs:boolean',
-			callFunction: fnTrue,
-		},
-
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'not',
-			argumentTypes: ['item()*'],
-			returnType: 'xs:boolean',
-			callFunction: fnNot,
-		},
-
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'false',
-			argumentTypes: [],
-			returnType: 'xs:boolean',
-			callFunction: fnFalse,
-		},
-	],
+	declarations,
 	functions: {
 		boolean: fnBoolean,
 		true: fnTrue,

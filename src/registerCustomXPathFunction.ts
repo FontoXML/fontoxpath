@@ -1,9 +1,11 @@
 import IDomFacade from './domFacade/IDomFacade';
 import { PositionedError } from './evaluationUtils/PositionedError';
 import { adaptJavaScriptValueToSequence } from './expressions/adaptJavaScriptValueToXPathValue';
+import { BaseType } from './expressions/dataTypes/BaseType';
 import ISequence from './expressions/dataTypes/ISequence';
 import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
 import sequenceFactory from './expressions/dataTypes/sequenceFactory';
+import { SequenceType, ValueType } from './expressions/dataTypes/Value';
 import DynamicContext from './expressions/DynamicContext';
 import ExecutionParameters from './expressions/ExecutionParameters';
 import { registerFunction } from './expressions/functions/functionRegistry';
@@ -58,36 +60,36 @@ class CustomXPathFunctionError extends Error {
 
 function adaptXPathValueToJavascriptValue(
 	valueSequence: ISequence,
-	sequenceType: string,
+	sequenceType: ValueType,
 	executionParameters: ExecutionParameters
 ): any | null | any[] {
-	switch (sequenceType[sequenceType.length - 1]) {
-		case '?':
-			if (valueSequence.isEmpty()) {
-				return null;
-			}
-			return transformXPathItemToJavascriptObject(
-				valueSequence.first(),
-				executionParameters
-			).next(IterationHint.NONE).value;
-
-		case '*':
-		case '+':
-			return valueSequence.getAllValues().map((value) => {
-				if (isSubtypeOf(value.type, 'attribute()')) {
-					throw new Error('Cannot pass attribute nodes to custom functions');
-				}
-				return transformXPathItemToJavascriptObject(value, executionParameters).next(
-					IterationHint.NONE
-				).value;
-			});
-
-		default:
-			return transformXPathItemToJavascriptObject(
-				valueSequence.first(),
-				executionParameters
-			).next(IterationHint.NONE).value;
+	if (sequenceType.seqType === SequenceType.ZERO_OR_ONE) {
+		if (valueSequence.isEmpty()) {
+			return null;
+		}
+		return transformXPathItemToJavascriptObject(
+			valueSequence.first(),
+			executionParameters
+		).next(IterationHint.NONE).value;
 	}
+
+	if (
+		sequenceType.seqType === SequenceType.ZERO_OR_MORE ||
+		sequenceType.seqType === SequenceType.ONE_OR_MORE
+	) {
+		return valueSequence.getAllValues().map((value) => {
+			if (isSubtypeOf(value.type.kind, BaseType.ATTRIBUTE)) {
+				throw new Error('Cannot pass attribute nodes to custom functions');
+			}
+			return transformXPathItemToJavascriptObject(value, executionParameters).next(
+				IterationHint.NONE
+			).value;
+		});
+	}
+
+	return transformXPathItemToJavascriptObject(valueSequence.first(), executionParameters).next(
+		IterationHint.NONE
+	).value;
 }
 
 function splitFunctionName(
@@ -127,8 +129,8 @@ function splitFunctionName(
  */
 export default function registerCustomXPathFunction(
 	name: string | { localName: string; namespaceURI: string },
-	signature: string[],
-	returnType: string,
+	signature: ValueType[],
+	returnType: ValueType,
 	callback: (
 		domFacade: { currentContext: any; domFacade: IDomFacade },
 		...functionArgs: any[]

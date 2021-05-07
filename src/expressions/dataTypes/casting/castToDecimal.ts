@@ -1,17 +1,21 @@
+import { BaseType } from '../BaseType';
 import createAtomicValue from '../createAtomicValue';
-import { ValueType } from '../Value';
+import { SequenceType } from '../Value';
 import CastResult from './CastResult';
 
 export default function castToDecimal(
-	instanceOf: (typeName: ValueType) => boolean
-): (value) => CastResult {
-	if (instanceOf('xs:integer')) {
+	instanceOf: (typeName: BaseType) => boolean
+): (value: any) => CastResult {
+	if (instanceOf(BaseType.XSINTEGER)) {
 		return (value) => ({
 			successful: true,
-			value: createAtomicValue(value, 'xs:decimal'),
+			value: createAtomicValue(value, {
+				kind: BaseType.XSDECIMAL,
+				seqType: SequenceType.EXACTLY_ONE,
+			}),
 		});
 	}
-	if (instanceOf('xs:float') || instanceOf('xs:double')) {
+	if (instanceOf(BaseType.XSFLOAT) || instanceOf(BaseType.XSDOUBLE)) {
 		return (value) => {
 			if (isNaN(value) || !isFinite(value)) {
 				return {
@@ -29,24 +33,33 @@ export default function castToDecimal(
 			}
 			return {
 				successful: true,
-				value: createAtomicValue(value, 'xs:decimal'),
+				value: createAtomicValue(value, {
+					kind: BaseType.XSDECIMAL,
+					seqType: SequenceType.EXACTLY_ONE,
+				}),
 			};
 		};
 	}
-	if (instanceOf('xs:boolean')) {
+	if (instanceOf(BaseType.XSBOOLEAN)) {
 		return (value) => ({
 			successful: true,
-			value: createAtomicValue(value ? 1 : 0, 'xs:decimal'),
+			value: createAtomicValue(value ? 1 : 0, {
+				kind: BaseType.XSDECIMAL,
+				seqType: SequenceType.EXACTLY_ONE,
+			}),
 		});
 	}
 
-	if (instanceOf('xs:string') || instanceOf('xs:untypedAtomic')) {
+	if (instanceOf(BaseType.XSSTRING) || instanceOf(BaseType.XSUNTYPEDATOMIC)) {
 		return (value) => {
 			const decimalValue = parseFloat(value);
 			if (!isNaN(decimalValue) || isFinite(decimalValue)) {
 				return {
 					successful: true,
-					value: createAtomicValue(decimalValue, 'xs:decimal'),
+					value: createAtomicValue(decimalValue, {
+						kind: BaseType.XSDECIMAL,
+						seqType: SequenceType.EXACTLY_ONE,
+					}),
 				};
 			}
 			return {

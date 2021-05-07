@@ -1,20 +1,18 @@
-import Expression, { RESULT_ORDERINGS } from '../Expression';
-
-import Specificity from '../Specificity';
-import UpdatingExpression from './UpdatingExpression';
-
-import { rename } from './pulPrimitives';
-import { mergeUpdates } from './pulRoutines';
-
+import { BaseType } from '../dataTypes/BaseType';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import QName from '../dataTypes/valueTypes/QName';
-import { IIterator, IterationHint, ready } from '../util/iterators';
-import { evaluateNCNameExpression, evaluateQNameExpression } from '../xquery/nameExpression';
-
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import Value from '../dataTypes/Value';
+import QName from '../dataTypes/valueTypes/QName';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
+import Specificity from '../Specificity';
 import UpdatingExpressionResult from '../UpdatingExpressionResult';
+import { IIterator, IterationHint, ready } from '../util/iterators';
+import { evaluateNCNameExpression, evaluateQNameExpression } from '../xquery/nameExpression';
+import { rename } from './pulPrimitives';
+import { mergeUpdates } from './pulRoutines';
+import UpdatingExpression from './UpdatingExpression';
 import { errXUDY0023, errXUDY0027, errXUTY0012 } from './XQueryUpdateFacilityErrors';
 
 function evaluateTarget(targetXdmValue) {
@@ -31,9 +29,9 @@ function evaluateTarget(targetXdmValue) {
 		throw errXUTY0012();
 	}
 	if (
-		!isSubtypeOf(targetXdmValue[0].type, 'element()') &&
-		!isSubtypeOf(targetXdmValue[0].type, 'attribute()') &&
-		!isSubtypeOf(targetXdmValue[0].type, 'processing-instruction()')
+		!isSubtypeOf(targetXdmValue[0].type.kind, BaseType.ELEMENT) &&
+		!isSubtypeOf(targetXdmValue[0].type.kind, BaseType.ATTRIBUTE) &&
+		!isSubtypeOf(targetXdmValue[0].type.kind, BaseType.PROCESSINGINSTRUCTION)
 	) {
 		throw errXUTY0012();
 	}
@@ -42,12 +40,12 @@ function evaluateTarget(targetXdmValue) {
 	return targetXdmValue[0];
 }
 
-function evaluateNewName(staticContext, executionParameters, newNameXdmValue, target) {
+function evaluateNewName(staticContext, executionParameters, newNameXdmValue, target: Value) {
 	// NewNameExpr is processed as follows:
 	const nameSequence = sequenceFactory.create(newNameXdmValue);
 
-	switch (target.type) {
-		case 'element()': {
+	switch (target.type.kind) {
+		case BaseType.ELEMENT: {
 			// If $target is an element node, let $QName be the result of evaluating NewNameExpr as though it were the name expression of a computed element constructor (see Section 3.9.3.1 Computed Element Constructors XQ30).
 			const qName = evaluateQNameExpression(
 				staticContext,
@@ -63,7 +61,7 @@ function evaluateNewName(staticContext, executionParameters, newNameXdmValue, ta
 
 			return qName;
 		}
-		case 'attribute()': {
+		case BaseType.ATTRIBUTE: {
 			// If $target is an attribute node, let $QName be the result of evaluating NewNameExpr as though it were the name expression of a computed attribute constructor (see Section 3.9.3.2 Computed Attribute Constructors XQ30).
 			const qName = evaluateQNameExpression(
 				staticContext,
@@ -81,7 +79,7 @@ function evaluateNewName(staticContext, executionParameters, newNameXdmValue, ta
 
 			return qName;
 		}
-		case 'processing-instruction()': {
+		case BaseType.PROCESSINGINSTRUCTION: {
 			// If $target is a processing instruction node, let $NCName be the result of evaluating NewNameExpr as though it were the name expression of a computed processing instruction constructor (see Section 3.9.3.5 Computed Processing Instruction Constructors XQ30),
 			const nCName = evaluateNCNameExpression(executionParameters, nameSequence).next(
 				IterationHint.NONE

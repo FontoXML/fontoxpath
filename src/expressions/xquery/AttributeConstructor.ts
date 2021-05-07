@@ -1,10 +1,11 @@
 import { TinyAttributeNode } from '../../domClone/Pointer';
 import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import atomize from '../dataTypes/atomize';
+import { BaseType } from '../dataTypes/BaseType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import createPointerValue from '../dataTypes/createPointerValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value from '../dataTypes/Value';
+import Value, { SequenceType } from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
@@ -118,7 +119,10 @@ class AttributeConstructor extends Expression {
 									sequenceFactory.singleton(
 										createAtomicValue(
 											allValues.map((val) => val.value).join(' '),
-											'xs:string'
+											{
+												kind: BaseType.XSSTRING,
+												seqType: SequenceType.EXACTLY_ONE,
+											}
 										)
 									)
 								);

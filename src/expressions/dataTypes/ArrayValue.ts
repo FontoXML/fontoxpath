@@ -1,8 +1,10 @@
 import arrayGet from '../functions/builtInFunctions_arrays_get';
 import { ARRAY_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import { BaseType } from './BaseType';
 import FunctionValue from './FunctionValue';
 import ISequence from './ISequence';
 import sequenceFactory from './sequenceFactory';
+import { SequenceType } from './Value';
 
 class ArrayValue extends FunctionValue {
 	public members: (() => ISequence)[];
@@ -18,11 +20,12 @@ class ArrayValue extends FunctionValue {
 				),
 			localName: 'get',
 			namespaceURI: ARRAY_NAMESPACE_URI,
-			argumentTypes: [{ type: 'xs:integer', isRestArgument: false }],
+			// argumentTypes: [{ type: { kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE }, isRestArgument: false }],
+			argumentTypes: [{ kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE }],
 			arity: 1,
-			returnType: { type: 'item()', occurrence: '*' },
+			returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
 		});
-		this.type = 'array(*)';
+		this.type = { kind: BaseType.ARRAY, items: [], seqType: SequenceType.EXACTLY_ONE };
 		this.members = members;
 	}
 }

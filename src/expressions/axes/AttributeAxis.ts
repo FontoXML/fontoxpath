@@ -1,3 +1,4 @@
+import { BaseType } from '../dataTypes/BaseType';
 import createPointerValue from '../dataTypes/createPointerValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
@@ -34,7 +35,7 @@ class AttributeAxis extends Expression {
 
 		const domFacade = executionParameters.domFacade;
 
-		if (!isSubtypeOf(contextItem.type, 'element()')) {
+		if (!isSubtypeOf(contextItem.type.kind, BaseType.ELEMENT)) {
 			return sequenceFactory.empty();
 		}
 

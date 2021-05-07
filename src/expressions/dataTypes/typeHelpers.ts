@@ -1,22 +1,23 @@
-import builtinDataTypesByName, { TypeModel } from './builtins/builtinDataTypesByName';
-import { ValueType } from './Value';
+import { BaseType } from './BaseType';
+import builtinDataTypesByType, { TypeModel } from './builtins/builtinDataTypesByType';
+import { Variety } from './Variety';
 
-export function getPrimitiveTypeName(typeName: ValueType): ValueType | null {
-	let type = builtinDataTypesByName[typeName];
-	while (type && type.variety !== 'primitive') {
+export function getPrimitiveTypeName(typeName: BaseType): BaseType | null {
+	let type = builtinDataTypesByType[typeName];
+	while (type && type.variety !== Variety.PRIMITIVE) {
 		type = type.parent;
 	}
-	return !type ? null : type.name;
+	return !type ? null : type.type.kind;
 }
 
-export function normalizeWhitespace(input: string, typeName: ValueType): string {
-	const type = builtinDataTypesByName[typeName];
+export function normalizeWhitespace(input: string, typeName: BaseType): string {
+	const type = builtinDataTypesByType[typeName];
 	const restrictionsByName = type.restrictionsByName;
 	if (!restrictionsByName || !restrictionsByName.whiteSpace) {
 		if (!type.parent) {
 			return input;
 		}
-		return normalizeWhitespace(input, type.parent.name);
+		return normalizeWhitespace(input, type.parent.type.kind);
 	}
 	const whiteSpaceType = type.restrictionsByName.whiteSpace;
 	switch (whiteSpaceType) {
@@ -34,10 +35,10 @@ export function normalizeWhitespace(input: string, typeName: ValueType): string 
 	return input;
 }
 
-export function validatePattern(input: string, typeName: ValueType): boolean {
-	let typeModel = builtinDataTypesByName[typeName];
+export function validatePattern(input: string, type: BaseType): boolean {
+	let typeModel = builtinDataTypesByType[type];
 	while (typeModel && typeModel.validator === null) {
-		if (typeModel.variety === 'list' || typeModel.variety === 'union') {
+		if (typeModel.variety === Variety.LIST || typeModel.variety === Variety.UNION) {
 			return true;
 		}
 		typeModel = typeModel.parent;
@@ -58,8 +59,8 @@ function getHandlerForFacet(typeModel: TypeModel, facetName: string) {
 	return () => true;
 }
 
-export function validateRestrictions(value: string, typeName: ValueType): boolean {
-	let type = builtinDataTypesByName[typeName];
+export function validateRestrictions(value: string, baseType: BaseType): boolean {
+	let type = builtinDataTypesByType[baseType];
 	while (type) {
 		if (!type.restrictionsByName) {
 			type = type.parent;

@@ -1,10 +1,11 @@
 import atomize from './dataTypes/atomize';
+import { BaseType } from './dataTypes/BaseType';
 import castToType from './dataTypes/castToType';
 import ISequence from './dataTypes/ISequence';
 import isSubtypeOf from './dataTypes/isSubtypeOf';
 import sequenceFactory from './dataTypes/sequenceFactory';
 import { getPrimitiveTypeName } from './dataTypes/typeHelpers';
-import Value from './dataTypes/Value';
+import Value, { SequenceType } from './dataTypes/Value';
 import DynamicContext from './DynamicContext';
 import ExecutionParameters from './ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from './Expression';
@@ -16,14 +17,14 @@ import Specificity from './Specificity';
 import { DONE_TOKEN, IIterator, IterationHint, IterationResult, ready } from './util/iterators';
 import { errXPTY0004 } from './xquery/XQueryErrors';
 
-function getFirstPrimitiveType(values: Value[]): string | null {
+function getFirstPrimitiveType(values: Value[]): BaseType | null {
 	const firstActualValue = values.find((value) => !!value);
 
 	if (!firstActualValue) {
 		return null;
 	}
 
-	return getPrimitiveTypeName(firstActualValue.type);
+	return getPrimitiveTypeName(firstActualValue.type.kind);
 }
 
 class OrderByExpression extends FlworExpression {
@@ -117,8 +118,11 @@ class OrderByExpression extends FlworExpression {
 							return value;
 						}
 
-						if (isSubtypeOf('xs:untypedAtomic', value.type)) {
-							return castToType(value, 'xs:string');
+						if (isSubtypeOf(BaseType.XSUNTYPEDATOMIC, value.type.kind)) {
+							return castToType(value, {
+								kind: BaseType.XSSTRING,
+								seqType: SequenceType.EXACTLY_ONE,
+							});
 						}
 
 						return value;
@@ -129,7 +133,7 @@ class OrderByExpression extends FlworExpression {
 					// 2. If each value is an instance of one of the types xs:decimal or xs:float, then all values are cast to type xs:float.
 					// 3. If each value is an instance of one of the types xs:decimal, xs:float, or xs:double, then all values are cast to type xs:double.
 					// 4. Otherwise, a type error is raised [err:XPTY0004].
-					const firstPrimitiveType: string | null = getFirstPrimitiveType(values);
+					const firstPrimitiveType: BaseType | null = getFirstPrimitiveType(values);
 
 					if (firstPrimitiveType) {
 						values = convertItemsToCommonType(values);

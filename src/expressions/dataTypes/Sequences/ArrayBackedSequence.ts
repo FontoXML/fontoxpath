@@ -1,5 +1,6 @@
 import { errFORG0006 } from '../../functions/FunctionOperationErrors';
 import { DONE_TOKEN, IIterator, ready } from '../../util/iterators';
+import { BaseType } from '../BaseType';
 import ISequence, { SwitchCasesCases } from '../ISequence';
 import isSubtypeOf from '../isSubtypeOf';
 import sequenceFactory from '../sequenceFactory';
@@ -55,7 +56,7 @@ export default class ArrayBackedSequence implements ISequence {
 	}
 
 	public getEffectiveBooleanValue(): boolean {
-		if (isSubtypeOf(this._values[0].type, 'node()')) {
+		if (isSubtypeOf(this._values[0].type.kind, BaseType.NODE)) {
 			return true;
 		}
 		// We always have a length > 1, or we'd be a singletonSequence

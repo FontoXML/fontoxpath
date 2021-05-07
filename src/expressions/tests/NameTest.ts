@@ -1,4 +1,5 @@
 import { AttributeNodePointer, ElementNodePointer } from '../../domClone/Pointer';
+import { BaseType } from '../dataTypes/BaseType';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import Value from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
@@ -43,8 +44,8 @@ class NameTest extends TestAbstractExpression {
 		executionParameters: ExecutionParameters
 	) {
 		const domFacade = executionParameters.domFacade;
-		const nodeIsElement = isSubtypeOf(value.type, 'element()');
-		const nodeIsAttribute = isSubtypeOf(value.type, 'attribute()');
+		const nodeIsElement = isSubtypeOf(value.type.kind, BaseType.ELEMENT);
+		const nodeIsAttribute = isSubtypeOf(value.type.kind, BaseType.ATTRIBUTE);
 		if (!nodeIsElement && !nodeIsAttribute) {
 			return false;
 		}

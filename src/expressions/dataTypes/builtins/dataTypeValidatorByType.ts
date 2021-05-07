@@ -1,7 +1,7 @@
 // Validators for all XML-schema built-in types.
 // Implemented by spec: http://www.w3.org/TR/xmlschema-2/
 
-import { ValueType } from '../Value';
+import { BaseType } from '../BaseType';
 
 function isValidAnySimpleType(_value: string): boolean {
 	return true;
@@ -158,48 +158,42 @@ function isValidDayTimeDuration(value: string): boolean {
 	return /^-?P([0-9]+D)?(T([0-9]+H)?([0-9]+M)?([0-9]+(\.[0-9]+)?S)?)?$/.test(value);
 }
 
-export function getValidatorForType(type: ValueType): (value: string) => boolean {
-	return dataTypeValidatorByName[type];
+export function getValidatorForType(type: BaseType): (value: string) => boolean {
+	const validatorToType: Map<BaseType, (value: string) => boolean> = new Map([
+		[BaseType.XSANYSIMPLETYPE, isValidAnySimpleType],
+		[BaseType.XSANYATOMICTYPE, isValidAnyAtomicType],
+		[BaseType.XSSTRING, isValidString],
+		[BaseType.XSBOOLEAN, isValidBoolean],
+		[BaseType.XSFLOAT, isValidFloat],
+		[BaseType.XSDOUBLE, isValidDouble],
+		[BaseType.XSDECIMAL, isValidDecimal],
+		[BaseType.XSDURATION, isValidDuration],
+		[BaseType.XSDATETIME, isValidDateTime],
+		[BaseType.XSTIME, isValidTime],
+		[BaseType.XSDATE, isValidDate],
+		[BaseType.XSGYEARMONTH, isValidGYearMonth],
+		[BaseType.XSGYEAR, isValidGYear],
+		[BaseType.XSGMONTHDAY, isValidGMonthDay],
+		[BaseType.XSGDAY, isValidGDay],
+		[BaseType.XSGMONTH, isValidGMonth],
+		[BaseType.XSHEXBINARY, isValidHexBinary],
+		[BaseType.XSBASE64BINARY, isValidBase64Binary],
+		[BaseType.XSANYURI, isValidAnyURI],
+		[BaseType.XSNOTATION, isValidQName],
+		[BaseType.XSNORMALIZEDSTRING, isValidNormalizedString],
+		[BaseType.XSTOKEN, isValidToken],
+		[BaseType.XSLANGUAGE, isValidLanguage],
+		[BaseType.XSNMTOKEN, isValidNMTOKEN],
+		[BaseType.XSNAME, isValidName],
+		[BaseType.XSQNAME, isValidQName],
+		[BaseType.XSNCNAME, isValidNCName],
+		[BaseType.XSID, isValidID],
+		[BaseType.XSIDREF, isValidID],
+		[BaseType.XSENTITY, isValidENTITY],
+		[BaseType.XSINTEGER, isValidInteger],
+		[BaseType.XSYEARMONTHDURATION, isValidYearMonthDuration],
+		[BaseType.XSDAYTIMEDURATION, isValidDayTimeDuration],
+	]);
+
+	return validatorToType.get(type);
 }
-
-const dataTypeValidatorByName: { [s: string]: (value: string) => boolean } = {
-	'xs:anySimpleType': isValidAnySimpleType,
-	'xs:anyAtomicType': isValidAnyAtomicType,
-
-	'xs:string': isValidString,
-	'xs:boolean': isValidBoolean,
-	'xs:float': isValidFloat,
-	'xs:double': isValidDouble,
-	'xs:decimal': isValidDecimal,
-	'xs:duration': isValidDuration,
-	'xs:dateTime': isValidDateTime,
-	'xs:time': isValidTime,
-	'xs:date': isValidDate,
-	'xs:gYearMonth': isValidGYearMonth,
-	'xs:gYear': isValidGYear,
-	'xs:gMonthDay': isValidGMonthDay,
-	'xs:gDay': isValidGDay,
-	'xs:gMonth': isValidGMonth,
-	'xs:hexBinary': isValidHexBinary,
-	'xs:base64Binary': isValidBase64Binary,
-	'xs:anyURI': isValidAnyURI,
-	'xs:NOTATION': isValidQName,
-
-	'xs:normalizedString': isValidNormalizedString,
-	'xs:token': isValidToken,
-	'xs:language': isValidLanguage,
-	'xs:NMTOKEN': isValidNMTOKEN,
-	'xs:Name': isValidName,
-	'xs:QName': isValidQName,
-	'xs:NCName': isValidNCName,
-	'xs:ID': isValidID,
-	'xs:IDREF': isValidID,
-	'xs:ENTITY': isValidENTITY,
-
-	'xs:integer': isValidInteger,
-
-	'xs:yearMonthDuration': isValidYearMonthDuration,
-	'xs:dayTimeDuration': isValidDayTimeDuration,
-};
-
-export default dataTypeValidatorByName;

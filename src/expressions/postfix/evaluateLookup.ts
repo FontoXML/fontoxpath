@@ -1,4 +1,5 @@
 import ArrayValue from '../dataTypes/ArrayValue';
+import { BaseType } from '../dataTypes/BaseType';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import MapValue from '../dataTypes/MapValue';
@@ -20,11 +21,11 @@ function performLookup(
 ): ISequence {
 	const sequences = [previousSequence];
 
-	if (isSubtypeOf(contextItem.type, 'array(*)')) {
+	if (isSubtypeOf(contextItem.type.kind, BaseType.ARRAY)) {
 		const arrayItem = contextItem as ArrayValue;
 		if (lookup === '*') {
 			sequences.push(...arrayItem.members.map((member) => member()));
-		} else if (!isSubtypeOf(lookup.type, 'xs:integer')) {
+		} else if (!isSubtypeOf(lookup.type.kind, BaseType.XSINTEGER)) {
 			throw errXPTY0004('The key specifier is not an integer.');
 		} else {
 			const index = lookup.value as number;
@@ -33,7 +34,7 @@ function performLookup(
 			}
 			sequences.push(arrayItem.members[index - 1]());
 		}
-	} else if (isSubtypeOf(contextItem.type, 'map(*)')) {
+	} else if (isSubtypeOf(contextItem.type.kind, BaseType.MAP)) {
 		const mapItem = contextItem as MapValue;
 		if (lookup === '*') {
 			sequences.push(...mapItem.keyValuePairs.map((keyValuePair) => keyValuePair.value()));

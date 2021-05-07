@@ -1,5 +1,6 @@
 import { errFORG0006 } from '../../functions/FunctionOperationErrors';
 import { DONE_TOKEN, IIterator, IterationHint, ready } from '../../util/iterators';
+import { BaseType } from '../BaseType';
 import ISequence, { SwitchCasesCases } from '../ISequence';
 import isSubtypeOf from '../isSubtypeOf';
 import sequenceFactory from '../sequenceFactory';
@@ -120,7 +121,7 @@ export default class IteratorBackedSequence implements ISequence {
 		}
 		const firstValue = it.value;
 
-		if (isSubtypeOf(firstValue.type, 'node()')) {
+		if (isSubtypeOf(firstValue.type.kind, BaseType.NODE)) {
 			this.reset(oldPosition);
 			return true;
 		}

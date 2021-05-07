@@ -1,6 +1,6 @@
 import ISequence from '../expressions/dataTypes/ISequence';
 import sequenceFactory from '../expressions/dataTypes/sequenceFactory';
-import TypeDeclaration from '../expressions/dataTypes/TypeDeclaration';
+import { ValueType } from '../expressions/dataTypes/Value';
 import DynamicContext from '../expressions/DynamicContext';
 import ExecutionParameters from '../expressions/ExecutionParameters';
 import Expression from '../expressions/Expression';
@@ -34,11 +34,6 @@ const RESERVED_FUNCTION_NAMESPACE_URIS = [
 	'http://www.w3.org/2005/xpath-functions/array',
 	'http://www.w3.org/2005/xpath-functions/map',
 ];
-
-function isSameTypeDeclaration(a: TypeDeclaration, b: TypeDeclaration) {
-	return a.occurrence === b.occurrence && a.type === b.type;
-}
-
 export type FunctionDeclaration = {
 	arity: number;
 	expression: Expression;
@@ -192,13 +187,13 @@ export default function processProlog(
 			throw errXQST0060();
 		}
 
-		const returnType = astHelper.getTypeDeclaration(declaration);
+		const returnType: ValueType = astHelper.getTypeDeclaration(declaration);
 		const params = astHelper.getChildren(
 			astHelper.getFirstChild(declaration, 'paramList'),
 			'param'
 		);
 		const paramNames = params.map((param) => astHelper.getFirstChild(param, 'varName'));
-		const paramTypes = params.map((param) => astHelper.getTypeDeclaration(param));
+		const paramTypes: ValueType[] = params.map((param) => astHelper.getTypeDeclaration(param));
 
 		let functionDefinition: GenericFunctionDefinition<any, any>;
 		const functionBody = astHelper.getFirstChild(declaration, 'functionBody');
@@ -347,11 +342,11 @@ export default function processProlog(
 				}
 
 				if (
-					!isSameTypeDeclaration(actualFunctionProperties.returnType, returnType) ||
+					actualFunctionProperties.returnType.kind !== returnType.kind ||
 					actualFunctionProperties.argumentTypes.some(
 						// TODO: what do we do with any RestArguments here?
 						// It seems that callFunction in FunctionCall.ts performs a similar cast...
-						(type, i) => !isSameTypeDeclaration(type as TypeDeclaration, paramTypes[i])
+						(type, i) => (type as ValueType).kind !== paramTypes[i].kind
 					)
 				) {
 					throw new Error(

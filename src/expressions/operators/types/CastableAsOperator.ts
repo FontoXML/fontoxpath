@@ -1,8 +1,9 @@
 import atomize from '../../dataTypes/atomize';
+import { BaseType } from '../../dataTypes/BaseType';
 import canCastToType from '../../dataTypes/canCastToType';
 import { falseBoolean, trueBoolean } from '../../dataTypes/createAtomicValue';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import { ValueType } from '../../dataTypes/Value';
+import { stringToValueType, ValueType } from '../../dataTypes/Value';
 import Expression from '../../Expression';
 
 class CastableAsOperator extends Expression {
@@ -17,13 +18,15 @@ class CastableAsOperator extends Expression {
 	) {
 		super(expression.specificity, [expression], { canBeStaticallyEvaluated: false });
 
-		this._targetType = (targetType.prefix
-			? `${targetType.prefix}:${targetType.localName}`
-			: targetType.localName) as ValueType;
+		this._targetType = stringToValueType(
+			targetType.prefix
+				? `${targetType.prefix}:${targetType.localName}`
+				: targetType.localName
+		);
 		if (
-			this._targetType === 'xs:anyAtomicType' ||
-			this._targetType === 'xs:anySimpleType' ||
-			this._targetType === 'xs:NOTATION'
+			this._targetType.kind === BaseType.XSANYATOMICTYPE ||
+			this._targetType.kind === BaseType.XSANYSIMPLETYPE ||
+			this._targetType.kind === BaseType.XSNOTATION
 		) {
 			throw new Error(
 				'XPST0080: Casting to xs:anyAtomicType, xs:anySimpleType or xs:NOTATION is not permitted.'

@@ -1,10 +1,11 @@
 import * as chai from 'chai';
 import sequenceFactory from 'fontoxpath/expressions/dataTypes/sequenceFactory';
-import Value from 'fontoxpath/expressions/dataTypes/Value';
+import Value, { SequenceType } from 'fontoxpath/expressions/dataTypes/Value';
+import { BaseType } from 'fontoxpath/expressions/dataTypes/BaseType';
 import concatSequences from 'fontoxpath/expressions/util/concatSequences';
 
 function value(val) {
-	return new Value('xs:integer', val);
+	return new Value({ kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE }, val);
 }
 
 describe('concatSequences', () => {

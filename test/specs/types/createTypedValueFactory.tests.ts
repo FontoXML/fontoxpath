@@ -1,13 +1,8 @@
 import * as chai from 'chai';
 import * as slimdom from 'slimdom';
 
-import {
-	createTypedValueFactory,
-	evaluateXPath,
-	evaluateXPathToBoolean,
-	evaluateXPathToNodes,
-	evaluateXPathToNumber,
-} from 'fontoxpath';
+import { BaseType, createTypedValueFactory, evaluateXPathToBoolean } from 'fontoxpath';
+import { SequenceType } from 'fontoxpath/expressions/dataTypes/Value';
 
 let documentNode;
 beforeEach(() => {
@@ -16,7 +11,10 @@ beforeEach(() => {
 
 describe('createTypedValueFactory', () => {
 	it('creates an xs:integer value', () => {
-		const typedValueFactory = createTypedValueFactory('xs:integer');
+		const typedValueFactory = createTypedValueFactory({
+			kind: BaseType.XSINTEGER,
+			seqType: SequenceType.EXACTLY_ONE,
+		});
 
 		const typedValue = typedValueFactory(123, documentNode);
 
@@ -29,7 +27,10 @@ describe('createTypedValueFactory', () => {
 	});
 
 	it('creates an xs:integer value from a string', () => {
-		const typedValueFactory = createTypedValueFactory('xs:integer');
+		const typedValueFactory = createTypedValueFactory({
+			kind: BaseType.XSINTEGER,
+			seqType: SequenceType.EXACTLY_ONE,
+		});
 
 		const typedValue = typedValueFactory('123', documentNode);
 
@@ -42,25 +43,34 @@ describe('createTypedValueFactory', () => {
 	});
 
 	it('throws when expecting a Date value but reiving a boolean', () => {
-		const typedValueFactory = createTypedValueFactory('xs:date');
+		const typedValueFactory = createTypedValueFactory({
+			kind: BaseType.XSDATE,
+			seqType: SequenceType.EXACTLY_ONE,
+		});
 
 		chai.assert.throws(
 			() => typedValueFactory(true, documentNode),
-			`he JavaScript value true with type boolean is not a valid type to be converted to an XPath xs:date.`
+			`The JavaScript value true with type boolean is not a valid type to be converted to an XPath xs:date.`
 		);
 	});
 
 	it('throws when expecting a node() value but reiving a boolean', () => {
-		const typedValueFactory = createTypedValueFactory('node()');
+		const typedValueFactory = createTypedValueFactory({
+			kind: BaseType.NODE,
+			seqType: SequenceType.EXACTLY_ONE,
+		});
 
 		chai.assert.throws(
 			() => typedValueFactory(true, documentNode),
-			`he JavaScript value true with type boolean is not a valid type to be converted to an XPath node().`
+			`The JavaScript value true with type boolean is not a valid type to be converted to an XPath node().`
 		);
 	});
 
 	it('throws when expecting a number value but reiving a boolean', () => {
-		const typedValueFactory = createTypedValueFactory('xs:integer');
+		const typedValueFactory = createTypedValueFactory({
+			kind: BaseType.XSINTEGER,
+			seqType: SequenceType.EXACTLY_ONE,
+		});
 
 		chai.assert.throws(
 			() => typedValueFactory(true, documentNode),
@@ -69,7 +79,10 @@ describe('createTypedValueFactory', () => {
 	});
 
 	it('throws when expecting a number value but reiving a string', () => {
-		const typedValueFactory = createTypedValueFactory('xs:integer');
+		const typedValueFactory = createTypedValueFactory({
+			kind: BaseType.XSINTEGER,
+			seqType: SequenceType.EXACTLY_ONE,
+		});
 
 		chai.assert.throws(
 			() => typedValueFactory('foo', documentNode),
@@ -78,7 +91,10 @@ describe('createTypedValueFactory', () => {
 	});
 
 	it('throws when expecting a number value but reiving null', () => {
-		const typedValueFactory = createTypedValueFactory('xs:integer');
+		const typedValueFactory = createTypedValueFactory({
+			kind: BaseType.XSINTEGER,
+			seqType: SequenceType.EXACTLY_ONE,
+		});
 
 		chai.assert.throws(
 			() => typedValueFactory(null, documentNode),
@@ -87,7 +103,10 @@ describe('createTypedValueFactory', () => {
 	});
 
 	it('throws when expecting an array', () => {
-		const typedValueFactory = createTypedValueFactory('xs:integer*');
+		const typedValueFactory = createTypedValueFactory({
+			kind: BaseType.XSINTEGER,
+			seqType: SequenceType.ZERO_OR_MORE,
+		});
 
 		chai.assert.throws(
 			() => typedValueFactory(123, documentNode),
@@ -96,7 +115,10 @@ describe('createTypedValueFactory', () => {
 	});
 
 	it('throws when trying to convert a Symbol', () => {
-		const typedValueFactory = createTypedValueFactory('item()');
+		const typedValueFactory = createTypedValueFactory({
+			kind: BaseType.ITEM,
+			seqType: SequenceType.EXACTLY_ONE,
+		});
 
 		chai.assert.throws(
 			() => typedValueFactory((Symbol('foo') as unknown) as string, documentNode),

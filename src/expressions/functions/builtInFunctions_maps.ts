@@ -1,14 +1,16 @@
+import { BaseType } from '../dataTypes/BaseType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import { SequenceType } from '../dataTypes/Value';
 import { MAP_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import concatSequences from '../util/concatSequences';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import zipSingleton from '../util/zipSingleton';
+import { BuiltinDeclarationType } from './builtInFunctions';
 import mapGet from './builtInFunctions_maps_get';
-import isSameMapKey from './isSameMapKey';
-
 import FunctionDefinitionType from './FunctionDefinitionType';
+import isSameMapKey from './isSameMapKey';
 
 const mapMerge: FunctionDefinitionType = (
 	dynamicContext,
@@ -17,7 +19,12 @@ const mapMerge: FunctionDefinitionType = (
 	mapSequence,
 	optionMap
 ) => {
-	const duplicateKey = sequenceFactory.singleton(createAtomicValue('duplicates', 'xs:string'));
+	const duplicateKey = sequenceFactory.singleton(
+		createAtomicValue('duplicates', {
+			kind: BaseType.XSSTRING,
+			seqType: SequenceType.EXACTLY_ONE,
+		})
+	);
 	const duplicationHandlingValueSequence = mapGet(
 		dynamicContext,
 		executionParameters,
@@ -129,7 +136,10 @@ const mapSize: FunctionDefinitionType = (
 	mapSequence
 ) => {
 	return mapSequence.map((onlyMap) =>
-		createAtomicValue((onlyMap as MapValue).keyValuePairs.length, 'xs:integer')
+		createAtomicValue((onlyMap as MapValue).keyValuePairs.length, {
+			kind: BaseType.XSINTEGER,
+			seqType: SequenceType.EXACTLY_ONE,
+		})
 	);
 };
 
@@ -207,108 +217,137 @@ const mapForEach: FunctionDefinitionType = (
 	);
 };
 
+const declarations: BuiltinDeclarationType[] = [
+	{
+		namespaceURI: MAP_NAMESPACE_URI,
+		localName: 'contains',
+		argumentTypes: [
+			{ kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
+		],
+		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
+		callFunction: mapContains,
+	},
+
+	{
+		namespaceURI: MAP_NAMESPACE_URI,
+		localName: 'entry',
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+		],
+		returnType: { kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE },
+		callFunction: mapEntry,
+	},
+
+	{
+		namespaceURI: MAP_NAMESPACE_URI,
+		localName: 'for-each',
+		// TODO: reimplement type checking by parsing the types
+		argumentTypes: [
+			{ kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+		],
+		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+		callFunction: mapForEach,
+	},
+
+	{
+		namespaceURI: MAP_NAMESPACE_URI,
+		localName: 'get',
+		argumentTypes: [
+			{ kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
+		],
+		returnType: { kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+		callFunction: mapGet,
+	},
+
+	{
+		namespaceURI: MAP_NAMESPACE_URI,
+		localName: 'keys',
+		argumentTypes: [{ kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE }],
+		returnType: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_MORE },
+		callFunction: mapKeys,
+	},
+
+	{
+		namespaceURI: MAP_NAMESPACE_URI,
+		localName: 'merge',
+		argumentTypes: [
+			{ kind: BaseType.MAP, items: [], seqType: SequenceType.ZERO_OR_MORE },
+			{ kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE },
+		],
+		returnType: { kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE },
+		callFunction: mapMerge,
+	},
+
+	{
+		namespaceURI: MAP_NAMESPACE_URI,
+		localName: 'merge',
+		argumentTypes: [{ kind: BaseType.MAP, items: [], seqType: SequenceType.ZERO_OR_MORE }],
+		returnType: { kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE },
+		callFunction(dynamicContext, executionParameters, staticContext, maps) {
+			return mapMerge(
+				dynamicContext,
+				executionParameters,
+				staticContext,
+				maps,
+				sequenceFactory.singleton(
+					new MapValue([
+						{
+							key: createAtomicValue('duplicates', {
+								kind: BaseType.XSSTRING,
+								seqType: SequenceType.EXACTLY_ONE,
+							}),
+							value: () =>
+								sequenceFactory.singleton(
+									createAtomicValue('use-first', {
+										kind: BaseType.XSSTRING,
+										seqType: SequenceType.EXACTLY_ONE,
+									})
+								),
+						},
+					])
+				)
+			);
+		},
+	},
+
+	{
+		namespaceURI: MAP_NAMESPACE_URI,
+		localName: 'put',
+		argumentTypes: [
+			{ kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.ITEM, seqType: SequenceType.ZERO_OR_MORE },
+		],
+		returnType: { kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE },
+		callFunction: mapPut,
+	},
+
+	{
+		namespaceURI: MAP_NAMESPACE_URI,
+		localName: 'remove',
+		argumentTypes: [
+			{ kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE },
+			{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_MORE },
+		],
+		returnType: { kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE },
+		callFunction: mapRemove,
+	},
+
+	{
+		namespaceURI: MAP_NAMESPACE_URI,
+		localName: 'size',
+		argumentTypes: [{ kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE }],
+		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE },
+		callFunction: mapSize,
+	},
+];
+
 export default {
-	declarations: [
-		{
-			namespaceURI: MAP_NAMESPACE_URI,
-			localName: 'contains',
-			argumentTypes: ['map(*)', 'xs:anyAtomicType'],
-			returnType: 'xs:boolean',
-			callFunction: mapContains,
-		},
-
-		{
-			namespaceURI: MAP_NAMESPACE_URI,
-			localName: 'entry',
-			argumentTypes: ['xs:anyAtomicType', 'item()*'],
-			returnType: 'map(*)',
-			callFunction: mapEntry,
-		},
-
-		{
-			namespaceURI: MAP_NAMESPACE_URI,
-			localName: 'for-each',
-			// TODO: reimplement type checking by parsing the types
-			// argumentTypes: ['map(*)', '(xs:anyAtomicType, item()*) as item()*'],
-			argumentTypes: ['map(*)', 'item()*'],
-			returnType: 'item()*',
-			callFunction: mapForEach,
-		},
-
-		{
-			namespaceURI: MAP_NAMESPACE_URI,
-			localName: 'get',
-			argumentTypes: ['map(*)', 'xs:anyAtomicType'],
-			returnType: 'item()*',
-			callFunction: mapGet,
-		},
-
-		{
-			namespaceURI: MAP_NAMESPACE_URI,
-			localName: 'keys',
-			argumentTypes: ['map(*)'],
-			returnType: 'xs:anyAtomicType*',
-			callFunction: mapKeys,
-		},
-
-		{
-			namespaceURI: MAP_NAMESPACE_URI,
-			localName: 'merge',
-			argumentTypes: ['map(*)*', 'map(*)'],
-			returnType: 'map(*)',
-			callFunction: mapMerge,
-		},
-
-		{
-			namespaceURI: MAP_NAMESPACE_URI,
-			localName: 'merge',
-			argumentTypes: ['map(*)*'],
-			returnType: 'map(*)',
-			callFunction(dynamicContext, executionParameters, staticContext, maps) {
-				return mapMerge(
-					dynamicContext,
-					executionParameters,
-					staticContext,
-					maps,
-					sequenceFactory.singleton(
-						new MapValue([
-							{
-								key: createAtomicValue('duplicates', 'xs:string'),
-								value: () =>
-									sequenceFactory.singleton(
-										createAtomicValue('use-first', 'xs:string')
-									),
-							},
-						])
-					)
-				);
-			},
-		},
-
-		{
-			namespaceURI: MAP_NAMESPACE_URI,
-			localName: 'put',
-			argumentTypes: ['map(*)', 'xs:anyAtomicType', 'item()*'],
-			returnType: 'map(*)',
-			callFunction: mapPut,
-		},
-
-		{
-			namespaceURI: MAP_NAMESPACE_URI,
-			localName: 'remove',
-			argumentTypes: ['map(*)', 'xs:anyAtomicType*'],
-			returnType: 'map(*)',
-			callFunction: mapRemove,
-		},
-
-		{
-			namespaceURI: MAP_NAMESPACE_URI,
-			localName: 'size',
-			argumentTypes: ['map(*)'],
-			returnType: 'xs:integer',
-			callFunction: mapSize,
-		},
-	],
+	declarations,
 	functions: {
 		get: mapGet,
 		merge: mapMerge,

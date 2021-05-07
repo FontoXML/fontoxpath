@@ -1,8 +1,8 @@
+import { BaseType } from '../dataTypes/BaseType';
 import FunctionValue from '../dataTypes/FunctionValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import TypeDeclaration from '../dataTypes/TypeDeclaration';
-import Value from '../dataTypes/Value';
+import Value, { ValueType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
@@ -26,7 +26,7 @@ const functionXPTY0004 = () =>
 	);
 
 export function transformArgumentList(
-	argumentTypes: TypeDeclaration[],
+	argumentTypes: ValueType[],
 	argumentList: ISequence[],
 	executionParameters: ExecutionParameters,
 	functionItem: string
@@ -50,8 +50,8 @@ export function transformArgumentList(
 	return transformedArguments;
 }
 
-function validateFunctionItem(item: Value, callArity: number) {
-	if (!isSubtypeOf(item.type, 'function(*)')) {
+function validateFunctionItem(item: Value, callArity: number): FunctionValue {
+	if (!isSubtypeOf(item.type.kind, BaseType.FUNCTION)) {
 		throw errXPTY0004('Expected base expression to evaluate to a function item');
 	}
 
@@ -87,7 +87,7 @@ function callFunction(
 
 	// Test if we have the correct arguments, and pre-convert the ones we can pre-convert
 	const transformedArguments = transformArgumentList(
-		functionItem.getArgumentTypes() as TypeDeclaration[],
+		functionItem.getArgumentTypes() as ValueType[],
 		evaluatedArgs,
 		executionParameters,
 		functionItem.getName()
@@ -221,7 +221,7 @@ class FunctionCall extends PossiblyUpdatingExpression {
 		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters,
 		[createFunctionReferenceSequence, ...createArgumentSequences]
-	) {
+	): ISequence {
 		if (this._functionReference) {
 			// We can assume this function is not updating
 			return callFunction(

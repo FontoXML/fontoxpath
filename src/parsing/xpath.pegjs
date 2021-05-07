@@ -322,7 +322,7 @@ Annotation
 
 // 28
 VarDecl
- = "variable" S "$" _ name:VarName varType:(_ t:TypeDeclaration {return t})?
+ = "variable" S "$" _ name:VarName varType:(_ t:ValueType {return t})?
       value:((_ ":=" _ value:VarValue {return ["varValue", value]})
       / (S "external" defaultValue:(_ ":=" _ v:VarDefaultValue {return ["varValue", v]})? {return ["external"].concat(defaultValue ? [defaultValue] : [])}))
   {return ["varDecl", ["varName"].concat(name)].concat(varType ? [varType] : []).concat([value])}
@@ -358,7 +358,7 @@ ParamList
 
 // 34
 Param
- = "$" varName:EQName typeDeclaration:(S t:TypeDeclaration {return t})?
+ = "$" varName:EQName typeDeclaration:(S t:ValueType {return t})?
  {return ["param", ["varName"].concat(varName)].concat(typeDeclaration ? [typeDeclaration] : [])}
 
 // 35
@@ -424,7 +424,7 @@ ForClause
 
 // 45
 ForBinding
- = "$" varName:VarName _ typeDecl:TypeDeclaration? _ empty:AllowingEmpty? _ pos:PositionalVar? _ "in"_ expr:ExprSingle
+ = "$" varName:VarName _ typeDecl:ValueType? _ empty:AllowingEmpty? _ pos:PositionalVar? _ "in"_ expr:ExprSingle
    {
      return [
        "forClauseItem",
@@ -448,7 +448,7 @@ LetClause
 
 // 49
 LetBinding
- = "$" varName:VarName _ typeDecl:TypeDeclaration? _ ":=" _ expr:ExprSingle
+ = "$" varName:VarName _ typeDecl:ValueType? _ ":=" _ expr:ExprSingle
    {return ["letClauseItem", ["typedVariableBinding", ["varName"].concat(varName)].concat(typeDecl ? [typeDecl] : []), ["letExpr", expr]]}
 
 // 60
@@ -469,7 +469,7 @@ GroupingSpec
    {return ["groupingSpec", varName].concat(init ? [init] : []).concat(col ? [col] : [])}
 
 groupVarInitialize
- = _ t:TypeDeclaration? _ ":=" _ val:ExprSingle
+ = _ t:ValueType? _ ":=" _ val:ExprSingle
    {
      return ["groupVarInitialize"]
        .concat(t ? [["typeDeclaration"].concat(t)] : [])
@@ -524,7 +524,7 @@ quantifiedExprInClauses
  {return [first].concat(rest)}
 
 quantifiedExprInClause
- = "$" varName:VarName type:(S t:TypeDeclaration {return t})? S "in" S exprSingle:ExprSingle
+ = "$" varName:VarName type:(S t:ValueType {return t})? S "in" S exprSingle:ExprSingle
    {
      return [
        "quantifiedExprInClause",
@@ -1196,7 +1196,7 @@ SingleType
  = typeName:SimpleTypeName optional:"?"? {return optional ? ["singleType", ["atomicType"].concat(typeName), ["optional"]] : ["singleType", ["atomicType"].concat(typeName)]}
 
 // 183
-TypeDeclaration
+ValueType
  = "as" S st:SequenceType {return ["typeDeclaration"].concat(st)}
 
 // 184

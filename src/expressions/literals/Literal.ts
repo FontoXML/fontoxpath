@@ -1,16 +1,16 @@
+import { BaseType } from '../dataTypes/BaseType';
+import createAtomicValue from '../dataTypes/createAtomicValue';
+import ISequence from '../dataTypes/ISequence';
+import sequenceFactory from '../dataTypes/sequenceFactory';
+import { ValueType } from '../dataTypes/Value';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
 
-import sequenceFactory from '../dataTypes/sequenceFactory';
-
-import createAtomicValue from '../dataTypes/createAtomicValue';
-import ISequence from '../dataTypes/ISequence';
-
 class Literal extends Expression {
 	private _createValueSequence: () => ISequence;
-	private _type: string;
+	private _type: ValueType;
 
-	constructor(jsValue: string, type: string) {
+	constructor(jsValue: string, type: ValueType) {
 		super(new Specificity({}), [], {
 			canBeStaticallyEvaluated: true,
 			resultOrder: RESULT_ORDERINGS.SORTED,
@@ -18,17 +18,15 @@ class Literal extends Expression {
 		this._type = type;
 
 		let value;
-		switch (type) {
-			case 'xs:integer':
+		switch (type.kind) {
+			case BaseType.XSINTEGER:
 				value = createAtomicValue(parseInt(jsValue, 10), type);
 				break;
-			case 'xs:string':
+			case BaseType.XSSTRING:
 				value = createAtomicValue(jsValue + '', type);
 				break;
-			case 'xs:decimal':
-				value = createAtomicValue(parseFloat(jsValue), type);
-				break;
-			case 'xs:double':
+			case BaseType.XSDECIMAL:
+			case BaseType.XSDOUBLE:
 				value = createAtomicValue(parseFloat(jsValue), type);
 				break;
 			default:

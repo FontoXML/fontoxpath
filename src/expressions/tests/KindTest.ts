@@ -1,3 +1,4 @@
+import { BaseType } from '../dataTypes/BaseType';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import Value from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
@@ -22,7 +23,7 @@ class KindTest extends TestAbstractExpression {
 		node: Value,
 		executionParameters: ExecutionParameters
 	) {
-		if (!isSubtypeOf(node.type, 'node()')) {
+		if (!isSubtypeOf(node.type.kind, BaseType.NODE)) {
 			return false;
 		}
 		const nodeType = executionParameters.domFacade.getNodeType(node.value);

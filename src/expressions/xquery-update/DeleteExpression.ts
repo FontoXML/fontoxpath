@@ -1,19 +1,16 @@
-import Expression, { RESULT_ORDERINGS } from '../Expression';
-
-import Specificity from '../Specificity';
-import UpdatingExpression from './UpdatingExpression';
-
-import { deletePu } from './pulPrimitives';
-import { mergeUpdates } from './pulRoutines';
-
+import { BaseType } from '../dataTypes/BaseType';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import { IIterator, IterationHint, ready } from '../util/iterators';
-
 import Value from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
+import Specificity from '../Specificity';
 import UpdatingExpressionResult from '../UpdatingExpressionResult';
+import { IIterator, IterationHint, ready } from '../util/iterators';
 import { IPendingUpdate } from './IPendingUpdate';
+import { deletePu } from './pulPrimitives';
+import { mergeUpdates } from './pulRoutines';
+import UpdatingExpression from './UpdatingExpression';
 import { errXUTY0007 } from './XQueryUpdateFacilityErrors';
 
 class DeleteExpression extends UpdatingExpression {
@@ -46,7 +43,11 @@ class DeleteExpression extends UpdatingExpression {
 					const tv = targetValueIterator.next(IterationHint.NONE);
 
 					// The result must be a sequence of zero or more nodes; otherwise a type error is raised [err:XUTY0007].
-					if (tv.value.xdmValue.some((entry) => !isSubtypeOf(entry.type, 'node()'))) {
+					if (
+						tv.value.xdmValue.some(
+							(entry) => !isSubtypeOf(entry.type.kind, BaseType.NODE)
+						)
+					) {
 						throw errXUTY0007();
 					}
 

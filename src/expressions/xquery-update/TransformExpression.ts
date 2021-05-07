@@ -1,4 +1,5 @@
 import deepCloneNode from '../../domClone/deepCloneNode';
+import { BaseType } from '../dataTypes/BaseType';
 import createPointerValue from '../dataTypes/createPointerValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
@@ -112,7 +113,7 @@ class TransformExpression extends UpdatingExpression {
 						// The result of evaluating the source expression must be a single node [err:XUTY0013]. Let $node be this single node.
 						if (
 							sv.value.xdmValue.length !== 1 ||
-							!isSubtypeOf(sv.value.xdmValue[0].type, 'node()')
+							!isSubtypeOf(sv.value.xdmValue[0].type.kind, BaseType.NODE)
 						) {
 							throw errXUTY0013();
 						}
