@@ -90,7 +90,7 @@ export const performFunctionConversion = (
 				throw new Error(
 					`XPTY0004: Multiplicity of ${
 						isReturn ? 'function return value' : 'function argument'
-					} of type ${argumentType}${
+					} of type ${valueTypeToString(argumentType.type)}${
 						argumentType.type || ''
 					} for ${functionName} is incorrect. Expected "?", but got "+".`
 				);
@@ -103,7 +103,7 @@ export const performFunctionConversion = (
 				throw new Error(
 					`XPTY0004: Multiplicity of ${
 						isReturn ? 'function return value' : 'function argument'
-					} of type ${argumentType}${
+					} of type ${valueTypeToString(argumentType.type)}${
 						argumentType.type || ''
 					} for ${functionName} is incorrect. Expected "+", but got "empty-sequence()"`
 				);
@@ -129,7 +129,7 @@ export const performFunctionConversion = (
 			throw new Error(
 				`XPTY0004: Multiplicity of ${
 					isReturn ? 'function return value' : 'function argument'
-				} of type ${argumentType}${
+				} of type ${valueTypeToString(argumentType.type)}${
 					argumentType.type || ''
 				} for ${functionName} is incorrect. Expected exactly one`
 			);

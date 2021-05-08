@@ -22,7 +22,7 @@ class MapValue extends FunctionValue<ISequence> {
 					sequenceFactory.singleton(this),
 					key
 				),
-			returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.EXACTLY_ONE },
+			returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
 		});
 		this.type = ValueType.MAP;
 		this.keyValuePairs = keyValuePairs;
