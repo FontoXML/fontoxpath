@@ -4,8 +4,8 @@ import RestArgument, { REST_ARGUMENT_INSTANCE } from '../dataTypes/RestArgument'
 import {
 	EllipsisType,
 	ParameterType,
-	sequenceTypeToString,
 	SequenceType,
+	sequenceTypeToString,
 } from '../dataTypes/Value';
 
 export type FunctionProperties = {

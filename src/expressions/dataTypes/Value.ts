@@ -109,8 +109,8 @@ export type ParameterType = SequenceType | EllipsisType;
  * @public
  */
 export type SequenceType = {
-	type: ValueType;
 	mult: SequenceMultiplicity;
+	type: ValueType;
 };
 
 /**
@@ -359,7 +359,7 @@ export function stringToValueType(input: string): ValueType {
 		'array(*)': ValueType.ARRAY,
 	};
 
-	let type = stringToValueTypeMap[input];
+	const type = stringToValueTypeMap[input];
 
 	if (type === undefined || type === null) {
 		throw new Error(`XPST0051: Cannot convert String of type "${input}" to ValueType`);

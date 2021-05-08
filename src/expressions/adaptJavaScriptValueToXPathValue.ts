@@ -10,10 +10,10 @@ import MapValue from './dataTypes/MapValue';
 import sequenceFactory from './dataTypes/sequenceFactory';
 import Value, {
 	SequenceMultiplicity,
-	ValueType,
-	sequenceTypeToString,
-	valueTypeToString,
 	SequenceType,
+	sequenceTypeToString,
+	ValueType,
+	valueTypeToString,
 } from './dataTypes/Value';
 import DateTime from './dataTypes/valueTypes/DateTime';
 import createDoublyIterableSequence from './util/createDoublyIterableSequence';

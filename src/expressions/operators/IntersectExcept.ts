@@ -1,9 +1,9 @@
-import { ValueType } from '../dataTypes/Value';
 import DomFacade from '../../domFacade/DomFacade';
 import { compareNodePositions, sortNodeValues } from '../dataTypes/documentOrderUtils';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import { ValueType } from '../dataTypes/Value';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import { DONE_TOKEN, IterationHint, ready } from '../util/iterators';
 import arePointersEqual from './compares/arePointersEqual';

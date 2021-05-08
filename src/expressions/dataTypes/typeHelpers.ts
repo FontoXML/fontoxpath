@@ -59,8 +59,8 @@ function getHandlerForFacet(typeModel: TypeModel, facetName: string) {
 	return () => true;
 }
 
-export function validateRestrictions(value: string, ValueType: ValueType): boolean {
-	let type = builtinDataTypesByType[ValueType];
+export function validateRestrictions(value: string, valueType: ValueType): boolean {
+	let type = builtinDataTypesByType[valueType];
 	while (type) {
 		if (!type.restrictionsByName) {
 			type = type.parent;

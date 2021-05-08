@@ -5,9 +5,9 @@ import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import promoteToType from '../dataTypes/promoteToType';
 import Value, {
 	SequenceMultiplicity,
-	ValueType,
-	sequenceTypeToString,
 	SequenceType,
+	sequenceTypeToString,
+	ValueType,
 	valueTypeToString,
 } from '../dataTypes/Value';
 import ExecutionParameters from '../ExecutionParameters';

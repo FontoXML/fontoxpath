@@ -1,9 +1,8 @@
 import createAtomicValue from '../createAtomicValue';
-import { SequenceMultiplicity, ValueType } from '../Value';
+import { ValueType } from '../Value';
 import CastResult from './CastResult';
 
-const createIntegerValue = (value) =>
-	createAtomicValue(value, ValueType.XSINTEGER);
+const createIntegerValue = (value) => createAtomicValue(value, ValueType.XSINTEGER);
 
 export default function castToInteger(
 	instanceOf: (typeName: ValueType) => boolean

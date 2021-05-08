@@ -1,5 +1,5 @@
 import createAtomicValue from '../createAtomicValue';
-import { SequenceMultiplicity, ValueType } from '../Value';
+import { ValueType } from '../Value';
 import CastResult from './CastResult';
 
 export default function castToDecimal(
@@ -8,7 +8,7 @@ export default function castToDecimal(
 	if (instanceOf(ValueType.XSINTEGER)) {
 		return (value) => ({
 			successful: true,
-			value: createAtomicValue(value,  ValueType.XSDECIMAL),
+			value: createAtomicValue(value, ValueType.XSDECIMAL),
 		});
 	}
 	if (instanceOf(ValueType.XSFLOAT) || instanceOf(ValueType.XSDOUBLE)) {
