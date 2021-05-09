@@ -1,16 +1,21 @@
 import { FunctionSignature } from '../dataTypes/FunctionValue';
 import ISequence from '../dataTypes/ISequence';
 import RestArgument, { REST_ARGUMENT_INSTANCE } from '../dataTypes/RestArgument';
-import { EllipsisType, ParameterType, ValueType, valueTypeToString } from '../dataTypes/Value';
+import {
+	EllipsisType,
+	ParameterType,
+	SequenceType,
+	sequenceTypeToString,
+} from '../dataTypes/Value';
 
 export type FunctionProperties = {
-	argumentTypes: (ValueType | RestArgument)[];
+	argumentTypes: (SequenceType | RestArgument)[];
 	arity: number;
 	callFunction: FunctionSignature<ISequence>;
 	isUpdating: boolean;
 	localName: string;
 	namespaceURI: string;
-	returnType: ValueType;
+	returnType: SequenceType;
 };
 
 const registeredFunctionsByName: { [s: string]: FunctionProperties[] } = Object.create(null);
@@ -98,7 +103,7 @@ export function getAlternativesAsStringFor(functionName: string): string {
 						.map((argumentType) =>
 							(argumentType as RestArgument).isRestArgument
 								? '...'
-								: valueTypeToString(argumentType as ValueType)
+								: sequenceTypeToString(argumentType as SequenceType)
 						)
 						.join(', ')})"`
 			)
@@ -153,7 +158,7 @@ export function registerFunction(
 	namespaceURI,
 	localName,
 	argumentTypes: ParameterType[],
-	returnType: ValueType,
+	returnType: SequenceType,
 	callFunction
 ) {
 	if (!registeredFunctionsByName[namespaceURI + ':' + localName]) {

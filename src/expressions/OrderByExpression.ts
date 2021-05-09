@@ -1,11 +1,10 @@
 import atomize from './dataTypes/atomize';
-import { BaseType } from './dataTypes/BaseType';
 import castToType from './dataTypes/castToType';
 import ISequence from './dataTypes/ISequence';
 import isSubtypeOf from './dataTypes/isSubtypeOf';
 import sequenceFactory from './dataTypes/sequenceFactory';
 import { getPrimitiveTypeName } from './dataTypes/typeHelpers';
-import Value, { SequenceType } from './dataTypes/Value';
+import Value, { SequenceMultiplicity, ValueType } from './dataTypes/Value';
 import DynamicContext from './DynamicContext';
 import ExecutionParameters from './ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from './Expression';
@@ -17,14 +16,14 @@ import Specificity from './Specificity';
 import { DONE_TOKEN, IIterator, IterationHint, IterationResult, ready } from './util/iterators';
 import { errXPTY0004 } from './xquery/XQueryErrors';
 
-function getFirstPrimitiveType(values: Value[]): BaseType | null {
+function getFirstPrimitiveType(values: Value[]): ValueType | null {
 	const firstActualValue = values.find((value) => !!value);
 
 	if (!firstActualValue) {
 		return null;
 	}
 
-	return getPrimitiveTypeName(firstActualValue.type.kind);
+	return getPrimitiveTypeName(firstActualValue.type);
 }
 
 class OrderByExpression extends FlworExpression {
@@ -118,11 +117,8 @@ class OrderByExpression extends FlworExpression {
 							return value;
 						}
 
-						if (isSubtypeOf(BaseType.XSUNTYPEDATOMIC, value.type.kind)) {
-							return castToType(value, {
-								kind: BaseType.XSSTRING,
-								seqType: SequenceType.EXACTLY_ONE,
-							});
+						if (isSubtypeOf(ValueType.XSUNTYPEDATOMIC, value.type)) {
+							return castToType(value, ValueType.XSSTRING);
 						}
 
 						return value;
@@ -133,7 +129,7 @@ class OrderByExpression extends FlworExpression {
 					// 2. If each value is an instance of one of the types xs:decimal or xs:float, then all values are cast to type xs:float.
 					// 3. If each value is an instance of one of the types xs:decimal, xs:float, or xs:double, then all values are cast to type xs:double.
 					// 4. Otherwise, a type error is raised [err:XPTY0004].
-					const firstPrimitiveType: BaseType | null = getFirstPrimitiveType(values);
+					const firstPrimitiveType: ValueType | null = getFirstPrimitiveType(values);
 
 					if (firstPrimitiveType) {
 						values = convertItemsToCommonType(values);

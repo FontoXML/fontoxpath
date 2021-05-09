@@ -1,11 +1,10 @@
 import { ElementNodePointer, NodePointer, ParentNodePointer } from '../../domClone/Pointer';
 import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import DomFacade from '../../domFacade/DomFacade';
-import { BaseType } from '../dataTypes/BaseType';
 import createPointerValue from '../dataTypes/createPointerValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { SequenceType } from '../dataTypes/Value';
+import { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { errXPTY0004, XPDY0002 } from '../XPathErrors';
 import { BuiltinDeclarationType } from './builtInFunctions';
@@ -47,7 +46,7 @@ const fnId: FunctionDefinitionType = (
 	if (!targetNodeValue) {
 		throw XPDY0002('The context is absent, it needs to be present to use id function.');
 	}
-	if (!isSubtypeOf(targetNodeValue.type.kind, BaseType.NODE)) {
+	if (!isSubtypeOf(targetNodeValue.type, ValueType.NODE)) {
 		throw errXPTY0004(
 			'The context item is not a node, it needs to be node to use id function.'
 		);
@@ -104,7 +103,7 @@ const fnIdref: FunctionDefinitionType = (
 	if (!targetNodeValue) {
 		throw XPDY0002('The context is absent, it needs to be present to use idref function.');
 	}
-	if (!isSubtypeOf(targetNodeValue.type.kind, BaseType.NODE)) {
+	if (!isSubtypeOf(targetNodeValue.type, ValueType.NODE)) {
 		throw errXPTY0004(
 			'The context item is not a node, it needs to be node to use idref function.'
 		);
@@ -150,18 +149,18 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'id',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_MORE },
-			{ kind: BaseType.NODE, seqType: SequenceType.EXACTLY_ONE },
+			{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.ZERO_OR_MORE },
+			{ type: ValueType.NODE, mult: SequenceMultiplicity.EXACTLY_ONE },
 		],
-		returnType: { kind: BaseType.ELEMENT, seqType: SequenceType.ZERO_OR_MORE },
+		returnType: { type: ValueType.ELEMENT, mult: SequenceMultiplicity.ZERO_OR_MORE },
 		callFunction: fnId,
 	},
 
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'id',
-		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_MORE }],
-		returnType: { kind: BaseType.ELEMENT, seqType: SequenceType.ZERO_OR_MORE },
+		argumentTypes: [{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.ZERO_OR_MORE }],
+		returnType: { type: ValueType.ELEMENT, mult: SequenceMultiplicity.ZERO_OR_MORE },
 		callFunction(dynamicContext, executionParameters, _staticContext, strings) {
 			return fnId(
 				dynamicContext,
@@ -177,18 +176,18 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'idref',
 		argumentTypes: [
-			{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_MORE },
-			{ kind: BaseType.NODE, seqType: SequenceType.EXACTLY_ONE },
+			{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.ZERO_OR_MORE },
+			{ type: ValueType.NODE, mult: SequenceMultiplicity.EXACTLY_ONE },
 		],
-		returnType: { kind: BaseType.NODE, seqType: SequenceType.ZERO_OR_MORE },
+		returnType: { type: ValueType.NODE, mult: SequenceMultiplicity.ZERO_OR_MORE },
 		callFunction: fnIdref,
 	},
 
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'idref',
-		argumentTypes: [{ kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_MORE }],
-		returnType: { kind: BaseType.NODE, seqType: SequenceType.ZERO_OR_MORE },
+		argumentTypes: [{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.ZERO_OR_MORE }],
+		returnType: { type: ValueType.NODE, mult: SequenceMultiplicity.ZERO_OR_MORE },
 		callFunction(dynamicContext, executionParameters, _staticContext, strings) {
 			return fnIdref(
 				dynamicContext,

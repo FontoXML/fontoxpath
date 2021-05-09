@@ -2,7 +2,7 @@ import DomFacade from '../domFacade/DomFacade';
 import ExternalDomFacade from '../domFacade/ExternalDomFacade';
 import IDomFacade from '../domFacade/IDomFacade';
 import { adaptJavaScriptValueToArrayOfXPathValues } from '../expressions/adaptJavaScriptValueToXPathValue';
-import Value, { ValueType } from '../expressions/dataTypes/Value';
+import Value, { SequenceType } from '../expressions/dataTypes/Value';
 
 /**
  * Any type is allowed expect: functions, symbols, undefined, and null
@@ -32,7 +32,7 @@ export type TypedExternalValue = {
  *
  * @param  typeName  The type into which to convert the values.
  */
-export default function createTypedValueFactory(typeName: ValueType) {
+export default function createTypedValueFactory(typeName: SequenceType) {
 	return (value: UntypedExternalValue, domFacade: IDomFacade): TypedExternalValue => {
 		const wrappedDomFacade: DomFacade = new DomFacade(
 			domFacade === null ? new ExternalDomFacade() : domFacade

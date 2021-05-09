@@ -1,28 +1,22 @@
 import AtomicValue from '../AtomicValue';
-import { BaseType } from '../BaseType';
 import createAtomicValue from '../createAtomicValue';
-import { SequenceType } from '../Value';
+import { SequenceMultiplicity, ValueType } from '../Value';
 import DateTime from '../valueTypes/DateTime';
 import CastResult from './CastResult';
 
 const createGYearMonthValue = (value: any): AtomicValue =>
-	createAtomicValue(value, { kind: BaseType.XSGYEARMONTH, seqType: SequenceType.EXACTLY_ONE });
+	createAtomicValue(value, ValueType.XSGYEARMONTH);
 
 export default function castToGYearMonth(
-	instanceOf: (typeName: BaseType) => boolean
+	instanceOf: (typeName: ValueType) => boolean
 ): (value: DateTime) => CastResult {
-	if (instanceOf(BaseType.XSDATE) || instanceOf(BaseType.XSDATETIME)) {
+	if (instanceOf(ValueType.XSDATE) || instanceOf(ValueType.XSDATETIME)) {
 		return (value) => ({
 			successful: true,
-			value: createGYearMonthValue(
-				value.convertToType({
-					kind: BaseType.XSGYEARMONTH,
-					seqType: SequenceType.EXACTLY_ONE,
-				})
-			),
+			value: createGYearMonthValue(value.convertToType(ValueType.XSGYEARMONTH)),
 		});
 	}
-	if (instanceOf(BaseType.XSUNTYPEDATOMIC) || instanceOf(BaseType.XSSTRING)) {
+	if (instanceOf(ValueType.XSUNTYPEDATOMIC) || instanceOf(ValueType.XSSTRING)) {
 		return (value) => ({
 			successful: true,
 			value: createGYearMonthValue(DateTime.fromString(value)),

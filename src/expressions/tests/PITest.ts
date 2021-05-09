@@ -1,6 +1,5 @@
-import { BaseType } from '../dataTypes/BaseType';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import Value from '../dataTypes/Value';
+import Value, { ValueType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Specificity from '../Specificity';
@@ -26,7 +25,7 @@ class PITest extends TestAbstractExpression {
 	) {
 		// Assume singleton
 		const isMatchingProcessingInstruction =
-			isSubtypeOf(node.type.kind, BaseType.PROCESSINGINSTRUCTION) &&
+			isSubtypeOf(node.type, ValueType.PROCESSINGINSTRUCTION) &&
 			executionParameters.domFacade.getTarget(node.value) === this._target;
 		return isMatchingProcessingInstruction;
 	}

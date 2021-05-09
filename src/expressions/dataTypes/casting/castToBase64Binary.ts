@@ -1,11 +1,10 @@
 import AtomicValue from '../AtomicValue';
-import { BaseType } from '../BaseType';
 import createAtomicValue from '../createAtomicValue';
-import { SequenceType } from '../Value';
+import { SequenceMultiplicity, ValueType } from '../Value';
 import CastResult from './CastResult';
 
 const createBase64BinaryValue = (value: any): AtomicValue =>
-	createAtomicValue(value, { kind: BaseType.XSBASE64BINARY, seqType: SequenceType.EXACTLY_ONE });
+	createAtomicValue(value, ValueType.XSBASE64BINARY);
 
 function hexToString(hex: string) {
 	let text = '';
@@ -19,15 +18,15 @@ function hexToString(hex: string) {
 declare var btoa: (s: string) => string;
 
 export default function castToBase64Binary(
-	instanceOf: (typeName: BaseType) => boolean
+	instanceOf: (typeName: ValueType) => boolean
 ): (value: any) => CastResult {
-	if (instanceOf(BaseType.XSHEXBINARY)) {
+	if (instanceOf(ValueType.XSHEXBINARY)) {
 		return (value) => ({
 			successful: true,
 			value: createBase64BinaryValue(btoa(hexToString(value))),
 		});
 	}
-	if (instanceOf(BaseType.XSSTRING) || instanceOf(BaseType.XSUNTYPEDATOMIC)) {
+	if (instanceOf(ValueType.XSSTRING) || instanceOf(ValueType.XSUNTYPEDATOMIC)) {
 		return (value) => ({
 			successful: true,
 			value: createBase64BinaryValue(value),

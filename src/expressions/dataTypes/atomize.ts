@@ -15,34 +15,33 @@ import ExecutionParameters from '../ExecutionParameters';
 import concatSequences from '../util/concatSequences';
 import { DONE_TOKEN, IIterator, IterationHint } from '../util/iterators';
 import ArrayValue from './ArrayValue';
-import { BaseType } from './BaseType';
 import createAtomicValue from './createAtomicValue';
 import ISequence from './ISequence';
 import isSubtypeOf from './isSubtypeOf';
 import sequenceFactory from './sequenceFactory';
-import Value, { SequenceType } from './Value';
+import Value, { SequenceMultiplicity, ValueType } from './Value';
 export function atomizeSingleValue(
 	value: Value,
 	executionParameters: ExecutionParameters
 ): ISequence {
 	if (
-		isSubtypeOf(value.type.kind, BaseType.XSANYATOMICTYPE) ||
-		isSubtypeOf(value.type.kind, BaseType.XSUNTYPEDATOMIC) ||
-		isSubtypeOf(value.type.kind, BaseType.XSBOOLEAN) ||
-		isSubtypeOf(value.type.kind, BaseType.XSDECIMAL) ||
-		isSubtypeOf(value.type.kind, BaseType.XSDOUBLE) ||
-		isSubtypeOf(value.type.kind, BaseType.XSFLOAT) ||
-		isSubtypeOf(value.type.kind, BaseType.XSINTEGER) ||
-		isSubtypeOf(value.type.kind, BaseType.XSNUMERIC) ||
-		isSubtypeOf(value.type.kind, BaseType.XSQNAME) ||
-		isSubtypeOf(value.type.kind, BaseType.XSSTRING)
+		isSubtypeOf(value.type, ValueType.XSANYATOMICTYPE) ||
+		isSubtypeOf(value.type, ValueType.XSUNTYPEDATOMIC) ||
+		isSubtypeOf(value.type, ValueType.XSBOOLEAN) ||
+		isSubtypeOf(value.type, ValueType.XSDECIMAL) ||
+		isSubtypeOf(value.type, ValueType.XSDOUBLE) ||
+		isSubtypeOf(value.type, ValueType.XSFLOAT) ||
+		isSubtypeOf(value.type, ValueType.XSINTEGER) ||
+		isSubtypeOf(value.type, ValueType.XSNUMERIC) ||
+		isSubtypeOf(value.type, ValueType.XSQNAME) ||
+		isSubtypeOf(value.type, ValueType.XSSTRING)
 	) {
 		return sequenceFactory.create(value);
 	}
 
 	const domFacade = executionParameters.domFacade;
 
-	if (isSubtypeOf(value.type.kind, BaseType.NODE)) {
+	if (isSubtypeOf(value.type, ValueType.NODE)) {
 		const pointer = value.value;
 
 		// TODO: Mix in types, by default get string value.
@@ -53,10 +52,7 @@ export function atomizeSingleValue(
 			pointer.node.nodeType === NODE_TYPES.TEXT_NODE
 		) {
 			return sequenceFactory.create(
-				createAtomicValue(domFacade.getDataFromPointer(pointer), {
-					kind: BaseType.XSUNTYPEDATOMIC,
-					seqType: SequenceType.EXACTLY_ONE,
-				})
+				createAtomicValue(domFacade.getDataFromPointer(pointer), ValueType.XSUNTYPEDATOMIC)
 			);
 		}
 
@@ -66,10 +62,7 @@ export function atomizeSingleValue(
 			pointer.node.nodeType === NODE_TYPES.PROCESSING_INSTRUCTION_NODE
 		) {
 			return sequenceFactory.create(
-				createAtomicValue(domFacade.getDataFromPointer(pointer), {
-					kind: BaseType.XSSTRING,
-					seqType: SequenceType.EXACTLY_ONE,
-				})
+				createAtomicValue(domFacade.getDataFromPointer(pointer), ValueType.XSSTRING)
 			);
 		}
 		// This is an element or a document node. Because we do not know the specific type of this element.
@@ -101,20 +94,14 @@ export function atomizeSingleValue(
 		})(pointer.node);
 
 		return sequenceFactory.create(
-			createAtomicValue(allTexts.join(''), {
-				kind: BaseType.XSUNTYPEDATOMIC,
-				seqType: SequenceType.EXACTLY_ONE,
-			})
+			createAtomicValue(allTexts.join(''), ValueType.XSUNTYPEDATOMIC)
 		);
 	}
 	// (function || map) && !array
-	if (
-		isSubtypeOf(value.type.kind, BaseType.FUNCTION) &&
-		!isSubtypeOf(value.type.kind, BaseType.ARRAY)
-	) {
+	if (isSubtypeOf(value.type, ValueType.FUNCTION) && !isSubtypeOf(value.type, ValueType.ARRAY)) {
 		throw new Error(`FOTY0013: Atomization is not supported for ${value.type}.`);
 	}
-	if (isSubtypeOf(value.type.kind, BaseType.ARRAY)) {
+	if (isSubtypeOf(value.type, ValueType.ARRAY)) {
 		const arrayValue = value as ArrayValue;
 		return concatSequences(
 			arrayValue.members.map((getMemberSequence) =>

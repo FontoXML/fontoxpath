@@ -1,5 +1,4 @@
-import { BaseType } from '../BaseType';
-import { SequenceType, ValueType } from '../Value';
+import { SequenceMultiplicity, ValueType } from '../Value';
 import { Variety } from '../Variety';
 
 type BuildinModelTypeDeclaration = {
@@ -15,14 +14,14 @@ type BuildinModelTypeDeclaration = {
 const builtinModels: BuildinModelTypeDeclaration[] = [
 	{
 		variety: Variety.PRIMITIVE,
-		name: { kind: BaseType.ITEM, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.ITEM,
 	},
 
 	// anyAtomicType
 	{
 		variety: Variety.PRIMITIVE,
-		name: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
-		parent: { kind: BaseType.ITEM, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSANYATOMICTYPE,
+		parent: ValueType.ITEM,
 		restrictions: {
 			whiteSpace: 'preserve',
 		},
@@ -31,22 +30,22 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// untypedAtomic
 	{
 		variety: Variety.PRIMITIVE,
-		name: { kind: BaseType.XSUNTYPEDATOMIC, seqType: SequenceType.EXACTLY_ONE },
-		parent: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSUNTYPEDATOMIC,
+		parent: ValueType.XSANYATOMICTYPE,
 	},
 
 	// string
 	{
 		variety: Variety.PRIMITIVE,
-		name: { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
-		parent: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSSTRING,
+		parent: ValueType.XSANYATOMICTYPE,
 	},
 
 	// boolean
 	{
 		variety: Variety.PRIMITIVE,
-		name: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.EXACTLY_ONE },
-		parent: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSBOOLEAN,
+		parent: ValueType.XSANYATOMICTYPE,
 		restrictions: {
 			whiteSpace: 'collapse', // fixed
 		},
@@ -55,8 +54,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// decimal
 	{
 		variety: Variety.PRIMITIVE,
-		name: { kind: BaseType.XSDECIMAL, seqType: SequenceType.EXACTLY_ONE },
-		parent: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSDECIMAL,
+		parent: ValueType.XSANYATOMICTYPE,
 		restrictions: {
 			whiteSpace: 'collapse', // fixed
 		},
@@ -65,8 +64,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// float
 	{
 		variety: Variety.PRIMITIVE,
-		name: { kind: BaseType.XSFLOAT, seqType: SequenceType.EXACTLY_ONE },
-		parent: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSFLOAT,
+		parent: ValueType.XSANYATOMICTYPE,
 		restrictions: {
 			whiteSpace: 'collapse', // fixed
 		},
@@ -75,8 +74,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// double
 	{
 		variety: Variety.PRIMITIVE,
-		name: { kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE },
-		parent: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSDOUBLE,
+		parent: ValueType.XSANYATOMICTYPE,
 		restrictions: {
 			whiteSpace: 'collapse', // fixed
 		},
@@ -85,8 +84,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// duration
 	{
 		variety: Variety.PRIMITIVE,
-		name: { kind: BaseType.XSDURATION, seqType: SequenceType.EXACTLY_ONE },
-		parent: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSDURATION,
+		parent: ValueType.XSANYATOMICTYPE,
 		restrictions: {
 			whiteSpace: 'collapse', // fixed
 		},
@@ -95,8 +94,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// dateTime
 	{
 		variety: Variety.PRIMITIVE,
-		name: { kind: BaseType.XSDATETIME, seqType: SequenceType.EXACTLY_ONE },
-		parent: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSDATETIME,
+		parent: ValueType.XSANYATOMICTYPE,
 		restrictions: {
 			explicitTimezone: 'optional',
 			whiteSpace: 'collapse', // fixed
@@ -106,8 +105,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// time
 	{
 		variety: Variety.PRIMITIVE,
-		name: { kind: BaseType.XSTIME, seqType: SequenceType.EXACTLY_ONE },
-		parent: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSTIME,
+		parent: ValueType.XSANYATOMICTYPE,
 		restrictions: {
 			explicitTimezone: 'optional',
 			whiteSpace: 'collapse', // fixed
@@ -117,8 +116,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// date
 	{
 		variety: Variety.PRIMITIVE,
-		name: { kind: BaseType.XSDATE, seqType: SequenceType.EXACTLY_ONE },
-		parent: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSDATE,
+		parent: ValueType.XSANYATOMICTYPE,
 		restrictions: {
 			explicitTimezone: 'optional',
 			whiteSpace: 'collapse', // fixed
@@ -128,8 +127,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// gYearMonth
 	{
 		variety: Variety.PRIMITIVE,
-		name: { kind: BaseType.XSGYEARMONTH, seqType: SequenceType.EXACTLY_ONE },
-		parent: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSGYEARMONTH,
+		parent: ValueType.XSANYATOMICTYPE,
 		restrictions: {
 			explicitTimezone: 'optional',
 			whiteSpace: 'collapse', // fixed
@@ -139,8 +138,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// gYear
 	{
 		variety: Variety.PRIMITIVE,
-		name: { kind: BaseType.XSGYEAR, seqType: SequenceType.EXACTLY_ONE },
-		parent: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSGYEAR,
+		parent: ValueType.XSANYATOMICTYPE,
 		restrictions: {
 			explicitTimezone: 'optional',
 			whiteSpace: 'collapse', // fixed
@@ -150,8 +149,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// gMonthDay
 	{
 		variety: Variety.PRIMITIVE,
-		name: { kind: BaseType.XSGMONTHDAY, seqType: SequenceType.EXACTLY_ONE },
-		parent: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSGMONTHDAY,
+		parent: ValueType.XSANYATOMICTYPE,
 		restrictions: {
 			explicitTimezone: 'optional',
 			whiteSpace: 'collapse', // fixed
@@ -161,8 +160,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// gDay
 	{
 		variety: Variety.PRIMITIVE,
-		name: { kind: BaseType.XSGDAY, seqType: SequenceType.EXACTLY_ONE },
-		parent: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSGDAY,
+		parent: ValueType.XSANYATOMICTYPE,
 		restrictions: {
 			explicitTimezone: 'optional',
 			whiteSpace: 'collapse', // fixed
@@ -172,8 +171,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// gMonth
 	{
 		variety: Variety.PRIMITIVE,
-		name: { kind: BaseType.XSGMONTH, seqType: SequenceType.EXACTLY_ONE },
-		parent: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSGMONTH,
+		parent: ValueType.XSANYATOMICTYPE,
 		restrictions: {
 			explicitTimezone: 'optional',
 			whiteSpace: 'collapse', // fixed
@@ -183,8 +182,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// hexBinary
 	{
 		variety: Variety.PRIMITIVE,
-		name: { kind: BaseType.XSHEXBINARY, seqType: SequenceType.EXACTLY_ONE },
-		parent: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSHEXBINARY,
+		parent: ValueType.XSANYATOMICTYPE,
 		restrictions: {
 			whiteSpace: 'collapse', // fixed
 		},
@@ -193,8 +192,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// base64Binary
 	{
 		variety: Variety.PRIMITIVE,
-		name: { kind: BaseType.XSBASE64BINARY, seqType: SequenceType.EXACTLY_ONE },
-		parent: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSBASE64BINARY,
+		parent: ValueType.XSANYATOMICTYPE,
 		restrictions: {
 			whiteSpace: 'collapse', // fixed
 		},
@@ -203,8 +202,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// anyURI
 	{
 		variety: Variety.PRIMITIVE,
-		name: { kind: BaseType.XSANYURI, seqType: SequenceType.EXACTLY_ONE },
-		parent: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSANYURI,
+		parent: ValueType.XSANYATOMICTYPE,
 		restrictions: {
 			whiteSpace: 'collapse', // fixed
 		},
@@ -213,8 +212,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// QName
 	{
 		variety: Variety.PRIMITIVE,
-		name: { kind: BaseType.XSQNAME, seqType: SequenceType.EXACTLY_ONE },
-		parent: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSQNAME,
+		parent: ValueType.XSANYATOMICTYPE,
 		restrictions: {
 			whiteSpace: 'collapse', // fixed
 		},
@@ -223,8 +222,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// NOTATION
 	{
 		variety: Variety.PRIMITIVE,
-		name: { kind: BaseType.XSNOTATION, seqType: SequenceType.EXACTLY_ONE },
-		parent: { kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSNOTATION,
+		parent: ValueType.XSANYATOMICTYPE,
 		restrictions: {
 			whiteSpace: 'collapse', // fixed
 		},
@@ -233,8 +232,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// dateTimeStamp
 	{
 		variety: Variety.DERIVED,
-		name: { kind: BaseType.XSDATETIMESTAMP, seqType: SequenceType.EXACTLY_ONE },
-		base: { kind: BaseType.XSDATETIME, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSDATETIMESTAMP,
+		base: ValueType.XSDATETIME,
 		restrictions: {
 			whiteSpace: 'collapse', // fixed
 			explicitTimezone: 'required', // fixed
@@ -244,8 +243,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// normalizedString
 	{
 		variety: Variety.DERIVED,
-		name: { kind: BaseType.XSNORMALIZEDSTRING, seqType: SequenceType.EXACTLY_ONE },
-		base: { kind: BaseType.XSSTRING, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSNORMALIZEDSTRING,
+		base: ValueType.XSSTRING,
 		restrictions: {
 			whiteSpace: 'replace',
 		},
@@ -254,8 +253,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// token
 	{
 		variety: Variety.DERIVED,
-		name: { kind: BaseType.XSTOKEN, seqType: SequenceType.EXACTLY_ONE },
-		base: { kind: BaseType.XSNORMALIZEDSTRING, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSTOKEN,
+		base: ValueType.XSNORMALIZEDSTRING,
 		restrictions: {
 			whiteSpace: 'collapse',
 		},
@@ -264,8 +263,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// language (TODO: implement pattern)
 	{
 		variety: Variety.DERIVED,
-		name: { kind: BaseType.XSLANGUAGE, seqType: SequenceType.EXACTLY_ONE },
-		base: { kind: BaseType.XSTOKEN, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSLANGUAGE,
+		base: ValueType.XSTOKEN,
 		restrictions: {
 			whiteSpace: 'collapse',
 		},
@@ -274,8 +273,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// NMTOKEN (TODO: implement pattern)
 	{
 		variety: Variety.DERIVED,
-		name: { kind: BaseType.XSNMTOKEN, seqType: SequenceType.EXACTLY_ONE },
-		base: { kind: BaseType.XSTOKEN, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSNMTOKEN,
+		base: ValueType.XSTOKEN,
 		restrictions: {
 			whiteSpace: 'collapse',
 		},
@@ -284,8 +283,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// NMTOKENS
 	{
 		variety: Variety.LIST,
-		name: { kind: BaseType.XSNMTOKENS, seqType: SequenceType.EXACTLY_ONE },
-		type: { kind: BaseType.XSNMTOKEN, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSNMTOKENS,
+		type: ValueType.XSNMTOKEN,
 		restrictions: {
 			minLength: 1,
 			whiteSpace: 'collapse',
@@ -295,8 +294,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// Name (TODO: implement pattern)
 	{
 		variety: Variety.DERIVED,
-		name: { kind: BaseType.XSNAME, seqType: SequenceType.EXACTLY_ONE },
-		base: { kind: BaseType.XSTOKEN, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSNAME,
+		base: ValueType.XSTOKEN,
 		restrictions: {
 			whiteSpace: 'collapse',
 		},
@@ -305,8 +304,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// NCName (TODO: implement pattern)
 	{
 		variety: Variety.DERIVED,
-		name: { kind: BaseType.XSNCNAME, seqType: SequenceType.EXACTLY_ONE },
-		base: { kind: BaseType.XSNAME, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSNCNAME,
+		base: ValueType.XSNAME,
 		restrictions: {
 			whiteSpace: 'collapse',
 		},
@@ -315,8 +314,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// ID (TODO: implement pattern)
 	{
 		variety: Variety.DERIVED,
-		name: { kind: BaseType.XSID, seqType: SequenceType.EXACTLY_ONE },
-		base: { kind: BaseType.XSNCNAME, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSID,
+		base: ValueType.XSNCNAME,
 		restrictions: {
 			whiteSpace: 'collapse',
 		},
@@ -325,8 +324,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// IDREF (TODO: implement pattern)
 	{
 		variety: Variety.DERIVED,
-		name: { kind: BaseType.XSIDREF, seqType: SequenceType.EXACTLY_ONE },
-		base: { kind: BaseType.XSNCNAME, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSIDREF,
+		base: ValueType.XSNCNAME,
 		restrictions: {
 			whiteSpace: 'collapse',
 		},
@@ -335,8 +334,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// IDREFS
 	{
 		variety: Variety.LIST,
-		name: { kind: BaseType.XSIDREFS, seqType: SequenceType.EXACTLY_ONE },
-		type: { kind: BaseType.XSIDREF, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSIDREFS,
+		type: ValueType.XSIDREF,
 		restrictions: {
 			minLength: 1,
 			whiteSpace: 'collapse',
@@ -346,8 +345,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// ENTITY (TODO: implement pattern)
 	{
 		variety: Variety.DERIVED,
-		name: { kind: BaseType.XSENTITY, seqType: SequenceType.EXACTLY_ONE },
-		base: { kind: BaseType.XSNCNAME, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSENTITY,
+		base: ValueType.XSNCNAME,
 		restrictions: {
 			whiteSpace: 'collapse',
 		},
@@ -356,8 +355,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// ENTITIES
 	{
 		variety: Variety.LIST,
-		name: { kind: BaseType.XSENTITIES, seqType: SequenceType.EXACTLY_ONE },
-		type: { kind: BaseType.XSENTITY, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSENTITIES,
+		type: ValueType.XSENTITY,
 		restrictions: {
 			minLength: 1,
 			whiteSpace: 'collapse',
@@ -367,8 +366,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// integer (TODO: implement pattern)
 	{
 		variety: Variety.PRIMITIVE,
-		name: { kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE },
-		parent: { kind: BaseType.XSDECIMAL, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSINTEGER,
+		parent: ValueType.XSDECIMAL,
 		restrictions: {
 			fractionDigits: 0, // fixed
 			whiteSpace: 'collapse', // fixed
@@ -378,8 +377,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// nonPositiveInteger (TODO: implement pattern)
 	{
 		variety: Variety.DERIVED,
-		name: { kind: BaseType.XSNONPOSITIVEINTEGER, seqType: SequenceType.EXACTLY_ONE },
-		base: { kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSNONPOSITIVEINTEGER,
+		base: ValueType.XSINTEGER,
 		restrictions: {
 			fractionDigits: 0, // fixed
 			maxInclusive: '0',
@@ -390,8 +389,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// negativeInteger (TODO: implement pattern)
 	{
 		variety: Variety.DERIVED,
-		name: { kind: BaseType.XSNEGATIVEINTEGER, seqType: SequenceType.EXACTLY_ONE },
-		base: { kind: BaseType.XSNONPOSITIVEINTEGER, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSNEGATIVEINTEGER,
+		base: ValueType.XSNONPOSITIVEINTEGER,
 		restrictions: {
 			fractionDigits: 0, // fixed
 			maxInclusive: '-1',
@@ -402,8 +401,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// long (TODO: implement pattern)
 	{
 		variety: Variety.DERIVED,
-		name: { kind: BaseType.XSLONG, seqType: SequenceType.EXACTLY_ONE },
-		base: { kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSLONG,
+		base: ValueType.XSINTEGER,
 		restrictions: {
 			fractionDigits: 0, // fixed
 			maxInclusive: '9223372036854775807',
@@ -415,8 +414,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// int (TODO: implement pattern)
 	{
 		variety: Variety.DERIVED,
-		name: { kind: BaseType.XSINT, seqType: SequenceType.EXACTLY_ONE },
-		base: { kind: BaseType.XSLONG, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSINT,
+		base: ValueType.XSLONG,
 		restrictions: {
 			fractionDigits: 0, // fixed
 			maxInclusive: '2147483647',
@@ -428,8 +427,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// short (TODO: implement pattern)
 	{
 		variety: Variety.DERIVED,
-		name: { kind: BaseType.XSSHORT, seqType: SequenceType.EXACTLY_ONE },
-		base: { kind: BaseType.XSINT, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSSHORT,
+		base: ValueType.XSINT,
 		restrictions: {
 			fractionDigits: 0, // fixed
 			maxInclusive: '32767',
@@ -441,8 +440,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// byte (TODO: implement pattern)
 	{
 		variety: Variety.DERIVED,
-		name: { kind: BaseType.XSBYTE, seqType: SequenceType.EXACTLY_ONE },
-		base: { kind: BaseType.XSSHORT, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSBYTE,
+		base: ValueType.XSSHORT,
 		restrictions: {
 			fractionDigits: 0, // fixed
 			maxInclusive: '127',
@@ -454,8 +453,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// nonNegativeInteger (TODO: implement pattern)
 	{
 		variety: Variety.DERIVED,
-		name: { kind: BaseType.XSNONNEGATIVEINTEGER, seqType: SequenceType.EXACTLY_ONE },
-		base: { kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSNONNEGATIVEINTEGER,
+		base: ValueType.XSINTEGER,
 		restrictions: {
 			fractionDigits: 0, // fixed
 			minInclusive: '0',
@@ -466,8 +465,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// unsignedLong (TODO: implement pattern)
 	{
 		variety: Variety.DERIVED,
-		name: { kind: BaseType.XSUNSIGNEDLONG, seqType: SequenceType.EXACTLY_ONE },
-		base: { kind: BaseType.XSNONNEGATIVEINTEGER, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSUNSIGNEDLONG,
+		base: ValueType.XSNONNEGATIVEINTEGER,
 		restrictions: {
 			fractionDigits: 0, // fixed
 			maxInclusive: '18446744073709551615',
@@ -479,8 +478,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// unsignedInt (TODO: implement pattern)
 	{
 		variety: Variety.DERIVED,
-		name: { kind: BaseType.XSUNSIGNEDINT, seqType: SequenceType.EXACTLY_ONE },
-		base: { kind: BaseType.XSUNSIGNEDLONG, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSUNSIGNEDINT,
+		base: ValueType.XSUNSIGNEDLONG,
 		restrictions: {
 			fractionDigits: 0, // fixed
 			maxInclusive: '4294967295',
@@ -492,8 +491,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// unsignedShort (TODO: implement pattern)
 	{
 		variety: Variety.DERIVED,
-		name: { kind: BaseType.XSUNSIGNEDSHORT, seqType: SequenceType.EXACTLY_ONE },
-		base: { kind: BaseType.XSUNSIGNEDINT, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSUNSIGNEDSHORT,
+		base: ValueType.XSUNSIGNEDINT,
 		restrictions: {
 			fractionDigits: 0, // fixed
 			maxInclusive: '65535',
@@ -505,8 +504,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// unsignedByte (TODO: implement pattern)
 	{
 		variety: Variety.DERIVED,
-		name: { kind: BaseType.XSUNSIGNEDBYTE, seqType: SequenceType.EXACTLY_ONE },
-		base: { kind: BaseType.XSUNSIGNEDSHORT, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSUNSIGNEDBYTE,
+		base: ValueType.XSUNSIGNEDSHORT,
 		restrictions: {
 			fractionDigits: 0, // fixed
 			maxInclusive: '255',
@@ -518,8 +517,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// positiveInteger (TODO: implement pattern)
 	{
 		variety: Variety.DERIVED,
-		name: { kind: BaseType.XSPOSITIVEINTEGER, seqType: SequenceType.EXACTLY_ONE },
-		base: { kind: BaseType.XSNONNEGATIVEINTEGER, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSPOSITIVEINTEGER,
+		base: ValueType.XSNONNEGATIVEINTEGER,
 		restrictions: {
 			fractionDigits: 0, // fixed
 			minInclusive: '1',
@@ -530,8 +529,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// yearMonthDuration (TODO: implement pattern)
 	{
 		variety: Variety.DERIVED,
-		name: { kind: BaseType.XSYEARMONTHDURATION, seqType: SequenceType.EXACTLY_ONE },
-		base: { kind: BaseType.XSDURATION, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSYEARMONTHDURATION,
+		base: ValueType.XSDURATION,
 		restrictions: {
 			whiteSpace: 'collapse', // fixed
 		},
@@ -540,8 +539,8 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	// dayTimeDuration (TODO: implement pattern)
 	{
 		variety: Variety.DERIVED,
-		name: { kind: BaseType.XSDAYTIMEDURATION, seqType: SequenceType.EXACTLY_ONE },
-		base: { kind: BaseType.XSDURATION, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSDAYTIMEDURATION,
+		base: ValueType.XSDURATION,
 		restrictions: {
 			whiteSpace: 'collapse', // fixed
 		},
@@ -549,93 +548,78 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	{
 		variety: Variety.DERIVED,
-		name: {
-			kind: BaseType.FUNCTION,
-			returnType: undefined,
-			params: [],
-			seqType: SequenceType.EXACTLY_ONE,
-		},
-		base: { kind: BaseType.ITEM, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.FUNCTION,
+		base: ValueType.ITEM,
 	},
 
 	{
 		variety: Variety.UNION,
-		name: { kind: BaseType.XSERROR, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSERROR,
 		memberTypes: [],
 	},
 
 	{
 		variety: Variety.DERIVED,
-		name: { kind: BaseType.MAP, items: [], seqType: SequenceType.EXACTLY_ONE },
-		base: {
-			kind: BaseType.FUNCTION,
-			returnType: undefined,
-			params: [],
-			seqType: SequenceType.EXACTLY_ONE,
-		},
+		name: ValueType.MAP,
+		base: ValueType.FUNCTION,
 	},
 
 	{
 		variety: Variety.DERIVED,
-		name: { kind: BaseType.ARRAY, items: [], seqType: SequenceType.EXACTLY_ONE },
-		base: {
-			kind: BaseType.FUNCTION,
-			returnType: undefined,
-			params: [],
-			seqType: SequenceType.EXACTLY_ONE,
-		},
+		name: ValueType.ARRAY,
+		base: ValueType.FUNCTION,
 	},
 
 	{
 		variety: Variety.PRIMITIVE,
-		name: { kind: BaseType.NODE, seqType: SequenceType.EXACTLY_ONE },
-		parent: { kind: BaseType.ITEM, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.NODE,
+		parent: ValueType.ITEM,
 	},
 
 	{
 		variety: Variety.DERIVED,
-		name: { kind: BaseType.ELEMENT, seqType: SequenceType.EXACTLY_ONE },
-		base: { kind: BaseType.NODE, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.ELEMENT,
+		base: ValueType.NODE,
 	},
 
 	{
 		variety: Variety.DERIVED,
-		name: { kind: BaseType.COMMENT, seqType: SequenceType.EXACTLY_ONE },
-		base: { kind: BaseType.NODE, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.COMMENT,
+		base: ValueType.NODE,
 	},
 
 	{
 		variety: Variety.DERIVED,
-		name: { kind: BaseType.ATTRIBUTE, seqType: SequenceType.EXACTLY_ONE },
-		base: { kind: BaseType.NODE, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.ATTRIBUTE,
+		base: ValueType.NODE,
 	},
 
 	{
 		variety: Variety.DERIVED,
-		name: { kind: BaseType.TEXT, seqType: SequenceType.EXACTLY_ONE },
-		base: { kind: BaseType.NODE, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.TEXT,
+		base: ValueType.NODE,
 	},
 
 	{
 		variety: Variety.DERIVED,
-		name: { kind: BaseType.PROCESSINGINSTRUCTION, seqType: SequenceType.EXACTLY_ONE },
-		base: { kind: BaseType.NODE, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.PROCESSINGINSTRUCTION,
+		base: ValueType.NODE,
 	},
 
 	{
 		variety: Variety.DERIVED,
-		name: { kind: BaseType.DOCUMENTNODE, seqType: SequenceType.EXACTLY_ONE },
-		base: { kind: BaseType.NODE, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.DOCUMENTNODE,
+		base: ValueType.NODE,
 	},
 
 	{
 		variety: Variety.UNION,
-		name: { kind: BaseType.XSNUMERIC, seqType: SequenceType.EXACTLY_ONE },
+		name: ValueType.XSNUMERIC,
 		memberTypes: [
-			{ kind: BaseType.XSDECIMAL, seqType: SequenceType.EXACTLY_ONE },
-			{ kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE },
-			{ kind: BaseType.XSFLOAT, seqType: SequenceType.EXACTLY_ONE },
-			{ kind: BaseType.XSDOUBLE, seqType: SequenceType.EXACTLY_ONE },
+			ValueType.XSDECIMAL,
+			ValueType.XSINTEGER,
+			ValueType.XSFLOAT,
+			ValueType.XSDOUBLE,
 		],
 	},
 ];

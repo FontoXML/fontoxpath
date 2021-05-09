@@ -1,25 +1,21 @@
 import AtomicValue from '../AtomicValue';
-import { BaseType } from '../BaseType';
 import createAtomicValue from '../createAtomicValue';
-import { SequenceType } from '../Value';
+import { SequenceMultiplicity, ValueType } from '../Value';
 import DateTime from '../valueTypes/DateTime';
 import CastResult from './CastResult';
 
-const createGYearValue = (value: any): AtomicValue =>
-	createAtomicValue(value, { kind: BaseType.XSGYEAR, seqType: SequenceType.EXACTLY_ONE });
+const createGYearValue = (value: any): AtomicValue => createAtomicValue(value, ValueType.XSGYEAR);
 
 export default function castToGYear(
-	instanceOf: (typeName: BaseType) => boolean
+	instanceOf: (typeName: ValueType) => boolean
 ): (value: DateTime) => CastResult {
-	if (instanceOf(BaseType.XSDATE) || instanceOf(BaseType.XSDATETIME)) {
+	if (instanceOf(ValueType.XSDATE) || instanceOf(ValueType.XSDATETIME)) {
 		return (value) => ({
 			successful: true,
-			value: createGYearValue(
-				value.convertToType({ kind: BaseType.XSGYEAR, seqType: SequenceType.EXACTLY_ONE })
-			),
+			value: createGYearValue(value.convertToType(ValueType.XSGYEAR)),
 		});
 	}
-	if (instanceOf(BaseType.XSUNTYPEDATOMIC) || instanceOf(BaseType.XSSTRING)) {
+	if (instanceOf(ValueType.XSUNTYPEDATOMIC) || instanceOf(ValueType.XSSTRING)) {
 		return (value) => ({
 			successful: true,
 			value: createGYearValue(DateTime.fromString(value)),

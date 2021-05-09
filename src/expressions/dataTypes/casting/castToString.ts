@@ -1,11 +1,10 @@
-import { BaseType } from '../BaseType';
 import createAtomicValue from '../createAtomicValue';
-import { SequenceType } from '../Value';
+import { SequenceMultiplicity, ValueType } from '../Value';
 import CastResult from './CastResult';
 import castToStringLikeType from './castToStringLikeType';
 
 export default function castToString(
-	instanceOf: (typeName: BaseType) => boolean
+	instanceOf: (typeName: ValueType) => boolean
 ): (value) => CastResult {
 	const caster = castToStringLikeType(instanceOf);
 	return (value) => {
@@ -16,10 +15,7 @@ export default function castToString(
 
 		return {
 			successful: true,
-			value: createAtomicValue(castResult.value, {
-				kind: BaseType.XSSTRING,
-				seqType: SequenceType.EXACTLY_ONE,
-			}),
+			value: createAtomicValue(castResult.value, ValueType.XSSTRING),
 		};
 	};
 }

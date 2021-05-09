@@ -1,5 +1,4 @@
 import atomize from '../../dataTypes/atomize';
-import { BaseType } from '../../dataTypes/BaseType';
 import castToType from '../../dataTypes/castToType';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
 import { stringToValueType, ValueType } from '../../dataTypes/Value';
@@ -22,9 +21,9 @@ class CastAsOperator extends Expression {
 				: targetType.localName
 		);
 		if (
-			this._targetType.kind === BaseType.XSANYATOMICTYPE ||
-			this._targetType.kind === BaseType.XSANYSIMPLETYPE ||
-			this._targetType.kind === BaseType.XSNOTATION
+			this._targetType === ValueType.XSANYATOMICTYPE ||
+			this._targetType === ValueType.XSANYSIMPLETYPE ||
+			this._targetType === ValueType.XSNOTATION
 		) {
 			throw new Error(
 				'XPST0080: Casting to xs:anyAtomicType, xs:anySimpleType or xs:NOTATION is not permitted.'

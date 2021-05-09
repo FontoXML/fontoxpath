@@ -11,7 +11,6 @@ import PrecedingAxis from '../expressions/axes/PrecedingAxis';
 import PrecedingSiblingAxis from '../expressions/axes/PrecedingSiblingAxis';
 import SelfAxis from '../expressions/axes/SelfAxis';
 import IfExpression from '../expressions/conditional/IfExpression';
-import { BaseType } from '../expressions/dataTypes/BaseType';
 import { SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import QName from '../expressions/dataTypes/valueTypes/QName';
 import StackTraceGenerator, { SourceRange } from '../expressions/debug/StackTraceGenerator';
@@ -370,10 +369,7 @@ function compileLookup(ast: IAST, compilationOptions: CompilationOptions): '*' |
 	const keyExpression = astHelper.getFirstChild(ast, '*');
 	switch (keyExpression[0]) {
 		case 'NCName':
-			return new Literal(astHelper.getTextContent(keyExpression), {
-				kind: BaseType.XSSTRING,
-				seqType: SequenceType.EXACTLY_ONE,
-			});
+			return new Literal(astHelper.getTextContent(keyExpression), ValueType.XSSTRING);
 		case 'star':
 			return '*';
 		default:
@@ -684,7 +680,7 @@ function inlineFunction(
 		params.map((param) => {
 			const td: {
 				name: QName;
-				type: ValueType;
+				type: SequenceType;
 			} = {
 				name: astHelper.getQName(astHelper.getFirstChild(param, 'varName')),
 				type: astHelper.getTypeDeclaration(param),
@@ -714,31 +710,31 @@ function instanceOf(
 }
 
 function integerConstantExpr(ast: IAST, _compilationOptions: CompilationOptions) {
-	return new Literal(astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')), {
-		kind: BaseType.XSINTEGER,
-		seqType: SequenceType.EXACTLY_ONE,
-	});
+	return new Literal(
+		astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')),
+		ValueType.XSINTEGER
+	);
 }
 
 function stringConstantExpr(ast: IAST, _compilationOptions: CompilationOptions) {
-	return new Literal(astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')), {
-		kind: BaseType.XSSTRING,
-		seqType: SequenceType.EXACTLY_ONE,
-	});
+	return new Literal(
+		astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')),
+		ValueType.XSSTRING
+	);
 }
 
 function decimalConstantExpr(ast: IAST, _compilationOptions: CompilationOptions) {
-	return new Literal(astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')), {
-		kind: BaseType.XSDECIMAL,
-		seqType: SequenceType.EXACTLY_ONE,
-	});
+	return new Literal(
+		astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')),
+		ValueType.XSDECIMAL
+	);
 }
 
 function doubleConstantExpr(ast: IAST, _compilationOptions: CompilationOptions) {
-	return new Literal(astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')), {
-		kind: BaseType.XSDOUBLE,
-		seqType: SequenceType.EXACTLY_ONE,
-	});
+	return new Literal(
+		astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')),
+		ValueType.XSDOUBLE
+	);
 }
 
 function nameTest(ast: IAST, _compilationOptions: CompilationOptions) {
@@ -1152,10 +1148,7 @@ function dirElementConstructor(ast: IAST, compilationOptions: CompilationOptions
 
 function CDataSection(ast: IAST, _compilationOptions: CompilationOptions) {
 	// Walks like a stringliteral, talks like a stringliteral, it's a stringliteral
-	return new Literal(astHelper.getTextContent(ast), {
-		kind: BaseType.XSSTRING,
-		seqType: SequenceType.EXACTLY_ONE,
-	});
+	return new Literal(astHelper.getTextContent(ast), ValueType.XSSTRING);
 }
 
 function attributeConstructor(ast: IAST, compilationOptions: CompilationOptions) {

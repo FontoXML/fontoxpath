@@ -1,11 +1,10 @@
 import { TinyProcessingInstructionNode } from '../../domClone/Pointer';
 import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import atomize from '../dataTypes/atomize';
-import { BaseType } from '../dataTypes/BaseType';
 import castToType from '../dataTypes/castToType';
 import createPointerValue from '../dataTypes/createPointerValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { SequenceType } from '../dataTypes/Value';
+import { ValueType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
@@ -60,15 +59,7 @@ class PIConstructor extends Expression {
 			executionParameters
 		);
 		return atomize(dataSequence, executionParameters).mapAll((items) => {
-			const data = items
-				.map(
-					(item) =>
-						castToType(item, {
-							kind: BaseType.XSSTRING,
-							seqType: SequenceType.EXACTLY_ONE,
-						}).value
-				)
-				.join(' ');
+			const data = items.map((item) => castToType(item, ValueType.XSSTRING).value).join(' ');
 
 			if (data.indexOf('?>') !== -1) {
 				throw new Error(

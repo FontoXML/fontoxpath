@@ -1,11 +1,10 @@
 import IDomFacade from './domFacade/IDomFacade';
 import { PositionedError } from './evaluationUtils/PositionedError';
 import { adaptJavaScriptValueToSequence } from './expressions/adaptJavaScriptValueToXPathValue';
-import { BaseType } from './expressions/dataTypes/BaseType';
 import ISequence from './expressions/dataTypes/ISequence';
 import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
 import sequenceFactory from './expressions/dataTypes/sequenceFactory';
-import { SequenceType, ValueType } from './expressions/dataTypes/Value';
+import { SequenceMultiplicity, SequenceType, ValueType } from './expressions/dataTypes/Value';
 import DynamicContext from './expressions/DynamicContext';
 import ExecutionParameters from './expressions/ExecutionParameters';
 import { registerFunction } from './expressions/functions/functionRegistry';
@@ -60,10 +59,10 @@ class CustomXPathFunctionError extends Error {
 
 function adaptXPathValueToJavascriptValue(
 	valueSequence: ISequence,
-	sequenceType: ValueType,
+	sequenceType: SequenceType,
 	executionParameters: ExecutionParameters
 ): any | null | any[] {
-	if (sequenceType.seqType === SequenceType.ZERO_OR_ONE) {
+	if (sequenceType.mult === SequenceMultiplicity.ZERO_OR_ONE) {
 		if (valueSequence.isEmpty()) {
 			return null;
 		}
@@ -74,11 +73,11 @@ function adaptXPathValueToJavascriptValue(
 	}
 
 	if (
-		sequenceType.seqType === SequenceType.ZERO_OR_MORE ||
-		sequenceType.seqType === SequenceType.ONE_OR_MORE
+		sequenceType.mult === SequenceMultiplicity.ZERO_OR_MORE ||
+		sequenceType.mult === SequenceMultiplicity.ONE_OR_MORE
 	) {
 		return valueSequence.getAllValues().map((value) => {
-			if (isSubtypeOf(value.type.kind, BaseType.ATTRIBUTE)) {
+			if (isSubtypeOf(value.type, ValueType.ATTRIBUTE)) {
 				throw new Error('Cannot pass attribute nodes to custom functions');
 			}
 			return transformXPathItemToJavascriptObject(value, executionParameters).next(
@@ -129,8 +128,8 @@ function splitFunctionName(
  */
 export default function registerCustomXPathFunction(
 	name: string | { localName: string; namespaceURI: string },
-	signature: ValueType[],
-	returnType: ValueType,
+	signature: SequenceType[],
+	returnType: SequenceType,
 	callback: (
 		domFacade: { currentContext: any; domFacade: IDomFacade },
 		...functionArgs: any[]

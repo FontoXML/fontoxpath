@@ -1,10 +1,9 @@
 import atomize from '../../dataTypes/atomize';
-import { BaseType } from '../../dataTypes/BaseType';
 import castToType from '../../dataTypes/castToType';
 import createAtomicValue from '../../dataTypes/createAtomicValue';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import { SequenceType } from '../../dataTypes/Value';
+import { SequenceMultiplicity, ValueType } from '../../dataTypes/Value';
 import Expression from '../../Expression';
 
 class Unary extends Expression {
@@ -41,75 +40,50 @@ class Unary extends Expression {
 
 			const value = atomizedValues[0];
 
-			if (isSubtypeOf(value.type.kind, BaseType.XSUNTYPEDATOMIC)) {
-				const castValue = castToType(value, {
-					kind: BaseType.XSDOUBLE,
-					seqType: SequenceType.EXACTLY_ONE,
-				}).value as number;
+			if (isSubtypeOf(value.type, ValueType.XSUNTYPEDATOMIC)) {
+				const castValue = castToType(value, ValueType.XSDOUBLE).value as number;
 				return sequenceFactory.singleton(
-					createAtomicValue(this._kind === '+' ? castValue : -castValue, {
-						kind: BaseType.XSDOUBLE,
-						seqType: SequenceType.EXACTLY_ONE,
-					})
+					createAtomicValue(
+						this._kind === '+' ? castValue : -castValue,
+						ValueType.XSDOUBLE
+					)
 				);
 			}
 
 			if (this._kind === '+') {
 				if (
-					isSubtypeOf(value.type.kind, BaseType.XSDECIMAL) ||
-					isSubtypeOf(value.type.kind, BaseType.XSDOUBLE) ||
-					isSubtypeOf(value.type.kind, BaseType.XSFLOAT) ||
-					isSubtypeOf(value.type.kind, BaseType.XSINTEGER)
+					isSubtypeOf(value.type, ValueType.XSDECIMAL) ||
+					isSubtypeOf(value.type, ValueType.XSDOUBLE) ||
+					isSubtypeOf(value.type, ValueType.XSFLOAT) ||
+					isSubtypeOf(value.type, ValueType.XSINTEGER)
 				) {
 					return sequenceFactory.singleton(atomizedValues[0]);
 				}
+				return sequenceFactory.singleton(createAtomicValue(Number.NaN, ValueType.XSDOUBLE));
+			}
+
+			if (isSubtypeOf(value.type, ValueType.XSINTEGER)) {
 				return sequenceFactory.singleton(
-					createAtomicValue(Number.NaN, {
-						kind: BaseType.XSDOUBLE,
-						seqType: SequenceType.EXACTLY_ONE,
-					})
+					createAtomicValue((value.value as number) * -1, ValueType.XSINTEGER)
+				);
+			}
+			if (isSubtypeOf(value.type, ValueType.XSDECIMAL)) {
+				return sequenceFactory.singleton(
+					createAtomicValue((value.value as number) * -1, ValueType.XSDECIMAL)
+				);
+			}
+			if (isSubtypeOf(value.type, ValueType.XSDOUBLE)) {
+				return sequenceFactory.singleton(
+					createAtomicValue((value.value as number) * -1, ValueType.XSDOUBLE)
+				);
+			}
+			if (isSubtypeOf(value.type, ValueType.XSFLOAT)) {
+				return sequenceFactory.singleton(
+					createAtomicValue((value.value as number) * -1, ValueType.XSFLOAT)
 				);
 			}
 
-			if (isSubtypeOf(value.type.kind, BaseType.XSINTEGER)) {
-				return sequenceFactory.singleton(
-					createAtomicValue((value.value as number) * -1, {
-						kind: BaseType.XSINTEGER,
-						seqType: SequenceType.EXACTLY_ONE,
-					})
-				);
-			}
-			if (isSubtypeOf(value.type.kind, BaseType.XSDECIMAL)) {
-				return sequenceFactory.singleton(
-					createAtomicValue((value.value as number) * -1, {
-						kind: BaseType.XSDECIMAL,
-						seqType: SequenceType.EXACTLY_ONE,
-					})
-				);
-			}
-			if (isSubtypeOf(value.type.kind, BaseType.XSDOUBLE)) {
-				return sequenceFactory.singleton(
-					createAtomicValue((value.value as number) * -1, {
-						kind: BaseType.XSDOUBLE,
-						seqType: SequenceType.EXACTLY_ONE,
-					})
-				);
-			}
-			if (isSubtypeOf(value.type.kind, BaseType.XSFLOAT)) {
-				return sequenceFactory.singleton(
-					createAtomicValue((value.value as number) * -1, {
-						kind: BaseType.XSFLOAT,
-						seqType: SequenceType.EXACTLY_ONE,
-					})
-				);
-			}
-
-			return sequenceFactory.singleton(
-				createAtomicValue(Number.NaN, {
-					kind: BaseType.XSDOUBLE,
-					seqType: SequenceType.EXACTLY_ONE,
-				})
-			);
+			return sequenceFactory.singleton(createAtomicValue(Number.NaN, ValueType.XSDOUBLE));
 		});
 	}
 }

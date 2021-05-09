@@ -1,8 +1,8 @@
 import * as chai from 'chai';
 import * as slimdom from 'slimdom';
 
-import { BaseType, createTypedValueFactory, evaluateXPathToBoolean } from 'fontoxpath';
-import { SequenceType } from 'fontoxpath/expressions/dataTypes/Value';
+import { ValueType, createTypedValueFactory, evaluateXPathToBoolean } from 'fontoxpath';
+import { SequenceMultiplicity } from 'fontoxpath/expressions/dataTypes/Value';
 
 let documentNode;
 beforeEach(() => {
@@ -12,8 +12,8 @@ beforeEach(() => {
 describe('createTypedValueFactory', () => {
 	it('creates an xs:integer value', () => {
 		const typedValueFactory = createTypedValueFactory({
-			kind: BaseType.XSINTEGER,
-			seqType: SequenceType.EXACTLY_ONE,
+			type: ValueType.XSINTEGER,
+			mult: SequenceMultiplicity.EXACTLY_ONE,
 		});
 
 		const typedValue = typedValueFactory(123, documentNode);
@@ -28,8 +28,8 @@ describe('createTypedValueFactory', () => {
 
 	it('creates an xs:integer value from a string', () => {
 		const typedValueFactory = createTypedValueFactory({
-			kind: BaseType.XSINTEGER,
-			seqType: SequenceType.EXACTLY_ONE,
+			type: ValueType.XSINTEGER,
+			mult: SequenceMultiplicity.EXACTLY_ONE,
 		});
 
 		const typedValue = typedValueFactory('123', documentNode);
@@ -44,8 +44,8 @@ describe('createTypedValueFactory', () => {
 
 	it('throws when expecting a Date value but reiving a boolean', () => {
 		const typedValueFactory = createTypedValueFactory({
-			kind: BaseType.XSDATE,
-			seqType: SequenceType.EXACTLY_ONE,
+			type: ValueType.XSDATE,
+			mult: SequenceMultiplicity.EXACTLY_ONE,
 		});
 
 		chai.assert.throws(
@@ -56,8 +56,8 @@ describe('createTypedValueFactory', () => {
 
 	it('throws when expecting a node() value but reiving a boolean', () => {
 		const typedValueFactory = createTypedValueFactory({
-			kind: BaseType.NODE,
-			seqType: SequenceType.EXACTLY_ONE,
+			type: ValueType.NODE,
+			mult: SequenceMultiplicity.EXACTLY_ONE,
 		});
 
 		chai.assert.throws(
@@ -68,8 +68,8 @@ describe('createTypedValueFactory', () => {
 
 	it('throws when expecting a number value but reiving a boolean', () => {
 		const typedValueFactory = createTypedValueFactory({
-			kind: BaseType.XSINTEGER,
-			seqType: SequenceType.EXACTLY_ONE,
+			type: ValueType.XSINTEGER,
+			mult: SequenceMultiplicity.EXACTLY_ONE,
 		});
 
 		chai.assert.throws(
@@ -80,8 +80,8 @@ describe('createTypedValueFactory', () => {
 
 	it('throws when expecting a number value but reiving a string', () => {
 		const typedValueFactory = createTypedValueFactory({
-			kind: BaseType.XSINTEGER,
-			seqType: SequenceType.EXACTLY_ONE,
+			type: ValueType.XSINTEGER,
+			mult: SequenceMultiplicity.EXACTLY_ONE,
 		});
 
 		chai.assert.throws(
@@ -92,8 +92,8 @@ describe('createTypedValueFactory', () => {
 
 	it('throws when expecting a number value but reiving null', () => {
 		const typedValueFactory = createTypedValueFactory({
-			kind: BaseType.XSINTEGER,
-			seqType: SequenceType.EXACTLY_ONE,
+			type: ValueType.XSINTEGER,
+			mult: SequenceMultiplicity.EXACTLY_ONE,
 		});
 
 		chai.assert.throws(
@@ -104,8 +104,8 @@ describe('createTypedValueFactory', () => {
 
 	it('throws when expecting an array', () => {
 		const typedValueFactory = createTypedValueFactory({
-			kind: BaseType.XSINTEGER,
-			seqType: SequenceType.ZERO_OR_MORE,
+			type: ValueType.XSINTEGER,
+			mult: SequenceMultiplicity.ZERO_OR_MORE,
 		});
 
 		chai.assert.throws(
@@ -116,8 +116,8 @@ describe('createTypedValueFactory', () => {
 
 	it('throws when trying to convert a Symbol', () => {
 		const typedValueFactory = createTypedValueFactory({
-			kind: BaseType.ITEM,
-			seqType: SequenceType.EXACTLY_ONE,
+			type: ValueType.ITEM,
+			mult: SequenceMultiplicity.EXACTLY_ONE,
 		});
 
 		chai.assert.throws(

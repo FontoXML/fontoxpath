@@ -1,4 +1,4 @@
-import { BaseType } from '../../dataTypes/BaseType';
+import { ValueType } from '../Value';
 import decimalComparator from './comparators/decimalComparator';
 
 // fractionDigits
@@ -51,14 +51,14 @@ function validateExplicitTimeZone(value, option) {
 	}
 }
 
-function getFacetByDataType(type: BaseType) {
+function getFacetByDataType(type: ValueType) {
 	switch (type) {
-		case BaseType.XSSTRING:
-		case BaseType.XSBOOLEAN:
-		case BaseType.XSFLOAT:
-		case BaseType.XSDOUBLE:
+		case ValueType.XSSTRING:
+		case ValueType.XSBOOLEAN:
+		case ValueType.XSFLOAT:
+		case ValueType.XSDOUBLE:
 			return {};
-		case BaseType.XSDECIMAL:
+		case ValueType.XSDECIMAL:
 			return {
 				fractionDigits: validateFractionDigits,
 				maxInclusive: createMaxInclusiveFacet(decimalComparator),
@@ -66,22 +66,22 @@ function getFacetByDataType(type: BaseType) {
 				minInclusive: createMinInclusiveFacet(decimalComparator),
 				minExclusive: createMinExclusiveFacet(decimalComparator),
 			};
-		case BaseType.XSDURATION:
+		case ValueType.XSDURATION:
 			return {};
-		case BaseType.XSDATETIME:
-		case BaseType.XSTIME:
-		case BaseType.XSDATE:
-		case BaseType.XSGYEARMONTH:
-		case BaseType.XSGYEAR:
-		case BaseType.XSGMONTHDAY:
-		case BaseType.XSGDAY:
-		case BaseType.XSGMONTH:
+		case ValueType.XSDATETIME:
+		case ValueType.XSTIME:
+		case ValueType.XSDATE:
+		case ValueType.XSGYEARMONTH:
+		case ValueType.XSGYEAR:
+		case ValueType.XSGMONTHDAY:
+		case ValueType.XSGDAY:
+		case ValueType.XSGMONTH:
 			return { explicitTimezone: validateExplicitTimeZone };
-		case BaseType.XSHEXBINARY:
-		case BaseType.XSBASE64BINARY:
-		case BaseType.XSANYURI:
-		case BaseType.XSQNAME:
-		case BaseType.XSNOTATION:
+		case ValueType.XSHEXBINARY:
+		case ValueType.XSBASE64BINARY:
+		case ValueType.XSANYURI:
+		case ValueType.XSQNAME:
+		case ValueType.XSNOTATION:
 			return {};
 		default:
 			return null;

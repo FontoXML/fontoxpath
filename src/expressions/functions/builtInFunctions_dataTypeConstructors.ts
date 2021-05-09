@@ -1,11 +1,10 @@
-import { BaseType } from '../dataTypes/BaseType';
 import castToType from '../dataTypes/castToType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { normalizeWhitespace, validatePattern } from '../dataTypes/typeHelpers';
-import { SequenceType, ValueType } from '../dataTypes/Value';
+import { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
 import { XMLSCHEMA_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { BuiltinDeclarationType } from './builtInFunctions';
@@ -34,27 +33,24 @@ const xsQName: FunctionDefinitionType = (
 		return sequence;
 	}
 	const value = sequence.first();
-	if (isSubtypeOf(value.type.kind, BaseType.XSNUMERIC)) {
+	if (isSubtypeOf(value.type, ValueType.XSNUMERIC)) {
 		// This won't ever work
 		throw new Error('XPTY0004: The provided QName is not a string-like value.');
 	}
-	let lexicalQName = castToType(value, {
-		kind: BaseType.XSSTRING,
-		seqType: SequenceType.EXACTLY_ONE,
-	}).value;
+	let lexicalQName = castToType(value, ValueType.XSSTRING).value;
 	// Test lexical scope
-	lexicalQName = normalizeWhitespace(lexicalQName, BaseType.XSQNAME);
-	if (!validatePattern(lexicalQName, BaseType.XSQNAME)) {
+	lexicalQName = normalizeWhitespace(lexicalQName, ValueType.XSQNAME);
+	if (!validatePattern(lexicalQName, ValueType.XSQNAME)) {
 		throw new Error('FORG0001: The provided QName is invalid.');
 	}
 	if (!lexicalQName.includes(':')) {
 		// Only a local part
 		const resolvedDefaultNamespaceURI = staticContext.resolveNamespace('');
 		return sequenceFactory.singleton(
-			createAtomicValue(new QName('', resolvedDefaultNamespaceURI, lexicalQName), {
-				kind: BaseType.XSQNAME,
-				seqType: SequenceType.EXACTLY_ONE,
-			})
+			createAtomicValue(
+				new QName('', resolvedDefaultNamespaceURI, lexicalQName),
+				ValueType.XSQNAME
+			)
 		);
 	}
 	const [prefix, localName] = lexicalQName.split(':');
@@ -65,10 +61,7 @@ const xsQName: FunctionDefinitionType = (
 		);
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(new QName(prefix, namespaceURI, localName), {
-			kind: BaseType.XSQNAME,
-			seqType: SequenceType.EXACTLY_ONE,
-		})
+		createAtomicValue(new QName(prefix, namespaceURI, localName), ValueType.XSQNAME)
 	);
 };
 
@@ -76,457 +69,615 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'untypedAtomic',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSUNTYPEDATOMIC, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSUNTYPEDATOMIC,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSUNTYPEDATOMIC, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSUNTYPEDATOMIC
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'error',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
 		returnType: {
-			kind: BaseType.XSERROR,
-			seqType: SequenceType.ZERO_OR_ONE,
+			type: ValueType.XSERROR,
+			mult: SequenceMultiplicity.ZERO_OR_ONE,
 		},
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSERROR,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSERROR
+		) as FunctionDefinitionType,
 	},
 	// AnySimpleType cannot be instantiated
 	// AnyAtomicType cannot be instantiated
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'string',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSSTRING, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSSTRING,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSSTRING, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSSTRING
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'boolean',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSBOOLEAN, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSBOOLEAN,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSBOOLEAN
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'decimal',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSDECIMAL, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSDECIMAL,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSDECIMAL, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSDECIMAL
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'float',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSFLOAT, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSFLOAT,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSFLOAT, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSFLOAT
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'double',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSDOUBLE, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSDOUBLE,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSDOUBLE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSDOUBLE
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'duration',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSDURATION, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSDURATION,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSDURATION, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSDURATION
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'dateTime',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSDATETIME, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSDATETIME,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSDATETIME, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSDATETIME
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'dateTimeStamp',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
 		// TODO: this seems like a bug not sure though: xs:datetime instead of xs:datetimestamp
-		returnType: { kind: BaseType.XSDATETIME, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSDATETIMESTAMP,
-		}) as FunctionDefinitionType,
+		returnType: { type: ValueType.XSDATETIME, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSDATETIMESTAMP
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'time',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSTIME, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSTIME,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSTIME, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSTIME
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'date',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSDATE, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSDATE,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSDATE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSDATE
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'gYearMonth',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSGYEARMONTH, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSGYEARMONTH,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSGYEARMONTH, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSGYEARMONTH
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'gYear',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSGYEAR, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSGYEAR,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSGYEAR, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSGYEAR
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'gMonthDay',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSGMONTHDAY, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSGMONTHDAY,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSGMONTHDAY, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSGMONTHDAY
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'gDay',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSGDAY, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSGDAY,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSGDAY, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSGDAY
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'gMonth',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSGMONTH, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSGMONTH,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSGMONTH, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSGMONTH
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'hexBinary',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSHEXBINARY, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSHEXBINARY,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSHEXBINARY, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSHEXBINARY
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'base64Binary',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSBASE64BINARY, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSBASE64BINARY,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSBASE64BINARY, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSBASE64BINARY
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'QName',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSQNAME, seqType: SequenceType.ZERO_OR_ONE },
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSQNAME, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: xsQName,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'anyURI',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSANYURI, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSANYURI,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSANYURI, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSANYURI
+		) as FunctionDefinitionType,
 	},
 	// NOTATION cannot be instantiated
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'normalizedString',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSNORMALIZEDSTRING, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSNORMALIZEDSTRING,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: {
+			type: ValueType.XSNORMALIZEDSTRING,
+			mult: SequenceMultiplicity.ZERO_OR_ONE,
+		},
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSNORMALIZEDSTRING
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'token',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSTOKEN, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSTOKEN,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSTOKEN, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSTOKEN
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'language',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSLANGUAGE, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSLANGUAGE,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSLANGUAGE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSLANGUAGE
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'NMTOKEN',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSNMTOKEN, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSNMTOKEN,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSNMTOKEN, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSNMTOKEN
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'NMTOKENS',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSNMTOKENS, seqType: SequenceType.ZERO_OR_MORE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSNMTOKENS,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSNMTOKENS, mult: SequenceMultiplicity.ZERO_OR_MORE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSNMTOKENS
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'Name',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSNAME, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSNAME,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSNAME, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSNAME
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'NCName',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSNCNAME, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSNCNAME,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSNCNAME, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSNCNAME
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'ID',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSID, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSID,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSID, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSID
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'IDREF',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSIDREF, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSIDREF,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSIDREF, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSIDREF
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'IDREFS',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSIDREFS, seqType: SequenceType.ZERO_OR_MORE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSIDREFS,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSIDREFS, mult: SequenceMultiplicity.ZERO_OR_MORE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSIDREFS
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'ENTITY',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSENTITY, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSENTITY,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSENTITY, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSENTITY
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'ENTITIES',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSENTITIES, seqType: SequenceType.ZERO_OR_MORE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSENTITIES,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSENTITIES, mult: SequenceMultiplicity.ZERO_OR_MORE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSENTITIES
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'integer',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSINTEGER,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSINTEGER
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'nonPositiveInteger',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
 		returnType: {
-			kind: BaseType.XSNONPOSITIVEINTEGER,
-			seqType: SequenceType.ZERO_OR_ONE,
+			type: ValueType.XSNONPOSITIVEINTEGER,
+			mult: SequenceMultiplicity.ZERO_OR_ONE,
 		},
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSNONPOSITIVEINTEGER,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSNONPOSITIVEINTEGER
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'negativeInteger',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSNEGATIVEINTEGER, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSNEGATIVEINTEGER,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: {
+			type: ValueType.XSNEGATIVEINTEGER,
+			mult: SequenceMultiplicity.ZERO_OR_ONE,
+		},
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSNEGATIVEINTEGER
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'long',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSLONG, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSLONG,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSLONG, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSLONG
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'int',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSINT, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSINT,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSINT, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSINT
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'short',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSSHORT, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSSHORT,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSSHORT, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSSHORT
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'byte',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSBYTE, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSBYTE,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSBYTE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSBYTE
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'nonNegativeInteger',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
 		returnType: {
-			kind: BaseType.XSNONNEGATIVEINTEGER,
-			seqType: SequenceType.ZERO_OR_ONE,
+			type: ValueType.XSNONNEGATIVEINTEGER,
+			mult: SequenceMultiplicity.ZERO_OR_ONE,
 		},
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSNONNEGATIVEINTEGER,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSNONNEGATIVEINTEGER
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'unsignedLong',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSUNSIGNEDLONG, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSUNSIGNEDLONG,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSUNSIGNEDLONG, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSUNSIGNEDLONG
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'unsignedInt',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSUNSIGNEDINT, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSUNSIGNEDINT,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSUNSIGNEDINT, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSUNSIGNEDINT
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'unsignedShort',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSUNSIGNEDSHORT, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSUNSIGNEDSHORT,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSUNSIGNEDSHORT, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSUNSIGNEDSHORT
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'unsignedByte',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSUNSIGNEDBYTE, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSUNSIGNEDBYTE,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSUNSIGNEDBYTE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSUNSIGNEDBYTE
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'positiveInteger',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSPOSITIVEINTEGER, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSPOSITIVEINTEGER,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: {
+			type: ValueType.XSPOSITIVEINTEGER,
+			mult: SequenceMultiplicity.ZERO_OR_ONE,
+		},
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSPOSITIVEINTEGER
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'yearMonthDuration',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
 		returnType: {
-			kind: BaseType.XSYEARMONTHDURATION,
-			seqType: SequenceType.ZERO_OR_ONE,
+			type: ValueType.XSYEARMONTHDURATION,
+			mult: SequenceMultiplicity.ZERO_OR_ONE,
 		},
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSYEARMONTHDURATION,
-		}) as FunctionDefinitionType,
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSYEARMONTHDURATION
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'dayTimeDuration',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSDAYTIMEDURATION, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSDAYTIMEDURATION,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: {
+			type: ValueType.XSDAYTIMEDURATION,
+			mult: SequenceMultiplicity.ZERO_OR_ONE,
+		},
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSDAYTIMEDURATION
+		) as FunctionDefinitionType,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'dateTimeStamp',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, seqType: SequenceType.ZERO_OR_ONE }],
-		returnType: { kind: BaseType.XSDATETIMESTAMP, seqType: SequenceType.ZERO_OR_ONE },
-		callFunction: genericDataTypeConstructor.bind(null, {
-			kind: BaseType.XSDATETIMESTAMP,
-		}) as FunctionDefinitionType,
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		returnType: { type: ValueType.XSDATETIMESTAMP, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		callFunction: genericDataTypeConstructor.bind(
+			null,
+			ValueType.XSDATETIMESTAMP
+		) as FunctionDefinitionType,
 	},
 ];
 

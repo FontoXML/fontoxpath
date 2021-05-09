@@ -1,5 +1,4 @@
-import { BaseType } from '../BaseType';
-import { SequenceType, ValueType } from '../Value';
+import { SequenceMultiplicity, ValueType } from '../Value';
 import AbstractDuration from './AbstractDuration';
 import DayTimeDuration from './DayTimeDuration';
 
@@ -66,7 +65,7 @@ class DateTime {
 		seconds: number,
 		secondFraction: number,
 		timezone: DayTimeDuration,
-		type: ValueType = { kind: BaseType.XSDATETIME, seqType: SequenceType.EXACTLY_ONE }
+		type: ValueType = ValueType.XSDATETIME
 	) {
 		this._years = years;
 		this._months = months;
@@ -88,33 +87,68 @@ class DateTime {
 		// xs:gMonth     1972-xx-01T00:00:00
 		// xs:gDay       1972-12-xxT00:00:00
 
-		switch (type.kind) {
-			case BaseType.XSGDAY:
-				return new DateTime(1972, 12, this._days, 0, 0, 0, 0, this._timezone, {
-					kind: BaseType.XSGDAY,
-					seqType: SequenceType.EXACTLY_ONE,
-				});
-			case BaseType.XSGMONTH:
-				return new DateTime(1972, this._months, 1, 0, 0, 0, 0, this._timezone, {
-					kind: BaseType.XSGMONTH,
-					seqType: SequenceType.EXACTLY_ONE,
-				});
-			case BaseType.XSGYEAR:
-				return new DateTime(this._years, 1, 1, 0, 0, 0, 0, this._timezone, {
-					kind: BaseType.XSGYEAR,
-					seqType: SequenceType.EXACTLY_ONE,
-				});
-			case BaseType.XSGMONTHDAY:
-				return new DateTime(1972, this._months, this._days, 0, 0, 0, 0, this._timezone, {
-					kind: BaseType.XSGMONTHDAY,
-					seqType: SequenceType.EXACTLY_ONE,
-				});
-			case BaseType.XSGYEARMONTH:
-				return new DateTime(this._years, this._months, 1, 0, 0, 0, 0, this._timezone, {
-					kind: BaseType.XSGYEARMONTH,
-					seqType: SequenceType.EXACTLY_ONE,
-				});
-			case BaseType.XSTIME:
+		switch (type) {
+			case ValueType.XSGDAY:
+				return new DateTime(
+					1972,
+					12,
+					this._days,
+					0,
+					0,
+					0,
+					0,
+					this._timezone,
+					ValueType.XSGDAY
+				);
+			case ValueType.XSGMONTH:
+				return new DateTime(
+					1972,
+					this._months,
+					1,
+					0,
+					0,
+					0,
+					0,
+					this._timezone,
+					ValueType.XSGMONTH
+				);
+			case ValueType.XSGYEAR:
+				return new DateTime(
+					this._years,
+					1,
+					1,
+					0,
+					0,
+					0,
+					0,
+					this._timezone,
+					ValueType.XSGYEAR
+				);
+			case ValueType.XSGMONTHDAY:
+				return new DateTime(
+					1972,
+					this._months,
+					this._days,
+					0,
+					0,
+					0,
+					0,
+					this._timezone,
+					ValueType.XSGMONTHDAY
+				);
+			case ValueType.XSGYEARMONTH:
+				return new DateTime(
+					this._years,
+					this._months,
+					1,
+					0,
+					0,
+					0,
+					0,
+					this._timezone,
+					ValueType.XSGYEARMONTH
+				);
+			case ValueType.XSTIME:
 				return new DateTime(
 					1972,
 					12,
@@ -124,9 +158,9 @@ class DateTime {
 					this._seconds,
 					this.secondFraction,
 					this._timezone,
-					{ kind: BaseType.XSTIME, seqType: SequenceType.EXACTLY_ONE }
+					ValueType.XSTIME
 				);
-			case BaseType.XSDATE:
+			case ValueType.XSDATE:
 				return new DateTime(
 					this._years,
 					this._months,
@@ -136,9 +170,9 @@ class DateTime {
 					0,
 					0,
 					this._timezone,
-					{ kind: BaseType.XSDATE, seqType: SequenceType.EXACTLY_ONE }
+					ValueType.XSDATE
 				);
-			case BaseType.XSDATETIME:
+			case ValueType.XSDATETIME:
 			default:
 				return new DateTime(
 					this._years,
@@ -149,7 +183,7 @@ class DateTime {
 					this._seconds,
 					this.secondFraction,
 					this._timezone,
-					{ kind: BaseType.XSDATETIME, seqType: SequenceType.EXACTLY_ONE }
+					ValueType.XSDATETIME
 				);
 		}
 	}
@@ -210,8 +244,8 @@ class DateTime {
 	}
 
 	public toString() {
-		switch (this.type.kind) {
-			case BaseType.XSDATETIME:
+		switch (this.type) {
+			case ValueType.XSDATETIME:
 				return (
 					convertYearToString(this._years) +
 					'-' +
@@ -226,7 +260,7 @@ class DateTime {
 					convertSecondsToString(this._seconds + this.secondFraction) +
 					(this._timezone ? timezoneToString(this._timezone) : '')
 				);
-			case BaseType.XSDATE:
+			case ValueType.XSDATE:
 				return (
 					convertYearToString(this._years) +
 					'-' +
@@ -235,7 +269,7 @@ class DateTime {
 					convertToTwoCharString(this._days) +
 					(this._timezone ? timezoneToString(this._timezone) : '')
 				);
-			case BaseType.XSTIME:
+			case ValueType.XSTIME:
 				return (
 					convertToTwoCharString(this._hours) +
 					':' +
@@ -244,19 +278,19 @@ class DateTime {
 					convertSecondsToString(this._seconds + this.secondFraction) +
 					(this._timezone ? timezoneToString(this._timezone) : '')
 				);
-			case BaseType.XSGDAY:
+			case ValueType.XSGDAY:
 				return (
 					'---' +
 					convertToTwoCharString(this._days) +
 					(this._timezone ? timezoneToString(this._timezone) : '')
 				);
-			case BaseType.XSGMONTH:
+			case ValueType.XSGMONTH:
 				return (
 					'--' +
 					convertToTwoCharString(this._months) +
 					(this._timezone ? timezoneToString(this._timezone) : '')
 				);
-			case BaseType.XSGMONTHDAY:
+			case ValueType.XSGMONTHDAY:
 				return (
 					'--' +
 					convertToTwoCharString(this._months) +
@@ -264,12 +298,12 @@ class DateTime {
 					convertToTwoCharString(this._days) +
 					(this._timezone ? timezoneToString(this._timezone) : '')
 				);
-			case BaseType.XSGYEAR:
+			case ValueType.XSGYEAR:
 				return (
 					convertYearToString(this._years) +
 					(this._timezone ? timezoneToString(this._timezone) : '')
 				);
-			case BaseType.XSGYEARMONTH:
+			case ValueType.XSGYEARMONTH:
 				return (
 					convertYearToString(this._years) +
 					'-' +
@@ -319,63 +353,52 @@ DateTime.fromString = (dateString: string): DateTime => {
 			seconds,
 			secondFraction,
 			timezone,
-			{ kind: BaseType.XSDATETIME, seqType: SequenceType.EXACTLY_ONE }
+			ValueType.XSDATETIME
 		);
 	}
 
 	if (hours !== null && minutes !== null && seconds !== null) {
 		// There is no T separator, but there is a time component -> time
-		return new DateTime(1972, 12, 31, hours, minutes, seconds, secondFraction, timezone, {
-			kind: BaseType.XSTIME,
-			seqType: SequenceType.EXACTLY_ONE,
-		});
+		return new DateTime(
+			1972,
+			12,
+			31,
+			hours,
+			minutes,
+			seconds,
+			secondFraction,
+			timezone,
+			ValueType.XSTIME
+		);
 	}
 
 	if (years !== null && months !== null && days !== null) {
 		// There is no T separator, but there is a complete date component -> date
-		return new DateTime(years, months, days, 0, 0, 0, 0, timezone, {
-			kind: BaseType.XSDATE,
-			seqType: SequenceType.EXACTLY_ONE,
-		});
+		return new DateTime(years, months, days, 0, 0, 0, 0, timezone, ValueType.XSDATE);
 	}
 
 	if (years !== null && months !== null) {
 		// There is no complete date component, but there is a year and a month -> gYearMonth
-		return new DateTime(years, months, 1, 0, 0, 0, 0, timezone, {
-			kind: BaseType.XSGYEARMONTH,
-			seqType: SequenceType.EXACTLY_ONE,
-		});
+		return new DateTime(years, months, 1, 0, 0, 0, 0, timezone, ValueType.XSGYEARMONTH);
 	}
 
 	if (months !== null && days !== null) {
 		// There is no complete date component, but there is a month and a day -> gMonthDay
-		return new DateTime(1972, months, days, 0, 0, 0, 0, timezone, {
-			kind: BaseType.XSGMONTHDAY,
-			seqType: SequenceType.EXACTLY_ONE,
-		});
+		return new DateTime(1972, months, days, 0, 0, 0, 0, timezone, ValueType.XSGMONTHDAY);
 	}
 
 	if (years !== null) {
 		// There is only a year -> gYear
-		return new DateTime(years, 1, 1, 0, 0, 0, 0, timezone, {
-			kind: BaseType.XSGYEAR,
-			seqType: SequenceType.EXACTLY_ONE,
-		});
+		return new DateTime(years, 1, 1, 0, 0, 0, 0, timezone, ValueType.XSGYEAR);
 	}
 
 	if (months !== null) {
 		// There is only a month -> gMonth
-		return new DateTime(1972, months, 1, 0, 0, 0, 0, timezone, {
-			kind: BaseType.XSGMONTH,
-			seqType: SequenceType.EXACTLY_ONE,
-		});
+		return new DateTime(1972, months, 1, 0, 0, 0, 0, timezone, ValueType.XSGMONTH);
 	}
 
 	// There is only one option left -> gDay
-	return new DateTime(1972, 12, days, 0, 0, 0, 0, timezone, {
-		kind: BaseType.XSGDAY,
-		seqType: SequenceType.EXACTLY_ONE,
-	});
+	return new DateTime(1972, 12, days, 0, 0, 0, 0, timezone, ValueType.XSGDAY);
 };
 
 export function compare(

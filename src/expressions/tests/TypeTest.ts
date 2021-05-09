@@ -19,12 +19,12 @@ class TypeTest extends TestAbstractExpression {
 		_executionParameters: ExecutionParameters
 	) {
 		return isSubtypeOf(
-			item.type.kind,
+			item.type,
 			stringToValueType(
 				this._type.prefix
 					? this._type.prefix + ':' + this._type.localName
 					: this._type.localName
-			).kind
+			)
 		);
 	}
 }

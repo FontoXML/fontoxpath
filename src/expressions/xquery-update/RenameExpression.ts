@@ -1,7 +1,6 @@
-import { BaseType } from '../dataTypes/BaseType';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value from '../dataTypes/Value';
+import Value, { ValueType } from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
@@ -29,9 +28,9 @@ function evaluateTarget(targetXdmValue) {
 		throw errXUTY0012();
 	}
 	if (
-		!isSubtypeOf(targetXdmValue[0].type.kind, BaseType.ELEMENT) &&
-		!isSubtypeOf(targetXdmValue[0].type.kind, BaseType.ATTRIBUTE) &&
-		!isSubtypeOf(targetXdmValue[0].type.kind, BaseType.PROCESSINGINSTRUCTION)
+		!isSubtypeOf(targetXdmValue[0].type, ValueType.ELEMENT) &&
+		!isSubtypeOf(targetXdmValue[0].type, ValueType.ATTRIBUTE) &&
+		!isSubtypeOf(targetXdmValue[0].type, ValueType.PROCESSINGINSTRUCTION)
 	) {
 		throw errXUTY0012();
 	}
@@ -44,8 +43,8 @@ function evaluateNewName(staticContext, executionParameters, newNameXdmValue, ta
 	// NewNameExpr is processed as follows:
 	const nameSequence = sequenceFactory.create(newNameXdmValue);
 
-	switch (target.type.kind) {
-		case BaseType.ELEMENT: {
+	switch (target.type) {
+		case ValueType.ELEMENT: {
 			// If $target is an element node, let $QName be the result of evaluating NewNameExpr as though it were the name expression of a computed element constructor (see Section 3.9.3.1 Computed Element Constructors XQ30).
 			const qName = evaluateQNameExpression(
 				staticContext,
@@ -61,7 +60,7 @@ function evaluateNewName(staticContext, executionParameters, newNameXdmValue, ta
 
 			return qName;
 		}
-		case BaseType.ATTRIBUTE: {
+		case ValueType.ATTRIBUTE: {
 			// If $target is an attribute node, let $QName be the result of evaluating NewNameExpr as though it were the name expression of a computed attribute constructor (see Section 3.9.3.2 Computed Attribute Constructors XQ30).
 			const qName = evaluateQNameExpression(
 				staticContext,
@@ -79,7 +78,7 @@ function evaluateNewName(staticContext, executionParameters, newNameXdmValue, ta
 
 			return qName;
 		}
-		case BaseType.PROCESSINGINSTRUCTION: {
+		case ValueType.PROCESSINGINSTRUCTION: {
 			// If $target is a processing instruction node, let $NCName be the result of evaluating NewNameExpr as though it were the name expression of a computed processing instruction constructor (see Section 3.9.3.5 Computed Processing Instruction Constructors XQ30),
 			const nCName = evaluateNCNameExpression(executionParameters, nameSequence).next(
 				IterationHint.NONE

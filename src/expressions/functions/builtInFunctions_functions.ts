@@ -1,8 +1,7 @@
-import { BaseType } from '../dataTypes/BaseType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import FunctionValue from '../dataTypes/FunctionValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { SequenceType } from '../dataTypes/Value';
+import { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import zipSingleton from '../util/zipSingleton';
 import { BuiltinDeclarationType } from './builtInFunctions';
@@ -50,10 +49,7 @@ const fnFunctionName: FunctionDefinitionType = (
 			return sequenceFactory.empty();
 		}
 		return sequenceFactory.singleton(
-			createAtomicValue(functionValue.getQName(), {
-				kind: BaseType.XSQNAME,
-				seqType: SequenceType.EXACTLY_ONE,
-			})
+			createAtomicValue(functionValue.getQName(), ValueType.XSQNAME)
 		);
 	});
 };
@@ -66,10 +62,7 @@ const fnFunctionArity: FunctionDefinitionType = (
 ) => {
 	return zipSingleton([functionItem], ([functionValue]: FunctionValue[]) => {
 		return sequenceFactory.singleton(
-			createAtomicValue(functionValue.getArity(), {
-				kind: BaseType.XSINTEGER,
-				seqType: SequenceType.EXACTLY_ONE,
-			})
+			createAtomicValue(functionValue.getArity(), ValueType.XSINTEGER)
 		);
 	});
 };
@@ -77,48 +70,42 @@ const fnFunctionArity: FunctionDefinitionType = (
 const declarations: BuiltinDeclarationType[] = [
 	{
 		argumentTypes: [
-			{ kind: BaseType.XSQNAME, seqType: SequenceType.EXACTLY_ONE },
-			{ kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE },
+			{ type: ValueType.XSQNAME, mult: SequenceMultiplicity.EXACTLY_ONE },
+			{ type: ValueType.XSINTEGER, mult: SequenceMultiplicity.EXACTLY_ONE },
 		],
 		callFunction: fnFunctionLookup,
 		localName: 'function-lookup',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		returnType: {
-			seqType: SequenceType.ZERO_OR_ONE,
-			kind: BaseType.FUNCTION,
-			returnType: undefined,
-			params: [],
+			mult: SequenceMultiplicity.ZERO_OR_ONE,
+			type: ValueType.FUNCTION,
 		},
 	},
 
 	{
 		argumentTypes: [
 			{
-				kind: BaseType.FUNCTION,
-				returnType: undefined,
-				params: [],
-				seqType: SequenceType.EXACTLY_ONE,
+				type: ValueType.FUNCTION,
+				mult: SequenceMultiplicity.EXACTLY_ONE,
 			},
 		],
 		callFunction: fnFunctionName,
 		localName: 'function-name',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSQNAME, seqType: SequenceType.ZERO_OR_ONE },
+		returnType: { type: ValueType.XSQNAME, mult: SequenceMultiplicity.ZERO_OR_ONE },
 	},
 
 	{
 		argumentTypes: [
 			{
-				kind: BaseType.FUNCTION,
-				returnType: undefined,
-				params: [],
-				seqType: SequenceType.EXACTLY_ONE,
+				type: ValueType.FUNCTION,
+				mult: SequenceMultiplicity.EXACTLY_ONE,
 			},
 		],
 		callFunction: fnFunctionArity,
 		localName: 'function-arity',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE },
+		returnType: { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.EXACTLY_ONE },
 	},
 ];
 

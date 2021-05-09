@@ -1,43 +1,30 @@
 import AtomicValue from './AtomicValue';
-import { BaseType } from './BaseType';
 import createAtomicValue from './createAtomicValue';
 import isSubtypeOf from './isSubtypeOf';
-import { SequenceType } from './Value';
+import Value, { ValueType } from './Value';
 
-export default function promoteToType(value, type: BaseType): AtomicValue {
-	if (isSubtypeOf(value.type.kind, BaseType.XSNUMERIC)) {
-		if (isSubtypeOf(value.type.kind, BaseType.XSFLOAT)) {
-			if (type === BaseType.XSDOUBLE) {
-				return createAtomicValue(value.value, {
-					kind: BaseType.XSDOUBLE,
-					seqType: SequenceType.EXACTLY_ONE,
-				});
+export default function promoteToType(value: Value, type: ValueType): AtomicValue {
+	if (isSubtypeOf(value.type, ValueType.XSNUMERIC)) {
+		if (isSubtypeOf(value.type, ValueType.XSFLOAT)) {
+			if (type === ValueType.XSDOUBLE) {
+				return createAtomicValue(value.value, ValueType.XSDOUBLE);
 			}
 			return null;
 		}
-		if (isSubtypeOf(value.type.kind, BaseType.XSDECIMAL)) {
-			if (type === BaseType.XSFLOAT) {
-				return createAtomicValue(value.value, {
-					kind: BaseType.XSFLOAT,
-					seqType: SequenceType.EXACTLY_ONE,
-				});
+		if (isSubtypeOf(value.type, ValueType.XSDECIMAL)) {
+			if (type === ValueType.XSFLOAT) {
+				return createAtomicValue(value.value, ValueType.XSFLOAT);
 			}
-			if (type === BaseType.XSDOUBLE) {
-				return createAtomicValue(value.value, {
-					kind: BaseType.XSDOUBLE,
-					seqType: SequenceType.EXACTLY_ONE,
-				});
+			if (type === ValueType.XSDOUBLE) {
+				return createAtomicValue(value.value, ValueType.XSDOUBLE);
 			}
 		}
 		return null;
 	}
 
-	if (isSubtypeOf(value.type.kind, BaseType.XSANYURI)) {
-		if (type === BaseType.XSSTRING) {
-			return createAtomicValue(value.value, {
-				kind: BaseType.XSSTRING,
-				seqType: SequenceType.EXACTLY_ONE,
-			});
+	if (isSubtypeOf(value.type, ValueType.XSANYURI)) {
+		if (type === ValueType.XSSTRING) {
+			return createAtomicValue(value.value, ValueType.XSSTRING);
 		}
 	}
 	return null;

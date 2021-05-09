@@ -1,7 +1,7 @@
 import FunctionValue from '../dataTypes/FunctionValue';
 import ISequence from '../dataTypes/ISequence';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { ValueType } from '../dataTypes/Value';
+import { SequenceType } from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
@@ -15,12 +15,12 @@ class InlineFunction extends Expression {
 	private _functionBody: PossiblyUpdatingExpression;
 	private _parameterBindingNames: string[];
 	private _parameterNames: QName[];
-	private _parameterTypes: ValueType[];
-	private _returnType: ValueType;
+	private _parameterTypes: SequenceType[];
+	private _returnType: SequenceType;
 
 	constructor(
-		paramDescriptions: { name: QName; type: ValueType }[],
-		returnType: ValueType,
+		paramDescriptions: { name: QName; type: SequenceType }[],
+		returnType: SequenceType,
 		functionBody: PossiblyUpdatingExpression
 	) {
 		super(

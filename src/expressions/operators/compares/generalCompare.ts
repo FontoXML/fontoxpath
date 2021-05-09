@@ -1,9 +1,8 @@
-import { BaseType } from '../../dataTypes/BaseType';
 import castToType from '../../dataTypes/castToType';
 import ISequence from '../../dataTypes/ISequence';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import { SequenceType } from '../../dataTypes/Value';
+import { SequenceMultiplicity, ValueType } from '../../dataTypes/Value';
 import DynamicContext from '../../DynamicContext';
 import valueCompare from './valueCompare';
 
@@ -46,46 +45,24 @@ export default function generalCompare(
 					// In all other cases, V is cast to the primitive base type of T.
 					let secondValue = allSecondValues[i];
 					if (
-						isSubtypeOf(firstValue.type.kind, BaseType.XSUNTYPEDATOMIC) ||
-						isSubtypeOf(secondValue.type.kind, BaseType.XSUNTYPEDATOMIC)
+						isSubtypeOf(firstValue.type, ValueType.XSUNTYPEDATOMIC) ||
+						isSubtypeOf(secondValue.type, ValueType.XSUNTYPEDATOMIC)
 					) {
-						if (isSubtypeOf(firstValue.type.kind, BaseType.XSNUMERIC)) {
-							secondValue = castToType(secondValue, {
-								kind: BaseType.XSDOUBLE,
-								seqType: SequenceType.EXACTLY_ONE,
-							});
-						} else if (isSubtypeOf(secondValue.type.kind, BaseType.XSNUMERIC)) {
-							firstValue = castToType(firstValue, {
-								kind: BaseType.XSDOUBLE,
-								seqType: SequenceType.EXACTLY_ONE,
-							});
-						} else if (isSubtypeOf(firstValue.type.kind, BaseType.XSDAYTIMEDURATION)) {
-							secondValue = castToType(secondValue, {
-								kind: BaseType.XSDAYTIMEDURATION,
-								seqType: SequenceType.EXACTLY_ONE,
-							});
-						} else if (isSubtypeOf(secondValue.type.kind, BaseType.XSDAYTIMEDURATION)) {
-							firstValue = castToType(firstValue, {
-								kind: BaseType.XSDAYTIMEDURATION,
-								seqType: SequenceType.EXACTLY_ONE,
-							});
-						} else if (
-							isSubtypeOf(firstValue.type.kind, BaseType.XSYEARMONTHDURATION)
-						) {
-							secondValue = castToType(secondValue, {
-								kind: BaseType.XSYEARMONTHDURATION,
-								seqType: SequenceType.EXACTLY_ONE,
-							});
-						} else if (
-							isSubtypeOf(secondValue.type.kind, BaseType.XSYEARMONTHDURATION)
-						) {
-							firstValue = castToType(firstValue, {
-								kind: BaseType.XSYEARMONTHDURATION,
-								seqType: SequenceType.EXACTLY_ONE,
-							});
-						} else if (isSubtypeOf(firstValue.type.kind, BaseType.XSUNTYPEDATOMIC)) {
+						if (isSubtypeOf(firstValue.type, ValueType.XSNUMERIC)) {
+							secondValue = castToType(secondValue, ValueType.XSDOUBLE);
+						} else if (isSubtypeOf(secondValue.type, ValueType.XSNUMERIC)) {
+							firstValue = castToType(firstValue, ValueType.XSDOUBLE);
+						} else if (isSubtypeOf(firstValue.type, ValueType.XSDAYTIMEDURATION)) {
+							secondValue = castToType(secondValue, ValueType.XSDAYTIMEDURATION);
+						} else if (isSubtypeOf(secondValue.type, ValueType.XSDAYTIMEDURATION)) {
+							firstValue = castToType(firstValue, ValueType.XSDAYTIMEDURATION);
+						} else if (isSubtypeOf(firstValue.type, ValueType.XSYEARMONTHDURATION)) {
+							secondValue = castToType(secondValue, ValueType.XSYEARMONTHDURATION);
+						} else if (isSubtypeOf(secondValue.type, ValueType.XSYEARMONTHDURATION)) {
+							firstValue = castToType(firstValue, ValueType.XSYEARMONTHDURATION);
+						} else if (isSubtypeOf(firstValue.type, ValueType.XSUNTYPEDATOMIC)) {
 							firstValue = castToType(firstValue, secondValue.type);
-						} else if (isSubtypeOf(secondValue.type.kind, BaseType.XSUNTYPEDATOMIC)) {
+						} else if (isSubtypeOf(secondValue.type, ValueType.XSUNTYPEDATOMIC)) {
 							secondValue = castToType(secondValue, firstValue.type);
 						}
 					}

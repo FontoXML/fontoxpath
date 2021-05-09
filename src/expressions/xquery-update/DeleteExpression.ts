@@ -1,6 +1,5 @@
-import { BaseType } from '../dataTypes/BaseType';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import Value from '../dataTypes/Value';
+import Value, { ValueType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
@@ -44,9 +43,7 @@ class DeleteExpression extends UpdatingExpression {
 
 					// The result must be a sequence of zero or more nodes; otherwise a type error is raised [err:XUTY0007].
 					if (
-						tv.value.xdmValue.some(
-							(entry) => !isSubtypeOf(entry.type.kind, BaseType.NODE)
-						)
+						tv.value.xdmValue.some((entry) => !isSubtypeOf(entry.type, ValueType.NODE))
 					) {
 						throw errXUTY0007();
 					}

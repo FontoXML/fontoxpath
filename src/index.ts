@@ -15,8 +15,16 @@ import evaluateXPathToNumbers from './evaluateXPathToNumbers';
 import evaluateXPathToString from './evaluateXPathToString';
 import evaluateXPathToStrings from './evaluateXPathToStrings';
 import executePendingUpdateList from './executePendingUpdateList';
-import { BaseType } from './expressions/dataTypes/BaseType';
-import { EllipsisType, SequenceType, ValueType } from './expressions/dataTypes/Value';
+import castToType from './expressions/dataTypes/castToType';
+import createAtomicValue from './expressions/dataTypes/createAtomicValue';
+import {
+	EllipsisType,
+	ParameterType,
+	SequenceMultiplicity,
+	SequenceType,
+	ValueType,
+} from './expressions/dataTypes/Value';
+import DateTime from './expressions/dataTypes/valueTypes/DateTime';
 import { getBucketsForNode } from './getBuckets';
 import INodesFactory from './nodesFactory/INodesFactory';
 import ISimpleNodesFactory from './nodesFactory/ISimpleNodesFactory';
@@ -158,7 +166,7 @@ if (typeof fontoxpathGlobal !== 'undefined') {
  * @public
  */
 type ExternalTypedValueFactory = (
-	type: ValueType
+	type: SequenceType
 ) => (value: UntypedExternalValue, domFacade: IDomFacade) => unknown;
 
 /**
@@ -171,8 +179,9 @@ export const createTypedValueFactory = internalCreateTypedValueFactory as Extern
 export {
 	ValueType,
 	EllipsisType,
-	BaseType,
+	SequenceMultiplicity,
 	SequenceType,
+	ParameterType,
 	Attr,
 	CDATASection,
 	CharacterData,
@@ -192,7 +201,6 @@ export {
 	Logger,
 	NamespaceResolver,
 	Node,
-	SequenceType as OccurrenceIndicator,
 	Options,
 	ProcessingInstruction,
 	Profiler,

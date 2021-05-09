@@ -1,11 +1,10 @@
 import { TinyCommentNode } from '../../domClone/Pointer';
 import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import atomize from '../dataTypes/atomize';
-import { BaseType } from '../dataTypes/BaseType';
 import castToType from '../dataTypes/castToType';
 import createPointerValue from '../dataTypes/createPointerValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { SequenceType } from '../dataTypes/Value';
+import { ValueType } from '../dataTypes/Value';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
 
@@ -35,13 +34,7 @@ class CommentConstructor extends Expression {
 		const sequence = this._expr.evaluateMaybeStatically(_dynamicContext, executionParameters);
 		return atomize(sequence, executionParameters).mapAll((items) => {
 			const content = items
-				.map(
-					(item) =>
-						castToType(item, {
-							kind: BaseType.XSSTRING,
-							seqType: SequenceType.EXACTLY_ONE,
-						}).value
-				)
+				.map((item) => castToType(item, ValueType.XSSTRING).value)
 				.join(' ');
 
 			if (content.indexOf('-->') !== -1) {
