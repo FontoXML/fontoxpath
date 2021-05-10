@@ -367,3 +367,28 @@ export function stringToValueType(input: string): ValueType {
 
 	return type;
 }
+
+export function stringtoSequenceType(input: string): SequenceType {
+	switch (input[input.length - 1]) {
+		case '*':
+			return {
+				type: stringToValueType(input.substr(0, input.length - 1)),
+				mult: SequenceMultiplicity.ZERO_OR_MORE,
+			};
+		case '?':
+			return {
+				type: stringToValueType(input.substr(0, input.length - 1)),
+				mult: SequenceMultiplicity.ZERO_OR_ONE,
+			};
+		case '+':
+			return {
+				type: stringToValueType(input.substr(0, input.length - 1)),
+				mult: SequenceMultiplicity.ONE_OR_MORE,
+			};
+		default:
+			return {
+				type: stringToValueType(input),
+				mult: SequenceMultiplicity.EXACTLY_ONE,
+			};
+	}
+}

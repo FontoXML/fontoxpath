@@ -166,7 +166,7 @@ if (typeof fontoxpathGlobal !== 'undefined') {
  * @public
  */
 type ExternalTypedValueFactory = (
-	type: SequenceType
+	typeName: string
 ) => (value: UntypedExternalValue, domFacade: IDomFacade) => unknown;
 
 /**

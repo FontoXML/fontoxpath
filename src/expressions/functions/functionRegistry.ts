@@ -8,7 +8,7 @@ import {
 } from '../dataTypes/Value';
 
 export type FunctionProperties = {
-	argumentTypes: (ParameterType)[];
+	argumentTypes: ParameterType[];
 	arity: number;
 	callFunction: FunctionSignature<ISequence>;
 	isUpdating: boolean;
@@ -100,9 +100,9 @@ export function getAlternativesAsStringFor(functionName: string): string {
 						functionDeclaration.localName
 					} (${functionDeclaration.argumentTypes
 						.map((argumentType) =>
-							(argumentType == EllipsisType.ELLIPSIS)
+							argumentType === EllipsisType.ELLIPSIS
 								? '...'
-								: sequenceTypeToString(argumentType as SequenceType)
+								: sequenceTypeToString(argumentType)
 						)
 						.join(', ')})"`
 			)
@@ -130,7 +130,7 @@ export function getFunctionByArity(
 
 	const matchingFunction = matchingFunctions.find((functionDeclaration) => {
 		const isElipsis = functionDeclaration.argumentTypes.some(
-			(argument) => (argument == EllipsisType.ELLIPSIS)
+			(argument) => argument === EllipsisType.ELLIPSIS
 		);
 		if (isElipsis) {
 			return functionDeclaration.argumentTypes.length - 1 <= arity;

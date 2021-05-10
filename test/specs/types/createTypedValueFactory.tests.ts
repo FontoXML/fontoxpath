@@ -11,10 +11,7 @@ beforeEach(() => {
 
 describe('createTypedValueFactory', () => {
 	it('creates an xs:integer value', () => {
-		const typedValueFactory = createTypedValueFactory({
-			type: ValueType.XSINTEGER,
-			mult: SequenceMultiplicity.EXACTLY_ONE,
-		});
+		const typedValueFactory = createTypedValueFactory('xs:integer');
 
 		const typedValue = typedValueFactory(123, documentNode);
 
@@ -27,10 +24,7 @@ describe('createTypedValueFactory', () => {
 	});
 
 	it('creates an xs:integer value from a string', () => {
-		const typedValueFactory = createTypedValueFactory({
-			type: ValueType.XSINTEGER,
-			mult: SequenceMultiplicity.EXACTLY_ONE,
-		});
+		const typedValueFactory = createTypedValueFactory('xs:integer');
 
 		const typedValue = typedValueFactory('123', documentNode);
 
@@ -43,10 +37,7 @@ describe('createTypedValueFactory', () => {
 	});
 
 	it('throws when expecting a Date value but reiving a boolean', () => {
-		const typedValueFactory = createTypedValueFactory({
-			type: ValueType.XSDATE,
-			mult: SequenceMultiplicity.EXACTLY_ONE,
-		});
+		const typedValueFactory = createTypedValueFactory('xs:date');
 
 		chai.assert.throws(
 			() => typedValueFactory(true, documentNode),
@@ -55,10 +46,7 @@ describe('createTypedValueFactory', () => {
 	});
 
 	it('throws when expecting a node() value but reiving a boolean', () => {
-		const typedValueFactory = createTypedValueFactory({
-			type: ValueType.NODE,
-			mult: SequenceMultiplicity.EXACTLY_ONE,
-		});
+		const typedValueFactory = createTypedValueFactory('node()');
 
 		chai.assert.throws(
 			() => typedValueFactory(true, documentNode),
@@ -67,10 +55,7 @@ describe('createTypedValueFactory', () => {
 	});
 
 	it('throws when expecting a number value but reiving a boolean', () => {
-		const typedValueFactory = createTypedValueFactory({
-			type: ValueType.XSINTEGER,
-			mult: SequenceMultiplicity.EXACTLY_ONE,
-		});
+		const typedValueFactory = createTypedValueFactory('xs:integer');
 
 		chai.assert.throws(
 			() => typedValueFactory(true, documentNode),
@@ -79,10 +64,7 @@ describe('createTypedValueFactory', () => {
 	});
 
 	it('throws when expecting a number value but reiving a string', () => {
-		const typedValueFactory = createTypedValueFactory({
-			type: ValueType.XSINTEGER,
-			mult: SequenceMultiplicity.EXACTLY_ONE,
-		});
+		const typedValueFactory = createTypedValueFactory('xs:integer');
 
 		chai.assert.throws(
 			() => typedValueFactory('foo', documentNode),
@@ -91,10 +73,7 @@ describe('createTypedValueFactory', () => {
 	});
 
 	it('throws when expecting a number value but reiving null', () => {
-		const typedValueFactory = createTypedValueFactory({
-			type: ValueType.XSINTEGER,
-			mult: SequenceMultiplicity.EXACTLY_ONE,
-		});
+		const typedValueFactory = createTypedValueFactory('xs:integer');
 
 		chai.assert.throws(
 			() => typedValueFactory(null, documentNode),
@@ -103,10 +82,7 @@ describe('createTypedValueFactory', () => {
 	});
 
 	it('throws when expecting an array', () => {
-		const typedValueFactory = createTypedValueFactory({
-			type: ValueType.XSINTEGER,
-			mult: SequenceMultiplicity.ZERO_OR_MORE,
-		});
+		const typedValueFactory = createTypedValueFactory('xs:integer*');
 
 		chai.assert.throws(
 			() => typedValueFactory(123, documentNode),
@@ -115,10 +91,7 @@ describe('createTypedValueFactory', () => {
 	});
 
 	it('throws when trying to convert a Symbol', () => {
-		const typedValueFactory = createTypedValueFactory({
-			type: ValueType.ITEM,
-			mult: SequenceMultiplicity.EXACTLY_ONE,
-		});
+		const typedValueFactory = createTypedValueFactory('item()');
 
 		chai.assert.throws(
 			() => typedValueFactory((Symbol('foo') as unknown) as string, documentNode),

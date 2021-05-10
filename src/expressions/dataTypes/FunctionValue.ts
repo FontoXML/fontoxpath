@@ -15,12 +15,12 @@ export type FunctionSignature<T> = (
 ) => T;
 
 function expandParameterTypeToArity(
-	argumentTypes: (ParameterType)[],
+	argumentTypes: ParameterType[],
 	arity: number
-): (ParameterType)[] {
+): ParameterType[] {
 	let indexOfRest = -1;
 	for (let i = 0; i < argumentTypes.length; i++) {
-		if (argumentTypes[i] == EllipsisType.ELLIPSIS) {
+		if (argumentTypes[i] === EllipsisType.ELLIPSIS) {
 			indexOfRest = i;
 		}
 	}
@@ -38,7 +38,7 @@ function expandParameterTypeToArity(
 class FunctionValue<T = ISequence> extends Value {
 	public readonly isUpdating: boolean;
 	public readonly value: FunctionSignature<T>;
-	private readonly _argumentTypes: (ParameterType)[];
+	private readonly _argumentTypes: ParameterType[];
 	private readonly _arity: number;
 	private readonly _isAnonymous: boolean;
 	private readonly _localName: string;
@@ -55,7 +55,7 @@ class FunctionValue<T = ISequence> extends Value {
 		returnType,
 		value,
 	}: {
-		argumentTypes: (ParameterType)[];
+		argumentTypes: ParameterType[];
 		arity: number;
 		isAnonymous?: boolean;
 		isUpdating?: boolean;
@@ -109,7 +109,7 @@ class FunctionValue<T = ISequence> extends Value {
 			);
 		}
 		const argumentTypes = appliedArguments.reduce(
-			(indices: (ParameterType)[], arg: ISequence | null, index: number) => {
+			(indices: ParameterType[], arg: ISequence | null, index: number) => {
 				if (arg === null) {
 					indices.push(this._argumentTypes[index]);
 				}
