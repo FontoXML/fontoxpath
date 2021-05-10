@@ -1,6 +1,6 @@
 import * as chai from 'chai';
-import { ValueType, SequenceMultiplicity } from 'fontoxpath';
 import sequenceFactory from 'fontoxpath/expressions/dataTypes/sequenceFactory';
+import { ValueType } from 'fontoxpath/expressions/dataTypes/Value';
 import argumentListToString from 'fontoxpath/expressions/functions/argumentListToString';
 
 describe('argumentListToString()', () => {

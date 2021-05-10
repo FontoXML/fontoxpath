@@ -1,7 +1,7 @@
 import * as chai from 'chai';
-import { registerCustomXPathFunction, SequenceMultiplicity, ValueType } from 'fontoxpath';
 import DomFacade from 'fontoxpath/domFacade/DomFacade';
 import { adaptJavaScriptValueToSequence } from 'fontoxpath/expressions/adaptJavaScriptValueToXPathValue';
+import { SequenceMultiplicity, ValueType } from 'fontoxpath/expressions/dataTypes/Value';
 import DateTime from 'fontoxpath/expressions/dataTypes/valueTypes/DateTime';
 import * as slimdom from 'slimdom';
 import { domFacade as adaptingDomFacade } from '../../../src';

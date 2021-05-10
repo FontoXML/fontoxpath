@@ -6,9 +6,8 @@ export default class Value {
 }
 
 /**
- * The ValueTypes;
- * Previously represented by strings.
- * @public
+ * The value types. Every value in XPath is of one of these types
+ * @private
  */
 export const enum ValueType {
 	XSBOOLEAN,
@@ -81,7 +80,7 @@ export const enum ValueType {
  * Zero or one matches to '?';
  * One or more matches to '+';
  * Zero or more matches to '*'
- * @public
+ * @private
  */
 export const enum SequenceMultiplicity {
 	ZERO_OR_ONE = 0,
@@ -92,7 +91,7 @@ export const enum SequenceMultiplicity {
 
 /**
  * A seperate enum for the ellipsis function parameter
- * @public
+ * @private
  */
 export const enum EllipsisType {
 	ELLIPSIS = 4,
@@ -100,13 +99,13 @@ export const enum EllipsisType {
 
 /**
  * The combined parameter type which is either a value type or an ellipsis type.
- * @public
+ * @private
  */
 export type ParameterType = SequenceType | EllipsisType;
 
 /**
  * The type of a sequence, it contains the ValueType and the multiplicity of the sequence.
- * @public
+ * @private
  */
 export type SequenceType = {
 	mult: SequenceMultiplicity;
@@ -356,7 +355,7 @@ export function sequenceTypeToString(input: SequenceType): string {
 
 export function stringToValueType(input: string): ValueType {
 	if (!input.startsWith('xs:') && input.indexOf(':') >= 0) {
-		throw new Error('XPST0081: Invalid prefix for input ' + input);
+		throw new Error(`XPST0081: Invalid prefix for input ${input}`);
 	}
 
 	const type = stringToValueTypeMap[input];
