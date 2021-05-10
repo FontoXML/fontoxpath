@@ -4,6 +4,7 @@ import { falseBoolean, trueBoolean } from '../../dataTypes/createAtomicValue';
 import ISequence from '../../dataTypes/ISequence';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
+import { ValueType } from '../../dataTypes/Value';
 import DynamicContext from '../../DynamicContext';
 import ExecutionParameters from '../../ExecutionParameters';
 import Expression from '../../Expression';
@@ -37,7 +38,7 @@ class AndOperator extends Expression {
 		let contextItemBuckets: string[] | null = null;
 		if (dynamicContext !== null) {
 			const contextItem = dynamicContext.contextItem;
-			if (contextItem !== null && isSubtypeOf(contextItem.type, 'node()')) {
+			if (contextItem !== null && isSubtypeOf(contextItem.type, ValueType.NODE)) {
 				contextItemBuckets = getBucketsForPointer(
 					contextItem.value as NodePointer,
 					executionParameters.domFacade

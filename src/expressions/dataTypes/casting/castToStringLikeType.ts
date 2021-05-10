@@ -4,19 +4,19 @@ import QName from '../valueTypes/QName';
 export default function castToStringLikeType(
 	instanceOf: (t: ValueType) => boolean
 ): (value: any) => { successful: true; value: any } | { error: Error; successful: false } {
-	if (instanceOf('xs:string') || instanceOf('xs:untypedAtomic')) {
+	if (instanceOf(ValueType.XSSTRING) || instanceOf(ValueType.XSUNTYPEDATOMIC)) {
 		return (value) => ({
 			successful: true,
 			value: value + '',
 		});
 	}
-	if (instanceOf('xs:anyURI')) {
+	if (instanceOf(ValueType.XSANYURI)) {
 		return (value) => ({
 			successful: true,
 			value,
 		});
 	}
-	if (instanceOf('xs:QName')) {
+	if (instanceOf(ValueType.XSQNAME)) {
 		return (value: QName) => {
 			return {
 				successful: true,
@@ -24,20 +24,20 @@ export default function castToStringLikeType(
 			};
 		};
 	}
-	if (instanceOf('xs:NOTATION')) {
+	if (instanceOf(ValueType.XSNOTATION)) {
 		return (value) => ({
 			successful: true,
 			value: value.toString(),
 		});
 	}
-	if (instanceOf('xs:numeric')) {
-		if (instanceOf('xs:integer') || instanceOf('xs:decimal')) {
+	if (instanceOf(ValueType.XSNUMERIC)) {
+		if (instanceOf(ValueType.XSINTEGER) || instanceOf(ValueType.XSDECIMAL)) {
 			return (value) => ({
 				successful: true,
 				value: (value + '').replace('e', 'E'),
 			});
 		}
-		if (instanceOf('xs:float') || instanceOf('xs:double')) {
+		if (instanceOf(ValueType.XSFLOAT) || instanceOf(ValueType.XSDOUBLE)) {
 			return (value) => {
 				if (isNaN(value)) {
 					return {
@@ -67,39 +67,39 @@ export default function castToStringLikeType(
 		}
 	}
 	if (
-		instanceOf('xs:dateTime') ||
-		instanceOf('xs:date') ||
-		instanceOf('xs:time') ||
-		instanceOf('xs:gDay') ||
-		instanceOf('xs:gMonth') ||
-		instanceOf('xs:gMonthDay') ||
-		instanceOf('xs:gYear') ||
-		instanceOf('xs:gYearMonth')
+		instanceOf(ValueType.XSDATETIME) ||
+		instanceOf(ValueType.XSDATE) ||
+		instanceOf(ValueType.XSTIME) ||
+		instanceOf(ValueType.XSGDAY) ||
+		instanceOf(ValueType.XSGMONTH) ||
+		instanceOf(ValueType.XSGMONTHDAY) ||
+		instanceOf(ValueType.XSGYEAR) ||
+		instanceOf(ValueType.XSGYEARMONTH)
 	) {
 		return (value) => ({
 			successful: true,
 			value: value.toString(),
 		});
 	}
-	if (instanceOf('xs:yearMonthDuration')) {
+	if (instanceOf(ValueType.XSYEARMONTHDURATION)) {
 		return (value) => ({
 			successful: true,
 			value: value.toString(),
 		});
 	}
-	if (instanceOf('xs:dayTimeDuration')) {
+	if (instanceOf(ValueType.XSDAYTIMEDURATION)) {
 		return (value) => ({
 			successful: true,
 			value: value.toString(),
 		});
 	}
-	if (instanceOf('xs:duration')) {
+	if (instanceOf(ValueType.XSDURATION)) {
 		return (value) => ({
 			successful: true,
 			value: value.toString(),
 		});
 	}
-	if (instanceOf('xs:hexBinary')) {
+	if (instanceOf(ValueType.XSHEXBINARY)) {
 		return (value) => ({
 			successful: true,
 			value: value.toUpperCase(),

@@ -1,3 +1,4 @@
+import { ValueType } from '../Value';
 import decimalComparator from './comparators/decimalComparator';
 
 // fractionDigits
@@ -50,48 +51,45 @@ function validateExplicitTimeZone(value, option) {
 	}
 }
 
+function getFacetByDataType(type: ValueType) {
+	switch (type) {
+		case ValueType.XSSTRING:
+		case ValueType.XSBOOLEAN:
+		case ValueType.XSFLOAT:
+		case ValueType.XSDOUBLE:
+			return {};
+		case ValueType.XSDECIMAL:
+			return {
+				fractionDigits: validateFractionDigits,
+				maxInclusive: createMaxInclusiveFacet(decimalComparator),
+				maxExclusive: createMaxExclusiveFacet(decimalComparator),
+				minInclusive: createMinInclusiveFacet(decimalComparator),
+				minExclusive: createMinExclusiveFacet(decimalComparator),
+			};
+		case ValueType.XSDURATION:
+			return {};
+		case ValueType.XSDATETIME:
+		case ValueType.XSTIME:
+		case ValueType.XSDATE:
+		case ValueType.XSGYEARMONTH:
+		case ValueType.XSGYEAR:
+		case ValueType.XSGMONTHDAY:
+		case ValueType.XSGDAY:
+		case ValueType.XSGMONTH:
+			return { explicitTimezone: validateExplicitTimeZone };
+		case ValueType.XSHEXBINARY:
+		case ValueType.XSBASE64BINARY:
+		case ValueType.XSANYURI:
+		case ValueType.XSQNAME:
+		case ValueType.XSNOTATION:
+			return {};
+		default:
+			return null;
+	}
+}
+
 export default {
-	'xs:string': {},
-	'xs:boolean': {},
-	'xs:float': {},
-	'xs:double': {},
-	'xs:decimal': {
-		fractionDigits: validateFractionDigits,
-		maxInclusive: createMaxInclusiveFacet(decimalComparator),
-		maxExclusive: createMaxExclusiveFacet(decimalComparator),
-		minInclusive: createMinInclusiveFacet(decimalComparator),
-		minExclusive: createMinExclusiveFacet(decimalComparator),
-	},
-	'xs:duration': {},
-	'xs:dateTime': {
-		explicitTimezone: validateExplicitTimeZone,
-	},
-	'xs:time': {
-		explicitTimezone: validateExplicitTimeZone,
-	},
-	'xs:date': {
-		explicitTimezone: validateExplicitTimeZone,
-	},
-	'xs:gYearMonth': {
-		explicitTimezone: validateExplicitTimeZone,
-	},
-	'xs:gYear': {
-		explicitTimezone: validateExplicitTimeZone,
-	},
-	'xs:gMonthDay': {
-		explicitTimezone: validateExplicitTimeZone,
-	},
-	'xs:gDay': {
-		explicitTimezone: validateExplicitTimeZone,
-	},
-	'xs:gMonth': {
-		explicitTimezone: validateExplicitTimeZone,
-	},
-	'xs:hexBinary': {},
-	'xs:base64Binary': {},
-	'xs:anyURI': {},
-	'xs:QName': {},
-	'xs:NOTATION': {},
+	getFacetByDataType,
 	list: {},
 	union: {},
 };

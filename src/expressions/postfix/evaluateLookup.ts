@@ -3,7 +3,7 @@ import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import MapValue from '../dataTypes/MapValue';
 import EmptySequence from '../dataTypes/Sequences/EmptySequence';
-import Value from '../dataTypes/Value';
+import Value, { ValueType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression from '../Expression';
@@ -20,11 +20,11 @@ function performLookup(
 ): ISequence {
 	const sequences = [previousSequence];
 
-	if (isSubtypeOf(contextItem.type, 'array(*)')) {
+	if (isSubtypeOf(contextItem.type, ValueType.ARRAY)) {
 		const arrayItem = contextItem as ArrayValue;
 		if (lookup === '*') {
 			sequences.push(...arrayItem.members.map((member) => member()));
-		} else if (!isSubtypeOf(lookup.type, 'xs:integer')) {
+		} else if (!isSubtypeOf(lookup.type, ValueType.XSINTEGER)) {
 			throw errXPTY0004('The key specifier is not an integer.');
 		} else {
 			const index = lookup.value as number;
@@ -33,7 +33,7 @@ function performLookup(
 			}
 			sequences.push(arrayItem.members[index - 1]());
 		}
-	} else if (isSubtypeOf(contextItem.type, 'map(*)')) {
+	} else if (isSubtypeOf(contextItem.type, ValueType.MAP)) {
 		const mapItem = contextItem as MapValue;
 		if (lookup === '*') {
 			sequences.push(...mapItem.keyValuePairs.map((keyValuePair) => keyValuePair.value()));

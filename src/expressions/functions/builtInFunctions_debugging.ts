@@ -1,9 +1,9 @@
 import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-
+import { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
-
+import { BuiltinDeclarationType } from './builtInFunctions';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
 const fnTrace: FunctionDefinitionType = (
@@ -15,7 +15,7 @@ const fnTrace: FunctionDefinitionType = (
 ) => {
 	return arg.mapAll((allItems) => {
 		const argumentAsStrings = atomize(sequenceFactory.create(allItems), executionParameters)
-			.map((value) => castToType(value, 'xs:string'))
+			.map((value) => castToType(value, ValueType.XSSTRING))
 			.getAllValues();
 
 		let newMessage = '';
@@ -36,21 +36,26 @@ const fnTrace: FunctionDefinitionType = (
 	});
 };
 
+const declarations: BuiltinDeclarationType[] = [
+	{
+		argumentTypes: [{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE }],
+		callFunction: fnTrace,
+		localName: 'trace',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+	},
+	{
+		argumentTypes: [
+			{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+			{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
+		],
+		callFunction: fnTrace,
+		localName: 'trace',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+	},
+];
+
 export default {
-	declarations: [
-		{
-			argumentTypes: ['item()*'],
-			callFunction: fnTrace,
-			localName: 'trace',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'item()*',
-		},
-		{
-			argumentTypes: ['item()*', 'xs:string'],
-			callFunction: fnTrace,
-			localName: 'trace',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'item()*',
-		},
-	],
+	declarations,
 };

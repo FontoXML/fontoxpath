@@ -1,5 +1,5 @@
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import Value from '../dataTypes/Value';
+import Value, { ValueType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Specificity from '../Specificity';
@@ -22,7 +22,7 @@ class KindTest extends TestAbstractExpression {
 		node: Value,
 		executionParameters: ExecutionParameters
 	) {
-		if (!isSubtypeOf(node.type, 'node()')) {
+		if (!isSubtypeOf(node.type, ValueType.NODE)) {
 			return false;
 		}
 		const nodeType = executionParameters.domFacade.getNodeType(node.value);

@@ -2,6 +2,7 @@ import { compareNodePositions } from '../../dataTypes/documentOrderUtils';
 import ISequence from '../../dataTypes/ISequence';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
+import { ValueType } from '../../dataTypes/Value';
 import zipSingleton from '../../util/zipSingleton';
 import arePointersEqual from './arePointersEqual';
 
@@ -24,8 +25,8 @@ export default function nodeCompare(
 				singleton: () => {
 					return zipSingleton([firstSequence, secondSequence], ([first, second]) => {
 						if (
-							!isSubtypeOf(first.type, 'node()') ||
-							!isSubtypeOf(second.type, 'node()')
+							!isSubtypeOf(first.type, ValueType.NODE) ||
+							!isSubtypeOf(second.type, ValueType.NODE)
 						) {
 							throw new Error('XPTY0004: Sequences to compare are not nodes');
 						}
@@ -33,13 +34,13 @@ export default function nodeCompare(
 							case 'isOp':
 								return first === second ||
 									(first.type === second.type &&
-										(first.type === 'attribute()' ||
-											first.type === 'node()' ||
-											first.type === 'element()' ||
-											first.type === 'document-node()' ||
-											first.type === 'text()' ||
-											first.type === 'processing-instruction()' ||
-											first.type === 'comment()') &&
+										(first.type === ValueType.ATTRIBUTE ||
+											first.type === ValueType.NODE ||
+											first.type === ValueType.ELEMENT ||
+											first.type === ValueType.DOCUMENTNODE ||
+											first.type === ValueType.TEXT ||
+											first.type === ValueType.PROCESSINGINSTRUCTION ||
+											first.type === ValueType.COMMENT) &&
 										arePointersEqual(first.value, second.value))
 									? sequenceFactory.singletonTrueSequence()
 									: sequenceFactory.singletonFalseSequence();

@@ -3,7 +3,7 @@ import realizeDom from './domClone/realizeDom';
 import ArrayValue from './expressions/dataTypes/ArrayValue';
 import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
 import MapValue from './expressions/dataTypes/MapValue';
-import Value from './expressions/dataTypes/Value';
+import Value, { ValueType } from './expressions/dataTypes/Value';
 import DateTime from './expressions/dataTypes/valueTypes/DateTime';
 import QName from './expressions/dataTypes/valueTypes/QName';
 import ExecutionParameters from './expressions/ExecutionParameters';
@@ -109,13 +109,13 @@ export default function transformXPathItemToJavascriptObject(
 	value: Value,
 	executionParameters: ExecutionParameters
 ): IIterator<any> {
-	if (isSubtypeOf(value.type, 'map(*)')) {
+	if (isSubtypeOf(value.type, ValueType.MAP)) {
 		return transformMapToObject(value as MapValue, executionParameters);
 	}
-	if (isSubtypeOf(value.type, 'array(*)')) {
+	if (isSubtypeOf(value.type, ValueType.ARRAY)) {
 		return transformArrayToArray(value as ArrayValue, executionParameters);
 	}
-	if (isSubtypeOf(value.type, 'xs:QName')) {
+	if (isSubtypeOf(value.type, ValueType.XSQNAME)) {
 		const qualifiedName = value.value as QName;
 		return {
 			next: () => ready(`Q{${qualifiedName.namespaceURI || ''}}${qualifiedName.localName}`),
@@ -124,26 +124,26 @@ export default function transformXPathItemToJavascriptObject(
 
 	// Make it actual here
 	switch (value.type) {
-		case 'xs:date':
-		case 'xs:time':
-		case 'xs:dateTime':
-		case 'xs:gYearMonth':
-		case 'xs:gYear':
-		case 'xs:gMonthDay':
-		case 'xs:gMonth':
-		case 'xs:gDay': {
+		case ValueType.XSDATE:
+		case ValueType.XSTIME:
+		case ValueType.XSDATETIME:
+		case ValueType.XSGYEARMONTH:
+		case ValueType.XSGYEAR:
+		case ValueType.XSGMONTHDAY:
+		case ValueType.XSGMONTH:
+		case ValueType.XSGDAY: {
 			const temporalValue = value.value as DateTime;
 			return {
 				next: () => ready(temporalValue.toJavaScriptDate()),
 			};
 		}
-		case 'attribute()':
-		case 'node()':
-		case 'element()':
-		case 'document-node()':
-		case 'text()':
-		case 'processing-instruction()':
-		case 'comment()': {
+		case ValueType.ATTRIBUTE:
+		case ValueType.NODE:
+		case ValueType.ELEMENT:
+		case ValueType.DOCUMENTNODE:
+		case ValueType.TEXT:
+		case ValueType.PROCESSINGINSTRUCTION:
+		case ValueType.COMMENT: {
 			const nodeValue = value.value as NodePointer;
 			return {
 				next: () => ready(realizeDom(nodeValue, executionParameters, false)),

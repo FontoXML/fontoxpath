@@ -1,19 +1,30 @@
 import * as chai from 'chai';
+import { SequenceMultiplicity, ValueType } from 'fontoxpath/expressions/dataTypes/Value';
 import functionRegistry from 'fontoxpath/expressions/functions/functionRegistry';
 import registerCustomXPathFunction from 'fontoxpath/registerCustomXPathFunction';
 
 describe('functionRegistry.getFunctionByArity', () => {
 	before(() => {
-		registerCustomXPathFunction('fonto:functionName', [], 'xs:boolean', function () {});
-
 		registerCustomXPathFunction(
 			'fonto:functionName',
-			['xs:boolean'],
-			'xs:boolean',
+			[],
+			{ type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE },
 			function () {}
 		);
 
-		registerCustomXPathFunction('fonto:otherFunctionName', [], 'xs:boolean', function () {});
+		registerCustomXPathFunction(
+			'fonto:functionName',
+			[{ type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE }],
+			{ type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE },
+			function () {}
+		);
+
+		registerCustomXPathFunction(
+			'fonto:otherFunctionName',
+			[],
+			{ type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE },
+			function () {}
+		);
 	});
 
 	it('return null if a custom function cannot be found', () => {

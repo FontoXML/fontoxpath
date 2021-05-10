@@ -1,13 +1,8 @@
 import * as chai from 'chai';
 import * as slimdom from 'slimdom';
 
-import {
-	createTypedValueFactory,
-	evaluateXPath,
-	evaluateXPathToBoolean,
-	evaluateXPathToNodes,
-	evaluateXPathToNumber,
-} from 'fontoxpath';
+import { ValueType, createTypedValueFactory, evaluateXPathToBoolean } from 'fontoxpath';
+import { SequenceMultiplicity } from 'fontoxpath/expressions/dataTypes/Value';
 
 let documentNode;
 beforeEach(() => {
@@ -46,7 +41,7 @@ describe('createTypedValueFactory', () => {
 
 		chai.assert.throws(
 			() => typedValueFactory(true, documentNode),
-			`he JavaScript value true with type boolean is not a valid type to be converted to an XPath xs:date.`
+			`The JavaScript value true with type boolean is not a valid type to be converted to an XPath xs:date.`
 		);
 	});
 
@@ -55,7 +50,7 @@ describe('createTypedValueFactory', () => {
 
 		chai.assert.throws(
 			() => typedValueFactory(true, documentNode),
-			`he JavaScript value true with type boolean is not a valid type to be converted to an XPath node().`
+			`The JavaScript value true with type boolean is not a valid type to be converted to an XPath node().`
 		);
 	});
 

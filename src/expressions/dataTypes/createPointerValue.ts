@@ -1,24 +1,24 @@
 import { NodePointer } from '../../domClone/Pointer';
 import DomFacade from '../../domFacade/DomFacade';
-import Value, { ValueType } from './Value';
+import Value, { SequenceMultiplicity, ValueType } from './Value';
 
 function getNodeSubType(pointer: NodePointer, domFacade: DomFacade): ValueType {
 	switch (domFacade.getNodeType(pointer)) {
 		case 2:
-			return 'attribute()';
+			return ValueType.ATTRIBUTE;
 		case 1:
-			return 'element()';
+			return ValueType.ELEMENT;
 		case 3:
 		case 4: // CDATA nodes are text too
-			return 'text()';
+			return ValueType.TEXT;
 		case 7:
-			return 'processing-instruction()';
+			return ValueType.PROCESSINGINSTRUCTION;
 		case 8:
-			return 'comment()';
+			return ValueType.COMMENT;
 		case 9:
-			return 'document-node()';
+			return ValueType.DOCUMENTNODE;
 		default:
-			return 'node()';
+			return ValueType.NODE;
 	}
 }
 

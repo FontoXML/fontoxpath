@@ -1,7 +1,7 @@
 import * as chai from 'chai';
 import castToType from 'fontoxpath/expressions/dataTypes/castToType';
 import createAtomicValue from 'fontoxpath/expressions/dataTypes/createAtomicValue';
-
+import { ValueType } from 'fontoxpath/expressions/dataTypes/Value';
 import DateTime from 'fontoxpath/expressions/dataTypes/valueTypes/DateTime';
 import DayTimeDuration from 'fontoxpath/expressions/dataTypes/valueTypes/DayTimeDuration';
 import Duration from 'fontoxpath/expressions/dataTypes/valueTypes/Duration';
@@ -47,12 +47,18 @@ describe('castToType()', () => {
 	describe('casting to or from xs:anySimpleType', () => {
 		it('throws when casting to xs:anySimpleType', () => {
 			chai.assert.throw(() =>
-				castToType(createAtomicValue('string', 'xs:string'), 'xs:anySimpleType')
+				castToType(
+					createAtomicValue('string', ValueType.XSSTRING),
+					ValueType.XSANYSIMPLETYPE
+				)
 			);
 		});
 		it('throws when casting from xs:anySimpleType', () => {
 			chai.assert.throw(() =>
-				castToType(createAtomicValue('string', 'xs:anySimpleType'), 'xs:string')
+				castToType(
+					createAtomicValue('string', ValueType.XSANYSIMPLETYPE),
+					ValueType.XSSTRING
+				)
 			);
 		});
 	});
@@ -60,12 +66,18 @@ describe('castToType()', () => {
 	describe('casting to or from xs:anyAtomicType', () => {
 		it('throws when casting to xs:anyAtomicType', () => {
 			chai.assert.throw(() =>
-				castToType(createAtomicValue('string', 'xs:string'), 'xs:anyAtomicType')
+				castToType(
+					createAtomicValue('string', ValueType.XSSTRING),
+					ValueType.XSANYATOMICTYPE
+				)
 			);
 		});
 		it('throws when casting to xs:anyAtomicTpe', () => {
 			chai.assert.throw(() =>
-				castToType(createAtomicValue('string', 'xs:anyAtomicType'), 'xs:string')
+				castToType(
+					createAtomicValue('string', ValueType.XSANYATOMICTYPE),
+					ValueType.XSSTRING
+				)
 			);
 		});
 	});
@@ -73,350 +85,389 @@ describe('castToType()', () => {
 	describe('to xs:untypedAtomic', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('string', 'xs:untypedAtomic'), 'xs:untypedAtomic'),
-				createAtomicValue('string', 'xs:untypedAtomic')
+				castToType(
+					createAtomicValue('string', ValueType.XSUNTYPEDATOMIC),
+					ValueType.XSUNTYPEDATOMIC
+				),
+				createAtomicValue('string', ValueType.XSUNTYPEDATOMIC)
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('string', 'xs:string'), 'xs:untypedAtomic'),
-				createAtomicValue('string', 'xs:untypedAtomic')
+				castToType(
+					createAtomicValue('string', ValueType.XSSTRING),
+					ValueType.XSUNTYPEDATOMIC
+				),
+				createAtomicValue('string', ValueType.XSUNTYPEDATOMIC)
 			));
 		it('from xs:float', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(10.123, 'xs:float'), 'xs:untypedAtomic'),
-				createAtomicValue('10.123', 'xs:untypedAtomic')
+				castToType(createAtomicValue(10.123, ValueType.XSFLOAT), ValueType.XSUNTYPEDATOMIC),
+				createAtomicValue('10.123', ValueType.XSUNTYPEDATOMIC)
 			));
 		it('from xs:double', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(10.123, 'xs:double'), 'xs:untypedAtomic'),
-				createAtomicValue('10.123', 'xs:untypedAtomic')
+				castToType(
+					createAtomicValue(10.123, ValueType.XSDOUBLE),
+					ValueType.XSUNTYPEDATOMIC
+				),
+				createAtomicValue('10.123', ValueType.XSUNTYPEDATOMIC)
 			));
 		it('from xs:decimal', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1010, 'xs:decimal'), 'xs:untypedAtomic'),
-				createAtomicValue('1010', 'xs:untypedAtomic')
+				castToType(createAtomicValue(1010, ValueType.XSDECIMAL), ValueType.XSUNTYPEDATOMIC),
+				createAtomicValue('1010', ValueType.XSUNTYPEDATOMIC)
 			));
 		it('from xs:integer', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1010, 'xs:integer'), 'xs:untypedAtomic'),
-				createAtomicValue('1010', 'xs:untypedAtomic')
+				castToType(createAtomicValue(1010, ValueType.XSINTEGER), ValueType.XSUNTYPEDATOMIC),
+				createAtomicValue('1010', ValueType.XSUNTYPEDATOMIC)
 			));
 		it('from xs:duration', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue(Duration.fromString('P10Y10M10DT10H10M10S'), 'xs:duration'),
-					'xs:untypedAtomic'
+					createAtomicValue(
+						Duration.fromString('P10Y10M10DT10H10M10S'),
+						ValueType.XSDURATION
+					),
+					ValueType.XSUNTYPEDATOMIC
 				),
-				createAtomicValue('P10Y10M10DT10H10M10S', 'xs:untypedAtomic')
+				createAtomicValue('P10Y10M10DT10H10M10S', ValueType.XSUNTYPEDATOMIC)
 			));
 		it('from xs:yearMonthDuration', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue(Duration.fromString('P10Y10M'), 'xs:yearMonthDuration'),
-					'xs:untypedAtomic'
+					createAtomicValue(
+						Duration.fromString('P10Y10M'),
+						ValueType.XSYEARMONTHDURATION
+					),
+					ValueType.XSUNTYPEDATOMIC
 				),
-				createAtomicValue('P10Y10M', 'xs:untypedAtomic')
+				createAtomicValue('P10Y10M', ValueType.XSUNTYPEDATOMIC)
 			));
 		it('from xs:dayTimeDuration', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue(Duration.fromString('P10DT10H10M10S'), 'xs:dayTimeDuration'),
-					'xs:untypedAtomic'
+					createAtomicValue(
+						Duration.fromString('P10DT10H10M10S'),
+						ValueType.XSDAYTIMEDURATION
+					),
+					ValueType.XSUNTYPEDATOMIC
 				),
-				createAtomicValue('P10DT10H10M10S', 'xs:untypedAtomic')
+				createAtomicValue('P10DT10H10M10S', ValueType.XSUNTYPEDATOMIC)
 			));
 		it('from xs:dateTime', () =>
 			chai.assert.deepEqual(
 				castToType(
 					createAtomicValue(
 						DateTime.fromString('2000-10-10T10:10:10+10:30'),
-						'xs:dateTime'
+						ValueType.XSDATETIME
 					),
-					'xs:untypedAtomic'
+					ValueType.XSUNTYPEDATOMIC
 				),
-				createAtomicValue('2000-10-10T10:10:10+10:30', 'xs:untypedAtomic')
+				createAtomicValue('2000-10-10T10:10:10+10:30', ValueType.XSUNTYPEDATOMIC)
 			));
 		it('from xs:time', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue(DateTime.fromString('10:10:10+10:30'), 'xs:time'),
-					'xs:untypedAtomic'
+					createAtomicValue(DateTime.fromString('10:10:10+10:30'), ValueType.XSTIME),
+					ValueType.XSUNTYPEDATOMIC
 				),
-				createAtomicValue('10:10:10+10:30', 'xs:untypedAtomic')
+				createAtomicValue('10:10:10+10:30', ValueType.XSUNTYPEDATOMIC)
 			));
 		it('from xs:date', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue(DateTime.fromString('2000-10-10+10:30'), 'xs:date'),
-					'xs:untypedAtomic'
+					createAtomicValue(DateTime.fromString('2000-10-10+10:30'), ValueType.XSDATE),
+					ValueType.XSUNTYPEDATOMIC
 				),
-				createAtomicValue('2000-10-10+10:30', 'xs:untypedAtomic')
+				createAtomicValue('2000-10-10+10:30', ValueType.XSUNTYPEDATOMIC)
 			));
 		it('from xs:gYearMonth', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue(DateTime.fromString('2000-10+10:30'), 'xs:gYearMonth'),
-					'xs:untypedAtomic'
+					createAtomicValue(DateTime.fromString('2000-10+10:30'), ValueType.XSGYEARMONTH),
+					ValueType.XSUNTYPEDATOMIC
 				),
-				createAtomicValue('2000-10+10:30', 'xs:untypedAtomic')
+				createAtomicValue('2000-10+10:30', ValueType.XSUNTYPEDATOMIC)
 			));
 		it('from xs:gYear', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue(DateTime.fromString('2000+10:30'), 'xs:gYear'),
-					'xs:untypedAtomic'
+					createAtomicValue(DateTime.fromString('2000+10:30'), ValueType.XSGYEAR),
+					ValueType.XSUNTYPEDATOMIC
 				),
-				createAtomicValue('2000+10:30', 'xs:untypedAtomic')
+				createAtomicValue('2000+10:30', ValueType.XSUNTYPEDATOMIC)
 			));
 		it('from xs:gMonthDay', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue(DateTime.fromString('--10-10+10:30'), 'xs:gMonthDay'),
-					'xs:untypedAtomic'
+					createAtomicValue(DateTime.fromString('--10-10+10:30'), ValueType.XSGMONTHDAY),
+					ValueType.XSUNTYPEDATOMIC
 				),
-				createAtomicValue('--10-10+10:30', 'xs:untypedAtomic')
+				createAtomicValue('--10-10+10:30', ValueType.XSUNTYPEDATOMIC)
 			));
 		it('from xs:gDay', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue(DateTime.fromString('---10+10:30'), 'xs:gDay'),
-					'xs:untypedAtomic'
+					createAtomicValue(DateTime.fromString('---10+10:30'), ValueType.XSGDAY),
+					ValueType.XSUNTYPEDATOMIC
 				),
-				createAtomicValue('---10+10:30', 'xs:untypedAtomic')
+				createAtomicValue('---10+10:30', ValueType.XSUNTYPEDATOMIC)
 			));
 		it('from xs:gMonth', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue(DateTime.fromString('--10+10:30'), 'xs:gMonth'),
-					'xs:untypedAtomic'
+					createAtomicValue(DateTime.fromString('--10+10:30'), ValueType.XSGMONTH),
+					ValueType.XSUNTYPEDATOMIC
 				),
-				createAtomicValue('--10+10:30', 'xs:untypedAtomic')
+				createAtomicValue('--10+10:30', ValueType.XSUNTYPEDATOMIC)
 			));
 		it('from xs:boolean', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(true, 'xs:boolean'), 'xs:untypedAtomic'),
-				createAtomicValue('true', 'xs:untypedAtomic')
+				castToType(createAtomicValue(true, ValueType.XSBOOLEAN), ValueType.XSUNTYPEDATOMIC),
+				createAtomicValue('true', ValueType.XSUNTYPEDATOMIC)
 			));
 		it('from xs:base64Binary', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', 'xs:base64Binary'),
-					'xs:untypedAtomic'
+					createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', ValueType.XSBASE64BINARY),
+					ValueType.XSUNTYPEDATOMIC
 				),
-				createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', 'xs:untypedAtomic')
+				createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', ValueType.XSUNTYPEDATOMIC)
 			));
 		it('from xs:hexBinary', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue('21FE3A44123C21FE3A44123C', 'xs:hexBinary'),
-					'xs:untypedAtomic'
+					createAtomicValue('21FE3A44123C21FE3A44123C', ValueType.XSHEXBINARY),
+					ValueType.XSUNTYPEDATOMIC
 				),
-				createAtomicValue('21FE3A44123C21FE3A44123C', 'xs:untypedAtomic')
+				createAtomicValue('21FE3A44123C21FE3A44123C', ValueType.XSUNTYPEDATOMIC)
 			));
 		it('from xs:anyURI', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('string', 'xs:anyURI'), 'xs:untypedAtomic'),
-				createAtomicValue('string', 'xs:untypedAtomic')
+				castToType(
+					createAtomicValue('string', ValueType.XSANYURI),
+					ValueType.XSUNTYPEDATOMIC
+				),
+				createAtomicValue('string', ValueType.XSUNTYPEDATOMIC)
 			));
 		it('from xs:NOTATION', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('string', 'xs:NOTATION'), 'xs:untypedAtomic'),
-				createAtomicValue('string', 'xs:untypedAtomic')
+				castToType(
+					createAtomicValue('string', ValueType.XSNOTATION),
+					ValueType.XSUNTYPEDATOMIC
+				),
+				createAtomicValue('string', ValueType.XSUNTYPEDATOMIC)
 			));
 	});
 
 	describe('to xs:string', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('string', 'xs:untypedAtomic'), 'xs:string'),
-				createAtomicValue('string', 'xs:string')
+				castToType(
+					createAtomicValue('string', ValueType.XSUNTYPEDATOMIC),
+					ValueType.XSSTRING
+				),
+				createAtomicValue('string', ValueType.XSSTRING)
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('string', 'xs:string'), 'xs:string'),
-				createAtomicValue('string', 'xs:string')
+				castToType(createAtomicValue('string', ValueType.XSSTRING), ValueType.XSSTRING),
+				createAtomicValue('string', ValueType.XSSTRING)
 			));
 		it('from xs:float', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(10.123, 'xs:float'), 'xs:string'),
-				createAtomicValue('10.123', 'xs:string')
+				castToType(createAtomicValue(10.123, ValueType.XSFLOAT), ValueType.XSSTRING),
+				createAtomicValue('10.123', ValueType.XSSTRING)
 			));
 		it('from xs:double', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(10.123, 'xs:double'), 'xs:string'),
-				createAtomicValue('10.123', 'xs:string')
+				castToType(createAtomicValue(10.123, ValueType.XSDOUBLE), ValueType.XSSTRING),
+				createAtomicValue('10.123', ValueType.XSSTRING)
 			));
 		it('from xs:decimal', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1010, 'xs:decimal'), 'xs:string'),
-				createAtomicValue('1010', 'xs:string')
+				castToType(createAtomicValue(1010, ValueType.XSDECIMAL), ValueType.XSSTRING),
+				createAtomicValue('1010', ValueType.XSSTRING)
 			));
 		it('from xs:integer', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1010, 'xs:integer'), 'xs:string'),
-				createAtomicValue('1010', 'xs:string')
+				castToType(createAtomicValue(1010, ValueType.XSINTEGER), ValueType.XSSTRING),
+				createAtomicValue('1010', ValueType.XSSTRING)
 			));
 		it('from xs:duration', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue(Duration.fromString('P10Y10M10DT10H10M10S'), 'xs:duration'),
-					'xs:string'
+					createAtomicValue(
+						Duration.fromString('P10Y10M10DT10H10M10S'),
+						ValueType.XSDURATION
+					),
+					ValueType.XSSTRING
 				),
-				createAtomicValue('P10Y10M10DT10H10M10S', 'xs:string')
+				createAtomicValue('P10Y10M10DT10H10M10S', ValueType.XSSTRING)
 			));
 		it('from xs:yearMonthDuration', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue(Duration.fromString('P10Y10M'), 'xs:yearMonthDuration'),
-					'xs:string'
+					createAtomicValue(
+						Duration.fromString('P10Y10M'),
+						ValueType.XSYEARMONTHDURATION
+					),
+					ValueType.XSSTRING
 				),
-				createAtomicValue('P10Y10M', 'xs:string')
+				createAtomicValue('P10Y10M', ValueType.XSSTRING)
 			));
 		it('from xs:dayTimeDuration', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue(Duration.fromString('P10DT10H10M10S'), 'xs:dayTimeDuration'),
-					'xs:string'
+					createAtomicValue(
+						Duration.fromString('P10DT10H10M10S'),
+						ValueType.XSDAYTIMEDURATION
+					),
+					ValueType.XSSTRING
 				),
-				createAtomicValue('P10DT10H10M10S', 'xs:string')
+				createAtomicValue('P10DT10H10M10S', ValueType.XSSTRING)
 			));
 		it('from xs:dateTime', () =>
 			chai.assert.deepEqual(
 				castToType(
 					createAtomicValue(
 						DateTime.fromString('2000-10-10T10:10:10+10:30'),
-						'xs:dateTime'
+						ValueType.XSDATETIME
 					),
-					'xs:string'
+					ValueType.XSSTRING
 				),
-				createAtomicValue('2000-10-10T10:10:10+10:30', 'xs:string')
+				createAtomicValue('2000-10-10T10:10:10+10:30', ValueType.XSSTRING)
 			));
 		it('from xs:time', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue(DateTime.fromString('10:10:10+10:30'), 'xs:time'),
-					'xs:string'
+					createAtomicValue(DateTime.fromString('10:10:10+10:30'), ValueType.XSTIME),
+					ValueType.XSSTRING
 				),
-				createAtomicValue('10:10:10+10:30', 'xs:string')
+				createAtomicValue('10:10:10+10:30', ValueType.XSSTRING)
 			));
 		it('from xs:date', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue(DateTime.fromString('2000-10-10+10:30'), 'xs:date'),
-					'xs:string'
+					createAtomicValue(DateTime.fromString('2000-10-10+10:30'), ValueType.XSDATE),
+					ValueType.XSSTRING
 				),
-				createAtomicValue('2000-10-10+10:30', 'xs:string')
+				createAtomicValue('2000-10-10+10:30', ValueType.XSSTRING)
 			));
 		it('from xs:gYearMonth', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue(DateTime.fromString('2000-10+10:30'), 'xs:gYearMonth'),
-					'xs:string'
+					createAtomicValue(DateTime.fromString('2000-10+10:30'), ValueType.XSGYEARMONTH),
+					ValueType.XSSTRING
 				),
-				createAtomicValue('2000-10+10:30', 'xs:string')
+				createAtomicValue('2000-10+10:30', ValueType.XSSTRING)
 			));
 		it('from xs:gYear', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue(DateTime.fromString('2000+10:30'), 'xs:gYear'),
-					'xs:string'
+					createAtomicValue(DateTime.fromString('2000+10:30'), ValueType.XSGYEAR),
+					ValueType.XSSTRING
 				),
-				createAtomicValue('2000+10:30', 'xs:string')
+				createAtomicValue('2000+10:30', ValueType.XSSTRING)
 			));
 		it('from xs:gMonthDay', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue(DateTime.fromString('--10-10+10:30'), 'xs:gMonthDay'),
-					'xs:string'
+					createAtomicValue(DateTime.fromString('--10-10+10:30'), ValueType.XSGMONTHDAY),
+					ValueType.XSSTRING
 				),
-				createAtomicValue('--10-10+10:30', 'xs:string')
+				createAtomicValue('--10-10+10:30', ValueType.XSSTRING)
 			));
 		it('from xs:gDay', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue(DateTime.fromString('---10+10:30'), 'xs:gDay'),
-					'xs:string'
+					createAtomicValue(DateTime.fromString('---10+10:30'), ValueType.XSGDAY),
+					ValueType.XSSTRING
 				),
-				createAtomicValue('---10+10:30', 'xs:string')
+				createAtomicValue('---10+10:30', ValueType.XSSTRING)
 			));
 		it('from xs:gMonth', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue(DateTime.fromString('--10+10:30'), 'xs:gMonth'),
-					'xs:string'
+					createAtomicValue(DateTime.fromString('--10+10:30'), ValueType.XSGMONTH),
+					ValueType.XSSTRING
 				),
-				createAtomicValue('--10+10:30', 'xs:string')
+				createAtomicValue('--10+10:30', ValueType.XSSTRING)
 			));
 		it('from xs:boolean', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(true, 'xs:boolean'), 'xs:string'),
-				createAtomicValue('true', 'xs:string')
+				castToType(createAtomicValue(true, ValueType.XSBOOLEAN), ValueType.XSSTRING),
+				createAtomicValue('true', ValueType.XSSTRING)
 			));
 		it('from xs:base64Binary', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', 'xs:base64Binary'),
-					'xs:string'
+					createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', ValueType.XSBASE64BINARY),
+					ValueType.XSSTRING
 				),
-				createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', 'xs:string')
+				createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', ValueType.XSSTRING)
 			));
 		it('from xs:hexBinary', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue('21FE3A44123C21FE3A44123C', 'xs:hexBinary'),
-					'xs:string'
+					createAtomicValue('21FE3A44123C21FE3A44123C', ValueType.XSHEXBINARY),
+					ValueType.XSSTRING
 				),
-				createAtomicValue('21FE3A44123C21FE3A44123C', 'xs:string')
+				createAtomicValue('21FE3A44123C21FE3A44123C', ValueType.XSSTRING)
 			));
 		it('from xs:anyURI', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('string', 'xs:anyURI'), 'xs:string'),
-				createAtomicValue('string', 'xs:string')
+				castToType(createAtomicValue('string', ValueType.XSANYURI), ValueType.XSSTRING),
+				createAtomicValue('string', ValueType.XSSTRING)
 			));
 		it('from xs:NOTATION', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('string', 'xs:NOTATION'), 'xs:string'),
-				createAtomicValue('string', 'xs:string')
+				castToType(createAtomicValue('string', ValueType.XSNOTATION), ValueType.XSSTRING),
+				createAtomicValue('string', ValueType.XSSTRING)
 			));
 	});
 
 	describe('to xs:float', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('10.10', 'xs:untypedAtomic'), 'xs:float'),
-				createAtomicValue(10.1, 'xs:float')
+				castToType(
+					createAtomicValue('10.10', ValueType.XSUNTYPEDATOMIC),
+					ValueType.XSFLOAT
+				),
+				createAtomicValue(10.1, ValueType.XSFLOAT)
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('10.10', 'xs:string'), 'xs:float'),
-				createAtomicValue(10.1, 'xs:float')
+				castToType(createAtomicValue('10.10', ValueType.XSSTRING), ValueType.XSFLOAT),
+				createAtomicValue(10.1, ValueType.XSFLOAT)
 			));
 		it('from xs:float', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(10.123, 'xs:float'), 'xs:float'),
-				createAtomicValue(10.123, 'xs:float')
+				castToType(createAtomicValue(10.123, ValueType.XSFLOAT), ValueType.XSFLOAT),
+				createAtomicValue(10.123, ValueType.XSFLOAT)
 			));
 		it('from xs:double', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(10.123, 'xs:double'), 'xs:float'),
-				createAtomicValue(10.123, 'xs:float')
+				castToType(createAtomicValue(10.123, ValueType.XSDOUBLE), ValueType.XSFLOAT),
+				createAtomicValue(10.123, ValueType.XSFLOAT)
 			));
 		it('from xs:decimal', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1010, 'xs:decimal'), 'xs:float'),
-				createAtomicValue(1010, 'xs:float')
+				castToType(createAtomicValue(1010, ValueType.XSDECIMAL), ValueType.XSFLOAT),
+				createAtomicValue(1010, ValueType.XSFLOAT)
 			));
 		it('from xs:integer', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1010, 'xs:integer'), 'xs:float'),
-				createAtomicValue(1010, 'xs:float')
+				castToType(createAtomicValue(1010, ValueType.XSINTEGER), ValueType.XSFLOAT),
+				createAtomicValue(1010, ValueType.XSFLOAT)
 			));
 		it('from xs:duration (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:duration'),
-						'xs:float'
+						createAtomicValue(Duration.fromString('P10Y10M'), ValueType.XSDURATION),
+						ValueType.XSFLOAT
 					),
 				'XPTY0004'
 			));
@@ -424,8 +475,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:yearMonthDuration'),
-						'xs:float'
+						createAtomicValue(
+							Duration.fromString('P10Y10M'),
+							ValueType.XSYEARMONTHDURATION
+						),
+						ValueType.XSFLOAT
 					),
 				'XPTY0004'
 			));
@@ -433,8 +487,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:dayTimeDuration'),
-						'xs:float'
+						createAtomicValue(
+							Duration.fromString('P10Y10M'),
+							ValueType.XSDAYTIMEDURATION
+						),
+						ValueType.XSFLOAT
 					),
 				'XPTY0004'
 			));
@@ -444,9 +501,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(
 							DateTime.fromString('2000-10-10T10:10:10+10:30'),
-							'xs:dateTime'
+							ValueType.XSDATETIME
 						),
-						'xs:float'
+						ValueType.XSFLOAT
 					),
 				'XPTY0004'
 			));
@@ -454,8 +511,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('10:10:10+10:30'), 'xs:time'),
-						'xs:float'
+						createAtomicValue(DateTime.fromString('10:10:10+10:30'), ValueType.XSTIME),
+						ValueType.XSFLOAT
 					),
 				'XPTY0004'
 			));
@@ -463,8 +520,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000-10-10+10:30'), 'xs:date'),
-						'xs:float'
+						createAtomicValue(
+							DateTime.fromString('2000-10-10+10:30'),
+							ValueType.XSDATE
+						),
+						ValueType.XSFLOAT
 					),
 				'XPTY0004'
 			));
@@ -472,8 +532,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000-10+10:30'), 'xs:gYearMonth'),
-						'xs:float'
+						createAtomicValue(
+							DateTime.fromString('2000-10+10:30'),
+							ValueType.XSGYEARMONTH
+						),
+						ValueType.XSFLOAT
 					),
 				'XPTY0004'
 			));
@@ -481,8 +544,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000+10:30'), 'xs:gYear'),
-						'xs:float'
+						createAtomicValue(DateTime.fromString('2000+10:30'), ValueType.XSGYEAR),
+						ValueType.XSFLOAT
 					),
 				'XPTY0004'
 			));
@@ -490,8 +553,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10-10+10:30'), 'xs:gMonthDay'),
-						'xs:float'
+						createAtomicValue(
+							DateTime.fromString('--10-10+10:30'),
+							ValueType.XSGMONTHDAY
+						),
+						ValueType.XSFLOAT
 					),
 				'XPTY0004'
 			));
@@ -499,8 +565,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('---10+10:30'), 'xs:gDay'),
-						'xs:float'
+						createAtomicValue(DateTime.fromString('---10+10:30'), ValueType.XSGDAY),
+						ValueType.XSFLOAT
 					),
 				'XPTY0004'
 			));
@@ -508,22 +574,22 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10+10:30'), 'xs:gMonth'),
-						'xs:float'
+						createAtomicValue(DateTime.fromString('--10+10:30'), ValueType.XSGMONTH),
+						ValueType.XSFLOAT
 					),
 				'XPTY0004'
 			));
 		it('from xs:boolean', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(true, 'xs:boolean'), 'xs:float'),
-				createAtomicValue(1, 'xs:float')
+				castToType(createAtomicValue(true, ValueType.XSBOOLEAN), ValueType.XSFLOAT),
+				createAtomicValue(1, ValueType.XSFLOAT)
 			));
 		it('from xs:base64Binary (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', 'xs:base64Binary'),
-						'xs:float'
+						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', ValueType.XSBASE64BINARY),
+						ValueType.XSFLOAT
 					),
 				'XPTY0004'
 			));
@@ -531,19 +597,24 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue('21FE3A44123C21FE3A44123C', 'xs:hexBinary'),
-						'xs:float'
+						createAtomicValue('21FE3A44123C21FE3A44123C', ValueType.XSHEXBINARY),
+						ValueType.XSFLOAT
 					),
 				'XPTY0004'
 			));
 		it('from xs:anyURI (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:anyURI'), 'xs:float'),
+				() =>
+					castToType(createAtomicValue('string', ValueType.XSANYURI), ValueType.XSFLOAT),
 				'XPTY0004'
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:NOTATION'), 'xs:float'),
+				() =>
+					castToType(
+						createAtomicValue('string', ValueType.XSNOTATION),
+						ValueType.XSFLOAT
+					),
 				'XPTY0004'
 			));
 	});
@@ -551,40 +622,43 @@ describe('castToType()', () => {
 	describe('to xs:double', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('10.10', 'xs:untypedAtomic'), 'xs:double'),
-				createAtomicValue(10.1, 'xs:double')
+				castToType(
+					createAtomicValue('10.10', ValueType.XSUNTYPEDATOMIC),
+					ValueType.XSDOUBLE
+				),
+				createAtomicValue(10.1, ValueType.XSDOUBLE)
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('10.10', 'xs:string'), 'xs:double'),
-				createAtomicValue(10.1, 'xs:double')
+				castToType(createAtomicValue('10.10', ValueType.XSSTRING), ValueType.XSDOUBLE),
+				createAtomicValue(10.1, ValueType.XSDOUBLE)
 			));
 		it('from xs:float', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(10.123, 'xs:float'), 'xs:double'),
-				createAtomicValue(10.123, 'xs:double')
+				castToType(createAtomicValue(10.123, ValueType.XSFLOAT), ValueType.XSDOUBLE),
+				createAtomicValue(10.123, ValueType.XSDOUBLE)
 			));
 		it('from xs:double', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(10.123, 'xs:double'), 'xs:double'),
-				createAtomicValue(10.123, 'xs:double')
+				castToType(createAtomicValue(10.123, ValueType.XSDOUBLE), ValueType.XSDOUBLE),
+				createAtomicValue(10.123, ValueType.XSDOUBLE)
 			));
 		it('from xs:decimal', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1010, 'xs:decimal'), 'xs:double'),
-				createAtomicValue(1010, 'xs:double')
+				castToType(createAtomicValue(1010, ValueType.XSDECIMAL), ValueType.XSDOUBLE),
+				createAtomicValue(1010, ValueType.XSDOUBLE)
 			));
 		it('from xs:integer', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1010, 'xs:integer'), 'xs:double'),
-				createAtomicValue(1010, 'xs:double')
+				castToType(createAtomicValue(1010, ValueType.XSINTEGER), ValueType.XSDOUBLE),
+				createAtomicValue(1010, ValueType.XSDOUBLE)
 			));
 		it('from xs:duration (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:duration'),
-						'xs:double'
+						createAtomicValue(Duration.fromString('P10Y10M'), ValueType.XSDURATION),
+						ValueType.XSDOUBLE
 					),
 				'XPTY0004'
 			));
@@ -592,8 +666,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:yearMonthDuration'),
-						'xs:double'
+						createAtomicValue(
+							Duration.fromString('P10Y10M'),
+							ValueType.XSYEARMONTHDURATION
+						),
+						ValueType.XSDOUBLE
 					),
 				'XPTY0004'
 			));
@@ -601,8 +678,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:dayTimeDuration'),
-						'xs:double'
+						createAtomicValue(
+							Duration.fromString('P10Y10M'),
+							ValueType.XSDAYTIMEDURATION
+						),
+						ValueType.XSDOUBLE
 					),
 				'XPTY0004'
 			));
@@ -612,9 +692,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(
 							DateTime.fromString('2000-10-10T10:10:10+10:30'),
-							'xs:dateTime'
+							ValueType.XSDATETIME
 						),
-						'xs:double'
+						ValueType.XSDOUBLE
 					),
 				'XPTY0004'
 			));
@@ -622,8 +702,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('10:10:10+10:30'), 'xs:time'),
-						'xs:double'
+						createAtomicValue(DateTime.fromString('10:10:10+10:30'), ValueType.XSTIME),
+						ValueType.XSDOUBLE
 					),
 				'XPTY0004'
 			));
@@ -631,8 +711,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000-10-10+10:30'), 'xs:date'),
-						'xs:double'
+						createAtomicValue(
+							DateTime.fromString('2000-10-10+10:30'),
+							ValueType.XSDATE
+						),
+						ValueType.XSDOUBLE
 					),
 				'XPTY0004'
 			));
@@ -640,8 +723,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000-10+10:30'), 'xs:gYearMonth'),
-						'xs:double'
+						createAtomicValue(
+							DateTime.fromString('2000-10+10:30'),
+							ValueType.XSGYEARMONTH
+						),
+						ValueType.XSDOUBLE
 					),
 				'XPTY0004'
 			));
@@ -649,8 +735,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000+10:30'), 'xs:gYear'),
-						'xs:double'
+						createAtomicValue(DateTime.fromString('2000+10:30'), ValueType.XSGYEAR),
+						ValueType.XSDOUBLE
 					),
 				'XPTY0004'
 			));
@@ -658,8 +744,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10-10+10:30'), 'xs:gMonthDay'),
-						'xs:double'
+						createAtomicValue(
+							DateTime.fromString('--10-10+10:30'),
+							ValueType.XSGMONTHDAY
+						),
+						ValueType.XSDOUBLE
 					),
 				'XPTY0004'
 			));
@@ -667,8 +756,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('---10+10:30'), 'xs:gDay'),
-						'xs:double'
+						createAtomicValue(DateTime.fromString('---10+10:30'), ValueType.XSGDAY),
+						ValueType.XSDOUBLE
 					),
 				'XPTY0004'
 			));
@@ -676,22 +765,22 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10+10:30'), 'xs:gMonth'),
-						'xs:double'
+						createAtomicValue(DateTime.fromString('--10+10:30'), ValueType.XSGMONTH),
+						ValueType.XSDOUBLE
 					),
 				'XPTY0004'
 			));
 		it('from xs:boolean', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(true, 'xs:boolean'), 'xs:double'),
-				createAtomicValue(1, 'xs:double')
+				castToType(createAtomicValue(true, ValueType.XSBOOLEAN), ValueType.XSDOUBLE),
+				createAtomicValue(1, ValueType.XSDOUBLE)
 			));
 		it('from xs:base64Binary (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', 'xs:base64Binary'),
-						'xs:double'
+						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', ValueType.XSBASE64BINARY),
+						ValueType.XSDOUBLE
 					),
 				'XPTY0004'
 			));
@@ -699,19 +788,24 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue('21FE3A44123C21FE3A44123C', 'xs:hexBinary'),
-						'xs:double'
+						createAtomicValue('21FE3A44123C21FE3A44123C', ValueType.XSHEXBINARY),
+						ValueType.XSDOUBLE
 					),
 				'XPTY0004'
 			));
 		it('from xs:anyURI (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:anyURI'), 'xs:double'),
+				() =>
+					castToType(createAtomicValue('string', ValueType.XSANYURI), ValueType.XSDOUBLE),
 				'XPTY0004'
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:NOTATION'), 'xs:double'),
+				() =>
+					castToType(
+						createAtomicValue('string', ValueType.XSNOTATION),
+						ValueType.XSDOUBLE
+					),
 				'XPTY0004'
 			));
 	});
@@ -719,40 +813,43 @@ describe('castToType()', () => {
 	describe('to xs:double', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('10.10', 'xs:untypedAtomic'), 'xs:double'),
-				createAtomicValue(10.1, 'xs:double')
+				castToType(
+					createAtomicValue('10.10', ValueType.XSUNTYPEDATOMIC),
+					ValueType.XSDOUBLE
+				),
+				createAtomicValue(10.1, ValueType.XSDOUBLE)
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('10.10', 'xs:string'), 'xs:double'),
-				createAtomicValue(10.1, 'xs:double')
+				castToType(createAtomicValue('10.10', ValueType.XSSTRING), ValueType.XSDOUBLE),
+				createAtomicValue(10.1, ValueType.XSDOUBLE)
 			));
 		it('from xs:float', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(10.123, 'xs:float'), 'xs:double'),
-				createAtomicValue(10.123, 'xs:double')
+				castToType(createAtomicValue(10.123, ValueType.XSFLOAT), ValueType.XSDOUBLE),
+				createAtomicValue(10.123, ValueType.XSDOUBLE)
 			));
 		it('from xs:double', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(10.123, 'xs:double'), 'xs:double'),
-				createAtomicValue(10.123, 'xs:double')
+				castToType(createAtomicValue(10.123, ValueType.XSDOUBLE), ValueType.XSDOUBLE),
+				createAtomicValue(10.123, ValueType.XSDOUBLE)
 			));
 		it('from xs:decimal', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1010, 'xs:decimal'), 'xs:double'),
-				createAtomicValue(1010, 'xs:double')
+				castToType(createAtomicValue(1010, ValueType.XSDECIMAL), ValueType.XSDOUBLE),
+				createAtomicValue(1010, ValueType.XSDOUBLE)
 			));
 		it('from xs:integer', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1010, 'xs:integer'), 'xs:double'),
-				createAtomicValue(1010, 'xs:double')
+				castToType(createAtomicValue(1010, ValueType.XSINTEGER), ValueType.XSDOUBLE),
+				createAtomicValue(1010, ValueType.XSDOUBLE)
 			));
 		it('from xs:duration (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:duration'),
-						'xs:double'
+						createAtomicValue(Duration.fromString('P10Y10M'), ValueType.XSDURATION),
+						ValueType.XSDOUBLE
 					),
 				'XPTY0004'
 			));
@@ -760,8 +857,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:yearMonthDuration'),
-						'xs:double'
+						createAtomicValue(
+							Duration.fromString('P10Y10M'),
+							ValueType.XSYEARMONTHDURATION
+						),
+						ValueType.XSDOUBLE
 					),
 				'XPTY0004'
 			));
@@ -769,8 +869,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:dayTimeDuration'),
-						'xs:double'
+						createAtomicValue(
+							Duration.fromString('P10Y10M'),
+							ValueType.XSDAYTIMEDURATION
+						),
+						ValueType.XSDOUBLE
 					),
 				'XPTY0004'
 			));
@@ -780,9 +883,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(
 							DateTime.fromString('2000-10-10T10:10:10+10:30'),
-							'xs:dateTime'
+							ValueType.XSDATETIME
 						),
-						'xs:double'
+						ValueType.XSDOUBLE
 					),
 				'XPTY0004'
 			));
@@ -790,8 +893,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('10:10:10+10:30'), 'xs:time'),
-						'xs:double'
+						createAtomicValue(DateTime.fromString('10:10:10+10:30'), ValueType.XSTIME),
+						ValueType.XSDOUBLE
 					),
 				'XPTY0004'
 			));
@@ -799,8 +902,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000-10-10+10:30'), 'xs:date'),
-						'xs:double'
+						createAtomicValue(
+							DateTime.fromString('2000-10-10+10:30'),
+							ValueType.XSDATE
+						),
+						ValueType.XSDOUBLE
 					),
 				'XPTY0004'
 			));
@@ -808,8 +914,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000-10+10:30'), 'xs:gYearMonth'),
-						'xs:double'
+						createAtomicValue(
+							DateTime.fromString('2000-10+10:30'),
+							ValueType.XSGYEARMONTH
+						),
+						ValueType.XSDOUBLE
 					),
 				'XPTY0004'
 			));
@@ -817,8 +926,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000+10:30'), 'xs:gYear'),
-						'xs:double'
+						createAtomicValue(DateTime.fromString('2000+10:30'), ValueType.XSGYEAR),
+						ValueType.XSDOUBLE
 					),
 				'XPTY0004'
 			));
@@ -826,8 +935,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10-10+10:30'), 'xs:gMonthDay'),
-						'xs:double'
+						createAtomicValue(
+							DateTime.fromString('--10-10+10:30'),
+							ValueType.XSGMONTHDAY
+						),
+						ValueType.XSDOUBLE
 					),
 				'XPTY0004'
 			));
@@ -835,8 +947,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('---10+10:30'), 'xs:gDay'),
-						'xs:double'
+						createAtomicValue(DateTime.fromString('---10+10:30'), ValueType.XSGDAY),
+						ValueType.XSDOUBLE
 					),
 				'XPTY0004'
 			));
@@ -844,22 +956,22 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10+10:30'), 'xs:gMonth'),
-						'xs:double'
+						createAtomicValue(DateTime.fromString('--10+10:30'), ValueType.XSGMONTH),
+						ValueType.XSDOUBLE
 					),
 				'XPTY0004'
 			));
 		it('from xs:boolean', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(true, 'xs:boolean'), 'xs:double'),
-				createAtomicValue(1, 'xs:double')
+				castToType(createAtomicValue(true, ValueType.XSBOOLEAN), ValueType.XSDOUBLE),
+				createAtomicValue(1, ValueType.XSDOUBLE)
 			));
 		it('from xs:base64Binary (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', 'xs:base64Binary'),
-						'xs:double'
+						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', ValueType.XSBASE64BINARY),
+						ValueType.XSDOUBLE
 					),
 				'XPTY0004'
 			));
@@ -867,19 +979,24 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue('21FE3A44123C21FE3A44123C', 'xs:hexBinary'),
-						'xs:double'
+						createAtomicValue('21FE3A44123C21FE3A44123C', ValueType.XSHEXBINARY),
+						ValueType.XSDOUBLE
 					),
 				'XPTY0004'
 			));
 		it('from xs:anyURI (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:anyURI'), 'xs:double'),
+				() =>
+					castToType(createAtomicValue('string', ValueType.XSANYURI), ValueType.XSDOUBLE),
 				'XPTY0004'
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:NOTATION'), 'xs:double'),
+				() =>
+					castToType(
+						createAtomicValue('string', ValueType.XSNOTATION),
+						ValueType.XSDOUBLE
+					),
 				'XPTY0004'
 			));
 	});
@@ -887,40 +1004,43 @@ describe('castToType()', () => {
 	describe('to xs:decimal', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('10.10', 'xs:untypedAtomic'), 'xs:decimal'),
-				createAtomicValue(10.1, 'xs:decimal')
+				castToType(
+					createAtomicValue('10.10', ValueType.XSUNTYPEDATOMIC),
+					ValueType.XSDECIMAL
+				),
+				createAtomicValue(10.1, ValueType.XSDECIMAL)
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('10.10', 'xs:string'), 'xs:decimal'),
-				createAtomicValue(10.1, 'xs:decimal')
+				castToType(createAtomicValue('10.10', ValueType.XSSTRING), ValueType.XSDECIMAL),
+				createAtomicValue(10.1, ValueType.XSDECIMAL)
 			));
 		it('from xs:float', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(10.123, 'xs:float'), 'xs:decimal'),
-				createAtomicValue(10.123, 'xs:decimal')
+				castToType(createAtomicValue(10.123, ValueType.XSFLOAT), ValueType.XSDECIMAL),
+				createAtomicValue(10.123, ValueType.XSDECIMAL)
 			));
 		it('from xs:double', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(10.123, 'xs:double'), 'xs:decimal'),
-				createAtomicValue(10.123, 'xs:decimal')
+				castToType(createAtomicValue(10.123, ValueType.XSDOUBLE), ValueType.XSDECIMAL),
+				createAtomicValue(10.123, ValueType.XSDECIMAL)
 			));
 		it('from xs:decimal', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1010, 'xs:decimal'), 'xs:decimal'),
-				createAtomicValue(1010, 'xs:decimal')
+				castToType(createAtomicValue(1010, ValueType.XSDECIMAL), ValueType.XSDECIMAL),
+				createAtomicValue(1010, ValueType.XSDECIMAL)
 			));
 		it('from xs:integer', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1010, 'xs:integer'), 'xs:decimal'),
-				createAtomicValue(1010, 'xs:decimal')
+				castToType(createAtomicValue(1010, ValueType.XSINTEGER), ValueType.XSDECIMAL),
+				createAtomicValue(1010, ValueType.XSDECIMAL)
 			));
 		it('from xs:duration (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:duration'),
-						'xs:decimal'
+						createAtomicValue(Duration.fromString('P10Y10M'), ValueType.XSDURATION),
+						ValueType.XSDECIMAL
 					),
 				'XPTY0004'
 			));
@@ -928,8 +1048,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:yearMonthDuration'),
-						'xs:decimal'
+						createAtomicValue(
+							Duration.fromString('P10Y10M'),
+							ValueType.XSYEARMONTHDURATION
+						),
+						ValueType.XSDECIMAL
 					),
 				'XPTY0004'
 			));
@@ -937,8 +1060,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:dayTimeDuration'),
-						'xs:decimal'
+						createAtomicValue(
+							Duration.fromString('P10Y10M'),
+							ValueType.XSDAYTIMEDURATION
+						),
+						ValueType.XSDECIMAL
 					),
 				'XPTY0004'
 			));
@@ -948,9 +1074,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(
 							DateTime.fromString('2000-10-10T10:10:10+10:30'),
-							'xs:dateTime'
+							ValueType.XSDATETIME
 						),
-						'xs:decimal'
+						ValueType.XSDECIMAL
 					),
 				'XPTY0004'
 			));
@@ -958,8 +1084,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('10:10:10+10:30'), 'xs:time'),
-						'xs:decimal'
+						createAtomicValue(DateTime.fromString('10:10:10+10:30'), ValueType.XSTIME),
+						ValueType.XSDECIMAL
 					),
 				'XPTY0004'
 			));
@@ -967,8 +1093,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000-10-10+10:30'), 'xs:date'),
-						'xs:decimal'
+						createAtomicValue(
+							DateTime.fromString('2000-10-10+10:30'),
+							ValueType.XSDATE
+						),
+						ValueType.XSDECIMAL
 					),
 				'XPTY0004'
 			));
@@ -976,8 +1105,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000-10+10:30'), 'xs:gYearMonth'),
-						'xs:decimal'
+						createAtomicValue(
+							DateTime.fromString('2000-10+10:30'),
+							ValueType.XSGYEARMONTH
+						),
+						ValueType.XSDECIMAL
 					),
 				'XPTY0004'
 			));
@@ -985,8 +1117,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000+10:30'), 'xs:gYear'),
-						'xs:decimal'
+						createAtomicValue(DateTime.fromString('2000+10:30'), ValueType.XSGYEAR),
+						ValueType.XSDECIMAL
 					),
 				'XPTY0004'
 			));
@@ -994,8 +1126,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10-10+10:30'), 'xs:gMonthDay'),
-						'xs:decimal'
+						createAtomicValue(
+							DateTime.fromString('--10-10+10:30'),
+							ValueType.XSGMONTHDAY
+						),
+						ValueType.XSDECIMAL
 					),
 				'XPTY0004'
 			));
@@ -1003,8 +1138,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('---10+10:30'), 'xs:gDay'),
-						'xs:decimal'
+						createAtomicValue(DateTime.fromString('---10+10:30'), ValueType.XSGDAY),
+						ValueType.XSDECIMAL
 					),
 				'XPTY0004'
 			));
@@ -1012,22 +1147,22 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10+10:30'), 'xs:gMonth'),
-						'xs:decimal'
+						createAtomicValue(DateTime.fromString('--10+10:30'), ValueType.XSGMONTH),
+						ValueType.XSDECIMAL
 					),
 				'XPTY0004'
 			));
 		it('from xs:boolean', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(true, 'xs:boolean'), 'xs:decimal'),
-				createAtomicValue(1, 'xs:decimal')
+				castToType(createAtomicValue(true, ValueType.XSBOOLEAN), ValueType.XSDECIMAL),
+				createAtomicValue(1, ValueType.XSDECIMAL)
 			));
 		it('from xs:base64Binary (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', 'xs:base64Binary'),
-						'xs:decimal'
+						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', ValueType.XSBASE64BINARY),
+						ValueType.XSDECIMAL
 					),
 				'XPTY0004'
 			));
@@ -1035,19 +1170,27 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue('21FE3A44123C21FE3A44123C', 'xs:hexBinary'),
-						'xs:decimal'
+						createAtomicValue('21FE3A44123C21FE3A44123C', ValueType.XSHEXBINARY),
+						ValueType.XSDECIMAL
 					),
 				'XPTY0004'
 			));
 		it('from xs:anyURI (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:anyURI'), 'xs:decimal'),
+				() =>
+					castToType(
+						createAtomicValue('string', ValueType.XSANYURI),
+						ValueType.XSDECIMAL
+					),
 				'XPTY0004'
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:NOTATION'), 'xs:decimal'),
+				() =>
+					castToType(
+						createAtomicValue('string', ValueType.XSNOTATION),
+						ValueType.XSDECIMAL
+					),
 				'XPTY0004'
 			));
 	});
@@ -1055,40 +1198,40 @@ describe('castToType()', () => {
 	describe('to xs:integer', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('10', 'xs:untypedAtomic'), 'xs:integer'),
-				createAtomicValue(10, 'xs:integer')
+				castToType(createAtomicValue('10', ValueType.XSUNTYPEDATOMIC), ValueType.XSINTEGER),
+				createAtomicValue(10, ValueType.XSINTEGER)
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('10', 'xs:string'), 'xs:integer'),
-				createAtomicValue(10, 'xs:integer')
+				castToType(createAtomicValue('10', ValueType.XSSTRING), ValueType.XSINTEGER),
+				createAtomicValue(10, ValueType.XSINTEGER)
 			));
 		it('from xs:float', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(10.123, 'xs:float'), 'xs:integer'),
-				createAtomicValue(10, 'xs:integer')
+				castToType(createAtomicValue(10.123, ValueType.XSFLOAT), ValueType.XSINTEGER),
+				createAtomicValue(10, ValueType.XSINTEGER)
 			));
 		it('from xs:double', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(10.123, 'xs:double'), 'xs:integer'),
-				createAtomicValue(10, 'xs:integer')
+				castToType(createAtomicValue(10.123, ValueType.XSDOUBLE), ValueType.XSINTEGER),
+				createAtomicValue(10, ValueType.XSINTEGER)
 			));
 		it('from xs:decimal', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1010, 'xs:decimal'), 'xs:integer'),
-				createAtomicValue(1010, 'xs:integer')
+				castToType(createAtomicValue(1010, ValueType.XSDECIMAL), ValueType.XSINTEGER),
+				createAtomicValue(1010, ValueType.XSINTEGER)
 			));
 		it('from xs:integer', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1010, 'xs:integer'), 'xs:integer'),
-				createAtomicValue(1010, 'xs:integer')
+				castToType(createAtomicValue(1010, ValueType.XSINTEGER), ValueType.XSINTEGER),
+				createAtomicValue(1010, ValueType.XSINTEGER)
 			));
 		it('from xs:duration (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:duration'),
-						'xs:integer'
+						createAtomicValue(Duration.fromString('P10Y10M'), ValueType.XSDURATION),
+						ValueType.XSINTEGER
 					),
 				'XPTY0004'
 			));
@@ -1096,8 +1239,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:yearMonthDuration'),
-						'xs:integer'
+						createAtomicValue(
+							Duration.fromString('P10Y10M'),
+							ValueType.XSYEARMONTHDURATION
+						),
+						ValueType.XSINTEGER
 					),
 				'XPTY0004'
 			));
@@ -1105,8 +1251,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:dayTimeDuration'),
-						'xs:integer'
+						createAtomicValue(
+							Duration.fromString('P10Y10M'),
+							ValueType.XSDAYTIMEDURATION
+						),
+						ValueType.XSINTEGER
 					),
 				'XPTY0004'
 			));
@@ -1116,9 +1265,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(
 							DateTime.fromString('2000-10-10T10:10:10+10:30'),
-							'xs:dateTime'
+							ValueType.XSDATETIME
 						),
-						'xs:integer'
+						ValueType.XSINTEGER
 					),
 				'XPTY0004'
 			));
@@ -1126,8 +1275,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('10:10:10+10:30'), 'xs:time'),
-						'xs:integer'
+						createAtomicValue(DateTime.fromString('10:10:10+10:30'), ValueType.XSTIME),
+						ValueType.XSINTEGER
 					),
 				'XPTY0004'
 			));
@@ -1135,8 +1284,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000-10-10+10:30'), 'xs:date'),
-						'xs:integer'
+						createAtomicValue(
+							DateTime.fromString('2000-10-10+10:30'),
+							ValueType.XSDATE
+						),
+						ValueType.XSINTEGER
 					),
 				'XPTY0004'
 			));
@@ -1144,8 +1296,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000-10+10:30'), 'xs:gYearMonth'),
-						'xs:integer'
+						createAtomicValue(
+							DateTime.fromString('2000-10+10:30'),
+							ValueType.XSGYEARMONTH
+						),
+						ValueType.XSINTEGER
 					),
 				'XPTY0004'
 			));
@@ -1153,8 +1308,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000+10:30'), 'xs:gYear'),
-						'xs:integer'
+						createAtomicValue(DateTime.fromString('2000+10:30'), ValueType.XSGYEAR),
+						ValueType.XSINTEGER
 					),
 				'XPTY0004'
 			));
@@ -1162,8 +1317,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10-10+10:30'), 'xs:gMonthDay'),
-						'xs:integer'
+						createAtomicValue(
+							DateTime.fromString('--10-10+10:30'),
+							ValueType.XSGMONTHDAY
+						),
+						ValueType.XSINTEGER
 					),
 				'XPTY0004'
 			));
@@ -1171,8 +1329,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('---10+10:30'), 'xs:gDay'),
-						'xs:integer'
+						createAtomicValue(DateTime.fromString('---10+10:30'), ValueType.XSGDAY),
+						ValueType.XSINTEGER
 					),
 				'XPTY0004'
 			));
@@ -1180,22 +1338,22 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10+10:30'), 'xs:gMonth'),
-						'xs:integer'
+						createAtomicValue(DateTime.fromString('--10+10:30'), ValueType.XSGMONTH),
+						ValueType.XSINTEGER
 					),
 				'XPTY0004'
 			));
 		it('from xs:boolean', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(true, 'xs:boolean'), 'xs:integer'),
-				createAtomicValue(1, 'xs:integer')
+				castToType(createAtomicValue(true, ValueType.XSBOOLEAN), ValueType.XSINTEGER),
+				createAtomicValue(1, ValueType.XSINTEGER)
 			));
 		it('from xs:base64Binary (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', 'xs:base64Binary'),
-						'xs:integer'
+						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', ValueType.XSBASE64BINARY),
+						ValueType.XSINTEGER
 					),
 				'XPTY0004'
 			));
@@ -1203,19 +1361,27 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue('21FE3A44123C21FE3A44123C', 'xs:hexBinary'),
-						'xs:integer'
+						createAtomicValue('21FE3A44123C21FE3A44123C', ValueType.XSHEXBINARY),
+						ValueType.XSINTEGER
 					),
 				'XPTY0004'
 			));
 		it('from xs:anyURI (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:anyURI'), 'xs:integer'),
+				() =>
+					castToType(
+						createAtomicValue('string', ValueType.XSANYURI),
+						ValueType.XSINTEGER
+					),
 				'XPTY0004'
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:NOTATION'), 'xs:integer'),
+				() =>
+					castToType(
+						createAtomicValue('string', ValueType.XSNOTATION),
+						ValueType.XSINTEGER
+					),
 				'XPTY0004'
 			));
 	});
@@ -1224,62 +1390,75 @@ describe('castToType()', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue('P10Y10M10DT10H10M10S', 'xs:untypedAtomic'),
-					'xs:duration'
+					createAtomicValue('P10Y10M10DT10H10M10S', ValueType.XSUNTYPEDATOMIC),
+					ValueType.XSDURATION
 				),
-				createAtomicValue(Duration.fromString('P10Y10M10DT10H10M10S'), 'xs:duration')
+				createAtomicValue(Duration.fromString('P10Y10M10DT10H10M10S'), ValueType.XSDURATION)
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('P10Y10M10DT10H10M10S', 'xs:string'), 'xs:duration'),
-				createAtomicValue(Duration.fromString('P10Y10M10DT10H10M10S'), 'xs:duration')
+				castToType(
+					createAtomicValue('P10Y10M10DT10H10M10S', ValueType.XSSTRING),
+					ValueType.XSDURATION
+				),
+				createAtomicValue(Duration.fromString('P10Y10M10DT10H10M10S'), ValueType.XSDURATION)
 			));
 		it('from xs:float (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(10.123, 'xs:float'), 'xs:duration'),
+				() =>
+					castToType(createAtomicValue(10.123, ValueType.XSFLOAT), ValueType.XSDURATION),
 				'XPTY0004'
 			));
 		it('from xs:double (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(10.123, 'xs:double'), 'xs:duration'),
+				() =>
+					castToType(createAtomicValue(10.123, ValueType.XSDOUBLE), ValueType.XSDURATION),
 				'XPTY0004'
 			));
 		it('from xs:decimal (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(1010, 'xs:decimal'), 'xs:duration'),
+				() =>
+					castToType(createAtomicValue(1010, ValueType.XSDECIMAL), ValueType.XSDURATION),
 				'XPTY0004'
 			));
 		it('from xs:integer (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(1010, 'xs:integer'), 'xs:duration'),
+				() =>
+					castToType(createAtomicValue(1010, ValueType.XSINTEGER), ValueType.XSDURATION),
 				'XPTY0004'
 			));
 		it('from xs:duration', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue(Duration.fromString('P10Y10M10DT10H10M10S'), 'xs:duration'),
-					'xs:duration'
+					createAtomicValue(
+						Duration.fromString('P10Y10M10DT10H10M10S'),
+						ValueType.XSDURATION
+					),
+					ValueType.XSDURATION
 				),
-				createAtomicValue(Duration.fromString('P10Y10M10DT10H10M10S'), 'xs:duration')
+				createAtomicValue(Duration.fromString('P10Y10M10DT10H10M10S'), ValueType.XSDURATION)
 			));
 		it('from xs:yearMonthDuration', () =>
 			chai.assert.deepEqual(
 				castToType(
 					createAtomicValue(
 						YearMonthDuration.fromString('P10Y10M'),
-						'xs:yearMonthDuration'
+						ValueType.XSYEARMONTHDURATION
 					),
-					'xs:duration'
+					ValueType.XSDURATION
 				),
-				createAtomicValue(Duration.fromString('P10Y10M'), 'xs:duration')
+				createAtomicValue(Duration.fromString('P10Y10M'), ValueType.XSDURATION)
 			));
 		it('from xs:dayTimeDuration', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue(DayTimeDuration.fromString('P10D'), 'xs:dayTimeDuration'),
-					'xs:duration'
+					createAtomicValue(
+						DayTimeDuration.fromString('P10D'),
+						ValueType.XSDAYTIMEDURATION
+					),
+					ValueType.XSDURATION
 				),
-				createAtomicValue(Duration.fromString('P10D'), 'xs:duration')
+				createAtomicValue(Duration.fromString('P10D'), ValueType.XSDURATION)
 			));
 		it('from xs:dateTime (throws XPTY0004)', () =>
 			chai.assert.throws(
@@ -1287,9 +1466,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(
 							DateTime.fromString('2000-10-10T10:10:10+10:30'),
-							'xs:dateTime'
+							ValueType.XSDATETIME
 						),
-						'xs:duration'
+						ValueType.XSDURATION
 					),
 				'XPTY0004'
 			));
@@ -1297,8 +1476,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('10:10:10+10:30'), 'xs:time'),
-						'xs:duration'
+						createAtomicValue(DateTime.fromString('10:10:10+10:30'), ValueType.XSTIME),
+						ValueType.XSDURATION
 					),
 				'XPTY0004'
 			));
@@ -1306,8 +1485,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000-10-10+10:30'), 'xs:date'),
-						'xs:duration'
+						createAtomicValue(
+							DateTime.fromString('2000-10-10+10:30'),
+							ValueType.XSDATE
+						),
+						ValueType.XSDURATION
 					),
 				'XPTY0004'
 			));
@@ -1315,8 +1497,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000-10+10:30'), 'xs:gYearMonth'),
-						'xs:duration'
+						createAtomicValue(
+							DateTime.fromString('2000-10+10:30'),
+							ValueType.XSGYEARMONTH
+						),
+						ValueType.XSDURATION
 					),
 				'XPTY0004'
 			));
@@ -1324,8 +1509,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000+10:30'), 'xs:gYear'),
-						'xs:duration'
+						createAtomicValue(DateTime.fromString('2000+10:30'), ValueType.XSGYEAR),
+						ValueType.XSDURATION
 					),
 				'XPTY0004'
 			));
@@ -1333,8 +1518,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10-10+10:30'), 'xs:gMonthDay'),
-						'xs:duration'
+						createAtomicValue(
+							DateTime.fromString('--10-10+10:30'),
+							ValueType.XSGMONTHDAY
+						),
+						ValueType.XSDURATION
 					),
 				'XPTY0004'
 			));
@@ -1342,8 +1530,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('---10+10:30'), 'xs:gDay'),
-						'xs:duration'
+						createAtomicValue(DateTime.fromString('---10+10:30'), ValueType.XSGDAY),
+						ValueType.XSDURATION
 					),
 				'XPTY0004'
 			));
@@ -1351,22 +1539,23 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10+10:30'), 'xs:gMonth'),
-						'xs:duration'
+						createAtomicValue(DateTime.fromString('--10+10:30'), ValueType.XSGMONTH),
+						ValueType.XSDURATION
 					),
 				'XPTY0004'
 			));
 		it('from xs:boolean (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(true, 'xs:boolean'), 'xs:duration'),
+				() =>
+					castToType(createAtomicValue(true, ValueType.XSBOOLEAN), ValueType.XSDURATION),
 				'XPTY0004'
 			));
 		it('from xs:base64Binary (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', 'xs:base64Binary'),
-						'xs:duration'
+						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', ValueType.XSBASE64BINARY),
+						ValueType.XSDURATION
 					),
 				'XPTY0004'
 			));
@@ -1374,19 +1563,27 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue('21FE3A44123C21FE3A44123C', 'xs:hexBinary'),
-						'xs:duration'
+						createAtomicValue('21FE3A44123C21FE3A44123C', ValueType.XSHEXBINARY),
+						ValueType.XSDURATION
 					),
 				'XPTY0004'
 			));
 		it('from xs:anyURI (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:anyURI'), 'xs:duration'),
+				() =>
+					castToType(
+						createAtomicValue('string', ValueType.XSANYURI),
+						ValueType.XSDURATION
+					),
 				'XPTY0004'
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:NOTATION'), 'xs:duration'),
+				() =>
+					castToType(
+						createAtomicValue('string', ValueType.XSNOTATION),
+						ValueType.XSDURATION
+					),
 				'XPTY0004'
 			));
 	});
@@ -1395,62 +1592,102 @@ describe('castToType()', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue('P10Y10M', 'xs:untypedAtomic'),
-					'xs:yearMonthDuration'
+					createAtomicValue('P10Y10M', ValueType.XSUNTYPEDATOMIC),
+					ValueType.XSYEARMONTHDURATION
 				),
-				createAtomicValue(YearMonthDuration.fromString('P10Y10M'), 'xs:yearMonthDuration')
+				createAtomicValue(
+					YearMonthDuration.fromString('P10Y10M'),
+					ValueType.XSYEARMONTHDURATION
+				)
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('P10Y10M', 'xs:string'), 'xs:yearMonthDuration'),
-				createAtomicValue(YearMonthDuration.fromString('P10Y10M'), 'xs:yearMonthDuration')
+				castToType(
+					createAtomicValue('P10Y10M', ValueType.XSSTRING),
+					ValueType.XSYEARMONTHDURATION
+				),
+				createAtomicValue(
+					YearMonthDuration.fromString('P10Y10M'),
+					ValueType.XSYEARMONTHDURATION
+				)
 			));
 		it('from xs:float (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(10.123, 'xs:float'), 'xs:yearMonthDuration'),
+				() =>
+					castToType(
+						createAtomicValue(10.123, ValueType.XSFLOAT),
+						ValueType.XSYEARMONTHDURATION
+					),
 				'XPTY0004'
 			));
 		it('from xs:double (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(10.123, 'xs:double'), 'xs:yearMonthDuration'),
+				() =>
+					castToType(
+						createAtomicValue(10.123, ValueType.XSDOUBLE),
+						ValueType.XSYEARMONTHDURATION
+					),
 				'XPTY0004'
 			));
 		it('from xs:decimal (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(1010, 'xs:decimal'), 'xs:yearMonthDuration'),
+				() =>
+					castToType(
+						createAtomicValue(1010, ValueType.XSDECIMAL),
+						ValueType.XSYEARMONTHDURATION
+					),
 				'XPTY0004'
 			));
 		it('from xs:integer (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(1010, 'xs:integer'), 'xs:yearMonthDuration'),
+				() =>
+					castToType(
+						createAtomicValue(1010, ValueType.XSINTEGER),
+						ValueType.XSYEARMONTHDURATION
+					),
 				'XPTY0004'
 			));
 		it('from xs:duration', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue(Duration.fromString('P10Y10M10DT10H10M10S'), 'xs:duration'),
-					'xs:yearMonthDuration'
+					createAtomicValue(
+						Duration.fromString('P10Y10M10DT10H10M10S'),
+						ValueType.XSDURATION
+					),
+					ValueType.XSYEARMONTHDURATION
 				),
-				createAtomicValue(YearMonthDuration.fromString('P10Y10M'), 'xs:yearMonthDuration')
+				createAtomicValue(
+					YearMonthDuration.fromString('P10Y10M'),
+					ValueType.XSYEARMONTHDURATION
+				)
 			));
 		it('from xs:yearMonthDuration', () =>
 			chai.assert.deepEqual(
 				castToType(
 					createAtomicValue(
 						YearMonthDuration.fromString('P10Y10M'),
-						'xs:yearMonthDuration'
+						ValueType.XSYEARMONTHDURATION
 					),
-					'xs:yearMonthDuration'
+					ValueType.XSYEARMONTHDURATION
 				),
-				createAtomicValue(YearMonthDuration.fromString('P10Y10M'), 'xs:yearMonthDuration')
+				createAtomicValue(
+					YearMonthDuration.fromString('P10Y10M'),
+					ValueType.XSYEARMONTHDURATION
+				)
 			));
 		it('from xs:dayTimeDuration', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue(DayTimeDuration.fromString('P10Y10M'), 'xs:dayTimeDuration'),
-					'xs:yearMonthDuration'
+					createAtomicValue(
+						DayTimeDuration.fromString('P10Y10M'),
+						ValueType.XSDAYTIMEDURATION
+					),
+					ValueType.XSYEARMONTHDURATION
 				),
-				createAtomicValue(YearMonthDuration.fromString('P0M'), 'xs:yearMonthDuration')
+				createAtomicValue(
+					YearMonthDuration.fromString('P0M'),
+					ValueType.XSYEARMONTHDURATION
+				)
 			));
 		it('from xs:dateTime (throws XPTY0004)', () =>
 			chai.assert.throws(
@@ -1458,9 +1695,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(
 							DateTime.fromString('2000-10-10T10:10:10+10:30'),
-							'xs:dateTime'
+							ValueType.XSDATETIME
 						),
-						'xs:yearMonthDuration'
+						ValueType.XSYEARMONTHDURATION
 					),
 				'XPTY0004'
 			));
@@ -1468,8 +1705,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('10:10:10+10:30'), 'xs:time'),
-						'xs:yearMonthDuration'
+						createAtomicValue(DateTime.fromString('10:10:10+10:30'), ValueType.XSTIME),
+						ValueType.XSYEARMONTHDURATION
 					),
 				'XPTY0004'
 			));
@@ -1477,8 +1714,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000-10-10+10:30'), 'xs:date'),
-						'xs:yearMonthDuration'
+						createAtomicValue(
+							DateTime.fromString('2000-10-10+10:30'),
+							ValueType.XSDATE
+						),
+						ValueType.XSYEARMONTHDURATION
 					),
 				'XPTY0004'
 			));
@@ -1486,8 +1726,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000-10+10:30'), 'xs:gYearMonth'),
-						'xs:yearMonthDuration'
+						createAtomicValue(
+							DateTime.fromString('2000-10+10:30'),
+							ValueType.XSGYEARMONTH
+						),
+						ValueType.XSYEARMONTHDURATION
 					),
 				'XPTY0004'
 			));
@@ -1495,8 +1738,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000+10:30'), 'xs:gYear'),
-						'xs:yearMonthDuration'
+						createAtomicValue(DateTime.fromString('2000+10:30'), ValueType.XSGYEAR),
+						ValueType.XSYEARMONTHDURATION
 					),
 				'XPTY0004'
 			));
@@ -1504,8 +1747,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10-10+10:30'), 'xs:gMonthDay'),
-						'xs:yearMonthDuration'
+						createAtomicValue(
+							DateTime.fromString('--10-10+10:30'),
+							ValueType.XSGMONTHDAY
+						),
+						ValueType.XSYEARMONTHDURATION
 					),
 				'XPTY0004'
 			));
@@ -1513,8 +1759,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('---10+10:30'), 'xs:gDay'),
-						'xs:yearMonthDuration'
+						createAtomicValue(DateTime.fromString('---10+10:30'), ValueType.XSGDAY),
+						ValueType.XSYEARMONTHDURATION
 					),
 				'XPTY0004'
 			));
@@ -1522,22 +1768,26 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10+10:30'), 'xs:gMonth'),
-						'xs:yearMonthDuration'
+						createAtomicValue(DateTime.fromString('--10+10:30'), ValueType.XSGMONTH),
+						ValueType.XSYEARMONTHDURATION
 					),
 				'XPTY0004'
 			));
 		it('from xs:boolean (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(true, 'xs:boolean'), 'xs:yearMonthDuration'),
+				() =>
+					castToType(
+						createAtomicValue(true, ValueType.XSBOOLEAN),
+						ValueType.XSYEARMONTHDURATION
+					),
 				'XPTY0004'
 			));
 		it('from xs:base64Binary (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', 'xs:base64Binary'),
-						'xs:yearMonthDuration'
+						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', ValueType.XSBASE64BINARY),
+						ValueType.XSYEARMONTHDURATION
 					),
 				'XPTY0004'
 			));
@@ -1545,20 +1795,27 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue('21FE3A44123C21FE3A44123C', 'xs:hexBinary'),
-						'xs:yearMonthDuration'
+						createAtomicValue('21FE3A44123C21FE3A44123C', ValueType.XSHEXBINARY),
+						ValueType.XSYEARMONTHDURATION
 					),
 				'XPTY0004'
 			));
 		it('from xs:anyURI (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:anyURI'), 'xs:yearMonthDuration'),
+				() =>
+					castToType(
+						createAtomicValue('string', ValueType.XSANYURI),
+						ValueType.XSYEARMONTHDURATION
+					),
 				'XPTY0004'
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
-					castToType(createAtomicValue('string', 'xs:NOTATION'), 'xs:yearMonthDuration'),
+					castToType(
+						createAtomicValue('string', ValueType.XSNOTATION),
+						ValueType.XSYEARMONTHDURATION
+					),
 				'XPTY0004'
 			));
 	});
@@ -1567,51 +1824,73 @@ describe('castToType()', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue('P10DT10H10M10S', 'xs:untypedAtomic'),
-					'xs:dayTimeDuration'
+					createAtomicValue('P10DT10H10M10S', ValueType.XSUNTYPEDATOMIC),
+					ValueType.XSDAYTIMEDURATION
 				),
 				createAtomicValue(
 					DayTimeDuration.fromString('P10DT10H10M10S'),
-					'xs:dayTimeDuration'
+					ValueType.XSDAYTIMEDURATION
 				)
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('P10DT10H10M10S', 'xs:string'), 'xs:dayTimeDuration'),
+				castToType(
+					createAtomicValue('P10DT10H10M10S', ValueType.XSSTRING),
+					ValueType.XSDAYTIMEDURATION
+				),
 				createAtomicValue(
 					DayTimeDuration.fromString('P10DT10H10M10S'),
-					'xs:dayTimeDuration'
+					ValueType.XSDAYTIMEDURATION
 				)
 			));
 		it('from xs:float (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(10.123, 'xs:float'), 'xs:dayTimeDuration'),
+				() =>
+					castToType(
+						createAtomicValue(10.123, ValueType.XSFLOAT),
+						ValueType.XSDAYTIMEDURATION
+					),
 				'XPTY0004'
 			));
 		it('from xs:double (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(10.123, 'xs:double'), 'xs:dayTimeDuration'),
+				() =>
+					castToType(
+						createAtomicValue(10.123, ValueType.XSDOUBLE),
+						ValueType.XSDAYTIMEDURATION
+					),
 				'XPTY0004'
 			));
 		it('from xs:decimal (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(1010, 'xs:decimal'), 'xs:dayTimeDuration'),
+				() =>
+					castToType(
+						createAtomicValue(1010, ValueType.XSDECIMAL),
+						ValueType.XSDAYTIMEDURATION
+					),
 				'XPTY0004'
 			));
 		it('from xs:integer (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(1010, 'xs:integer'), 'xs:dayTimeDuration'),
+				() =>
+					castToType(
+						createAtomicValue(1010, ValueType.XSINTEGER),
+						ValueType.XSDAYTIMEDURATION
+					),
 				'XPTY0004'
 			));
 		it('from xs:duration', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue(Duration.fromString('P10Y10M10DT10H10M10S'), 'xs:duration'),
-					'xs:dayTimeDuration'
+					createAtomicValue(
+						Duration.fromString('P10Y10M10DT10H10M10S'),
+						ValueType.XSDURATION
+					),
+					ValueType.XSDAYTIMEDURATION
 				),
 				createAtomicValue(
 					DayTimeDuration.fromString('P10DT10H10M10S'),
-					'xs:dayTimeDuration'
+					ValueType.XSDAYTIMEDURATION
 				)
 			));
 		it('from xs:yearMonthDuration', () =>
@@ -1619,24 +1898,24 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue(
 						YearMonthDuration.fromString('P10Y10M'),
-						'xs:yearMonthDuration'
+						ValueType.XSYEARMONTHDURATION
 					),
-					'xs:dayTimeDuration'
+					ValueType.XSDAYTIMEDURATION
 				),
-				createAtomicValue(DayTimeDuration.fromString('PT0S'), 'xs:dayTimeDuration')
+				createAtomicValue(DayTimeDuration.fromString('PT0S'), ValueType.XSDAYTIMEDURATION)
 			));
 		it('from xs:dayTimeDuration', () =>
 			chai.assert.deepEqual(
 				castToType(
 					createAtomicValue(
 						DayTimeDuration.fromString('P10DT10H10M10S'),
-						'xs:dayTimeDuration'
+						ValueType.XSDAYTIMEDURATION
 					),
-					'xs:dayTimeDuration'
+					ValueType.XSDAYTIMEDURATION
 				),
 				createAtomicValue(
 					DayTimeDuration.fromString('P10DT10H10M10S'),
-					'xs:dayTimeDuration'
+					ValueType.XSDAYTIMEDURATION
 				)
 			));
 		it('from xs:dateTime (throws XPTY0004)', () =>
@@ -1645,9 +1924,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(
 							DateTime.fromString('2000-10-10T10:10:10+10:30'),
-							'xs:dateTime'
+							ValueType.XSDATETIME
 						),
-						'xs:dayTimeDuration'
+						ValueType.XSDAYTIMEDURATION
 					),
 				'XPTY0004'
 			));
@@ -1655,8 +1934,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('10:10:10+10:30'), 'xs:time'),
-						'xs:dayTimeDuration'
+						createAtomicValue(DateTime.fromString('10:10:10+10:30'), ValueType.XSTIME),
+						ValueType.XSDAYTIMEDURATION
 					),
 				'XPTY0004'
 			));
@@ -1664,8 +1943,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000-10-10+10:30'), 'xs:date'),
-						'xs:dayTimeDuration'
+						createAtomicValue(
+							DateTime.fromString('2000-10-10+10:30'),
+							ValueType.XSDATE
+						),
+						ValueType.XSDAYTIMEDURATION
 					),
 				'XPTY0004'
 			));
@@ -1673,8 +1955,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000-10+10:30'), 'xs:gYearMonth'),
-						'xs:dayTimeDuration'
+						createAtomicValue(
+							DateTime.fromString('2000-10+10:30'),
+							ValueType.XSGYEARMONTH
+						),
+						ValueType.XSDAYTIMEDURATION
 					),
 				'XPTY0004'
 			));
@@ -1682,8 +1967,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000+10:30'), 'xs:gYear'),
-						'xs:dayTimeDuration'
+						createAtomicValue(DateTime.fromString('2000+10:30'), ValueType.XSGYEAR),
+						ValueType.XSDAYTIMEDURATION
 					),
 				'XPTY0004'
 			));
@@ -1691,8 +1976,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10-10+10:30'), 'xs:gMonthDay'),
-						'xs:dayTimeDuration'
+						createAtomicValue(
+							DateTime.fromString('--10-10+10:30'),
+							ValueType.XSGMONTHDAY
+						),
+						ValueType.XSDAYTIMEDURATION
 					),
 				'XPTY0004'
 			));
@@ -1700,8 +1988,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('---10+10:30'), 'xs:gDay'),
-						'xs:dayTimeDuration'
+						createAtomicValue(DateTime.fromString('---10+10:30'), ValueType.XSGDAY),
+						ValueType.XSDAYTIMEDURATION
 					),
 				'XPTY0004'
 			));
@@ -1709,22 +1997,26 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10+10:30'), 'xs:gMonth'),
-						'xs:dayTimeDuration'
+						createAtomicValue(DateTime.fromString('--10+10:30'), ValueType.XSGMONTH),
+						ValueType.XSDAYTIMEDURATION
 					),
 				'XPTY0004'
 			));
 		it('from xs:boolean (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(true, 'xs:boolean'), 'xs:dayTimeDuration'),
+				() =>
+					castToType(
+						createAtomicValue(true, ValueType.XSBOOLEAN),
+						ValueType.XSDAYTIMEDURATION
+					),
 				'XPTY0004'
 			));
 		it('from xs:base64Binary (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', 'xs:base64Binary'),
-						'xs:dayTimeDuration'
+						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', ValueType.XSBASE64BINARY),
+						ValueType.XSDAYTIMEDURATION
 					),
 				'XPTY0004'
 			));
@@ -1732,19 +2024,27 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue('21FE3A44123C21FE3A44123C', 'xs:hexBinary'),
-						'xs:dayTimeDuration'
+						createAtomicValue('21FE3A44123C21FE3A44123C', ValueType.XSHEXBINARY),
+						ValueType.XSDAYTIMEDURATION
 					),
 				'XPTY0004'
 			));
 		it('from xs:anyURI (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:anyURI'), 'xs:dayTimeDuration'),
+				() =>
+					castToType(
+						createAtomicValue('string', ValueType.XSANYURI),
+						ValueType.XSDAYTIMEDURATION
+					),
 				'XPTY0004'
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:NOTATION'), 'xs:dayTimeDuration'),
+				() =>
+					castToType(
+						createAtomicValue('string', ValueType.XSNOTATION),
+						ValueType.XSDAYTIMEDURATION
+					),
 				'XPTY0004'
 			));
 	});
@@ -1753,37 +2053,47 @@ describe('castToType()', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue('2000-10-10T10:10:10+10:30', 'xs:untypedAtomic'),
-					'xs:dateTime'
+					createAtomicValue('2000-10-10T10:10:10+10:30', ValueType.XSUNTYPEDATOMIC),
+					ValueType.XSDATETIME
 				),
-				createAtomicValue(DateTime.fromString('2000-10-10T10:10:10+10:30'), 'xs:dateTime')
+				createAtomicValue(
+					DateTime.fromString('2000-10-10T10:10:10+10:30'),
+					ValueType.XSDATETIME
+				)
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue('2000-10-10T10:10:10+10:30', 'xs:string'),
-					'xs:dateTime'
+					createAtomicValue('2000-10-10T10:10:10+10:30', ValueType.XSSTRING),
+					ValueType.XSDATETIME
 				),
-				createAtomicValue(DateTime.fromString('2000-10-10T10:10:10+10:30'), 'xs:dateTime')
+				createAtomicValue(
+					DateTime.fromString('2000-10-10T10:10:10+10:30'),
+					ValueType.XSDATETIME
+				)
 			));
 		it('from xs:float (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(10.123, 'xs:float'), 'xs:dateTime'),
+				() =>
+					castToType(createAtomicValue(10.123, ValueType.XSFLOAT), ValueType.XSDATETIME),
 				'XPTY0004'
 			));
 		it('from xs:double (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(10.123, 'xs:double'), 'xs:dateTime'),
+				() =>
+					castToType(createAtomicValue(10.123, ValueType.XSDOUBLE), ValueType.XSDATETIME),
 				'XPTY0004'
 			));
 		it('from xs:decimal (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(1010, 'xs:decimal'), 'xs:dateTime'),
+				() =>
+					castToType(createAtomicValue(1010, ValueType.XSDECIMAL), ValueType.XSDATETIME),
 				'XPTY0004'
 			));
 		it('from xs:integer (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(1010, 'xs:integer'), 'xs:dateTime'),
+				() =>
+					castToType(createAtomicValue(1010, ValueType.XSINTEGER), ValueType.XSDATETIME),
 				'XPTY0004'
 			));
 		it('from xs:duration (throws XPTY0004)', () =>
@@ -1792,9 +2102,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(
 							Duration.fromString('P10Y10M10DT10H10M10S'),
-							'xs:duration'
+							ValueType.XSDURATION
 						),
-						'xs:dateTime'
+						ValueType.XSDATETIME
 					),
 				'XPTY0004'
 			));
@@ -1802,8 +2112,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:yearMonthDuration'),
-						'xs:dateTime'
+						createAtomicValue(
+							Duration.fromString('P10Y10M'),
+							ValueType.XSYEARMONTHDURATION
+						),
+						ValueType.XSDATETIME
 					),
 				'XPTY0004'
 			));
@@ -1811,8 +2124,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:dayTimeDuration'),
-						'xs:dateTime'
+						createAtomicValue(
+							Duration.fromString('P10Y10M'),
+							ValueType.XSDAYTIMEDURATION
+						),
+						ValueType.XSDATETIME
 					),
 				'XPTY0004'
 			));
@@ -1821,35 +2137,44 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue(
 						DateTime.fromString('2000-10-10T10:10:10+10:30'),
-						'xs:dateTime'
+						ValueType.XSDATETIME
 					),
-					'xs:dateTime'
+					ValueType.XSDATETIME
 				),
-				createAtomicValue(DateTime.fromString('2000-10-10T10:10:10+10:30'), 'xs:dateTime')
+				createAtomicValue(
+					DateTime.fromString('2000-10-10T10:10:10+10:30'),
+					ValueType.XSDATETIME
+				)
 			));
 		it('from xs:time (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('10:10:10+10:30'), 'xs:time'),
-						'xs:dateTime'
+						createAtomicValue(DateTime.fromString('10:10:10+10:30'), ValueType.XSTIME),
+						ValueType.XSDATETIME
 					),
 				'XPTY0004'
 			));
 		it('from xs:date', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue(DateTime.fromString('2000-10-10+10:30'), 'xs:date'),
-					'xs:dateTime'
+					createAtomicValue(DateTime.fromString('2000-10-10+10:30'), ValueType.XSDATE),
+					ValueType.XSDATETIME
 				),
-				createAtomicValue(DateTime.fromString('2000-10-10T00:00:00+10:30'), 'xs:dateTime')
+				createAtomicValue(
+					DateTime.fromString('2000-10-10T00:00:00+10:30'),
+					ValueType.XSDATETIME
+				)
 			));
 		it('from xs:gYearMonth (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000-10+10:30'), 'xs:gYearMonth'),
-						'xs:dateTime'
+						createAtomicValue(
+							DateTime.fromString('2000-10+10:30'),
+							ValueType.XSGYEARMONTH
+						),
+						ValueType.XSDATETIME
 					),
 				'XPTY0004'
 			));
@@ -1857,8 +2182,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000+10:30'), 'xs:gYear'),
-						'xs:dateTime'
+						createAtomicValue(DateTime.fromString('2000+10:30'), ValueType.XSGYEAR),
+						ValueType.XSDATETIME
 					),
 				'XPTY0004'
 			));
@@ -1866,8 +2191,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10-10+10:30'), 'xs:gMonthDay'),
-						'xs:dateTime'
+						createAtomicValue(
+							DateTime.fromString('--10-10+10:30'),
+							ValueType.XSGMONTHDAY
+						),
+						ValueType.XSDATETIME
 					),
 				'XPTY0004'
 			));
@@ -1875,8 +2203,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('---10+10:30'), 'xs:gDay'),
-						'xs:dateTime'
+						createAtomicValue(DateTime.fromString('---10+10:30'), ValueType.XSGDAY),
+						ValueType.XSDATETIME
 					),
 				'XPTY0004'
 			));
@@ -1884,22 +2212,23 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10+10:30'), 'xs:gMonth'),
-						'xs:dateTime'
+						createAtomicValue(DateTime.fromString('--10+10:30'), ValueType.XSGMONTH),
+						ValueType.XSDATETIME
 					),
 				'XPTY0004'
 			));
 		it('from xs:boolean (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(true, 'xs:boolean'), 'xs:dateTime'),
+				() =>
+					castToType(createAtomicValue(true, ValueType.XSBOOLEAN), ValueType.XSDATETIME),
 				'XPTY0004'
 			));
 		it('from xs:base64Binary (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', 'xs:base64Binary'),
-						'xs:dateTime'
+						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', ValueType.XSBASE64BINARY),
+						ValueType.XSDATETIME
 					),
 				'XPTY0004'
 			));
@@ -1907,19 +2236,27 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue('21FE3A44123C21FE3A44123C', 'xs:hexBinary'),
-						'xs:dateTime'
+						createAtomicValue('21FE3A44123C21FE3A44123C', ValueType.XSHEXBINARY),
+						ValueType.XSDATETIME
 					),
 				'XPTY0004'
 			));
 		it('from xs:anyURI (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:anyURI'), 'xs:dateTime'),
+				() =>
+					castToType(
+						createAtomicValue('string', ValueType.XSANYURI),
+						ValueType.XSDATETIME
+					),
 				'XPTY0004'
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:NOTATION'), 'xs:dateTime'),
+				() =>
+					castToType(
+						createAtomicValue('string', ValueType.XSNOTATION),
+						ValueType.XSDATETIME
+					),
 				'XPTY0004'
 			));
 	});
@@ -1927,32 +2264,38 @@ describe('castToType()', () => {
 	describe('to xs:time', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('10:10:10+10:30', 'xs:untypedAtomic'), 'xs:time'),
-				createAtomicValue(DateTime.fromString('10:10:10+10:30'), 'xs:time')
+				castToType(
+					createAtomicValue('10:10:10+10:30', ValueType.XSUNTYPEDATOMIC),
+					ValueType.XSTIME
+				),
+				createAtomicValue(DateTime.fromString('10:10:10+10:30'), ValueType.XSTIME)
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('10:10:10+10:30', 'xs:string'), 'xs:time'),
-				createAtomicValue(DateTime.fromString('10:10:10+10:30'), 'xs:time')
+				castToType(
+					createAtomicValue('10:10:10+10:30', ValueType.XSSTRING),
+					ValueType.XSTIME
+				),
+				createAtomicValue(DateTime.fromString('10:10:10+10:30'), ValueType.XSTIME)
 			));
 		it('from xs:float (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(10.123, 'xs:float'), 'xs:time'),
+				() => castToType(createAtomicValue(10.123, ValueType.XSFLOAT), ValueType.XSTIME),
 				'XPTY0004'
 			));
 		it('from xs:double (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(10.123, 'xs:double'), 'xs:time'),
+				() => castToType(createAtomicValue(10.123, ValueType.XSDOUBLE), ValueType.XSTIME),
 				'XPTY0004'
 			));
 		it('from xs:decimal (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(1010, 'xs:decimal'), 'xs:time'),
+				() => castToType(createAtomicValue(1010, ValueType.XSDECIMAL), ValueType.XSTIME),
 				'XPTY0004'
 			));
 		it('from xs:integer (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(1010, 'xs:integer'), 'xs:time'),
+				() => castToType(createAtomicValue(1010, ValueType.XSINTEGER), ValueType.XSTIME),
 				'XPTY0004'
 			));
 		it('from xs:duration (throws XPTY0004)', () =>
@@ -1961,9 +2304,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(
 							Duration.fromString('P10Y10M10DT10H10M10S'),
-							'xs:duration'
+							ValueType.XSDURATION
 						),
-						'xs:time'
+						ValueType.XSTIME
 					),
 				'XPTY0004'
 			));
@@ -1971,8 +2314,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:yearMonthDuration'),
-						'xs:time'
+						createAtomicValue(
+							Duration.fromString('P10Y10M'),
+							ValueType.XSYEARMONTHDURATION
+						),
+						ValueType.XSTIME
 					),
 				'XPTY0004'
 			));
@@ -1980,8 +2326,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:dayTimeDuration'),
-						'xs:time'
+						createAtomicValue(
+							Duration.fromString('P10Y10M'),
+							ValueType.XSDAYTIMEDURATION
+						),
+						ValueType.XSTIME
 					),
 				'XPTY0004'
 			));
@@ -1990,26 +2339,29 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue(
 						DateTime.fromString('2000-10-10T10:10:10+10:30'),
-						'xs:dateTime'
+						ValueType.XSDATETIME
 					),
-					'xs:time'
+					ValueType.XSTIME
 				),
-				createAtomicValue(DateTime.fromString('10:10:10+10:30'), 'xs:time')
+				createAtomicValue(DateTime.fromString('10:10:10+10:30'), ValueType.XSTIME)
 			));
 		it('from xs:time', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue(DateTime.fromString('10:10:10+10:30'), 'xs:time'),
-					'xs:time'
+					createAtomicValue(DateTime.fromString('10:10:10+10:30'), ValueType.XSTIME),
+					ValueType.XSTIME
 				),
-				createAtomicValue(DateTime.fromString('10:10:10+10:30'), 'xs:time')
+				createAtomicValue(DateTime.fromString('10:10:10+10:30'), ValueType.XSTIME)
 			));
 		it('from xs:date (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000-10-10+10:30'), 'xs:date'),
-						'xs:time'
+						createAtomicValue(
+							DateTime.fromString('2000-10-10+10:30'),
+							ValueType.XSDATE
+						),
+						ValueType.XSTIME
 					),
 				'XPTY0004'
 			));
@@ -2017,8 +2369,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000-10+10:30'), 'xs:gYearMonth'),
-						'xs:time'
+						createAtomicValue(
+							DateTime.fromString('2000-10+10:30'),
+							ValueType.XSGYEARMONTH
+						),
+						ValueType.XSTIME
 					),
 				'XPTY0004'
 			));
@@ -2026,8 +2381,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000+10:30'), 'xs:gYear'),
-						'xs:time'
+						createAtomicValue(DateTime.fromString('2000+10:30'), ValueType.XSGYEAR),
+						ValueType.XSTIME
 					),
 				'XPTY0004'
 			));
@@ -2035,8 +2390,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10-10+10:30'), 'xs:gMonthDay'),
-						'xs:time'
+						createAtomicValue(
+							DateTime.fromString('--10-10+10:30'),
+							ValueType.XSGMONTHDAY
+						),
+						ValueType.XSTIME
 					),
 				'XPTY0004'
 			));
@@ -2044,8 +2402,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('---10+10:30'), 'xs:gDay'),
-						'xs:time'
+						createAtomicValue(DateTime.fromString('---10+10:30'), ValueType.XSGDAY),
+						ValueType.XSTIME
 					),
 				'XPTY0004'
 			));
@@ -2053,22 +2411,22 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10+10:30'), 'xs:gMonth'),
-						'xs:time'
+						createAtomicValue(DateTime.fromString('--10+10:30'), ValueType.XSGMONTH),
+						ValueType.XSTIME
 					),
 				'XPTY0004'
 			));
 		it('from xs:boolean (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(true, 'xs:boolean'), 'xs:time'),
+				() => castToType(createAtomicValue(true, ValueType.XSBOOLEAN), ValueType.XSTIME),
 				'XPTY0004'
 			));
 		it('from xs:base64Binary (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', 'xs:base64Binary'),
-						'xs:time'
+						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', ValueType.XSBASE64BINARY),
+						ValueType.XSTIME
 					),
 				'XPTY0004'
 			));
@@ -2076,19 +2434,20 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue('21FE3A44123C21FE3A44123C', 'xs:hexBinary'),
-						'xs:time'
+						createAtomicValue('21FE3A44123C21FE3A44123C', ValueType.XSHEXBINARY),
+						ValueType.XSTIME
 					),
 				'XPTY0004'
 			));
 		it('from xs:anyURI (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:anyURI'), 'xs:time'),
+				() => castToType(createAtomicValue('string', ValueType.XSANYURI), ValueType.XSTIME),
 				'XPTY0004'
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:NOTATION'), 'xs:time'),
+				() =>
+					castToType(createAtomicValue('string', ValueType.XSNOTATION), ValueType.XSTIME),
 				'XPTY0004'
 			));
 	});
@@ -2096,32 +2455,38 @@ describe('castToType()', () => {
 	describe('to xs:date', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('2000-10-10+10:30', 'xs:untypedAtomic'), 'xs:date'),
-				createAtomicValue(DateTime.fromString('2000-10-10+10:30'), 'xs:date')
+				castToType(
+					createAtomicValue('2000-10-10+10:30', ValueType.XSUNTYPEDATOMIC),
+					ValueType.XSDATE
+				),
+				createAtomicValue(DateTime.fromString('2000-10-10+10:30'), ValueType.XSDATE)
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('2000-10-10+10:30', 'xs:string'), 'xs:date'),
-				createAtomicValue(DateTime.fromString('2000-10-10+10:30'), 'xs:date')
+				castToType(
+					createAtomicValue('2000-10-10+10:30', ValueType.XSSTRING),
+					ValueType.XSDATE
+				),
+				createAtomicValue(DateTime.fromString('2000-10-10+10:30'), ValueType.XSDATE)
 			));
 		it('from xs:float (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(10.123, 'xs:float'), 'xs:date'),
+				() => castToType(createAtomicValue(10.123, ValueType.XSFLOAT), ValueType.XSDATE),
 				'XPTY0004'
 			));
 		it('from xs:double (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(10.123, 'xs:double'), 'xs:date'),
+				() => castToType(createAtomicValue(10.123, ValueType.XSDOUBLE), ValueType.XSDATE),
 				'XPTY0004'
 			));
 		it('from xs:decimal (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(1010, 'xs:decimal'), 'xs:date'),
+				() => castToType(createAtomicValue(1010, ValueType.XSDECIMAL), ValueType.XSDATE),
 				'XPTY0004'
 			));
 		it('from xs:integer (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(1010, 'xs:integer'), 'xs:date'),
+				() => castToType(createAtomicValue(1010, ValueType.XSINTEGER), ValueType.XSDATE),
 				'XPTY0004'
 			));
 		it('from xs:duration (throws XPTY0004)', () =>
@@ -2130,9 +2495,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(
 							Duration.fromString('P10Y10M10DT10H10M10S'),
-							'xs:duration'
+							ValueType.XSDURATION
 						),
-						'xs:date'
+						ValueType.XSDATE
 					),
 				'XPTY0004'
 			));
@@ -2140,8 +2505,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:yearMonthDuration'),
-						'xs:date'
+						createAtomicValue(
+							Duration.fromString('P10Y10M'),
+							ValueType.XSYEARMONTHDURATION
+						),
+						ValueType.XSDATE
 					),
 				'XPTY0004'
 			));
@@ -2149,8 +2517,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:dayTimeDuration'),
-						'xs:date'
+						createAtomicValue(
+							Duration.fromString('P10Y10M'),
+							ValueType.XSDAYTIMEDURATION
+						),
+						ValueType.XSDATE
 					),
 				'XPTY0004'
 			));
@@ -2159,35 +2530,38 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue(
 						DateTime.fromString('2000-10-10T10:10:10+10:30'),
-						'xs:dateTime'
+						ValueType.XSDATETIME
 					),
-					'xs:date'
+					ValueType.XSDATE
 				),
-				createAtomicValue(DateTime.fromString('2000-10-10+10:30'), 'xs:date')
+				createAtomicValue(DateTime.fromString('2000-10-10+10:30'), ValueType.XSDATE)
 			));
 		it('from xs:time (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('10:10:10+10:30'), 'xs:time'),
-						'xs:date'
+						createAtomicValue(DateTime.fromString('10:10:10+10:30'), ValueType.XSTIME),
+						ValueType.XSDATE
 					),
 				'XPTY0004'
 			));
 		it('from xs:date', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue(DateTime.fromString('2000-10-10+10:30'), 'xs:date'),
-					'xs:date'
+					createAtomicValue(DateTime.fromString('2000-10-10+10:30'), ValueType.XSDATE),
+					ValueType.XSDATE
 				),
-				createAtomicValue(DateTime.fromString('2000-10-10+10:30'), 'xs:date')
+				createAtomicValue(DateTime.fromString('2000-10-10+10:30'), ValueType.XSDATE)
 			));
 		it('from xs:gYearMonth (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000-10+10:30'), 'xs:gYearMonth'),
-						'xs:date'
+						createAtomicValue(
+							DateTime.fromString('2000-10+10:30'),
+							ValueType.XSGYEARMONTH
+						),
+						ValueType.XSDATE
 					),
 				'XPTY0004'
 			));
@@ -2195,8 +2569,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000+10:30'), 'xs:gYear'),
-						'xs:date'
+						createAtomicValue(DateTime.fromString('2000+10:30'), ValueType.XSGYEAR),
+						ValueType.XSDATE
 					),
 				'XPTY0004'
 			));
@@ -2204,8 +2578,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10-10+10:30'), 'xs:gMonthDay'),
-						'xs:date'
+						createAtomicValue(
+							DateTime.fromString('--10-10+10:30'),
+							ValueType.XSGMONTHDAY
+						),
+						ValueType.XSDATE
 					),
 				'XPTY0004'
 			));
@@ -2213,8 +2590,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('---10+10:30'), 'xs:gDay'),
-						'xs:date'
+						createAtomicValue(DateTime.fromString('---10+10:30'), ValueType.XSGDAY),
+						ValueType.XSDATE
 					),
 				'XPTY0004'
 			));
@@ -2222,22 +2599,22 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10+10:30'), 'xs:gMonth'),
-						'xs:date'
+						createAtomicValue(DateTime.fromString('--10+10:30'), ValueType.XSGMONTH),
+						ValueType.XSDATE
 					),
 				'XPTY0004'
 			));
 		it('from xs:boolean (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(true, 'xs:boolean'), 'xs:date'),
+				() => castToType(createAtomicValue(true, ValueType.XSBOOLEAN), ValueType.XSDATE),
 				'XPTY0004'
 			));
 		it('from xs:base64Binary (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', 'xs:base64Binary'),
-						'xs:date'
+						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', ValueType.XSBASE64BINARY),
+						ValueType.XSDATE
 					),
 				'XPTY0004'
 			));
@@ -2245,19 +2622,20 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue('21FE3A44123C21FE3A44123C', 'xs:hexBinary'),
-						'xs:date'
+						createAtomicValue('21FE3A44123C21FE3A44123C', ValueType.XSHEXBINARY),
+						ValueType.XSDATE
 					),
 				'XPTY0004'
 			));
 		it('from xs:anyURI (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:anyURI'), 'xs:date'),
+				() => castToType(createAtomicValue('string', ValueType.XSANYURI), ValueType.XSDATE),
 				'XPTY0004'
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:NOTATION'), 'xs:date'),
+				() =>
+					castToType(createAtomicValue('string', ValueType.XSNOTATION), ValueType.XSDATE),
 				'XPTY0004'
 			));
 	});
@@ -2265,32 +2643,54 @@ describe('castToType()', () => {
 	describe('to xs:gYearMonth', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('2000-10+10:30', 'xs:untypedAtomic'), 'xs:gYearMonth'),
-				createAtomicValue(DateTime.fromString('2000-10+10:30'), 'xs:gYearMonth')
+				castToType(
+					createAtomicValue('2000-10+10:30', ValueType.XSUNTYPEDATOMIC),
+					ValueType.XSGYEARMONTH
+				),
+				createAtomicValue(DateTime.fromString('2000-10+10:30'), ValueType.XSGYEARMONTH)
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('2000-10+10:30', 'xs:string'), 'xs:gYearMonth'),
-				createAtomicValue(DateTime.fromString('2000-10+10:30'), 'xs:gYearMonth')
+				castToType(
+					createAtomicValue('2000-10+10:30', ValueType.XSSTRING),
+					ValueType.XSGYEARMONTH
+				),
+				createAtomicValue(DateTime.fromString('2000-10+10:30'), ValueType.XSGYEARMONTH)
 			));
 		it('from xs:float (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(10.123, 'xs:float'), 'xs:gYearMonth'),
+				() =>
+					castToType(
+						createAtomicValue(10.123, ValueType.XSFLOAT),
+						ValueType.XSGYEARMONTH
+					),
 				'XPTY0004'
 			));
 		it('from xs:double (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(10.123, 'xs:double'), 'xs:gYearMonth'),
+				() =>
+					castToType(
+						createAtomicValue(10.123, ValueType.XSDOUBLE),
+						ValueType.XSGYEARMONTH
+					),
 				'XPTY0004'
 			));
 		it('from xs:decimal (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(1010, 'xs:decimal'), 'xs:gYearMonth'),
+				() =>
+					castToType(
+						createAtomicValue(1010, ValueType.XSDECIMAL),
+						ValueType.XSGYEARMONTH
+					),
 				'XPTY0004'
 			));
 		it('from xs:integer (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(1010, 'xs:integer'), 'xs:gYearMonth'),
+				() =>
+					castToType(
+						createAtomicValue(1010, ValueType.XSINTEGER),
+						ValueType.XSGYEARMONTH
+					),
 				'XPTY0004'
 			));
 		it('from xs:duration (throws XPTY0004)', () =>
@@ -2299,9 +2699,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(
 							Duration.fromString('P10Y10M10DT10H10M10S'),
-							'xs:duration'
+							ValueType.XSDURATION
 						),
-						'xs:gYearMonth'
+						ValueType.XSGYEARMONTH
 					),
 				'XPTY0004'
 			));
@@ -2309,8 +2709,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:yearMonthDuration'),
-						'xs:gYearMonth'
+						createAtomicValue(
+							Duration.fromString('P10Y10M'),
+							ValueType.XSYEARMONTHDURATION
+						),
+						ValueType.XSGYEARMONTH
 					),
 				'XPTY0004'
 			));
@@ -2318,8 +2721,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:dayTimeDuration'),
-						'xs:gYearMonth'
+						createAtomicValue(
+							Duration.fromString('P10Y10M'),
+							ValueType.XSDAYTIMEDURATION
+						),
+						ValueType.XSGYEARMONTH
 					),
 				'XPTY0004'
 			));
@@ -2328,43 +2734,43 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue(
 						DateTime.fromString('2000-10-10T10:10:10+10:30'),
-						'xs:dateTime'
+						ValueType.XSDATETIME
 					),
-					'xs:gYearMonth'
+					ValueType.XSGYEARMONTH
 				),
-				createAtomicValue(DateTime.fromString('2000-10+10:30'), 'xs:gYearMonth')
+				createAtomicValue(DateTime.fromString('2000-10+10:30'), ValueType.XSGYEARMONTH)
 			));
 		it('from xs:time (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('10:10:10+10:30'), 'xs:time'),
-						'xs:gYearMonth'
+						createAtomicValue(DateTime.fromString('10:10:10+10:30'), ValueType.XSTIME),
+						ValueType.XSGYEARMONTH
 					),
 				'XPTY0004'
 			));
 		it('from xs:date', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue(DateTime.fromString('2000-10-10+10:30'), 'xs:date'),
-					'xs:gYearMonth'
+					createAtomicValue(DateTime.fromString('2000-10-10+10:30'), ValueType.XSDATE),
+					ValueType.XSGYEARMONTH
 				),
-				createAtomicValue(DateTime.fromString('2000-10+10:30'), 'xs:gYearMonth')
+				createAtomicValue(DateTime.fromString('2000-10+10:30'), ValueType.XSGYEARMONTH)
 			));
 		it('from xs:gYearMonth', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue(DateTime.fromString('2000-10+10:30'), 'xs:gYearMonth'),
-					'xs:gYearMonth'
+					createAtomicValue(DateTime.fromString('2000-10+10:30'), ValueType.XSGYEARMONTH),
+					ValueType.XSGYEARMONTH
 				),
-				createAtomicValue(DateTime.fromString('2000-10+10:30'), 'xs:gYearMonth')
+				createAtomicValue(DateTime.fromString('2000-10+10:30'), ValueType.XSGYEARMONTH)
 			));
 		it('from xs:gYear (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000+10:30'), 'xs:gYear'),
-						'xs:gYearMonth'
+						createAtomicValue(DateTime.fromString('2000+10:30'), ValueType.XSGYEAR),
+						ValueType.XSGYEARMONTH
 					),
 				'XPTY0004'
 			));
@@ -2372,8 +2778,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10-10+10:30'), 'xs:gMonthDay'),
-						'xs:gYearMonth'
+						createAtomicValue(
+							DateTime.fromString('--10-10+10:30'),
+							ValueType.XSGMONTHDAY
+						),
+						ValueType.XSGYEARMONTH
 					),
 				'XPTY0004'
 			));
@@ -2381,8 +2790,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('---10+10:30'), 'xs:gDay'),
-						'xs:gYearMonth'
+						createAtomicValue(DateTime.fromString('---10+10:30'), ValueType.XSGDAY),
+						ValueType.XSGYEARMONTH
 					),
 				'XPTY0004'
 			));
@@ -2390,22 +2799,26 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10+10:30'), 'xs:gMonth'),
-						'xs:gYearMonth'
+						createAtomicValue(DateTime.fromString('--10+10:30'), ValueType.XSGMONTH),
+						ValueType.XSGYEARMONTH
 					),
 				'XPTY0004'
 			));
 		it('from xs:boolean (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(true, 'xs:boolean'), 'xs:gYearMonth'),
+				() =>
+					castToType(
+						createAtomicValue(true, ValueType.XSBOOLEAN),
+						ValueType.XSGYEARMONTH
+					),
 				'XPTY0004'
 			));
 		it('from xs:base64Binary (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', 'xs:base64Binary'),
-						'xs:gYearMonth'
+						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', ValueType.XSBASE64BINARY),
+						ValueType.XSGYEARMONTH
 					),
 				'XPTY0004'
 			));
@@ -2413,19 +2826,27 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue('21FE3A44123C21FE3A44123C', 'xs:hexBinary'),
-						'xs:gYearMonth'
+						createAtomicValue('21FE3A44123C21FE3A44123C', ValueType.XSHEXBINARY),
+						ValueType.XSGYEARMONTH
 					),
 				'XPTY0004'
 			));
 		it('from xs:anyURI (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:anyURI'), 'xs:gYearMonth'),
+				() =>
+					castToType(
+						createAtomicValue('string', ValueType.XSANYURI),
+						ValueType.XSGYEARMONTH
+					),
 				'XPTY0004'
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:NOTATION'), 'xs:gYearMonth'),
+				() =>
+					castToType(
+						createAtomicValue('string', ValueType.XSNOTATION),
+						ValueType.XSGYEARMONTH
+					),
 				'XPTY0004'
 			));
 	});
@@ -2433,32 +2854,35 @@ describe('castToType()', () => {
 	describe('to xs:gYear', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('2000+10:30', 'xs:untypedAtomic'), 'xs:gYear'),
-				createAtomicValue(DateTime.fromString('2000+10:30'), 'xs:gYear')
+				castToType(
+					createAtomicValue('2000+10:30', ValueType.XSUNTYPEDATOMIC),
+					ValueType.XSGYEAR
+				),
+				createAtomicValue(DateTime.fromString('2000+10:30'), ValueType.XSGYEAR)
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('2000+10:30', 'xs:string'), 'xs:gYear'),
-				createAtomicValue(DateTime.fromString('2000+10:30'), 'xs:gYear')
+				castToType(createAtomicValue('2000+10:30', ValueType.XSSTRING), ValueType.XSGYEAR),
+				createAtomicValue(DateTime.fromString('2000+10:30'), ValueType.XSGYEAR)
 			));
 		it('from xs:float (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(10.123, 'xs:float'), 'xs:gYear'),
+				() => castToType(createAtomicValue(10.123, ValueType.XSFLOAT), ValueType.XSGYEAR),
 				'XPTY0004'
 			));
 		it('from xs:double (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(10.123, 'xs:double'), 'xs:gYear'),
+				() => castToType(createAtomicValue(10.123, ValueType.XSDOUBLE), ValueType.XSGYEAR),
 				'XPTY0004'
 			));
 		it('from xs:decimal (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(1010, 'xs:decimal'), 'xs:gYear'),
+				() => castToType(createAtomicValue(1010, ValueType.XSDECIMAL), ValueType.XSGYEAR),
 				'XPTY0004'
 			));
 		it('from xs:integer (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(1010, 'xs:integer'), 'xs:gYear'),
+				() => castToType(createAtomicValue(1010, ValueType.XSINTEGER), ValueType.XSGYEAR),
 				'XPTY0004'
 			));
 		it('from xs:duration (throws XPTY0004)', () =>
@@ -2467,9 +2891,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(
 							Duration.fromString('P10Y10M10DT10H10M10S'),
-							'xs:duration'
+							ValueType.XSDURATION
 						),
-						'xs:gYear'
+						ValueType.XSGYEAR
 					),
 				'XPTY0004'
 			));
@@ -2477,8 +2901,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:yearMonthDuration'),
-						'xs:gYear'
+						createAtomicValue(
+							Duration.fromString('P10Y10M'),
+							ValueType.XSYEARMONTHDURATION
+						),
+						ValueType.XSGYEAR
 					),
 				'XPTY0004'
 			));
@@ -2486,8 +2913,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:dayTimeDuration'),
-						'xs:gYear'
+						createAtomicValue(
+							Duration.fromString('P10Y10M'),
+							ValueType.XSDAYTIMEDURATION
+						),
+						ValueType.XSGYEAR
 					),
 				'XPTY0004'
 			));
@@ -2496,52 +2926,58 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue(
 						DateTime.fromString('2000-10-10T10:10:10+10:30'),
-						'xs:dateTime'
+						ValueType.XSDATETIME
 					),
-					'xs:gYear'
+					ValueType.XSGYEAR
 				),
-				createAtomicValue(DateTime.fromString('2000+10:30'), 'xs:gYear')
+				createAtomicValue(DateTime.fromString('2000+10:30'), ValueType.XSGYEAR)
 			));
 		it('from xs:time (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('10:10:10+10:30'), 'xs:time'),
-						'xs:gYear'
+						createAtomicValue(DateTime.fromString('10:10:10+10:30'), ValueType.XSTIME),
+						ValueType.XSGYEAR
 					),
 				'XPTY0004'
 			));
 		it('from xs:date', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue(DateTime.fromString('2000-10-10+10:30'), 'xs:date'),
-					'xs:gYear'
+					createAtomicValue(DateTime.fromString('2000-10-10+10:30'), ValueType.XSDATE),
+					ValueType.XSGYEAR
 				),
-				createAtomicValue(DateTime.fromString('2000+10:30'), 'xs:gYear')
+				createAtomicValue(DateTime.fromString('2000+10:30'), ValueType.XSGYEAR)
 			));
 		it('from xs:gYearMonth (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000-10+10:30'), 'xs:gYearMonth'),
-						'xs:gYear'
+						createAtomicValue(
+							DateTime.fromString('2000-10+10:30'),
+							ValueType.XSGYEARMONTH
+						),
+						ValueType.XSGYEAR
 					),
 				'XPTY0004'
 			));
 		it('from xs:gYear', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue(DateTime.fromString('2000+10:30'), 'xs:gYear'),
-					'xs:gYear'
+					createAtomicValue(DateTime.fromString('2000+10:30'), ValueType.XSGYEAR),
+					ValueType.XSGYEAR
 				),
-				createAtomicValue(DateTime.fromString('2000+10:30'), 'xs:gYear')
+				createAtomicValue(DateTime.fromString('2000+10:30'), ValueType.XSGYEAR)
 			));
 		it('from xs:gMonthDay (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10-10+10:30'), 'xs:gMonthDay'),
-						'xs:gYear'
+						createAtomicValue(
+							DateTime.fromString('--10-10+10:30'),
+							ValueType.XSGMONTHDAY
+						),
+						ValueType.XSGYEAR
 					),
 				'XPTY0004'
 			));
@@ -2549,8 +2985,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('---10+10:30'), 'xs:gDay'),
-						'xs:gYear'
+						createAtomicValue(DateTime.fromString('---10+10:30'), ValueType.XSGDAY),
+						ValueType.XSGYEAR
 					),
 				'XPTY0004'
 			));
@@ -2558,22 +2994,22 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10+10:30'), 'xs:gMonth'),
-						'xs:gYear'
+						createAtomicValue(DateTime.fromString('--10+10:30'), ValueType.XSGMONTH),
+						ValueType.XSGYEAR
 					),
 				'XPTY0004'
 			));
 		it('from xs:boolean (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(true, 'xs:boolean'), 'xs:gYear'),
+				() => castToType(createAtomicValue(true, ValueType.XSBOOLEAN), ValueType.XSGYEAR),
 				'XPTY0004'
 			));
 		it('from xs:base64Binary (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', 'xs:base64Binary'),
-						'xs:gYear'
+						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', ValueType.XSBASE64BINARY),
+						ValueType.XSGYEAR
 					),
 				'XPTY0004'
 			));
@@ -2581,19 +3017,24 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue('21FE3A44123C21FE3A44123C', 'xs:hexBinary'),
-						'xs:gYear'
+						createAtomicValue('21FE3A44123C21FE3A44123C', ValueType.XSHEXBINARY),
+						ValueType.XSGYEAR
 					),
 				'XPTY0004'
 			));
 		it('from xs:anyURI (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:anyURI'), 'xs:gYear'),
+				() =>
+					castToType(createAtomicValue('string', ValueType.XSANYURI), ValueType.XSGYEAR),
 				'XPTY0004'
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:NOTATION'), 'xs:gYear'),
+				() =>
+					castToType(
+						createAtomicValue('string', ValueType.XSNOTATION),
+						ValueType.XSGYEAR
+					),
 				'XPTY0004'
 			));
 	});
@@ -2601,32 +3042,45 @@ describe('castToType()', () => {
 	describe('to xs:gMonthDay', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('--10-10+10:30', 'xs:untypedAtomic'), 'xs:gMonthDay'),
-				createAtomicValue(DateTime.fromString('--10-10+10:30'), 'xs:gMonthDay')
+				castToType(
+					createAtomicValue('--10-10+10:30', ValueType.XSUNTYPEDATOMIC),
+					ValueType.XSGMONTHDAY
+				),
+				createAtomicValue(DateTime.fromString('--10-10+10:30'), ValueType.XSGMONTHDAY)
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('--10-10+10:30', 'xs:string'), 'xs:gMonthDay'),
-				createAtomicValue(DateTime.fromString('--10-10+10:30'), 'xs:gMonthDay')
+				castToType(
+					createAtomicValue('--10-10+10:30', ValueType.XSSTRING),
+					ValueType.XSGMONTHDAY
+				),
+				createAtomicValue(DateTime.fromString('--10-10+10:30'), ValueType.XSGMONTHDAY)
 			));
 		it('from xs:float (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(10.123, 'xs:float'), 'xs:gMonthDay'),
+				() =>
+					castToType(createAtomicValue(10.123, ValueType.XSFLOAT), ValueType.XSGMONTHDAY),
 				'XPTY0004'
 			));
 		it('from xs:double (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(10.123, 'xs:double'), 'xs:gMonthDay'),
+				() =>
+					castToType(
+						createAtomicValue(10.123, ValueType.XSDOUBLE),
+						ValueType.XSGMONTHDAY
+					),
 				'XPTY0004'
 			));
 		it('from xs:decimal (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(1010, 'xs:decimal'), 'xs:gMonthDay'),
+				() =>
+					castToType(createAtomicValue(1010, ValueType.XSDECIMAL), ValueType.XSGMONTHDAY),
 				'XPTY0004'
 			));
 		it('from xs:integer (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(1010, 'xs:integer'), 'xs:gMonthDay'),
+				() =>
+					castToType(createAtomicValue(1010, ValueType.XSINTEGER), ValueType.XSGMONTHDAY),
 				'XPTY0004'
 			));
 		it('from xs:duration (throws XPTY0004)', () =>
@@ -2635,9 +3089,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(
 							Duration.fromString('P10Y10M10DT10H10M10S'),
-							'xs:duration'
+							ValueType.XSDURATION
 						),
-						'xs:gMonthDay'
+						ValueType.XSGMONTHDAY
 					),
 				'XPTY0004'
 			));
@@ -2645,8 +3099,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:yearMonthDuration'),
-						'xs:gMonthDay'
+						createAtomicValue(
+							Duration.fromString('P10Y10M'),
+							ValueType.XSYEARMONTHDURATION
+						),
+						ValueType.XSGMONTHDAY
 					),
 				'XPTY0004'
 			));
@@ -2654,8 +3111,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:dayTimeDuration'),
-						'xs:gMonthDay'
+						createAtomicValue(
+							Duration.fromString('P10Y10M'),
+							ValueType.XSDAYTIMEDURATION
+						),
+						ValueType.XSGMONTHDAY
 					),
 				'XPTY0004'
 			));
@@ -2664,35 +3124,38 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue(
 						DateTime.fromString('2000-10-10T10:10:10+10:30'),
-						'xs:dateTime'
+						ValueType.XSDATETIME
 					),
-					'xs:gMonthDay'
+					ValueType.XSGMONTHDAY
 				),
-				createAtomicValue(DateTime.fromString('--10-10+10:30'), 'xs:gMonthDay')
+				createAtomicValue(DateTime.fromString('--10-10+10:30'), ValueType.XSGMONTHDAY)
 			));
 		it('from xs:time (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('10:10:10+10:30'), 'xs:time'),
-						'xs:gMonthDay'
+						createAtomicValue(DateTime.fromString('10:10:10+10:30'), ValueType.XSTIME),
+						ValueType.XSGMONTHDAY
 					),
 				'XPTY0004'
 			));
 		it('from xs:date', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue(DateTime.fromString('2000-10-10+10:30'), 'xs:date'),
-					'xs:gMonthDay'
+					createAtomicValue(DateTime.fromString('2000-10-10+10:30'), ValueType.XSDATE),
+					ValueType.XSGMONTHDAY
 				),
-				createAtomicValue(DateTime.fromString('--10-10+10:30'), 'xs:gMonthDay')
+				createAtomicValue(DateTime.fromString('--10-10+10:30'), ValueType.XSGMONTHDAY)
 			));
 		it('from xs:gYearMonth (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000-10+10:30'), 'xs:gYearMonth'),
-						'xs:gMonthDay'
+						createAtomicValue(
+							DateTime.fromString('2000-10+10:30'),
+							ValueType.XSGYEARMONTH
+						),
+						ValueType.XSGMONTHDAY
 					),
 				'XPTY0004'
 			));
@@ -2700,25 +3163,25 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000+10:30'), 'xs:gYear'),
-						'xs:gMonthDay'
+						createAtomicValue(DateTime.fromString('2000+10:30'), ValueType.XSGYEAR),
+						ValueType.XSGMONTHDAY
 					),
 				'XPTY0004'
 			));
 		it('from xs:gMonthDay', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue(DateTime.fromString('--10-10+10:30'), 'xs:gMonthDay'),
-					'xs:gMonthDay'
+					createAtomicValue(DateTime.fromString('--10-10+10:30'), ValueType.XSGMONTHDAY),
+					ValueType.XSGMONTHDAY
 				),
-				createAtomicValue(DateTime.fromString('--10-10+10:30'), 'xs:gMonthDay')
+				createAtomicValue(DateTime.fromString('--10-10+10:30'), ValueType.XSGMONTHDAY)
 			));
 		it('from xs:gDay (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('---10+10:30'), 'xs:gDay'),
-						'xs:gMonthDay'
+						createAtomicValue(DateTime.fromString('---10+10:30'), ValueType.XSGDAY),
+						ValueType.XSGMONTHDAY
 					),
 				'XPTY0004'
 			));
@@ -2726,22 +3189,23 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10+10:30'), 'xs:gMonth'),
-						'xs:gMonthDay'
+						createAtomicValue(DateTime.fromString('--10+10:30'), ValueType.XSGMONTH),
+						ValueType.XSGMONTHDAY
 					),
 				'XPTY0004'
 			));
 		it('from xs:boolean (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(true, 'xs:boolean'), 'xs:gMonthDay'),
+				() =>
+					castToType(createAtomicValue(true, ValueType.XSBOOLEAN), ValueType.XSGMONTHDAY),
 				'XPTY0004'
 			));
 		it('from xs:base64Binary (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', 'xs:base64Binary'),
-						'xs:gMonthDay'
+						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', ValueType.XSBASE64BINARY),
+						ValueType.XSGMONTHDAY
 					),
 				'XPTY0004'
 			));
@@ -2749,19 +3213,27 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue('21FE3A44123C21FE3A44123C', 'xs:hexBinary'),
-						'xs:gMonthDay'
+						createAtomicValue('21FE3A44123C21FE3A44123C', ValueType.XSHEXBINARY),
+						ValueType.XSGMONTHDAY
 					),
 				'XPTY0004'
 			));
 		it('from xs:anyURI (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:anyURI'), 'xs:gMonthDay'),
+				() =>
+					castToType(
+						createAtomicValue('string', ValueType.XSANYURI),
+						ValueType.XSGMONTHDAY
+					),
 				'XPTY0004'
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:NOTATION'), 'xs:gMonthDay'),
+				() =>
+					castToType(
+						createAtomicValue('string', ValueType.XSNOTATION),
+						ValueType.XSGMONTHDAY
+					),
 				'XPTY0004'
 			));
 	});
@@ -2769,32 +3241,35 @@ describe('castToType()', () => {
 	describe('to xs:gDay', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('---10+10:30', 'xs:untypedAtomic'), 'xs:gDay'),
-				createAtomicValue(DateTime.fromString('---10+10:30'), 'xs:gDay')
+				castToType(
+					createAtomicValue('---10+10:30', ValueType.XSUNTYPEDATOMIC),
+					ValueType.XSGDAY
+				),
+				createAtomicValue(DateTime.fromString('---10+10:30'), ValueType.XSGDAY)
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('---10+10:30', 'xs:string'), 'xs:gDay'),
-				createAtomicValue(DateTime.fromString('---10+10:30'), 'xs:gDay')
+				castToType(createAtomicValue('---10+10:30', ValueType.XSSTRING), ValueType.XSGDAY),
+				createAtomicValue(DateTime.fromString('---10+10:30'), ValueType.XSGDAY)
 			));
 		it('from xs:float (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(10.123, 'xs:float'), 'xs:gDay'),
+				() => castToType(createAtomicValue(10.123, ValueType.XSFLOAT), ValueType.XSGDAY),
 				'XPTY0004'
 			));
 		it('from xs:double (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(10.123, 'xs:double'), 'xs:gDay'),
+				() => castToType(createAtomicValue(10.123, ValueType.XSDOUBLE), ValueType.XSGDAY),
 				'XPTY0004'
 			));
 		it('from xs:decimal (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(1010, 'xs:decimal'), 'xs:gDay'),
+				() => castToType(createAtomicValue(1010, ValueType.XSDECIMAL), ValueType.XSGDAY),
 				'XPTY0004'
 			));
 		it('from xs:integer (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(1010, 'xs:integer'), 'xs:gDay'),
+				() => castToType(createAtomicValue(1010, ValueType.XSINTEGER), ValueType.XSGDAY),
 				'XPTY0004'
 			));
 		it('from xs:duration (throws XPTY0004)', () =>
@@ -2803,9 +3278,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(
 							Duration.fromString('P10Y10M10DT10H10M10S'),
-							'xs:duration'
+							ValueType.XSDURATION
 						),
-						'xs:gDay'
+						ValueType.XSGDAY
 					),
 				'XPTY0004'
 			));
@@ -2813,8 +3288,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:yearMonthDuration'),
-						'xs:gDay'
+						createAtomicValue(
+							Duration.fromString('P10Y10M'),
+							ValueType.XSYEARMONTHDURATION
+						),
+						ValueType.XSGDAY
 					),
 				'XPTY0004'
 			));
@@ -2822,8 +3300,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:dayTimeDuration'),
-						'xs:gDay'
+						createAtomicValue(
+							Duration.fromString('P10Y10M'),
+							ValueType.XSDAYTIMEDURATION
+						),
+						ValueType.XSGDAY
 					),
 				'XPTY0004'
 			));
@@ -2832,35 +3313,38 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue(
 						DateTime.fromString('2000-10-10T10:10:10+10:30'),
-						'xs:dateTime'
+						ValueType.XSDATETIME
 					),
-					'xs:gDay'
+					ValueType.XSGDAY
 				),
-				createAtomicValue(DateTime.fromString('---10+10:30'), 'xs:gDay')
+				createAtomicValue(DateTime.fromString('---10+10:30'), ValueType.XSGDAY)
 			));
 		it('from xs:time (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('10:10:10+10:30'), 'xs:time'),
-						'xs:gDay'
+						createAtomicValue(DateTime.fromString('10:10:10+10:30'), ValueType.XSTIME),
+						ValueType.XSGDAY
 					),
 				'XPTY0004'
 			));
 		it('from xs:date', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue(DateTime.fromString('2000-10-10+10:30'), 'xs:date'),
-					'xs:gDay'
+					createAtomicValue(DateTime.fromString('2000-10-10+10:30'), ValueType.XSDATE),
+					ValueType.XSGDAY
 				),
-				createAtomicValue(DateTime.fromString('---10+10:30'), 'xs:gDay')
+				createAtomicValue(DateTime.fromString('---10+10:30'), ValueType.XSGDAY)
 			));
 		it('from xs:gYearMonth (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000-10+10:30'), 'xs:gYearMonth'),
-						'xs:gDay'
+						createAtomicValue(
+							DateTime.fromString('2000-10+10:30'),
+							ValueType.XSGYEARMONTH
+						),
+						ValueType.XSGDAY
 					),
 				'XPTY0004'
 			));
@@ -2868,8 +3352,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000+10:30'), 'xs:gYear'),
-						'xs:gDay'
+						createAtomicValue(DateTime.fromString('2000+10:30'), ValueType.XSGYEAR),
+						ValueType.XSGDAY
 					),
 				'XPTY0004'
 			));
@@ -2877,39 +3361,42 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10-10+10:30'), 'xs:gMonthDay'),
-						'xs:gDay'
+						createAtomicValue(
+							DateTime.fromString('--10-10+10:30'),
+							ValueType.XSGMONTHDAY
+						),
+						ValueType.XSGDAY
 					),
 				'XPTY0004'
 			));
 		it('from xs:gDay', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue(DateTime.fromString('---10+10:30'), 'xs:gDay'),
-					'xs:gDay'
+					createAtomicValue(DateTime.fromString('---10+10:30'), ValueType.XSGDAY),
+					ValueType.XSGDAY
 				),
-				createAtomicValue(DateTime.fromString('---10+10:30'), 'xs:gDay')
+				createAtomicValue(DateTime.fromString('---10+10:30'), ValueType.XSGDAY)
 			));
 		it('from xs:gMonth (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10+10:30'), 'xs:gMonth'),
-						'xs:gDay'
+						createAtomicValue(DateTime.fromString('--10+10:30'), ValueType.XSGMONTH),
+						ValueType.XSGDAY
 					),
 				'XPTY0004'
 			));
 		it('from xs:boolean (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(true, 'xs:boolean'), 'xs:gDay'),
+				() => castToType(createAtomicValue(true, ValueType.XSBOOLEAN), ValueType.XSGDAY),
 				'XPTY0004'
 			));
 		it('from xs:base64Binary (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', 'xs:base64Binary'),
-						'xs:gDay'
+						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', ValueType.XSBASE64BINARY),
+						ValueType.XSGDAY
 					),
 				'XPTY0004'
 			));
@@ -2917,19 +3404,20 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue('21FE3A44123C21FE3A44123C', 'xs:hexBinary'),
-						'xs:gDay'
+						createAtomicValue('21FE3A44123C21FE3A44123C', ValueType.XSHEXBINARY),
+						ValueType.XSGDAY
 					),
 				'XPTY0004'
 			));
 		it('from xs:anyURI (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:anyURI'), 'xs:gDay'),
+				() => castToType(createAtomicValue('string', ValueType.XSANYURI), ValueType.XSGDAY),
 				'XPTY0004'
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:NOTATION'), 'xs:gDay'),
+				() =>
+					castToType(createAtomicValue('string', ValueType.XSNOTATION), ValueType.XSGDAY),
 				'XPTY0004'
 			));
 	});
@@ -2937,32 +3425,35 @@ describe('castToType()', () => {
 	describe('to xs:gMonth', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('--10+10:30', 'xs:untypedAtomic'), 'xs:gMonth'),
-				createAtomicValue(DateTime.fromString('--10+10:30'), 'xs:gMonth')
+				castToType(
+					createAtomicValue('--10+10:30', ValueType.XSUNTYPEDATOMIC),
+					ValueType.XSGMONTH
+				),
+				createAtomicValue(DateTime.fromString('--10+10:30'), ValueType.XSGMONTH)
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('--10+10:30', 'xs:string'), 'xs:gMonth'),
-				createAtomicValue(DateTime.fromString('--10+10:30'), 'xs:gMonth')
+				castToType(createAtomicValue('--10+10:30', ValueType.XSSTRING), ValueType.XSGMONTH),
+				createAtomicValue(DateTime.fromString('--10+10:30'), ValueType.XSGMONTH)
 			));
 		it('from xs:float (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(10.123, 'xs:float'), 'xs:gMonth'),
+				() => castToType(createAtomicValue(10.123, ValueType.XSFLOAT), ValueType.XSGMONTH),
 				'XPTY0004'
 			));
 		it('from xs:double (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(10.123, 'xs:double'), 'xs:gMonth'),
+				() => castToType(createAtomicValue(10.123, ValueType.XSDOUBLE), ValueType.XSGMONTH),
 				'XPTY0004'
 			));
 		it('from xs:decimal (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(1010, 'xs:decimal'), 'xs:gMonth'),
+				() => castToType(createAtomicValue(1010, ValueType.XSDECIMAL), ValueType.XSGMONTH),
 				'XPTY0004'
 			));
 		it('from xs:integer (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(1010, 'xs:integer'), 'xs:gMonth'),
+				() => castToType(createAtomicValue(1010, ValueType.XSINTEGER), ValueType.XSGMONTH),
 				'XPTY0004'
 			));
 		it('from xs:duration (throws XPTY0004)', () =>
@@ -2971,9 +3462,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(
 							Duration.fromString('P10Y10M10DT10H10M10S'),
-							'xs:duration'
+							ValueType.XSDURATION
 						),
-						'xs:gMonth'
+						ValueType.XSGMONTH
 					),
 				'XPTY0004'
 			));
@@ -2981,8 +3472,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:yearMonthDuration'),
-						'xs:gMonth'
+						createAtomicValue(
+							Duration.fromString('P10Y10M'),
+							ValueType.XSYEARMONTHDURATION
+						),
+						ValueType.XSGMONTH
 					),
 				'XPTY0004'
 			));
@@ -2990,8 +3484,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:dayTimeDuration'),
-						'xs:gMonth'
+						createAtomicValue(
+							Duration.fromString('P10Y10M'),
+							ValueType.XSDAYTIMEDURATION
+						),
+						ValueType.XSGMONTH
 					),
 				'XPTY0004'
 			));
@@ -3000,35 +3497,38 @@ describe('castToType()', () => {
 				castToType(
 					createAtomicValue(
 						DateTime.fromString('2000-10-10T10:10:10+10:30'),
-						'xs:dateTime'
+						ValueType.XSDATETIME
 					),
-					'xs:gMonth'
+					ValueType.XSGMONTH
 				),
-				createAtomicValue(DateTime.fromString('--10+10:30'), 'xs:gMonth')
+				createAtomicValue(DateTime.fromString('--10+10:30'), ValueType.XSGMONTH)
 			));
 		it('from xs:time (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('10:10:10+10:30'), 'xs:time'),
-						'xs:gMonth'
+						createAtomicValue(DateTime.fromString('10:10:10+10:30'), ValueType.XSTIME),
+						ValueType.XSGMONTH
 					),
 				'XPTY0004'
 			));
 		it('from xs:date', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue(DateTime.fromString('2000-10-10+10:30'), 'xs:date'),
-					'xs:gMonth'
+					createAtomicValue(DateTime.fromString('2000-10-10+10:30'), ValueType.XSDATE),
+					ValueType.XSGMONTH
 				),
-				createAtomicValue(DateTime.fromString('--10+10:30'), 'xs:gMonth')
+				createAtomicValue(DateTime.fromString('--10+10:30'), ValueType.XSGMONTH)
 			));
 		it('from xs:gYearMonth (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000-10+10:30'), 'xs:gYearMonth'),
-						'xs:gMonth'
+						createAtomicValue(
+							DateTime.fromString('2000-10+10:30'),
+							ValueType.XSGYEARMONTH
+						),
+						ValueType.XSGMONTH
 					),
 				'XPTY0004'
 			));
@@ -3036,8 +3536,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000+10:30'), 'xs:gYear'),
-						'xs:gMonth'
+						createAtomicValue(DateTime.fromString('2000+10:30'), ValueType.XSGYEAR),
+						ValueType.XSGMONTH
 					),
 				'XPTY0004'
 			));
@@ -3045,8 +3545,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10-10+10:30'), 'xs:gMonthDay'),
-						'xs:gMonth'
+						createAtomicValue(
+							DateTime.fromString('--10-10+10:30'),
+							ValueType.XSGMONTHDAY
+						),
+						ValueType.XSGMONTH
 					),
 				'XPTY0004'
 			));
@@ -3054,30 +3557,30 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('---10+10:30'), 'xs:gDay'),
-						'xs:gMonth'
+						createAtomicValue(DateTime.fromString('---10+10:30'), ValueType.XSGDAY),
+						ValueType.XSGMONTH
 					),
 				'XPTY0004'
 			));
 		it('from xs:gMonth', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue(DateTime.fromString('--10+10:30'), 'xs:gMonth'),
-					'xs:gMonth'
+					createAtomicValue(DateTime.fromString('--10+10:30'), ValueType.XSGMONTH),
+					ValueType.XSGMONTH
 				),
-				createAtomicValue(DateTime.fromString('--10+10:30'), 'xs:gMonth')
+				createAtomicValue(DateTime.fromString('--10+10:30'), ValueType.XSGMONTH)
 			));
 		it('from xs:boolean (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(true, 'xs:boolean'), 'xs:gMonth'),
+				() => castToType(createAtomicValue(true, ValueType.XSBOOLEAN), ValueType.XSGMONTH),
 				'XPTY0004'
 			));
 		it('from xs:base64Binary (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', 'xs:base64Binary'),
-						'xs:gMonth'
+						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', ValueType.XSBASE64BINARY),
+						ValueType.XSGMONTH
 					),
 				'XPTY0004'
 			));
@@ -3085,19 +3588,24 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue('21FE3A44123C21FE3A44123C', 'xs:hexBinary'),
-						'xs:gMonth'
+						createAtomicValue('21FE3A44123C21FE3A44123C', ValueType.XSHEXBINARY),
+						ValueType.XSGMONTH
 					),
 				'XPTY0004'
 			));
 		it('from xs:anyURI (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:anyURI'), 'xs:gMonth'),
+				() =>
+					castToType(createAtomicValue('string', ValueType.XSANYURI), ValueType.XSGMONTH),
 				'XPTY0004'
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:NOTATION'), 'xs:gMonth'),
+				() =>
+					castToType(
+						createAtomicValue('string', ValueType.XSNOTATION),
+						ValueType.XSGMONTH
+					),
 				'XPTY0004'
 			));
 	});
@@ -3105,33 +3613,36 @@ describe('castToType()', () => {
 	describe('to xs:boolean', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('true', 'xs:untypedAtomic'), 'xs:boolean'),
-				createAtomicValue(true, 'xs:boolean')
+				castToType(
+					createAtomicValue('true', ValueType.XSUNTYPEDATOMIC),
+					ValueType.XSBOOLEAN
+				),
+				createAtomicValue(true, ValueType.XSBOOLEAN)
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('true', 'xs:string'), 'xs:boolean'),
-				createAtomicValue(true, 'xs:boolean')
+				castToType(createAtomicValue('true', ValueType.XSSTRING), ValueType.XSBOOLEAN),
+				createAtomicValue(true, ValueType.XSBOOLEAN)
 			));
 		it('from xs:float', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1, 'xs:float'), 'xs:boolean'),
-				createAtomicValue(true, 'xs:boolean')
+				castToType(createAtomicValue(1, ValueType.XSFLOAT), ValueType.XSBOOLEAN),
+				createAtomicValue(true, ValueType.XSBOOLEAN)
 			));
 		it('from xs:double', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1, 'xs:double'), 'xs:boolean'),
-				createAtomicValue(true, 'xs:boolean')
+				castToType(createAtomicValue(1, ValueType.XSDOUBLE), ValueType.XSBOOLEAN),
+				createAtomicValue(true, ValueType.XSBOOLEAN)
 			));
 		it('from xs:decimal', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1, 'xs:decimal'), 'xs:boolean'),
-				createAtomicValue(true, 'xs:boolean')
+				castToType(createAtomicValue(1, ValueType.XSDECIMAL), ValueType.XSBOOLEAN),
+				createAtomicValue(true, ValueType.XSBOOLEAN)
 			));
 		it('from xs:integer', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1, 'xs:integer'), 'xs:boolean'),
-				createAtomicValue(true, 'xs:boolean')
+				castToType(createAtomicValue(1, ValueType.XSINTEGER), ValueType.XSBOOLEAN),
+				createAtomicValue(true, ValueType.XSBOOLEAN)
 			));
 		it('from xs:duration (throws XPTY0004)', () =>
 			chai.assert.throws(
@@ -3139,9 +3650,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(
 							Duration.fromString('P10Y10M10DT10H10M10S'),
-							'xs:duration'
+							ValueType.XSDURATION
 						),
-						'xs:boolean'
+						ValueType.XSBOOLEAN
 					),
 				'XPTY0004'
 			));
@@ -3149,8 +3660,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:yearMonthDuration'),
-						'xs:boolean'
+						createAtomicValue(
+							Duration.fromString('P10Y10M'),
+							ValueType.XSYEARMONTHDURATION
+						),
+						ValueType.XSBOOLEAN
 					),
 				'XPTY0004'
 			));
@@ -3158,8 +3672,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:dayTimeDuration'),
-						'xs:boolean'
+						createAtomicValue(
+							Duration.fromString('P10Y10M'),
+							ValueType.XSDAYTIMEDURATION
+						),
+						ValueType.XSBOOLEAN
 					),
 				'XPTY0004'
 			));
@@ -3169,9 +3686,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(
 							DateTime.fromString('2000-10-10T10:10:10+10:30'),
-							'xs:dateTime'
+							ValueType.XSDATETIME
 						),
-						'xs:boolean'
+						ValueType.XSBOOLEAN
 					),
 				'XPTY0004'
 			));
@@ -3179,8 +3696,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('10:10:10+10:30'), 'xs:time'),
-						'xs:boolean'
+						createAtomicValue(DateTime.fromString('10:10:10+10:30'), ValueType.XSTIME),
+						ValueType.XSBOOLEAN
 					),
 				'XPTY0004'
 			));
@@ -3188,8 +3705,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000-10-10+10:30'), 'xs:date'),
-						'xs:boolean'
+						createAtomicValue(
+							DateTime.fromString('2000-10-10+10:30'),
+							ValueType.XSDATE
+						),
+						ValueType.XSBOOLEAN
 					),
 				'XPTY0004'
 			));
@@ -3197,8 +3717,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000-10+10:30'), 'xs:gYearMonth'),
-						'xs:boolean'
+						createAtomicValue(
+							DateTime.fromString('2000-10+10:30'),
+							ValueType.XSGYEARMONTH
+						),
+						ValueType.XSBOOLEAN
 					),
 				'XPTY0004'
 			));
@@ -3206,8 +3729,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000+10:30'), 'xs:gYear'),
-						'xs:boolean'
+						createAtomicValue(DateTime.fromString('2000+10:30'), ValueType.XSGYEAR),
+						ValueType.XSBOOLEAN
 					),
 				'XPTY0004'
 			));
@@ -3215,8 +3738,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10-10+10:30'), 'xs:gMonthDay'),
-						'xs:boolean'
+						createAtomicValue(
+							DateTime.fromString('--10-10+10:30'),
+							ValueType.XSGMONTHDAY
+						),
+						ValueType.XSBOOLEAN
 					),
 				'XPTY0004'
 			));
@@ -3224,8 +3750,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('---10+10:30'), 'xs:gDay'),
-						'xs:boolean'
+						createAtomicValue(DateTime.fromString('---10+10:30'), ValueType.XSGDAY),
+						ValueType.XSBOOLEAN
 					),
 				'XPTY0004'
 			));
@@ -3233,22 +3759,22 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10+10:30'), 'xs:gMonth'),
-						'xs:boolean'
+						createAtomicValue(DateTime.fromString('--10+10:30'), ValueType.XSGMONTH),
+						ValueType.XSBOOLEAN
 					),
 				'XPTY0004'
 			));
 		it('from xs:boolean', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(true, 'xs:boolean'), 'xs:boolean'),
-				createAtomicValue(true, 'xs:boolean')
+				castToType(createAtomicValue(true, ValueType.XSBOOLEAN), ValueType.XSBOOLEAN),
+				createAtomicValue(true, ValueType.XSBOOLEAN)
 			));
 		it('from xs:base64Binary (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', 'xs:base64Binary'),
-						'xs:boolean'
+						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', ValueType.XSBASE64BINARY),
+						ValueType.XSBOOLEAN
 					),
 				'XPTY0004'
 			));
@@ -3256,19 +3782,27 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue('21FE3A44123C21FE3A44123C', 'xs:hexBinary'),
-						'xs:boolean'
+						createAtomicValue('21FE3A44123C21FE3A44123C', ValueType.XSHEXBINARY),
+						ValueType.XSBOOLEAN
 					),
 				'XPTY0004'
 			));
 		it('from xs:anyURI (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:anyURI'), 'xs:boolean'),
+				() =>
+					castToType(
+						createAtomicValue('string', ValueType.XSANYURI),
+						ValueType.XSBOOLEAN
+					),
 				'XPTY0004'
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:NOTATION'), 'xs:boolean'),
+				() =>
+					castToType(
+						createAtomicValue('string', ValueType.XSNOTATION),
+						ValueType.XSBOOLEAN
+					),
 				'XPTY0004'
 			));
 	});
@@ -3277,37 +3811,40 @@ describe('castToType()', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', 'xs:untypedAtomic'),
-					'xs:base64Binary'
+					createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', ValueType.XSUNTYPEDATOMIC),
+					ValueType.XSBASE64BINARY
 				),
-				createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', 'xs:base64Binary')
+				createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', ValueType.XSBASE64BINARY)
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', 'xs:string'),
-					'xs:base64Binary'
+					createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', ValueType.XSSTRING),
+					ValueType.XSBASE64BINARY
 				),
-				createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', 'xs:base64Binary')
+				createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', ValueType.XSBASE64BINARY)
 			));
 		it('from xs:float (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(1, 'xs:float'), 'xs:base64Binary'),
+				() => castToType(createAtomicValue(1, ValueType.XSFLOAT), ValueType.XSBASE64BINARY),
 				'XPTY0004'
 			));
 		it('from xs:double (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(1, 'xs:double'), 'xs:base64Binary'),
+				() =>
+					castToType(createAtomicValue(1, ValueType.XSDOUBLE), ValueType.XSBASE64BINARY),
 				'XPTY0004'
 			));
 		it('from xs:decimal (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(1, 'xs:decimal'), 'xs:base64Binary'),
+				() =>
+					castToType(createAtomicValue(1, ValueType.XSDECIMAL), ValueType.XSBASE64BINARY),
 				'XPTY0004'
 			));
 		it('from xs:integer (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(1, 'xs:integer'), 'xs:base64Binary'),
+				() =>
+					castToType(createAtomicValue(1, ValueType.XSINTEGER), ValueType.XSBASE64BINARY),
 				'XPTY0004'
 			));
 		it('from xs:duration (throws XPTY0004)', () =>
@@ -3316,9 +3853,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(
 							Duration.fromString('P10Y10M10DT10H10M10S'),
-							'xs:duration'
+							ValueType.XSDURATION
 						),
-						'xs:base64Binary'
+						ValueType.XSBASE64BINARY
 					),
 				'XPTY0004'
 			));
@@ -3326,8 +3863,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:yearMonthDuration'),
-						'xs:base64Binary'
+						createAtomicValue(
+							Duration.fromString('P10Y10M'),
+							ValueType.XSYEARMONTHDURATION
+						),
+						ValueType.XSBASE64BINARY
 					),
 				'XPTY0004'
 			));
@@ -3335,8 +3875,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:dayTimeDuration'),
-						'xs:base64Binary'
+						createAtomicValue(
+							Duration.fromString('P10Y10M'),
+							ValueType.XSDAYTIMEDURATION
+						),
+						ValueType.XSBASE64BINARY
 					),
 				'XPTY0004'
 			));
@@ -3346,9 +3889,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(
 							DateTime.fromString('2000-10-10T10:10:10+10:30'),
-							'xs:dateTime'
+							ValueType.XSDATETIME
 						),
-						'xs:base64Binary'
+						ValueType.XSBASE64BINARY
 					),
 				'XPTY0004'
 			));
@@ -3356,8 +3899,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('10:10:10+10:30'), 'xs:time'),
-						'xs:base64Binary'
+						createAtomicValue(DateTime.fromString('10:10:10+10:30'), ValueType.XSTIME),
+						ValueType.XSBASE64BINARY
 					),
 				'XPTY0004'
 			));
@@ -3365,8 +3908,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000-10-10+10:30'), 'xs:date'),
-						'xs:base64Binary'
+						createAtomicValue(
+							DateTime.fromString('2000-10-10+10:30'),
+							ValueType.XSDATE
+						),
+						ValueType.XSBASE64BINARY
 					),
 				'XPTY0004'
 			));
@@ -3374,8 +3920,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000-10+10:30'), 'xs:gYearMonth'),
-						'xs:base64Binary'
+						createAtomicValue(
+							DateTime.fromString('2000-10+10:30'),
+							ValueType.XSGYEARMONTH
+						),
+						ValueType.XSBASE64BINARY
 					),
 				'XPTY0004'
 			));
@@ -3383,8 +3932,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000+10:30'), 'xs:gYear'),
-						'xs:base64Binary'
+						createAtomicValue(DateTime.fromString('2000+10:30'), ValueType.XSGYEAR),
+						ValueType.XSBASE64BINARY
 					),
 				'XPTY0004'
 			));
@@ -3392,8 +3941,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10-10+10:30'), 'xs:gMonthDay'),
-						'xs:base64Binary'
+						createAtomicValue(
+							DateTime.fromString('--10-10+10:30'),
+							ValueType.XSGMONTHDAY
+						),
+						ValueType.XSBASE64BINARY
 					),
 				'XPTY0004'
 			));
@@ -3401,8 +3953,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('---10+10:30'), 'xs:gDay'),
-						'xs:base64Binary'
+						createAtomicValue(DateTime.fromString('---10+10:30'), ValueType.XSGDAY),
+						ValueType.XSBASE64BINARY
 					),
 				'XPTY0004'
 			));
@@ -3410,40 +3962,52 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10+10:30'), 'xs:gMonth'),
-						'xs:base64Binary'
+						createAtomicValue(DateTime.fromString('--10+10:30'), ValueType.XSGMONTH),
+						ValueType.XSBASE64BINARY
 					),
 				'XPTY0004'
 			));
 		it('from xs:boolean (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(true, 'xs:boolean'), 'xs:base64Binary'),
+				() =>
+					castToType(
+						createAtomicValue(true, ValueType.XSBOOLEAN),
+						ValueType.XSBASE64BINARY
+					),
 				'XPTY0004'
 			));
 		it('from xs:base64Binary', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', 'xs:base64Binary'),
-					'xs:base64Binary'
+					createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', ValueType.XSBASE64BINARY),
+					ValueType.XSBASE64BINARY
 				),
-				createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', 'xs:base64Binary')
+				createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', ValueType.XSBASE64BINARY)
 			));
 		it('from xs:hexBinary', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue('736F6D65206261736536342074657874', 'xs:hexBinary'),
-					'xs:base64Binary'
+					createAtomicValue('736F6D65206261736536342074657874', ValueType.XSHEXBINARY),
+					ValueType.XSBASE64BINARY
 				),
-				createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', 'xs:base64Binary')
+				createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', ValueType.XSBASE64BINARY)
 			));
 		it('from xs:anyURI (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:anyURI'), 'xs:base64Binary'),
+				() =>
+					castToType(
+						createAtomicValue('string', ValueType.XSANYURI),
+						ValueType.XSBASE64BINARY
+					),
 				'XPTY0004'
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:NOTATION'), 'xs:base64Binary'),
+				() =>
+					castToType(
+						createAtomicValue('string', ValueType.XSNOTATION),
+						ValueType.XSBASE64BINARY
+					),
 				'XPTY0004'
 			));
 	});
@@ -3452,37 +4016,40 @@ describe('castToType()', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue('736F6D65206261736536342074657874', 'xs:untypedAtomic'),
-					'xs:hexBinary'
+					createAtomicValue(
+						'736F6D65206261736536342074657874',
+						ValueType.XSUNTYPEDATOMIC
+					),
+					ValueType.XSHEXBINARY
 				),
-				createAtomicValue('736F6D65206261736536342074657874', 'xs:hexBinary')
+				createAtomicValue('736F6D65206261736536342074657874', ValueType.XSHEXBINARY)
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue('736F6D65206261736536342074657874', 'xs:string'),
-					'xs:hexBinary'
+					createAtomicValue('736F6D65206261736536342074657874', ValueType.XSSTRING),
+					ValueType.XSHEXBINARY
 				),
-				createAtomicValue('736F6D65206261736536342074657874', 'xs:hexBinary')
+				createAtomicValue('736F6D65206261736536342074657874', ValueType.XSHEXBINARY)
 			));
 		it('from xs:float (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(1, 'xs:float'), 'xs:hexBinary'),
+				() => castToType(createAtomicValue(1, ValueType.XSFLOAT), ValueType.XSHEXBINARY),
 				'XPTY0004'
 			));
 		it('from xs:double (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(1, 'xs:double'), 'xs:hexBinary'),
+				() => castToType(createAtomicValue(1, ValueType.XSDOUBLE), ValueType.XSHEXBINARY),
 				'XPTY0004'
 			));
 		it('from xs:decimal (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(1, 'xs:decimal'), 'xs:hexBinary'),
+				() => castToType(createAtomicValue(1, ValueType.XSDECIMAL), ValueType.XSHEXBINARY),
 				'XPTY0004'
 			));
 		it('from xs:integer (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(1, 'xs:integer'), 'xs:hexBinary'),
+				() => castToType(createAtomicValue(1, ValueType.XSINTEGER), ValueType.XSHEXBINARY),
 				'XPTY0004'
 			));
 		it('from xs:duration (throws XPTY0004)', () =>
@@ -3491,9 +4058,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(
 							Duration.fromString('P10Y10M10DT10H10M10S'),
-							'xs:duration'
+							ValueType.XSDURATION
 						),
-						'xs:hexBinary'
+						ValueType.XSHEXBINARY
 					),
 				'XPTY0004'
 			));
@@ -3501,8 +4068,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:yearMonthDuration'),
-						'xs:hexBinary'
+						createAtomicValue(
+							Duration.fromString('P10Y10M'),
+							ValueType.XSYEARMONTHDURATION
+						),
+						ValueType.XSHEXBINARY
 					),
 				'XPTY0004'
 			));
@@ -3510,8 +4080,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:dayTimeDuration'),
-						'xs:hexBinary'
+						createAtomicValue(
+							Duration.fromString('P10Y10M'),
+							ValueType.XSDAYTIMEDURATION
+						),
+						ValueType.XSHEXBINARY
 					),
 				'XPTY0004'
 			));
@@ -3521,9 +4094,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(
 							DateTime.fromString('2000-10-10T10:10:10+10:30'),
-							'xs:dateTime'
+							ValueType.XSDATETIME
 						),
-						'xs:hexBinary'
+						ValueType.XSHEXBINARY
 					),
 				'XPTY0004'
 			));
@@ -3531,8 +4104,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('10:10:10+10:30'), 'xs:time'),
-						'xs:hexBinary'
+						createAtomicValue(DateTime.fromString('10:10:10+10:30'), ValueType.XSTIME),
+						ValueType.XSHEXBINARY
 					),
 				'XPTY0004'
 			));
@@ -3540,8 +4113,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000-10-10+10:30'), 'xs:date'),
-						'xs:hexBinary'
+						createAtomicValue(
+							DateTime.fromString('2000-10-10+10:30'),
+							ValueType.XSDATE
+						),
+						ValueType.XSHEXBINARY
 					),
 				'XPTY0004'
 			));
@@ -3549,8 +4125,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000-10+10:30'), 'xs:gYearMonth'),
-						'xs:hexBinary'
+						createAtomicValue(
+							DateTime.fromString('2000-10+10:30'),
+							ValueType.XSGYEARMONTH
+						),
+						ValueType.XSHEXBINARY
 					),
 				'XPTY0004'
 			));
@@ -3558,8 +4137,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000+10:30'), 'xs:gYear'),
-						'xs:hexBinary'
+						createAtomicValue(DateTime.fromString('2000+10:30'), ValueType.XSGYEAR),
+						ValueType.XSHEXBINARY
 					),
 				'XPTY0004'
 			));
@@ -3567,8 +4146,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10-10+10:30'), 'xs:gMonthDay'),
-						'xs:hexBinary'
+						createAtomicValue(
+							DateTime.fromString('--10-10+10:30'),
+							ValueType.XSGMONTHDAY
+						),
+						ValueType.XSHEXBINARY
 					),
 				'XPTY0004'
 			));
@@ -3576,8 +4158,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('---10+10:30'), 'xs:gDay'),
-						'xs:hexBinary'
+						createAtomicValue(DateTime.fromString('---10+10:30'), ValueType.XSGDAY),
+						ValueType.XSHEXBINARY
 					),
 				'XPTY0004'
 			));
@@ -3585,40 +4167,49 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10+10:30'), 'xs:gMonth'),
-						'xs:hexBinary'
+						createAtomicValue(DateTime.fromString('--10+10:30'), ValueType.XSGMONTH),
+						ValueType.XSHEXBINARY
 					),
 				'XPTY0004'
 			));
 		it('from xs:boolean (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(true, 'xs:boolean'), 'xs:hexBinary'),
+				() =>
+					castToType(createAtomicValue(true, ValueType.XSBOOLEAN), ValueType.XSHEXBINARY),
 				'XPTY0004'
 			));
 		it('from xs:base64Binary', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', 'xs:base64Binary'),
-					'xs:hexBinary'
+					createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', ValueType.XSBASE64BINARY),
+					ValueType.XSHEXBINARY
 				),
-				createAtomicValue('736F6D65206261736536342074657874', 'xs:hexBinary')
+				createAtomicValue('736F6D65206261736536342074657874', ValueType.XSHEXBINARY)
 			));
 		it('from xs:hexBinary', () =>
 			chai.assert.deepEqual(
 				castToType(
-					createAtomicValue('736F6D65206261736536342074657874', 'xs:hexBinary'),
-					'xs:hexBinary'
+					createAtomicValue('736F6D65206261736536342074657874', ValueType.XSHEXBINARY),
+					ValueType.XSHEXBINARY
 				),
-				createAtomicValue('736F6D65206261736536342074657874', 'xs:hexBinary')
+				createAtomicValue('736F6D65206261736536342074657874', ValueType.XSHEXBINARY)
 			));
 		it('from xs:anyURI (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:anyURI'), 'xs:hexBinary'),
+				() =>
+					castToType(
+						createAtomicValue('string', ValueType.XSANYURI),
+						ValueType.XSHEXBINARY
+					),
 				'XPTY0004'
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:NOTATION'), 'xs:hexBinary'),
+				() =>
+					castToType(
+						createAtomicValue('string', ValueType.XSNOTATION),
+						ValueType.XSHEXBINARY
+					),
 				'XPTY0004'
 			));
 	});
@@ -3626,32 +4217,35 @@ describe('castToType()', () => {
 	describe('to xs:anyURI', () => {
 		it('from xs:untypedAtomic', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('string', 'xs:untypedAtomic'), 'xs:anyURI'),
-				createAtomicValue('string', 'xs:anyURI')
+				castToType(
+					createAtomicValue('string', ValueType.XSUNTYPEDATOMIC),
+					ValueType.XSANYURI
+				),
+				createAtomicValue('string', ValueType.XSANYURI)
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('string', 'xs:string'), 'xs:anyURI'),
-				createAtomicValue('string', 'xs:anyURI')
+				castToType(createAtomicValue('string', ValueType.XSSTRING), ValueType.XSANYURI),
+				createAtomicValue('string', ValueType.XSANYURI)
 			));
 		it('from xs:float (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(1, 'xs:float'), 'xs:anyURI'),
+				() => castToType(createAtomicValue(1, ValueType.XSFLOAT), ValueType.XSANYURI),
 				'XPTY0004'
 			));
 		it('from xs:double (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(1, 'xs:double'), 'xs:anyURI'),
+				() => castToType(createAtomicValue(1, ValueType.XSDOUBLE), ValueType.XSANYURI),
 				'XPTY0004'
 			));
 		it('from xs:decimal (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(1, 'xs:decimal'), 'xs:anyURI'),
+				() => castToType(createAtomicValue(1, ValueType.XSDECIMAL), ValueType.XSANYURI),
 				'XPTY0004'
 			));
 		it('from xs:integer (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(1, 'xs:integer'), 'xs:anyURI'),
+				() => castToType(createAtomicValue(1, ValueType.XSINTEGER), ValueType.XSANYURI),
 				'XPTY0004'
 			));
 		it('from xs:duration (throws XPTY0004)', () =>
@@ -3660,9 +4254,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(
 							Duration.fromString('P10Y10M10DT10H10M10S'),
-							'xs:duration'
+							ValueType.XSDURATION
 						),
-						'xs:anyURI'
+						ValueType.XSANYURI
 					),
 				'XPTY0004'
 			));
@@ -3670,8 +4264,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:yearMonthDuration'),
-						'xs:anyURI'
+						createAtomicValue(
+							Duration.fromString('P10Y10M'),
+							ValueType.XSYEARMONTHDURATION
+						),
+						ValueType.XSANYURI
 					),
 				'XPTY0004'
 			));
@@ -3679,8 +4276,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:dayTimeDuration'),
-						'xs:anyURI'
+						createAtomicValue(
+							Duration.fromString('P10Y10M'),
+							ValueType.XSDAYTIMEDURATION
+						),
+						ValueType.XSANYURI
 					),
 				'XPTY0004'
 			));
@@ -3690,9 +4290,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(
 							DateTime.fromString('2000-10-10T10:10:10+10:30'),
-							'xs:dateTime'
+							ValueType.XSDATETIME
 						),
-						'xs:anyURI'
+						ValueType.XSANYURI
 					),
 				'XPTY0004'
 			));
@@ -3700,8 +4300,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('10:10:10+10:30'), 'xs:time'),
-						'xs:anyURI'
+						createAtomicValue(DateTime.fromString('10:10:10+10:30'), ValueType.XSTIME),
+						ValueType.XSANYURI
 					),
 				'XPTY0004'
 			));
@@ -3709,8 +4309,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000-10-10+10:30'), 'xs:date'),
-						'xs:anyURI'
+						createAtomicValue(
+							DateTime.fromString('2000-10-10+10:30'),
+							ValueType.XSDATE
+						),
+						ValueType.XSANYURI
 					),
 				'XPTY0004'
 			));
@@ -3718,8 +4321,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000-10+10:30'), 'xs:gYearMonth'),
-						'xs:anyURI'
+						createAtomicValue(
+							DateTime.fromString('2000-10+10:30'),
+							ValueType.XSGYEARMONTH
+						),
+						ValueType.XSANYURI
 					),
 				'XPTY0004'
 			));
@@ -3727,8 +4333,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000+10:30'), 'xs:gYear'),
-						'xs:anyURI'
+						createAtomicValue(DateTime.fromString('2000+10:30'), ValueType.XSGYEAR),
+						ValueType.XSANYURI
 					),
 				'XPTY0004'
 			));
@@ -3736,8 +4342,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10-10+10:30'), 'xs:gMonthDay'),
-						'xs:anyURI'
+						createAtomicValue(
+							DateTime.fromString('--10-10+10:30'),
+							ValueType.XSGMONTHDAY
+						),
+						ValueType.XSANYURI
 					),
 				'XPTY0004'
 			));
@@ -3745,8 +4354,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('---10+10:30'), 'xs:gDay'),
-						'xs:anyURI'
+						createAtomicValue(DateTime.fromString('---10+10:30'), ValueType.XSGDAY),
+						ValueType.XSANYURI
 					),
 				'XPTY0004'
 			));
@@ -3754,22 +4363,22 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10+10:30'), 'xs:gMonth'),
-						'xs:anyURI'
+						createAtomicValue(DateTime.fromString('--10+10:30'), ValueType.XSGMONTH),
+						ValueType.XSANYURI
 					),
 				'XPTY0004'
 			));
 		it('from xs:boolean (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(true, 'xs:boolean'), 'xs:anyURI'),
+				() => castToType(createAtomicValue(true, ValueType.XSBOOLEAN), ValueType.XSANYURI),
 				'XPTY0004'
 			));
 		it('from xs:base64Binary (throws XPTY0004)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', 'xs:base64Binary'),
-						'xs:anyURI'
+						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', ValueType.XSBASE64BINARY),
+						ValueType.XSANYURI
 					),
 				'XPTY0004'
 			));
@@ -3777,19 +4386,26 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue('736F6D65206261736536342074657874', 'xs:hexBinary'),
-						'xs:anyURI'
+						createAtomicValue(
+							'736F6D65206261736536342074657874',
+							ValueType.XSHEXBINARY
+						),
+						ValueType.XSANYURI
 					),
 				'XPTY0004'
 			));
 		it('from xs:anyURI', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue('string', 'xs:anyURI'), 'xs:anyURI'),
-				createAtomicValue('string', 'xs:anyURI')
+				castToType(createAtomicValue('string', ValueType.XSANYURI), ValueType.XSANYURI),
+				createAtomicValue('string', ValueType.XSANYURI)
 			));
 		it('from xs:NOTATION (throws XPTY0004)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:NOTATION'), 'xs:anyURI'),
+				() =>
+					castToType(
+						createAtomicValue('string', ValueType.XSNOTATION),
+						ValueType.XSANYURI
+					),
 				'XPTY0004'
 			));
 	});
@@ -3797,32 +4413,40 @@ describe('castToType()', () => {
 	describe('to xs:NOTATION', () => {
 		it('from xs:untypedAtomic (throws XPST0080)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:untypedAtomic'), 'xs:NOTATION'),
+				() =>
+					castToType(
+						createAtomicValue('string', ValueType.XSUNTYPEDATOMIC),
+						ValueType.XSNOTATION
+					),
 				'XPST0080'
 			));
 		it('from xs:string (throws XPST0080)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:string'), 'xs:NOTATION'),
+				() =>
+					castToType(
+						createAtomicValue('string', ValueType.XSSTRING),
+						ValueType.XSNOTATION
+					),
 				'XPST0080'
 			));
 		it('from xs:float (throws XPST0080)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(1, 'xs:float'), 'xs:NOTATION'),
+				() => castToType(createAtomicValue(1, ValueType.XSFLOAT), ValueType.XSNOTATION),
 				'XPST0080'
 			));
 		it('from xs:double (throws XPST0080)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(1, 'xs:double'), 'xs:NOTATION'),
+				() => castToType(createAtomicValue(1, ValueType.XSDOUBLE), ValueType.XSNOTATION),
 				'XPST0080'
 			));
 		it('from xs:decimal (throws XPST0080)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(1, 'xs:decimal'), 'xs:NOTATION'),
+				() => castToType(createAtomicValue(1, ValueType.XSDECIMAL), ValueType.XSNOTATION),
 				'XPST0080'
 			));
 		it('from xs:integer (throws XPST0080)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(1, 'xs:integer'), 'xs:NOTATION'),
+				() => castToType(createAtomicValue(1, ValueType.XSINTEGER), ValueType.XSNOTATION),
 				'XPST0080'
 			));
 		it('from xs:duration (throws XPST0080)', () =>
@@ -3831,9 +4455,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(
 							Duration.fromString('P10Y10M10DT10H10M10S'),
-							'xs:duration'
+							ValueType.XSDURATION
 						),
-						'xs:NOTATION'
+						ValueType.XSNOTATION
 					),
 				'XPST0080'
 			));
@@ -3841,8 +4465,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:yearMonthDuration'),
-						'xs:NOTATION'
+						createAtomicValue(
+							Duration.fromString('P10Y10M'),
+							ValueType.XSYEARMONTHDURATION
+						),
+						ValueType.XSNOTATION
 					),
 				'XPST0080'
 			));
@@ -3850,8 +4477,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(Duration.fromString('P10Y10M'), 'xs:dayTimeDuration'),
-						'xs:NOTATION'
+						createAtomicValue(
+							Duration.fromString('P10Y10M'),
+							ValueType.XSDAYTIMEDURATION
+						),
+						ValueType.XSNOTATION
 					),
 				'XPST0080'
 			));
@@ -3861,9 +4491,9 @@ describe('castToType()', () => {
 					castToType(
 						createAtomicValue(
 							DateTime.fromString('2000-10-10T10:10:10+10:30'),
-							'xs:dateTime'
+							ValueType.XSDATETIME
 						),
-						'xs:NOTATION'
+						ValueType.XSNOTATION
 					),
 				'XPST0080'
 			));
@@ -3871,8 +4501,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('10:10:10+10:30'), 'xs:time'),
-						'xs:NOTATION'
+						createAtomicValue(DateTime.fromString('10:10:10+10:30'), ValueType.XSTIME),
+						ValueType.XSNOTATION
 					),
 				'XPST0080'
 			));
@@ -3880,8 +4510,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000-10-10+10:30'), 'xs:date'),
-						'xs:NOTATION'
+						createAtomicValue(
+							DateTime.fromString('2000-10-10+10:30'),
+							ValueType.XSDATE
+						),
+						ValueType.XSNOTATION
 					),
 				'XPST0080'
 			));
@@ -3889,8 +4522,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000-10+10:30'), 'xs:gYearMonth'),
-						'xs:NOTATION'
+						createAtomicValue(
+							DateTime.fromString('2000-10+10:30'),
+							ValueType.XSGYEARMONTH
+						),
+						ValueType.XSNOTATION
 					),
 				'XPST0080'
 			));
@@ -3898,8 +4534,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('2000+10:30'), 'xs:gYear'),
-						'xs:NOTATION'
+						createAtomicValue(DateTime.fromString('2000+10:30'), ValueType.XSGYEAR),
+						ValueType.XSNOTATION
 					),
 				'XPST0080'
 			));
@@ -3907,8 +4543,11 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10-10+10:30'), 'xs:gMonthDay'),
-						'xs:NOTATION'
+						createAtomicValue(
+							DateTime.fromString('--10-10+10:30'),
+							ValueType.XSGMONTHDAY
+						),
+						ValueType.XSNOTATION
 					),
 				'XPST0080'
 			));
@@ -3916,8 +4555,8 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('---10+10:30'), 'xs:gDay'),
-						'xs:NOTATION'
+						createAtomicValue(DateTime.fromString('---10+10:30'), ValueType.XSGDAY),
+						ValueType.XSNOTATION
 					),
 				'XPST0080'
 			));
@@ -3925,22 +4564,23 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue(DateTime.fromString('--10+10:30'), 'xs:gMonth'),
-						'xs:NOTATION'
+						createAtomicValue(DateTime.fromString('--10+10:30'), ValueType.XSGMONTH),
+						ValueType.XSNOTATION
 					),
 				'XPST0080'
 			));
 		it('from xs:boolean (throws XPST0080)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue(true, 'xs:boolean'), 'xs:NOTATION'),
+				() =>
+					castToType(createAtomicValue(true, ValueType.XSBOOLEAN), ValueType.XSNOTATION),
 				'XPST0080'
 			));
 		it('from xs:base64Binary (throws XPST0080)', () =>
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', 'xs:base64Binary'),
-						'xs:NOTATION'
+						createAtomicValue('c29tZSBiYXNlNjQgdGV4dA==', ValueType.XSBASE64BINARY),
+						ValueType.XSNOTATION
 					),
 				'XPST0080'
 			));
@@ -3948,19 +4588,27 @@ describe('castToType()', () => {
 			chai.assert.throws(
 				() =>
 					castToType(
-						createAtomicValue('736F6D65206261736536342074657874', 'xs:NOTATION'),
-						'xs:NOTATION'
+						createAtomicValue('736F6D65206261736536342074657874', ValueType.XSNOTATION),
+						ValueType.XSNOTATION
 					),
 				'XPST0080'
 			));
 		it('from xs:anyURI (throws XPST0080)', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:anyURI'), 'xs:NOTATION'),
+				() =>
+					castToType(
+						createAtomicValue('string', ValueType.XSANYURI),
+						ValueType.XSNOTATION
+					),
 				'XPST0080'
 			));
 		it('from xs:NOTATION', () =>
 			chai.assert.throws(
-				() => castToType(createAtomicValue('string', 'xs:NOTATION'), 'xs:NOTATION'),
+				() =>
+					castToType(
+						createAtomicValue('string', ValueType.XSNOTATION),
+						ValueType.XSNOTATION
+					),
 				'XPST0080'
 			));
 	});

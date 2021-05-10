@@ -159,47 +159,41 @@ function isValidDayTimeDuration(value: string): boolean {
 }
 
 export function getValidatorForType(type: ValueType): (value: string) => boolean {
-	return dataTypeValidatorByName[type];
+	const validatorToType: Map<ValueType, (value: string) => boolean> = new Map([
+		[ValueType.XSANYSIMPLETYPE, isValidAnySimpleType],
+		[ValueType.XSANYATOMICTYPE, isValidAnyAtomicType],
+		[ValueType.XSSTRING, isValidString],
+		[ValueType.XSBOOLEAN, isValidBoolean],
+		[ValueType.XSFLOAT, isValidFloat],
+		[ValueType.XSDOUBLE, isValidDouble],
+		[ValueType.XSDECIMAL, isValidDecimal],
+		[ValueType.XSDURATION, isValidDuration],
+		[ValueType.XSDATETIME, isValidDateTime],
+		[ValueType.XSTIME, isValidTime],
+		[ValueType.XSDATE, isValidDate],
+		[ValueType.XSGYEARMONTH, isValidGYearMonth],
+		[ValueType.XSGYEAR, isValidGYear],
+		[ValueType.XSGMONTHDAY, isValidGMonthDay],
+		[ValueType.XSGDAY, isValidGDay],
+		[ValueType.XSGMONTH, isValidGMonth],
+		[ValueType.XSHEXBINARY, isValidHexBinary],
+		[ValueType.XSBASE64BINARY, isValidBase64Binary],
+		[ValueType.XSANYURI, isValidAnyURI],
+		[ValueType.XSNOTATION, isValidQName],
+		[ValueType.XSNORMALIZEDSTRING, isValidNormalizedString],
+		[ValueType.XSTOKEN, isValidToken],
+		[ValueType.XSLANGUAGE, isValidLanguage],
+		[ValueType.XSNMTOKEN, isValidNMTOKEN],
+		[ValueType.XSNAME, isValidName],
+		[ValueType.XSQNAME, isValidQName],
+		[ValueType.XSNCNAME, isValidNCName],
+		[ValueType.XSID, isValidID],
+		[ValueType.XSIDREF, isValidID],
+		[ValueType.XSENTITY, isValidENTITY],
+		[ValueType.XSINTEGER, isValidInteger],
+		[ValueType.XSYEARMONTHDURATION, isValidYearMonthDuration],
+		[ValueType.XSDAYTIMEDURATION, isValidDayTimeDuration],
+	]);
+
+	return validatorToType.get(type);
 }
-
-const dataTypeValidatorByName: { [s: string]: (value: string) => boolean } = {
-	'xs:anySimpleType': isValidAnySimpleType,
-	'xs:anyAtomicType': isValidAnyAtomicType,
-
-	'xs:string': isValidString,
-	'xs:boolean': isValidBoolean,
-	'xs:float': isValidFloat,
-	'xs:double': isValidDouble,
-	'xs:decimal': isValidDecimal,
-	'xs:duration': isValidDuration,
-	'xs:dateTime': isValidDateTime,
-	'xs:time': isValidTime,
-	'xs:date': isValidDate,
-	'xs:gYearMonth': isValidGYearMonth,
-	'xs:gYear': isValidGYear,
-	'xs:gMonthDay': isValidGMonthDay,
-	'xs:gDay': isValidGDay,
-	'xs:gMonth': isValidGMonth,
-	'xs:hexBinary': isValidHexBinary,
-	'xs:base64Binary': isValidBase64Binary,
-	'xs:anyURI': isValidAnyURI,
-	'xs:NOTATION': isValidQName,
-
-	'xs:normalizedString': isValidNormalizedString,
-	'xs:token': isValidToken,
-	'xs:language': isValidLanguage,
-	'xs:NMTOKEN': isValidNMTOKEN,
-	'xs:Name': isValidName,
-	'xs:QName': isValidQName,
-	'xs:NCName': isValidNCName,
-	'xs:ID': isValidID,
-	'xs:IDREF': isValidID,
-	'xs:ENTITY': isValidENTITY,
-
-	'xs:integer': isValidInteger,
-
-	'xs:yearMonthDuration': isValidYearMonthDuration,
-	'xs:dayTimeDuration': isValidDayTimeDuration,
-};
-
-export default dataTypeValidatorByName;

@@ -1,5 +1,9 @@
-import TypeDeclaration from '../expressions/dataTypes/TypeDeclaration';
-import { ValueType } from '../expressions/dataTypes/Value';
+import {
+	SequenceMultiplicity,
+	SequenceType,
+	stringToValueType,
+	ValueType,
+} from '../expressions/dataTypes/Value';
 import { SourceRange } from '../expressions/debug/StackTraceGenerator';
 
 type QName = { localName: string; namespaceURI: string | null; prefix: string };
@@ -74,44 +78,44 @@ function getTextContent(ast: IAST): string {
  * @param   ast  The parent
  * @return  The type declaration
  */
-function getTypeDeclaration(ast: IAST): TypeDeclaration {
+function getTypeDeclaration(ast: IAST): SequenceType {
 	const typeDeclarationAst = getFirstChild(ast, 'typeDeclaration');
 	if (!typeDeclarationAst || getFirstChild(typeDeclarationAst, 'voidSequenceType')) {
-		return { type: 'item()', occurrence: '*' };
+		return { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE };
 	}
 
 	const determineType = (typeAst: IAST): ValueType => {
 		switch (typeAst[0]) {
 			case 'documentTest':
-				return 'document-node()';
+				return ValueType.DOCUMENTNODE;
 			case 'elementTest':
-				return 'element()';
+				return ValueType.ELEMENT;
 			case 'attributeTest':
-				return 'attribute()';
+				return ValueType.ATTRIBUTE;
 			case 'piTest':
-				return 'processing-instruction()';
+				return ValueType.PROCESSINGINSTRUCTION;
 			case 'commentTest':
-				return 'comment()';
+				return ValueType.COMMENT;
 			case 'textTest':
-				return 'text()';
+				return ValueType.TEXT;
 			case 'anyKindTest':
-				return 'node()';
+				return ValueType.NODE;
 			case 'anyItemType':
-				return 'item()';
+				return ValueType.ITEM;
 			case 'anyFunctionTest':
 			case 'functionTest':
 			case 'typedFunctionTest':
-				return 'function(*)';
+				return ValueType.FUNCTION;
 			case 'anyMapTest':
 			case 'typedMapTest':
-				return 'map(*)';
+				return ValueType.MAP;
 			case 'anyArrayTest':
 			case 'typedArrayTest':
-				return 'array(*)';
+				return ValueType.ARRAY;
 			case 'atomicType':
-				return [getAttribute(typeAst, 'prefix'), getTextContent(typeAst)].join(
-					':'
-				) as ValueType;
+				return stringToValueType(
+					[getAttribute(typeAst, 'prefix'), getTextContent(typeAst)].join(':')
+				);
 			case 'parenthesizedItemType':
 				return determineType(getFirstChild(typeAst, '*'));
 			case 'schemaElementTest':
@@ -126,7 +130,10 @@ function getTypeDeclaration(ast: IAST): TypeDeclaration {
 		}
 	};
 
-	const type = determineType(getFirstChild(typeDeclarationAst, '*'));
+	const type: SequenceType = {
+		type: determineType(getFirstChild(typeDeclarationAst, '*')),
+		mult: SequenceMultiplicity.EXACTLY_ONE,
+	};
 
 	let occurrence = null;
 	const occurrenceNode = getFirstChild(typeDeclarationAst, 'occurrenceIndicator');
@@ -134,10 +141,20 @@ function getTypeDeclaration(ast: IAST): TypeDeclaration {
 		occurrence = getTextContent(occurrenceNode);
 	}
 
-	return {
-		occurrence,
-		type,
-	};
+	switch (occurrence) {
+		case '*':
+			type.mult = SequenceMultiplicity.ZERO_OR_MORE;
+			return type;
+		case '?':
+			type.mult = SequenceMultiplicity.ZERO_OR_ONE;
+			return type;
+		case '+':
+			type.mult = SequenceMultiplicity.ONE_OR_MORE;
+			return type;
+		case '':
+		case null:
+			return type;
+	}
 }
 
 /**

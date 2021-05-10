@@ -1,12 +1,12 @@
 import createAtomicValue from '../createAtomicValue';
-import { ValueType } from '../Value';
+import { SequenceMultiplicity, ValueType } from '../Value';
 import CastResult from './CastResult';
 import castToFloatLikeType from './castToFloatLikeType';
 
 export default function castToFloat(
 	instanceOf: (typeName: ValueType) => boolean
-): (value) => CastResult {
-	const caster = castToFloatLikeType(instanceOf, 'xs:float');
+): (value: any) => CastResult {
+	const caster = castToFloatLikeType(instanceOf, ValueType.XSFLOAT);
 	return (value) => {
 		const castResult = caster(value);
 		if (!castResult.successful) {
@@ -14,7 +14,7 @@ export default function castToFloat(
 		}
 		return {
 			successful: true,
-			value: createAtomicValue(castResult.value, 'xs:float'),
+			value: createAtomicValue(castResult.value, ValueType.XSFLOAT),
 		};
 	};
 }

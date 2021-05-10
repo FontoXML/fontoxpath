@@ -15,6 +15,16 @@ import evaluateXPathToNumbers from './evaluateXPathToNumbers';
 import evaluateXPathToString from './evaluateXPathToString';
 import evaluateXPathToStrings from './evaluateXPathToStrings';
 import executePendingUpdateList from './executePendingUpdateList';
+import castToType from './expressions/dataTypes/castToType';
+import createAtomicValue from './expressions/dataTypes/createAtomicValue';
+import {
+	EllipsisType,
+	ParameterType,
+	SequenceMultiplicity,
+	SequenceType,
+	ValueType,
+} from './expressions/dataTypes/Value';
+import DateTime from './expressions/dataTypes/valueTypes/DateTime';
 import { getBucketsForNode } from './getBuckets';
 import INodesFactory from './nodesFactory/INodesFactory';
 import ISimpleNodesFactory from './nodesFactory/ISimpleNodesFactory';
@@ -156,7 +166,7 @@ if (typeof fontoxpathGlobal !== 'undefined') {
  * @public
  */
 type ExternalTypedValueFactory = (
-	type: string
+	typeName: string
 ) => (value: UntypedExternalValue, domFacade: IDomFacade) => unknown;
 
 /**
@@ -167,6 +177,11 @@ type ExternalTypedValueFactory = (
 export const createTypedValueFactory = internalCreateTypedValueFactory as ExternalTypedValueFactory;
 
 export {
+	ValueType,
+	EllipsisType,
+	SequenceMultiplicity,
+	SequenceType,
+	ParameterType,
 	Attr,
 	CDATASection,
 	CharacterData,

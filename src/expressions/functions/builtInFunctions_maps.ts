@@ -1,14 +1,15 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
 import { MAP_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import concatSequences from '../util/concatSequences';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import zipSingleton from '../util/zipSingleton';
+import { BuiltinDeclarationType } from './builtInFunctions';
 import mapGet from './builtInFunctions_maps_get';
-import isSameMapKey from './isSameMapKey';
-
 import FunctionDefinitionType from './FunctionDefinitionType';
+import isSameMapKey from './isSameMapKey';
 
 const mapMerge: FunctionDefinitionType = (
 	dynamicContext,
@@ -17,7 +18,9 @@ const mapMerge: FunctionDefinitionType = (
 	mapSequence,
 	optionMap
 ) => {
-	const duplicateKey = sequenceFactory.singleton(createAtomicValue('duplicates', 'xs:string'));
+	const duplicateKey = sequenceFactory.singleton(
+		createAtomicValue('duplicates', ValueType.XSSTRING)
+	);
 	const duplicationHandlingValueSequence = mapGet(
 		dynamicContext,
 		executionParameters,
@@ -129,7 +132,7 @@ const mapSize: FunctionDefinitionType = (
 	mapSequence
 ) => {
 	return mapSequence.map((onlyMap) =>
-		createAtomicValue((onlyMap as MapValue).keyValuePairs.length, 'xs:integer')
+		createAtomicValue((onlyMap as MapValue).keyValuePairs.length, ValueType.XSINTEGER)
 	);
 };
 
@@ -207,108 +210,131 @@ const mapForEach: FunctionDefinitionType = (
 	);
 };
 
+const declarations: BuiltinDeclarationType[] = [
+	{
+		namespaceURI: MAP_NAMESPACE_URI,
+		localName: 'contains',
+		argumentTypes: [
+			{ type: ValueType.MAP, mult: SequenceMultiplicity.EXACTLY_ONE },
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.EXACTLY_ONE },
+		],
+		returnType: { type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE },
+		callFunction: mapContains,
+	},
+
+	{
+		namespaceURI: MAP_NAMESPACE_URI,
+		localName: 'entry',
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.EXACTLY_ONE },
+			{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+		],
+		returnType: { type: ValueType.MAP, mult: SequenceMultiplicity.EXACTLY_ONE },
+		callFunction: mapEntry,
+	},
+
+	{
+		namespaceURI: MAP_NAMESPACE_URI,
+		localName: 'for-each',
+		// TODO: reimplement type checking by parsing the types
+		argumentTypes: [
+			{ type: ValueType.MAP, mult: SequenceMultiplicity.EXACTLY_ONE },
+			{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+		],
+		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+		callFunction: mapForEach,
+	},
+
+	{
+		namespaceURI: MAP_NAMESPACE_URI,
+		localName: 'get',
+		argumentTypes: [
+			{ type: ValueType.MAP, mult: SequenceMultiplicity.EXACTLY_ONE },
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.EXACTLY_ONE },
+		],
+		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+		callFunction: mapGet,
+	},
+
+	{
+		namespaceURI: MAP_NAMESPACE_URI,
+		localName: 'keys',
+		argumentTypes: [{ type: ValueType.MAP, mult: SequenceMultiplicity.EXACTLY_ONE }],
+		returnType: { type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_MORE },
+		callFunction: mapKeys,
+	},
+
+	{
+		namespaceURI: MAP_NAMESPACE_URI,
+		localName: 'merge',
+		argumentTypes: [
+			{ type: ValueType.MAP, mult: SequenceMultiplicity.ZERO_OR_MORE },
+			{ type: ValueType.MAP, mult: SequenceMultiplicity.EXACTLY_ONE },
+		],
+		returnType: { type: ValueType.MAP, mult: SequenceMultiplicity.EXACTLY_ONE },
+		callFunction: mapMerge,
+	},
+
+	{
+		namespaceURI: MAP_NAMESPACE_URI,
+		localName: 'merge',
+		argumentTypes: [{ type: ValueType.MAP, mult: SequenceMultiplicity.ZERO_OR_MORE }],
+		returnType: { type: ValueType.MAP, mult: SequenceMultiplicity.EXACTLY_ONE },
+		callFunction(dynamicContext, executionParameters, staticContext, maps) {
+			return mapMerge(
+				dynamicContext,
+				executionParameters,
+				staticContext,
+				maps,
+				sequenceFactory.singleton(
+					new MapValue([
+						{
+							key: createAtomicValue('duplicates', ValueType.XSSTRING),
+							value: () =>
+								sequenceFactory.singleton(
+									createAtomicValue('use-first', ValueType.XSSTRING)
+								),
+						},
+					])
+				)
+			);
+		},
+	},
+
+	{
+		namespaceURI: MAP_NAMESPACE_URI,
+		localName: 'put',
+		argumentTypes: [
+			{ type: ValueType.MAP, mult: SequenceMultiplicity.EXACTLY_ONE },
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.EXACTLY_ONE },
+			{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+		],
+		returnType: { type: ValueType.MAP, mult: SequenceMultiplicity.EXACTLY_ONE },
+		callFunction: mapPut,
+	},
+
+	{
+		namespaceURI: MAP_NAMESPACE_URI,
+		localName: 'remove',
+		argumentTypes: [
+			{ type: ValueType.MAP, mult: SequenceMultiplicity.EXACTLY_ONE },
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_MORE },
+		],
+		returnType: { type: ValueType.MAP, mult: SequenceMultiplicity.EXACTLY_ONE },
+		callFunction: mapRemove,
+	},
+
+	{
+		namespaceURI: MAP_NAMESPACE_URI,
+		localName: 'size',
+		argumentTypes: [{ type: ValueType.MAP, mult: SequenceMultiplicity.EXACTLY_ONE }],
+		returnType: { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.EXACTLY_ONE },
+		callFunction: mapSize,
+	},
+];
+
 export default {
-	declarations: [
-		{
-			namespaceURI: MAP_NAMESPACE_URI,
-			localName: 'contains',
-			argumentTypes: ['map(*)', 'xs:anyAtomicType'],
-			returnType: 'xs:boolean',
-			callFunction: mapContains,
-		},
-
-		{
-			namespaceURI: MAP_NAMESPACE_URI,
-			localName: 'entry',
-			argumentTypes: ['xs:anyAtomicType', 'item()*'],
-			returnType: 'map(*)',
-			callFunction: mapEntry,
-		},
-
-		{
-			namespaceURI: MAP_NAMESPACE_URI,
-			localName: 'for-each',
-			// TODO: reimplement type checking by parsing the types
-			// argumentTypes: ['map(*)', '(xs:anyAtomicType, item()*) as item()*'],
-			argumentTypes: ['map(*)', 'item()*'],
-			returnType: 'item()*',
-			callFunction: mapForEach,
-		},
-
-		{
-			namespaceURI: MAP_NAMESPACE_URI,
-			localName: 'get',
-			argumentTypes: ['map(*)', 'xs:anyAtomicType'],
-			returnType: 'item()*',
-			callFunction: mapGet,
-		},
-
-		{
-			namespaceURI: MAP_NAMESPACE_URI,
-			localName: 'keys',
-			argumentTypes: ['map(*)'],
-			returnType: 'xs:anyAtomicType*',
-			callFunction: mapKeys,
-		},
-
-		{
-			namespaceURI: MAP_NAMESPACE_URI,
-			localName: 'merge',
-			argumentTypes: ['map(*)*', 'map(*)'],
-			returnType: 'map(*)',
-			callFunction: mapMerge,
-		},
-
-		{
-			namespaceURI: MAP_NAMESPACE_URI,
-			localName: 'merge',
-			argumentTypes: ['map(*)*'],
-			returnType: 'map(*)',
-			callFunction(dynamicContext, executionParameters, staticContext, maps) {
-				return mapMerge(
-					dynamicContext,
-					executionParameters,
-					staticContext,
-					maps,
-					sequenceFactory.singleton(
-						new MapValue([
-							{
-								key: createAtomicValue('duplicates', 'xs:string'),
-								value: () =>
-									sequenceFactory.singleton(
-										createAtomicValue('use-first', 'xs:string')
-									),
-							},
-						])
-					)
-				);
-			},
-		},
-
-		{
-			namespaceURI: MAP_NAMESPACE_URI,
-			localName: 'put',
-			argumentTypes: ['map(*)', 'xs:anyAtomicType', 'item()*'],
-			returnType: 'map(*)',
-			callFunction: mapPut,
-		},
-
-		{
-			namespaceURI: MAP_NAMESPACE_URI,
-			localName: 'remove',
-			argumentTypes: ['map(*)', 'xs:anyAtomicType*'],
-			returnType: 'map(*)',
-			callFunction: mapRemove,
-		},
-
-		{
-			namespaceURI: MAP_NAMESPACE_URI,
-			localName: 'size',
-			argumentTypes: ['map(*)'],
-			returnType: 'xs:integer',
-			callFunction: mapSize,
-		},
-	],
+	declarations,
 	functions: {
 		get: mapGet,
 		merge: mapMerge,

@@ -3,6 +3,7 @@ import { ARRAY_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import FunctionValue from './FunctionValue';
 import ISequence from './ISequence';
 import sequenceFactory from './sequenceFactory';
+import { SequenceMultiplicity, ValueType } from './Value';
 
 class ArrayValue extends FunctionValue {
 	public members: (() => ISequence)[];
@@ -18,11 +19,12 @@ class ArrayValue extends FunctionValue {
 				),
 			localName: 'get',
 			namespaceURI: ARRAY_NAMESPACE_URI,
-			argumentTypes: [{ type: 'xs:integer', isRestArgument: false }],
+			// argumentTypes: [{ type: { kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE }, isResArgument: false }],
+			argumentTypes: [{ type: ValueType.XSINTEGER, mult: SequenceMultiplicity.EXACTLY_ONE }],
 			arity: 1,
-			returnType: { type: 'item()', occurrence: '*' },
+			returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
 		});
-		this.type = 'array(*)';
+		this.type = ValueType.ARRAY;
 		this.members = members;
 	}
 }

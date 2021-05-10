@@ -1,13 +1,10 @@
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import StaticContext from '../StaticContext';
-import UpdatingExpressionResult from '../UpdatingExpressionResult';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import ISequence from './ISequence';
-import RestArgument from './RestArgument';
 import sequenceFactory from './sequenceFactory';
-import TypeDeclaration from './TypeDeclaration';
-import Value from './Value';
+import Value, { EllipsisType, ParameterType, SequenceType, ValueType } from './Value';
 import QName from './valueTypes/QName';
 
 export type FunctionSignature<T> = (
@@ -17,10 +14,13 @@ export type FunctionSignature<T> = (
 	...args: ISequence[]
 ) => T;
 
-function expandRestArgumentToArity(argumentTypes, arity) {
+function expandParameterTypeToArity(
+	argumentTypes: ParameterType[],
+	arity: number
+): ParameterType[] {
 	let indexOfRest = -1;
 	for (let i = 0; i < argumentTypes.length; i++) {
-		if (argumentTypes[i].isRestArgument) {
+		if (argumentTypes[i] === EllipsisType.ELLIPSIS) {
 			indexOfRest = i;
 		}
 	}
@@ -38,12 +38,12 @@ function expandRestArgumentToArity(argumentTypes, arity) {
 class FunctionValue<T = ISequence> extends Value {
 	public readonly isUpdating: boolean;
 	public readonly value: FunctionSignature<T>;
-	private readonly _argumentTypes: (TypeDeclaration | RestArgument)[];
+	private readonly _argumentTypes: ParameterType[];
 	private readonly _arity: number;
 	private readonly _isAnonymous: boolean;
 	private readonly _localName: string;
 	private readonly _namespaceURI: string;
-	private readonly _returnType: TypeDeclaration;
+	private readonly _returnType: SequenceType;
 
 	constructor({
 		argumentTypes,
@@ -55,20 +55,20 @@ class FunctionValue<T = ISequence> extends Value {
 		returnType,
 		value,
 	}: {
-		argumentTypes: (TypeDeclaration | RestArgument)[];
+		argumentTypes: ParameterType[];
 		arity: number;
 		isAnonymous?: boolean;
 		isUpdating?: boolean;
 		localName: string;
 		namespaceURI: string;
-		returnType: TypeDeclaration;
+		returnType: SequenceType;
 		value: FunctionSignature<T>;
 	}) {
-		super('function(*)', null);
+		super(ValueType.FUNCTION, null);
 
 		this.value = value;
 		this.isUpdating = isUpdating;
-		this._argumentTypes = expandRestArgumentToArity(argumentTypes, arity);
+		this._argumentTypes = expandParameterTypeToArity(argumentTypes, arity);
 		this._arity = arity;
 		this._isAnonymous = isAnonymous;
 		this._localName = localName;
@@ -109,7 +109,7 @@ class FunctionValue<T = ISequence> extends Value {
 			);
 		}
 		const argumentTypes = appliedArguments.reduce(
-			(indices: (TypeDeclaration | RestArgument)[], arg: ISequence | null, index: number) => {
+			(indices: ParameterType[], arg: ISequence | null, index: number) => {
 				if (arg === null) {
 					indices.push(this._argumentTypes[index]);
 				}

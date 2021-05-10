@@ -1,17 +1,20 @@
 import { FunctionSignature } from '../dataTypes/FunctionValue';
 import ISequence from '../dataTypes/ISequence';
-import RestArgument, { REST_ARGUMENT_INSTANCE } from '../dataTypes/RestArgument';
-import TypeDeclaration from '../dataTypes/TypeDeclaration';
-import { ValueType } from '../dataTypes/Value';
+import {
+	EllipsisType,
+	ParameterType,
+	SequenceType,
+	sequenceTypeToString,
+} from '../dataTypes/Value';
 
 export type FunctionProperties = {
-	argumentTypes: (TypeDeclaration | RestArgument)[];
+	argumentTypes: ParameterType[];
 	arity: number;
 	callFunction: FunctionSignature<ISequence>;
 	isUpdating: boolean;
 	localName: string;
 	namespaceURI: string;
-	returnType: TypeDeclaration;
+	returnType: SequenceType;
 };
 
 const registeredFunctionsByName: { [s: string]: FunctionProperties[] } = Object.create(null);
@@ -97,10 +100,9 @@ export function getAlternativesAsStringFor(functionName: string): string {
 						functionDeclaration.localName
 					} (${functionDeclaration.argumentTypes
 						.map((argumentType) =>
-							(argumentType as RestArgument).isRestArgument
+							argumentType === EllipsisType.ELLIPSIS
 								? '...'
-								: (argumentType as TypeDeclaration).type +
-								  ((argumentType as TypeDeclaration).occurrence || '')
+								: sequenceTypeToString(argumentType)
 						)
 						.join(', ')})"`
 			)
@@ -127,10 +129,10 @@ export function getFunctionByArity(
 	}
 
 	const matchingFunction = matchingFunctions.find((functionDeclaration) => {
-		const hasRestArgument = functionDeclaration.argumentTypes.some(
-			(argument) => (argument as RestArgument).isRestArgument
+		const isElipsis = functionDeclaration.argumentTypes.some(
+			(argument) => argument === EllipsisType.ELLIPSIS
 		);
-		if (hasRestArgument) {
+		if (isElipsis) {
 			return functionDeclaration.argumentTypes.length - 1 <= arity;
 		}
 		return functionDeclaration.argumentTypes.length === arity;
@@ -151,30 +153,25 @@ export function getFunctionByArity(
 	};
 }
 
-function splitType(type: string): TypeDeclaration {
-	// argumentType is something like 'xs:string?' or 'map(*)'
-	const parts = type.match(/^(.*[^+?*])([+*?])?$/);
-	return {
-		type: parts[1] as ValueType,
-		occurrence: (parts[2] as '?' | '+' | '*' | '') || null,
-	};
-}
-
-export function registerFunction(namespaceURI, localName, argumentTypes, returnType, callFunction) {
+export function registerFunction(
+	namespaceURI,
+	localName,
+	argumentTypes: ParameterType[],
+	returnType: SequenceType,
+	callFunction
+) {
 	if (!registeredFunctionsByName[namespaceURI + ':' + localName]) {
 		registeredFunctionsByName[namespaceURI + ':' + localName] = [];
 	}
 
 	registeredFunctionsByName[namespaceURI + ':' + localName].push({
-		argumentTypes: argumentTypes.map((argumentType: string) =>
-			argumentType === '...' ? REST_ARGUMENT_INSTANCE : splitType(argumentType)
-		),
+		argumentTypes,
 		arity: argumentTypes.length,
 		callFunction,
 		isUpdating: false,
 		localName,
 		namespaceURI,
-		returnType: splitType(returnType),
+		returnType,
 	});
 }
 

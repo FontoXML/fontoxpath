@@ -1,20 +1,22 @@
+import AtomicValue from '../AtomicValue';
 import createAtomicValue from '../createAtomicValue';
-import { ValueType } from '../Value';
+import { SequenceMultiplicity, ValueType } from '../Value';
 import DateTime from '../valueTypes/DateTime';
 import CastResult from './CastResult';
 
-const createGYearMonthValue = (value) => createAtomicValue(value, 'xs:gYearMonth');
+const createGYearMonthValue = (value: any): AtomicValue =>
+	createAtomicValue(value, ValueType.XSGYEARMONTH);
 
 export default function castToGYearMonth(
 	instanceOf: (typeName: ValueType) => boolean
-): (value) => CastResult {
-	if (instanceOf('xs:date') || instanceOf('xs:dateTime')) {
+): (value: DateTime) => CastResult {
+	if (instanceOf(ValueType.XSDATE) || instanceOf(ValueType.XSDATETIME)) {
 		return (value) => ({
 			successful: true,
-			value: createGYearMonthValue(value.convertToType('xs:gYearMonth')),
+			value: createGYearMonthValue(value.convertToType(ValueType.XSGYEARMONTH)),
 		});
 	}
-	if (instanceOf('xs:untypedAtomic') || instanceOf('xs:string')) {
+	if (instanceOf(ValueType.XSUNTYPEDATOMIC) || instanceOf(ValueType.XSSTRING)) {
 		return (value) => ({
 			successful: true,
 			value: createGYearMonthValue(DateTime.fromString(value)),

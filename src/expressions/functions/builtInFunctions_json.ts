@@ -1,11 +1,12 @@
 import ArrayValue from '../dataTypes/ArrayValue';
 import createAtomicValue from '../dataTypes/createAtomicValue';
+import ISequence from '../dataTypes/ISequence';
 import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-
-import ISequence from '../dataTypes/ISequence';
+import { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
+import { BuiltinDeclarationType } from './builtInFunctions';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
 function convert(obj: any): ISequence {
@@ -26,16 +27,16 @@ function convert(obj: any): ISequence {
 				new MapValue(
 					Object.keys(obj as object).map((key) => {
 						return {
-							key: createAtomicValue(key, 'xs:string'),
+							key: createAtomicValue(key, ValueType.XSSTRING),
 							value: createDoublyIterableSequence(convert((obj as object)[key])),
 						};
 					})
 				)
 			);
 		case 'number':
-			return sequenceFactory.singleton(createAtomicValue(obj, 'xs:double'));
+			return sequenceFactory.singleton(createAtomicValue(obj, ValueType.XSDOUBLE));
 		case 'string':
-			return sequenceFactory.singleton(createAtomicValue(obj, 'xs:string'));
+			return sequenceFactory.singleton(createAtomicValue(obj, ValueType.XSSTRING));
 		case 'boolean':
 			return obj
 				? sequenceFactory.singletonTrueSequence()
@@ -61,16 +62,18 @@ const fnParseJson: FunctionDefinitionType = (
 	return convert(jsObject);
 };
 
+const declarations: BuiltinDeclarationType[] = [
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'parse-json',
+		argumentTypes: [{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE }],
+		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		callFunction: fnParseJson,
+	},
+];
+
 export default {
-	declarations: [
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'parse-json',
-			argumentTypes: ['xs:string'],
-			returnType: 'item()?',
-			callFunction: fnParseJson,
-		},
-	],
+	declarations,
 	functions: {
 		parseJson: fnParseJson,
 	},

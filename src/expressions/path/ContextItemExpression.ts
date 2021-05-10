@@ -1,6 +1,5 @@
-import Expression, { RESULT_ORDERINGS } from '../Expression';
-
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
 
 class ContextItemExpression extends Expression {

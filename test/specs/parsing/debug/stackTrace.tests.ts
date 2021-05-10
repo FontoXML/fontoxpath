@@ -1,10 +1,12 @@
 import * as chai from 'chai';
 import {
+	ValueType,
 	evaluateUpdatingExpression,
 	evaluateXPath,
 	evaluateXPathToString,
 	registerCustomXPathFunction,
 	registerXQueryModule,
+	SequenceMultiplicity
 } from 'fontoxpath';
 import * as sinon from 'sinon';
 
@@ -52,7 +54,7 @@ describe('showStackTraceOnError', () => {
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'boom-abc' },
 			[],
-			'xs:string',
+			{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
 			(_dynamicContext) => {
 				// This will throw an error so no need for a return
 				c();
@@ -64,7 +66,7 @@ describe('showStackTraceOnError', () => {
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'boom-def' },
 			[],
-			'xs:string',
+			{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
 			(_dynamicContext) => {
 				// This will throw an error so no need for a return
 				f();
@@ -278,13 +280,13 @@ Test error
 			// filename, and line number. We only check these as the full error message is machine
 			// specific (may contain user name in the full file paths)
 			chai.assert.include(errorMessageLines[5], '    at a (');
-			chai.assert.include(errorMessageLines[5], 'stackTrace.tests.ts:12:8)');
+			chai.assert.include(errorMessageLines[5], 'stackTrace.tests.ts:14:8)');
 
 			chai.assert.include(errorMessageLines[6], '    at b (');
-			chai.assert.include(errorMessageLines[6], 'stackTrace.tests.ts:15:2)');
+			chai.assert.include(errorMessageLines[6], 'stackTrace.tests.ts:17:2)');
 
 			chai.assert.include(errorMessageLines[7], '    at c (');
-			chai.assert.include(errorMessageLines[7], 'stackTrace.tests.ts:18:2)');
+			chai.assert.include(errorMessageLines[7], 'stackTrace.tests.ts:20:2)');
 
 			chai.assert.equal(errorMessageLines[15], '  at <functionCallExpr>:1:1 - 1:18');
 		}
@@ -313,26 +315,26 @@ Test error
 			// filename, and line number. We only check these as the full error message is machine
 			// specific (may contain user name in the full file paths)
 			chai.assert.include(error.message, '    at a (');
-			chai.assert.include(error.message, 'stackTrace.tests.ts:12:8)');
+			chai.assert.include(error.message, 'stackTrace.tests.ts:14:8)');
 
 			chai.assert.include(error.message, '    at b (');
-			chai.assert.include(error.message, 'stackTrace.tests.ts:15:2)');
+			chai.assert.include(error.message, 'stackTrace.tests.ts:17:2)');
 
 			chai.assert.include(error.message, '    at c (');
-			chai.assert.include(error.message, 'stackTrace.tests.ts:18:2)');
+			chai.assert.include(error.message, 'stackTrace.tests.ts:20:2)');
 
 			chai.assert.include(error.message, '  at <functionCallExpr>:1:15 - 1:32');
 			chai.assert.include(error.message, '  at <andOp>:1:4 - 1:32');
 			chai.assert.include(error.message, '  at <ifThenElseExpr>:1:1 - 1:57');
 
 			chai.assert.include(error.message, '    at d (');
-			chai.assert.include(error.message, 'stackTrace.tests.ts:22:9)');
+			chai.assert.include(error.message, 'stackTrace.tests.ts:24:9)');
 
 			chai.assert.include(error.message, '    at e (');
-			chai.assert.include(error.message, 'stackTrace.tests.ts:34:2)');
+			chai.assert.include(error.message, 'stackTrace.tests.ts:36:2)');
 
 			chai.assert.include(error.message, '    at f (');
-			chai.assert.include(error.message, 'stackTrace.tests.ts:38:2)');
+			chai.assert.include(error.message, 'stackTrace.tests.ts:40:2)');
 
 			chai.assert.include(error.message, '  at <functionCallExpr>:1:1 - 1:18');
 		}

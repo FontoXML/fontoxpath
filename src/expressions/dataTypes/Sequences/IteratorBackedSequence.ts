@@ -3,7 +3,7 @@ import { DONE_TOKEN, IIterator, IterationHint, ready } from '../../util/iterator
 import ISequence, { SwitchCasesCases } from '../ISequence';
 import isSubtypeOf from '../isSubtypeOf';
 import sequenceFactory from '../sequenceFactory';
-import Value from '../Value';
+import Value, { ValueType } from '../Value';
 import getEffectiveBooleanValue from './getEffectiveBooleanValue';
 
 export default class IteratorBackedSequence implements ISequence {
@@ -120,7 +120,7 @@ export default class IteratorBackedSequence implements ISequence {
 		}
 		const firstValue = it.value;
 
-		if (isSubtypeOf(firstValue.type, 'node()')) {
+		if (isSubtypeOf(firstValue.type, ValueType.NODE)) {
 			this.reset(oldPosition);
 			return true;
 		}

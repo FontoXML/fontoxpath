@@ -1,10 +1,10 @@
 import castToType from '../../dataTypes/castToType';
+import ISequence from '../../dataTypes/ISequence';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import valueCompare from './valueCompare';
-
-import ISequence from '../../dataTypes/ISequence';
+import { SequenceMultiplicity, ValueType } from '../../dataTypes/Value';
 import DynamicContext from '../../DynamicContext';
+import valueCompare from './valueCompare';
 
 const OPERATOR_TRANSLATION = {
 	['equalOp']: 'eqOp',
@@ -45,24 +45,24 @@ export default function generalCompare(
 					// In all other cases, V is cast to the primitive base type of T.
 					let secondValue = allSecondValues[i];
 					if (
-						isSubtypeOf(firstValue.type, 'xs:untypedAtomic') ||
-						isSubtypeOf(secondValue.type, 'xs:untypedAtomic')
+						isSubtypeOf(firstValue.type, ValueType.XSUNTYPEDATOMIC) ||
+						isSubtypeOf(secondValue.type, ValueType.XSUNTYPEDATOMIC)
 					) {
-						if (isSubtypeOf(firstValue.type, 'xs:numeric')) {
-							secondValue = castToType(secondValue, 'xs:double');
-						} else if (isSubtypeOf(secondValue.type, 'xs:numeric')) {
-							firstValue = castToType(firstValue, 'xs:double');
-						} else if (isSubtypeOf(firstValue.type, 'xs:dayTimeDuration')) {
-							secondValue = castToType(secondValue, 'xs:dayTimeDuration');
-						} else if (isSubtypeOf(secondValue.type, 'xs:dayTimeDuration')) {
-							firstValue = castToType(firstValue, 'xs:dayTimeDuration');
-						} else if (isSubtypeOf(firstValue.type, 'xs:yearMonthDuration')) {
-							secondValue = castToType(secondValue, 'xs:yearMonthDuration');
-						} else if (isSubtypeOf(secondValue.type, 'xs:yearMonthDuration')) {
-							firstValue = castToType(firstValue, 'xs:yearMonthDuration');
-						} else if (isSubtypeOf(firstValue.type, 'xs:untypedAtomic')) {
+						if (isSubtypeOf(firstValue.type, ValueType.XSNUMERIC)) {
+							secondValue = castToType(secondValue, ValueType.XSDOUBLE);
+						} else if (isSubtypeOf(secondValue.type, ValueType.XSNUMERIC)) {
+							firstValue = castToType(firstValue, ValueType.XSDOUBLE);
+						} else if (isSubtypeOf(firstValue.type, ValueType.XSDAYTIMEDURATION)) {
+							secondValue = castToType(secondValue, ValueType.XSDAYTIMEDURATION);
+						} else if (isSubtypeOf(secondValue.type, ValueType.XSDAYTIMEDURATION)) {
+							firstValue = castToType(firstValue, ValueType.XSDAYTIMEDURATION);
+						} else if (isSubtypeOf(firstValue.type, ValueType.XSYEARMONTHDURATION)) {
+							secondValue = castToType(secondValue, ValueType.XSYEARMONTHDURATION);
+						} else if (isSubtypeOf(secondValue.type, ValueType.XSYEARMONTHDURATION)) {
+							firstValue = castToType(firstValue, ValueType.XSYEARMONTHDURATION);
+						} else if (isSubtypeOf(firstValue.type, ValueType.XSUNTYPEDATOMIC)) {
 							firstValue = castToType(firstValue, secondValue.type);
-						} else if (isSubtypeOf(secondValue.type, 'xs:untypedAtomic')) {
+						} else if (isSubtypeOf(secondValue.type, ValueType.XSUNTYPEDATOMIC)) {
 							secondValue = castToType(secondValue, firstValue.type);
 						}
 					}
