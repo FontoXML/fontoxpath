@@ -1,6 +1,5 @@
 import * as chai from 'chai';
-import { compareSpecificity, evaluateXPath } from 'fontoxpath';
-import { slimdom } from 'slimdom-sax-parser';
+import { compareSpecificity } from 'fontoxpath';
 
 describe('compareSpecificity', () => {
 	it('returns 0 for the same xpath', () => {

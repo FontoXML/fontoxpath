@@ -9,6 +9,7 @@
 		"strict": false,
 		"allowJs": true,
 		"types": ["mocha", "node"],
+		"moduleResolution": "node",
 		"target": "es2020"
 	},
 	"include": ["../src/**/*.ts", "./**/*.ts"]
