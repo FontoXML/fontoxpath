@@ -3,13 +3,12 @@ import xPathParserRaw from './xPathParser_raw';
 
 const xpathModule: any = {};
 
-// tslint:disable-next-line:function-constructor
-new Function(xPathParserRaw()).call(xpathModule);
+xPathParserRaw(xpathModule);
 
-const xpathParserModule = xpathModule['xPathParser'];
-export const parse = xpathParserModule['parse'] as (
+const xpathParserModule = xpathModule.xPathParser;
+export const parse = xpathParserModule.parse as (
 	source: string,
 	params: { outputDebugInfo: boolean; xquery: boolean }
 ) => IAST;
-// tslint:disable-next-line:variable-name
-export const SyntaxError = xpathParserModule['SyntaxError'];
+
+export const SyntaxError = xpathParserModule.SyntaxError;

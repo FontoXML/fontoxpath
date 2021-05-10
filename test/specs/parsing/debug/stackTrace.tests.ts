@@ -232,29 +232,6 @@ Error: XPST0008, The variable map is not in scope.
 		);
 	});
 
-	it('contains the correct location of the error in the code', () => {
-		const errorLine = '$map("key")';
-		const position = {
-			end: {
-				column: 12,
-				line: 7,
-				offset: 41,
-			},
-			start: {
-				column: 1,
-				line: 7,
-				offset: 30,
-			},
-		};
-		try {
-			const lines = Array(10).fill('(::)');
-			lines[6] = errorLine;
-			evaluateXPath(lines.join('\n'), null, null, null, null, { debug: true });
-		} catch (error) {
-			chai.assert.deepEqual(error.position, position);
-		}
-	});
-
 	it('shows the JS stack trace for error in a custom xpath function', () => {
 		try {
 			evaluateXPath('Q{test}boom-abc()', null, null, null, null, { debug: true });

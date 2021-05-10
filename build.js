@@ -1,6 +1,5 @@
 const peg = require('pegjs');
 const fs = require('fs-extra');
-const UglifyJS = require('uglify-js');
 
 const ts = require('typescript');
 
@@ -23,16 +22,29 @@ function doPegJsBuild() {
 				format: 'globals',
 				exportVar: 'xPathParser',
 			})
-		)
-		.then((parserString) => {
-			const uglified = UglifyJS.minify(parserString);
-			if (uglified.error) {
-				fs.writeFileSync('./src/parsing/xPathParser_raw.ts', parserString);
-				throw uglified.error;
-			}
-			return uglified.code;
-		})
-		.then((parserString) => `export default () => ${JSON.stringify(parserString)};`)
+			 )
+	// Note the ts-nocheck, the output of pegJs is not valid TypeScript. The tslint-disable disables
+	// linter errors. Also, don't measure code coverage on this file. It is generated.
+		.then((parserString) => `// @ts-nocheck
+/* tslint:disable */
+/* istanbul ignore file */
+
+// HACK: PegJS uses a single object with keys that are later indexed using strings,
+//  this is incompatible with the closure compiler.
+// Annotate this object with the following interface to prevent renaming.
+declare interface pegjs_internal {
+	literal: unknown,
+	'class': unknown,
+	any: unknown,
+	end: unknown,
+	other: unknown,
+}
+
+export default function(globalThis) {
+(function() {
+${parserString.replace('var DESCRIBE_EXPECTATION_FNS = ', 'var DESCRIBE_EXPECTATION_FNS: pegjs_internal = ')}
+}).call(globalThis);
+};`)
 		.then((parserString) =>
 			Promise.all([
 				new Promise((resolve, reject) =>
@@ -77,6 +89,7 @@ function doTSCCBuild() {
 			},
 			prefix: './',
 			compilerFlags: {
+				debug: false,
 				assume_function_wrapper: true,
 				compilation_level: 'ADVANCED',
 				output_wrapper: `function (xspattern) {

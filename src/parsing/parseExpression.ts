@@ -30,8 +30,8 @@ export default function parseExpression(
 			ast = cached;
 		} else {
 			ast = parse(xPathString, {
-				['xquery']: !!compilationOptions.allowXQuery,
-				['outputDebugInfo']: !!compilationOptions.debug,
+				xquery: !!compilationOptions.allowXQuery,
+				outputDebugInfo: !!compilationOptions.debug,
 			});
 			if (!compilationOptions.debug) {
 				storeParseResultInCache(xPathString, language, ast);
@@ -42,9 +42,9 @@ export default function parseExpression(
 		if (error instanceof SyntaxError) {
 			throw new Error(
 				`XPST0003: Unable to parse: "${xPathString}".\n${error.message}\n${
-					xPathString.slice(0, error['location']['start']['offset']) +
+					xPathString.slice(0, error.location.start.offset) +
 					'[Error is around here]' +
-					xPathString.slice(error['location']['start']['offset'])
+					xPathString.slice(error.location.start.offset)
 				}`
 			);
 		}

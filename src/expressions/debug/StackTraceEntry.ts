@@ -23,7 +23,7 @@ export class StackTraceEntry {
 
 	public makeStackTrace(): string[] {
 		let innerStackTrace: string[];
-		if ('position' in this.innerTrace) {
+		if (this.innerTrace instanceof PositionedError) {
 			// We are dealing with a nested positioned error
 			innerStackTrace = ['Inner error:', this.innerTrace.message];
 		} else if (this.innerTrace instanceof Error) {
