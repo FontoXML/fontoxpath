@@ -1,3 +1,4 @@
+import compileXPathToJavaScript from './compileXPathToJavaScript';
 import IDocumentWriter from './documentWriter/IDocumentWriter';
 import ExternalDomFacade from './domFacade/ExternalDomFacade';
 import IDomFacade from './domFacade/IDomFacade';
@@ -16,6 +17,7 @@ import evaluateXPathToString from './evaluateXPathToString';
 import evaluateXPathToStrings from './evaluateXPathToStrings';
 import executePendingUpdateList from './executePendingUpdateList';
 import { getBucketsForNode } from './getBuckets';
+import executeCompiledXPath from './jsCodegen/executeCompiledXPath';
 import INodesFactory from './nodesFactory/INodesFactory';
 import ISimpleNodesFactory from './nodesFactory/ISimpleNodesFactory';
 import parseScript from './parseScript';
@@ -197,6 +199,8 @@ export {
 	ValidValue,
 	XPathPerformanceMeasurement,
 	compareSpecificity,
+	compileXPathToJavaScript,
+	executeCompiledXPath,
 	domFacade,
 	evaluateUpdatingExpression,
 	evaluateUpdatingExpressionSync,

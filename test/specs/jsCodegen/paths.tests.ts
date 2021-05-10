@@ -2,12 +2,21 @@ import * as chai from 'chai';
 import * as slimdom from 'slimdom';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
-import { evaluateXPathToNodes } from 'fontoxpath';
+import { ReturnType } from 'fontoxpath';
+import evaluateXPathWithJsCodegen from './evaluateXPathWithJsCodegen';
 
 describe('paths (js-codegen)', () => {
-	const documentNode = new slimdom.Document();
-	it('compiles (/)', () => {
+	let documentNode: slimdom.Document;
+
+	beforeEach(() => {
+		documentNode = new slimdom.Document();
 		jsonMlMapper.parse(['xml', ['title']], documentNode);
-		chai.assert.deepEqual(evaluateXPathToNodes('(/)', documentNode, undefined, undefined, {backend: 'js-codegen'}), [documentNode]);
+	});
+
+	it('compiles (/)', () => {
+		chai.assert.deepEqual(
+			evaluateXPathWithJsCodegen('(/)', documentNode, null, ReturnType.NODES),
+			[documentNode]
+		);
 	});
 });

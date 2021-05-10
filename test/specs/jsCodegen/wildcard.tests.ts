@@ -3,31 +3,42 @@ import * as slimdom from 'slimdom';
 
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
-import evaluateXPathToBoolean from '../../../src/evaluateXPathToBoolean';
-import evaluateXPathToNodes from '../../../src/evaluateXPathToNodes';
+import { ReturnType } from 'fontoxpath';
+import evaluateXPathWithJsCodegen from './evaluateXPathWithJsCodegen';
 
 describe('wildcard', () => {
-	const document = new slimdom.Document();
-	jsonMlMapper.parse(
-		[
-			'xml',
-			{ id: 'yes' },
-			['title', 'Tips'],
-			['tips', ['tip', 'Make it work'], ['tip', 'Make it right'], ['tip', 'Make it fast']],
-		],
-		document
-	);
+	let documentNode: slimdom.Document;
+
+	beforeEach(() => {
+		documentNode = new slimdom.Document();
+		jsonMlMapper.parse(
+			[
+				'xml',
+				['title', 'Tips'],
+				[
+					'tips',
+					['tip', 'Make it work'],
+					['tip', 'Make it right'],
+					['tip', 'Make it fast'],
+				],
+			],
+			documentNode
+		);
+	});
+
 	it('selects elements (non-specified namespace)', () => {
-		const results = evaluateXPathToNodes('/xml/*', document, null, null, {
-			backend: 'js-codegen',
-		});
+		const results = evaluateXPathWithJsCodegen(
+			'/xml/*',
+			documentNode,
+			null,
+			ReturnType.NODES
+		);
+
 		chai.assert.equal(results.length, 2);
 	});
 	it('does not select text elements', () => {
 		chai.assert.isFalse(
-			evaluateXPathToBoolean('/xml/tips/tip/*', document, null, null, {
-				backend: 'js-codegen',
-			})
+			evaluateXPathWithJsCodegen('/xml/tips/tip/*', documentNode, null, ReturnType.BOOLEAN)
 		);
 	});
 });

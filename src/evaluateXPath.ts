@@ -1,20 +1,11 @@
 import IDomFacade from './domFacade/IDomFacade';
-import buildEvaluationContext, {
-	normalizeEndOfLines,
-} from './evaluationUtils/buildEvaluationContext';
+import buildEvaluationContext from './evaluationUtils/buildEvaluationContext';
 import { printAndRethrowError } from './evaluationUtils/printAndRethrowError';
 import DynamicContext from './expressions/DynamicContext';
 import ExecutionParameters from './expressions/ExecutionParameters';
 import Expression from './expressions/Expression';
 import { getBucketsForNode } from './getBuckets';
-import compileAstToJavaScript from './jsCodegen/compileAstToJavaScript';
-import {
-	getCompiledJavaScriptFromCache,
-	storeCompiledJavaScriptInCache,
-} from './jsCodegen/compiledJavaScriptCache';
-import evaluateCompiledJavaScript from './jsCodegen/evaluateCompiledJavaScript';
 import convertXDMReturnValue, { IReturnTypes, ReturnType } from './parsing/convertXDMReturnValue';
-import parseExpression from './parsing/parseExpression';
 import { markXPathEnd, markXPathStart } from './performance';
 import { TypedExternalValue, UntypedExternalValue } from './types/createTypedValueFactory';
 import { Language, Options } from './types/Options';
@@ -155,43 +146,6 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 		debug: !!options['debug'],
 		disableCache: !!options['disableCache'],
 	};
-
-	if (options.backend === 'js-codegen' || options.backend === 'auto') {
-		const expressionString = normalizeEndOfLines(selector);
-
-		let compiledJavaScriptFunction = compilationOptions.disableCache
-			? null
-			: getCompiledJavaScriptFromCache(expressionString, returnType);
-
-		if (!compiledJavaScriptFunction) {
-			const ast = parseExpression(expressionString, compilationOptions);
-			const compiledJavaScriptResult = compileAstToJavaScript(ast, returnType);
-
-			if (compiledJavaScriptResult.isAstAccepted === true) {
-				// tslint:disable-next-line
-				compiledJavaScriptFunction = new Function(
-					'contextItem',
-					'domFacade',
-					'runtimeLibrary',
-					compiledJavaScriptResult.code
-				);
-
-				storeCompiledJavaScriptInCache(
-					expressionString,
-					returnType,
-					compiledJavaScriptFunction
-				);
-			} else if (options.backend !== 'auto') {
-				throw new Error(
-					`Failed compiling the given XPath with the js-codegen backend. ${compiledJavaScriptResult.reason}`
-				);
-			}
-		}
-
-		if (compiledJavaScriptFunction) {
-			return evaluateCompiledJavaScript(compiledJavaScriptFunction, contextItem, domFacade);
-		}
-	}
 
 	let dynamicContext: DynamicContext;
 	let executionParameters: ExecutionParameters;

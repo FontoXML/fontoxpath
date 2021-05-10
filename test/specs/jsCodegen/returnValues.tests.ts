@@ -3,51 +3,64 @@ import * as slimdom from 'slimdom';
 
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
-import evaluateXPathToBoolean from '../../../src/evaluateXPathToBoolean';
-import evaluateXPathToFirstNode from '../../../src/evaluateXPathToFirstNode';
-import evaluateXPathToNodes from '../../../src/evaluateXPathToNodes';
+import { ReturnType } from 'fontoxpath';
+import evaluateXPathWithJsCodegen from './evaluateXPathWithJsCodegen';
 
 describe('return values', () => {
-	const document = new slimdom.Document();
-	jsonMlMapper.parse(
-		[
-			'xml',
-			{ id: 'yes' },
-			['title', 'Tips'],
-			['tips', ['tip', 'Make it work'], ['tip', 'Make it right'], ['tip', 'Make it fast']],
-		],
-		document
-	);
+	let documentNode: slimdom.Document;
+
+	beforeEach(() => {
+		documentNode = new slimdom.Document();
+		jsonMlMapper.parse(
+			[
+				'xml',
+				{ id: 'yes' },
+				['title', 'Tips'],
+				[
+					'tips',
+					['tip', 'Make it work'],
+					['tip', 'Make it right'],
+					['tip', 'Make it fast'],
+				],
+			],
+			documentNode
+		);
+	});
+
 	it('evaluates to boolean', () => {
 		chai.assert.isTrue(
-			evaluateXPathToBoolean('/xml/element()/text()', document, null, null, {
-				backend: 'js-codegen',
-			})
+			evaluateXPathWithJsCodegen(
+				'/xml/element()/text()',
+				documentNode,
+				null,
+				ReturnType.BOOLEAN
+			)
 		);
 		chai.assert.isFalse(
-			evaluateXPathToBoolean('/xml/element(tips)/text()', document, null, null, {
-				backend: 'js-codegen',
-			})
+			evaluateXPathWithJsCodegen(
+				'/xml/element(tips)/text()',
+				documentNode,
+				null,
+				ReturnType.BOOLEAN
+			)
 		);
 	});
 	it('evaluates to nodes', () => {
-		const results = evaluateXPathToNodes(
+		const results = evaluateXPathWithJsCodegen(
 			'/element()/element()/element()/text()',
-			document,
+			documentNode,
 			null,
-			null,
-			{ backend: 'js-codegen' }
+			ReturnType.NODES
 		);
 		chai.assert.equal(results.length, 3);
 	});
 	it('evaluates to first node', () => {
-		const node: slimdom.Text = evaluateXPathToFirstNode(
+		const node: slimdom.Text = evaluateXPathWithJsCodegen(
 			'/element()',
-			document,
+			documentNode,
 			null,
-			null,
-			{ backend: 'js-codegen' }
+			ReturnType.FIRST_NODE
 		);
-		chai.assert.equal(node, document.firstChild);
+		chai.assert.equal(node, documentNode.firstChild);
 	});
 });

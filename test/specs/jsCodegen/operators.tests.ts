@@ -4,32 +4,37 @@ import * as slimdom from 'slimdom';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 import evaluateXPathToBoolean from '../../../src/evaluateXPathToBoolean';
+import { ReturnType } from 'fontoxpath';
+import evaluateXPathWithJsCodegen from './evaluateXPathWithJsCodegen';
 
 describe('operators', () => {
-	const document = new slimdom.Document();
-	jsonMlMapper.parse(
-		[
-			'xml',
-			{ id: 'yes' },
-			['title', 'Tips'],
-			['tips', ['tip', 'Make it work'], ['tip', 'Make it right'], ['tip', 'Make it fast']],
-		],
-		document
-	);
+	let documentNode: slimdom.Document;
+
+	beforeEach(() => {
+		documentNode = new slimdom.Document();
+		jsonMlMapper.parse(['xml', ['title', 'Tips'], ['tips']], documentNode);
+	});
+
 	it('compiles "or" when used as a base expression', () => {
-		const xmlNode: slimdom.Node = document.firstChild;
+		const elementNode: slimdom.Node = documentNode.firstChild;
 		chai.assert.isTrue(
-			evaluateXPathToBoolean('self::p or self::xml', xmlNode, null, null, {
-				backend: 'js-codegen',
-			})
+			evaluateXPathWithJsCodegen(
+				'self::p or self::xml',
+				elementNode,
+				null,
+				ReturnType.BOOLEAN
+			)
 		);
 	});
 	it('compiles "and" when used as a base expression', () => {
-		const xmlNode: slimdom.Node = document.firstChild;
+		const elementNode: slimdom.Node = documentNode.firstChild;
 		chai.assert.isTrue(
-			evaluateXPathToBoolean('self::xml and child::element(tips)', xmlNode, null, null, {
-				backend: 'js-codegen',
-			})
+			evaluateXPathToBoolean(
+				'self::xml and child::element(tips)',
+				elementNode,
+				null,
+				elementNode
+			)
 		);
 	});
 });

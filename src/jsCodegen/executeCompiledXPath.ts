@@ -8,18 +8,18 @@ import * as runtimeLibrary from './runtimeLibrary';
 type RuntimeLibrary = {};
 
 export type CompiledJavaScriptFunction = (
-	dynamicContext: Value,
+	contextItem: Value,
 	domFacade: DomFacade,
 	runtimeLibrary: RuntimeLibrary
 ) => any;
 
-export default function evaluateCompiledJavaScript(
+export default function executeCompiledXPath(
 	compiledJavaScriptFunction: CompiledJavaScriptFunction,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null
 ): any {
 	const wrappedDomFacade: DomFacade = new DomFacade(
-		domFacade === null ? new ExternalDomFacade() : domFacade
+		!domFacade ? new ExternalDomFacade() : domFacade
 	);
 
 	const contextArray = adaptJavaScriptValueToArrayOfXPathValues(
@@ -28,7 +28,7 @@ export default function evaluateCompiledJavaScript(
 		'item()?'
 	);
 
-	const dynamicContext = contextArray[0];
+	contextItem = contextArray[0];
 
-	return compiledJavaScriptFunction(dynamicContext, wrappedDomFacade, runtimeLibrary);
+	return compiledJavaScriptFunction(contextItem, wrappedDomFacade, runtimeLibrary);
 }

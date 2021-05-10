@@ -61,25 +61,6 @@ export type NamespaceResolver = (prefix: string) => string | null;
  */
 export type Options = {
 	/**
-	 *
-	 * What compiler backend to use.
-	 *
-	 * Defaults to the stable 'expression' backend.
-	 *
-	 * An experimental backend is in development. This backend compiles XPath to
-	 * JavaScript, which can give a significant boost to query performance. To
-	 * try this experimental backend, specify 'auto'. If a given query is can
-	 * not be compiled by the experimental backend, the default 'expression'
-	 * backend is used instead.
-	 *
-	 * The 'js-codegen' option only enabled the experimental backend. This
-	 * should be used for TESTING PURPOSES ONLY.
-	 *
-	 * @beta
-	 */
-	backend?: 'expression' | 'js-codegen' | 'auto';
-
-	/**
 	 * The current context for a query. Will be passed whenever an extension function is called. Can be
 	 * used to implement the current function in XSLT.
 	 *

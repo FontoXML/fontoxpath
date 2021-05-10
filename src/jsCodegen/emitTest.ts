@@ -1,6 +1,7 @@
 import { NODE_TYPES } from '../domFacade/ConcreteNode';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { acceptAst, PartiallyCompiledJavaScriptResult, rejectAst } from './CompiledJavaScript';
+import escapeUntrustedString from './escapeJavaScriptString';
 
 const testAstNodeNames = {
 	TEXT_TEST: 'textTest',
@@ -40,7 +41,7 @@ function emitNameTestFromQName(
 	}
 
 	return acceptAst(
-		`${conditionCode} && ${identifier}.localName === ${JSON.stringify(localName)}`
+		`${conditionCode} && ${identifier}.localName === ${escapeUntrustedString(localName)}`
 	);
 }
 

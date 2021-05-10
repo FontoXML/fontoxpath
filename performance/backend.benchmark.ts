@@ -1,7 +1,8 @@
 import benchmarkRunner from '@fontoxml/fonto-benchmark-runner';
 import { Document, Node } from 'slimdom';
 import * as slimdomSaxParser from 'slimdom-sax-parser';
-import { evaluateXPathToBoolean, evaluateXPathToNodes } from '../src/index';
+import { evaluateXPathToBoolean, evaluateXPathToNodes, ReturnType } from '../src/index';
+import evaluateXPathWithJsCodegen from '../test/specs/jsCodegen/evaluateXPathWithJsCodegen';
 import jsonMlMapper from '../test/helpers/jsonMlMapper';
 import loadFile from './utils/loadFile';
 
@@ -22,18 +23,14 @@ benchmarkRunner.compareBenchmarks(
 		name: 'Expression Backend',
 		test: () => {
 			const node: Node = document.firstChild;
-			evaluateXPathToBoolean(selfPQuery, node, null, null, {
-				backend: 'expression',
-			});
+			evaluateXPathToBoolean(selfPQuery, node);
 		},
 	},
 	{
 		name: 'JS Codegen Backend',
 		test: () => {
 			const node: Node = document.firstChild;
-			evaluateXPathToBoolean(selfPQuery, node, null, null, {
-				backend: 'js-codegen',
-			});
+			evaluateXPathWithJsCodegen(selfPQuery, node, null, ReturnType.BOOLEAN);
 		},
 	}
 );
@@ -49,17 +46,13 @@ benchmarkRunner.compareBenchmarks(
 	{
 		name: 'Expression Backend',
 		test: () => {
-			evaluateXPathToBoolean(childElementsQuery, document, null, null, {
-				backend: 'expression',
-			});
+			evaluateXPathToBoolean(childElementsQuery, document);
 		},
 	},
 	{
 		name: 'JS Codegen Backend',
 		test: () => {
-			evaluateXPathToBoolean(childElementsQuery, document, null, null, {
-				backend: 'js-codegen',
-			});
+			evaluateXPathWithJsCodegen(childElementsQuery, document, null, ReturnType.BOOLEAN);
 		},
 	}
 );
@@ -75,17 +68,18 @@ benchmarkRunner.compareBenchmarks(
 	{
 		name: 'Expression Backend',
 		test: () => {
-			evaluateXPathToBoolean(childElementsQueryWithoutResults, document, null, null, {
-				backend: 'expression',
-			});
+			evaluateXPathToBoolean(childElementsQueryWithoutResults, document);
 		},
 	},
 	{
 		name: 'JS Codegen Backend',
 		test: () => {
-			evaluateXPathToBoolean(childElementsQueryWithoutResults, document, null, null, {
-				backend: 'js-codegen',
-			});
+			evaluateXPathWithJsCodegen(
+				childElementsQueryWithoutResults,
+				document,
+				null,
+				ReturnType.BOOLEAN
+			);
 		},
 	}
 );
@@ -100,17 +94,13 @@ benchmarkRunner.compareBenchmarks(
 	{
 		name: 'Expression Backend',
 		test: () => {
-			evaluateXPathToNodes(childElementsQuery, document, null, null, {
-				backend: 'expression',
-			});
+			evaluateXPathToNodes(childElementsQuery, document);
 		},
 	},
 	{
 		name: 'JS Codegen Backend',
 		test: () => {
-			evaluateXPathToNodes(childElementsQuery, document, null, null, {
-				backend: 'js-codegen',
-			});
+			evaluateXPathWithJsCodegen(childElementsQuery, document, null, ReturnType.NODES);
 		},
 	}
 );
@@ -128,9 +118,7 @@ benchmarkRunner.compareBenchmarks(
 		test: () => {
 			const chapter: Node = document.firstChild;
 			const paragraph: Node = chapter.firstChild;
-			evaluateXPathToBoolean(filterExpressionQuery, paragraph, null, null, {
-				backend: 'expression',
-			});
+			evaluateXPathToBoolean(filterExpressionQuery, paragraph);
 		},
 	},
 	{
@@ -138,9 +126,7 @@ benchmarkRunner.compareBenchmarks(
 		test: () => {
 			const chapter: Node = document.firstChild;
 			const paragraph: Node = chapter.firstChild;
-			evaluateXPathToBoolean(filterExpressionQuery, paragraph, null, null, {
-				backend: 'js-codegen',
-			});
+			evaluateXPathWithJsCodegen(filterExpressionQuery, paragraph, null, ReturnType.BOOLEAN);
 		},
 	}
 );
@@ -158,9 +144,7 @@ benchmarkRunner.compareBenchmarks(
 		test: () => {
 			const chapter: Node = document.firstChild;
 			const paragraph: Node = chapter.firstChild;
-			evaluateXPathToBoolean(filterWithAndExpressionQuery, paragraph, null, null, {
-				backend: 'expression',
-			});
+			evaluateXPathToBoolean(filterWithAndExpressionQuery, paragraph);
 		},
 	},
 	{
@@ -168,9 +152,12 @@ benchmarkRunner.compareBenchmarks(
 		test: () => {
 			const chapter: Node = document.firstChild;
 			const paragraph: Node = chapter.firstChild;
-			evaluateXPathToBoolean(filterWithAndExpressionQuery, paragraph, null, null, {
-				backend: 'js-codegen',
-			});
+			evaluateXPathWithJsCodegen(
+				filterWithAndExpressionQuery,
+				paragraph,
+				null,
+				ReturnType.BOOLEAN
+			);
 		},
 	}
 );
