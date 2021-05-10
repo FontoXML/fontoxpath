@@ -35,13 +35,5 @@ export default function isSubtypeOf(baseSubType: ValueType, baseSuperType: Value
 	const superType: TypeModel = builtinDataTypesByType[baseSuperType];
 	const subType: TypeModel = builtinDataTypesByType[baseSubType];
 
-	if (!superType) {
-		if (!startWithXS(baseSuperType)) {
-			// Note that 'xs' is the only namespace currently supported
-			throw new Error(`XPST0081: The type ${baseSuperType} could not be found.`);
-		}
-		throw new Error(`XPST0051: The type ${baseSuperType} could not be found.`);
-	}
-
 	return isSubtypeOfType(subType, superType);
 }
