@@ -6,7 +6,7 @@ import {
 	evaluateXPathToString,
 	registerCustomXPathFunction,
 	registerXQueryModule,
-	SequenceMultiplicity
+	SequenceMultiplicity,
 } from 'fontoxpath';
 import * as sinon from 'sinon';
 
@@ -54,7 +54,7 @@ describe('showStackTraceOnError', () => {
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'boom-abc' },
 			[],
-			{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
+			'xs:string',
 			(_dynamicContext) => {
 				// This will throw an error so no need for a return
 				c();
@@ -66,7 +66,7 @@ describe('showStackTraceOnError', () => {
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'boom-def' },
 			[],
-			{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
+			'xs:string',
 			(_dynamicContext) => {
 				// This will throw an error so no need for a return
 				f();

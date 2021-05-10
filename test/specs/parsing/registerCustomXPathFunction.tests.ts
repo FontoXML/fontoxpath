@@ -9,8 +9,6 @@ import {
 	evaluateXPathToString,
 	evaluateXPathToStrings,
 	registerCustomXPathFunction,
-	SequenceMultiplicity,
-	ValueType,
 } from 'fontoxpath';
 
 import IDomFacade from 'fontoxpath/domFacade/IDomFacade';
@@ -32,8 +30,8 @@ describe('registerCustomXPathFunction', () => {
 	before(() => {
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'custom-function1' },
-			[{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.ZERO_OR_ONE }],
-			{ type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE },
+			['xs:string?'],
+			'xs:boolean',
 			(dynamicContext, stringValue) => {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
@@ -43,11 +41,8 @@ describe('registerCustomXPathFunction', () => {
 
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'custom-function2' },
-			[
-				{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
-				{ type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE },
-			],
-			{ type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE },
+			['xs:string', 'xs:boolean'],
+			'xs:boolean',
 			(dynamicContext, stringValue, booleanValue) => {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
@@ -58,8 +53,8 @@ describe('registerCustomXPathFunction', () => {
 
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'custom-function3' },
-			[{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE }],
-			{ type: ValueType.ITEM, mult: SequenceMultiplicity.EXACTLY_ONE },
+			['item()*'],
+			'item()',
 			(dynamicContext, input) => {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
@@ -70,8 +65,8 @@ describe('registerCustomXPathFunction', () => {
 
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'custom-function4' },
-			[{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.ZERO_OR_MORE }],
-			{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.ZERO_OR_MORE },
+			['xs:string*'],
+			'xs:string*',
 			(dynamicContext, stringArray) => {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
@@ -84,8 +79,8 @@ describe('registerCustomXPathFunction', () => {
 
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'custom-function5' },
-			[{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.ZERO_OR_ONE }],
-			{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.ZERO_OR_ONE },
+			['xs:string?'],
+			'xs:string?',
 			(dynamicContext, stringValue) => {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
@@ -103,7 +98,7 @@ describe('registerCustomXPathFunction', () => {
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'custom-date-function' },
 			[],
-			{ type: ValueType.XSDATE, mult: SequenceMultiplicity.EXACTLY_ONE },
+			'xs:date',
 			(dynamicContext) => {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
@@ -115,7 +110,7 @@ describe('registerCustomXPathFunction', () => {
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'custom-time-function' },
 			[],
-			{ type: ValueType.XSTIME, mult: SequenceMultiplicity.EXACTLY_ONE },
+			'xs:time',
 			(dynamicContext) => {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
@@ -127,7 +122,7 @@ describe('registerCustomXPathFunction', () => {
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'custom-dateTime-function' },
 			[],
-			{ type: ValueType.XSDATETIME, mult: SequenceMultiplicity.EXACTLY_ONE },
+			'xs:dateTime',
 			(dynamicContext) => {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
@@ -139,7 +134,7 @@ describe('registerCustomXPathFunction', () => {
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'custom-gYearMonth-function' },
 			[],
-			{ type: ValueType.XSGYEARMONTH, mult: SequenceMultiplicity.EXACTLY_ONE },
+			'xs:gYearMonth',
 			(dynamicContext) => {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
@@ -151,7 +146,7 @@ describe('registerCustomXPathFunction', () => {
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'custom-gYear-function' },
 			[],
-			{ type: ValueType.XSGYEAR, mult: SequenceMultiplicity.EXACTLY_ONE },
+			'xs:gYear',
 			(dynamicContext) => {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
@@ -163,7 +158,7 @@ describe('registerCustomXPathFunction', () => {
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'custom-gMonthDay-function' },
 			[],
-			{ type: ValueType.XSGMONTHDAY, mult: SequenceMultiplicity.EXACTLY_ONE },
+			'xs:gMonthDay',
 			(dynamicContext) => {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
@@ -175,7 +170,7 @@ describe('registerCustomXPathFunction', () => {
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'custom-gMonth-function' },
 			[],
-			{ type: ValueType.XSGMONTH, mult: SequenceMultiplicity.EXACTLY_ONE },
+			'xs:gMonth',
 			(dynamicContext) => {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
@@ -187,7 +182,7 @@ describe('registerCustomXPathFunction', () => {
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'custom-gDay-function' },
 			[],
-			{ type: ValueType.XSGDAY, mult: SequenceMultiplicity.EXACTLY_ONE },
+			'xs:gDay',
 			(dynamicContext) => {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
@@ -254,7 +249,7 @@ describe('registerCustomXPathFunction', () => {
 		registerCustomXPathFunction(
 			{ namespaceURI: 'http://www.example.com/customFunctionTest', localName: 'test' },
 			[],
-			{ type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE },
+			'xs:boolean',
 			(dynamicContext) => {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
@@ -280,7 +275,7 @@ describe('registerCustomXPathFunction', () => {
 				registerCustomXPathFunction(
 					'custom-function-in-no-ns',
 					[],
-					{ type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE },
+					'xs:boolean',
 					() => true
 				),
 			'Do not register custom functions in the default function namespace'
@@ -452,7 +447,7 @@ describe('registerCustomXPathFunction', () => {
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'custom-function-keeps-the-dom-facade' },
 			[],
-			{ type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE },
+			'xs:boolean',
 			(dynamicContext) => {
 				chai.assert.equal(outerDomFacade, dynamicContext.domFacade);
 				return true;
@@ -475,7 +470,7 @@ describe('registerCustomXPathFunction', () => {
 				registerCustomXPathFunction(
 					{ namespaceURI: '', localName: 'empty-uri' },
 					[],
-					{ type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE },
+					'xs:boolean',
 					(dynamicContext) => true
 				),
 			'XQST0060'
@@ -485,7 +480,7 @@ describe('registerCustomXPathFunction', () => {
 				registerCustomXPathFunction(
 					{ namespaceURI: null, localName: 'empty-uri' },
 					[],
-					{ type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE },
+					'xs:boolean',
 					(dynamicContext) => true
 				),
 			'XQST0060'
@@ -513,8 +508,8 @@ describe('registerCustomXPathFunction', () => {
 		} as unknown) as IDomFacade;
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'my-custom-func-msc' },
-			[{ type: ValueType.NODE, mult: SequenceMultiplicity.EXACTLY_ONE }],
-			{ type: ValueType.NODE, mult: SequenceMultiplicity.EXACTLY_ONE },
+			['node()'],
+			'node()',
 			(dynamicContext, node) => {
 				chai.assert.equal(
 					dynamicContext.domFacade.getAttribute(node, 'myAttribute'),
@@ -546,8 +541,8 @@ describe('registerCustomXPathFunction', () => {
 		before(() => {
 			registerCustomXPathFunction(
 				{ namespaceURI: 'test', localName: 'custom-date-function-param' },
-				[{ type: ValueType.XSDATE, mult: SequenceMultiplicity.EXACTLY_ONE }],
-				{ type: ValueType.XSDATE, mult: SequenceMultiplicity.EXACTLY_ONE },
+				['xs:date'],
+				'xs:date',
 				(dynamicContext, date) => {
 					chai.assert.isTrue(
 						date instanceof Date,
@@ -559,8 +554,8 @@ describe('registerCustomXPathFunction', () => {
 
 			registerCustomXPathFunction(
 				{ namespaceURI: 'test', localName: 'custom-date-function-optional-param' },
-				[{ type: ValueType.XSDATE, mult: SequenceMultiplicity.ZERO_OR_ONE }],
-				{ type: ValueType.XSDATE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+				['xs:date?'],
+				'xs:date?',
 				(dynamicContext, date) => {
 					chai.assert.isTrue(
 						date === null || date instanceof Date,
@@ -572,8 +567,8 @@ describe('registerCustomXPathFunction', () => {
 
 			registerCustomXPathFunction(
 				{ namespaceURI: 'test', localName: 'custom-date-function-zero-to-many-param' },
-				[{ type: ValueType.XSDATE, mult: SequenceMultiplicity.ZERO_OR_MORE }],
-				{ type: ValueType.XSDATE, mult: SequenceMultiplicity.ZERO_OR_MORE },
+				['xs:date*'],
+				'xs:date*',
 				(dynamicContext, dates) => {
 					chai.assert.isTrue(Array.isArray(dates), 'Parameter is not an array');
 
@@ -589,8 +584,8 @@ describe('registerCustomXPathFunction', () => {
 
 			registerCustomXPathFunction(
 				{ namespaceURI: 'test', localName: 'custom-date-function-one-to-many-param' },
-				[{ type: ValueType.XSDATE, mult: SequenceMultiplicity.ONE_OR_MORE }],
-				{ type: ValueType.XSDATE, mult: SequenceMultiplicity.ZERO_OR_MORE },
+				['xs:date+'],
+				'xs:date*',
 				(dynamicContext, dates) => {
 					chai.assert.isTrue(Array.isArray(dates), 'Parameter is not an array');
 
@@ -606,8 +601,8 @@ describe('registerCustomXPathFunction', () => {
 
 			registerCustomXPathFunction(
 				{ namespaceURI: 'test', localName: 'custom-time-param-function' },
-				[{ type: ValueType.XSTIME, mult: SequenceMultiplicity.EXACTLY_ONE }],
-				{ type: ValueType.XSTIME, mult: SequenceMultiplicity.EXACTLY_ONE },
+				['xs:time'],
+				'xs:time',
 				(dynamicContext, time) => {
 					chai.assert.isTrue(
 						time instanceof Date,
@@ -619,8 +614,8 @@ describe('registerCustomXPathFunction', () => {
 
 			registerCustomXPathFunction(
 				{ namespaceURI: 'test', localName: 'custom-dateTime-param-function' },
-				[{ type: ValueType.XSDATETIME, mult: SequenceMultiplicity.EXACTLY_ONE }],
-				{ type: ValueType.XSDATETIME, mult: SequenceMultiplicity.EXACTLY_ONE },
+				['xs:dateTime'],
+				'xs:dateTime',
 				(dynamicContext, dateTime) => {
 					chai.assert.isTrue(
 						dateTime instanceof Date,
@@ -632,8 +627,8 @@ describe('registerCustomXPathFunction', () => {
 
 			registerCustomXPathFunction(
 				{ namespaceURI: 'test', localName: 'custom-gYearMonth-param-function' },
-				[{ type: ValueType.XSGYEARMONTH, mult: SequenceMultiplicity.EXACTLY_ONE }],
-				{ type: ValueType.XSGYEARMONTH, mult: SequenceMultiplicity.EXACTLY_ONE },
+				['xs:gYearMonth'],
+				'xs:gYearMonth',
 				(dynamicContext, gYearMonth) => {
 					chai.assert.isTrue(
 						gYearMonth instanceof Date,
@@ -645,8 +640,8 @@ describe('registerCustomXPathFunction', () => {
 
 			registerCustomXPathFunction(
 				{ namespaceURI: 'test', localName: 'custom-gYear-param-function' },
-				[{ type: ValueType.XSGYEAR, mult: SequenceMultiplicity.EXACTLY_ONE }],
-				{ type: ValueType.XSGYEAR, mult: SequenceMultiplicity.EXACTLY_ONE },
+				['xs:gYear'],
+				'xs:gYear',
 				(dynamicContext, gYear) => {
 					chai.assert.isTrue(
 						gYear instanceof Date,
@@ -658,8 +653,8 @@ describe('registerCustomXPathFunction', () => {
 
 			registerCustomXPathFunction(
 				{ namespaceURI: 'test', localName: 'custom-gMonthDay-param-function' },
-				[{ type: ValueType.XSGMONTHDAY, mult: SequenceMultiplicity.EXACTLY_ONE }],
-				{ type: ValueType.XSGMONTHDAY, mult: SequenceMultiplicity.EXACTLY_ONE },
+				['xs:gMonthDay'],
+				'xs:gMonthDay',
 				(dynamicContext, gMonthDay) => {
 					chai.assert.isTrue(
 						gMonthDay instanceof Date,
@@ -671,8 +666,8 @@ describe('registerCustomXPathFunction', () => {
 
 			registerCustomXPathFunction(
 				{ namespaceURI: 'test', localName: 'custom-gMonth-param-function' },
-				[{ type: ValueType.XSGMONTH, mult: SequenceMultiplicity.EXACTLY_ONE }],
-				{ type: ValueType.XSGMONTH, mult: SequenceMultiplicity.EXACTLY_ONE },
+				['xs:gMonth'],
+				'xs:gMonth',
 				(dynamicContext, gMonth) => {
 					chai.assert.isTrue(
 						gMonth instanceof Date,
@@ -684,8 +679,8 @@ describe('registerCustomXPathFunction', () => {
 
 			registerCustomXPathFunction(
 				{ namespaceURI: 'test', localName: 'custom-gDay-param-function' },
-				[{ type: ValueType.XSGDAY, mult: SequenceMultiplicity.EXACTLY_ONE }],
-				{ type: ValueType.XSGDAY, mult: SequenceMultiplicity.EXACTLY_ONE },
+				['xs:gDay'],
+				'xs:gDay',
 				(dynamicContext, gDay) => {
 					chai.assert.isTrue(
 						gDay instanceof Date,

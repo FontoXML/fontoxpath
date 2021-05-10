@@ -4,7 +4,12 @@ import { adaptJavaScriptValueToSequence } from './expressions/adaptJavaScriptVal
 import ISequence from './expressions/dataTypes/ISequence';
 import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
 import sequenceFactory from './expressions/dataTypes/sequenceFactory';
-import { SequenceMultiplicity, SequenceType, ValueType } from './expressions/dataTypes/Value';
+import {
+	SequenceMultiplicity,
+	SequenceType,
+	ValueType,
+	stringToSequenceType,
+} from './expressions/dataTypes/Value';
 import DynamicContext from './expressions/DynamicContext';
 import ExecutionParameters from './expressions/ExecutionParameters';
 import { registerFunction } from './expressions/functions/functionRegistry';
@@ -128,8 +133,8 @@ function splitFunctionName(
  */
 export default function registerCustomXPathFunction(
 	name: string | { localName: string; namespaceURI: string },
-	signature: SequenceType[],
-	returnType: SequenceType,
+	signatureNames: string[],
+	returnTypeName: string,
 	callback: (
 		domFacade: { currentContext: any; domFacade: IDomFacade },
 		...functionArgs: any[]
@@ -140,6 +145,9 @@ export default function registerCustomXPathFunction(
 	if (!namespaceURI) {
 		throw errXQST0060();
 	}
+
+	const signature = signatureNames.map((x) => stringToSequenceType(x));
+	const returnType = stringToSequenceType(returnTypeName);
 
 	// tslint:disable-next-line: only-arrow-functions
 	const callFunction = function (

@@ -5,26 +5,16 @@ import registerCustomXPathFunction from 'fontoxpath/registerCustomXPathFunction'
 
 describe('functionRegistry.getFunctionByArity', () => {
 	before(() => {
-		registerCustomXPathFunction(
-			'fonto:functionName',
-			[],
-			{ type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE },
-			function () {}
-		);
+		registerCustomXPathFunction('fonto:functionName', [], 'xs:boolean', function () {});
 
 		registerCustomXPathFunction(
 			'fonto:functionName',
-			[{ type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE }],
-			{ type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE },
+			['xs:boolean'],
+			'xs:boolean',
 			function () {}
 		);
 
-		registerCustomXPathFunction(
-			'fonto:otherFunctionName',
-			[],
-			{ type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE },
-			function () {}
-		);
+		registerCustomXPathFunction('fonto:otherFunctionName', [], 'xs:boolean', function () {});
 	});
 
 	it('return null if a custom function cannot be found', () => {

@@ -2,7 +2,7 @@ import DomFacade from '../domFacade/DomFacade';
 import ExternalDomFacade from '../domFacade/ExternalDomFacade';
 import IDomFacade from '../domFacade/IDomFacade';
 import { adaptJavaScriptValueToArrayOfXPathValues } from '../expressions/adaptJavaScriptValueToXPathValue';
-import Value, { SequenceType, stringtoSequenceType } from '../expressions/dataTypes/Value';
+import Value, { SequenceType, stringToSequenceType } from '../expressions/dataTypes/Value';
 
 /**
  * Any type is allowed expect: functions, symbols, undefined, and null
@@ -41,7 +41,7 @@ export default function createTypedValueFactory(sequenceTypeName: string) {
 		const convertedValue = adaptJavaScriptValueToArrayOfXPathValues(
 			wrappedDomFacade,
 			value,
-			stringtoSequenceType(sequenceTypeName)
+			stringToSequenceType(sequenceTypeName)
 		);
 
 		return {

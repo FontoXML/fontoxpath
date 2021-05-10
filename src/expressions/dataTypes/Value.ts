@@ -368,7 +368,7 @@ export function stringToValueType(input: string): ValueType {
 	return type;
 }
 
-export function stringtoSequenceType(input: string): SequenceType {
+export function stringToSequenceType(input: string): SequenceType {
 	switch (input[input.length - 1]) {
 		case '*':
 			return {

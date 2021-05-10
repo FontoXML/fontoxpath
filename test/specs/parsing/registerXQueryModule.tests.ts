@@ -1,11 +1,9 @@
 import * as chai from 'chai';
 import {
-	ValueType,
 	evaluateXPath,
 	evaluateXPathToString,
 	registerCustomXPathFunction,
 	registerXQueryModule,
-	SequenceMultiplicity
 } from 'fontoxpath';
 
 describe('registerXQueryModule', () => {
@@ -125,7 +123,7 @@ declare function x:fn () external;`);
 				localName: 'external-1',
 			},
 			[],
-			{ type: ValueType.ITEM, mult: SequenceMultiplicity.EXACTLY_ONE },
+			'item()',
 			() => 'meep'
 		);
 
@@ -159,7 +157,7 @@ declare function x:fn () external;`);
 				localName: 'external-2',
 			},
 			[],
-			{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
+			'xs:string',
 			() => 'meep'
 		);
 
@@ -192,8 +190,8 @@ declare function x:fn () external;`);
 				namespaceURI: 'http://www.example.com',
 				localName: 'external-3',
 			},
-			[{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE }],
-			{ type: ValueType.ITEM, mult: SequenceMultiplicity.EXACTLY_ONE },
+			['xs:string'],
+			'item()',
 			() => 'meep'
 		);
 
@@ -225,7 +223,7 @@ declare function x:fn () external;`);
 				localName: 'duplicate-fn',
 			},
 			[],
-			{ type: ValueType.ITEM, mult: SequenceMultiplicity.EXACTLY_ONE },
+			'item()',
 			() => 'meep'
 		);
 
@@ -248,7 +246,7 @@ declare function x:fn () external;`);
 				localName: 'pre-registered-fn',
 			},
 			[],
-			{ type: ValueType.ITEM, mult: SequenceMultiplicity.EXACTLY_ONE },
+			'item()',
 			() => 'meep'
 		);
 

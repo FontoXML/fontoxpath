@@ -79,8 +79,8 @@ describe('measuring performance', () => {
 	before(() => {
 		registerCustomXPathFunction(
 			'perftest:syncsleep',
-			[{ type: ValueType.ITEM, mult: SequenceMultiplicity.EXACTLY_ONE }],
-			{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_ONE },
+			['item()'],
+			'item()?',
 			(_, shouldRecurse) => {
 				now++;
 				if (shouldRecurse) {
