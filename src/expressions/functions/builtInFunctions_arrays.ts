@@ -4,8 +4,7 @@ import FunctionValue, { FunctionSignature } from '../dataTypes/FunctionValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import TypeDeclaration from '../dataTypes/TypeDeclaration';
-import Value, { ValueType } from '../dataTypes/Value';
+import Value, { SequenceMultiplicity, SequenceType, ValueType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import { ARRAY_NAMESPACE_URI } from '../staticallyKnownNamespaces';
@@ -15,6 +14,7 @@ import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import { DONE_TOKEN, IterationHint, ready } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
 import { errXPTY0004 } from '../XPathErrors';
+import { BuiltinDeclarationType } from './builtInFunctions';
 import arrayGet from './builtInFunctions_arrays_get';
 import sequenceDeepEqual, { itemDeepEqual } from './builtInFunctions_sequences_deepEqual';
 import { transformArgumentList } from './FunctionCall';
@@ -28,7 +28,7 @@ const arraySize: FunctionDefinitionType = (
 ) => {
 	return zipSingleton([arraySequence], ([array]) =>
 		sequenceFactory.singleton(
-			createAtomicValue((array as ArrayValue).members.length, 'xs:integer')
+			createAtomicValue((array as ArrayValue).members.length, ValueType.XSINTEGER)
 		)
 	);
 };
@@ -198,7 +198,7 @@ const arrayForEach: FunctionDefinitionType = (
 					executionParameters,
 					staticContext,
 					transformArgumentList(
-						itemFunctionValue.getArgumentTypes() as TypeDeclaration[],
+						itemFunctionValue.getArgumentTypes() as SequenceType[],
 						[member()],
 						executionParameters,
 						'array:for-each'
@@ -224,7 +224,7 @@ const arrayFilter: FunctionDefinitionType = (
 		}
 		const filterResultSequences: ISequence[] = (array as ArrayValue).members.map((member) => {
 			const castArgument = transformArgumentList(
-				itemFunctionValue.getArgumentTypes() as TypeDeclaration[],
+				itemFunctionValue.getArgumentTypes() as SequenceType[],
 				[member()],
 				executionParameters,
 				'array:filter'
@@ -272,7 +272,7 @@ const arrayFoldLeft: FunctionDefinitionType = (
 
 		return (array as ArrayValue).members.reduce((accum, member) => {
 			const castMember = transformArgumentList(
-				itemFunctionValue.getArgumentTypes() as TypeDeclaration[],
+				itemFunctionValue.getArgumentTypes() as SequenceType[],
 				[member()],
 				executionParameters,
 				'array:fold-left'
@@ -306,7 +306,7 @@ const arrayFoldRight: FunctionDefinitionType = (
 
 		return (array as ArrayValue).members.reduceRight((accum, member) => {
 			const castMember = transformArgumentList(
-				itemFunctionValue.getArgumentTypes() as TypeDeclaration[],
+				itemFunctionValue.getArgumentTypes() as SequenceType[],
 				[member()],
 				executionParameters,
 				'array:fold-right'
@@ -353,7 +353,7 @@ const arrayForEachPair: FunctionDefinitionType = (
 				++i
 			) {
 				const [argumentA, argumentB] = transformArgumentList(
-					itemFunctionValue.getArgumentTypes() as TypeDeclaration[],
+					itemFunctionValue.getArgumentTypes() as SequenceType[],
 					[(arrayA as ArrayValue).members[i](), (arrayB as ArrayValue).members[i]()],
 					executionParameters,
 					'array:for-each-pair'
@@ -378,9 +378,9 @@ const arrayForEachPair: FunctionDefinitionType = (
 
 const isString = (type: ValueType): boolean => {
 	return (
-		isSubtypeOf(type, 'xs:string') ||
-		isSubtypeOf(type, 'xs:anyURI') ||
-		isSubtypeOf(type, 'xs:untypedAtomic')
+		isSubtypeOf(type, ValueType.XSSTRING) ||
+		isSubtypeOf(type, ValueType.XSANYURI) ||
+		isSubtypeOf(type, ValueType.XSUNTYPEDATOMIC)
 	);
 };
 
@@ -461,7 +461,7 @@ const arraySort: FunctionDefinitionType = (
 };
 
 function flattenItem(flatteneditems: ISequence, item: Value) {
-	if (isSubtypeOf(item.type, 'array(*)')) {
+	if (isSubtypeOf(item.type, ValueType.ARRAY)) {
 		return (item as ArrayValue).members.reduce(
 			(flatteneditemsOfMember, member) =>
 				member().mapAll((allValues) =>
@@ -481,207 +481,266 @@ const arrayFlatten: FunctionDefinitionType = (
 	return itemSequence.mapAll((items) => items.reduce(flattenItem, sequenceFactory.empty()));
 };
 
-export default {
-	declarations: [
-		{
-			namespaceURI: ARRAY_NAMESPACE_URI,
-			localName: 'size',
-			argumentTypes: ['array(*)'],
-			returnType: 'xs:integer',
-			callFunction: arraySize,
-		},
+const declarations: BuiltinDeclarationType[] = [
+	{
+		namespaceURI: ARRAY_NAMESPACE_URI,
+		localName: 'size',
+		argumentTypes: [{ type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE }],
+		returnType: { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.EXACTLY_ONE },
+		callFunction: arraySize,
+	},
 
-		{
-			namespaceURI: ARRAY_NAMESPACE_URI,
-			localName: 'get',
-			argumentTypes: ['array(*)', 'xs:integer'],
-			returnType: 'item()*',
-			callFunction: arrayGet,
-		},
+	{
+		namespaceURI: ARRAY_NAMESPACE_URI,
+		localName: 'get',
+		argumentTypes: [
+			{ type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE },
+			{ type: ValueType.XSINTEGER, mult: SequenceMultiplicity.EXACTLY_ONE },
+		],
+		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+		callFunction: arrayGet,
+	},
 
-		{
-			namespaceURI: ARRAY_NAMESPACE_URI,
-			localName: 'put',
-			argumentTypes: ['array(*)', 'xs:integer', 'item()*'],
-			returnType: 'array(*)',
-			callFunction: arrayPut,
-		},
+	{
+		namespaceURI: ARRAY_NAMESPACE_URI,
+		localName: 'put',
+		argumentTypes: [
+			{ type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE },
+			{ type: ValueType.XSINTEGER, mult: SequenceMultiplicity.EXACTLY_ONE },
+			{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+		],
+		returnType: { type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE },
+		callFunction: arrayPut,
+	},
 
-		{
-			namespaceURI: ARRAY_NAMESPACE_URI,
-			localName: 'append',
-			argumentTypes: ['array(*)', 'item()*'],
-			returnType: 'array(*)',
-			callFunction: arrayAppend,
-		},
+	{
+		namespaceURI: ARRAY_NAMESPACE_URI,
+		localName: 'append',
+		argumentTypes: [
+			{ type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE },
+			{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+		],
+		returnType: { type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE },
+		callFunction: arrayAppend,
+	},
 
-		{
-			namespaceURI: ARRAY_NAMESPACE_URI,
-			localName: 'subarray',
-			argumentTypes: ['array(*)', 'xs:integer', 'xs:integer'],
-			returnType: 'array(*)',
-			callFunction: arraySubarray,
-		},
+	{
+		namespaceURI: ARRAY_NAMESPACE_URI,
+		localName: 'subarray',
+		argumentTypes: [
+			{ type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE },
+			{ type: ValueType.XSINTEGER, mult: SequenceMultiplicity.EXACTLY_ONE },
+			{ type: ValueType.XSINTEGER, mult: SequenceMultiplicity.EXACTLY_ONE },
+		],
+		returnType: { type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE },
+		callFunction: arraySubarray,
+	},
 
-		{
-			namespaceURI: ARRAY_NAMESPACE_URI,
-			localName: 'subarray',
-			argumentTypes: ['array(*)', 'xs:integer'],
-			returnType: 'array(*)',
-			callFunction(
+	{
+		namespaceURI: ARRAY_NAMESPACE_URI,
+		localName: 'subarray',
+		argumentTypes: [
+			{ type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE },
+			{ type: ValueType.XSINTEGER, mult: SequenceMultiplicity.EXACTLY_ONE },
+		],
+		returnType: { type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE },
+		callFunction(
+			dynamicContext,
+			executionParameters,
+			staticContext,
+			arraySequence,
+			startSequence
+		) {
+			const lengthSequence = sequenceFactory.singleton(
+				createAtomicValue(
+					arraySequence.first().value.length - startSequence.first().value + 1,
+					ValueType.XSINTEGER
+				)
+			);
+			return arraySubarray(
 				dynamicContext,
 				executionParameters,
 				staticContext,
 				arraySequence,
-				startSequence
-			) {
-				const lengthSequence = sequenceFactory.singleton(
-					createAtomicValue(
-						arraySequence.first().members.length - startSequence.first().value + 1,
-						'xs:integer'
-					)
-				);
-				return arraySubarray(
-					dynamicContext,
-					executionParameters,
-					staticContext,
-					arraySequence,
-					startSequence,
-					lengthSequence
-				);
+				startSequence,
+				lengthSequence
+			);
+		},
+	},
+
+	{
+		namespaceURI: ARRAY_NAMESPACE_URI,
+		localName: 'remove',
+		argumentTypes: [
+			{ type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE },
+			{ type: ValueType.XSINTEGER, mult: SequenceMultiplicity.ZERO_OR_MORE },
+		],
+		returnType: { type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE },
+		callFunction: arrayRemove,
+	},
+
+	{
+		namespaceURI: ARRAY_NAMESPACE_URI,
+		localName: 'insert-before',
+		argumentTypes: [
+			{ type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE },
+			{ type: ValueType.XSINTEGER, mult: SequenceMultiplicity.EXACTLY_ONE },
+			{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+		],
+		returnType: { type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE },
+		callFunction: arrayInsertBefore,
+	},
+
+	{
+		namespaceURI: ARRAY_NAMESPACE_URI,
+		localName: 'head',
+		argumentTypes: [{ type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE }],
+		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+		callFunction(dynamicContext, executionParameters, _staticContext, arraySequence) {
+			return arrayGet(
+				dynamicContext,
+				executionParameters,
+				_staticContext,
+				arraySequence,
+				sequenceFactory.singleton(createAtomicValue(1, ValueType.XSINTEGER))
+			);
+		},
+	},
+
+	{
+		namespaceURI: ARRAY_NAMESPACE_URI,
+		localName: 'tail',
+		argumentTypes: [{ type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE }],
+		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+		callFunction(dynamicContext, executionParameters, _staticContext, arraySequence) {
+			return arrayRemove(
+				dynamicContext,
+				executionParameters,
+				_staticContext,
+				arraySequence,
+				sequenceFactory.singleton(createAtomicValue(1, ValueType.XSINTEGER))
+			);
+		},
+	},
+
+	{
+		namespaceURI: ARRAY_NAMESPACE_URI,
+		localName: 'reverse',
+		argumentTypes: [{ type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE }],
+		returnType: { type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE },
+		callFunction: arrayReverse,
+	},
+
+	{
+		namespaceURI: ARRAY_NAMESPACE_URI,
+		localName: 'join',
+		argumentTypes: [{ type: ValueType.ARRAY, mult: SequenceMultiplicity.ZERO_OR_MORE }],
+		returnType: { type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE },
+		callFunction: arrayJoin,
+	},
+
+	{
+		namespaceURI: ARRAY_NAMESPACE_URI,
+		localName: 'for-each',
+		// TODO: reimplement type checking by parsing the types
+		// argumentTypes: ['array(*)', '(item()*) as item()*)]
+		argumentTypes: [
+			{ type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE },
+			{
+				type: ValueType.FUNCTION,
+				mult: SequenceMultiplicity.EXACTLY_ONE,
 			},
-		},
+		],
+		returnType: { type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE },
+		callFunction: arrayForEach,
+	},
 
-		{
-			namespaceURI: ARRAY_NAMESPACE_URI,
-			localName: 'remove',
-			argumentTypes: ['array(*)', 'xs:integer*'],
-			returnType: 'array(*)',
-			callFunction: arrayRemove,
-		},
-
-		{
-			namespaceURI: ARRAY_NAMESPACE_URI,
-			localName: 'insert-before',
-			argumentTypes: ['array(*)', 'xs:integer', 'item()*'],
-			returnType: 'array(*)',
-			callFunction: arrayInsertBefore,
-		},
-
-		{
-			namespaceURI: ARRAY_NAMESPACE_URI,
-			localName: 'head',
-			argumentTypes: ['array(*)'],
-			returnType: 'item()*',
-			callFunction(dynamicContext, executionParameters, _staticContext, arraySequence) {
-				return arrayGet(
-					dynamicContext,
-					executionParameters,
-					_staticContext,
-					arraySequence,
-					sequenceFactory.singleton(createAtomicValue(1, 'xs:integer'))
-				);
+	{
+		namespaceURI: ARRAY_NAMESPACE_URI,
+		localName: 'filter',
+		// TODO: reimplement type checking by parsing the types
+		// argumentTypes: ['array(*)', '(item()*) as xs:boolean)]
+		argumentTypes: [
+			{ type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE },
+			{
+				type: ValueType.FUNCTION,
+				mult: SequenceMultiplicity.EXACTLY_ONE,
 			},
-		},
+		],
+		returnType: { type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE },
+		callFunction: arrayFilter,
+	},
 
-		{
-			namespaceURI: ARRAY_NAMESPACE_URI,
-			localName: 'tail',
-			argumentTypes: ['array(*)'],
-			returnType: 'item()*',
-			callFunction(dynamicContext, executionParameters, _staticContext, arraySequence) {
-				return arrayRemove(
-					dynamicContext,
-					executionParameters,
-					_staticContext,
-					arraySequence,
-					sequenceFactory.singleton(createAtomicValue(1, 'xs:integer'))
-				);
+	{
+		namespaceURI: ARRAY_NAMESPACE_URI,
+		localName: 'fold-left',
+		// TODO: reimplement type checking by parsing the types
+		// argumentTypes: ['array(*)', 'item()*', '(item()*, item()*) as item())]
+		argumentTypes: [
+			{ type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE },
+			{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+			{
+				type: ValueType.FUNCTION,
+				mult: SequenceMultiplicity.EXACTLY_ONE,
 			},
-		},
+		],
+		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+		callFunction: arrayFoldLeft,
+	},
 
-		{
-			namespaceURI: ARRAY_NAMESPACE_URI,
-			localName: 'reverse',
-			argumentTypes: ['array(*)'],
-			returnType: 'array(*)',
-			callFunction: arrayReverse,
-		},
+	{
+		namespaceURI: ARRAY_NAMESPACE_URI,
+		localName: 'fold-right',
+		// TODO: reimplement type checking by parsing the types
+		// argumentTypes: ['array(*)', 'item()*', '(item()*, item()*) as item())]
+		argumentTypes: [
+			{ type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE },
+			{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+			{
+				type: ValueType.FUNCTION,
+				mult: SequenceMultiplicity.EXACTLY_ONE,
+			},
+		],
+		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+		callFunction: arrayFoldRight,
+	},
 
-		{
-			namespaceURI: ARRAY_NAMESPACE_URI,
-			localName: 'join',
-			argumentTypes: ['array(*)*'],
-			returnType: 'array(*)',
-			callFunction: arrayJoin,
-		},
+	{
+		namespaceURI: ARRAY_NAMESPACE_URI,
+		localName: 'for-each-pair',
+		// TODO: reimplement type checking by parsing the types
+		// argumentTypes: ['array(*)', 'item()*', '(item()*, item()*) as item())]
+		argumentTypes: [
+			{ type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE },
+			{ type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE },
+			{
+				type: ValueType.FUNCTION,
+				mult: SequenceMultiplicity.EXACTLY_ONE,
+			},
+		],
+		returnType: { type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE },
+		callFunction: arrayForEachPair,
+	},
 
-		{
-			namespaceURI: ARRAY_NAMESPACE_URI,
-			localName: 'for-each',
-			// TODO: reimplement type checking by parsing the types
-			// argumentTypes: ['array(*)', '(item()*) as item()*)]
-			argumentTypes: ['array(*)', 'function(*)'],
-			returnType: 'array(*)',
-			callFunction: arrayForEach,
-		},
+	{
+		namespaceURI: ARRAY_NAMESPACE_URI,
+		localName: 'sort',
+		argumentTypes: [{ type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE }],
+		returnType: { type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE },
+		callFunction: arraySort,
+	},
 
-		{
-			namespaceURI: ARRAY_NAMESPACE_URI,
-			localName: 'filter',
-			// TODO: reimplement type checking by parsing the types
-			// argumentTypes: ['array(*)', '(item()*) as xs:boolean)]
-			argumentTypes: ['array(*)', 'function(*)'],
-			returnType: 'array(*)',
-			callFunction: arrayFilter,
-		},
+	{
+		namespaceURI: ARRAY_NAMESPACE_URI,
+		localName: 'flatten',
+		argumentTypes: [{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE }],
+		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+		callFunction: arrayFlatten,
+	},
+];
 
-		{
-			namespaceURI: ARRAY_NAMESPACE_URI,
-			localName: 'fold-left',
-			// TODO: reimplement type checking by parsing the types
-			// argumentTypes: ['array(*)', 'item()*', '(item()*, item()*) as item())]
-			argumentTypes: ['array(*)', 'item()*', 'function(*)'],
-			returnType: 'item()*',
-			callFunction: arrayFoldLeft,
-		},
-
-		{
-			namespaceURI: ARRAY_NAMESPACE_URI,
-			localName: 'fold-right',
-			// TODO: reimplement type checking by parsing the types
-			// argumentTypes: ['array(*)', 'item()*', '(item()*, item()*) as item())]
-			argumentTypes: ['array(*)', 'item()*', 'function(*)'],
-			returnType: 'item()*',
-			callFunction: arrayFoldRight,
-		},
-
-		{
-			namespaceURI: ARRAY_NAMESPACE_URI,
-			localName: 'for-each-pair',
-			// TODO: reimplement type checking by parsing the types
-			// argumentTypes: ['array(*)', 'item()*', '(item()*, item()*) as item())]
-			argumentTypes: ['array(*)', 'array(*)', 'function(*)'],
-			returnType: 'array(*)',
-			callFunction: arrayForEachPair,
-		},
-
-		{
-			namespaceURI: ARRAY_NAMESPACE_URI,
-			localName: 'sort',
-			argumentTypes: ['array(*)'],
-			returnType: 'array(*)',
-			callFunction: arraySort,
-		},
-
-		{
-			namespaceURI: ARRAY_NAMESPACE_URI,
-			localName: 'flatten',
-			argumentTypes: ['item()*'],
-			returnType: 'item()*',
-			callFunction: arrayFlatten,
-		},
-	],
+export default {
+	declarations,
 	s: {
 		append: arrayAppend,
 		flatten: arrayFlatten,

@@ -4,14 +4,14 @@ import CastResult from './CastResult';
 
 export default function castToBoolean(
 	instanceOf: (typeName: ValueType) => boolean
-): (value) => CastResult {
-	if (instanceOf('xs:numeric')) {
+): (value: any) => CastResult {
+	if (instanceOf(ValueType.XSNUMERIC)) {
 		return (value) => ({
 			successful: true,
 			value: value === 0 || isNaN(value) ? falseBoolean : trueBoolean,
 		});
 	}
-	if (instanceOf('xs:string') || instanceOf('xs:untypedAtomic')) {
+	if (instanceOf(ValueType.XSSTRING) || instanceOf(ValueType.XSUNTYPEDATOMIC)) {
 		return (value) => {
 			switch (value) {
 				case 'true':

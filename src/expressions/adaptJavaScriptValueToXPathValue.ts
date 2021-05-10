@@ -2,13 +2,19 @@ import { NodePointer } from '../domClone/Pointer';
 import DomFacade from '../domFacade/DomFacade';
 import { UntypedExternalValue, ValidValue } from '../types/createTypedValueFactory';
 import ArrayValue from './dataTypes/ArrayValue';
-import { getValidatorForType } from './dataTypes/builtins/dataTypeValidatorByName';
+import { getValidatorForType } from './dataTypes/builtins/dataTypeValidatorByType';
 import createAtomicValue, { falseBoolean, trueBoolean } from './dataTypes/createAtomicValue';
 import createPointerValue from './dataTypes/createPointerValue';
 import ISequence from './dataTypes/ISequence';
 import MapValue from './dataTypes/MapValue';
 import sequenceFactory from './dataTypes/sequenceFactory';
-import Value, { ValueType } from './dataTypes/Value';
+import Value, {
+	SequenceMultiplicity,
+	SequenceType,
+	sequenceTypeToString,
+	ValueType,
+	valueTypeToString,
+} from './dataTypes/Value';
 import DateTime from './dataTypes/valueTypes/DateTime';
 import createDoublyIterableSequence from './util/createDoublyIterableSequence';
 
@@ -28,9 +34,9 @@ function adaptSingleJavaScriptValue(value: ValidValue, domFacade: DomFacade): Va
 		case 'boolean':
 			return value ? trueBoolean : falseBoolean;
 		case 'number':
-			return createAtomicValue(value, 'xs:double');
+			return createAtomicValue(value, ValueType.XSDOUBLE);
 		case 'string':
-			return createAtomicValue(value, 'xs:string');
+			return createAtomicValue(value, ValueType.XSSTRING);
 		case 'object':
 			// Test if it is a node
 			if ('nodeType' in value) {
@@ -65,7 +71,7 @@ function adaptSingleJavaScriptValue(value: ValidValue, domFacade: DomFacade): Va
 								: sequenceFactory.singleton(adaptedValue);
 
 						return {
-							key: createAtomicValue(key, 'xs:string'),
+							key: createAtomicValue(key, ValueType.XSSTRING),
 							value: createDoublyIterableSequence(adaptedSequence),
 						};
 					})
@@ -89,7 +95,9 @@ function checkNumericType(value: ValidValue, type: ValueType): asserts value is 
 		}
 	}
 	throw new Error(
-		`Cannot convert JavaScript value '${value}' to the XPath type ${type} since it is not valid.`
+		`Cannot convert JavaScript value '${value}' to the XPath type ${valueTypeToString(
+			type
+		)} since it is not valid.`
 	);
 }
 
@@ -108,55 +116,59 @@ function adaptJavaScriptValueToXPath(
 		return null;
 	}
 	switch (type) {
-		case 'xs:boolean':
+		case ValueType.XSBOOLEAN:
 			return value ? trueBoolean : falseBoolean;
-		case 'xs:string':
-			return createAtomicValue(value + '', 'xs:string');
-		case 'xs:double':
-		case 'xs:numeric':
-			checkNumericType(value, 'xs:double');
-			return createAtomicValue(+value, 'xs:double');
-		case 'xs:decimal':
+		case ValueType.XSSTRING:
+			return createAtomicValue(value + '', ValueType.XSSTRING);
+		case ValueType.XSDOUBLE:
+		case ValueType.XSNUMERIC:
+			checkNumericType(value, ValueType.XSDOUBLE);
+			return createAtomicValue(+value, ValueType.XSDOUBLE);
+		case ValueType.XSDECIMAL:
 			checkNumericType(value, type);
-			return createAtomicValue(+value, 'xs:decimal');
-		case 'xs:integer':
+			return createAtomicValue(+value, ValueType.XSDECIMAL);
+		case ValueType.XSINTEGER:
 			checkNumericType(value, type);
-			return createAtomicValue(value | 0, 'xs:integer');
-		case 'xs:float':
+			return createAtomicValue(value | 0, ValueType.XSINTEGER);
+		case ValueType.XSFLOAT:
 			checkNumericType(value, type);
-			return createAtomicValue(+value, 'xs:float');
-		case 'xs:date':
-		case 'xs:time':
-		case 'xs:dateTime':
-		case 'xs:gYearMonth':
-		case 'xs:gYear':
-		case 'xs:gMonthDay':
-		case 'xs:gMonth':
-		case 'xs:gDay':
+			return createAtomicValue(+value, ValueType.XSFLOAT);
+		case ValueType.XSDATE:
+		case ValueType.XSTIME:
+		case ValueType.XSDATETIME:
+		case ValueType.XSGYEARMONTH:
+		case ValueType.XSGYEAR:
+		case ValueType.XSGMONTHDAY:
+		case ValueType.XSGMONTH:
+		case ValueType.XSGDAY:
 			if (!(value instanceof Date)) {
 				throw new Error(
-					`The JavaScript value ${value} with type ${typeof value} is not a valid type to be converted to an XPath ${type}.`
+					`The JavaScript value ${value} with type ${typeof value} is not a valid type to be converted to an XPath ${valueTypeToString(
+						type
+					)}.`
 				);
 			}
 			return createAtomicValue(
 				DateTime.fromString(value.toISOString()).convertToType(type),
 				type
 			);
-		case 'node()':
-		case 'attribute()':
-		case 'document-node()':
-		case 'element()':
-		case 'text()':
-		case 'processing-instruction()':
-		case 'comment()':
+		case ValueType.NODE:
+		case ValueType.ATTRIBUTE:
+		case ValueType.DOCUMENTNODE:
+		case ValueType.ELEMENT:
+		case ValueType.TEXT:
+		case ValueType.PROCESSINGINSTRUCTION:
+		case ValueType.COMMENT:
 			if (!(typeof value === 'object') || !('nodeType' in value)) {
 				throw new Error(
-					`The JavaScript value ${value} with type ${typeof value} is not a valid type to be converted to an XPath ${type}.`
+					`The JavaScript value ${value} with type ${typeof value} is not a valid type to be converted to an XPath ${valueTypeToString(
+						type
+					)}.`
 				);
 			}
 			const pointer: NodePointer = { node: value, graftAncestor: null };
 			return createPointerValue(pointer, domFacade);
-		case 'item()':
+		case ValueType.ITEM:
 			return adaptSingleJavaScriptValue(value, domFacade);
 		default:
 			throw new Error(
@@ -168,39 +180,38 @@ function adaptJavaScriptValueToXPath(
 export function adaptJavaScriptValueToArrayOfXPathValues(
 	domFacade: DomFacade,
 	value: UntypedExternalValue,
-	expectedType: string
+	expectedType: SequenceType
 ): Value[] {
-	const parts = expectedType.match(/^([^+?*]*)([\+\*\?])?$/);
-	const type = parts[1] as ValueType;
-	const multiplicity = parts[2];
-
-	switch (multiplicity) {
-		case '?': {
-			const converted = adaptJavaScriptValueToXPath(type, value, domFacade);
-			return converted === null ? [] : [converted];
-		}
-		case '+':
-		case '*': {
-			if (!Array.isArray(value)) {
-				throw new Error(
-					`The JavaScript value ${value} should be an array if it is to be converted to ${expectedType}.`
-				);
-			}
-			return value
-				.map((val) => adaptJavaScriptValueToXPath(type, val, domFacade))
-				.filter((val: Value | null) => val !== null);
-		}
-
-		default: {
-			const adaptedValue = adaptJavaScriptValueToXPath(type, value, domFacade);
-			if (adaptedValue === null) {
-				throw new Error(
-					`The JavaScript value ${value} should be an single entry if it is to be converted to ${expectedType}.`
-				);
-			}
-			return [adaptedValue];
-		}
+	if (expectedType.mult === SequenceMultiplicity.ZERO_OR_ONE) {
+		const converted = adaptJavaScriptValueToXPath(expectedType.type, value, domFacade);
+		return converted === null ? [] : [converted];
 	}
+
+	if (
+		expectedType.mult === SequenceMultiplicity.ZERO_OR_MORE ||
+		expectedType.mult === SequenceMultiplicity.ONE_OR_MORE
+	) {
+		if (!Array.isArray(value)) {
+			throw new Error(
+				`The JavaScript value ${value} should be an array if it is to be converted to ${sequenceTypeToString(
+					expectedType
+				)}.`
+			);
+		}
+		return value
+			.map((val) => adaptJavaScriptValueToXPath(expectedType.type, val, domFacade))
+			.filter((val: Value | null) => val !== null);
+	}
+
+	const adaptedValue = adaptJavaScriptValueToXPath(expectedType.type, value, domFacade);
+	if (adaptedValue === null) {
+		throw new Error(
+			`The JavaScript value ${value} should be an single entry if it is to be converted to ${sequenceTypeToString(
+				expectedType
+			)}.`
+		);
+	}
+	return [adaptedValue];
 }
 
 /**
@@ -216,7 +227,7 @@ export function adaptJavaScriptValueToArrayOfXPathValues(
 export function adaptJavaScriptValueToSequence(
 	domFacade: DomFacade,
 	value: UntypedExternalValue,
-	expectedType: string = 'item()?'
+	expectedType: SequenceType = { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_ONE }
 ): ISequence {
 	return sequenceFactory.create(
 		adaptJavaScriptValueToArrayOfXPathValues(domFacade, value, expectedType)

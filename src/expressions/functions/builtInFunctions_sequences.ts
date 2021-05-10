@@ -5,13 +5,13 @@ import FunctionValue from '../dataTypes/FunctionValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import TypeDeclaration from '../dataTypes/TypeDeclaration';
-import Value from '../dataTypes/Value';
+import Value, { SequenceMultiplicity, SequenceType, ValueType } from '../dataTypes/Value';
 import valueCompare from '../operators/compares/valueCompare';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { DONE_TOKEN, IIterator, IterationHint, ready } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
 import { performFunctionConversion } from './argumentHelper';
+import { BuiltinDeclarationType } from './builtInFunctions';
 import sequenceDeepEqual from './builtInFunctions_sequences_deepEqual';
 import convertItemsToCommonType from './convertItemsToCommonType';
 import FunctionDefinitionType from './FunctionDefinitionType';
@@ -54,8 +54,8 @@ function subSequence(sequence: ISequence, start: number, length: number) {
 
 function castUntypedItemsToDouble(items: Value[]) {
 	return items.map((item) => {
-		if (isSubtypeOf(item.type, 'xs:untypedAtomic')) {
-			return castToType(item, 'xs:double');
+		if (isSubtypeOf(item.type, ValueType.XSUNTYPEDATOMIC)) {
+			return castToType(item, ValueType.XSDOUBLE);
 		}
 		return item;
 	});
@@ -70,7 +70,7 @@ function castItemsForMinMax(items: Value[]) {
 			return Number.isNaN(item.value);
 		})
 	) {
-		return [createAtomicValue(NaN, 'xs:double')];
+		return [createAtomicValue(NaN, ValueType.XSDOUBLE)];
 	}
 
 	const convertResult = convertItemsToCommonType(items);
@@ -243,8 +243,8 @@ const fnIndexOf: FunctionDefinitionType = (
 		atomize(sequence, executionParameters)
 			.map((element, i) => {
 				return valueCompare('eqOp', element, onlySearchValue, dynamicContext)
-					? createAtomicValue(i + 1, 'xs:integer')
-					: createAtomicValue(-1, 'xs:integer');
+					? createAtomicValue(i + 1, ValueType.XSINTEGER)
+					: createAtomicValue(-1, ValueType.XSINTEGER);
 			})
 			.filter((indexValue) => {
 				return indexValue.value !== -1;
@@ -278,7 +278,7 @@ const fnDeepEqual: FunctionDefinitionType = (
 				return result;
 			}
 			hasPassed = true;
-			return ready(createAtomicValue(result.value, 'xs:boolean'));
+			return ready(createAtomicValue(result.value, ValueType.XSBOOLEAN));
 		},
 	});
 };
@@ -297,7 +297,7 @@ const fnCount: FunctionDefinitionType = (
 			}
 			const length = sequence.getLength();
 			hasPassed = true;
-			return ready(createAtomicValue(length, 'xs:integer'));
+			return ready(createAtomicValue(length, ValueType.XSINTEGER));
 		},
 	});
 };
@@ -319,7 +319,7 @@ const fnAvg: FunctionDefinitionType = (
 		throw new Error('FORG0006: Incompatible types to be converted to a common type');
 	}
 
-	if (!items.every((item) => isSubtypeOf(item.type, 'xs:numeric'))) {
+	if (!items.every((item) => isSubtypeOf(item.type, ValueType.XSNUMERIC))) {
 		throw new Error('FORG0006: items passed to fn:avg are not all numeric.');
 	}
 
@@ -330,21 +330,24 @@ const fnAvg: FunctionDefinitionType = (
 
 	if (
 		items.every((item) => {
-			return isSubtypeOf(item.type, 'xs:integer') || isSubtypeOf(item.type, 'xs:double');
+			return (
+				isSubtypeOf(item.type, ValueType.XSINTEGER) ||
+				isSubtypeOf(item.type, ValueType.XSDOUBLE)
+			);
 		})
 	) {
-		return sequenceFactory.singleton(createAtomicValue(resultValue, 'xs:double'));
+		return sequenceFactory.singleton(createAtomicValue(resultValue, ValueType.XSDOUBLE));
 	}
 
 	if (
 		items.every((item) => {
-			return isSubtypeOf(item.type, 'xs:decimal');
+			return isSubtypeOf(item.type, ValueType.XSDECIMAL);
 		})
 	) {
-		return sequenceFactory.singleton(createAtomicValue(resultValue, 'xs:decimal'));
+		return sequenceFactory.singleton(createAtomicValue(resultValue, ValueType.XSDECIMAL));
 	}
 
-	return sequenceFactory.singleton(createAtomicValue(resultValue, 'xs:float'));
+	return sequenceFactory.singleton(createAtomicValue(resultValue, ValueType.XSFLOAT));
 };
 
 const fnMax: FunctionDefinitionType = (
@@ -405,7 +408,7 @@ const fnSum: FunctionDefinitionType = (
 		throw new Error('FORG0006: Incompatible types to be converted to a common type');
 	}
 
-	if (!items.every((item) => isSubtypeOf(item.type, 'xs:numeric'))) {
+	if (!items.every((item) => isSubtypeOf(item.type, ValueType.XSNUMERIC))) {
 		throw new Error('FORG0006: items passed to fn:sum are not all numeric.');
 	}
 
@@ -415,29 +418,29 @@ const fnSum: FunctionDefinitionType = (
 
 	if (
 		items.every((item) => {
-			return isSubtypeOf(item.type, 'xs:integer');
+			return isSubtypeOf(item.type, ValueType.XSINTEGER);
 		})
 	) {
-		return sequenceFactory.singleton(createAtomicValue(resultValue, 'xs:integer'));
+		return sequenceFactory.singleton(createAtomicValue(resultValue, ValueType.XSINTEGER));
 	}
 
 	if (
 		items.every((item) => {
-			return isSubtypeOf(item.type, 'xs:double');
+			return isSubtypeOf(item.type, ValueType.XSDOUBLE);
 		})
 	) {
-		return sequenceFactory.singleton(createAtomicValue(resultValue, 'xs:double'));
+		return sequenceFactory.singleton(createAtomicValue(resultValue, ValueType.XSDOUBLE));
 	}
 
 	if (
 		items.every((item) => {
-			return isSubtypeOf(item.type, 'xs:decimal');
+			return isSubtypeOf(item.type, ValueType.XSDECIMAL);
 		})
 	) {
-		return sequenceFactory.singleton(createAtomicValue(resultValue, 'xs:decimal'));
+		return sequenceFactory.singleton(createAtomicValue(resultValue, ValueType.XSDECIMAL));
 	}
 
-	return sequenceFactory.singleton(createAtomicValue(resultValue, 'xs:float'));
+	return sequenceFactory.singleton(createAtomicValue(resultValue, ValueType.XSFLOAT));
 };
 
 const fnZeroOrOne: FunctionDefinitionType = (
@@ -500,7 +503,7 @@ const fnFilter: FunctionDefinitionType = (
 	return sequence.filter((item) => {
 		// Transform argument
 		const transformedArgument = performFunctionConversion(
-			callbackArgumentTypes[0] as TypeDeclaration,
+			callbackArgumentTypes[0] as SequenceType,
 			sequenceFactory.singleton(item),
 			executionParameters,
 			'fn:filter',
@@ -515,7 +518,7 @@ const fnFilter: FunctionDefinitionType = (
 		);
 		if (
 			!functionCallResult.isSingleton() ||
-			!isSubtypeOf(functionCallResult.first().type, 'xs:boolean')
+			!isSubtypeOf(functionCallResult.first().type, ValueType.XSBOOLEAN)
 		) {
 			throw new Error(`XPTY0004: signature of function passed to fn:filter is incompatible.`);
 		}
@@ -553,7 +556,7 @@ const fnForEach: FunctionDefinitionType = (
 					}
 
 					const transformedArgument = performFunctionConversion(
-						callbackArgumentTypes[0] as TypeDeclaration,
+						callbackArgumentTypes[0] as SequenceType,
 						sequenceFactory.singleton(item.value),
 						executionParameters,
 						'fn:for-each',
@@ -601,14 +604,14 @@ const fnFoldLeft: FunctionDefinitionType = (
 	return sequence.mapAll((values) =>
 		values.reduce((previous, current) => {
 			const previousArg = performFunctionConversion(
-				callbackArgumentTypes[0] as TypeDeclaration,
+				callbackArgumentTypes[0] as SequenceType,
 				previous,
 				executionParameters,
 				'fn:fold-left',
 				false
 			);
 			const currentArg = performFunctionConversion(
-				callbackArgumentTypes[1] as TypeDeclaration,
+				callbackArgumentTypes[1] as SequenceType,
 				sequenceFactory.singleton(current),
 				executionParameters,
 				'fn:fold-left',
@@ -647,14 +650,14 @@ const fnFoldRight: FunctionDefinitionType = (
 	return sequence.mapAll((values) =>
 		values.reduceRight((previous, current) => {
 			const previousArg = performFunctionConversion(
-				callbackArgumentTypes[0] as TypeDeclaration,
+				callbackArgumentTypes[0] as SequenceType,
 				previous,
 				executionParameters,
 				'fn:fold-right',
 				false
 			);
 			const currentArg = performFunctionConversion(
-				callbackArgumentTypes[1] as TypeDeclaration,
+				callbackArgumentTypes[1] as SequenceType,
 				sequenceFactory.singleton(current),
 				executionParameters,
 				'fn:fold-right',
@@ -672,264 +675,337 @@ const fnFoldRight: FunctionDefinitionType = (
 	);
 };
 
+const declarations: BuiltinDeclarationType[] = [
+	{
+		argumentTypes: [{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE }],
+		callFunction: fnEmpty,
+		localName: 'empty',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE },
+	},
+
+	{
+		argumentTypes: [{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE }],
+		callFunction: fnExists,
+		localName: 'exists',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE },
+	},
+
+	{
+		argumentTypes: [{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE }],
+		callFunction: fnHead,
+		localName: 'head',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_ONE },
+	},
+
+	{
+		argumentTypes: [{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE }],
+		callFunction: fnTail,
+		localName: 'tail',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+	},
+
+	{
+		argumentTypes: [
+			{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+			{ type: ValueType.XSINTEGER, mult: SequenceMultiplicity.EXACTLY_ONE },
+			{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+		],
+		callFunction: fnInsertBefore,
+		localName: 'insert-before',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+	},
+
+	{
+		argumentTypes: [
+			{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+			{ type: ValueType.XSINTEGER, mult: SequenceMultiplicity.EXACTLY_ONE },
+		],
+		callFunction: fnRemove,
+		localName: 'remove',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+	},
+
+	{
+		argumentTypes: [{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE }],
+		callFunction: fnReverse,
+		localName: 'reverse',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+	},
+
+	{
+		argumentTypes: [
+			{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+			{ type: ValueType.XSDOUBLE, mult: SequenceMultiplicity.EXACTLY_ONE },
+		],
+		callFunction: ((dynamicContext, executionParameters, _staticContext, sequence, start) =>
+			fnSubsequence(
+				dynamicContext,
+				executionParameters,
+				_staticContext,
+				sequence,
+				start,
+				sequenceFactory.empty()
+			)) as FunctionDefinitionType,
+		localName: 'subsequence',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+	},
+
+	{
+		argumentTypes: [
+			{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+			{ type: ValueType.XSDOUBLE, mult: SequenceMultiplicity.EXACTLY_ONE },
+			{ type: ValueType.XSDOUBLE, mult: SequenceMultiplicity.EXACTLY_ONE },
+		],
+		callFunction: fnSubsequence,
+		localName: 'subsequence',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+	},
+
+	{
+		argumentTypes: [{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE }],
+		callFunction: fnUnordered,
+		localName: 'unordered',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+	},
+
+	{
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_MORE },
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.EXACTLY_ONE },
+		],
+		callFunction: fnIndexOf,
+		localName: 'index-of',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.ZERO_OR_MORE },
+	},
+
+	{
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_MORE },
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.EXACTLY_ONE },
+			{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
+		],
+		callFunction() {
+			throw new Error('FOCH0002: No collations are supported');
+		},
+		localName: 'index-of',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.ZERO_OR_MORE },
+	},
+
+	{
+		argumentTypes: [
+			{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+			{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+		],
+		callFunction: fnDeepEqual,
+		localName: 'deep-equal',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE },
+	},
+
+	{
+		argumentTypes: [
+			{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+			{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+			{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
+		],
+		callFunction() {
+			throw new Error('FOCH0002: No collations are supported');
+		},
+		localName: 'deep-equal',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE },
+	},
+
+	{
+		argumentTypes: [{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE }],
+		callFunction: fnCount,
+		localName: 'count',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.EXACTLY_ONE },
+	},
+
+	{
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_MORE },
+		],
+		callFunction: fnAvg,
+		localName: 'avg',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+	},
+
+	{
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_MORE },
+		],
+		callFunction: fnMax,
+		localName: 'max',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+	},
+
+	{
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_MORE },
+			{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
+		],
+		callFunction() {
+			throw new Error('FOCH0002: No collations are supported');
+		},
+		localName: 'max',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+	},
+
+	{
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_MORE },
+		],
+		callFunction: fnMin,
+		localName: 'min',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+	},
+
+	{
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_MORE },
+			{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
+		],
+		callFunction() {
+			throw new Error('FOCH0002: No collations are supported');
+		},
+		localName: 'min',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+	},
+
+	{
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_MORE },
+		],
+		callFunction: ((dynamicContext, executionParameters, _staticContext, sequence) => {
+			return fnSum(
+				dynamicContext,
+				executionParameters,
+				_staticContext,
+				sequence,
+				sequenceFactory.singleton(createAtomicValue(0, ValueType.XSINTEGER))
+			);
+		}) as FunctionDefinitionType,
+		localName: 'sum',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.EXACTLY_ONE },
+	},
+
+	{
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_MORE },
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		callFunction: fnSum,
+		localName: 'sum',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
+	},
+
+	{
+		argumentTypes: [{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE }],
+		callFunction: fnZeroOrOne,
+		localName: 'zero-or-one',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_ONE },
+	},
+
+	{
+		argumentTypes: [{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE }],
+		callFunction: fnOneOrMore,
+		localName: 'one-or-more',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ONE_OR_MORE },
+	},
+
+	{
+		argumentTypes: [{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE }],
+		callFunction: fnExactlyOne,
+		localName: 'exactly-one',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.EXACTLY_ONE },
+	},
+
+	{
+		argumentTypes: [
+			{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+			{
+				type: ValueType.FUNCTION,
+				mult: SequenceMultiplicity.EXACTLY_ONE,
+			},
+		],
+		callFunction: fnFilter,
+		localName: 'filter',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+	},
+
+	{
+		argumentTypes: [
+			{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+			{
+				type: ValueType.FUNCTION,
+				mult: SequenceMultiplicity.EXACTLY_ONE,
+			},
+		],
+		callFunction: fnForEach,
+		localName: 'for-each',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+	},
+
+	{
+		argumentTypes: [
+			{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+			{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+			{
+				type: ValueType.FUNCTION,
+				mult: SequenceMultiplicity.EXACTLY_ONE,
+			},
+		],
+		callFunction: fnFoldLeft,
+		localName: 'fold-left',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+	},
+
+	{
+		argumentTypes: [
+			{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+			{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+			{
+				type: ValueType.FUNCTION,
+				mult: SequenceMultiplicity.EXACTLY_ONE,
+			},
+		],
+		callFunction: fnFoldRight,
+		localName: 'fold-right',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+	},
+];
+
 export default {
-	declarations: [
-		{
-			argumentTypes: ['item()*'],
-			callFunction: fnEmpty,
-			localName: 'empty',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:boolean',
-		},
-
-		{
-			argumentTypes: ['item()*'],
-			callFunction: fnExists,
-			localName: 'exists',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:boolean',
-		},
-
-		{
-			argumentTypes: ['item()*'],
-			callFunction: fnHead,
-			localName: 'head',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'item()?',
-		},
-
-		{
-			argumentTypes: ['item()*'],
-			callFunction: fnTail,
-			localName: 'tail',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'item()*',
-		},
-
-		{
-			argumentTypes: ['item()*', 'xs:integer', 'item()*'],
-			callFunction: fnInsertBefore,
-			localName: 'insert-before',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'item()*',
-		},
-
-		{
-			argumentTypes: ['item()*', 'xs:integer'],
-			callFunction: fnRemove,
-			localName: 'remove',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'item()*',
-		},
-
-		{
-			argumentTypes: ['item()*'],
-			callFunction: fnReverse,
-			localName: 'reverse',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'item()*',
-		},
-
-		{
-			argumentTypes: ['item()*', 'xs:double'],
-			callFunction: ((dynamicContext, executionParameters, _staticContext, sequence, start) =>
-				fnSubsequence(
-					dynamicContext,
-					executionParameters,
-					_staticContext,
-					sequence,
-					start,
-					sequenceFactory.empty()
-				)) as FunctionDefinitionType,
-			localName: 'subsequence',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'item()*',
-		},
-
-		{
-			argumentTypes: ['item()*', 'xs:double', 'xs:double'],
-			callFunction: fnSubsequence,
-			localName: 'subsequence',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'item()*',
-		},
-
-		{
-			argumentTypes: ['item()*'],
-			callFunction: fnUnordered,
-			localName: 'unordered',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'item()*',
-		},
-
-		{
-			argumentTypes: ['xs:anyAtomicType*', 'xs:anyAtomicType'],
-			callFunction: fnIndexOf,
-			localName: 'index-of',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:integer*',
-		},
-
-		{
-			argumentTypes: ['xs:anyAtomicType*', 'xs:anyAtomicType', 'xs:string'],
-			callFunction() {
-				throw new Error('FOCH0002: No collations are supported');
-			},
-			localName: 'index-of',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:integer*',
-		},
-
-		{
-			argumentTypes: ['item()*', 'item()*'],
-			callFunction: fnDeepEqual,
-			localName: 'deep-equal',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:boolean',
-		},
-
-		{
-			argumentTypes: ['item()*', 'item()*', 'xs:string'],
-			callFunction() {
-				throw new Error('FOCH0002: No collations are supported');
-			},
-			localName: 'deep-equal',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:boolean',
-		},
-
-		{
-			argumentTypes: ['item()*'],
-			callFunction: fnCount,
-			localName: 'count',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:integer',
-		},
-
-		{
-			argumentTypes: ['xs:anyAtomicType*'],
-			callFunction: fnAvg,
-			localName: 'avg',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:anyAtomicType?',
-		},
-
-		{
-			argumentTypes: ['xs:anyAtomicType*'],
-			callFunction: fnMax,
-			localName: 'max',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:anyAtomicType?',
-		},
-
-		{
-			argumentTypes: ['xs:anyAtomicType*', 'xs:string'],
-			callFunction() {
-				throw new Error('FOCH0002: No collations are supported');
-			},
-			localName: 'max',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:anyAtomicType?',
-		},
-
-		{
-			argumentTypes: ['xs:anyAtomicType*'],
-			callFunction: fnMin,
-			localName: 'min',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:anyAtomicType?',
-		},
-
-		{
-			argumentTypes: ['xs:anyAtomicType*', 'xs:string'],
-			callFunction() {
-				throw new Error('FOCH0002: No collations are supported');
-			},
-			localName: 'min',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:anyAtomicType?',
-		},
-
-		{
-			argumentTypes: ['xs:anyAtomicType*'],
-			callFunction: ((dynamicContext, executionParameters, _staticContext, sequence) => {
-				return fnSum(
-					dynamicContext,
-					executionParameters,
-					_staticContext,
-					sequence,
-					sequenceFactory.singleton(createAtomicValue(0, 'xs:integer'))
-				);
-			}) as FunctionDefinitionType,
-			localName: 'sum',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:anyAtomicType',
-		},
-
-		{
-			argumentTypes: ['xs:anyAtomicType*', 'xs:anyAtomicType?'],
-			callFunction: fnSum,
-			localName: 'sum',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:anyAtomicType?',
-		},
-
-		{
-			argumentTypes: ['item()*'],
-			callFunction: fnZeroOrOne,
-			localName: 'zero-or-one',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'item()?',
-		},
-
-		{
-			argumentTypes: ['item()*'],
-			callFunction: fnOneOrMore,
-			localName: 'one-or-more',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'item()+',
-		},
-
-		{
-			argumentTypes: ['item()*'],
-			callFunction: fnExactlyOne,
-			localName: 'exactly-one',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'item()',
-		},
-
-		{
-			argumentTypes: ['item()*', 'function(*)'],
-			callFunction: fnFilter,
-			localName: 'filter',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'item()*',
-		},
-
-		{
-			argumentTypes: ['item()*', 'function(*)'],
-			callFunction: fnForEach,
-			localName: 'for-each',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'item()*',
-		},
-
-		{
-			argumentTypes: ['item()*', 'item()*', 'function(*)'],
-			callFunction: fnFoldLeft,
-			localName: 'fold-left',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'item()*',
-		},
-
-		{
-			argumentTypes: ['item()*', 'item()*', 'function(*)'],
-			callFunction: fnFoldRight,
-			localName: 'fold-right',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'item()*',
-		},
-	],
+	declarations,
 	functions: {
 		avg: fnAvg,
 		count: fnCount,

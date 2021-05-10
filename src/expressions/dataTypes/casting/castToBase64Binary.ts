@@ -1,10 +1,12 @@
+import AtomicValue from '../AtomicValue';
 import createAtomicValue from '../createAtomicValue';
-import { ValueType } from '../Value';
+import { SequenceMultiplicity, ValueType } from '../Value';
 import CastResult from './CastResult';
 
-const createBase64BinaryValue = (value) => createAtomicValue(value, 'xs:base64Binary');
+const createBase64BinaryValue = (value: any): AtomicValue =>
+	createAtomicValue(value, ValueType.XSBASE64BINARY);
 
-function hexToString(hex) {
+function hexToString(hex: string) {
 	let text = '';
 	for (let i = 0; i < hex.length; i += 2) {
 		text += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
@@ -17,14 +19,14 @@ declare var btoa: (s: string) => string;
 
 export default function castToBase64Binary(
 	instanceOf: (typeName: ValueType) => boolean
-): (value) => CastResult {
-	if (instanceOf('xs:hexBinary')) {
+): (value: any) => CastResult {
+	if (instanceOf(ValueType.XSHEXBINARY)) {
 		return (value) => ({
 			successful: true,
 			value: createBase64BinaryValue(btoa(hexToString(value))),
 		});
 	}
-	if (instanceOf('xs:string') || instanceOf('xs:untypedAtomic')) {
+	if (instanceOf(ValueType.XSSTRING) || instanceOf(ValueType.XSUNTYPEDATOMIC)) {
 		return (value) => ({
 			successful: true,
 			value: createBase64BinaryValue(value),

@@ -3,6 +3,7 @@ import castToType from '../../dataTypes/castToType';
 import createAtomicValue from '../../dataTypes/createAtomicValue';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
+import { SequenceMultiplicity, ValueType } from '../../dataTypes/Value';
 import Expression from '../../Expression';
 
 class Unary extends Expression {
@@ -39,47 +40,50 @@ class Unary extends Expression {
 
 			const value = atomizedValues[0];
 
-			if (isSubtypeOf(value.type, 'xs:untypedAtomic')) {
-				const castValue = castToType(value, 'xs:double').value as number;
+			if (isSubtypeOf(value.type, ValueType.XSUNTYPEDATOMIC)) {
+				const castValue = castToType(value, ValueType.XSDOUBLE).value as number;
 				return sequenceFactory.singleton(
-					createAtomicValue(this._kind === '+' ? castValue : -castValue, 'xs:double')
+					createAtomicValue(
+						this._kind === '+' ? castValue : -castValue,
+						ValueType.XSDOUBLE
+					)
 				);
 			}
 
 			if (this._kind === '+') {
 				if (
-					isSubtypeOf(value.type, 'xs:decimal') ||
-					isSubtypeOf(value.type, 'xs:double') ||
-					isSubtypeOf(value.type, 'xs:float') ||
-					isSubtypeOf(value.type, 'xs:integer')
+					isSubtypeOf(value.type, ValueType.XSDECIMAL) ||
+					isSubtypeOf(value.type, ValueType.XSDOUBLE) ||
+					isSubtypeOf(value.type, ValueType.XSFLOAT) ||
+					isSubtypeOf(value.type, ValueType.XSINTEGER)
 				) {
 					return sequenceFactory.singleton(atomizedValues[0]);
 				}
-				return sequenceFactory.singleton(createAtomicValue(Number.NaN, 'xs:double'));
+				return sequenceFactory.singleton(createAtomicValue(Number.NaN, ValueType.XSDOUBLE));
 			}
 
-			if (isSubtypeOf(value.type, 'xs:integer')) {
+			if (isSubtypeOf(value.type, ValueType.XSINTEGER)) {
 				return sequenceFactory.singleton(
-					createAtomicValue((value.value as number) * -1, 'xs:integer')
+					createAtomicValue((value.value as number) * -1, ValueType.XSINTEGER)
 				);
 			}
-			if (isSubtypeOf(value.type, 'xs:decimal')) {
+			if (isSubtypeOf(value.type, ValueType.XSDECIMAL)) {
 				return sequenceFactory.singleton(
-					createAtomicValue((value.value as number) * -1, 'xs:decimal')
+					createAtomicValue((value.value as number) * -1, ValueType.XSDECIMAL)
 				);
 			}
-			if (isSubtypeOf(value.type, 'xs:double')) {
+			if (isSubtypeOf(value.type, ValueType.XSDOUBLE)) {
 				return sequenceFactory.singleton(
-					createAtomicValue((value.value as number) * -1, 'xs:double')
+					createAtomicValue((value.value as number) * -1, ValueType.XSDOUBLE)
 				);
 			}
-			if (isSubtypeOf(value.type, 'xs:float')) {
+			if (isSubtypeOf(value.type, ValueType.XSFLOAT)) {
 				return sequenceFactory.singleton(
-					createAtomicValue((value.value as number) * -1, 'xs:float')
+					createAtomicValue((value.value as number) * -1, ValueType.XSFLOAT)
 				);
 			}
 
-			return sequenceFactory.singleton(createAtomicValue(Number.NaN, 'xs:double'));
+			return sequenceFactory.singleton(createAtomicValue(Number.NaN, ValueType.XSDOUBLE));
 		});
 	}
 }

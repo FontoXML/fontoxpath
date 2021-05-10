@@ -1,4 +1,5 @@
 import * as chai from 'chai';
+import { SequenceMultiplicity, ValueType } from 'fontoxpath/expressions/dataTypes/Value';
 import functionRegistry from 'fontoxpath/expressions/functions/functionRegistry';
 import registerCustomXPathFunction from 'fontoxpath/registerCustomXPathFunction';
 

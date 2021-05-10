@@ -9,7 +9,7 @@ import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value from '../dataTypes/Value';
+import Value, { SequenceMultiplicity, SequenceType, ValueType } from '../dataTypes/Value';
 import { equal } from '../dataTypes/valueTypes/DateTime';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
@@ -60,31 +60,32 @@ function anyAtomicTypeDeepEqual(
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	item1,
-	item2
-) {
+	item1: Value,
+	item2: Value
+): boolean {
 	if (
-		(isSubtypeOf(item1.type, 'xs:decimal') || isSubtypeOf(item1.type, 'xs:float')) &&
-		(isSubtypeOf(item2.type, 'xs:decimal') || isSubtypeOf(item2.type, 'xs:float'))
+		(isSubtypeOf(item1.type, ValueType.XSDECIMAL) ||
+			isSubtypeOf(item1.type, ValueType.XSFLOAT)) &&
+		(isSubtypeOf(item2.type, ValueType.XSDECIMAL) || isSubtypeOf(item2.type, ValueType.XSFLOAT))
 	) {
-		const temp1 = castToType(item1, 'xs:float');
-		const temp2 = castToType(item2, 'xs:float');
+		const temp1 = castToType(item1, ValueType.XSFLOAT);
+		const temp2 = castToType(item2, ValueType.XSFLOAT);
 		return temp1.value === temp2.value || (isNaN(item1.value) && isNaN(item2.value));
 	}
 	if (
-		(isSubtypeOf(item1.type, 'xs:decimal') ||
-			isSubtypeOf(item1.type, 'xs:float') ||
-			isSubtypeOf(item1.type, 'xs:double')) &&
-		(isSubtypeOf(item2.type, 'xs:decimal') ||
-			isSubtypeOf(item2.type, 'xs:float') ||
-			isSubtypeOf(item2.type, 'xs:double'))
+		(isSubtypeOf(item1.type, ValueType.XSDECIMAL) ||
+			isSubtypeOf(item1.type, ValueType.XSFLOAT) ||
+			isSubtypeOf(item1.type, ValueType.XSDOUBLE)) &&
+		(isSubtypeOf(item2.type, ValueType.XSDECIMAL) ||
+			isSubtypeOf(item2.type, ValueType.XSFLOAT) ||
+			isSubtypeOf(item2.type, ValueType.XSDOUBLE))
 	) {
-		const temp1 = castToType(item1, 'xs:double');
-		const temp2 = castToType(item2, 'xs:double');
+		const temp1 = castToType(item1, ValueType.XSDOUBLE);
+		const temp2 = castToType(item2, ValueType.XSDOUBLE);
 		return temp1.value === temp2.value || (isNaN(item1.value) && isNaN(item2.value));
 	}
 
-	if (isSubtypeOf(item1.type, 'xs:QName') && isSubtypeOf(item2.type, 'xs:QName')) {
+	if (isSubtypeOf(item1.type, ValueType.XSQNAME) && isSubtypeOf(item2.type, ValueType.XSQNAME)) {
 		return (
 			item1.value.namespaceURI === item2.value.namespaceURI &&
 			item1.value.localName === item2.value.localName
@@ -92,22 +93,22 @@ function anyAtomicTypeDeepEqual(
 	}
 
 	if (
-		(isSubtypeOf(item1.type, 'xs:dateTime') ||
-			isSubtypeOf(item1.type, 'xs:date') ||
-			isSubtypeOf(item1.type, 'xs:time') ||
-			isSubtypeOf(item1.type, 'xs:gYearMonth') ||
-			isSubtypeOf(item1.type, 'xs:gYear') ||
-			isSubtypeOf(item1.type, 'xs:gMonthDay') ||
-			isSubtypeOf(item1.type, 'xs:gMonth') ||
-			isSubtypeOf(item1.type, 'xs:gDay')) &&
-		(isSubtypeOf(item2.type, 'xs:dateTime') ||
-			isSubtypeOf(item2.type, 'xs:date') ||
-			isSubtypeOf(item2.type, 'xs:time') ||
-			isSubtypeOf(item2.type, 'xs:gYearMonth') ||
-			isSubtypeOf(item2.type, 'xs:gYear') ||
-			isSubtypeOf(item2.type, 'xs:gMonthDay') ||
-			isSubtypeOf(item2.type, 'xs:gMonth') ||
-			isSubtypeOf(item2.type, 'xs:gDay'))
+		(isSubtypeOf(item1.type, ValueType.XSDATETIME) ||
+			isSubtypeOf(item1.type, ValueType.XSDATE) ||
+			isSubtypeOf(item1.type, ValueType.XSTIME) ||
+			isSubtypeOf(item1.type, ValueType.XSGYEARMONTH) ||
+			isSubtypeOf(item1.type, ValueType.XSGYEAR) ||
+			isSubtypeOf(item1.type, ValueType.XSGMONTHDAY) ||
+			isSubtypeOf(item1.type, ValueType.XSGMONTH) ||
+			isSubtypeOf(item1.type, ValueType.XSGDAY)) &&
+		(isSubtypeOf(item2.type, ValueType.XSDATETIME) ||
+			isSubtypeOf(item2.type, ValueType.XSDATE) ||
+			isSubtypeOf(item2.type, ValueType.XSTIME) ||
+			isSubtypeOf(item2.type, ValueType.XSGYEARMONTH) ||
+			isSubtypeOf(item2.type, ValueType.XSGYEAR) ||
+			isSubtypeOf(item2.type, ValueType.XSGMONTHDAY) ||
+			isSubtypeOf(item2.type, ValueType.XSGMONTH) ||
+			isSubtypeOf(item2.type, ValueType.XSGDAY))
 	) {
 		return equal(item1.value, item2.value);
 	}
@@ -121,15 +122,16 @@ function compareNormalizedTextNodes(
 	textValues1: Value[],
 	textValues2: Value[]
 ) {
-	const [atomicValue1, atomicValue2] = [textValues1, textValues2].map((textValues) => {
+	const [atomicValue1, atomicValue2]: Value[] = [textValues1, textValues2].map((textValues) => {
 		const value = textValues.reduce((wholeValue, textValue) => {
 			wholeValue =
 				wholeValue + atomizeSingleValue(textValue, executionParameters).first().value;
 
 			return wholeValue;
 		}, '');
+
 		return {
-			type: 'xs:string',
+			type: ValueType.XSSTRING,
 			value,
 		};
 	});
@@ -151,7 +153,7 @@ function takeConsecutiveTextValues(
 	iterator: IIterator<Value>,
 	domFacade: DomFacade
 ): IterationResult<Value> {
-	while (item.value && isSubtypeOf(item.value.type, 'text()')) {
+	while (item.value && isSubtypeOf(item.value.type, ValueType.TEXT)) {
 		textValues.push(item.value);
 		const nextSibling = domFacade.getNextSiblingPointer(item.value.value as TextNodePointer);
 		item = iterator.next(IterationHint.NONE);
@@ -474,8 +476,8 @@ export function itemDeepEqual(
 ): IIterator<boolean> {
 	// All atomic types
 	if (
-		isSubtypeOf(item1.type, 'xs:anyAtomicType') &&
-		isSubtypeOf(item2.type, 'xs:anyAtomicType')
+		isSubtypeOf(item1.type, ValueType.XSANYATOMICTYPE) &&
+		isSubtypeOf(item2.type, ValueType.XSANYATOMICTYPE)
 	) {
 		return createSingleValueIterator(
 			anyAtomicTypeDeepEqual(dynamicContext, executionParameters, staticContext, item1, item2)
@@ -483,7 +485,7 @@ export function itemDeepEqual(
 	}
 
 	// Maps
-	if (isSubtypeOf(item1.type, 'map(*)') && isSubtypeOf(item2.type, 'map(*)')) {
+	if (isSubtypeOf(item1.type, ValueType.MAP) && isSubtypeOf(item2.type, ValueType.MAP)) {
 		return mapTypeDeepEqual(
 			dynamicContext,
 			executionParameters,
@@ -494,7 +496,7 @@ export function itemDeepEqual(
 	}
 
 	// Arrays
-	if (isSubtypeOf(item1.type, 'array(*)') && isSubtypeOf(item2.type, 'array(*)')) {
+	if (isSubtypeOf(item1.type, ValueType.ARRAY) && isSubtypeOf(item2.type, ValueType.ARRAY)) {
 		return arrayTypeDeepEqual(
 			dynamicContext,
 			executionParameters,
@@ -505,17 +507,20 @@ export function itemDeepEqual(
 	}
 
 	// Nodes
-	if (isSubtypeOf(item1.type, 'node()') && isSubtypeOf(item2.type, 'node()')) {
+	if (isSubtypeOf(item1.type, ValueType.NODE) && isSubtypeOf(item2.type, ValueType.NODE)) {
 		// Document nodes
 		if (
-			isSubtypeOf(item1.type, 'document-node()') &&
-			isSubtypeOf(item2.type, 'document-node()')
+			isSubtypeOf(item1.type, ValueType.DOCUMENTNODE) &&
+			isSubtypeOf(item2.type, ValueType.DOCUMENTNODE)
 		) {
 			return nodeDeepEqual(dynamicContext, executionParameters, staticContext, item1, item2);
 		}
 
 		// Element nodes, cannot be compared due to missing schema information
-		if (isSubtypeOf(item1.type, 'element()') && isSubtypeOf(item2.type, 'element()')) {
+		if (
+			isSubtypeOf(item1.type, ValueType.ELEMENT) &&
+			isSubtypeOf(item2.type, ValueType.ELEMENT)
+		) {
 			return elementNodeDeepEqual(
 				dynamicContext,
 				executionParameters,
@@ -526,7 +531,10 @@ export function itemDeepEqual(
 		}
 
 		// Attribute nodes
-		if (isSubtypeOf(item1.type, 'attribute()') && isSubtypeOf(item2.type, 'attribute()')) {
+		if (
+			isSubtypeOf(item1.type, ValueType.ATTRIBUTE) &&
+			isSubtypeOf(item2.type, ValueType.ATTRIBUTE)
+		) {
 			return atomicTypeNodeDeepEqual(
 				dynamicContext,
 				executionParameters,
@@ -538,8 +546,8 @@ export function itemDeepEqual(
 
 		// Processing instruction node
 		if (
-			isSubtypeOf(item1.type, 'processing-instruction()') &&
-			isSubtypeOf(item2.type, 'processing-instruction()')
+			isSubtypeOf(item1.type, ValueType.PROCESSINGINSTRUCTION) &&
+			isSubtypeOf(item2.type, ValueType.PROCESSINGINSTRUCTION)
 		) {
 			return atomicTypeNodeDeepEqual(
 				dynamicContext,
@@ -551,7 +559,10 @@ export function itemDeepEqual(
 		}
 
 		// Comment nodes
-		if (isSubtypeOf(item1.type, 'comment()') && isSubtypeOf(item2.type, 'comment()')) {
+		if (
+			isSubtypeOf(item1.type, ValueType.COMMENT) &&
+			isSubtypeOf(item2.type, ValueType.COMMENT)
+		) {
 			return atomicTypeNodeDeepEqual(
 				dynamicContext,
 				executionParameters,

@@ -22,12 +22,7 @@ import {
 	TypedExternalValue,
 	UntypedExternalValue,
 } from '../types/createTypedValueFactory';
-import {
-	LexicalQualifiedName,
-	NamespaceResolver,
-	Options,
-	ResolvedQualifiedName,
-} from '../types/Options';
+import { LexicalQualifiedName, Options, ResolvedQualifiedName } from '../types/Options';
 import { Node } from '../types/Types';
 
 const generateGlobalVariableBindingName = (variableName: string) => `Q{}${variableName}[0]`;

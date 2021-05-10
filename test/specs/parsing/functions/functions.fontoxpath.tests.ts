@@ -8,7 +8,6 @@ import {
 	registerCustomXPathFunction,
 } from 'fontoxpath';
 import * as slimdom from 'slimdom';
-
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 let documentNode;

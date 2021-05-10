@@ -1,5 +1,5 @@
 import createAtomicValue from '../createAtomicValue';
-import { ValueType } from '../Value';
+import { SequenceMultiplicity, ValueType } from '../Value';
 import CastResult from './CastResult';
 import castToStringLikeType from './castToStringLikeType';
 
@@ -15,7 +15,7 @@ export default function castToString(
 
 		return {
 			successful: true,
-			value: createAtomicValue(castResult.value, 'xs:string'),
+			value: createAtomicValue(castResult.value, ValueType.XSSTRING),
 		};
 	};
 }

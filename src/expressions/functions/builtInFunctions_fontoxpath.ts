@@ -1,21 +1,20 @@
+import { printAndRethrowError } from '../../evaluationUtils/printAndRethrowError';
 import astHelper from '../../parsing/astHelper';
 import compileAstToExpression from '../../parsing/compileAstToExpression';
 import parseExpression from '../../parsing/parseExpression';
 import processProlog from '../../parsing/processProlog';
 import createAtomicValue from '../dataTypes/createAtomicValue';
-import createPointerValue from '../dataTypes/createPointerValue';
 import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value from '../dataTypes/Value';
+import Value, { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionSpecificStaticContext from '../ExecutionSpecificStaticContext';
 import { FONTOXPATH_NAMESPACE_URI, FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import StaticContext from '../StaticContext';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
-import { DONE_TOKEN, IIterator, IterationHint, ready } from '../util/iterators';
+import { IIterator, IterationHint } from '../util/iterators';
+import { BuiltinDeclarationType } from './builtInFunctions';
 import FunctionDefinitionType from './FunctionDefinitionType';
-
-import { printAndRethrowError } from '../../evaluationUtils/printAndRethrowError';
 
 const fontoxpathEvaluate: FunctionDefinitionType = (
 	_dynamicContext,
@@ -131,24 +130,29 @@ const fontoxpathVersion: FunctionDefinitionType = () => {
 	let version: string;
 	// TODO: Refactor when https://github.com/google/closure-compiler/issues/1601 is fixed
 	version = typeof VERSION === 'undefined' ? 'devbuild' : VERSION;
-	return sequenceFactory.singleton(createAtomicValue(version, 'xs:string'));
+	return sequenceFactory.singleton(createAtomicValue(version, ValueType.XSSTRING));
 };
 
+const declarations: BuiltinDeclarationType[] = [
+	{
+		argumentTypes: [
+			{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
+			{ type: ValueType.MAP, mult: SequenceMultiplicity.EXACTLY_ONE },
+		],
+		callFunction: fontoxpathEvaluate,
+		localName: 'evaluate',
+		namespaceURI: FONTOXPATH_NAMESPACE_URI,
+		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+	},
+	{
+		argumentTypes: [],
+		callFunction: fontoxpathVersion,
+		localName: 'version',
+		namespaceURI: FONTOXPATH_NAMESPACE_URI,
+		returnType: { type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
+	},
+];
+
 export default {
-	declarations: [
-		{
-			argumentTypes: ['xs:string', 'map(*)'],
-			callFunction: fontoxpathEvaluate,
-			localName: 'evaluate',
-			namespaceURI: FONTOXPATH_NAMESPACE_URI,
-			returnType: 'item()*',
-		},
-		{
-			argumentTypes: [],
-			callFunction: fontoxpathVersion,
-			localName: 'version',
-			namespaceURI: FONTOXPATH_NAMESPACE_URI,
-			returnType: 'xs:string',
-		},
-	],
+	declarations,
 };

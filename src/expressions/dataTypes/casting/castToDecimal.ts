@@ -4,14 +4,14 @@ import CastResult from './CastResult';
 
 export default function castToDecimal(
 	instanceOf: (typeName: ValueType) => boolean
-): (value) => CastResult {
-	if (instanceOf('xs:integer')) {
+): (value: any) => CastResult {
+	if (instanceOf(ValueType.XSINTEGER)) {
 		return (value) => ({
 			successful: true,
-			value: createAtomicValue(value, 'xs:decimal'),
+			value: createAtomicValue(value, ValueType.XSDECIMAL),
 		});
 	}
-	if (instanceOf('xs:float') || instanceOf('xs:double')) {
+	if (instanceOf(ValueType.XSFLOAT) || instanceOf(ValueType.XSDOUBLE)) {
 		return (value) => {
 			if (isNaN(value) || !isFinite(value)) {
 				return {
@@ -29,24 +29,24 @@ export default function castToDecimal(
 			}
 			return {
 				successful: true,
-				value: createAtomicValue(value, 'xs:decimal'),
+				value: createAtomicValue(value, ValueType.XSDECIMAL),
 			};
 		};
 	}
-	if (instanceOf('xs:boolean')) {
+	if (instanceOf(ValueType.XSBOOLEAN)) {
 		return (value) => ({
 			successful: true,
-			value: createAtomicValue(value ? 1 : 0, 'xs:decimal'),
+			value: createAtomicValue(value ? 1 : 0, ValueType.XSDECIMAL),
 		});
 	}
 
-	if (instanceOf('xs:string') || instanceOf('xs:untypedAtomic')) {
+	if (instanceOf(ValueType.XSSTRING) || instanceOf(ValueType.XSUNTYPEDATOMIC)) {
 		return (value) => {
 			const decimalValue = parseFloat(value);
 			if (!isNaN(decimalValue) || isFinite(decimalValue)) {
 				return {
 					successful: true,
-					value: createAtomicValue(decimalValue, 'xs:decimal'),
+					value: createAtomicValue(decimalValue, ValueType.XSDECIMAL),
 				};
 			}
 			return {

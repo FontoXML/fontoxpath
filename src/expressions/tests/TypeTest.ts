@@ -1,5 +1,5 @@
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import Value, { ValueType } from '../dataTypes/Value';
+import Value, { stringToValueType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Specificity from '../Specificity';
@@ -20,9 +20,11 @@ class TypeTest extends TestAbstractExpression {
 	) {
 		return isSubtypeOf(
 			item.type,
-			(this._type.prefix
-				? this._type.prefix + ':' + this._type.localName
-				: this._type.localName) as ValueType
+			stringToValueType(
+				this._type.prefix
+					? this._type.prefix + ':' + this._type.localName
+					: this._type.localName
+			)
 		);
 	}
 }
