@@ -1,5 +1,5 @@
 import * as chai from 'chai';
-import { SequenceMultiplicity, ValueType } from 'fontoxpath';
+import { registerCustomXPathFunction, SequenceMultiplicity, ValueType } from 'fontoxpath';
 import DomFacade from 'fontoxpath/domFacade/DomFacade';
 import { adaptJavaScriptValueToSequence } from 'fontoxpath/expressions/adaptJavaScriptValueToXPathValue';
 import DateTime from 'fontoxpath/expressions/dataTypes/valueTypes/DateTime';
@@ -16,14 +16,6 @@ describe('adaptJavaScriptValueToSequence', () => {
 		chai.assert(xpathSequence.first().type === ValueType.XSINTEGER, 'is an integer');
 		chai.assert.equal(xpathSequence.first().value, 1, 'is 1');
 	});
-
-	// TODO: This is impossible right?
-	// it('does not support unknown types', () => {
-	// 	chai.assert.throws(
-	// 		() => adaptJavaScriptValueToSequence(null, 1, 'fonto:theBestType'),
-	// 		' can not be adapted to equivalent XPath values'
-	// 	);
-	// });
 
 	it('turns numbers into doubles', () => {
 		const xpathSequence = adaptJavaScriptValueToSequence(null, 1.0, {
