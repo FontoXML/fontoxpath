@@ -2,7 +2,7 @@ import DomFacade from '../domFacade/DomFacade';
 import ExternalDomFacade from '../domFacade/ExternalDomFacade';
 import IDomFacade from '../domFacade/IDomFacade';
 import { adaptJavaScriptValueToArrayOfXPathValues } from '../expressions/adaptJavaScriptValueToXPathValue';
-import Value, { SequenceType } from '../expressions/dataTypes/Value';
+import Value, { SequenceType, stringtoSequenceType } from '../expressions/dataTypes/Value';
 
 /**
  * Any type is allowed expect: functions, symbols, undefined, and null
@@ -32,7 +32,7 @@ export type TypedExternalValue = {
  *
  * @param  typeName  The type into which to convert the values.
  */
-export default function createTypedValueFactory(typeName: SequenceType) {
+export default function createTypedValueFactory(sequenceTypeName: string) {
 	return (value: UntypedExternalValue, domFacade: IDomFacade): TypedExternalValue => {
 		const wrappedDomFacade: DomFacade = new DomFacade(
 			domFacade === null ? new ExternalDomFacade() : domFacade
@@ -41,7 +41,7 @@ export default function createTypedValueFactory(typeName: SequenceType) {
 		const convertedValue = adaptJavaScriptValueToArrayOfXPathValues(
 			wrappedDomFacade,
 			value,
-			typeName
+			stringtoSequenceType(sequenceTypeName)
 		);
 
 		return {

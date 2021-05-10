@@ -1,6 +1,5 @@
 import FunctionValue, { FunctionSignature } from '../dataTypes/FunctionValue';
-import RestArgument from '../dataTypes/RestArgument';
-import { SequenceType } from '../dataTypes/Value';
+import { ParameterType, SequenceType } from '../dataTypes/Value';
 import UpdatingExpressionResult from '../UpdatingExpressionResult';
 import { IIterator } from '../util/iterators';
 
@@ -8,7 +7,7 @@ export default class UpdatingFunctionValue extends FunctionValue<
 	IIterator<UpdatingExpressionResult>
 > {
 	constructor(definition: {
-		argumentTypes: (SequenceType | RestArgument)[];
+		argumentTypes: ParameterType[];
 		arity: number;
 		isAnonymous?: boolean;
 		isUpdating: boolean;

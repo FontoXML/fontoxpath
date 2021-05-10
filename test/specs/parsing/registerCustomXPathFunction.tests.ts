@@ -22,10 +22,7 @@ describe('registerCustomXPathFunction', () => {
 	}
 
 	let documentNode;
-	const stringValueFactory = createTypedValueFactory({
-		type: ValueType.XSSTRING,
-		mult: SequenceMultiplicity.ZERO_OR_ONE,
-	});
+	const stringValueFactory = createTypedValueFactory('xs:string?');
 	beforeEach(() => {
 		documentNode = new slimdom.Document();
 
