@@ -3,9 +3,8 @@ import ExecutionParameters from '../ExecutionParameters';
 import StaticContext from '../StaticContext';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import ISequence from './ISequence';
-import RestArgument from './RestArgument';
 import sequenceFactory from './sequenceFactory';
-import Value, { SequenceType, ValueType } from './Value';
+import Value, { EllipsisType, ParameterType, SequenceType, ValueType } from './Value';
 import QName from './valueTypes/QName';
 
 export type FunctionSignature<T> = (
@@ -15,13 +14,13 @@ export type FunctionSignature<T> = (
 	...args: ISequence[]
 ) => T;
 
-function expandRestArgumentToArity(
-	argumentTypes: (SequenceType | RestArgument)[],
+function expandParameterTypeToArity(
+	argumentTypes: (ParameterType)[],
 	arity: number
-): (SequenceType | RestArgument)[] {
+): (ParameterType)[] {
 	let indexOfRest = -1;
 	for (let i = 0; i < argumentTypes.length; i++) {
-		if ((argumentTypes[i] as RestArgument).isRestArgument) {
+		if (argumentTypes[i] == EllipsisType.ELLIPSIS) {
 			indexOfRest = i;
 		}
 	}
@@ -39,7 +38,7 @@ function expandRestArgumentToArity(
 class FunctionValue<T = ISequence> extends Value {
 	public readonly isUpdating: boolean;
 	public readonly value: FunctionSignature<T>;
-	private readonly _argumentTypes: (SequenceType | RestArgument)[];
+	private readonly _argumentTypes: (ParameterType)[];
 	private readonly _arity: number;
 	private readonly _isAnonymous: boolean;
 	private readonly _localName: string;
@@ -56,7 +55,7 @@ class FunctionValue<T = ISequence> extends Value {
 		returnType,
 		value,
 	}: {
-		argumentTypes: (SequenceType | RestArgument)[];
+		argumentTypes: (ParameterType)[];
 		arity: number;
 		isAnonymous?: boolean;
 		isUpdating?: boolean;
@@ -69,7 +68,7 @@ class FunctionValue<T = ISequence> extends Value {
 
 		this.value = value;
 		this.isUpdating = isUpdating;
-		this._argumentTypes = expandRestArgumentToArity(argumentTypes, arity);
+		this._argumentTypes = expandParameterTypeToArity(argumentTypes, arity);
 		this._arity = arity;
 		this._isAnonymous = isAnonymous;
 		this._localName = localName;
@@ -110,7 +109,7 @@ class FunctionValue<T = ISequence> extends Value {
 			);
 		}
 		const argumentTypes = appliedArguments.reduce(
-			(indices: (SequenceType | RestArgument)[], arg: ISequence | null, index: number) => {
+			(indices: (ParameterType)[], arg: ISequence | null, index: number) => {
 				if (arg === null) {
 					indices.push(this._argumentTypes[index]);
 				}
