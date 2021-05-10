@@ -1,6 +1,6 @@
 {
 	"name": "fontoxpath",
-	"version": "3.17.2",
+	"version": "3.17.3",
 	"description": "A minimalistic XPath 3.1 engine in JavaScript",
 	"main": "dist/fontoxpath.js",
 	"module": "dist/fontoxpath.esm.js",
@@ -26,7 +26,8 @@
 		"xqutstests": "ts-mocha --paths -p test/tsconfig.json test/xqutsTests.ts",
 		"xqutstestsxqueryx": "ts-mocha --paths -p test/tsconfig.json test/xqutsTestsXQueryX.ts",
 		"browsertests": "karma start",
-		"lint": "tslint \"./src/**/*.ts\" --project . && prettier \"./src/**/*.ts\" --list-different"
+		"lint": "tslint \"./src/**/*.ts\" --project . && prettier \"./src/**/*.ts\" --list-different",
+		"fuzzer": "ts-node -P fuzzers/tsconfig.json -r tsconfig-paths/register fuzzers/fuzzer.ts"
 	},
 	"repository": {
 		"type": "git",
@@ -69,6 +70,7 @@
 		"@types/node": "^14.0.1",
 		"@types/node-static": "^0.7.6",
 		"@types/sinon": "^9.0.10",
+		"bundlemon": "^0.3.2",
 		"chai": "^4.2.0",
 		"concurrently": "^5.3.0",
 		"coveralls": "^3.1.0",
