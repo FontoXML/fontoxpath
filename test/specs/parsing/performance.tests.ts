@@ -1,11 +1,5 @@
 import * as chai from 'chai';
-import {
-	ValueType,
-	evaluateXPathToBoolean,
-	profiler,
-	registerCustomXPathFunction,
-} from 'fontoxpath';
-import { SequenceMultiplicity } from 'fontoxpath/expressions/dataTypes/Value';
+import { evaluateXPathToBoolean, profiler, registerCustomXPathFunction } from 'fontoxpath';
 import * as slimdom from 'slimdom';
 
 function timeXPath(xpath, document) {

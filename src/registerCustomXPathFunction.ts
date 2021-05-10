@@ -7,8 +7,8 @@ import sequenceFactory from './expressions/dataTypes/sequenceFactory';
 import {
 	SequenceMultiplicity,
 	SequenceType,
-	ValueType,
 	stringToSequenceType,
+	ValueType,
 } from './expressions/dataTypes/Value';
 import DynamicContext from './expressions/DynamicContext';
 import ExecutionParameters from './expressions/ExecutionParameters';

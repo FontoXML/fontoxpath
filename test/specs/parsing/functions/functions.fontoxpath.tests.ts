@@ -1,16 +1,13 @@
 import * as chai from 'chai';
 import {
-	ValueType,
 	domFacade,
 	evaluateXPath,
 	evaluateXPathToBoolean,
 	evaluateXPathToNumber,
 	evaluateXPathToString,
 	registerCustomXPathFunction,
-	SequenceMultiplicity,
 } from 'fontoxpath';
 import * as slimdom from 'slimdom';
-
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 let documentNode;

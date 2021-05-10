@@ -1,12 +1,10 @@
 import * as chai from 'chai';
 import {
-	ValueType,
 	evaluateUpdatingExpression,
 	evaluateXPath,
 	evaluateXPathToString,
 	registerCustomXPathFunction,
 	registerXQueryModule,
-	SequenceMultiplicity,
 } from 'fontoxpath';
 import * as sinon from 'sinon';
 
