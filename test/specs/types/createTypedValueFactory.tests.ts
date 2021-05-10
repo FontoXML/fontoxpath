@@ -1,8 +1,7 @@
 import * as chai from 'chai';
+import evaluateXPathToBoolean from 'fontoxpath/evaluateXPathToBoolean';
+import createTypedValueFactory from 'fontoxpath/types/createTypedValueFactory';
 import * as slimdom from 'slimdom';
-
-import { ValueType, createTypedValueFactory, evaluateXPathToBoolean } from 'fontoxpath';
-import { SequenceMultiplicity } from 'fontoxpath/expressions/dataTypes/Value';
 
 let documentNode;
 beforeEach(() => {
