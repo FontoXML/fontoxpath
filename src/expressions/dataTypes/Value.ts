@@ -251,11 +251,7 @@ const stringToValueTypeMap: { [key: string]: ValueType } = {
  * @returns A string corresponding to that base type.
  */
 export function valueTypeToString(input: ValueType): string {
-	const stringVal = typeToStringMap[input];
-	if (stringVal === undefined) {
-		throw new Error(`Cannot convert ValueType of type "${input}" to a string`);
-	}
-	return stringVal;
+	return typeToStringMap[input];
 }
 
 /**
