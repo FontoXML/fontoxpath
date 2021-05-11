@@ -11,6 +11,7 @@ import {
 import { enhanceStaticContextWithModule } from './globalModuleCache';
 import parseExpression from './parseExpression';
 import processProlog from './processProlog';
+import annotateAST from './annotateAST';
 
 export default function staticallyCompileXPath(
 	xpathString: string,
@@ -56,6 +57,8 @@ export default function staticallyCompileXPath(
 	} else {
 		// We can not use anything from the cache, parse + compile
 		const ast = parseExpression(xpathString, compilationOptions);
+
+		annotateAST(ast)
 
 		const mainModule = astHelper.getFirstChild(ast, 'mainModule');
 		if (!mainModule) {

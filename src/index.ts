@@ -220,3 +220,7 @@ export {
 	registerCustomXPathFunction,
 	registerXQueryModule,
 };
+
+var DOMParser = require("dom-parser")
+const documentNode = new DOMParser().parseFromString('<xml/>', 'text/xml');
+console.log(evaluateXPath('3 + 23', documentNode))
