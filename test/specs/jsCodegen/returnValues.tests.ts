@@ -45,6 +45,7 @@ describe('return values', () => {
 			)
 		);
 	});
+
 	it('evaluates to nodes', () => {
 		const results = evaluateXPathWithJsCodegen(
 			'/element()/element()/element()/text()',
@@ -54,6 +55,7 @@ describe('return values', () => {
 		);
 		chai.assert.equal(results.length, 3);
 	});
+
 	it('evaluates to first node', () => {
 		const node: slimdom.Text = evaluateXPathWithJsCodegen(
 			'/element()',

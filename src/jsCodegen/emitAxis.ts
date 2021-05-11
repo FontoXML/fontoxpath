@@ -1,4 +1,4 @@
-import { acceptAst, AstAccepted } from './CompiledJavaScript';
+import { acceptAst, PariallyCompiledAstAccepted } from './JavaScriptCompiledXPath';
 
 const axisAstNodeNames = {
 	ATTRIBUTE: 'attribute',
@@ -25,7 +25,7 @@ function emitChildAxis(
 	predicates: string,
 	nestLevel: number,
 	nestedCode: string
-): AstAccepted {
+): PariallyCompiledAstAccepted {
 	const contextNodesCode = `const ${childAxisContextNodesIdentifier}${nestLevel} = domFacade.getChildNodes(contextItem${
 		nestLevel - 1
 	});`;
@@ -47,7 +47,7 @@ function emitAttributeAxis(
 	predicates: string,
 	nestLevel: number,
 	nestedCode: string
-): AstAccepted {
+): PariallyCompiledAstAccepted {
 	const contextNodesCode = `const ${attributeAxisContextNodesIdentifier}${nestLevel} = domFacade.getAllAttributes(contextItem${
 		nestLevel - 1
 	});`;
@@ -69,7 +69,7 @@ function emitSelfAxis(
 	predicates: string,
 	nestLevel: number,
 	nestedCode: string
-): AstAccepted {
+): PariallyCompiledAstAccepted {
 	const contextNodeCode = `const contextItem${nestLevel} = contextItem${nestLevel - 1};`;
 
 	return emitSingleNodeAxis(test, predicates, nestLevel, nestedCode, contextNodeCode);
@@ -83,7 +83,7 @@ function emitParentAxis(
 	predicates: string,
 	nestLevel: number,
 	nestedCode: string
-): AstAccepted {
+): PariallyCompiledAstAccepted {
 	const contextNodeCode = `
 	const contextItem${nestLevel} = domFacade.getParentNode(contextItem${nestLevel - 1});
 	`;
@@ -102,7 +102,7 @@ function emitMultipleNodeAxis(
 	nestedCode: string,
 	contextItemsIdentifier: string,
 	contextNodeCode: string
-): AstAccepted {
+): PariallyCompiledAstAccepted {
 	const indexReset = nestLevel !== 1 ? `i${nestLevel} = 0;` : ``;
 	const predicateConditionCode = formatConditionCode(predicates);
 
@@ -130,7 +130,7 @@ function emitSingleNodeAxis(
 	nestLevel: number,
 	nestedCode: string,
 	contextNodeCode: string
-): AstAccepted {
+): PariallyCompiledAstAccepted {
 	const testEvaluatationCode = formatConditionCode(test);
 	const predicateEvaluationCode = formatConditionCode(predicates);
 

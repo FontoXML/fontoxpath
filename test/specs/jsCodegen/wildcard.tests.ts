@@ -27,15 +27,11 @@ describe('wildcard', () => {
 	});
 
 	it('selects elements (non-specified namespace)', () => {
-		const results = evaluateXPathWithJsCodegen(
-			'/xml/*',
-			documentNode,
-			null,
-			ReturnType.NODES
-		);
+		const results = evaluateXPathWithJsCodegen('/xml/*', documentNode, null, ReturnType.NODES);
 
 		chai.assert.equal(results.length, 2);
 	});
+
 	it('does not select text elements', () => {
 		chai.assert.isFalse(
 			evaluateXPathWithJsCodegen('/xml/tips/tip/*', documentNode, null, ReturnType.BOOLEAN)

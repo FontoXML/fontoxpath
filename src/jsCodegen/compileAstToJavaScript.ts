@@ -1,18 +1,13 @@
 import astHelper, { IAST } from '../parsing/astHelper';
 import { ReturnType } from '../parsing/convertXDMReturnValue';
-import { CompiledJavaScriptResult, rejectAst } from './CompiledJavaScript';
 import { emitBaseExpression } from './emitBaseExpression';
+import { JavaScriptCompiledXPathResult, rejectAst } from './JavaScriptCompiledXPath';
 
 const emittersByReturnType = {
 	[ReturnType.NODES]: compileAstToReturnNodes,
 	[ReturnType.BOOLEAN]: compileAstToReturnBoolean,
 	[ReturnType.FIRST_NODE]: compileAstToReturnFirstNode,
 };
-
-const runtimeLibImports = `
-const { DONE_TOKEN, ready, isSubtypeOf, determinePredicateTruthValue,
-		adaptSingleJavaScriptValue } = runtimeLibrary;
-`;
 
 // Return all matching nodes.
 function compileAstToReturnNodes(identifier: string): string {
@@ -45,7 +40,10 @@ function compileAstToReturnFirstNode(identifier: string): string {
 }
 
 const compiledXPathIdentifier = 'compiledXPathExpression';
-export default function (xPathAst: IAST, returnType: ReturnType): CompiledJavaScriptResult {
+function compileAstToJavaScript(
+	xPathAst: IAST,
+	returnType: ReturnType
+): JavaScriptCompiledXPathResult {
 	const compileJavaScriptFunction = emittersByReturnType[returnType];
 	if (!compileJavaScriptFunction) {
 		return rejectAst(`Unsupported: the return type '${returnType}'.`);
@@ -72,12 +70,24 @@ export default function (xPathAst: IAST, returnType: ReturnType): CompiledJavaSc
 		? emittedBaseExpression.variables.join('\n')
 		: '';
 
+	const code =
+		emittedVariables +
+		emittedBaseExpression.code +
+		compileJavaScriptFunction(compiledXPathIdentifier);
+
+	const wrappedCode = `
+	return (contextItem, domFacade, runtimeLibrary) => {
+		const { DONE_TOKEN, ready, isSubtypeOf, determinePredicateTruthValue,
+		adaptSingleJavaScriptValue, XPDY0002 } = runtimeLibrary;
+
+		${code}
+	}
+	`;
+
 	return {
 		isAstAccepted: true,
-		code:
-			runtimeLibImports +
-			emittedVariables +
-			emittedBaseExpression.code +
-			compileJavaScriptFunction(compiledXPathIdentifier),
+		code: wrappedCode,
 	};
 }
+
+export default compileAstToJavaScript;

@@ -3,8 +3,8 @@ import * as slimdom from 'slimdom';
 
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
-import evaluateXPathWithJsCodegen from './evaluateXPathWithJsCodegen';
 import { ReturnType } from 'fontoxpath';
+import evaluateXPathWithJsCodegen from './evaluateXPathWithJsCodegen';
 
 describe('predicates', () => {
 	let documentNode: slimdom.Document;
@@ -52,6 +52,7 @@ describe('predicates', () => {
 			)
 		);
 	});
+
 	it('compiles path expressions with multiple predicates', () => {
 		chai.assert.isTrue(
 			evaluateXPathWithJsCodegen(
@@ -70,6 +71,7 @@ describe('predicates', () => {
 			)
 		);
 	});
+
 	it('compiles predicates with a combination of "and" and "or" expressions', () => {
 		const results = evaluateXPathWithJsCodegen(
 			'/xml/element()[child::text() and self::element(title) or self::element(tips)]',

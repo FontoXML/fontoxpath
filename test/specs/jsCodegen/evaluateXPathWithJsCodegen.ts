@@ -1,19 +1,31 @@
-import { compileXPathToJavaScript, executeCompiledXPath, IDomFacade } from '../../../src/index';
-import { ReturnType } from '../../../src/parsing/convertXDMReturnValue';
-import { normalizeEndOfLines } from '../../../src/evaluationUtils/buildEvaluationContext';
+import {
+	compileXPathToJavaScript,
+	executeJavaScriptCompiledXPath,
+	IDomFacade,
+	ReturnType,
+	IReturnTypes,
+} from 'fontoxpath';
 
 function generateKey(query: string, returnType: ReturnType) {
 	return `${query} ${returnType}`;
 }
 
+function normalizeEndOfLines(xpathString: string): string {
+	// Replace all character sequences of 0xD followed by 0xA and all 0xD not followed by 0xA with 0xA.
+	return xpathString.replace(/(\x0D+\x0A)|(\x0D+(?!\x0A))/g, String.fromCharCode(0xa));
+}
+
 const cache = {};
 
-function evaluateXPathWithJsCodegen(
+const evaluateXPathWithJsCodegen = <
+	TNode extends Node,
+	TReturnType extends keyof IReturnTypes<TNode>
+>(
 	query: string,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
 	returnType?: ReturnType
-): any {
+): IReturnTypes<TNode>[TReturnType] => {
 	returnType = returnType || (ReturnType.ANY as any);
 	query = normalizeEndOfLines(query);
 
@@ -22,22 +34,17 @@ function evaluateXPathWithJsCodegen(
 	if (!cachedQuery) {
 		const compiledXPathResult = compileXPathToJavaScript(query, returnType);
 		if (compiledXPathResult.isAstAccepted === true) {
-			const evalFunction = new Function(
-				'contextItem',
-				'domFacade',
-				'runtimeLibrary',
-				compiledXPathResult.code
-			) as () => {};
+			const evalFunction = new Function(compiledXPathResult.code) as any;
 
 			cache[generateKey(query, returnType)] = evalFunction;
 
-			return executeCompiledXPath(evalFunction, contextItem, domFacade);
+			return executeJavaScriptCompiledXPath(evalFunction, contextItem, domFacade);
 		} else {
 			throw new Error(compiledXPathResult.reason);
 		}
 	} else {
-		return executeCompiledXPath(cachedQuery, contextItem, domFacade);
+		return executeJavaScriptCompiledXPath(cachedQuery, contextItem, domFacade);
 	}
-}
+};
 
 export default evaluateXPathWithJsCodegen;

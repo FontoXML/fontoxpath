@@ -3,7 +3,6 @@ import * as slimdom from 'slimdom';
 
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
-import evaluateXPathToBoolean from '../../../src/evaluateXPathToBoolean';
 import { ReturnType } from 'fontoxpath';
 import evaluateXPathWithJsCodegen from './evaluateXPathWithJsCodegen';
 
@@ -26,14 +25,15 @@ describe('operators', () => {
 			)
 		);
 	});
+
 	it('compiles "and" when used as a base expression', () => {
 		const elementNode: slimdom.Node = documentNode.firstChild;
 		chai.assert.isTrue(
-			evaluateXPathToBoolean(
+			evaluateXPathWithJsCodegen(
 				'self::xml and child::element(tips)',
 				elementNode,
 				null,
-				elementNode
+				ReturnType.BOOLEAN
 			)
 		);
 	});

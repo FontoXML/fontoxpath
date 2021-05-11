@@ -3,8 +3,8 @@ import * as slimdom from 'slimdom';
 
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
-import evaluateXPathWithCodegen from './evaluateXPathWithJsCodegen';
 import { ReturnType } from 'fontoxpath';
+import evaluateXPathWithCodegen from './evaluateXPathWithJsCodegen';
 
 describe('axes (js-codegen)', () => {
 	let documentNode: slimdom.Document;
@@ -24,16 +24,19 @@ describe('axes (js-codegen)', () => {
 
 	it('compiles the self axis', () => {
 		const xmlNode: slimdom.Node = documentNode.firstChild;
-		chai.assert.isTrue(
-			evaluateXPathWithCodegen('self::xml', xmlNode, null, ReturnType.BOOLEAN)
+		chai.assert.equal(
+			evaluateXPathWithCodegen('self::xml', xmlNode, null, ReturnType.FIRST_NODE),
+			xmlNode
 		);
 		chai.assert.isFalse(evaluateXPathWithCodegen('self::p', xmlNode, null, ReturnType.BOOLEAN));
 	});
+
 	it('compiles the attribute axis', () => {
 		chai.assert.isTrue(
 			evaluateXPathWithCodegen('/xml/@id', documentNode, null, ReturnType.BOOLEAN)
 		);
 	});
+
 	it('compiles the parent axis', () => {
 		chai.assert.isTrue(
 			evaluateXPathWithCodegen(

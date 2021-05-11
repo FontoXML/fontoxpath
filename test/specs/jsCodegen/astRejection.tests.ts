@@ -2,8 +2,9 @@ import * as chai from 'chai';
 import * as slimdom from 'slimdom';
 
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
-import evaluateXPathWithJsCodegen from './evaluateXPathWithJsCodegen';
+
 import { ReturnType } from 'fontoxpath';
+import evaluateXPathWithJsCodegen from './evaluateXPathWithJsCodegen';
 
 describe("rejecting unsupported AST's (js-codegen)", () => {
 	let documentNode: slimdom.Document;
@@ -60,6 +61,7 @@ describe("rejecting unsupported AST's (js-codegen)", () => {
 			);
 		}, 'Unsupported');
 	});
+
 	it('rejects unsupported reverse axes', () => {
 		chai.assert.throws(() => {
 			evaluateXPathWithJsCodegen(
@@ -82,7 +84,6 @@ describe("rejecting unsupported AST's (js-codegen)", () => {
 				'/xml[preceding::element(xml)]',
 				documentNode,
 				null,
-
 				ReturnType.BOOLEAN
 			);
 		}, 'Unsupported');
@@ -95,6 +96,7 @@ describe("rejecting unsupported AST's (js-codegen)", () => {
 			);
 		}, 'Unsupported');
 	});
+
 	it('rejects wildcard with uri', () => {
 		chai.assert.throws(
 			() =>
@@ -107,6 +109,7 @@ describe("rejecting unsupported AST's (js-codegen)", () => {
 			'Unsupported'
 		);
 	});
+
 	it('rejects unsupported tests', () => {
 		chai.assert.throws(
 			() =>
@@ -119,6 +122,7 @@ describe("rejecting unsupported AST's (js-codegen)", () => {
 			'Unsupported'
 		);
 	});
+
 	it('rejects unsupported tests combined with the "or" operator', () => {
 		chai.assert.throws(
 			() =>
@@ -131,6 +135,7 @@ describe("rejecting unsupported AST's (js-codegen)", () => {
 			'Unsupported'
 		);
 	});
+
 	it('rejects unsupported tests combined with the "and" operator', () => {
 		chai.assert.throws(
 			() =>
@@ -143,6 +148,7 @@ describe("rejecting unsupported AST's (js-codegen)", () => {
 			'Unsupported'
 		);
 	});
+
 	it('rejects unsupported base expression (functionCallExpr)', () => {
 		chai.assert.throws(
 			() =>
@@ -155,19 +161,7 @@ describe("rejecting unsupported AST's (js-codegen)", () => {
 			'Unsupported'
 		);
 	});
-	it('rejects name tests with namespace URI', () => {
-		chai.assert.throws(
-			() =>
-				evaluateXPathWithJsCodegen(
-					'/Q{https://example.com}xml',
-					documentNode,
-					null,
-					ReturnType.BOOLEAN
-				),
 
-			'Unsupported'
-		);
-	});
 	it('rejects library modules', () => {
 		chai.assert.throws(() => {
 			evaluateXPathWithJsCodegen(
@@ -182,6 +176,6 @@ declare %public function test:hello($a) {
 				null,
 				ReturnType.BOOLEAN
 			);
-		});
+		}, 'Unsupported');
 	});
 });

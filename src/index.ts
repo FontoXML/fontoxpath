@@ -17,7 +17,12 @@ import evaluateXPathToString from './evaluateXPathToString';
 import evaluateXPathToStrings from './evaluateXPathToStrings';
 import executePendingUpdateList from './executePendingUpdateList';
 import { getBucketsForNode } from './getBuckets';
-import executeCompiledXPath from './jsCodegen/executeCompiledXPath';
+import executeJavaScriptCompiledXPath from './jsCodegen/executeJavaScriptCompiledXPath';
+import {
+	AstAccepted,
+	AstRejected,
+	JavaScriptCompiledXPathResult,
+} from './jsCodegen/JavaScriptCompiledXPath';
 import INodesFactory from './nodesFactory/INodesFactory';
 import ISimpleNodesFactory from './nodesFactory/ISimpleNodesFactory';
 import parseScript from './parseScript';
@@ -199,8 +204,6 @@ export {
 	ValidValue,
 	XPathPerformanceMeasurement,
 	compareSpecificity,
-	compileXPathToJavaScript,
-	executeCompiledXPath,
 	domFacade,
 	evaluateUpdatingExpression,
 	evaluateUpdatingExpressionSync,
@@ -223,4 +226,9 @@ export {
 	profiler,
 	registerCustomXPathFunction,
 	registerXQueryModule,
+	compileXPathToJavaScript,
+	executeJavaScriptCompiledXPath,
+	JavaScriptCompiledXPathResult,
+	AstAccepted,
+	AstRejected,
 };
