@@ -1,10 +1,10 @@
 import AtomicValue from '../AtomicValue';
 import createAtomicValue from '../createAtomicValue';
-import { SequenceMultiplicity, ValueType } from '../Value';
+import { ValueType } from '../Value';
 import DateTime from '../valueTypes/DateTime';
 import CastResult from './CastResult';
 
-const createDateTimeValue = (value: any): AtomicValue =>
+const createDateTimeValue = (value: DateTime): AtomicValue =>
 	createAtomicValue(value, ValueType.XSDATETIME);
 
 export default function castToDateTime(

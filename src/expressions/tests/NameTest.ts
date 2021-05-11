@@ -18,7 +18,7 @@ class NameTest extends TestAbstractExpression {
 		options: { kind: number | null } = { kind: null }
 	) {
 		const { prefix, namespaceURI, localName } = name;
-		const specificity = {};
+		const specificity: { [s: string]: number } = {};
 
 		if (localName !== '*') {
 			specificity[Specificity.NODENAME_KIND] = 1;

@@ -1,9 +1,9 @@
 import createAtomicValue from '../createAtomicValue';
-import { SequenceMultiplicity, ValueType } from '../Value';
+import { ValueType } from '../Value';
 import Duration from '../valueTypes/Duration';
 import CastResult from './CastResult';
 
-const createDurationValue = (value) => createAtomicValue(value, ValueType.XSDURATION);
+const createDurationValue = (value: Duration) => createAtomicValue(value, ValueType.XSDURATION);
 
 export default function castToDuration(
 	instanceOf: (typeName: ValueType) => boolean

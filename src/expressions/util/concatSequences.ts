@@ -1,10 +1,11 @@
 import ISequence from '../dataTypes/ISequence';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { DONE_TOKEN, IterationHint } from './iterators';
+import Value from '../dataTypes/Value';
+import { DONE_TOKEN, IIterator, IterationHint } from './iterators';
 
 export default function concatSequences(sequences: ISequence[]): ISequence {
 	let i = 0;
-	let iterator = null;
+	let iterator: IIterator<Value> = null;
 	let isFirst = true;
 	return sequenceFactory.create({
 		next: (hint: IterationHint) => {

@@ -1,5 +1,7 @@
 import ArrayValue from '../dataTypes/ArrayValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
 import Expression from '../Expression';
 import Specificity from '../Specificity';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
@@ -22,7 +24,7 @@ class CurlyArrayConstructor extends Expression {
 		this._members = members;
 	}
 
-	public evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
 		if (this._members.length === 0) {
 			return sequenceFactory.singleton(new ArrayValue([]));
 		}

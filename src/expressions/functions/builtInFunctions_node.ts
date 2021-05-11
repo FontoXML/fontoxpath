@@ -1,10 +1,12 @@
 import {
 	AttributeNodePointer,
 	ChildNodePointer,
+	CommentNodePointer,
 	ElementNodePointer,
 	NodePointer,
 	ParentNodePointer,
 	ProcessingInstructionNodePointer,
+	TextNodePointer,
 } from '../../domClone/Pointer';
 import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import DomFacade from '../../domFacade/DomFacade';
@@ -69,15 +71,9 @@ const fnNodeName: FunctionDefinitionType = (
 				return sequenceFactory.singleton(
 					createAtomicValue(
 						new QName(
-							domFacade.getPrefix(
-								pointer as AttributeNodePointer | ElementNodePointer
-							),
-							domFacade.getNamespaceURI(
-								pointer as AttributeNodePointer | ElementNodePointer
-							),
-							domFacade.getLocalName(
-								pointer as AttributeNodePointer | ElementNodePointer
-							)
+							domFacade.getPrefix(attrOrElPointer),
+							domFacade.getNamespaceURI(attrOrElPointer),
+							domFacade.getLocalName(attrOrElPointer)
 						),
 						ValueType.XSQNAME
 					)
@@ -207,28 +203,42 @@ const fnPath: FunctionDefinitionType = (
 			)
 		) {
 			switch (domFacade.getNodeType(ancestor)) {
-				case NODE_TYPES.ELEMENT_NODE:
+				case NODE_TYPES.ELEMENT_NODE: {
+					const ancestorElement = ancestor as ElementNodePointer;
 					result = `/Q{${
-						domFacade.getNamespaceURI(ancestor) || ''
-					}}${domFacade.getLocalName(ancestor)}[${getChildIndex(ancestor)}]${result}`;
+						domFacade.getNamespaceURI(ancestorElement) || ''
+					}}${domFacade.getLocalName(ancestorElement)}[${getChildIndex(
+						ancestorElement
+					)}]${result}`;
 					break;
-				case NODE_TYPES.ATTRIBUTE_NODE:
-					const attributeNameSpace = domFacade.getNamespaceURI(ancestor)
-						? `Q{${domFacade.getNamespaceURI(ancestor)}}`
+				}
+				case NODE_TYPES.ATTRIBUTE_NODE: {
+					const ancestorAttributeNode = ancestor as AttributeNodePointer;
+					const attributeNameSpace = domFacade.getNamespaceURI(ancestorAttributeNode)
+						? `Q{${domFacade.getNamespaceURI(ancestorAttributeNode)}}`
 						: '';
-					result = `/@${attributeNameSpace}${domFacade.getLocalName(ancestor)}${result}`;
+					result = `/@${attributeNameSpace}${domFacade.getLocalName(
+						ancestorAttributeNode
+					)}${result}`;
 					break;
-				case NODE_TYPES.TEXT_NODE:
-					result = `/text()[${getChildIndex(ancestor)}]${result}`;
+				}
+				case NODE_TYPES.TEXT_NODE: {
+					const ancestorTextNode = ancestor as TextNodePointer;
+					result = `/text()[${getChildIndex(ancestorTextNode)}]${result}`;
 					break;
-				case NODE_TYPES.PROCESSING_INSTRUCTION_NODE:
+				}
+				case NODE_TYPES.PROCESSING_INSTRUCTION_NODE: {
+					const ancestorPI = ancestor as ProcessingInstructionNodePointer;
 					result = `/processing-instruction(${domFacade.getTarget(
-						ancestor
-					)})[${getChildIndex(ancestor)}]${result}`;
+						ancestorPI
+					)})[${getChildIndex(ancestorPI)}]${result}`;
 					break;
-				case NODE_TYPES.COMMENT_NODE:
-					result = `/comment()[${getChildIndex(ancestor)}]${result}`;
+				}
+				case NODE_TYPES.COMMENT_NODE: {
+					const ancestorComment = ancestor as CommentNodePointer;
+					result = `/comment()[${getChildIndex(ancestorComment)}]${result}`;
 					break;
+				}
 			}
 		}
 		if (domFacade.getNodeType(ancestor) === NODE_TYPES.DOCUMENT_NODE) {

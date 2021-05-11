@@ -67,7 +67,7 @@ export default abstract class PossiblyUpdatingExpression extends UpdatingExpress
 		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters
 	): IIterator<UpdatingExpressionResult> {
-		let updateList = [];
+		let updateList: IPendingUpdate[] = [];
 
 		const sequence = this.performFunctionalEvaluation(
 			dynamicContext,

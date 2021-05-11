@@ -1,6 +1,7 @@
 import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import createPointerValue from '../dataTypes/createPointerValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import Value from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
@@ -27,7 +28,7 @@ class ChildAxis extends Expression {
 		const domFacade = executionParameters.domFacade;
 		const contextNode = contextItem.value;
 		const nodeType = domFacade.getNodeType(contextNode);
-		const nodeValues = [];
+		const nodeValues: Value[] = [];
 		if (nodeType === NODE_TYPES.ELEMENT_NODE || nodeType === NODE_TYPES.DOCUMENT_NODE) {
 			domFacade
 				.getChildNodePointers(contextNode, this._childExpression.getBucket())
