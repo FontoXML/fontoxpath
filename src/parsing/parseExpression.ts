@@ -1,3 +1,4 @@
+import annotateAst from './annotateAST';
 import { IAST } from './astHelper';
 import { parse, SyntaxError } from './xPathParser';
 
@@ -37,6 +38,9 @@ export default function parseExpression(
 				storeParseResultInCache(xPathString, language, ast);
 			}
 		}
+
+		annotateAst(ast);
+
 		return ast;
 	} catch (error) {
 		if (error instanceof SyntaxError) {
