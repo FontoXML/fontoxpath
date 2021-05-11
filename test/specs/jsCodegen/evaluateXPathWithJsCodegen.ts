@@ -1,9 +1,9 @@
 import {
+	compileXPathToJavaScript,
+	executeJavaScriptCompiledXPath,
 	IDomFacade,
 	IReturnTypes,
 	ReturnType,
-	compileXPathToJavaScript,
-	executeJavaScriptCompiledXPath,
 } from '../../../src/index';
 
 function generateKey(query: string, returnType: ReturnType) {
