@@ -8,14 +8,12 @@ import Specificity from '../Specificity';
 
 class Literal extends Expression {
 	private _createValueSequence: () => ISequence;
-	private _type: ValueType;
 
 	constructor(jsValue: string, type: ValueType) {
 		super(new Specificity({}), [], {
 			canBeStaticallyEvaluated: true,
 			resultOrder: RESULT_ORDERINGS.SORTED,
 		});
-		this._type = type;
 
 		let value: AtomicValue;
 		switch (type) {
@@ -36,7 +34,7 @@ class Literal extends Expression {
 		this._createValueSequence = () => sequenceFactory.singleton(value);
 	}
 
-	public evaluate(_dynamicContext) {
+	public evaluate() {
 		return this._createValueSequence();
 	}
 }

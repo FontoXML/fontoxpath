@@ -23,7 +23,6 @@ import {
 	UntypedExternalValue,
 } from '../types/createTypedValueFactory';
 import { LexicalQualifiedName, Options, ResolvedQualifiedName } from '../types/Options';
-import { Node } from '../types/Types';
 
 const generateGlobalVariableBindingName = (variableName: string) => `Q{}${variableName}[0]`;
 
@@ -42,7 +41,7 @@ function createDefaultNamespaceResolver(contextItem: any): (s: string) => string
 	if (!contextItem || typeof contextItem !== 'object' || !('lookupNamespaceURI' in contextItem)) {
 		return (_prefix) => null;
 	}
-	return (prefix) => (contextItem as Node)['lookupNamespaceURI'](prefix || null);
+	return (prefix) => contextItem['lookupNamespaceURI'](prefix || null);
 }
 
 function normalizeEndOfLines(xpathString: string) {
@@ -170,7 +169,7 @@ export default function buildEvaluationContext(
 		Object.create(null) as { [s: string]: () => ISequence }
 	);
 
-	let dynamicContext;
+	let dynamicContext: DynamicContext;
 	for (const binding of expressionAndStaticContext.staticContext.getVariableBindings()) {
 		if (!variableBindings[binding]) {
 			variableBindings[binding] = () =>

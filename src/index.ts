@@ -116,7 +116,7 @@ function compareSpecificity(xpathStringA: string, xpathStringB: string): -1 | 0 
 const domFacade = new ExternalDomFacade() as IDomFacade;
 
 // This declaration is needed, as we don't depend anymore on lib.dom.
-declare var fontoxpathGlobal;
+declare var fontoxpathGlobal: { [s: string]: any };
 
 /* istanbul ignore next */
 if (typeof fontoxpathGlobal !== 'undefined') {

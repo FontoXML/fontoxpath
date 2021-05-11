@@ -3,11 +3,12 @@ import { ValueType } from '../Value';
 import DayTimeDuration from '../valueTypes/DayTimeDuration';
 import CastResult from './CastResult';
 
-const createDayTimeDurationValue = (value) => createAtomicValue(value, ValueType.XSDAYTIMEDURATION);
+const createDayTimeDurationValue = (value: DayTimeDuration) =>
+	createAtomicValue(value, ValueType.XSDAYTIMEDURATION);
 
 export default function castToDayTimeDuration(
 	instanceOf: (typeName: ValueType) => boolean
-): (value) => CastResult {
+): (value: any) => CastResult {
 	if (instanceOf(ValueType.XSDURATION) && !instanceOf(ValueType.XSYEARMONTHDURATION)) {
 		return (value) => ({
 			successful: true,

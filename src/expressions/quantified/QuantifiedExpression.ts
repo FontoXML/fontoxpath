@@ -1,5 +1,8 @@
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
 import Expression from '../Expression';
+import StaticContext from '../StaticContext';
 
 type InClause = {
 	name: { localName: string; namespaceURI: string; prefix: string };
@@ -9,7 +12,7 @@ type InClause = {
 class QuantifiedExpression extends Expression {
 	public _inClauseExpressions: Expression[];
 	public _inClauseNames: { localName: string; namespaceURI: string; prefix: string }[];
-	public _inClauseVariableNames: any;
+	public _inClauseVariableNames: string[];
 	public _quantifier: string;
 	public _satisfiesExpr: Expression;
 
@@ -33,20 +36,18 @@ class QuantifiedExpression extends Expression {
 		this._inClauseVariableNames = null;
 	}
 
-	public evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
 		let scopingContext = dynamicContext;
-		const evaluatedInClauses = this._inClauseVariableNames.map(
-			(variableBinding: any, i: string | number) => {
-				const allValuesInInClause = this._inClauseExpressions[i]
-					.evaluateMaybeStatically(scopingContext, executionParameters)
-					.getAllValues();
-				scopingContext = dynamicContext.scopeWithVariableBindings({
-					[variableBinding]: () => sequenceFactory.create(allValuesInInClause),
-				});
+		const evaluatedInClauses = this._inClauseVariableNames.map((variableBinding, i: number) => {
+			const allValuesInInClause = this._inClauseExpressions[i]
+				.evaluateMaybeStatically(scopingContext, executionParameters)
+				.getAllValues();
+			scopingContext = dynamicContext.scopeWithVariableBindings({
+				[variableBinding]: () => sequenceFactory.create(allValuesInInClause),
+			});
 
-				return allValuesInInClause;
-			}
-		);
+			return allValuesInInClause;
+		});
 
 		// If any item of evaluatedInClauses is empty stop
 		if (
@@ -102,7 +103,7 @@ class QuantifiedExpression extends Expression {
 			: sequenceFactory.singletonFalseSequence();
 	}
 
-	public performStaticEvaluation(staticContext) {
+	public performStaticEvaluation(staticContext: StaticContext) {
 		this._inClauseVariableNames = [];
 		for (let i = 0, l = this._inClauseNames.length; i < l; ++i) {
 			const expr = this._inClauseExpressions[i];

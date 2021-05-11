@@ -3,7 +3,9 @@ import castToType from '../../dataTypes/castToType';
 import createAtomicValue from '../../dataTypes/createAtomicValue';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import { SequenceMultiplicity, ValueType } from '../../dataTypes/Value';
+import { ValueType } from '../../dataTypes/Value';
+import DynamicContext from '../../DynamicContext';
+import ExecutionParameters from '../../ExecutionParameters';
 import Expression from '../../Expression';
 
 class Unary extends Expression {
@@ -22,7 +24,7 @@ class Unary extends Expression {
 		this._kind = kind;
 	}
 
-	public evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
 		return atomize(
 			this._valueExpr.evaluateMaybeStatically(dynamicContext, executionParameters),
 			executionParameters

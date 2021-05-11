@@ -60,11 +60,12 @@ function adaptSingleJavaScriptValue(value: ValidValue, domFacade: DomFacade): Va
 				);
 			}
 			// Make it a map
+			const mapValue = value as { [s: string]: ValidValue };
 			return new MapValue(
-				Object.keys(value)
-					.filter((key) => value[key] !== undefined)
+				Object.keys(mapValue)
+					.filter((key) => mapValue[key] !== undefined)
 					.map((key) => {
-						const adaptedValue = adaptSingleJavaScriptValue(value[key], domFacade);
+						const adaptedValue = adaptSingleJavaScriptValue(mapValue[key], domFacade);
 						const adaptedSequence =
 							adaptedValue === null
 								? sequenceFactory.empty()

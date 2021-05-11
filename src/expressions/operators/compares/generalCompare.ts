@@ -2,11 +2,11 @@ import castToType from '../../dataTypes/castToType';
 import ISequence from '../../dataTypes/ISequence';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import { SequenceMultiplicity, ValueType } from '../../dataTypes/Value';
+import { ValueType } from '../../dataTypes/Value';
 import DynamicContext from '../../DynamicContext';
 import valueCompare from './valueCompare';
 
-const OPERATOR_TRANSLATION = {
+const OPERATOR_TRANSLATION: { [s: string]: string } = {
 	['equalOp']: 'eqOp',
 	['notEqualOp']: 'neOp',
 	['lessThanOrEqualOp']: 'leOp',
