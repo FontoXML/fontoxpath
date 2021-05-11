@@ -2,6 +2,7 @@ import DomFacade from '../domFacade/DomFacade';
 import ExternalDomFacade from '../domFacade/ExternalDomFacade';
 import IDomFacade from '../domFacade/IDomFacade';
 import { adaptJavaScriptValueToArrayOfXPathValues } from '../expressions/adaptJavaScriptValueToXPathValue';
+import { SequenceMultiplicity, ValueType } from '../expressions/dataTypes/Value';
 import { IReturnTypes } from '../parsing/convertXDMReturnValue';
 import * as runtimeLibrary from './runtimeLibrary';
 
@@ -30,11 +31,10 @@ const executeJavaScriptCompiledXPath = <
 		!domFacade ? new ExternalDomFacade() : domFacade
 	);
 
-	const contextArray = adaptJavaScriptValueToArrayOfXPathValues(
-		wrappedDomFacade,
-		contextItem,
-		'item()?'
-	);
+	const contextArray = adaptJavaScriptValueToArrayOfXPathValues(wrappedDomFacade, contextItem, {
+		type: ValueType.ITEM,
+		mult: SequenceMultiplicity.ZERO_OR_ONE,
+	});
 
 	contextItem = contextArray[0];
 

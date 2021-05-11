@@ -78,7 +78,7 @@ function compileAstToJavaScript(
 	const wrappedCode = `
 	return (contextItem, domFacade, runtimeLibrary) => {
 		const { DONE_TOKEN, ready, isSubtypeOf, determinePredicateTruthValue,
-		adaptSingleJavaScriptValue, XPDY0002 } = runtimeLibrary;
+		adaptSingleJavaScriptValue, XPDY0002, ValueType } = runtimeLibrary;
 
 		${code}
 	}

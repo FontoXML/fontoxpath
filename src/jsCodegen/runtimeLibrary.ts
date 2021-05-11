@@ -1,7 +1,7 @@
 import { adaptSingleJavaScriptValue } from '../expressions/adaptJavaScriptValueToXPathValue';
 import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
 import getEffectiveBooleanValue from '../expressions/dataTypes/Sequences/getEffectiveBooleanValue';
-import Value from '../expressions/dataTypes/Value';
+import Value, { ValueType } from '../expressions/dataTypes/Value';
 import { DONE_TOKEN, IterationResult, ready } from '../expressions/util/iterators';
 import { XPDY0002 } from '../expressions/XPathErrors';
 
@@ -25,4 +25,5 @@ export {
 	getEffectiveBooleanValue,
 	adaptSingleJavaScriptValue,
 	XPDY0002,
+	ValueType,
 };

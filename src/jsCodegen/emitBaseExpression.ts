@@ -32,7 +32,7 @@ function emitPredicates(predicatesAst: IAST, nestLevel: number): PartialCompilat
 
 		// Prepare condition used to determine if an axis should
 		// return a node.
-		const predicateFunctionCall = `determinePredicateTruthValue(${predicateFunctionIdentifier}({type: 'node()', value: {node: contextItem${nestLevel}}}))`;
+		const predicateFunctionCall = `determinePredicateTruthValue(${predicateFunctionIdentifier}({type: ValueType.NODE, value: {node: contextItem${nestLevel}}}))`;
 		if (i === 0) {
 			evaluatePredicateConditionCode += predicateFunctionCall;
 		} else {
@@ -138,7 +138,7 @@ function emitPathExpression(ast: IAST, identifier: string): PartialCompilationRe
 			throw XPDY0002("Context is needed to evaluate a given path expression.");
 		}
 
-		if (!isSubtypeOf(contextItem.type, "node()")) {
+		if (!isSubtypeOf(contextItem.type, ValueType.NODE)) {
 			throw new Error("Context item must be subtype of node().");
 		}
 		${emittedSteps.variables.join('\n')}
