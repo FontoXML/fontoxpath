@@ -1,10 +1,10 @@
 import {
+	IDomFacade,
+	IReturnTypes,
+	ReturnType,
 	compileXPathToJavaScript,
 	executeJavaScriptCompiledXPath,
-	IDomFacade,
-	ReturnType,
-	IReturnTypes,
-} from 'fontoxpath';
+} from '../../../src/index';
 
 function generateKey(query: string, returnType: ReturnType) {
 	return `${query} ${returnType}`;
@@ -34,6 +34,7 @@ const evaluateXPathWithJsCodegen = <
 	if (!cachedQuery) {
 		const compiledXPathResult = compileXPathToJavaScript(query, returnType);
 		if (compiledXPathResult.isAstAccepted === true) {
+			// tslint:disable-next-line
 			const evalFunction = new Function(compiledXPathResult.code) as any;
 
 			cache[generateKey(query, returnType)] = evalFunction;

@@ -2,8 +2,8 @@ import benchmarkRunner from '@fontoxml/fonto-benchmark-runner';
 import { Document, Node } from 'slimdom';
 import * as slimdomSaxParser from 'slimdom-sax-parser';
 import { evaluateXPathToBoolean, evaluateXPathToNodes, ReturnType } from '../src/index';
-import evaluateXPathWithJsCodegen from '../test/specs/jsCodegen/evaluateXPathWithJsCodegen';
 import jsonMlMapper from '../test/helpers/jsonMlMapper';
+import evaluateXPathWithJsCodegen from '../test/specs/jsCodegen/evaluateXPathWithJsCodegen';
 import loadFile from './utils/loadFile';
 
 // Comparisons between the js-codegen and expression backend.

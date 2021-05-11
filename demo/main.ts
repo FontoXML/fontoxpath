@@ -1,5 +1,4 @@
 import * as fontoxpath from '../src/index';
-import { compileXPathToJavaScript, ReturnType, executeJavaScriptCompiledXPath } from '../src/index';
 
 const allowXQuery = document.getElementById('allowXQuery') as HTMLInputElement;
 const allowXQueryUpdateFacility = document.getElementById(
@@ -200,11 +199,15 @@ async function runNormalXPath(script: string, asXQuery: boolean) {
 }
 
 async function runXPathWithJsCodegen(xpath: string) {
-	const compiledXPathResult = compileXPathToJavaScript(xpath, ReturnType.NODES);
+	const compiledXPathResult = fontoxpath.compileXPathToJavaScript(
+		xpath,
+		fontoxpath.ReturnType.NODES
+	);
 
 	if (compiledXPathResult.isAstAccepted === true) {
+		// tslint:disable-next-line
 		const evalFunction = new Function(compiledXPathResult.code) as () => any;
-		const result = executeJavaScriptCompiledXPath(evalFunction, xmlDoc);
+		const result = fontoxpath.executeJavaScriptCompiledXPath(evalFunction, xmlDoc);
 		resultText.innerText = JSON.stringify(result, jsonXmlReplacer, '  ');
 	} else {
 		resultText.innerText = JSON.stringify(compiledXPathResult.reason, jsonXmlReplacer, '  ');
