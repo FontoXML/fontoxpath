@@ -3,6 +3,7 @@ import QName from '../expressions/dataTypes/valueTypes/QName';
 import astHelper, { IAST } from '../parsing/astHelper';
 import escapeJavaScriptString from './escapeJavaScriptString';
 import { acceptAst, PartialCompilationResult, rejectAst } from './JavaScriptCompiledXPath';
+import { CompilationOptions } from './CompilationOptions';
 
 const testAstNodeNames = {
 	TEXT_TEST: 'textTest',
@@ -28,7 +29,8 @@ function emitTextTest(_ast: IAST, identifier: string): PartialCompilationResult 
 
 function emitNameTestFromQName(
 	identifier: string,
-	{ prefix, namespaceURI, localName }: QName
+	{ prefix, namespaceURI, localName }: QName,
+	compilationOptions: CompilationOptions
 ): PartialCompilationResult {
 	const isElementOrAttributeCode = `${identifier}.nodeType && (${identifier}.nodeType === ${NODE_TYPES.ELEMENT_NODE} || ${identifier}.nodeType === ${NODE_TYPES.ATTRIBUTE_NODE})`;
 
@@ -71,41 +73,58 @@ function emitNameTestFromQName(
 
 // element() and element(*) match any single element node, regardless of its name or type annotation.
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-ElementTest
-function emitElementTest(ast: IAST, identifier: string): PartialCompilationResult {
+function emitElementTest(
+	ast: IAST,
+	identifier: string,
+	compilationOptions: CompilationOptions
+): PartialCompilationResult {
 	const elementName = astHelper.getFirstChild(ast, 'elementName');
 	const star = elementName && astHelper.getFirstChild(elementName, 'star');
 	const isElementCode = `${identifier}.nodeType === ${NODE_TYPES.ELEMENT_NODE}`;
+
 	if (elementName === null || star) {
 		return acceptAst(isElementCode);
 	}
 
 	const qName = astHelper.getQName(astHelper.getFirstChild(elementName, 'QName'));
 
-	return emitNameTestFromQName(identifier, qName);
+	return emitNameTestFromQName(identifier, qName, compilationOptions);
 }
 
 // A node test that consists only of an EQName or a Wildcard is called a name test.
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-NameTest
-function emitNameTest(ast: IAST, identifier: string) {
-	return emitNameTestFromQName(identifier, astHelper.getQName(ast));
+function emitNameTest(ast: IAST, identifier: string, compilationOptions: CompilationOptions) {
+	return emitNameTestFromQName(identifier, astHelper.getQName(ast), compilationOptions);
 }
 
 // select all element children of the context node
 // for example: child::*.
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-Wildcard
-function emitWildcard(ast: IAST, identifier: string): PartialCompilationResult {
+function emitWildcard(
+	ast: IAST,
+	identifier: string,
+	compilationOptions: CompilationOptions
+): PartialCompilationResult {
 	if (!astHelper.getFirstChild(ast, 'star')) {
-		return emitNameTestFromQName(identifier, {
-			localName: '*',
-			namespaceURI: null,
-			prefix: '*',
-		});
+		return emitNameTestFromQName(
+			identifier,
+			{
+				localName: '*',
+				namespaceURI: null,
+				prefix: '*',
+			},
+			compilationOptions
+		);
 	}
 
 	return rejectAst('Unsupported: the given wildcard.');
 }
 
-export default function emitTest(ast: IAST, identifier: string): PartialCompilationResult {
+export default function emitTest(
+	ast: IAST,
+	identifier: string,
+	compilationOptions: CompilationOptions
+): PartialCompilationResult {
 	const test = ast[0];
 	const emitTestFunction = testEmittersByAstNodeName[test];
 
@@ -113,5 +132,5 @@ export default function emitTest(ast: IAST, identifier: string): PartialCompilat
 		return rejectAst(`Unsupported: the test '${test}'.`);
 	}
 
-	return emitTestFunction(ast, identifier);
+	return emitTestFunction(ast, identifier, compilationOptions);
 }

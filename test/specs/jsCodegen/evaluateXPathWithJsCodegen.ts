@@ -4,6 +4,8 @@ import {
 	IDomFacade,
 	IReturnTypes,
 	ReturnType,
+	// Relative import is used so this module can be resolved by backend
+	// benchmarks.
 } from '../../../src/index';
 
 function generateKey(query: string, returnType: ReturnType) {

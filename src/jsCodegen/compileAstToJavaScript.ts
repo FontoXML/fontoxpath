@@ -2,6 +2,8 @@ import astHelper, { IAST } from '../parsing/astHelper';
 import { ReturnType } from '../parsing/convertXDMReturnValue';
 import { emitBaseExpression } from './emitBaseExpression';
 import { JavaScriptCompiledXPathResult, rejectAst } from './JavaScriptCompiledXPath';
+import { NamespaceResolver } from 'src';
+import { CompilationOptions } from './CompilationOptions';
 
 const emittersByReturnType = {
 	[ReturnType.NODES]: compileAstToReturnNodes,
@@ -42,7 +44,8 @@ function compileAstToReturnFirstNode(identifier: string): string {
 const compiledXPathIdentifier = 'compiledXPathExpression';
 function compileAstToJavaScript(
 	xPathAst: IAST,
-	returnType: ReturnType
+	returnType: ReturnType,
+	compilationOptions: CompilationOptions
 ): JavaScriptCompiledXPathResult {
 	const compileJavaScriptFunction = emittersByReturnType[returnType];
 	if (!compileJavaScriptFunction) {
@@ -61,7 +64,7 @@ function compileAstToJavaScript(
 		return rejectAst(`Unsupported: XQuery.`);
 	}
 
-	const emittedBaseExpression = emitBaseExpression(queryBodyContents, compiledXPathIdentifier);
+	const emittedBaseExpression = emitBaseExpression(queryBodyContents, compiledXPathIdentifier, compilationOptions);
 	if (emittedBaseExpression.isAstAccepted === false) {
 		return emittedBaseExpression;
 	}

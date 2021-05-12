@@ -26,7 +26,7 @@ function compileXPathToJavaScript(
 
 	const expressionString = normalizeEndOfLines(selector);
 
-	const compilationOptions = {
+	const parserOptions = {
 		allowUpdating: options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE,
 		allowXQuery:
 			options['language'] === Language.XQUERY_3_1_LANGUAGE ||
@@ -34,7 +34,7 @@ function compileXPathToJavaScript(
 		debug: !!options['debug'],
 	};
 
-	const ast = parseExpression(expressionString, compilationOptions);
+	const ast = parseExpression(expressionString, parserOptions);
 
 	return compileAstToJavaScript(ast, returnType);
 }

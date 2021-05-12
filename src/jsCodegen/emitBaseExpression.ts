@@ -1,5 +1,6 @@
 import { ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
+import { CompilationOptions } from './CompilationOptions';
 import { axisEmittersByAstNodeName } from './emitAxis';
 import emitTest, { testAstNodes } from './emitTest';
 import { acceptAst, PartialCompilationResult, rejectAst } from './JavaScriptCompiledXPath';
@@ -18,7 +19,7 @@ const baseExpressionEmittersByAstNodeName = {
 	[baseExpressionAstNodeNames.OR_OP]: emitOrExpression,
 };
 
-function emitPredicates(predicatesAst: IAST, nestLevel: number): PartialCompilationResult {
+function emitPredicates(predicatesAst: IAST, nestLevel: number, compilationOptions: CompilationOptions): PartialCompilationResult {
 	let evaluatePredicateConditionCode = '';
 	const functionDeclarations = [];
 
@@ -40,7 +41,7 @@ function emitPredicates(predicatesAst: IAST, nestLevel: number): PartialCompilat
 			evaluatePredicateConditionCode = `${evaluatePredicateConditionCode} && ${predicateFunctionCall}`;
 		}
 
-		const compiledPredicate = emitBaseExpression(predicate, predicateFunctionIdentifier);
+		const compiledPredicate = emitBaseExpression(predicate, predicateFunctionIdentifier, compilationOptions);
 		if (compiledPredicate.isAstAccepted) {
 			functionDeclarations.push(compiledPredicate.code);
 		} else {
@@ -50,7 +51,7 @@ function emitPredicates(predicatesAst: IAST, nestLevel: number): PartialCompilat
 	return acceptAst(evaluatePredicateConditionCode, functionDeclarations);
 }
 
-function emitSteps(stepsAst: IAST[]): PartialCompilationResult {
+function emitSteps(stepsAst: IAST[], compilationOptions: CompilationOptions): PartialCompilationResult {
 	if (stepsAst.length === 0) {
 		return acceptAst(
 			`
@@ -69,7 +70,7 @@ function emitSteps(stepsAst: IAST[]): PartialCompilationResult {
 		const nestLevel = i + 1;
 
 		const predicatesAst = astHelper.getFirstChild(step, 'predicates');
-		const emittedPredicates = emitPredicates(predicatesAst, nestLevel);
+		const emittedPredicates = emitPredicates(predicatesAst, nestLevel, compilationOptions);
 		if (!emittedPredicates.isAstAccepted) {
 			return emittedPredicates;
 		}
@@ -90,7 +91,7 @@ function emitSteps(stepsAst: IAST[]): PartialCompilationResult {
 					? `i${nestLevel}++;\nreturn ready(adaptSingleJavaScriptValue(contextItem${nestLevel}, domFacade));`
 					: `${emittedStepsCode}\ni${nestLevel}++;`;
 
-			const emittedTest = emitTest(testAst, `contextItem${nestLevel}`);
+			const emittedTest = emitTest(testAst, `contextItem${nestLevel}`, compilationOptions);
 			if (!emittedTest.isAstAccepted) {
 				return emittedTest;
 			}
@@ -127,8 +128,8 @@ function emitSteps(stepsAst: IAST[]): PartialCompilationResult {
 // A path expression can be used to locate nodes within trees. A path expression
 // consists of a series of one or more steps.
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-PathExpr
-function emitPathExpression(ast: IAST, identifier: string): PartialCompilationResult {
-	const emittedSteps = emitSteps(astHelper.getChildren(ast, 'stepExpr'));
+function emitPathExpression(ast: IAST, identifier: string, compilationOptions: CompilationOptions): PartialCompilationResult {
+	const emittedSteps = emitSteps(astHelper.getChildren(ast, 'stepExpr'), compilationOptions);
 	if (!emittedSteps.isAstAccepted) {
 		return emittedSteps;
 	}
@@ -163,7 +164,8 @@ const secondOperandIdentifier = 'secondOperand';
 function emitCompiledOperand(
 	ast: IAST,
 	identifier: string,
-	operandKind: string
+	operandKind: string,
+	compilationOptions: CompilationOptions
 ): PartialCompilationResult {
 	const operand = astHelper.getFirstChild(ast, operandKind);
 	const expressionAst = astHelper.getFirstChild(operand, baseExpressionAstNodes);
@@ -174,7 +176,7 @@ function emitCompiledOperand(
 
 	const expressionIdentifier = identifier + operandKind;
 
-	const compiledExpression = emitBaseExpression(expressionAst, expressionIdentifier);
+	const compiledExpression = emitBaseExpression(expressionAst, expressionIdentifier, compilationOptions);
 	if (!compiledExpression.isAstAccepted) {
 		return compiledExpression;
 	}
@@ -185,13 +187,13 @@ function emitCompiledOperand(
 }
 
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-AndExpr
-function emitAndExpression(ast: IAST, identifier: string): PartialCompilationResult {
-	const firstCompiledExpression = emitCompiledOperand(ast, identifier, firstOperandIdentifier);
+function emitAndExpression(ast: IAST, identifier: string, compilationOptions: CompilationOptions): PartialCompilationResult {
+	const firstCompiledExpression = emitCompiledOperand(ast, identifier, firstOperandIdentifier, compilationOptions);
 	if (!firstCompiledExpression.isAstAccepted) {
 		return firstCompiledExpression;
 	}
 
-	const secondCompiledExpression = emitCompiledOperand(ast, identifier, secondOperandIdentifier);
+	const secondCompiledExpression = emitCompiledOperand(ast, identifier, secondOperandIdentifier, compilationOptions);
 	if (!secondCompiledExpression.isAstAccepted) {
 		return secondCompiledExpression;
 	}
@@ -207,13 +209,13 @@ function emitAndExpression(ast: IAST, identifier: string): PartialCompilationRes
 }
 
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-OrExpr
-function emitOrExpression(ast: IAST, identifier: string): PartialCompilationResult {
-	const firstCompiledExpression = emitCompiledOperand(ast, identifier, firstOperandIdentifier);
+function emitOrExpression(ast: IAST, identifier: string, compilationOptions: CompilationOptions): PartialCompilationResult {
+	const firstCompiledExpression = emitCompiledOperand(ast, identifier, firstOperandIdentifier, compilationOptions);
 	if (!firstCompiledExpression.isAstAccepted) {
 		return firstCompiledExpression;
 	}
 
-	const secondCompiledExpression = emitCompiledOperand(ast, identifier, secondOperandIdentifier);
+	const secondCompiledExpression = emitCompiledOperand(ast, identifier, secondOperandIdentifier, compilationOptions);
 	if (!secondCompiledExpression.isAstAccepted) {
 		return secondCompiledExpression;
 	}
@@ -228,7 +230,7 @@ function emitOrExpression(ast: IAST, identifier: string): PartialCompilationResu
 	return acceptAst(orOpCode);
 }
 
-export function emitBaseExpression(ast: IAST, identifier: string): PartialCompilationResult {
+export function emitBaseExpression(ast: IAST, identifier: string, compilationOptions: CompilationOptions): PartialCompilationResult {
 	const name = ast[0];
 	const emitBaseExpressionFunction = baseExpressionEmittersByAstNodeName[name];
 
@@ -236,5 +238,5 @@ export function emitBaseExpression(ast: IAST, identifier: string): PartialCompil
 		return rejectAst(`Unsupported: the base expression '${name}'.`);
 	}
 
-	return emitBaseExpressionFunction(ast, identifier);
+	return emitBaseExpressionFunction(ast, identifier, compilationOptions);
 }
