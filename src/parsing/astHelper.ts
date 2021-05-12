@@ -8,7 +8,7 @@ import { SourceRange } from '../expressions/debug/StackTraceGenerator';
 
 type QName = { localName: string; namespaceURI: string | null; prefix: string };
 
-export interface IAST extends Array<string | object | SourceRange | IAST | ValueType> {
+export interface IAST extends Array<string | object | SourceRange | IAST | SequenceType> {
 	0: string;
 }
 
@@ -69,7 +69,7 @@ function getTextContent(ast: IAST): string {
 	if (typeof ast[1] === 'object') {
 		return (ast[2] || '') as string;
 	}
-	return ast[1] as string || '';
+	return (ast[1] as string) || '';
 }
 
 /**

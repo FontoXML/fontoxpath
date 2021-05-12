@@ -1,4 +1,4 @@
-import annotateAst from './annotateAST';
+import annotateAst from '../typeInference/annotateAST';
 import { IAST } from './astHelper';
 import { parse, SyntaxError } from './xPathParser';
 
