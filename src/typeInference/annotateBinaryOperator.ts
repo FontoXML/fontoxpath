@@ -1,7 +1,6 @@
 import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
-import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
+import { SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import { IAST } from '../parsing/astHelper';
-import { annotate } from './annotateAST';
 
 type BinOpLookupTable = {
 	[key: number]: ValueType;
@@ -14,10 +13,11 @@ const BINOP_LOOKUP: BinOpLookupTable = {
 	[ValueType.XSFLOAT + ValueType.XSFLOAT * 1000]: ValueType.XSFLOAT,
 };
 
-export function annotateAddOp(ast: IAST): SequenceType | undefined {
-	const left = annotate(ast[1][1] as IAST);
-	const right = annotate(ast[2][1] as IAST);
-
+export function annotateAddOp(
+	ast: IAST,
+	left: SequenceType | undefined,
+	right: SequenceType | undefined
+): SequenceType | undefined {
 	if (!left || !right) {
 		return undefined;
 	}
