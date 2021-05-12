@@ -1,12 +1,15 @@
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
-import { IAST } from './astHelper';
+import { IAST } from '../parsing/astHelper';
+import { annotateAddOp } from './annotateBinaryOperator';
 
-export default function annotateAst(ast: IAST): SequenceType {
+export default function annotateAst(ast: IAST): SequenceType | undefined {
 	const type = annotateUpperLevel(ast);
 	return type;
 }
 
-function annotateUpperLevel(ast: IAST): SequenceType {
+function annotateUpperLevel(ast: IAST): SequenceType | undefined {
+	if (!ast) return undefined;
+
 	switch (ast[0]) {
 		case 'module':
 			return annotateUpperLevel(ast[1] as IAST);
@@ -25,43 +28,50 @@ function annotateUpperLevel(ast: IAST): SequenceType {
 	}
 }
 
-function annotateAddOp(ast: IAST): SequenceType {
-	const left = annotate(ast[1][1] as IAST);
-	const right = annotate(ast[2][1] as IAST);
-
-	// TODO: fix
-	// if (left !== right) {
-	// 	throw new Error('XPST0003: Use of XQuery functionality is not allowed in XPath context');
-	// }
-
-	ast.push(['type', left]);
-	return left;
-}
-
-function annotateUnaryMinusOp(ast: IAST): SequenceType {
+function annotateUnaryMinusOp(ast: IAST): SequenceType | undefined {
 	const child = annotate(ast[1][1]);
+
+	if (!child) return undefined;
 
 	ast.push(['type', child]);
 	return child;
 }
 
-function annotate(ast: IAST): SequenceType {
+export function annotate(ast: IAST): SequenceType | undefined {
 	switch (ast[0]) {
 		case 'unaryMinusOp':
 			return annotateUnaryMinusOp(ast);
 		case 'addOp':
 			return annotateAddOp(ast);
 		case 'integerConstantExpr':
-			ast.push(['type', ValueType.XSINTEGER]);
+			ast.push([
+				'type',
+				{ type: ValueType.XSINTEGER, mult: SequenceMultiplicity.EXACTLY_ONE },
+			]);
 			return { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.EXACTLY_ONE };
 		case 'doubleConstantExpr':
-			ast.push(['type', ValueType.XSDOUBLE]);
+			ast.push([
+				'type',
+				{ type: ValueType.XSDOUBLE, mult: SequenceMultiplicity.EXACTLY_ONE },
+			]);
 			return { type: ValueType.XSDOUBLE, mult: SequenceMultiplicity.EXACTLY_ONE };
 		case 'decimalConstantExpr':
-			ast.push(['type'], ValueType.XSDECIMAL);
+			ast.push([
+				'type',
+				{
+					type: ValueType.XSDECIMAL,
+					mult: SequenceMultiplicity.EXACTLY_ONE,
+				},
+			]);
 			return { type: ValueType.XSDECIMAL, mult: SequenceMultiplicity.EXACTLY_ONE };
 		case 'stringConstantExpr':
-			ast.push(['type'], ValueType.XSSTRING);
+			ast.push([
+				'type',
+				{
+					type: ValueType.XSSTRING,
+					mult: SequenceMultiplicity.EXACTLY_ONE,
+				},
+			]);
 			return { type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE };
 		default:
 			return { type: ValueType.XSERROR, mult: SequenceMultiplicity.EXACTLY_ONE };

@@ -3,7 +3,7 @@ import castToType from '../../dataTypes/castToType';
 import createAtomicValue from '../../dataTypes/createAtomicValue';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import { SequenceMultiplicity, ValueType } from '../../dataTypes/Value';
+import { SequenceType, ValueType } from '../../dataTypes/Value';
 import {
 	addDuration as addDurationToDateTime,
 	subtract as dateTimeSubtract,
@@ -77,6 +77,7 @@ function generateBinaryOperatorFunction(
 				const returnType = determineReturnType(typeA, typeB);
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
+
 					return createAtomicValue(castA.value + castB.value, returnType);
 				};
 			}
@@ -454,13 +455,20 @@ class BinaryOperator extends Expression {
 	 * @param  firstValueExpr   The selector evaluating to the first value to process
 	 * @param  secondValueExpr  The selector evaluating to the second value to process
 	 */
-	constructor(operator: string, firstValueExpr: Expression, secondValueExpr: Expression) {
+	constructor(
+		operator: string,
+		firstValueExpr: Expression,
+		secondValueExpr: Expression,
+		type: SequenceType
+	) {
 		super(
 			firstValueExpr.specificity.add(secondValueExpr.specificity),
 			[firstValueExpr, secondValueExpr],
 			{
 				canBeStaticallyEvaluated: false,
-			}
+			},
+			false,
+			type
 		);
 		this._firstValueExpr = firstValueExpr;
 		this._secondValueExpr = secondValueExpr;

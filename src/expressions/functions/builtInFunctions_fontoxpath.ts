@@ -55,10 +55,14 @@ const fontoxpathEvaluate: FunctionDefinitionType = (
 				);
 				const innerStaticContext = new StaticContext(executionSpecificStaticContext);
 
-				const ast = parseExpression(queryString, {
-					allowXQuery: false,
-					debug: executionParameters.debug,
-				});
+				const ast = parseExpression(
+					queryString,
+					{
+						allowXQuery: false,
+						debug: executionParameters.debug,
+					},
+					true
+				);
 
 				const prolog = astHelper.followPath(ast, ['mainModule', 'prolog']);
 				if (prolog) {

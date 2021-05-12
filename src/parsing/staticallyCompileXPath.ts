@@ -55,7 +55,7 @@ export default function staticallyCompileXPath(
 		expression = fromCache.expression;
 	} else {
 		// We can not use anything from the cache, parse + compile
-		const ast = parseExpression(xpathString, compilationOptions);
+		const ast = parseExpression(xpathString, compilationOptions, true);
 
 		const mainModule = astHelper.getFirstChild(ast, 'mainModule');
 		if (!mainModule) {

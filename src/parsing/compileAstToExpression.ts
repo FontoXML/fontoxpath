@@ -11,7 +11,7 @@ import PrecedingAxis from '../expressions/axes/PrecedingAxis';
 import PrecedingSiblingAxis from '../expressions/axes/PrecedingSiblingAxis';
 import SelfAxis from '../expressions/axes/SelfAxis';
 import IfExpression from '../expressions/conditional/IfExpression';
-import { SequenceType, ValueType } from '../expressions/dataTypes/Value';
+import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import QName from '../expressions/dataTypes/valueTypes/QName';
 import StackTraceGenerator, { SourceRange } from '../expressions/debug/StackTraceGenerator';
 import Expression, { RESULT_ORDERINGS } from '../expressions/Expression';
@@ -371,7 +371,10 @@ function compileLookup(ast: IAST, compilationOptions: CompilationOptions): '*' |
 	const keyExpression = astHelper.getFirstChild(ast, '*');
 	switch (keyExpression[0]) {
 		case 'NCName':
-			return new Literal(astHelper.getTextContent(keyExpression), ValueType.XSSTRING);
+			return new Literal(astHelper.getTextContent(keyExpression), {
+				type: ValueType.XSSTRING,
+				mult: SequenceMultiplicity.EXACTLY_ONE,
+			});
 		case 'star':
 			return '*';
 		default:
@@ -712,31 +715,31 @@ function instanceOf(
 }
 
 function integerConstantExpr(ast: IAST, _compilationOptions: CompilationOptions) {
-	return new Literal(
-		astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')),
-		ValueType.XSINTEGER
-	);
+	return new Literal(astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')), {
+		type: ValueType.XSINTEGER,
+		mult: SequenceMultiplicity.EXACTLY_ONE,
+	});
 }
 
 function stringConstantExpr(ast: IAST, _compilationOptions: CompilationOptions) {
-	return new Literal(
-		astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')),
-		ValueType.XSSTRING
-	);
+	return new Literal(astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')), {
+		type: ValueType.XSSTRING,
+		mult: SequenceMultiplicity.EXACTLY_ONE,
+	});
 }
 
 function decimalConstantExpr(ast: IAST, _compilationOptions: CompilationOptions) {
-	return new Literal(
-		astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')),
-		ValueType.XSDECIMAL
-	);
+	return new Literal(astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')), {
+		type: ValueType.XSDECIMAL,
+		mult: SequenceMultiplicity.EXACTLY_ONE,
+	});
 }
 
 function doubleConstantExpr(ast: IAST, _compilationOptions: CompilationOptions) {
-	return new Literal(
-		astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')),
-		ValueType.XSDOUBLE
-	);
+	return new Literal(astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')), {
+		type: ValueType.XSDOUBLE,
+		mult: SequenceMultiplicity.EXACTLY_ONE,
+	});
 }
 
 function nameTest(ast: IAST, _compilationOptions: CompilationOptions) {
@@ -1150,7 +1153,10 @@ function dirElementConstructor(ast: IAST, compilationOptions: CompilationOptions
 
 function CDataSection(ast: IAST, _compilationOptions: CompilationOptions) {
 	// Walks like a stringliteral, talks like a stringliteral, it's a stringliteral
-	return new Literal(astHelper.getTextContent(ast), ValueType.XSSTRING);
+	return new Literal(astHelper.getTextContent(ast), {
+		type: ValueType.XSSTRING,
+		mult: SequenceMultiplicity.EXACTLY_ONE,
+	});
 }
 
 function attributeConstructor(ast: IAST, compilationOptions: CompilationOptions) {
