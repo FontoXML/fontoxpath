@@ -38,7 +38,12 @@ function determineReturnType(typeA: ValueType, typeB: ValueType): ValueType {
 	return ValueType.XSDOUBLE;
 }
 
-function generateBinaryOperatorFunction(operator, typeA: ValueType, typeB: ValueType) {
+function generateBinaryOperatorFunction(
+	operator,
+	typeA: ValueType,
+	typeB: ValueType,
+	retType?: SequenceType
+) {
 	let castFunctionForValueA = null;
 	let castFunctionForValueB = null;
 
@@ -55,6 +60,14 @@ function generateBinaryOperatorFunction(operator, typeA: ValueType, typeB: Value
 		return {
 			castA: castFunctionForValueA ? castFunctionForValueA(valueA) : valueA,
 			castB: castFunctionForValueB ? castFunctionForValueB(valueB) : valueB,
+		};
+	}
+
+	if (operator === 'addOp' && retType) {
+		return (a, b) => {
+			const { castA, castB } = applyCastFunctions(a, b);
+
+			return createAtomicValue(castA.value + castB.value, retType.type);
 		};
 	}
 
@@ -494,7 +507,8 @@ class BinaryOperator extends Expression {
 					] = generateBinaryOperatorFunction(
 						this._operator,
 						firstValue.type,
-						secondValue.type
+						secondValue.type,
+						this.type
 					);
 				}
 
