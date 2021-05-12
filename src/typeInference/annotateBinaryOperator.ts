@@ -38,5 +38,79 @@ export function annotateAddOp(
 		return type;
 	}
 
+	if (
+		left.type === ValueType.XSYEARMONTHDURATION &&
+		right.type === ValueType.XSYEARMONTHDURATION
+	) {
+		ast.push(['type', { type: ValueType.XSYEARMONTHDURATION, mult: left.mult }]);
+		return { type: ValueType.XSYEARMONTHDURATION, mult: left.mult };
+	}
+
+	if (
+		isSubtypeOf(left.type, ValueType.XSNUMERIC) &&
+		right.type === ValueType.XSYEARMONTHDURATION
+	) {
+		ast.push(['type', { type: ValueType.XSYEARMONTHDURATION, mult: left.mult }]);
+		return { type: ValueType.XSYEARMONTHDURATION, mult: left.mult };
+	}
+
+	if (
+		left.type === ValueType.XSYEARMONTHDURATION &&
+		isSubtypeOf(right.type, ValueType.XSNUMERIC)
+	) {
+		ast.push(['type', { type: ValueType.XSYEARMONTHDURATION, mult: left.mult }]);
+		return { type: ValueType.XSYEARMONTHDURATION, mult: left.mult };
+	}
+
+	if (left.type === ValueType.XSDAYTIMEDURATION && right.type === ValueType.XSDAYTIMEDURATION) {
+		ast.push(['type', { type: ValueType.XSDAYTIMEDURATION, mult: left.mult }]);
+		return { type: ValueType.XSDAYTIMEDURATION, mult: left.mult };
+	}
+
+	if (
+		(isSubtypeOf(left.type, ValueType.XSDATETIME) &&
+			right.type === ValueType.XSYEARMONTHDURATION) ||
+		(isSubtypeOf(left.type, ValueType.XSDATETIME) && right.type === ValueType.XSDAYTIMEDURATION)
+	) {
+		ast.push(['type', { type: ValueType.XSDATETIME, mult: left.mult }]);
+		return { type: ValueType.XSDATETIME, mult: left.mult };
+	}
+
+	if (
+		(isSubtypeOf(left.type, ValueType.XSDATE) &&
+			right.type === ValueType.XSYEARMONTHDURATION) ||
+		(isSubtypeOf(left.type, ValueType.XSDATE) && right.type === ValueType.XSDAYTIMEDURATION)
+	) {
+		ast.push(['type', { type: ValueType.XSDATE, mult: left.mult }]);
+		return { type: ValueType.XSDATE, mult: left.mult };
+	}
+
+	if (left.type === ValueType.XSTIME && right.type === ValueType.XSDAYTIMEDURATION) {
+		ast.push(['type', { type: ValueType.XSTIME, mult: left.mult }]);
+		return { type: ValueType.XSTIME, mult: left.mult };
+	}
+
+	if (
+		(right.type === ValueType.XSYEARMONTHDURATION &&
+			isSubtypeOf(left.type, ValueType.XSDATETIME)) ||
+		(right.type === ValueType.XSDAYTIMEDURATION && isSubtypeOf(left.type, ValueType.XSDATETIME))
+	) {
+		ast.push(['type', { type: ValueType.XSDATETIME, mult: left.mult }]);
+		return { type: ValueType.XSDATETIME, mult: left.mult };
+	}
+
+	if (
+		(right.type === ValueType.XSDAYTIMEDURATION && left.type === ValueType.XSDATE) ||
+		(right.type === ValueType.XSYEARMONTHDURATION && left.type === ValueType.XSDATE)
+	) {
+		ast.push(['type', { type: ValueType.XSDATE, mult: left.mult }]);
+		return { type: ValueType.XSDATE, mult: left.mult };
+	}
+
+	if (right.type === ValueType.XSDAYTIMEDURATION && left.type === ValueType.XSTIME) {
+		ast.push(['type', { type: ValueType.XSTIME, mult: left.mult }]);
+		return { type: ValueType.XSTIME, mult: left.mult };
+	}
+
 	return undefined;
 }
