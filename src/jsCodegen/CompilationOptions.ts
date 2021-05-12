@@ -1,4 +1,4 @@
-import { NamespaceResolver } from './types/Options';
+import { NamespaceResolver } from '../types/Options';
 
 export type CompilationOptions = {
 	namespaceResolver: NamespaceResolver;

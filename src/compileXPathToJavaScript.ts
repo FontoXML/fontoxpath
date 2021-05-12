@@ -1,4 +1,7 @@
-import { normalizeEndOfLines } from './evaluationUtils/buildEvaluationContext';
+import {
+	createDefaultNamespaceResolver,
+	normalizeEndOfLines,
+} from './evaluationUtils/buildEvaluationContext';
 import compileAstToJavaScript from './jsCodegen/compileAstToJavaScript';
 import { JavaScriptCompiledXPathResult } from './jsCodegen/JavaScriptCompiledXPath';
 import { ReturnType } from './parsing/convertXDMReturnValue';
@@ -36,7 +39,11 @@ function compileXPathToJavaScript(
 
 	const ast = parseExpression(expressionString, parserOptions);
 
-	return compileAstToJavaScript(ast, returnType);
+	const compilationOptions = {
+		namespaceResolver: options.namespaceResolver || createDefaultNamespaceResolver(null),
+	};
+
+	return compileAstToJavaScript(ast, returnType, compilationOptions);
 }
 
 export default compileXPathToJavaScript;

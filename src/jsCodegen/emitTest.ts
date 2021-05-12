@@ -1,25 +1,18 @@
 import { NODE_TYPES } from '../domFacade/ConcreteNode';
 import QName from '../expressions/dataTypes/valueTypes/QName';
 import astHelper, { IAST } from '../parsing/astHelper';
+import { CompilationOptions } from './CompilationOptions';
 import escapeJavaScriptString from './escapeJavaScriptString';
 import { acceptAst, PartialCompilationResult, rejectAst } from './JavaScriptCompiledXPath';
-import { CompilationOptions } from './CompilationOptions';
 
-const testAstNodeNames = {
+const testAstNodes = {
 	TEXT_TEST: 'textTest',
 	ELEMENT_TEST: 'elementTest',
 	NAME_TEST: 'nameTest',
 	WILDCARD: 'Wildcard',
 };
 
-export const testAstNodes = Object.values(testAstNodeNames);
-
-const testEmittersByAstNodeName = {
-	[testAstNodeNames.TEXT_TEST]: emitTextTest,
-	[testAstNodeNames.NAME_TEST]: emitNameTest,
-	[testAstNodeNames.ELEMENT_TEST]: emitElementTest,
-	[testAstNodeNames.WILDCARD]: emitWildcard,
-};
+export const tests = Object.values(testAstNodes);
 
 // text() matches any text node.
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-TextTest
@@ -126,11 +119,17 @@ export default function emitTest(
 	compilationOptions: CompilationOptions
 ): PartialCompilationResult {
 	const test = ast[0];
-	const emitTestFunction = testEmittersByAstNodeName[test];
 
-	if (!emitTestFunction) {
-		return rejectAst(`Unsupported: the test '${test}'.`);
+	switch (test) {
+		case testAstNodes.ELEMENT_TEST:
+			return emitElementTest(ast, identifier, compilationOptions);
+		case testAstNodes.TEXT_TEST:
+			return emitTextTest(ast, identifier);
+		case testAstNodes.NAME_TEST:
+			return emitNameTest(ast, identifier, compilationOptions);
+		case testAstNodes.WILDCARD:
+			return emitWildcard(ast, identifier, compilationOptions);
+		default:
+			return rejectAst(`Unsupported: the test '${test}'.`);
 	}
-
-	return emitTestFunction(ast, identifier, compilationOptions);
 }

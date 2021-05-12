@@ -1,9 +1,9 @@
+import { ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { ReturnType } from '../parsing/convertXDMReturnValue';
-import { emitBaseExpression } from './emitBaseExpression';
-import { JavaScriptCompiledXPathResult, rejectAst } from './JavaScriptCompiledXPath';
-import { NamespaceResolver } from 'src';
 import { CompilationOptions } from './CompilationOptions';
+import { emitBaseExpr } from './emitBaseExpression';
+import { JavaScriptCompiledXPathResult, rejectAst } from './JavaScriptCompiledXPath';
 
 const emittersByReturnType = {
 	[ReturnType.NODES]: compileAstToReturnNodes,
@@ -35,7 +35,7 @@ function compileAstToReturnBoolean(identifier: string): string {
 
 function compileAstToReturnFirstNode(identifier: string): string {
 	const transformToBooleanCode = `
-	return ${identifier}(contextItem).next().value.value.node;
+	return ${identifier}(contextItem).next().value.value.node
 	`;
 
 	return transformToBooleanCode;
@@ -64,24 +64,37 @@ function compileAstToJavaScript(
 		return rejectAst(`Unsupported: XQuery.`);
 	}
 
-	const emittedBaseExpression = emitBaseExpression(queryBodyContents, compiledXPathIdentifier, compilationOptions);
-	if (emittedBaseExpression.isAstAccepted === false) {
-		return emittedBaseExpression;
+	const emittedBaseExpr = emitBaseExpr(
+		queryBodyContents,
+		compiledXPathIdentifier,
+		compilationOptions
+	);
+	if (emittedBaseExpr.isAstAccepted === false) {
+		return emittedBaseExpr;
 	}
 
-	const emittedVariables = emittedBaseExpression.variables
-		? emittedBaseExpression.variables.join('\n')
-		: '';
+	const emittedVariables = emittedBaseExpr.variables ? emittedBaseExpr.variables.join('\n') : '';
 
 	const code =
 		emittedVariables +
-		emittedBaseExpression.code +
+		emittedBaseExpr.code +
 		compileJavaScriptFunction(compiledXPathIdentifier);
 
 	const wrappedCode = `
 	return (contextItem, domFacade, runtimeLibrary) => {
+		debugger;
 		const { DONE_TOKEN, ready, isSubtypeOf, determinePredicateTruthValue,
 		adaptSingleJavaScriptValue, XPDY0002, ValueType } = runtimeLibrary;
+
+		if (!contextItem) {
+			throw XPDY0002("Context is needed to evaluate a given path expression.");
+		}
+
+		if (!isSubtypeOf(contextItem.type, ${ValueType.NODE})) {
+			throw new Error("Context item must be subtype of node().");
+		}
+
+		contextItem = contextItem.value.node;
 
 		${code}
 	}

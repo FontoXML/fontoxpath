@@ -1,17 +1,16 @@
-import { acceptAst, PariallyCompiledAstAccepted } from './JavaScriptCompiledXPath';
+import astHelper, { IAST } from '../parsing/astHelper';
+import {
+	acceptAst,
+	PariallyCompiledAstAccepted,
+	PartialCompilationResult,
+	rejectAst,
+} from './JavaScriptCompiledXPath';
 
-const axisAstNodeNames = {
+const axisAstNodes = {
 	ATTRIBUTE: 'attribute',
 	CHILD: 'child',
 	PARENT: 'parent',
 	SELF: 'self',
-};
-
-export const axisEmittersByAstNodeName = {
-	[axisAstNodeNames.ATTRIBUTE]: emitAttributeAxis,
-	[axisAstNodeNames.CHILD]: emitChildAxis,
-	[axisAstNodeNames.PARENT]: emitParentAxis,
-	[axisAstNodeNames.SELF]: emitSelfAxis,
 };
 
 // The child axis contains the children of the context node.
@@ -144,3 +143,28 @@ function emitSingleNodeAxis(
 		[`let i${nestLevel} = 0;`]
 	);
 }
+
+function emitStep(
+	ast: IAST,
+	test: string,
+	predicates: string,
+	nestLevel: number,
+	nestedCode: string
+): PartialCompilationResult {
+	const axisName = astHelper.getTextContent(ast);
+
+	switch (axisName) {
+		case axisAstNodes.ATTRIBUTE:
+			return emitAttributeAxis(test, predicates, nestLevel, nestedCode);
+		case axisAstNodes.CHILD:
+			return emitChildAxis(test, predicates, nestLevel, nestedCode);
+		case axisAstNodes.PARENT:
+			return emitParentAxis(test, predicates, nestLevel, nestedCode);
+		case axisAstNodes.SELF:
+			return emitSelfAxis(test, predicates, nestLevel, nestedCode);
+		default:
+			return rejectAst(`Unsupported: the ${axisName} axis`);
+	}
+}
+
+export default emitStep;

@@ -37,7 +37,7 @@ builtInFunctions.forEach((builtInFunction) => {
 	);
 });
 
-function createDefaultNamespaceResolver(contextItem: any): (s: string) => string {
+export function createDefaultNamespaceResolver(contextItem: any): (s: string) => string {
 	if (!contextItem || typeof contextItem !== 'object' || !('lookupNamespaceURI' in contextItem)) {
 		return (_prefix) => null;
 	}

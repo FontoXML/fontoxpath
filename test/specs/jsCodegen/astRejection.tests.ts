@@ -62,7 +62,7 @@ describe("rejecting unsupported AST's (js-codegen)", () => {
 		}, 'Unsupported');
 	});
 
-	it('rejects unsupported reverse axes', () => {
+	it('rejects unsupported reverse axes in predicates', () => {
 		chai.assert.throws(() => {
 			evaluateXPathWithJsCodegen(
 				'/xml[ancestor::element(xml)]',
