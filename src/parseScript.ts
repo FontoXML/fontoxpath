@@ -158,10 +158,14 @@ export default function parseScript<TElement extends Element>(
 	simpleNodesFactory: ISimpleNodesFactory,
 	documentWriter: IDocumentWriter = domBackedDocumentWriter
 ): TElement {
-	const ast = parseExpression(script, {
-		allowXQuery: options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE,
-		debug: options.debug,
-	});
+	const ast = parseExpression(
+		script,
+		{
+			allowXQuery: options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE,
+			debug: options.debug,
+		},
+		false
+	);
 
 	return parseNode(documentWriter, simpleNodesFactory, ast, null) as TElement;
 }

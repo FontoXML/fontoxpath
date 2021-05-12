@@ -28,10 +28,10 @@ abstract class Expression {
 	public peer: boolean;
 	public specificity: Specificity;
 	public subtree: boolean;
+	public type?: SequenceType;
 	protected _childExpressions: Expression[];
 	protected _eagerlyEvaluatedValue: () => ISequence;
 	private _canBeUpdating: boolean;
-	public type?: SequenceType;
 
 	constructor(
 		specificity: Specificity,
@@ -43,7 +43,7 @@ abstract class Expression {
 			subtree: false,
 		},
 		canBeUpdating: boolean = false,
-		type: SequenceType = undefined
+		type?: SequenceType
 	) {
 		this.specificity = specificity;
 		this.expectedResultOrder = optimizationOptions.resultOrder || RESULT_ORDERINGS.UNSORTED;
