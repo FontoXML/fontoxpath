@@ -36,6 +36,7 @@ const evaluateXPathWithJsCodegen = <
 	if (!cachedQuery) {
 		const compiledXPathResult = compileXPathToJavaScript(query, returnType);
 		if (compiledXPathResult.isAstAccepted === true) {
+			console.log(compiledXPathResult.code);
 			// tslint:disable-next-line
 			const evalFunction = new Function(compiledXPathResult.code) as any;
 
