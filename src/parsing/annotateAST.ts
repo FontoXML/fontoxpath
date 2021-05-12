@@ -26,8 +26,8 @@ function annotateUpperLevel(ast: IAST): ValueType {
 }
 
 function annotateAddOp(ast: IAST): ValueType {
-	let left = annotate(ast[1][1] as IAST);
-	let right = annotate(ast[2][1] as IAST);
+	const left = annotate(ast[1][1] as IAST);
+	const right = annotate(ast[2][1] as IAST);
 
 	// TODO: fix
 	if (left !== right) {
@@ -57,6 +57,12 @@ function annotate(ast: IAST): ValueType {
 		case 'doubleConstantExpr':
 			ast.push(['type', ValueType.XSDOUBLE]);
 			return ValueType.XSDOUBLE;
+		case 'decimalConstantExpr':
+			ast.push(['type'], ValueType.XSDECIMAL);
+			return ValueType.XSDECIMAL;
+		case 'stringConstantExpr':
+			ast.push(['type'], ValueType.XSSTRING);
+			return ValueType.XSSTRING;
 		default:
 			return ValueType.XSERROR;
 	}
