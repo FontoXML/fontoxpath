@@ -82,42 +82,10 @@ class Unary extends Expression {
 					return sequenceFactory.singleton(atomizedValues[0]);
 				}
 				return sequenceFactory.singleton(
-					createAtomicValue((value.value as number) * -1, value.type)
+					createAtomicValue((value.value as number) * -1, UNARY_LOOKUP[value.type])
 				);
 			}
 			return sequenceFactory.singleton(createAtomicValue(Number.NaN, ValueType.XSDOUBLE));
-
-			// if (this._kind === '+') {
-			// 	if (
-			// 		isSubtypeOf(value.type, ValueType.XSNUMERIC)
-			// 	) {
-			// 		return sequenceFactory.singleton(atomizedValues[0]);
-			// 	}
-			// 	return sequenceFactory.singleton(createAtomicValue(Number.NaN, ValueType.XSDOUBLE));
-			// }
-
-			// if (isSubtypeOf(value.type, ValueType.XSINTEGER)) {
-			// 	return sequenceFactory.singleton(
-			// 		createAtomicValue((value.value as number) * -1, ValueType.XSINTEGER)
-			// 	);
-			// }
-			// if (isSubtypeOf(value.type, ValueType.XSDECIMAL)) {
-			// 	return sequenceFactory.singleton(
-			// 		createAtomicValue((value.value as number) * -1, ValueType.XSDECIMAL)
-			// 	);
-			// }
-			// if (isSubtypeOf(value.type, ValueType.XSDOUBLE)) {
-			// 	return sequenceFactory.singleton(
-			// 		createAtomicValue((value.value as number) * -1, ValueType.XSDOUBLE)
-			// 	);
-			// }
-			// if (isSubtypeOf(value.type, ValueType.XSFLOAT)) {
-			// 	return sequenceFactory.singleton(
-			// 		createAtomicValue((value.value as number) * -1, ValueType.XSFLOAT)
-			// 	);
-			// }
-
-			// return sequenceFactory.singleton(createAtomicValue(Number.NaN, ValueType.XSDOUBLE));
 		});
 	}
 }
