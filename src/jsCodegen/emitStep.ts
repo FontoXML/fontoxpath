@@ -1,7 +1,7 @@
 import astHelper, { IAST } from '../parsing/astHelper';
 import {
 	acceptAst,
-	PariallyCompiledAstAccepted,
+	PartiallyCompiledJavaScriptResult,
 	PartialCompilationResult,
 	rejectAst,
 } from './JavaScriptCompiledXPath';
@@ -24,7 +24,7 @@ function emitChildAxis(
 	predicates: string,
 	nestLevel: number,
 	nestedCode: string
-): PariallyCompiledAstAccepted {
+): PartiallyCompiledJavaScriptResult {
 	const contextNodesCode = `const ${childAxisContextNodesIdentifier}${nestLevel} = domFacade.getChildNodes(contextItem${
 		nestLevel - 1
 	});`;
@@ -46,7 +46,7 @@ function emitAttributeAxis(
 	predicates: string,
 	nestLevel: number,
 	nestedCode: string
-): PariallyCompiledAstAccepted {
+): PartiallyCompiledJavaScriptResult {
 	const contextNodesCode = `const ${attributeAxisContextNodesIdentifier}${nestLevel} = domFacade.getAllAttributes(contextItem${
 		nestLevel - 1
 	});`;
@@ -68,7 +68,7 @@ function emitSelfAxis(
 	predicates: string,
 	nestLevel: number,
 	nestedCode: string
-): PariallyCompiledAstAccepted {
+): PartiallyCompiledJavaScriptResult {
 	const contextNodeCode = `const contextItem${nestLevel} = contextItem${nestLevel - 1};`;
 
 	return emitSingleNodeAxis(test, predicates, nestLevel, nestedCode, contextNodeCode);
@@ -82,7 +82,7 @@ function emitParentAxis(
 	predicates: string,
 	nestLevel: number,
 	nestedCode: string
-): PariallyCompiledAstAccepted {
+): PartiallyCompiledJavaScriptResult {
 	const contextNodeCode = `
 	const contextItem${nestLevel} = domFacade.getParentNode(contextItem${nestLevel - 1});
 	`;
@@ -101,7 +101,7 @@ function emitMultipleNodeAxis(
 	nestedCode: string,
 	contextItemsIdentifier: string,
 	contextNodeCode: string
-): PariallyCompiledAstAccepted {
+): PartiallyCompiledJavaScriptResult {
 	const indexReset = nestLevel !== 1 ? `i${nestLevel} = 0;` : ``;
 	const predicateConditionCode = formatConditionCode(predicates);
 
@@ -129,7 +129,7 @@ function emitSingleNodeAxis(
 	nestLevel: number,
 	nestedCode: string,
 	contextNodeCode: string
-): PariallyCompiledAstAccepted {
+): PartiallyCompiledJavaScriptResult {
 	const testEvaluatationCode = formatConditionCode(test);
 	const predicateEvaluationCode = formatConditionCode(predicates);
 

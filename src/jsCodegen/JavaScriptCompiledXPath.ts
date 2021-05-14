@@ -1,4 +1,4 @@
-export type PariallyCompiledAstAccepted = {
+export type PartiallyCompiledAstAccepted = {
 	code: string;
 	isAstAccepted: true;
 	// Contains variable (and function) declarations for the upper compiled
@@ -6,15 +6,7 @@ export type PariallyCompiledAstAccepted = {
 	variables?: string[];
 };
 
-/**
- * Result for failing to compile XPath to JavaScript.
- * @beta
- */
-export type AstRejected = { isAstAccepted: false; reason: string };
-
-export type PartialCompilationResult = PariallyCompiledAstAccepted | AstRejected;
-
-export function acceptAst(code: string, variables?: string[]): PariallyCompiledAstAccepted {
+export function acceptAst(code: string, variables?: string[]): PartiallyCompiledAstAccepted {
 	return {
 		code,
 		variables,
@@ -22,9 +14,17 @@ export function acceptAst(code: string, variables?: string[]): PariallyCompiledA
 	};
 }
 
+/**
+ * Result for failing to compile XPath to JavaScript.
+ * @beta
+ */
+export type AstRejected = { isAstAccepted: false; reason: string };
+
 export function rejectAst(reason: string): AstRejected {
 	return { isAstAccepted: false, reason };
 }
+
+export type PartialCompilationResult = PartiallyCompiledAstAccepted | AstRejected;
 
 /**
  * Successfully JavaScript compiled XPath.

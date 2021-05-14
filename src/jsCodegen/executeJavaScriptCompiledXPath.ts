@@ -23,7 +23,7 @@ const executeJavaScriptCompiledXPath = <
 	TNode extends Node,
 	TReturnType extends keyof IReturnTypes<TNode>
 >(
-	compiledJavaScriptFunction: () => any,
+	compiledJavaScriptFunction: any,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null
 ): IReturnTypes<TNode>[TReturnType] => {

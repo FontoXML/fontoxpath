@@ -84,7 +84,7 @@ function emitSteps(
 			const emittedStepsCode = emittedSteps.code;
 			const testAst = astHelper.getFirstChild(step, tests);
 			if (!testAst) {
-				return rejectAst(`Unsupported: the step '${step}'.`);
+				return rejectAst(`Unsupported: the test in the '${step}' step.`);
 			}
 
 			// Only the innermost nested step returns a value.
