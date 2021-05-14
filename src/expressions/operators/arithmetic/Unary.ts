@@ -3,7 +3,7 @@ import castToType from '../../dataTypes/castToType';
 import createAtomicValue from '../../dataTypes/createAtomicValue';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import { SequenceMultiplicity, ValueType } from '../../dataTypes/Value';
+import { SequenceMultiplicity, SequenceType, ValueType } from '../../dataTypes/Value';
 import Expression from '../../Expression';
 
 type UnaryLookupTable = {
@@ -40,10 +40,9 @@ class Unary extends Expression {
 	 * @param  kind       Either + or -
 	 * @param  valueExpr  The selector evaluating to the value to process
 	 */
-	constructor(kind: string, valueExpr: Expression) {
-		super(valueExpr.specificity, [valueExpr], { canBeStaticallyEvaluated: false });
+	constructor(kind: string, valueExpr: Expression, type: SequenceType) {
+		super(valueExpr.specificity, [valueExpr], { canBeStaticallyEvaluated: false }, false, type);
 		this._valueExpr = valueExpr;
-
 		this._kind = kind;
 	}
 
