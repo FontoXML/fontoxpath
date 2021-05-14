@@ -6,6 +6,31 @@ import sequenceFactory from '../../dataTypes/sequenceFactory';
 import { SequenceMultiplicity, ValueType } from '../../dataTypes/Value';
 import Expression from '../../Expression';
 
+type UnaryLookupTable = {
+	[key: number]: ValueType;
+};
+
+// TODO: fix this?
+const UNARY_LOOKUP: UnaryLookupTable = {
+	[ValueType.XSINTEGER]: ValueType.XSINTEGER,
+	[ValueType.XSNONPOSITIVEINTEGER]: ValueType.XSINTEGER,
+	[ValueType.XSNEGATIVEINTEGER]: ValueType.XSINTEGER,
+	[ValueType.XSLONG]: ValueType.XSINTEGER,
+	[ValueType.XSINT]: ValueType.XSINTEGER,
+	[ValueType.XSSHORT]: ValueType.XSINTEGER,
+	[ValueType.XSBYTE]: ValueType.XSINTEGER,
+	[ValueType.XSNONNEGATIVEINTEGER]: ValueType.XSINTEGER,
+	[ValueType.XSUNSIGNEDLONG]: ValueType.XSINTEGER,
+	[ValueType.XSUNSIGNEDINT]: ValueType.XSINTEGER,
+	[ValueType.XSUNSIGNEDSHORT]: ValueType.XSINTEGER,
+	[ValueType.XSUNSIGNEDBYTE]: ValueType.XSINTEGER,
+	[ValueType.XSPOSITIVEINTEGER]: ValueType.XSINTEGER,
+
+	[ValueType.XSDECIMAL]: ValueType.XSDECIMAL,
+	[ValueType.XSFLOAT]: ValueType.XSFLOAT,
+	[ValueType.XSDOUBLE]: ValueType.XSDOUBLE,
+};
+
 class Unary extends Expression {
 	private _kind: string;
 	private _valueExpr: Expression;
@@ -50,40 +75,49 @@ class Unary extends Expression {
 				);
 			}
 
-			if (this._kind === '+') {
-				if (
-					isSubtypeOf(value.type, ValueType.XSDECIMAL) ||
-					isSubtypeOf(value.type, ValueType.XSDOUBLE) ||
-					isSubtypeOf(value.type, ValueType.XSFLOAT) ||
-					isSubtypeOf(value.type, ValueType.XSINTEGER)
-				) {
+			const isNumeric = isSubtypeOf(value.type, ValueType.XSNUMERIC);
+
+			if (isNumeric) {
+				if (this._kind === '+') {
 					return sequenceFactory.singleton(atomizedValues[0]);
 				}
-				return sequenceFactory.singleton(createAtomicValue(Number.NaN, ValueType.XSDOUBLE));
-			}
-
-			if (isSubtypeOf(value.type, ValueType.XSINTEGER)) {
 				return sequenceFactory.singleton(
-					createAtomicValue((value.value as number) * -1, ValueType.XSINTEGER)
+					createAtomicValue((value.value as number) * -1, value.type)
 				);
 			}
-			if (isSubtypeOf(value.type, ValueType.XSDECIMAL)) {
-				return sequenceFactory.singleton(
-					createAtomicValue((value.value as number) * -1, ValueType.XSDECIMAL)
-				);
-			}
-			if (isSubtypeOf(value.type, ValueType.XSDOUBLE)) {
-				return sequenceFactory.singleton(
-					createAtomicValue((value.value as number) * -1, ValueType.XSDOUBLE)
-				);
-			}
-			if (isSubtypeOf(value.type, ValueType.XSFLOAT)) {
-				return sequenceFactory.singleton(
-					createAtomicValue((value.value as number) * -1, ValueType.XSFLOAT)
-				);
-			}
-
 			return sequenceFactory.singleton(createAtomicValue(Number.NaN, ValueType.XSDOUBLE));
+
+			// if (this._kind === '+') {
+			// 	if (
+			// 		isSubtypeOf(value.type, ValueType.XSNUMERIC)
+			// 	) {
+			// 		return sequenceFactory.singleton(atomizedValues[0]);
+			// 	}
+			// 	return sequenceFactory.singleton(createAtomicValue(Number.NaN, ValueType.XSDOUBLE));
+			// }
+
+			// if (isSubtypeOf(value.type, ValueType.XSINTEGER)) {
+			// 	return sequenceFactory.singleton(
+			// 		createAtomicValue((value.value as number) * -1, ValueType.XSINTEGER)
+			// 	);
+			// }
+			// if (isSubtypeOf(value.type, ValueType.XSDECIMAL)) {
+			// 	return sequenceFactory.singleton(
+			// 		createAtomicValue((value.value as number) * -1, ValueType.XSDECIMAL)
+			// 	);
+			// }
+			// if (isSubtypeOf(value.type, ValueType.XSDOUBLE)) {
+			// 	return sequenceFactory.singleton(
+			// 		createAtomicValue((value.value as number) * -1, ValueType.XSDOUBLE)
+			// 	);
+			// }
+			// if (isSubtypeOf(value.type, ValueType.XSFLOAT)) {
+			// 	return sequenceFactory.singleton(
+			// 		createAtomicValue((value.value as number) * -1, ValueType.XSFLOAT)
+			// 	);
+			// }
+
+			// return sequenceFactory.singleton(createAtomicValue(Number.NaN, ValueType.XSDOUBLE));
 		});
 	}
 }
