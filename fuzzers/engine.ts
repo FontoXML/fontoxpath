@@ -1,5 +1,5 @@
-import readline from 'readline';
 import { evaluateXPath } from 'fontoxpath';
+import readline from 'readline';
 const { Worker: ThreadWorker, isMainThread, parentPort, workerData } = require('worker_threads');
 
 /**
@@ -47,7 +47,7 @@ export default class Engine<TFuzzer extends Fuzzer> {
 	run(fuzzer: TFuzzer, filename: string): void {
 		// Main entry point of the program
 		if (!isMainThread) {
-			this.run_worker(fuzzer)
+			this.run_worker(fuzzer);
 		} else {
 			this.run_main(filename);
 		}
@@ -117,8 +117,8 @@ export default class Engine<TFuzzer extends Fuzzer> {
 		const os = require('os');
 		const numOfCpus = os.cpus().length;
 		process.stdout.write(`Main thread, launching ${numOfCpus} workers\n`);
-		for (let tid of Array(numOfCpus).keys()) {
-			let worker = new ThreadWorker(
+		for (const tid of Array(numOfCpus).keys()) {
+			const worker = new ThreadWorker(
 				`
 				require('tsconfig-paths/register');
 				require('ts-node/register');
@@ -131,7 +131,7 @@ export default class Engine<TFuzzer extends Fuzzer> {
 					eval: true,
 					workerData: {
 						runThisFileInTheWorker: filename,
-						tid: tid
+						tid
 					}
 				}
 			);
@@ -142,7 +142,7 @@ export default class Engine<TFuzzer extends Fuzzer> {
 						break;
 					}
 					case WorkerMessageTypes.Progress: {
-						totalCases += msg.totalCases
+						totalCases += msg.totalCases;
 						break;
 					}
 					case WorkerMessageTypes.Crash: {

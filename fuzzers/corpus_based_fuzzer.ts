@@ -1,5 +1,5 @@
-import { Fuzzer, FuzzCase } from 'engine';
-import { rand, randomLanguage, mutateCharactersInPlace, mutateString } from 'mutators';
+import { FuzzCase, Fuzzer } from 'engine';
+import { mutateCharactersInPlace, mutateString, rand, randomLanguage } from 'mutators';
 import { sync } from 'slimdom-sax-parser';
 
 /**
