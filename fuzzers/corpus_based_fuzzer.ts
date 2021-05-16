@@ -1,16 +1,30 @@
-import { FuzzCase, Fuzzer } from 'engine';
+import { FuzzCase, IFuzzer } from 'fuzzer';
 import { mutateCharactersInPlace, mutateString, rand, randomLanguage } from 'mutators';
 import { sync } from 'slimdom-sax-parser';
 
 /**
  * Implements a corpus-based {@link Fuzzer}.
  */
-export default class CorpusBasedFuzzer implements Fuzzer {
+export default class CorpusBasedFuzzer implements IFuzzer {
 	private corpus: string[];
 	private documentNode: any;
 
 	constructor(corpus: string[]) {
 		this.corpus = corpus;
+	}
+
+	globalInit(): void {
+		this.documentNode = sync(
+			'<xml> \
+			<title>xpath.playground.fontoxml.com</title> \
+			<summary>This is a learning tool for XML, XPath and XQuery.</summary> \
+			<tips> \
+			<tip id="edit">You can edit everything on the left</tip> \
+			<tip id="examples">You can access more examples from a menu in the top right</tip> \
+			<tip id="permalink">Another button there lets you share your test using an URL</tip> \
+			</tips> \
+		</xml>'
+		);
 	}
 
 	isExpectedError(error: Error): boolean {
@@ -31,20 +45,6 @@ export default class CorpusBasedFuzzer implements Fuzzer {
 
 		// Did not expect error
 		return false;
-	}
-
-	globalInit(): void {
-		this.documentNode = sync(
-			'<xml> \
-			<title>xpath.playground.fontoxml.com</title> \
-			<summary>This is a learning tool for XML, XPath and XQuery.</summary> \
-			<tips> \
-			<tip id="edit">You can edit everything on the left</tip> \
-			<tip id="examples">You can access more examples from a menu in the top right</tip> \
-			<tip id="permalink">Another button there lets you share your test using an URL</tip> \
-			</tips> \
-		</xml>'
-		);
 	}
 
 	prepareCase(): FuzzCase {

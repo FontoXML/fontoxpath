@@ -1,38 +1,6 @@
-import { evaluateXPath } from 'fontoxpath';
+import { IFuzzer } from 'fuzzer';
 import readline from 'readline';
 const { Worker: ThreadWorker, isMainThread, parentPort, workerData } = require('worker_threads');
-
-/**
- * Interface for fuzzer which are run by the {@link Engine}.
- */
-export interface Fuzzer {
-	isExpectedError(error: Error): boolean;
-	globalInit(): void;
-	prepareCase(): FuzzCase;
-}
-
-/**
- * A single executable fuzz case.
- */
-export class FuzzCase {
-	contextItem?: any | null;
-	selector: string;
-	language: string;
-
-	constructor(selector: string, language: string, contextItem?: any | null) {
-		this.selector = selector;
-		this.language = language;
-		this.contextItem = contextItem;
-	}
-
-	run(): void {
-		// Execute the expression
-		evaluateXPath(this.selector, this.contextItem, null, null, null, {
-			disableCache: true,
-			language: this.language
-		});
-	}
-}
 
 enum WorkerMessageTypes {
 	Online = 'online',
@@ -43,68 +11,12 @@ enum WorkerMessageTypes {
 /**
  * Multi-threaded fuzzing engine.
  */
-export default class Engine<TFuzzer extends Fuzzer> {
+export default class Engine<TFuzzer extends IFuzzer> {
 	run(fuzzer: TFuzzer, filename: string): void {
-		// Main entry point of the program
-		if (!isMainThread) {
-			this.run_worker(fuzzer);
-		} else {
+		if (isMainThread) {
 			this.run_main(filename);
-		}
-	}
-
-	private run_worker(fuzzer: TFuzzer): void {
-		// Init the fuzzer
-		fuzzer.globalInit();
-
-		// Report worker as online
-		const tid = workerData.tid;
-		parentPort.postMessage({
-			type: WorkerMessageTypes.Online,
-			tid
-		});
-
-		let deltaCases = 0;
-		const uniqueStacks = new Set();
-		while (true) {
-			// Report progress
-			if (deltaCases === 1000) {
-				parentPort.postMessage({
-					type: WorkerMessageTypes.Progress,
-					totalCases: deltaCases,
-					tid
-				});
-				deltaCases = 0;
-			}
-			deltaCases += 1;
-
-			// Init case
-			const fuzzCase = fuzzer.prepareCase();
-
-			// Execute the case
-			try {
-				fuzzCase.run();
-			} catch (error) {
-				// Test if this is an expected error
-				if (fuzzer.isExpectedError(error)) {
-					continue;
-				}
-
-				// Not interested in duplicate stack traces
-				if (uniqueStacks.has(error.stack)) {
-					continue;
-				}
-				uniqueStacks.add(error.stack);
-
-				// Report the error
-				parentPort.postMessage({
-					type: WorkerMessageTypes.Crash,
-					selector: fuzzCase.selector,
-					language: fuzzCase.language,
-					stack: error.stack,
-					tid
-				});
-			}
+		} else {
+			this.run_worker(fuzzer);
 		}
 	}
 
@@ -185,5 +97,60 @@ export default class Engine<TFuzzer extends Fuzzer> {
 				`\x1b[0m\t[Workers: \x1b[32m${workersOnline}\x1b[0m] [Total cases: \x1b[32m${totalCases}\x1b[0m] [fcps: \x1b[32m${fcps}\x1b[0m] [Unique crashes: \x1b[31m${uniqueStacks.size}\x1b[0m]`
 			);
 		}, 1000);
+	}
+
+	private run_worker(fuzzer: TFuzzer): void {
+		// Init the fuzzer
+		fuzzer.globalInit();
+
+		// Report worker as online
+		const tid = workerData.tid;
+		parentPort.postMessage({
+			type: WorkerMessageTypes.Online,
+			tid
+		});
+
+		let deltaCases = 0;
+		const uniqueStacks = new Set();
+		while (true) {
+			// Report progress
+			if (deltaCases === 1000) {
+				parentPort.postMessage({
+					type: WorkerMessageTypes.Progress,
+					totalCases: deltaCases,
+					tid
+				});
+				deltaCases = 0;
+			}
+			deltaCases += 1;
+
+			// Init case
+			const fuzzCase = fuzzer.prepareCase();
+
+			// Execute the case
+			try {
+				fuzzCase.run();
+			} catch (error) {
+				// Test if this is an expected error
+				if (fuzzer.isExpectedError(error)) {
+					continue;
+				}
+
+				// Not interested in duplicate stack traces
+				if (uniqueStacks.has(error.stack)) {
+					continue;
+				}
+				uniqueStacks.add(error.stack);
+
+				// Report the error
+				parentPort.postMessage({
+					type: WorkerMessageTypes.Crash,
+					selector: fuzzCase.selector,
+					language: fuzzCase.language,
+					stack: error.stack,
+					tid
+				});
+			}
+		}
 	}
 }
