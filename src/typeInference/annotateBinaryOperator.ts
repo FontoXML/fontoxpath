@@ -31,7 +31,7 @@ export function annotateAddOp(
 		isSubtypeOf(right.type, ValueType.XSNUMERIC)
 	) {
 		const type = {
-			type: BINOP_LOOKUP[left.type + right.type * 1000] ?? ValueType.XSDECIMAL,
+			type: BINOP_LOOKUP[left.type + right.type * 1000] || ValueType.XSDECIMAL,
 			mult: left.mult,
 		};
 		ast.push(['type', type]);

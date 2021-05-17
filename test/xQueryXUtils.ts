@@ -39,7 +39,7 @@ export function buildTestCase(
 		try {
 			astElement = parseScript(
 				xQuery,
-				{ language: Language.XQUERY_UPDATE_3_1_LANGUAGE },
+				{ annotateAst: false, language: Language.XQUERY_UPDATE_3_1_LANGUAGE },
 				new slimdom.Document()
 			);
 		} catch (err) {
@@ -85,10 +85,16 @@ export function buildTestCase(
 		}
 
 		if (
-			!evaluateXPathToBoolean('deep-equal($expected, $actual)', null, null, {
-				expected,
-				actual,
-			})
+			!evaluateXPathToBoolean(
+				'deep-equal($expected, $actual)',
+				null,
+				null,
+				{
+					expected,
+					actual,
+				},
+				{ annotateAst: false }
+			)
 		) {
 			try {
 				chai.assert.equal(

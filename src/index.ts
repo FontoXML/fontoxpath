@@ -66,7 +66,7 @@ function parseXPath(xpathString: string) {
 		return cachedExpression;
 	}
 
-	const ast = parseExpression(xpathString, { allowXQuery: false }, true);
+	const ast = parseExpression(xpathString, { allowXQuery: false, annotateAst: false });
 
 	const queryBody = astHelper.followPath(ast, ['mainModule', 'queryBody', '*']);
 
