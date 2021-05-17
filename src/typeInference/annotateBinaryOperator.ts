@@ -1,7 +1,7 @@
 import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
 import { SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import { IAST } from '../parsing/astHelper';
-import { insertAttribute } from './annotateAST';
+import { insertAttribute } from './insertAttribute';
 
 type BinOpLookupTable = {
 	[key: number]: ValueType;

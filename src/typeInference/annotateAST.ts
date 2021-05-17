@@ -1,6 +1,7 @@
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import { IAST } from '../parsing/astHelper';
 import { annotateAddOp } from './annotateBinaryOperator';
+import { insertAttribute } from './insertAttribute';
 
 export default function annotateAst(ast: IAST): SequenceType | undefined {
 	const type = annotate(ast);
@@ -67,15 +68,4 @@ export function annotate(ast: IAST): SequenceType | undefined {
 			}
 			return { type: ValueType.XSERROR, mult: SequenceMultiplicity.EXACTLY_ONE };
 	}
-}
-
-export function insertAttribute(ast: IAST, sequenceType: SequenceType): IAST {
-	// WIP
-	if (typeof ast[1] === 'object' && !Array.isArray(ast[1])) {
-		ast[1]['type'] = sequenceType;
-	} else {
-		ast.splice(1, 0, { type: sequenceType });
-	}
-
-	return ast;
 }
