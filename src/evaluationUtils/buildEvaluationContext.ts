@@ -100,8 +100,8 @@ export default function buildEvaluationContext(
 		};
 	} else {
 		internalOptions = {
-			// tslint:disable-next-line:no-console
 			annotateAst: true,
+			// tslint:disable-next-line:no-console
 			logger: { trace: console.log.bind(console) },
 			moduleImports: {},
 			namespaceResolver: null,
