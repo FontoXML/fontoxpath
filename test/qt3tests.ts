@@ -588,11 +588,11 @@ describe('qt3 test set', () => {
 		describe(`${testName} (expression backend)`, function () {
 			this.timeout(60000);
 			for (const testCase of testCases) {
-				const testName = getTestName(testCase);
-				const description = getTestDescription(testSetName, testName, testCase);
+				const name = getTestName(testCase);
+				const description = getTestDescription(testSetName, name, testCase);
 
-				if (unrunnableTestCasesByName[testName]) {
-					it.skip(`${unrunnableTestCasesByName[testName]}. (${description})`);
+				if (unrunnableTestCasesByName[name]) {
+					it.skip(`${unrunnableTestCasesByName[name]}. (${description})`);
 					continue;
 				}
 
@@ -623,7 +623,7 @@ describe('qt3 test set', () => {
 							}
 
 							expressionBackendLog.push(
-								`${testName},${e.toString().replace(/\n/g, ' ').trim()}`
+								`${name},${e.toString().replace(/\n/g, ' ').trim()}`
 							);
 
 							// And rethrow the error
@@ -646,11 +646,11 @@ describe('qt3 test set', () => {
 		describe(`${testName} (js-codegen backend)`, function () {
 			this.timeout(60000);
 			for (const testCase of testCases) {
-				const testName = getTestName(testCase);
-				const description = getTestDescription(testSetName, testName, testCase);
+				const name = getTestName(testCase);
+				const description = getTestDescription(testSetName, name, testCase);
 
-				if (unrunnableTestCasesByName[testName]) {
-					it.skip(`${unrunnableTestCasesByName[testName]}. (${description})`);
+				if (unrunnableTestCasesByName[name]) {
+					it.skip(`${unrunnableTestCasesByName[name]}. (${description})`);
 					continue;
 				}
 

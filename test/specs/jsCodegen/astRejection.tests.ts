@@ -97,7 +97,7 @@ describe("rejecting unsupported AST's (js-codegen)", () => {
 		}, 'Unsupported');
 	});
 
-	it.only('rejects unsupported tests', () => {
+	it('rejects unsupported tests', () => {
 		chai.assert.throws(
 			() =>
 				evaluateXPathWithJsCodegen(

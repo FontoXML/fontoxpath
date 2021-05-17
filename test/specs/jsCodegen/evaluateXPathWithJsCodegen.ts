@@ -13,11 +13,6 @@ function generateKey(query: string, returnType: ReturnType) {
 	return `${query} ${returnType}`;
 }
 
-function normalizeEndOfLines(xpathString: string): string {
-	// Replace all character sequences of 0xD followed by 0xA and all 0xD not followed by 0xA with 0xA.
-	return xpathString.replace(/(\x0D+\x0A)|(\x0D+(?!\x0A))/g, String.fromCharCode(0xa));
-}
-
 const cache = {};
 
 const evaluateXPathWithJsCodegen = <
@@ -31,8 +26,6 @@ const evaluateXPathWithJsCodegen = <
 	options?: Options,
 ): IReturnTypes<TNode>[TReturnType] => {
 	returnType = returnType || (ReturnType.ANY as any);
-	query = normalizeEndOfLines(query);
-
 	const cachedQuery = cache[generateKey(query, returnType)];
 
 	if (!cachedQuery) {
