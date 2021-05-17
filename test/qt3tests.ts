@@ -510,7 +510,7 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 		}
 		default:
 			return () => {
-				-chai.assert.fail(null, null, `Skipped test, it was a ${assertNode.localName}`);
+				chai.assert.fail(null, null, `Skipped test, it was a ${assertNode.localName}`);
 			};
 	}
 }
