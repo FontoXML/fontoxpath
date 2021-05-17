@@ -2,7 +2,6 @@ import { SequenceType } from '../expressions/dataTypes/Value';
 import { IAST } from '../parsing/astHelper';
 
 export function insertAttribute(ast: IAST, sequenceType: SequenceType): IAST {
-	// WIP
 	if (typeof ast[1] === 'object' && !Array.isArray(ast[1])) {
 		ast[1]['type'] = sequenceType;
 	} else {

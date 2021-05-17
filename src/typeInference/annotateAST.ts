@@ -1,8 +1,8 @@
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import { IAST } from '../parsing/astHelper';
 import { annotateAddOp } from './annotateBinaryOperator';
-import { insertAttribute } from './insertAttribute';
 import { annotateUnaryMinus, annotateUnaryPlus } from './annotateUnaryOperator';
+import { insertAttribute } from './insertAttribute';
 
 export default function annotateAst(ast: IAST): SequenceType | undefined {
 	const type = annotate(ast);
