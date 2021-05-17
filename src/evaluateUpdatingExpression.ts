@@ -49,7 +49,9 @@ export default async function evaluateUpdatingExpression(
 	variables?: { [s: string]: any } | null,
 	options?: UpdatingOptions | null
 ): Promise<{ pendingUpdateList: object[]; xdmValue: any[] }> {
-	options = options || {};
+	options = options || {
+		annotateAst: true,
+	};
 
 	let dynamicContext: DynamicContext;
 	let executionParameters: ExecutionParameters;

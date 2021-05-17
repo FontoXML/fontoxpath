@@ -89,6 +89,7 @@ export default function buildEvaluationContext(
 	let internalOptions: Options;
 	if (externalOptions) {
 		internalOptions = {
+			annotateAst: true,
 			// tslint:disable-next-line:no-console
 			logger: externalOptions['logger'] || { trace: console.log.bind(console) },
 			documentWriter: externalOptions['documentWriter'],
@@ -100,6 +101,7 @@ export default function buildEvaluationContext(
 	} else {
 		internalOptions = {
 			// tslint:disable-next-line:no-console
+			annotateAst: true,
 			logger: { trace: console.log.bind(console) },
 			moduleImports: {},
 			namespaceResolver: null,
