@@ -1,6 +1,7 @@
 import { IFuzzer } from 'fuzzer';
+import os from 'os';
 import readline from 'readline';
-const { Worker: ThreadWorker, isMainThread, parentPort, workerData } = require('worker_threads');
+import { isMainThread, parentPort, Worker as ThreadWorker, workerData } from 'worker_threads';
 
 enum WorkerMessageTypes {
 	Online = 'online',
@@ -26,7 +27,6 @@ export default class Engine<TFuzzer extends IFuzzer> {
 		const uniqueStacks = new Set();
 
 		// Start all the workers
-		const os = require('os');
 		const numOfCpus = os.cpus().length;
 		process.stdout.write(`Main thread, launching ${numOfCpus} workers\n`);
 		for (const tid of Array(numOfCpus).keys()) {
