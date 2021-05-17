@@ -3,29 +3,8 @@ import { IAST } from '../parsing/astHelper';
 import { annotateAddOp } from './annotateBinaryOperator';
 
 export default function annotateAst(ast: IAST): SequenceType | undefined {
-	const type = annotateUpperLevel(ast);
+	const type = annotate(ast);
 	return type;
-}
-
-function annotateUpperLevel(ast: IAST): SequenceType | undefined {
-	if (!ast) return undefined;
-
-	switch (ast[0]) {
-		case 'module':
-			return annotateUpperLevel(ast[1] as IAST);
-		case 'libraryModule':
-			return annotateUpperLevel(ast[2] as IAST);
-		case 'mainModule':
-			return annotateUpperLevel(ast[1] as IAST);
-		case 'queryModule':
-			return annotateUpperLevel(ast[1] as IAST);
-		case 'queryBody':
-			return annotate(ast[1] as IAST);
-		case 'prolog':
-			return annotateUpperLevel(ast[1] as IAST);
-		case 'functionDecl':
-			return annotateUpperLevel(ast[3] as IAST);
-	}
 }
 
 function annotateUnaryMinusOp(ast: IAST): SequenceType | undefined {
@@ -38,6 +17,10 @@ function annotateUnaryMinusOp(ast: IAST): SequenceType | undefined {
 }
 
 export function annotate(ast: IAST): SequenceType | undefined {
+	if (!ast) {
+		return undefined;
+	}
+
 	switch (ast[0]) {
 		case 'unaryMinusOp':
 			return annotateUnaryMinusOp(ast);
@@ -77,6 +60,9 @@ export function annotate(ast: IAST): SequenceType | undefined {
 			]);
 			return { type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE };
 		default:
+			for (let i = 1; i < ast.length; i++) {
+				annotate(ast[i] as IAST);
+			}
 			return { type: ValueType.XSERROR, mult: SequenceMultiplicity.EXACTLY_ONE };
 	}
 }
