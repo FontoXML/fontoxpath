@@ -74,6 +74,7 @@ export default function buildEvaluationContext(
 	compilationOptions: {
 		allowUpdating: boolean;
 		allowXQuery: boolean;
+		annotateAst: boolean;
 		debug: boolean;
 		disableCache: boolean;
 	}
@@ -88,6 +89,7 @@ export default function buildEvaluationContext(
 	let internalOptions: Options;
 	if (externalOptions) {
 		internalOptions = {
+			annotateAst: true,
 			// tslint:disable-next-line:no-console
 			logger: externalOptions['logger'] || { trace: console.log.bind(console) },
 			documentWriter: externalOptions['documentWriter'],
@@ -98,6 +100,7 @@ export default function buildEvaluationContext(
 		};
 	} else {
 		internalOptions = {
+			annotateAst: true,
 			// tslint:disable-next-line:no-console
 			logger: { trace: console.log.bind(console) },
 			moduleImports: {},

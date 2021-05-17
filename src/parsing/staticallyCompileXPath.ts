@@ -17,6 +17,7 @@ export default function staticallyCompileXPath(
 	compilationOptions: {
 		allowUpdating: boolean | undefined;
 		allowXQuery: boolean | undefined;
+		annotateAst: boolean | undefined;
 		debug: boolean | undefined;
 		disableCache: boolean | undefined;
 	},
@@ -55,7 +56,7 @@ export default function staticallyCompileXPath(
 		expression = fromCache.expression;
 	} else {
 		// We can not use anything from the cache, parse + compile
-		const ast = parseExpression(xpathString, compilationOptions, true);
+		const ast = parseExpression(xpathString, compilationOptions);
 
 		const mainModule = astHelper.getFirstChild(ast, 'mainModule');
 		if (!mainModule) {

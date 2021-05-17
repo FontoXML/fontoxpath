@@ -136,7 +136,9 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 		throw new TypeError("Failed to execute 'evaluateXPath': xpathExpression must be a string.");
 	}
 
-	options = options || {};
+	options = options || {
+		annotateAst: true,
+	};
 
 	let dynamicContext: DynamicContext;
 	let executionParameters: ExecutionParameters;
@@ -155,6 +157,7 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 					options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE,
 				debug: !!options['debug'],
 				disableCache: !!options['disableCache'],
+				annotateAst: !!options['annotateAst'],
 			}
 		);
 		dynamicContext = context.dynamicContext;
