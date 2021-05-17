@@ -50,7 +50,10 @@ export default async function evaluateUpdatingExpression(
 	options?: UpdatingOptions | null
 ): Promise<{ pendingUpdateList: object[]; xdmValue: any[] }> {
 	options = options || {
-		annotateAst: true,
+		/* TODO: This could probably be changed. Setting this to true makes a single test fail in `alltests`
+		 *		 but this test does not fail when running the tests separately.
+		 */
+		annotateAst: false,
 	};
 
 	let dynamicContext: DynamicContext;
