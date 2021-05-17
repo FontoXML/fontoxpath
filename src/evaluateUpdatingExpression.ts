@@ -18,6 +18,7 @@ import { Language, Logger } from './types/Options';
  * @public
  */
 export type UpdatingOptions = {
+	annotateAst?: boolean;
 	debug?: boolean;
 	disableCache?: boolean;
 	documentWriter?: IDocumentWriter;
@@ -26,7 +27,6 @@ export type UpdatingOptions = {
 	namespaceResolver?: (s: string) => string | null;
 	nodesFactory?: INodesFactory;
 	returnType?: ReturnType;
-	annotateAst?: boolean;
 };
 
 /**
