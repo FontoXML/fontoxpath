@@ -66,3 +66,14 @@ export function annotate(ast: IAST): SequenceType | undefined {
 			return { type: ValueType.XSERROR, mult: SequenceMultiplicity.EXACTLY_ONE };
 	}
 }
+
+function insertAttribute(ast: IAST, sequenceType: SequenceType): IAST {
+	// WIP
+	if (typeof ast[1] === 'object' && !Array.isArray(ast[1])) {
+		ast[1]['type'] = sequenceType;
+	} else {
+		ast.splice(1, 0, { type: sequenceType });
+	}
+
+	return ast;
+}
