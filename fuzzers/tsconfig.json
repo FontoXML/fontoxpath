@@ -15,6 +15,7 @@
 			"mocha",
 			"node"
 		],
+		"moduleResolution": "node",
 		"target": "es2020",
 		"esModuleInterop": true
 	},

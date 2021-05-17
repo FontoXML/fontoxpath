@@ -15,13 +15,13 @@ enum WorkerMessageTypes {
 export default class Engine<TFuzzer extends IFuzzer> {
 	run(fuzzer: TFuzzer, filename: string): void {
 		if (isMainThread) {
-			this.run_main(filename);
+			this.runMain(filename);
 		} else {
-			this.run_worker(fuzzer);
+			this.runWorker(fuzzer);
 		}
 	}
 
-	private run_main(filename: string): void {
+	private runMain(filename: string): void {
 		let workersOnline = 0;
 		let totalCases = 0;
 		const uniqueStacks = new Set();
@@ -99,7 +99,7 @@ export default class Engine<TFuzzer extends IFuzzer> {
 		}, 1000);
 	}
 
-	private run_worker(fuzzer: TFuzzer): void {
+	private runWorker(fuzzer: TFuzzer): void {
 		// Init the fuzzer
 		fuzzer.globalInit();
 

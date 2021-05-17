@@ -1,10 +1,10 @@
 import { evaluateXPath } from 'fontoxpath';
 
 /**
- * Generates a ranumger number between 0 and {@link upper}.
+ * Generates a random number number between 0 and {@link upper}.
  * 
  * @param upper - The upper bound of the random number.
- * @returns The generated random nummer.
+ * @returns The generated random number.
  */
 export function rand(upper: number): number {
 	return Math.floor(Math.random() * upper);
@@ -55,7 +55,7 @@ export function mutateCharactersInPlace(input: string): string {
 }
 
 /**
- * Mutate the intput string.
+ * Mutate the input string.
  * 
  * @param input - The input string which to mutate.
  * @returns Returns the mutated string.
