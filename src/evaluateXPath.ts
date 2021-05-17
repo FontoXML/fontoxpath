@@ -138,15 +138,6 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 
 	options = options || {};
 
-	const compilationOptions = {
-		allowUpdating: options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE,
-		allowXQuery:
-			options['language'] === Language.XQUERY_3_1_LANGUAGE ||
-			options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE,
-		debug: !!options['debug'],
-		disableCache: !!options['disableCache'],
-	};
-
 	let dynamicContext: DynamicContext;
 	let executionParameters: ExecutionParameters;
 	let expression: Expression;
@@ -157,7 +148,14 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 			domFacade || null,
 			variables || {},
 			options,
-			compilationOptions
+			{
+				allowUpdating: options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE,
+				allowXQuery:
+					options['language'] === Language.XQUERY_3_1_LANGUAGE ||
+					options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE,
+				debug: !!options['debug'],
+				disableCache: !!options['disableCache'],
+			}
 		);
 		dynamicContext = context.dynamicContext;
 		executionParameters = context.executionParameters;
