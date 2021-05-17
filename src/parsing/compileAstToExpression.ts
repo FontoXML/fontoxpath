@@ -363,8 +363,9 @@ function binaryOperator(ast: IAST, compilationOptions: CompilationOptions) {
 	);
 
 	const typeNode = astHelper.followPath(ast, ['type']);
+	const attributeType = astHelper.getAttribute(ast, 'type');
 
-	return new BinaryOperator(kind, a, b, typeNode ? (typeNode[1] as SequenceType) : undefined);
+	return new BinaryOperator(kind, a, b, attributeType as SequenceType);
 }
 
 function compileLookup(ast: IAST, compilationOptions: CompilationOptions): '*' | Expression {

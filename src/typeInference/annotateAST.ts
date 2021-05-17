@@ -12,7 +12,7 @@ function annotateUnaryMinusOp(ast: IAST): SequenceType | undefined {
 
 	if (!child) return undefined;
 
-	ast.push(['type', child]);
+	insertAttribute(ast, child);
 	return child;
 }
 
@@ -30,35 +30,37 @@ export function annotate(ast: IAST): SequenceType | undefined {
 
 			return annotateAddOp(ast, left, right);
 		case 'integerConstantExpr':
-			ast.push([
-				'type',
-				{ type: ValueType.XSINTEGER, mult: SequenceMultiplicity.EXACTLY_ONE },
-			]);
-			return { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.EXACTLY_ONE };
+			const integerSequenceType = {
+				type: ValueType.XSINTEGER,
+				mult: SequenceMultiplicity.EXACTLY_ONE,
+			};
+
+			insertAttribute(ast, integerSequenceType);
+			return integerSequenceType;
 		case 'doubleConstantExpr':
-			ast.push([
-				'type',
-				{ type: ValueType.XSDOUBLE, mult: SequenceMultiplicity.EXACTLY_ONE },
-			]);
-			return { type: ValueType.XSDOUBLE, mult: SequenceMultiplicity.EXACTLY_ONE };
+			const doubleSequenceType = {
+				type: ValueType.XSDOUBLE,
+				mult: SequenceMultiplicity.EXACTLY_ONE,
+			};
+
+			insertAttribute(ast, doubleSequenceType);
+			return doubleSequenceType;
 		case 'decimalConstantExpr':
-			ast.push([
-				'type',
-				{
-					type: ValueType.XSDECIMAL,
-					mult: SequenceMultiplicity.EXACTLY_ONE,
-				},
-			]);
-			return { type: ValueType.XSDECIMAL, mult: SequenceMultiplicity.EXACTLY_ONE };
+			const decimalSequenceType = {
+				type: ValueType.XSDECIMAL,
+				mult: SequenceMultiplicity.EXACTLY_ONE,
+			};
+
+			insertAttribute(ast, decimalSequenceType);
+			return decimalSequenceType;
 		case 'stringConstantExpr':
-			ast.push([
-				'type',
-				{
-					type: ValueType.XSSTRING,
-					mult: SequenceMultiplicity.EXACTLY_ONE,
-				},
-			]);
-			return { type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE };
+			const stringSequenceType = {
+				type: ValueType.XSSTRING,
+				mult: SequenceMultiplicity.EXACTLY_ONE,
+			};
+
+			insertAttribute(ast, stringSequenceType);
+			return stringSequenceType;
 		default:
 			for (let i = 1; i < ast.length; i++) {
 				annotate(ast[i] as IAST);
@@ -67,7 +69,7 @@ export function annotate(ast: IAST): SequenceType | undefined {
 	}
 }
 
-function insertAttribute(ast: IAST, sequenceType: SequenceType): IAST {
+export function insertAttribute(ast: IAST, sequenceType: SequenceType): IAST {
 	// WIP
 	if (typeof ast[1] === 'object' && !Array.isArray(ast[1])) {
 		ast[1]['type'] = sequenceType;
