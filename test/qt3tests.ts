@@ -342,7 +342,7 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 					namespaceResolver,
 				});
 				if (compiled.isAstAccepted === true) {
-					let fn = new Function(compiled.code);
+					const fn = new Function(compiled.code);
 					chai.assert.isTrue(
 						executeJavaScriptCompiledXPath(fn, contextNode),
 						`Expected XPath ${xpath} to resolve to true`
@@ -374,7 +374,7 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 				}
 
 				if (compiled.isAstAccepted === true) {
-					let fn = new Function(compiled.code);
+					const fn = new Function(compiled.code);
 					chai.assert.equal(
 						executeJavaScriptCompiledXPath(fn, contextNode).length,
 						parseInt(equalWith, 10),
@@ -392,7 +392,7 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 					namespaceResolver,
 				});
 				if (compiled.isAstAccepted === true) {
-					let fn = new Function(compiled.code);
+					const fn = new Function(compiled.code);
 					chai.assert.deepEqual(
 						executeJavaScriptCompiledXPath(fn, contextNode),
 						evaluateXPathToNodes(equalWith, contextNode, null, variablesInScope, {
@@ -413,7 +413,7 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 					namespaceResolver,
 				});
 				if (compiled.isAstAccepted === true) {
-					let fn = new Function(compiled.code);
+					const fn = new Function(compiled.code);
 					chai.assert.equal(
 						executeJavaScriptCompiledXPath(fn, contextNode),
 						0,
@@ -429,7 +429,7 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 					namespaceResolver,
 				});
 				if (compiled.isAstAccepted === true) {
-					let fn = new Function(compiled.code);
+					const fn = new Function(compiled.code);
 					chai.assert.isFalse(
 						executeJavaScriptCompiledXPath(fn, contextNode),
 						`Expected XPath ${xpath} to resolve to false`
@@ -445,7 +445,7 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 					namespaceResolver,
 				});
 				if (compiled.isAstAccepted === true) {
-					let fn = new Function(compiled.code);
+					const fn = new Function(compiled.code);
 					chai.assert.equal(
 						executeJavaScriptCompiledXPath(fn, contextNode).length,
 						expectedCount,
@@ -478,7 +478,7 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 					namespaceResolver,
 				});
 				if (compiled.isAstAccepted === true) {
-					let fn = new Function(compiled.code);
+					const fn = new Function(compiled.code);
 					const results = executeJavaScriptCompiledXPath(fn, contextNode) as Node[];
 					chai.assert(
 						evaluateXPathToBoolean('deep-equal($a, $b)', null, null, {
