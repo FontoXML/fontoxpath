@@ -3,7 +3,7 @@ import castToType from '../../dataTypes/castToType';
 import createAtomicValue from '../../dataTypes/createAtomicValue';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import { SequenceMultiplicity, SequenceType, ValueType } from '../../dataTypes/Value';
+import { SequenceType, ValueType } from '../../dataTypes/Value';
 import Expression from '../../Expression';
 
 type UnaryLookupTable = {

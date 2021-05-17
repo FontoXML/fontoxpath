@@ -26,8 +26,6 @@ export function annotateUnaryMinus(
 		return type;
 	}
 
-	// TODO: This path does not mean it's invalid per se,
-	// documentation states that especially plus is used for casting to a number.
 	return undefined;
 }
 
@@ -55,6 +53,5 @@ export function annotateUnaryPlus(
 		return type;
 	}
 
-	// TODO: This path does not mean it's invalid per se,
 	return undefined;
 }
