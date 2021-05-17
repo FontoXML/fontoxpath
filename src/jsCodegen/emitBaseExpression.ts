@@ -18,7 +18,7 @@ function emitPredicates(
 	staticContext: StaticContext
 ): PartialCompilationResult {
 	let evaluatePredicateConditionCode = '';
-	const functionDeclarations = [];
+	const functionDeclarations: string[] = [];
 
 	if (!predicatesAst) {
 		return acceptAst(evaluatePredicateConditionCode, functionDeclarations);
@@ -65,7 +65,8 @@ function emitSteps(stepsAst: IAST[], staticContext: StaticContext): PartialCompi
 		);
 	}
 
-	const emittedSteps = { variables: [], code: '' };
+	let emittedCode = '';
+	const emittedVariables: string[] = [];
 	for (let i = stepsAst.length - 1; i >= 0; i--) {
 		const step = stepsAst[i];
 		const nestLevel = i + 1;
@@ -78,7 +79,7 @@ function emitSteps(stepsAst: IAST[], staticContext: StaticContext): PartialCompi
 
 		const axisAst = astHelper.getFirstChild(step, 'xpathAxis');
 		if (axisAst) {
-			const emittedStepsCode = emittedSteps.code;
+			const emittedStepsCode = emittedCode;
 			const testAst = astHelper.getFirstChild(step, tests);
 			if (!testAst) {
 				return rejectAst(`Unsupported: the test in the '${step}' step.`);
@@ -106,8 +107,8 @@ function emitSteps(stepsAst: IAST[], staticContext: StaticContext): PartialCompi
 				return emittedStep;
 			}
 
-			emittedSteps.variables.push(...emittedStep.variables, ...emittedPredicates.variables);
-			emittedSteps.code = emittedStep.code;
+			emittedVariables.push(...emittedStep.variables, ...emittedPredicates.variables);
+			emittedCode = emittedStep.code;
 		} else {
 			return rejectAst('Unsupported: filter expressions.');
 		}
@@ -118,9 +119,9 @@ function emitSteps(stepsAst: IAST[], staticContext: StaticContext): PartialCompi
 		}
 	}
 	const contextDeclaration = 'const contextItem0 = contextItem;';
-	emittedSteps.code = contextDeclaration + emittedSteps.code;
+	emittedCode = contextDeclaration + emittedCode;
 
-	return acceptAst(emittedSteps.code, emittedSteps.variables);
+	return acceptAst(emittedCode, emittedVariables);
 }
 
 // A path expression can be used to locate nodes within trees. A path expression
