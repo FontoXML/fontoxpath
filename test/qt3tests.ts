@@ -1,16 +1,16 @@
 import * as chai from 'chai';
 import {
+	compileXPathToJavaScript,
 	evaluateXPathToArray,
 	evaluateXPathToBoolean,
 	evaluateXPathToFirstNode,
 	evaluateXPathToNodes,
 	evaluateXPathToNumber,
 	evaluateXPathToString,
-	registerXQueryModule,
-	ReturnType,
-	compileXPathToJavaScript,
 	executeJavaScriptCompiledXPath,
 	JavaScriptCompiledXPathResult,
+	registerXQueryModule,
+	ReturnType,
 } from 'fontoxpath';
 import { Element, Node, XMLSerializer } from 'slimdom';
 import { slimdom } from 'slimdom-sax-parser';
