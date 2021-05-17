@@ -64,6 +64,15 @@ class Unary extends Expression {
 
 			const value = atomizedValues[0];
 
+			if (this.type) {
+				return sequenceFactory.singleton(
+					createAtomicValue(
+						this._kind === '+' ? value.value : -value.value,
+						UNARY_LOOKUP[value.type]
+					)
+				);
+			}
+
 			if (isSubtypeOf(value.type, ValueType.XSUNTYPEDATOMIC)) {
 				const castValue = castToType(value, ValueType.XSDOUBLE).value as number;
 				return sequenceFactory.singleton(
@@ -74,11 +83,9 @@ class Unary extends Expression {
 				);
 			}
 
-			const isNumeric = isSubtypeOf(value.type, ValueType.XSNUMERIC);
-
-			if (isNumeric) {
+			if (isSubtypeOf(value.type, ValueType.XSNUMERIC)) {
 				if (this._kind === '+') {
-					return sequenceFactory.singleton(atomizedValues[0]);
+					return sequenceFactory.singleton(value);
 				}
 				return sequenceFactory.singleton(
 					createAtomicValue((value.value as number) * -1, UNARY_LOOKUP[value.type])
