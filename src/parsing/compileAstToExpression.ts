@@ -1032,7 +1032,12 @@ function unaryPlus(
 	compilationOptions: { allowUpdating?: boolean; allowXQuery?: boolean }
 ) {
 	const operand = astHelper.getFirstChild(astHelper.getFirstChild(ast, 'operand'), '*');
-	return new Unary('+', compile(operand, compilationOptions));
+	const typeNode = astHelper.followPath(ast, ['type']);
+	return new Unary(
+		'+',
+		compile(operand, compilationOptions),
+		typeNode ? (typeNode[1] as SequenceType) : undefined
+	);
 }
 
 function unaryMinus(
@@ -1040,7 +1045,12 @@ function unaryMinus(
 	compilationOptions: { allowUpdating?: boolean; allowXQuery?: boolean }
 ) {
 	const operand = astHelper.getFirstChild(astHelper.getFirstChild(ast, 'operand'), '*');
-	return new Unary('-', compile(operand, compilationOptions));
+	const typeNode = astHelper.followPath(ast, ['type']);
+	return new Unary(
+		'-',
+		compile(operand, compilationOptions),
+		typeNode ? (typeNode[1] as SequenceType) : undefined
+	);
 }
 
 function unionOp(ast: IAST, compilationOptions: CompilationOptions) {
