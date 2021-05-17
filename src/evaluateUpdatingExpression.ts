@@ -26,6 +26,7 @@ export type UpdatingOptions = {
 	namespaceResolver?: (s: string) => string | null;
 	nodesFactory?: INodesFactory;
 	returnType?: ReturnType;
+	annotateAst?: boolean;
 };
 
 /**
@@ -65,6 +66,7 @@ export default async function evaluateUpdatingExpression(
 				allowXQuery: true,
 				debug: !!options['debug'],
 				disableCache: !!options['disableCache'],
+				annotateAst: !!options['annotateAst'],
 			}
 		);
 		dynamicContext = context.dynamicContext;

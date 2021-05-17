@@ -151,4 +151,6 @@ export type Options = {
 	 * elements using the document implementation related to the passed context node.
 	 */
 	nodesFactory?: INodesFactory;
+
+	annotateAst?: boolean;
 };

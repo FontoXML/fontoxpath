@@ -54,6 +54,7 @@ export default function evaluateUpdatingExpressionSync<
 				allowXQuery: true,
 				debug: !!options['debug'],
 				disableCache: !!options['disableCache'],
+				annotateAst: !!options['annotateAst'],
 			}
 		);
 		dynamicContext = context.dynamicContext;
