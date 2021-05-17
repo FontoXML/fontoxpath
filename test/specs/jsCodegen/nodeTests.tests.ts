@@ -18,7 +18,7 @@ describe('kind tests', () => {
 			evaluateXPathWithJsCodegen('/xml/text()', documentNode, null, ReturnType.BOOLEAN)
 		);
 	});
-	
+
 	it('does not select non-text nodes', () => {
 		chai.assert.isFalse(
 			evaluateXPathWithJsCodegen('/text()', documentNode, null, ReturnType.BOOLEAN)
@@ -29,7 +29,35 @@ describe('kind tests', () => {
 		documentNode = new slimdom.Document();
 		const element = documentNode.createElementNS('http://fontoxml.com/ns/', 'someElement');
 		chai.assert.equal(
-			evaluateXPathWithJsCodegen('self::Q{http://fontoxml.com/ns/}someElement', element, null, ReturnType.FIRST_NODE),
+			evaluateXPathWithJsCodegen(
+				'self::Q{http://fontoxml.com/ns/}someElement',
+				element,
+				null,
+				ReturnType.FIRST_NODE
+			),
+			element
+		);
+	});
+
+	it('resolves prefixes to namespace URIs', () => {
+		documentNode = new slimdom.Document();
+		const namespace = 'http://fontoxml.com/ns/';
+		const element = documentNode.createElementNS(namespace, 'someElement');
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen(
+				'self::fonto:someElement',
+				element,
+				null,
+				ReturnType.FIRST_NODE,
+				{
+					namespaceResolver: (prefix) => {
+						if (prefix === 'fonto') {
+							return namespace;
+						}
+						return '';
+					},
+				}
+			),
 			element
 		);
 	});

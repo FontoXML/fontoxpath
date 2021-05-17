@@ -317,7 +317,9 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 			) => {
 				chai.assert.throws(
 					() => {
-						const compiled = compileXPathToJavaScript(xpath, ReturnType.NODES);
+						const compiled = compileXPathToJavaScript(xpath, ReturnType.NODES, {
+							namespaceResolver,
+						});
 						if (compiled.isAstAccepted === true) {
 							const fn = new Function(compiled.code);
 							executeJavaScriptCompiledXPath(fn, contextNode);
@@ -336,7 +338,9 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 			};
 		case 'assert-true':
 			return (xpath, contextNode, variablesInScope, namespaceResolver, that) => {
-				const compiled = compileXPathToJavaScript(xpath, ReturnType.BOOLEAN);
+				const compiled = compileXPathToJavaScript(xpath, ReturnType.BOOLEAN, {
+					namespaceResolver,
+				});
 				if (compiled.isAstAccepted === true) {
 					let fn = new Function(compiled.code);
 					chai.assert.isTrue(
@@ -359,7 +363,9 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 
 				let compiled: JavaScriptCompiledXPathResult;
 				try {
-					compiled = compileXPathToJavaScript(xpath, ReturnType.NODES);
+					compiled = compileXPathToJavaScript(xpath, ReturnType.NODES, {
+						namespaceResolver,
+					});
 				} catch (e) {
 					// Parser error caused by substringing the query earlier.
 					if (e.toString().includes('XPST0003')) {
@@ -382,7 +388,9 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 		case 'assert-deep-eq': {
 			const equalWith = evaluateXPathToString('.', assertNode);
 			return (xpath, contextNode, variablesInScope, namespaceResolver, that) => {
-				const compiled = compileXPathToJavaScript(xpath, ReturnType.BOOLEAN);
+				const compiled = compileXPathToJavaScript(xpath, ReturnType.BOOLEAN, {
+					namespaceResolver,
+				});
 				if (compiled.isAstAccepted === true) {
 					let fn = new Function(compiled.code);
 					chai.assert.deepEqual(
@@ -401,7 +409,9 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 		}
 		case 'assert-empty':
 			return (xpath, contextNode, variablesInScope, namespaceResolver, that) => {
-				const compiled = compileXPathToJavaScript(xpath, ReturnType.NODES);
+				const compiled = compileXPathToJavaScript(xpath, ReturnType.NODES, {
+					namespaceResolver,
+				});
 				if (compiled.isAstAccepted === true) {
 					let fn = new Function(compiled.code);
 					chai.assert.equal(
@@ -415,7 +425,9 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 			};
 		case 'assert-false':
 			return (xpath, contextNode, variablesInScope, namespaceResolver, that) => {
-				const compiled = compileXPathToJavaScript(xpath, ReturnType.BOOLEAN);
+				const compiled = compileXPathToJavaScript(xpath, ReturnType.BOOLEAN, {
+					namespaceResolver,
+				});
 				if (compiled.isAstAccepted === true) {
 					let fn = new Function(compiled.code);
 					chai.assert.isFalse(
@@ -429,7 +441,9 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 		case 'assert-count': {
 			const expectedCount = evaluateXPathToNumber('number(.)', assertNode);
 			return (xpath, contextNode, variablesInScope, namespaceResolver, that) => {
-				const compiled = compileXPathToJavaScript(xpath, ReturnType.NODES);
+				const compiled = compileXPathToJavaScript(xpath, ReturnType.NODES, {
+					namespaceResolver,
+				});
 				if (compiled.isAstAccepted === true) {
 					let fn = new Function(compiled.code);
 					chai.assert.equal(
@@ -460,7 +474,9 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 				).documentElement;
 			}
 			return (xpath, contextNode, variablesInScope, namespaceResolver, that) => {
-				const compiled = compileXPathToJavaScript(xpath, ReturnType.NODES);
+				const compiled = compileXPathToJavaScript(xpath, ReturnType.NODES, {
+					namespaceResolver,
+				});
 				if (compiled.isAstAccepted === true) {
 					let fn = new Function(compiled.code);
 					const results = executeJavaScriptCompiledXPath(fn, contextNode) as Node[];
