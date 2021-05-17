@@ -2,7 +2,12 @@ import { NODE_TYPES } from '../domFacade/ConcreteNode';
 import QName from '../expressions/dataTypes/valueTypes/QName';
 import astHelper, { IAST } from '../parsing/astHelper';
 import escapeJavaScriptString from './escapeJavaScriptString';
-import { acceptAst, PartialCompilationResult, rejectAst } from './JavaScriptCompiledXPath';
+import {
+	acceptAst,
+	ContextItemIdentifier,
+	PartialCompilationResult,
+	rejectAst,
+} from './JavaScriptCompiledXPath';
 import { StaticContext } from './StaticContext';
 
 const testAstNodes = {
@@ -16,7 +21,7 @@ export const tests = Object.values(testAstNodes);
 
 // text() matches any text node.
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-TextTest
-function emitTextTest(_ast: IAST, identifier: string): PartialCompilationResult {
+function emitTextTest(_ast: IAST, identifier: ContextItemIdentifier): PartialCompilationResult {
 	return acceptAst(`${identifier}.nodeType === ${NODE_TYPES.TEXT_NODE}`);
 }
 
@@ -31,7 +36,7 @@ function resolveNamespaceURI(qName: QName, staticContext: StaticContext) {
 }
 
 function emitNameTestFromQName(
-	identifier: string,
+	identifier: ContextItemIdentifier,
 	qName: QName,
 	staticContext: StaticContext
 ): PartialCompilationResult {
@@ -41,10 +46,6 @@ function emitNameTestFromQName(
 	const isElementOrAttributeCode = `${identifier}.nodeType && (${identifier}.nodeType === ${NODE_TYPES.ELEMENT_NODE} || ${identifier}.nodeType === ${NODE_TYPES.ATTRIBUTE_NODE})`;
 
 	// Simple cases.
-	if (prefix === null && namespaceURI !== '' && localName === '*') {
-		return acceptAst(isElementOrAttributeCode);
-	}
-
 	if (prefix === '*') {
 		if (localName === '*') {
 			return acceptAst(isElementOrAttributeCode);
@@ -79,7 +80,7 @@ function emitNameTestFromQName(
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-ElementTest
 function emitElementTest(
 	ast: IAST,
-	identifier: string,
+	identifier: ContextItemIdentifier,
 	staticContext: StaticContext
 ): PartialCompilationResult {
 	const elementName = astHelper.getFirstChild(ast, 'elementName');
@@ -97,7 +98,7 @@ function emitElementTest(
 
 // A node test that consists only of an EQName or a Wildcard is called a name test.
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-NameTest
-function emitNameTest(ast: IAST, identifier: string, staticContext: StaticContext) {
+function emitNameTest(ast: IAST, identifier: ContextItemIdentifier, staticContext: StaticContext) {
 	return emitNameTestFromQName(identifier, astHelper.getQName(ast), staticContext);
 }
 
@@ -106,7 +107,7 @@ function emitNameTest(ast: IAST, identifier: string, staticContext: StaticContex
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-Wildcard
 function emitWildcard(
 	ast: IAST,
-	identifier: string,
+	identifier: ContextItemIdentifier,
 	staticContext: StaticContext
 ): PartialCompilationResult {
 	if (!astHelper.getFirstChild(ast, 'star')) {
@@ -121,12 +122,49 @@ function emitWildcard(
 		);
 	}
 
-	return rejectAst('Unsupported: the given wildcard.');
+	const uri = astHelper.getFirstChild(ast, 'uri');
+	if (uri) {
+		return emitNameTestFromQName(
+			identifier,
+			{
+				localName: '*',
+				namespaceURI: astHelper.getTextContent(uri),
+				prefix: '',
+			},
+			staticContext
+		);
+	}
+
+	// Either the prefix or the localName are 'starred', find out which one
+	const ncName = astHelper.getFirstChild(ast, 'NCName');
+	if (astHelper.getFirstChild(ast, '*')[0] === 'star') {
+		// The prefix is 'starred'
+		return emitNameTestFromQName(
+			identifier,
+			{
+				localName: astHelper.getTextContent(ncName),
+				namespaceURI: null,
+				prefix: '*',
+			},
+			staticContext
+		);
+	}
+
+	// The localName is 'starred'
+	return emitNameTestFromQName(
+		identifier,
+		{
+			localName: '*',
+			namespaceURI: null,
+			prefix: astHelper.getTextContent(ncName),
+		},
+		staticContext
+	);
 }
 
 export default function emitTest(
 	ast: IAST,
-	identifier: string,
+	identifier: ContextItemIdentifier,
 	staticContext: StaticContext
 ): PartialCompilationResult {
 	const test = ast[0];

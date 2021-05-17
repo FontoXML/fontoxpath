@@ -1,5 +1,10 @@
 import astHelper, { IAST } from '../parsing/astHelper';
-import { acceptAst, PartialCompilationResult, rejectAst } from './JavaScriptCompiledXPath';
+import {
+	acceptAst,
+	ContextItemIdentifier,
+	PartialCompilationResult,
+	rejectAst,
+} from './JavaScriptCompiledXPath';
 
 const axisAstNodes = {
 	ATTRIBUTE: 'attribute',
@@ -94,7 +99,7 @@ function emitMultipleNodeAxis(
 	predicates: string,
 	nestLevel: number,
 	nestedCode: string,
-	contextItemsIdentifier: string,
+	contextItemIdentifier: ContextItemIdentifier,
 	contextNodeCode: string
 ): PartialCompilationResult {
 	const indexReset = nestLevel !== 1 ? `i${nestLevel} = 0;` : ``;
@@ -102,8 +107,8 @@ function emitMultipleNodeAxis(
 
 	const axisCode = `
 	${contextNodeCode}
-	while (i${nestLevel} < ${contextItemsIdentifier}${nestLevel}.length) {
-		const contextItem${nestLevel} = ${contextItemsIdentifier}${nestLevel}[i${nestLevel}];
+	while (i${nestLevel} < ${contextItemIdentifier}${nestLevel}.length) {
+		const contextItem${nestLevel} = ${contextItemIdentifier}${nestLevel}[i${nestLevel}];
 		if (!(${test} ${predicateConditionCode})) {
 			i${nestLevel}++;
 			continue;

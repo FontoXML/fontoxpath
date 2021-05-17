@@ -61,4 +61,34 @@ describe('kind tests', () => {
 			element
 		);
 	});
+
+	it('resolves prefixes to namespace URIs', () => {
+		documentNode = new slimdom.Document();
+		const namespace = 'http://fontoxml.com/ns/';
+		const element = documentNode.createElementNS(namespace, 'someElement');
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen(
+				'self::fonto:*',
+				element,
+				null,
+				ReturnType.FIRST_NODE,
+				{
+					namespaceResolver: (prefix) => {
+						if (prefix === 'fonto') {
+							return namespace;
+						}
+						return '';
+					},
+				}
+			),
+			element
+		);
+	});
+
+	it('compiles the * prefix', () => {
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen('/*:xml', documentNode, null, ReturnType.FIRST_NODE),
+			documentNode.firstChild
+		);
+	});
 });

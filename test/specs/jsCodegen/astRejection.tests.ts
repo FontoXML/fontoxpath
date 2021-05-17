@@ -97,24 +97,11 @@ describe("rejecting unsupported AST's (js-codegen)", () => {
 		}, 'Unsupported');
 	});
 
-	it('rejects wildcard with uri', () => {
+	it.only('rejects unsupported tests', () => {
 		chai.assert.throws(
 			() =>
 				evaluateXPathWithJsCodegen(
-					'/somenamespace:*',
-					documentNode,
-					null,
-					ReturnType.BOOLEAN
-				),
-			'Unsupported'
-		);
-	});
-
-	it('rejects unsupported tests', () => {
-		chai.assert.throws(
-			() =>
-				evaluateXPathWithJsCodegen(
-					'/xml[self::namespace-node() or self::processing-instruction()]',
+					'/processing-instruction()',
 					documentNode,
 					null,
 					ReturnType.BOOLEAN
@@ -176,6 +163,19 @@ declare %public function test:hello($a) {
 				null,
 				ReturnType.BOOLEAN
 			);
+		}, 'Unsupported');
+	});
+
+	it('rejects unsupported return types', () => {
+		chai.assert.throws(() => {
+			evaluateXPathWithJsCodegen('/xml', documentNode, null, ReturnType.ANY);
+			evaluateXPathWithJsCodegen('/xml', documentNode, null, ReturnType.NUMBER);
+			evaluateXPathWithJsCodegen('/xml', documentNode, null, ReturnType.STRING);
+			evaluateXPathWithJsCodegen('/xml', documentNode, null, ReturnType.STRINGS);
+			evaluateXPathWithJsCodegen('/xml', documentNode, null, ReturnType.MAP);
+			evaluateXPathWithJsCodegen('/xml', documentNode, null, ReturnType.ARRAY);
+			evaluateXPathWithJsCodegen('/xml', documentNode, null, ReturnType.NUMBERS);
+			evaluateXPathWithJsCodegen('/xml', documentNode, null, ReturnType.MAP);
 		}, 'Unsupported');
 	});
 });

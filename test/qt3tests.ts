@@ -321,6 +321,7 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 							namespaceResolver,
 						});
 						if (compiled.isAstAccepted === true) {
+							// tslint:disable-next-line
 							const fn = new Function(compiled.code);
 							executeJavaScriptCompiledXPath(fn, contextNode);
 						} else {
@@ -342,6 +343,7 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 					namespaceResolver,
 				});
 				if (compiled.isAstAccepted === true) {
+					// tslint:disable-next-line
 					const fn = new Function(compiled.code);
 					chai.assert.isTrue(
 						executeJavaScriptCompiledXPath(fn, contextNode),
@@ -374,6 +376,7 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 				}
 
 				if (compiled.isAstAccepted === true) {
+					// tslint:disable-next-line
 					const fn = new Function(compiled.code);
 					chai.assert.equal(
 						executeJavaScriptCompiledXPath(fn, contextNode).length,
@@ -392,6 +395,7 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 					namespaceResolver,
 				});
 				if (compiled.isAstAccepted === true) {
+					// tslint:disable-next-line
 					const fn = new Function(compiled.code);
 					chai.assert.deepEqual(
 						executeJavaScriptCompiledXPath(fn, contextNode),
@@ -413,6 +417,7 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 					namespaceResolver,
 				});
 				if (compiled.isAstAccepted === true) {
+					// tslint:disable-next-line
 					const fn = new Function(compiled.code);
 					chai.assert.equal(
 						executeJavaScriptCompiledXPath(fn, contextNode),
@@ -429,6 +434,7 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 					namespaceResolver,
 				});
 				if (compiled.isAstAccepted === true) {
+					// tslint:disable-next-line
 					const fn = new Function(compiled.code);
 					chai.assert.isFalse(
 						executeJavaScriptCompiledXPath(fn, contextNode),
@@ -445,6 +451,7 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 					namespaceResolver,
 				});
 				if (compiled.isAstAccepted === true) {
+					// tslint:disable-next-line
 					const fn = new Function(compiled.code);
 					chai.assert.equal(
 						executeJavaScriptCompiledXPath(fn, contextNode).length,
@@ -478,6 +485,7 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 					namespaceResolver,
 				});
 				if (compiled.isAstAccepted === true) {
+					// tslint:disable-next-line
 					const fn = new Function(compiled.code);
 					const results = executeJavaScriptCompiledXPath(fn, contextNode) as Node[];
 					chai.assert(
@@ -589,6 +597,7 @@ describe('qt3 test set', () => {
 				}
 
 				try {
+					// tslint:disable-next-line
 					const assertFn = function () {
 						const {
 							baseUrl,
@@ -646,6 +655,7 @@ describe('qt3 test set', () => {
 				}
 
 				try {
+					// tslint:disable-next-line
 					const assertFn = function () {
 						const {
 							baseUrl,

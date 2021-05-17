@@ -1,7 +1,12 @@
 import astHelper, { IAST } from '../parsing/astHelper';
 import emitStep from './emitStep';
 import emitTest, { tests } from './emitTest';
-import { acceptAst, PartialCompilationResult, rejectAst } from './JavaScriptCompiledXPath';
+import {
+	acceptAst,
+	FunctionIdentifier,
+	PartialCompilationResult,
+	rejectAst,
+} from './JavaScriptCompiledXPath';
 import { StaticContext } from './StaticContext';
 
 const baseExprAstNodes = {
@@ -129,7 +134,7 @@ function emitSteps(stepsAst: IAST[], staticContext: StaticContext): PartialCompi
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-PathExpr
 function emitPathExpr(
 	ast: IAST,
-	identifier: string,
+	identifier: FunctionIdentifier,
 	staticContext: StaticContext
 ): PartialCompilationResult {
 	const emittedSteps = emitSteps(astHelper.getChildren(ast, 'stepExpr'), staticContext);
@@ -159,7 +164,7 @@ const secondOperandIdentifier = 'secondOperand';
 
 function emitOperand(
 	ast: IAST,
-	identifier: string,
+	identifier: FunctionIdentifier,
 	operandKind: 'firstOperand' | 'secondOperand',
 	staticContext: StaticContext
 ): PartialCompilationResult {
@@ -184,7 +189,7 @@ function emitOperand(
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-AndExpr
 function emitAndExpr(
 	ast: IAST,
-	identifier: string,
+	identifier: FunctionIdentifier,
 	staticContext: StaticContext
 ): PartialCompilationResult {
 	return emitLogicalExpr(ast, identifier, staticContext, '&&');
@@ -193,7 +198,7 @@ function emitAndExpr(
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-OrExpr
 function emitOrExpr(
 	ast: IAST,
-	identifier: string,
+	identifier: FunctionIdentifier,
 	staticContext: StaticContext
 ): PartialCompilationResult {
 	return emitLogicalExpr(ast, identifier, staticContext, '||');
@@ -201,7 +206,7 @@ function emitOrExpr(
 
 function emitLogicalExpr(
 	ast: IAST,
-	identifier: string,
+	identifier: FunctionIdentifier,
 	staticContext: StaticContext,
 	logicalExprOperator: '&&' | '||'
 ) {
@@ -225,9 +230,11 @@ function emitLogicalExpr(
 	return acceptAst(andOpCode);
 }
 
+// Compile AST to base expression contained in a function named as the given
+// identifier.
 export function emitBaseExpr(
 	ast: IAST,
-	identifier: string,
+	identifier: FunctionIdentifier,
 	staticContext: StaticContext
 ): PartialCompilationResult {
 	const name = ast[0];

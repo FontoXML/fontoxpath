@@ -1,3 +1,7 @@
+export type ContextItemIdentifier = string;
+
+export type FunctionIdentifier = string;
+
 export type PartiallyCompiledAstAccepted = {
 	code: string;
 	isAstAccepted: true;
