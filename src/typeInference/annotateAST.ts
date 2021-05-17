@@ -1,6 +1,7 @@
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import { IAST } from '../parsing/astHelper';
 import { annotateAddOp } from './annotateBinaryOperator';
+import { annotateUnaryMinus, annotateUnaryPlus } from './annotateUnaryOperator';
 
 export default function annotateAst(ast: IAST): SequenceType | undefined {
 	const type = annotate(ast);
@@ -23,7 +24,11 @@ export function annotate(ast: IAST): SequenceType | undefined {
 
 	switch (ast[0]) {
 		case 'unaryMinusOp':
-			return annotateUnaryMinusOp(ast);
+			const minVal = annotate(ast[1][1] as IAST);
+			return annotateUnaryMinus(ast, minVal);
+		case 'unaryPlusOp':
+			const plusVal = annotate(ast[1][1] as IAST);
+			return annotateUnaryPlus(ast, plusVal);
 		case 'addOp':
 			const left = annotate(ast[1][1] as IAST);
 			const right = annotate(ast[2][1] as IAST);

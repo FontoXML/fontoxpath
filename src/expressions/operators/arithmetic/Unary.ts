@@ -3,8 +3,33 @@ import castToType from '../../dataTypes/castToType';
 import createAtomicValue from '../../dataTypes/createAtomicValue';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import { SequenceMultiplicity, ValueType } from '../../dataTypes/Value';
+import { SequenceType, ValueType } from '../../dataTypes/Value';
 import Expression from '../../Expression';
+
+type UnaryLookupTable = {
+	[key: number]: ValueType;
+};
+
+// TODO: fix this?
+const UNARY_LOOKUP: UnaryLookupTable = {
+	[ValueType.XSINTEGER]: ValueType.XSINTEGER,
+	[ValueType.XSNONPOSITIVEINTEGER]: ValueType.XSINTEGER,
+	[ValueType.XSNEGATIVEINTEGER]: ValueType.XSINTEGER,
+	[ValueType.XSLONG]: ValueType.XSINTEGER,
+	[ValueType.XSINT]: ValueType.XSINTEGER,
+	[ValueType.XSSHORT]: ValueType.XSINTEGER,
+	[ValueType.XSBYTE]: ValueType.XSINTEGER,
+	[ValueType.XSNONNEGATIVEINTEGER]: ValueType.XSINTEGER,
+	[ValueType.XSUNSIGNEDLONG]: ValueType.XSINTEGER,
+	[ValueType.XSUNSIGNEDINT]: ValueType.XSINTEGER,
+	[ValueType.XSUNSIGNEDSHORT]: ValueType.XSINTEGER,
+	[ValueType.XSUNSIGNEDBYTE]: ValueType.XSINTEGER,
+	[ValueType.XSPOSITIVEINTEGER]: ValueType.XSINTEGER,
+
+	[ValueType.XSDECIMAL]: ValueType.XSDECIMAL,
+	[ValueType.XSFLOAT]: ValueType.XSFLOAT,
+	[ValueType.XSDOUBLE]: ValueType.XSDOUBLE,
+};
 
 class Unary extends Expression {
 	private _kind: string;
@@ -15,10 +40,9 @@ class Unary extends Expression {
 	 * @param  kind       Either + or -
 	 * @param  valueExpr  The selector evaluating to the value to process
 	 */
-	constructor(kind: string, valueExpr: Expression) {
-		super(valueExpr.specificity, [valueExpr], { canBeStaticallyEvaluated: false });
+	constructor(kind: string, valueExpr: Expression, type: SequenceType) {
+		super(valueExpr.specificity, [valueExpr], { canBeStaticallyEvaluated: false }, false, type);
 		this._valueExpr = valueExpr;
-
 		this._kind = kind;
 	}
 
@@ -40,6 +64,15 @@ class Unary extends Expression {
 
 			const value = atomizedValues[0];
 
+			if (this.type) {
+				return sequenceFactory.singleton(
+					createAtomicValue(
+						this._kind === '+' ? value.value : -value.value,
+						UNARY_LOOKUP[value.type]
+					)
+				);
+			}
+
 			if (isSubtypeOf(value.type, ValueType.XSUNTYPEDATOMIC)) {
 				const castValue = castToType(value, ValueType.XSDOUBLE).value as number;
 				return sequenceFactory.singleton(
@@ -50,39 +83,14 @@ class Unary extends Expression {
 				);
 			}
 
-			if (this._kind === '+') {
-				if (
-					isSubtypeOf(value.type, ValueType.XSDECIMAL) ||
-					isSubtypeOf(value.type, ValueType.XSDOUBLE) ||
-					isSubtypeOf(value.type, ValueType.XSFLOAT) ||
-					isSubtypeOf(value.type, ValueType.XSINTEGER)
-				) {
-					return sequenceFactory.singleton(atomizedValues[0]);
+			if (isSubtypeOf(value.type, ValueType.XSNUMERIC)) {
+				if (this._kind === '+') {
+					return sequenceFactory.singleton(value);
 				}
-				return sequenceFactory.singleton(createAtomicValue(Number.NaN, ValueType.XSDOUBLE));
-			}
-
-			if (isSubtypeOf(value.type, ValueType.XSINTEGER)) {
 				return sequenceFactory.singleton(
-					createAtomicValue((value.value as number) * -1, ValueType.XSINTEGER)
+					createAtomicValue((value.value as number) * -1, UNARY_LOOKUP[value.type])
 				);
 			}
-			if (isSubtypeOf(value.type, ValueType.XSDECIMAL)) {
-				return sequenceFactory.singleton(
-					createAtomicValue((value.value as number) * -1, ValueType.XSDECIMAL)
-				);
-			}
-			if (isSubtypeOf(value.type, ValueType.XSDOUBLE)) {
-				return sequenceFactory.singleton(
-					createAtomicValue((value.value as number) * -1, ValueType.XSDOUBLE)
-				);
-			}
-			if (isSubtypeOf(value.type, ValueType.XSFLOAT)) {
-				return sequenceFactory.singleton(
-					createAtomicValue((value.value as number) * -1, ValueType.XSFLOAT)
-				);
-			}
-
 			return sequenceFactory.singleton(createAtomicValue(Number.NaN, ValueType.XSDOUBLE));
 		});
 	}
