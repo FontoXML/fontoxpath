@@ -4,6 +4,7 @@ import {
 	IDomFacade,
 	IReturnTypes,
 	ReturnType,
+    Options,
 	// Relative import is used so this module can be resolved by backend
 	// benchmarks.
 } from '../../../src/index';
@@ -26,7 +27,8 @@ const evaluateXPathWithJsCodegen = <
 	query: string,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
-	returnType?: ReturnType
+	returnType?: ReturnType,
+	options?: Options,
 ): IReturnTypes<TNode>[TReturnType] => {
 	returnType = returnType || (ReturnType.ANY as any);
 	query = normalizeEndOfLines(query);
@@ -34,8 +36,8 @@ const evaluateXPathWithJsCodegen = <
 	const cachedQuery = cache[generateKey(query, returnType)];
 
 	if (!cachedQuery) {
-		const compiledXPathResult = compileXPathToJavaScript(query, returnType);
-		if (compiledXPathResult.isAstAccepted) {
+		const compiledXPathResult = compileXPathToJavaScript(query, returnType, options);
+		if (compiledXPathResult.isAstAccepted === true) {
 			// tslint:disable-next-line
 			const evalFunction = new Function(compiledXPathResult.code) as any;
 

@@ -1,8 +1,8 @@
 import astHelper, { IAST } from '../parsing/astHelper';
-import { CompilationOptions } from './CompilationOptions';
 import emitStep from './emitStep';
 import emitTest, { tests } from './emitTest';
 import { acceptAst, PartialCompilationResult, rejectAst } from './JavaScriptCompiledXPath';
+import { StaticContext } from './StaticContext';
 
 const baseExprAstNodes = {
 	PATH_EXPR: 'pathExpr',
@@ -15,7 +15,7 @@ const baseExpressions = Object.values(baseExprAstNodes);
 function emitPredicates(
 	predicatesAst: IAST,
 	nestLevel: number,
-	compilationOptions: CompilationOptions
+	staticContext: StaticContext
 ): PartialCompilationResult {
 	let evaluatePredicateConditionCode = '';
 	const functionDeclarations = [];
@@ -41,7 +41,7 @@ function emitPredicates(
 		const compiledPredicate = emitBaseExpr(
 			predicate,
 			predicateFunctionIdentifier,
-			compilationOptions
+			staticContext
 		);
 		if (compiledPredicate.isAstAccepted) {
 			functionDeclarations.push(compiledPredicate.code);
@@ -52,10 +52,7 @@ function emitPredicates(
 	return acceptAst(evaluatePredicateConditionCode, functionDeclarations);
 }
 
-function emitSteps(
-	stepsAst: IAST[],
-	compilationOptions: CompilationOptions
-): PartialCompilationResult {
+function emitSteps(stepsAst: IAST[], staticContext: StaticContext): PartialCompilationResult {
 	if (stepsAst.length === 0) {
 		return acceptAst(
 			`
@@ -74,7 +71,7 @@ function emitSteps(
 		const nestLevel = i + 1;
 
 		const predicatesAst = astHelper.getFirstChild(step, 'predicates');
-		const emittedPredicates = emitPredicates(predicatesAst, nestLevel, compilationOptions);
+		const emittedPredicates = emitPredicates(predicatesAst, nestLevel, staticContext);
 		if (!emittedPredicates.isAstAccepted) {
 			return emittedPredicates;
 		}
@@ -93,7 +90,7 @@ function emitSteps(
 					? `i${nestLevel}++;\nreturn ready(adaptSingleJavaScriptValue(contextItem${nestLevel}, domFacade));`
 					: `${emittedStepsCode}\ni${nestLevel}++;`;
 
-			const emittedTest = emitTest(testAst, `contextItem${nestLevel}`, compilationOptions);
+			const emittedTest = emitTest(testAst, `contextItem${nestLevel}`, staticContext);
 			if (!emittedTest.isAstAccepted) {
 				return emittedTest;
 			}
@@ -132,9 +129,9 @@ function emitSteps(
 function emitPathExpr(
 	ast: IAST,
 	identifier: string,
-	compilationOptions: CompilationOptions
+	staticContext: StaticContext
 ): PartialCompilationResult {
-	const emittedSteps = emitSteps(astHelper.getChildren(ast, 'stepExpr'), compilationOptions);
+	const emittedSteps = emitSteps(astHelper.getChildren(ast, 'stepExpr'), staticContext);
 	if (!emittedSteps.isAstAccepted) {
 		return emittedSteps;
 	}
@@ -163,7 +160,7 @@ function emitOperand(
 	ast: IAST,
 	identifier: string,
 	operandKind: 'firstOperand' | 'secondOperand',
-	compilationOptions: CompilationOptions
+	staticContext: StaticContext
 ): PartialCompilationResult {
 	const operand = astHelper.getFirstChild(ast, operandKind);
 	const exprAst = astHelper.getFirstChild(operand, baseExpressions);
@@ -173,7 +170,7 @@ function emitOperand(
 
 	const baseExprIdentifier = identifier + operandKind;
 
-	const baseExpr = emitBaseExpr(exprAst, baseExprIdentifier, compilationOptions);
+	const baseExpr = emitBaseExpr(exprAst, baseExprIdentifier, staticContext);
 	if (!baseExpr.isAstAccepted) {
 		return baseExpr;
 	}
@@ -187,32 +184,32 @@ function emitOperand(
 function emitAndExpr(
 	ast: IAST,
 	identifier: string,
-	compilationOptions: CompilationOptions
+	staticContext: StaticContext
 ): PartialCompilationResult {
-	return emitLogicalExpr(ast, identifier, compilationOptions, '&&');
+	return emitLogicalExpr(ast, identifier, staticContext, '&&');
 }
 
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-OrExpr
 function emitOrExpr(
 	ast: IAST,
 	identifier: string,
-	compilationOptions: CompilationOptions
+	staticContext: StaticContext
 ): PartialCompilationResult {
-	return emitLogicalExpr(ast, identifier, compilationOptions, '||');
+	return emitLogicalExpr(ast, identifier, staticContext, '||');
 }
 
 function emitLogicalExpr(
 	ast: IAST,
 	identifier: string,
-	compilationOptions: CompilationOptions,
+	staticContext: StaticContext,
 	logicalExprOperator: '&&' | '||'
 ) {
-	const firstExpr = emitOperand(ast, identifier, firstOperandIdentifier, compilationOptions);
+	const firstExpr = emitOperand(ast, identifier, firstOperandIdentifier, staticContext);
 	if (!firstExpr.isAstAccepted) {
 		return firstExpr;
 	}
 
-	const secondExpr = emitOperand(ast, identifier, secondOperandIdentifier, compilationOptions);
+	const secondExpr = emitOperand(ast, identifier, secondOperandIdentifier, staticContext);
 	if (!secondExpr.isAstAccepted) {
 		return secondExpr;
 	}
@@ -230,17 +227,17 @@ function emitLogicalExpr(
 export function emitBaseExpr(
 	ast: IAST,
 	identifier: string,
-	compilationOptions: CompilationOptions
+	staticContext: StaticContext
 ): PartialCompilationResult {
 	const name = ast[0];
 
 	switch (name) {
 		case baseExprAstNodes.PATH_EXPR:
-			return emitPathExpr(ast, identifier, compilationOptions);
+			return emitPathExpr(ast, identifier, staticContext);
 		case baseExprAstNodes.AND_OP:
-			return emitAndExpr(ast, identifier, compilationOptions);
+			return emitAndExpr(ast, identifier, staticContext);
 		case baseExprAstNodes.OR_OP:
-			return emitOrExpr(ast, identifier, compilationOptions);
+			return emitOrExpr(ast, identifier, staticContext);
 		default:
 			return rejectAst(`Unsupported: the base expression '${name}'.`);
 	}

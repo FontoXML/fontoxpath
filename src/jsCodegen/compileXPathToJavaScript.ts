@@ -1,12 +1,13 @@
 import {
 	createDefaultNamespaceResolver,
 	normalizeEndOfLines,
-} from './evaluationUtils/buildEvaluationContext';
-import compileAstToJavaScript from './jsCodegen/compileAstToJavaScript';
-import { JavaScriptCompiledXPathResult } from './jsCodegen/JavaScriptCompiledXPath';
-import { ReturnType } from './parsing/convertXDMReturnValue';
-import parseExpression from './parsing/parseExpression';
-import { Language, Options } from './types/Options';
+} from '../evaluationUtils/buildEvaluationContext';
+import { ReturnType } from '../parsing/convertXDMReturnValue';
+import parseExpression from '../parsing/parseExpression';
+import { Language, Options } from '../types/Options';
+import compileAstToJavaScript from './compileAstToJavaScript';
+import { JavaScriptCompiledXPathResult } from './JavaScriptCompiledXPath';
+import { StaticContext } from './StaticContext';
 
 /**
  * Compile a given query to JavaScript code. For executing compiled code, see
@@ -39,11 +40,11 @@ function compileXPathToJavaScript(
 
 	const ast = parseExpression(expressionString, parserOptions);
 
-	const compilationOptions = {
-		namespaceResolver: options.namespaceResolver || createDefaultNamespaceResolver(null),
+	const staticContext: StaticContext = {
+		resolveNamespace: options.namespaceResolver || createDefaultNamespaceResolver(null),
 	};
 
-	return compileAstToJavaScript(ast, returnType, compilationOptions);
+	return compileAstToJavaScript(ast, returnType, staticContext);
 }
 
 export default compileXPathToJavaScript;

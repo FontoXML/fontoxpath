@@ -1,10 +1,5 @@
 import astHelper, { IAST } from '../parsing/astHelper';
-import {
-	acceptAst,
-	PartiallyCompiledJavaScriptResult,
-	PartialCompilationResult,
-	rejectAst,
-} from './JavaScriptCompiledXPath';
+import { acceptAst, PartialCompilationResult, rejectAst } from './JavaScriptCompiledXPath';
 
 const axisAstNodes = {
 	ATTRIBUTE: 'attribute',
@@ -24,7 +19,7 @@ function emitChildAxis(
 	predicates: string,
 	nestLevel: number,
 	nestedCode: string
-): PartiallyCompiledJavaScriptResult {
+): PartialCompilationResult {
 	const contextNodesCode = `const ${childAxisContextNodesIdentifier}${nestLevel} = domFacade.getChildNodes(contextItem${
 		nestLevel - 1
 	});`;
@@ -46,7 +41,7 @@ function emitAttributeAxis(
 	predicates: string,
 	nestLevel: number,
 	nestedCode: string
-): PartiallyCompiledJavaScriptResult {
+): PartialCompilationResult {
 	const contextNodesCode = `const ${attributeAxisContextNodesIdentifier}${nestLevel} = domFacade.getAllAttributes(contextItem${
 		nestLevel - 1
 	});`;
@@ -68,7 +63,7 @@ function emitSelfAxis(
 	predicates: string,
 	nestLevel: number,
 	nestedCode: string
-): PartiallyCompiledJavaScriptResult {
+): PartialCompilationResult {
 	const contextNodeCode = `const contextItem${nestLevel} = contextItem${nestLevel - 1};`;
 
 	return emitSingleNodeAxis(test, predicates, nestLevel, nestedCode, contextNodeCode);
@@ -82,7 +77,7 @@ function emitParentAxis(
 	predicates: string,
 	nestLevel: number,
 	nestedCode: string
-): PartiallyCompiledJavaScriptResult {
+): PartialCompilationResult {
 	const contextNodeCode = `
 	const contextItem${nestLevel} = domFacade.getParentNode(contextItem${nestLevel - 1});
 	`;
@@ -101,7 +96,7 @@ function emitMultipleNodeAxis(
 	nestedCode: string,
 	contextItemsIdentifier: string,
 	contextNodeCode: string
-): PartiallyCompiledJavaScriptResult {
+): PartialCompilationResult {
 	const indexReset = nestLevel !== 1 ? `i${nestLevel} = 0;` : ``;
 	const predicateConditionCode = formatConditionCode(predicates);
 
@@ -129,7 +124,7 @@ function emitSingleNodeAxis(
 	nestLevel: number,
 	nestedCode: string,
 	contextNodeCode: string
-): PartiallyCompiledJavaScriptResult {
+): PartialCompilationResult {
 	const testEvaluatationCode = formatConditionCode(test);
 	const predicateEvaluationCode = formatConditionCode(predicates);
 

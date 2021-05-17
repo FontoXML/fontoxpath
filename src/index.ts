@@ -1,4 +1,3 @@
-import compileXPathToJavaScript from './compileXPathToJavaScript';
 import IDocumentWriter from './documentWriter/IDocumentWriter';
 import ExternalDomFacade from './domFacade/ExternalDomFacade';
 import IDomFacade from './domFacade/IDomFacade';
@@ -17,6 +16,7 @@ import evaluateXPathToString from './evaluateXPathToString';
 import evaluateXPathToStrings from './evaluateXPathToStrings';
 import executePendingUpdateList from './executePendingUpdateList';
 import { getBucketsForNode } from './getBuckets';
+import compileXPathToJavaScript from './jsCodegen/compileXPathToJavaScript';
 import executeJavaScriptCompiledXPath from './jsCodegen/executeJavaScriptCompiledXPath';
 import {
 	AstAccepted,

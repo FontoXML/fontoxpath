@@ -1,9 +1,9 @@
 import { NODE_TYPES } from '../domFacade/ConcreteNode';
 import QName from '../expressions/dataTypes/valueTypes/QName';
 import astHelper, { IAST } from '../parsing/astHelper';
-import { CompilationOptions } from './CompilationOptions';
 import escapeJavaScriptString from './escapeJavaScriptString';
 import { acceptAst, PartialCompilationResult, rejectAst } from './JavaScriptCompiledXPath';
+import { StaticContext } from './StaticContext';
 
 const testAstNodes = {
 	TEXT_TEST: 'textTest',
@@ -20,20 +20,31 @@ function emitTextTest(_ast: IAST, identifier: string): PartialCompilationResult 
 	return acceptAst(`${identifier}.nodeType === ${NODE_TYPES.TEXT_NODE}`);
 }
 
+function resolveNamespaceURI(qName: QName, staticContext: StaticContext) {
+	// Resolve prefix.
+	if (qName.namespaceURI === null && qName.prefix !== '*') {
+		qName.namespaceURI = staticContext.resolveNamespace(qName.prefix || '') || null;
+		if (!qName.namespaceURI && qName.prefix) {
+			throw new Error(`XPST0081: The prefix ${qName.prefix} could not be resolved.`);
+		}
+	}
+}
+
 function emitNameTestFromQName(
 	identifier: string,
-	{ prefix, namespaceURI, localName }: QName,
-	compilationOptions: CompilationOptions
+	qName: QName,
+	staticContext: StaticContext
 ): PartialCompilationResult {
+	resolveNamespaceURI(qName, staticContext);
+	const { prefix, namespaceURI, localName } = qName;
+
 	const isElementOrAttributeCode = `${identifier}.nodeType && (${identifier}.nodeType === ${NODE_TYPES.ELEMENT_NODE} || ${identifier}.nodeType === ${NODE_TYPES.ATTRIBUTE_NODE})`;
 
-	// Simple case.
+	// Simple cases.
 	if (prefix === null && namespaceURI !== '' && localName === '*') {
 		return acceptAst(isElementOrAttributeCode);
 	}
 
-	// Any prefix means any node matches, unless a non-wildcard localName is
-	// used.
 	if (prefix === '*') {
 		if (localName === '*') {
 			return acceptAst(isElementOrAttributeCode);
@@ -45,8 +56,8 @@ function emitNameTestFromQName(
 		);
 	}
 
-	// Return a condition that compares localName and the resolved namespaceURI
-	// against the context item.
+	// Return condition comparing localName and namespaceURI against the context
+	// item.
 	const matchesLocalNameCode =
 		localName !== '*'
 			? `${isElementOrAttributeCode} && ${identifier}.localName === ${escapeJavaScriptString(
@@ -69,7 +80,7 @@ function emitNameTestFromQName(
 function emitElementTest(
 	ast: IAST,
 	identifier: string,
-	compilationOptions: CompilationOptions
+	staticContext: StaticContext
 ): PartialCompilationResult {
 	const elementName = astHelper.getFirstChild(ast, 'elementName');
 	const star = elementName && astHelper.getFirstChild(elementName, 'star');
@@ -81,13 +92,13 @@ function emitElementTest(
 
 	const qName = astHelper.getQName(astHelper.getFirstChild(elementName, 'QName'));
 
-	return emitNameTestFromQName(identifier, qName, compilationOptions);
+	return emitNameTestFromQName(identifier, qName, staticContext);
 }
 
 // A node test that consists only of an EQName or a Wildcard is called a name test.
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-NameTest
-function emitNameTest(ast: IAST, identifier: string, compilationOptions: CompilationOptions) {
-	return emitNameTestFromQName(identifier, astHelper.getQName(ast), compilationOptions);
+function emitNameTest(ast: IAST, identifier: string, staticContext: StaticContext) {
+	return emitNameTestFromQName(identifier, astHelper.getQName(ast), staticContext);
 }
 
 // select all element children of the context node
@@ -96,7 +107,7 @@ function emitNameTest(ast: IAST, identifier: string, compilationOptions: Compila
 function emitWildcard(
 	ast: IAST,
 	identifier: string,
-	compilationOptions: CompilationOptions
+	staticContext: StaticContext
 ): PartialCompilationResult {
 	if (!astHelper.getFirstChild(ast, 'star')) {
 		return emitNameTestFromQName(
@@ -106,7 +117,7 @@ function emitWildcard(
 				namespaceURI: null,
 				prefix: '*',
 			},
-			compilationOptions
+			staticContext
 		);
 	}
 
@@ -116,19 +127,19 @@ function emitWildcard(
 export default function emitTest(
 	ast: IAST,
 	identifier: string,
-	compilationOptions: CompilationOptions
+	staticContext: StaticContext
 ): PartialCompilationResult {
 	const test = ast[0];
 
 	switch (test) {
 		case testAstNodes.ELEMENT_TEST:
-			return emitElementTest(ast, identifier, compilationOptions);
+			return emitElementTest(ast, identifier, staticContext);
 		case testAstNodes.TEXT_TEST:
 			return emitTextTest(ast, identifier);
 		case testAstNodes.NAME_TEST:
-			return emitNameTest(ast, identifier, compilationOptions);
+			return emitNameTest(ast, identifier, staticContext);
 		case testAstNodes.WILDCARD:
-			return emitWildcard(ast, identifier, compilationOptions);
+			return emitWildcard(ast, identifier, staticContext);
 		default:
 			return rejectAst(`Unsupported: the test '${test}'.`);
 	}

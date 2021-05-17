@@ -404,8 +404,9 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 				const compiled = compileXPathToJavaScript(xpath, ReturnType.NODES);
 				if (compiled.isAstAccepted === true) {
 					let fn = new Function(compiled.code);
-					chai.assert.isTrue(
+					chai.assert.equal(
 						executeJavaScriptCompiledXPath(fn, contextNode),
+						0,
 						`Expected XPath ${xpath} to resolve to the empty sequence`
 					);
 				} else {

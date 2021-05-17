@@ -32,6 +32,10 @@ export type PartialCompilationResult = PartiallyCompiledAstAccepted | AstRejecte
  */
 export type AstAccepted = { code: string; isAstAccepted: true };
 
+export function acceptFullyCompiledAst(code: string): AstAccepted {
+	return { code, isAstAccepted: true };
+}
+
 /**
  * Result for compiling XPath to JavaScript
  * @beta

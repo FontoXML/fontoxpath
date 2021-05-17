@@ -4,7 +4,7 @@ import IDomFacade from '../domFacade/IDomFacade';
 import { adaptJavaScriptValueToArrayOfXPathValues } from '../expressions/adaptJavaScriptValueToXPathValue';
 import { SequenceMultiplicity, ValueType } from '../expressions/dataTypes/Value';
 import { IReturnTypes } from '../parsing/convertXDMReturnValue';
-import * as runtimeLibrary from './runtimeLibrary';
+import * as RuntimeLib from './RuntimeLib';
 
 /**
  * Execute XPath compiled to JavaScript that is evaluated to a function. For
@@ -38,7 +38,7 @@ const executeJavaScriptCompiledXPath = <
 
 	contextItem = contextArray[0];
 
-	return compiledJavaScriptFunction()(contextItem, wrappedDomFacade, runtimeLibrary);
+	return compiledJavaScriptFunction()(contextItem, wrappedDomFacade, RuntimeLib);
 };
 
 export default executeJavaScriptCompiledXPath;
