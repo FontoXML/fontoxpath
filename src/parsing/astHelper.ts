@@ -5,10 +5,12 @@ import {
 	ValueType,
 } from '../expressions/dataTypes/Value';
 import { SourceRange } from '../expressions/debug/StackTraceGenerator';
+import { BinaryEvaluationFunction } from '../typeInference/binaryEvaluationFunction';
 
 type QName = { localName: string; namespaceURI: string | null; prefix: string };
 
-export interface IAST extends Array<string | object | SourceRange | IAST | SequenceType> {
+export interface IAST
+	extends Array<string | object | SourceRange | IAST | SequenceType | BinaryEvaluationFunction> {
 	0: string;
 }
 
@@ -69,7 +71,7 @@ function getTextContent(ast: IAST): string {
 	if (typeof ast[1] === 'object') {
 		return (ast[2] || '') as string;
 	}
-	return ast[1] || '';
+	return (ast[1] as string) || '';
 }
 
 /**
@@ -167,7 +169,10 @@ function followPath(ast: IAST, path: string[]): IAST | null {
 /**
  * Get the value of the given attribute
  */
-function getAttribute(ast: IAST, attributeName: string): string | SequenceType | null {
+function getAttribute(
+	ast: IAST,
+	attributeName: string
+): string | SequenceType | BinaryEvaluationFunction | null {
 	if (!Array.isArray(ast)) {
 		return null;
 	}

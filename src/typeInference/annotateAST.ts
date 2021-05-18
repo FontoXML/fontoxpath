@@ -1,6 +1,6 @@
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import { IAST } from '../parsing/astHelper';
-import { annotateAddOp } from './annotateBinaryOperator';
+import { annotateBinOp } from './annotateBinaryOperator';
 import { annotateUnaryMinus, annotateUnaryPlus } from './annotateUnaryOperator';
 import { insertAttribute } from './insertAttribute';
 
@@ -14,7 +14,7 @@ function annotateUnaryMinusOp(ast: IAST): SequenceType | undefined {
 
 	if (!child) return undefined;
 
-	insertAttribute(ast, child);
+	insertAttribute(ast, 'type', child);
 	return child;
 }
 
@@ -34,14 +34,14 @@ export function annotate(ast: IAST): SequenceType | undefined {
 			const left = annotate(ast[1][1] as IAST);
 			const right = annotate(ast[2][1] as IAST);
 
-			return annotateAddOp(ast, left, right);
+			return annotateBinOp(ast, left, right, 'add');
 		case 'integerConstantExpr':
 			const integerSequenceType = {
 				type: ValueType.XSINTEGER,
 				mult: SequenceMultiplicity.EXACTLY_ONE,
 			};
 
-			insertAttribute(ast, integerSequenceType);
+			insertAttribute(ast, 'type', integerSequenceType);
 			return integerSequenceType;
 		case 'doubleConstantExpr':
 			const doubleSequenceType = {
@@ -49,7 +49,7 @@ export function annotate(ast: IAST): SequenceType | undefined {
 				mult: SequenceMultiplicity.EXACTLY_ONE,
 			};
 
-			insertAttribute(ast, doubleSequenceType);
+			insertAttribute(ast, 'type', doubleSequenceType);
 			return doubleSequenceType;
 		case 'decimalConstantExpr':
 			const decimalSequenceType = {
@@ -57,7 +57,7 @@ export function annotate(ast: IAST): SequenceType | undefined {
 				mult: SequenceMultiplicity.EXACTLY_ONE,
 			};
 
-			insertAttribute(ast, decimalSequenceType);
+			insertAttribute(ast, 'type', decimalSequenceType);
 			return decimalSequenceType;
 		case 'stringConstantExpr':
 			const stringSequenceType = {
@@ -65,12 +65,12 @@ export function annotate(ast: IAST): SequenceType | undefined {
 				mult: SequenceMultiplicity.EXACTLY_ONE,
 			};
 
-			insertAttribute(ast, stringSequenceType);
+			insertAttribute(ast, 'type', stringSequenceType);
 			return stringSequenceType;
 		default:
 			for (let i = 1; i < ast.length; i++) {
 				annotate(ast[i] as IAST);
 			}
-			return { type: ValueType.XSERROR, mult: SequenceMultiplicity.EXACTLY_ONE };
+			return undefined;
 	}
 }

@@ -62,6 +62,7 @@ import ElementConstructor from '../expressions/xquery/ElementConstructor';
 import PIConstructor from '../expressions/xquery/PIConstructor';
 import TextConstructor from '../expressions/xquery/TextConstructor';
 import TypeSwitchExpression from '../expressions/xquery/TypeSwitchExpression';
+import { BinaryEvaluationFunction } from '../typeInference/binaryEvaluationFunction';
 import astHelper, { IAST } from './astHelper';
 
 const COMPILATION_OPTIONS = {
@@ -362,10 +363,16 @@ function binaryOperator(ast: IAST, compilationOptions: CompilationOptions) {
 		disallowUpdating(compilationOptions)
 	);
 
-	const typeNode = astHelper.followPath(ast, ['type']);
 	const attributeType = astHelper.getAttribute(ast, 'type');
+	const evaluateFunction = astHelper.getAttribute(ast, 'evalFunc');
 
-	return new BinaryOperator(kind, a, b, attributeType as SequenceType);
+	return new BinaryOperator(
+		kind,
+		a,
+		b,
+		attributeType as SequenceType,
+		evaluateFunction as BinaryEvaluationFunction
+	);
 }
 
 function compileLookup(ast: IAST, compilationOptions: CompilationOptions): '*' | Expression {
