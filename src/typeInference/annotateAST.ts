@@ -71,6 +71,6 @@ export function annotate(ast: IAST): SequenceType | undefined {
 			for (let i = 1; i < ast.length; i++) {
 				annotate(ast[i] as IAST);
 			}
-			return { type: ValueType.XSERROR, mult: SequenceMultiplicity.EXACTLY_ONE };
+			return undefined;
 	}
 }
