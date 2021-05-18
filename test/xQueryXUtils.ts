@@ -74,9 +74,11 @@ export function buildTestCase(
 		// contents because we can assume that
 		// the outer element is the same, but it may contain random attributes we should ignore.
 
-		const actualInnerHtml = new slimdom.XMLSerializer().serializeToString(
-			actual.documentElement.firstElementChild
-		);
+		const regex = / xqx:type="(.*?)"/gi;
+
+		const actualInnerHtml = new slimdom.XMLSerializer()
+			.serializeToString(actual.documentElement.firstElementChild)
+			.replace(regex, '');
 		const expectedInnerHtml = new slimdom.XMLSerializer().serializeToString(
 			expected.documentElement.firstElementChild
 		);
@@ -93,7 +95,7 @@ export function buildTestCase(
 					expected,
 					actual,
 				},
-				{ annotateAst: false }
+				{ annotateAst: true }
 			)
 		) {
 			try {

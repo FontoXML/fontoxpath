@@ -202,6 +202,10 @@ const BINOP_EVAL_FUNCTIONS: EvalFuncTable = {
 		(l: number, r: number) => l / r,
 		ValueType.XSDECIMAL,
 	],
+	[hash(ValueType.XSINTEGER, ValueType.XSDOUBLE, 'div')]: [
+		(l: number, r: number) => l / r,
+		ValueType.XSDOUBLE,
+	],
 	[hash(ValueType.XSFLOAT, ValueType.XSFLOAT, 'div')]: [
 		(l: number, r: number) => l / r,
 		ValueType.XSFLOAT,
