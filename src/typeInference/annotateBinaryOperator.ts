@@ -98,7 +98,7 @@ const BINOP_EVAL_FUNCTIONS: EvalFuncTable = {
 		(l: number, r: number) => l * r,
 		ValueType.XSDECIMAL,
 	],
-	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'multiply')]: [
+	[hash(ValueType.XSINTEGER, ValueType.XSINTEGER, 'multiply')]: [
 		(l: number, r: number) => l * r,
 		ValueType.XSDECIMAL,
 	],
@@ -147,6 +147,6 @@ export function annotateBinOp(
 	throw new Error(
 		`XPTY0004: Addition not available for types ${sequenceTypeToString(
 			left
-		)} and ${sequenceTypeToString(right)}`
+		)} and ${sequenceTypeToString(right)} ${operator}`
 	);
 }
