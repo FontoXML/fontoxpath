@@ -35,6 +35,10 @@ export function annotate(ast: IAST): SequenceType | undefined {
 			const right = annotate(ast[2][1] as IAST);
 
 			return annotateBinOp(ast, left, right, 'add');
+		case 'modOp':
+			const l = annotate(ast[1][1] as IAST);
+			const r = annotate(ast[2][1] as IAST);
+			return annotateBinOp(ast, l, r, 'mod');
 		case 'integerConstantExpr':
 			const integerSequenceType = {
 				type: ValueType.XSINTEGER,
