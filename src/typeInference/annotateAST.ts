@@ -23,6 +23,7 @@ export function annotate(ast: IAST): SequenceType | undefined {
 			return annotateUnaryPlus(ast, plusVal);
 		case 'addOp':
 		case 'divOp':
+		case 'idivOp':
 			const left = annotate(ast[1][1] as IAST);
 			const right = annotate(ast[2][1] as IAST);
 
