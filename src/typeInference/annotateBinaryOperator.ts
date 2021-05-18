@@ -8,9 +8,9 @@ import { addDuration as addDurationToDateTime } from '../expressions/dataTypes/v
 
 function hash(left: ValueType, right: ValueType, op: string): number {
 	return (
-		(left as number) * 100000 +
-		(right as number) * 10000 +
-		op.charCodeAt(0) * 100 +
+		((left as number) << 20) +
+		((right as number) << 12) +
+		(op.charCodeAt(0) << 8) +
 		op.charCodeAt(1)
 	);
 }
