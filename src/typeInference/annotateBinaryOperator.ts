@@ -1,7 +1,14 @@
 import { SequenceType, sequenceTypeToString, ValueType } from '../expressions/dataTypes/Value';
 import { addDuration as addDurationToDateTime } from '../expressions/dataTypes/valueTypes/DateTime';
-import { add as dayTimeDurationAdd } from '../expressions/dataTypes/valueTypes/DayTimeDuration';
-import { add as yearMonthDurationAdd } from '../expressions/dataTypes/valueTypes/YearMonthDuration';
+import {
+	add as dayTimeDurationAdd,
+	divideByDayTimeDuration as dayTimeDurationDivideByDayTimeDuration,
+} from '../expressions/dataTypes/valueTypes/DayTimeDuration';
+import {
+	add as yearMonthDurationAdd,
+	divide as yearMonthDurationDivide,
+	divideByYearMonthDuration as yearMonthDurationDivideByYearMonthDuration,
+} from '../expressions/dataTypes/valueTypes/YearMonthDuration';
 import { IAST } from '../parsing/astHelper';
 import { BinaryEvaluationFunction } from './binaryEvaluationFunction';
 import { insertAttribute } from './insertAttribute';
@@ -75,6 +82,74 @@ const BINOP_EVAL_FUNCTIONS: EvalFuncTable = {
 	[hash(ValueType.XSTIME, ValueType.XSDAYTIMEDURATION, 'add')]: [
 		addDurationToDateTime,
 		ValueType.XSDATETIME,
+	],
+	[hash(ValueType.XSINTEGER, ValueType.XSINTEGER, 'div')]: [
+		(l: number, r: number) => l / r,
+		ValueType.XSDECIMAL,
+	],
+	[hash(ValueType.XSFLOAT, ValueType.XSFLOAT, 'div')]: [
+		(l: number, r: number) => l / r,
+		ValueType.XSFLOAT,
+	],
+	[hash(ValueType.XSDOUBLE, ValueType.XSDOUBLE, 'div')]: [
+		(l: number, r: number) => l / r,
+		ValueType.XSDOUBLE,
+	],
+	[hash(ValueType.XSDECIMAL, ValueType.XSDECIMAL, 'div')]: [
+		(l: number, r: number) => l / r,
+		ValueType.XSDECIMAL,
+	],
+	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'div')]: [
+		(l: number, r: number) => l / r,
+		ValueType.XSDOUBLE,
+	],
+	[hash(ValueType.XSYEARMONTHDURATION, ValueType.XSYEARMONTHDURATION, 'div')]: [
+		yearMonthDurationDivideByYearMonthDuration,
+		ValueType.XSDECIMAL,
+	],
+	[hash(ValueType.XSYEARMONTHDURATION, ValueType.XSINTEGER, 'div')]: [
+		yearMonthDurationDivide,
+		ValueType.XSYEARMONTHDURATION,
+	],
+	[hash(ValueType.XSYEARMONTHDURATION, ValueType.XSFLOAT, 'div')]: [
+		yearMonthDurationDivide,
+		ValueType.XSYEARMONTHDURATION,
+	],
+	[hash(ValueType.XSYEARMONTHDURATION, ValueType.XSDOUBLE, 'div')]: [
+		yearMonthDurationDivide,
+		ValueType.XSYEARMONTHDURATION,
+	],
+	[hash(ValueType.XSYEARMONTHDURATION, ValueType.XSDECIMAL, 'div')]: [
+		yearMonthDurationDivide,
+		ValueType.XSYEARMONTHDURATION,
+	],
+	[hash(ValueType.XSYEARMONTHDURATION, ValueType.XSNUMERIC, 'div')]: [
+		yearMonthDurationDivide,
+		ValueType.XSYEARMONTHDURATION,
+	],
+	[hash(ValueType.XSDAYTIMEDURATION, ValueType.XSDAYTIMEDURATION, 'div')]: [
+		dayTimeDurationDivideByDayTimeDuration,
+		ValueType.XSDECIMAL,
+	],
+	[hash(ValueType.XSDAYTIMEDURATION, ValueType.XSINTEGER, 'div')]: [
+		yearMonthDurationDivide,
+		ValueType.XSDAYTIMEDURATION,
+	],
+	[hash(ValueType.XSDAYTIMEDURATION, ValueType.XSFLOAT, 'div')]: [
+		yearMonthDurationDivide,
+		ValueType.XSDAYTIMEDURATION,
+	],
+	[hash(ValueType.XSDAYTIMEDURATION, ValueType.XSDOUBLE, 'div')]: [
+		yearMonthDurationDivide,
+		ValueType.XSDAYTIMEDURATION,
+	],
+	[hash(ValueType.XSDAYTIMEDURATION, ValueType.XSDECIMAL, 'div')]: [
+		yearMonthDurationDivide,
+		ValueType.XSDAYTIMEDURATION,
+	],
+	[hash(ValueType.XSDAYTIMEDURATION, ValueType.XSNUMERIC, 'div')]: [
+		yearMonthDurationDivide,
+		ValueType.XSDAYTIMEDURATION,
 	],
 };
 

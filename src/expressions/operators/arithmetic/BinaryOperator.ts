@@ -64,14 +64,6 @@ function generateBinaryOperatorFunction(
 		};
 	}
 
-	// if (operator === 'addOp' && retType) {
-	// 	return (a, b) => {
-	// 		const { castA, castB } = applyCastFunctions(a, b);
-
-	// 		return createAtomicValue(castA.value + castB.value, retType.type);
-	// 	};
-	// }
-
 	if (isSubtypeOf(typeA, ValueType.XSNUMERIC) && isSubtypeOf(typeB, ValueType.XSNUMERIC)) {
 		switch (operator) {
 			case 'addOp': {
