@@ -1,13 +1,20 @@
 import { SequenceType, sequenceTypeToString, ValueType } from '../expressions/dataTypes/Value';
-import { addDuration as addDurationToDateTime } from '../expressions/dataTypes/valueTypes/DateTime';
+import {
+	addDuration as addDurationToDateTime,
+	subtractDuration as subDurationFromDateTime,
+} from '../expressions/dataTypes/valueTypes/DateTime';
 import {
 	add as dayTimeDurationAdd,
+	subtract as dayTimeDurationSub,
 	divideByDayTimeDuration as dayTimeDurationDivideByDayTimeDuration,
+	multiply as dayTimeDurationMultiply,
 } from '../expressions/dataTypes/valueTypes/DayTimeDuration';
 import {
 	add as yearMonthDurationAdd,
+	subtract as yearMonthDurationSub,
 	divide as yearMonthDurationDivide,
 	divideByYearMonthDuration as yearMonthDurationDivideByYearMonthDuration,
+	multiply as yearMonthDurationMultiply,
 } from '../expressions/dataTypes/valueTypes/YearMonthDuration';
 import { IAST } from '../parsing/astHelper';
 import { BinaryEvaluationFunction } from './binaryEvaluationFunction';
@@ -82,6 +89,114 @@ const BINOP_EVAL_FUNCTIONS: EvalFuncTable = {
 	[hash(ValueType.XSTIME, ValueType.XSDAYTIMEDURATION, 'add')]: [
 		addDurationToDateTime,
 		ValueType.XSDATETIME,
+	],
+	[hash(ValueType.XSINTEGER, ValueType.XSINTEGER, 'sub')]: [
+		(l: number, r: number) => l - r,
+		ValueType.XSINTEGER,
+	],
+	[hash(ValueType.XSFLOAT, ValueType.XSFLOAT, 'sub')]: [
+		(l: number, r: number) => l - r,
+		ValueType.XSFLOAT,
+	],
+	[hash(ValueType.XSDOUBLE, ValueType.XSDOUBLE, 'sub')]: [
+		(l: number, r: number) => l - r,
+		ValueType.XSDOUBLE,
+	],
+	[hash(ValueType.XSDECIMAL, ValueType.XSDECIMAL, 'sub')]: [
+		(l: number, r: number) => l - r,
+		ValueType.XSDECIMAL,
+	],
+	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'sub')]: [
+		(l: number, r: number) => l - r,
+		ValueType.XSDECIMAL,
+	],
+	[hash(ValueType.XSYEARMONTHDURATION, ValueType.XSYEARMONTHDURATION, 'sub')]: [
+		yearMonthDurationSub,
+		ValueType.XSYEARMONTHDURATION,
+	],
+	[hash(ValueType.XSDAYTIMEDURATION, ValueType.XSDAYTIMEDURATION, 'sub')]: [
+		dayTimeDurationSub,
+		ValueType.XSDAYTIMEDURATION,
+	],
+	[hash(ValueType.XSDATETIME, ValueType.XSYEARMONTHDURATION, 'sub')]: [
+		subDurationFromDateTime,
+		ValueType.XSDATETIME,
+	],
+	[hash(ValueType.XSDATETIME, ValueType.XSDAYTIMEDURATION, 'sub')]: [
+		subDurationFromDateTime,
+		ValueType.XSDATETIME,
+	],
+	[hash(ValueType.XSDATE, ValueType.XSYEARMONTHDURATION, 'sub')]: [
+		subDurationFromDateTime,
+		ValueType.XSDATE,
+	],
+	[hash(ValueType.XSDATE, ValueType.XSDAYTIMEDURATION, 'sub')]: [
+		subDurationFromDateTime,
+		ValueType.XSDATE,
+	],
+	[hash(ValueType.XSTIME, ValueType.XSDAYTIMEDURATION, 'sub')]: [
+		subDurationFromDateTime,
+		ValueType.XSTIME,
+	],
+	[hash(ValueType.XSDATETIME, ValueType.XSYEARMONTHDURATION, 'sub')]: [
+		subDurationFromDateTime,
+		ValueType.XSDATETIME,
+	],
+	[hash(ValueType.XSTIME, ValueType.XSDAYTIMEDURATION, 'sub')]: [
+		subDurationFromDateTime,
+		ValueType.XSDATETIME,
+	],
+	[hash(ValueType.XSINTEGER, ValueType.XSINTEGER, 'mod')]: [
+		(l: number, r: number) => l % r,
+		ValueType.XSINTEGER,
+	],
+	[hash(ValueType.XSDOUBLE, ValueType.XSDOUBLE, 'mod')]: [
+		(l: number, r: number) => l % r,
+		ValueType.XSDOUBLE,
+	],
+	[hash(ValueType.XSFLOAT, ValueType.XSFLOAT, 'mod')]: [
+		(l: number, r: number) => l % r,
+		ValueType.XSFLOAT,
+	],
+	[hash(ValueType.XSDECIMAL, ValueType.XSDECIMAL, 'mod')]: [
+		(l: number, r: number) => l % r,
+		ValueType.XSDECIMAL,
+	],
+	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'multiply')]: [
+		(l: number, r: number) => l * r,
+		ValueType.XSINTEGER,
+	],
+	[hash(ValueType.XSFLOAT, ValueType.XSFLOAT, 'multiply')]: [
+		(l: number, r: number) => l * r,
+		ValueType.XSFLOAT,
+	],
+	[hash(ValueType.XSDOUBLE, ValueType.XSDOUBLE, 'multiply')]: [
+		(l: number, r: number) => l * r,
+		ValueType.XSDOUBLE,
+	],
+	[hash(ValueType.XSDECIMAL, ValueType.XSDECIMAL, 'multiply')]: [
+		(l: number, r: number) => l * r,
+		ValueType.XSDECIMAL,
+	],
+	[hash(ValueType.XSINTEGER, ValueType.XSINTEGER, 'multiply')]: [
+		(l: number, r: number) => l * r,
+		ValueType.XSDECIMAL,
+	],
+	[hash(ValueType.XSYEARMONTHDURATION, ValueType.XSNUMERIC, 'multiply')]: [
+		yearMonthDurationMultiply,
+		ValueType.XSYEARMONTHDURATION,
+	],
+	[hash(ValueType.XSNUMERIC, ValueType.XSYEARMONTHDURATION, 'multiply')]: [
+		yearMonthDurationMultiply,
+		ValueType.XSYEARMONTHDURATION,
+	],
+	[hash(ValueType.XSDAYTIMEDURATION, ValueType.XSNUMERIC, 'multiply')]: [
+		dayTimeDurationMultiply,
+		ValueType.XSDAYTIMEDURATION,
+	],
+	[hash(ValueType.XSNUMERIC, ValueType.XSDAYTIMEDURATION, 'multiply')]: [
+		dayTimeDurationMultiply,
+		ValueType.XSDAYTIMEDURATION,
 	],
 	[hash(ValueType.XSINTEGER, ValueType.XSINTEGER, 'div')]: [
 		(l: number, r: number) => l / r,
@@ -244,7 +359,7 @@ export function annotateBinOp(
 	}
 
 	throw new Error(
-		`XPTY0004: Addition not available for types ${sequenceTypeToString(
+		`XPTY0004: ${operator} not available for types ${sequenceTypeToString(
 			left
 		)} and ${sequenceTypeToString(right)}`
 	);
