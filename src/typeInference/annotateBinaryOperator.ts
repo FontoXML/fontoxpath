@@ -85,6 +85,22 @@ const BINOP_EVAL_FUNCTIONS: EvalFuncTable = {
 		addDurationToDateTime,
 		ValueType.XSDATETIME,
 	],
+	[hash(ValueType.XSINTEGER, ValueType.XSINTEGER, 'mod')]: [
+		(l: number, r: number) => l % r,
+		ValueType.XSINTEGER,
+	],
+	[hash(ValueType.XSDOUBLE, ValueType.XSDOUBLE, 'mod')]: [
+		(l: number, r: number) => l % r,
+		ValueType.XSDOUBLE,
+	],
+	[hash(ValueType.XSFLOAT, ValueType.XSFLOAT, 'mod')]: [
+		(l: number, r: number) => l % r,
+		ValueType.XSFLOAT,
+	],
+	[hash(ValueType.XSDECIMAL, ValueType.XSDECIMAL, 'mod')]: [
+		(l: number, r: number) => l % r,
+		ValueType.XSDECIMAL,
+	],
 	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'multiply')]: [
 		(l: number, r: number) => l * r,
 		ValueType.XSINTEGER,

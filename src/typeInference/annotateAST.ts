@@ -21,24 +21,13 @@ export function annotate(ast: IAST): SequenceType | undefined {
 		case 'unaryPlusOp':
 			const plusVal = annotate(ast[1][1] as IAST);
 			return annotateUnaryPlus(ast, plusVal);
-		case 'addOp': {
+		case 'addOp':
+		case 'divOp':
+		case 'modOp':
+		case 'multiplyOp':
 			const left = annotate(ast[1][1] as IAST);
 			const right = annotate(ast[2][1] as IAST);
-
-			return annotateBinOp(ast, left, right, 'add');
-		}
-		case 'multiplyOp': {
-			const left = annotate(ast[1][1] as IAST);
-			const right = annotate(ast[2][1] as IAST);
-
-			return annotateBinOp(ast, left, right, 'multiply');
-		}
-		case 'divOp': {
-			const left = annotate(ast[1][1] as IAST);
-			const right = annotate(ast[2][1] as IAST);
-
 			return annotateBinOp(ast, left, right, ast[0]);
-		}
 		case 'integerConstantExpr':
 			const integerSequenceType = {
 				type: ValueType.XSINTEGER,
