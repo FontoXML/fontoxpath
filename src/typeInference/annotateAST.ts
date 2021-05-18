@@ -9,15 +9,6 @@ export default function annotateAst(ast: IAST): SequenceType | undefined {
 	return type;
 }
 
-function annotateUnaryMinusOp(ast: IAST): SequenceType | undefined {
-	const child = annotate(ast[1][1]);
-
-	if (!child) return undefined;
-
-	insertAttribute(ast, 'type', child);
-	return child;
-}
-
 export function annotate(ast: IAST): SequenceType | undefined {
 	if (!ast) {
 		return undefined;
