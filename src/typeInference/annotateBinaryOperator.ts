@@ -145,8 +145,8 @@ export function annotateBinOp(
 	}
 
 	throw new Error(
-		`XPTY0004: Addition not available for types ${sequenceTypeToString(
+		`XPTY0004: ${operator} not available for types ${sequenceTypeToString(
 			left
-		)} and ${sequenceTypeToString(right)} ${operator}`
+		)} and ${sequenceTypeToString(right)}`
 	);
 }
