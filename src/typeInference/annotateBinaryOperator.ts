@@ -78,10 +78,11 @@ const BINOP_EVAL_FUNCTIONS: EvalFuncTable = {
 	],
 };
 
-export function annotateAddOp(
+export function annotateBinOp(
 	ast: IAST,
 	left: SequenceType | undefined,
-	right: SequenceType | undefined
+	right: SequenceType | undefined,
+	operator: string
 ): SequenceType | undefined {
 	if (!left || !right) {
 		return undefined;
@@ -91,7 +92,7 @@ export function annotateAddOp(
 		throw new Error("Multiplicities in binary addition operator don't match");
 	}
 
-	const funcData = BINOP_EVAL_FUNCTIONS[hash(left.type, right.type, 'add')];
+	const funcData = BINOP_EVAL_FUNCTIONS[hash(left.type, right.type, operator)];
 	if (funcData) {
 		const type = { type: funcData[1], mult: left.mult };
 		insertAttribute(ast, 'type', type);
