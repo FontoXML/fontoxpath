@@ -1,15 +1,15 @@
 import { SequenceType, sequenceTypeToString, ValueType } from '../expressions/dataTypes/Value';
 import { addDuration as addDurationToDateTime } from '../expressions/dataTypes/valueTypes/DateTime';
 import {
-  add as dayTimeDurationAdd,
-  multiply as dayTimeDurationMultiply,
+	add as dayTimeDurationAdd,
+	multiply as dayTimeDurationMultiply,
 	divideByDayTimeDuration as dayTimeDurationDivideByDayTimeDuration,
 } from '../expressions/dataTypes/valueTypes/DayTimeDuration';
 import {
 	add as yearMonthDurationAdd,
 	divide as yearMonthDurationDivide,
 	divideByYearMonthDuration as yearMonthDurationDivideByYearMonthDuration,
-  multiply as yearMonthDurationMultiply,
+	multiply as yearMonthDurationMultiply,
 } from '../expressions/dataTypes/valueTypes/YearMonthDuration';
 import { IAST } from '../parsing/astHelper';
 import { BinaryEvaluationFunction } from './binaryEvaluationFunction';
@@ -119,7 +119,8 @@ const BINOP_EVAL_FUNCTIONS: EvalFuncTable = {
 	],
 	[hash(ValueType.XSNUMERIC, ValueType.XSDAYTIMEDURATION, 'multiply')]: [
 		dayTimeDurationMultiply,
-    ValueType.XSDAYTIMEDURATION,
+		ValueType.XSDAYTIMEDURATION,
+	],
 	[hash(ValueType.XSINTEGER, ValueType.XSINTEGER, 'div')]: [
 		(l: number, r: number) => l / r,
 		ValueType.XSDECIMAL,
