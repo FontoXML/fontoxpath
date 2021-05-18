@@ -38,7 +38,7 @@ export function annotate(ast: IAST): SequenceType | undefined {
 			const right = annotate(ast[2][1] as IAST);
 
 			return annotateBinOp(ast, left, right, ast[0]);
-    }
+		}
 		case 'integerConstantExpr':
 			const integerSequenceType = {
 				type: ValueType.XSINTEGER,

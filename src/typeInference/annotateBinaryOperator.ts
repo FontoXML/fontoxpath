@@ -2,8 +2,8 @@ import { SequenceType, sequenceTypeToString, ValueType } from '../expressions/da
 import { addDuration as addDurationToDateTime } from '../expressions/dataTypes/valueTypes/DateTime';
 import {
 	add as dayTimeDurationAdd,
-	multiply as dayTimeDurationMultiply,
 	divideByDayTimeDuration as dayTimeDurationDivideByDayTimeDuration,
+	multiply as dayTimeDurationMultiply,
 } from '../expressions/dataTypes/valueTypes/DayTimeDuration';
 import {
 	add as yearMonthDurationAdd,
