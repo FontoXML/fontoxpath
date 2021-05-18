@@ -266,6 +266,72 @@ const BINOP_EVAL_FUNCTIONS: EvalFuncTable = {
 		yearMonthDurationDivide,
 		ValueType.XSDAYTIMEDURATION,
 	],
+
+	// Integer Division, numerator and denominator of the same type
+	[hash(ValueType.XSINTEGER, ValueType.XSINTEGER, 'idiv')]: [
+		(l: number, r: number) => Math.trunc(l / r),
+		ValueType.XSINTEGER,
+	],
+	[hash(ValueType.XSFLOAT, ValueType.XSFLOAT, 'idiv')]: [
+		(l: number, r: number) => Math.trunc(l / r),
+		ValueType.XSINTEGER,
+	],
+	[hash(ValueType.XSDOUBLE, ValueType.XSDOUBLE, 'idiv')]: [
+		(l: number, r: number) => Math.trunc(l / r),
+		ValueType.XSINTEGER,
+	],
+	[hash(ValueType.XSDECIMAL, ValueType.XSDECIMAL, 'idiv')]: [
+		(l: number, r: number) => Math.trunc(l / r),
+		ValueType.XSINTEGER,
+	],
+	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'idiv')]: [
+		(l: number, r: number) => Math.trunc(l / r),
+		ValueType.XSINTEGER,
+	],
+
+	// Integer Division, float over integer
+	[hash(ValueType.XSFLOAT, ValueType.XSINTEGER, 'idiv')]: [
+		(l: number, r: number) => Math.trunc(l / r),
+		ValueType.XSINTEGER,
+	],
+	// Integer Division, integer over float
+	[hash(ValueType.XSINTEGER, ValueType.XSFLOAT, 'idiv')]: [
+		(l: number, r: number) => Math.trunc(l / r),
+		ValueType.XSINTEGER,
+	],
+
+	// Integer Division, double over integer
+	[hash(ValueType.XSDOUBLE, ValueType.XSINTEGER, 'idiv')]: [
+		(l: number, r: number) => Math.trunc(l / r),
+		ValueType.XSINTEGER,
+	],
+	// Integer Division, integer over double
+	[hash(ValueType.XSINTEGER, ValueType.XSDOUBLE, 'idiv')]: [
+		(l: number, r: number) => Math.trunc(l / r),
+		ValueType.XSINTEGER,
+	],
+
+	// Integer Division, decimal over integer
+	[hash(ValueType.XSDECIMAL, ValueType.XSINTEGER, 'idiv')]: [
+		(l: number, r: number) => Math.trunc(l / r),
+		ValueType.XSINTEGER,
+	],
+	// Integer Division, integer over decimal
+	[hash(ValueType.XSINTEGER, ValueType.XSDECIMAL, 'idiv')]: [
+		(l: number, r: number) => Math.trunc(l / r),
+		ValueType.XSINTEGER,
+	],
+
+	// Integer Division, numeric over integer
+	[hash(ValueType.XSNUMERIC, ValueType.XSINTEGER, 'idiv')]: [
+		(l: number, r: number) => Math.trunc(l / r),
+		ValueType.XSINTEGER,
+	],
+	// Integer Division, integer over numeric
+	[hash(ValueType.XSINTEGER, ValueType.XSNUMERIC, 'idiv')]: [
+		(l: number, r: number) => Math.trunc(l / r),
+		ValueType.XSINTEGER,
+	],
 };
 
 export function annotateBinOp(
