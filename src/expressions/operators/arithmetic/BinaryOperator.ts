@@ -1,9 +1,10 @@
+import { BinaryEvaluationFunction } from 'src/typeInference/binaryEvaluationFunction';
 import atomize from '../../dataTypes/atomize';
 import castToType from '../../dataTypes/castToType';
 import createAtomicValue from '../../dataTypes/createAtomicValue';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import { SequenceType, ValueType } from '../../dataTypes/Value';
+import Value, { SequenceType, ValueType } from '../../dataTypes/Value';
 import {
 	addDuration as addDurationToDateTime,
 	subtract as dateTimeSubtract,
@@ -63,13 +64,13 @@ function generateBinaryOperatorFunction(
 		};
 	}
 
-	if (operator === 'addOp' && retType) {
-		return (a, b) => {
-			const { castA, castB } = applyCastFunctions(a, b);
+	// if (operator === 'addOp' && retType) {
+	// 	return (a, b) => {
+	// 		const { castA, castB } = applyCastFunctions(a, b);
 
-			return createAtomicValue(castA.value + castB.value, retType.type);
-		};
-	}
+	// 		return createAtomicValue(castA.value + castB.value, retType.type);
+	// 	};
+	// }
 
 	if (isSubtypeOf(typeA, ValueType.XSNUMERIC) && isSubtypeOf(typeB, ValueType.XSNUMERIC)) {
 		switch (operator) {
@@ -449,6 +450,7 @@ class BinaryOperator extends Expression {
 	private _firstValueExpr: Expression;
 	private _operator: string;
 	private _secondValueExpr: Expression;
+	private _evaluateFunction?: BinaryEvaluationFunction;
 
 	/**
 	 * @param  operator         One of addOp, substractOp, multiplyOp, divOp, idivOp, modOp
@@ -459,7 +461,8 @@ class BinaryOperator extends Expression {
 		operator: string,
 		firstValueExpr: Expression,
 		secondValueExpr: Expression,
-		type: SequenceType
+		type: SequenceType,
+		evaluateFunction: BinaryEvaluationFunction
 	) {
 		super(
 			firstValueExpr.specificity.add(secondValueExpr.specificity),
@@ -474,6 +477,8 @@ class BinaryOperator extends Expression {
 		this._secondValueExpr = secondValueExpr;
 
 		this._operator = operator;
+
+		this._evaluateFunction = evaluateFunction;
 	}
 
 	public evaluate(dynamicContext, executionParameters) {
@@ -506,6 +511,16 @@ class BinaryOperator extends Expression {
 
 				const firstValue = firstValues[0];
 				const secondValue = secondValues[0];
+
+				if (this._evaluateFunction && this.type) {
+					return sequenceFactory.singleton(
+						createAtomicValue(
+							this._evaluateFunction(firstValue.value, secondValue.value),
+							this.type.type
+						)
+					);
+				}
+
 				// TODO: Find a more errorproof solution, hash collisions can occur here
 				const typingKey = `${firstValue.type}~${secondValue.type}~${this._operator}`;
 				let prefabOperator = operatorsByTypingKey[typingKey];
