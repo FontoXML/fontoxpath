@@ -1,4 +1,3 @@
-import { BinaryEvaluationFunction } from '../typeInference/binaryEvaluationFunction';
 import {
 	SequenceMultiplicity,
 	SequenceType,
@@ -6,6 +5,7 @@ import {
 	ValueType,
 } from '../expressions/dataTypes/Value';
 import { SourceRange } from '../expressions/debug/StackTraceGenerator';
+import { BinaryEvaluationFunction } from '../typeInference/binaryEvaluationFunction';
 
 type QName = { localName: string; namespaceURI: string | null; prefix: string };
 

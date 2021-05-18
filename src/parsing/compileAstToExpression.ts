@@ -1,4 +1,3 @@
-import { BinaryEvaluationFunction } from '../typeInference/binaryEvaluationFunction';
 import CurlyArrayConstructor from '../expressions/arrays/CurlyArrayConstructor';
 import SquareArrayConstructor from '../expressions/arrays/SquareArrayConstructor';
 import AncestorAxis from '../expressions/axes/AncestorAxis';
@@ -63,6 +62,7 @@ import ElementConstructor from '../expressions/xquery/ElementConstructor';
 import PIConstructor from '../expressions/xquery/PIConstructor';
 import TextConstructor from '../expressions/xquery/TextConstructor';
 import TypeSwitchExpression from '../expressions/xquery/TypeSwitchExpression';
+import { BinaryEvaluationFunction } from '../typeInference/binaryEvaluationFunction';
 import astHelper, { IAST } from './astHelper';
 
 const COMPILATION_OPTIONS = {

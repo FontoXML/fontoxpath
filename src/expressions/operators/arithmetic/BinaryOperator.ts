@@ -447,10 +447,10 @@ function generateBinaryOperatorFunction(
 const operatorsByTypingKey = Object.create(null);
 
 class BinaryOperator extends Expression {
+	private _evaluateFunction?: BinaryEvaluationFunction;
 	private _firstValueExpr: Expression;
 	private _operator: string;
 	private _secondValueExpr: Expression;
-	private _evaluateFunction?: BinaryEvaluationFunction;
 
 	/**
 	 * @param  operator         One of addOp, substractOp, multiplyOp, divOp, idivOp, modOp

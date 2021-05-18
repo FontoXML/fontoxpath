@@ -1,10 +1,10 @@
-import { add as yearMonthDurationAdd } from '../expressions/dataTypes/valueTypes/YearMonthDuration';
 import { SequenceType, sequenceTypeToString, ValueType } from '../expressions/dataTypes/Value';
+import { addDuration as addDurationToDateTime } from '../expressions/dataTypes/valueTypes/DateTime';
+import { add as dayTimeDurationAdd } from '../expressions/dataTypes/valueTypes/DayTimeDuration';
+import { add as yearMonthDurationAdd } from '../expressions/dataTypes/valueTypes/YearMonthDuration';
 import { IAST } from '../parsing/astHelper';
 import { BinaryEvaluationFunction } from './binaryEvaluationFunction';
 import { insertAttribute } from './insertAttribute';
-import { add as dayTimeDurationAdd } from '../expressions/dataTypes/valueTypes/DayTimeDuration';
-import { addDuration as addDurationToDateTime } from '../expressions/dataTypes/valueTypes/DateTime';
 
 function hash(left: ValueType, right: ValueType, op: string): number {
 	return (
