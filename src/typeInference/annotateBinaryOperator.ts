@@ -1,7 +1,13 @@
 import { SequenceType, sequenceTypeToString, ValueType } from '../expressions/dataTypes/Value';
 import { addDuration as addDurationToDateTime } from '../expressions/dataTypes/valueTypes/DateTime';
-import { add as dayTimeDurationAdd } from '../expressions/dataTypes/valueTypes/DayTimeDuration';
-import { add as yearMonthDurationAdd } from '../expressions/dataTypes/valueTypes/YearMonthDuration';
+import {
+	add as dayTimeDurationAdd,
+	multiply as dayTimeDurationMultiply,
+} from '../expressions/dataTypes/valueTypes/DayTimeDuration';
+import {
+	add as yearMonthDurationAdd,
+	multiply as yearMonthDurationMultiply,
+} from '../expressions/dataTypes/valueTypes/YearMonthDuration';
 import { IAST } from '../parsing/astHelper';
 import { BinaryEvaluationFunction } from './binaryEvaluationFunction';
 import { insertAttribute } from './insertAttribute';
@@ -75,6 +81,26 @@ const BINOP_EVAL_FUNCTIONS: EvalFuncTable = {
 	[hash(ValueType.XSTIME, ValueType.XSDAYTIMEDURATION, 'add')]: [
 		addDurationToDateTime,
 		ValueType.XSDATETIME,
+	],
+	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'multiply')]: [
+		(l: number, r: number) => l * r,
+		ValueType.XSINTEGER,
+	],
+	[hash(ValueType.XSYEARMONTHDURATION, ValueType.XSNUMERIC, 'multiply')]: [
+		yearMonthDurationMultiply,
+		ValueType.XSYEARMONTHDURATION,
+	],
+	[hash(ValueType.XSNUMERIC, ValueType.XSYEARMONTHDURATION, 'multiply')]: [
+		yearMonthDurationMultiply,
+		ValueType.XSYEARMONTHDURATION,
+	],
+	[hash(ValueType.XSDAYTIMEDURATION, ValueType.XSNUMERIC, 'multiply')]: [
+		dayTimeDurationMultiply,
+		ValueType.XSDAYTIMEDURATION,
+	],
+	[hash(ValueType.XSNUMERIC, ValueType.XSDAYTIMEDURATION, 'multiply')]: [
+		dayTimeDurationMultiply,
+		ValueType.XSDAYTIMEDURATION,
 	],
 };
 
