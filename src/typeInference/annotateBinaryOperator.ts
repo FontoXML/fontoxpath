@@ -184,7 +184,7 @@ const BINOP_EVAL_FUNCTIONS: EvalFuncTable = {
 		(l: number, r: number) => Math.trunc(l / r),
 		ValueType.XSINTEGER,
 	],
-	
+
 	// Integer Division, double over integer
 	[hash(ValueType.XSDOUBLE, ValueType.XSINTEGER, 'idiv')]: [
 		(l: number, r: number) => Math.trunc(l / r),
@@ -195,7 +195,7 @@ const BINOP_EVAL_FUNCTIONS: EvalFuncTable = {
 		(l: number, r: number) => Math.trunc(l / r),
 		ValueType.XSINTEGER,
 	],
-	
+
 	// Integer Division, decimal over integer
 	[hash(ValueType.XSDECIMAL, ValueType.XSINTEGER, 'idiv')]: [
 		(l: number, r: number) => Math.trunc(l / r),
@@ -206,14 +206,14 @@ const BINOP_EVAL_FUNCTIONS: EvalFuncTable = {
 		(l: number, r: number) => Math.trunc(l / r),
 		ValueType.XSINTEGER,
 	],
-	
+
 	// Integer Division, numeric over integer
 	[hash(ValueType.XSNUMERIC, ValueType.XSINTEGER, 'idiv')]: [
 		(l: number, r: number) => Math.trunc(l / r),
 		ValueType.XSINTEGER,
 	],
 	// Integer Division, integer over numeric
-	[hash(ValueType.XSINTEGER , ValueType.XSNUMERIC, 'idiv')]: [
+	[hash(ValueType.XSINTEGER, ValueType.XSNUMERIC, 'idiv')]: [
 		(l: number, r: number) => Math.trunc(l / r),
 		ValueType.XSINTEGER,
 	],
