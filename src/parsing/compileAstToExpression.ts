@@ -1,3 +1,4 @@
+import { BinaryEvaluationFunction } from '../typeInference/binaryEvaluationFunction';
 import CurlyArrayConstructor from '../expressions/arrays/CurlyArrayConstructor';
 import SquareArrayConstructor from '../expressions/arrays/SquareArrayConstructor';
 import AncestorAxis from '../expressions/axes/AncestorAxis';
@@ -362,10 +363,16 @@ function binaryOperator(ast: IAST, compilationOptions: CompilationOptions) {
 		disallowUpdating(compilationOptions)
 	);
 
-	const typeNode = astHelper.followPath(ast, ['type']);
 	const attributeType = astHelper.getAttribute(ast, 'type');
+	const evaluateFunction = astHelper.getAttribute(ast, 'evalFunc');
 
-	return new BinaryOperator(kind, a, b, attributeType as SequenceType);
+	return new BinaryOperator(
+		kind,
+		a,
+		b,
+		attributeType as SequenceType,
+		evaluateFunction as BinaryEvaluationFunction
+	);
 }
 
 function compileLookup(ast: IAST, compilationOptions: CompilationOptions): '*' | Expression {

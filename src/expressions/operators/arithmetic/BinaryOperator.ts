@@ -1,10 +1,10 @@
-import { BinaryEvaluationFunction } from 'src/typeInference/binaryEvaluationFunction';
+import { BinaryEvaluationFunction } from '../../../typeInference/binaryEvaluationFunction';
 import atomize from '../../dataTypes/atomize';
 import castToType from '../../dataTypes/castToType';
 import createAtomicValue from '../../dataTypes/createAtomicValue';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import Value, { SequenceType, ValueType } from '../../dataTypes/Value';
+import { SequenceType, ValueType } from '../../dataTypes/Value';
 import {
 	addDuration as addDurationToDateTime,
 	subtract as dateTimeSubtract,
