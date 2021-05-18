@@ -5,16 +5,16 @@ import {
 } from '../expressions/dataTypes/valueTypes/DateTime';
 import {
 	add as dayTimeDurationAdd,
-	subtract as dayTimeDurationSub,
 	divideByDayTimeDuration as dayTimeDurationDivideByDayTimeDuration,
 	multiply as dayTimeDurationMultiply,
+	subtract as dayTimeDurationSub,
 } from '../expressions/dataTypes/valueTypes/DayTimeDuration';
 import {
 	add as yearMonthDurationAdd,
-	subtract as yearMonthDurationSub,
 	divide as yearMonthDurationDivide,
 	divideByYearMonthDuration as yearMonthDurationDivideByYearMonthDuration,
 	multiply as yearMonthDurationMultiply,
+	subtract as yearMonthDurationSub,
 } from '../expressions/dataTypes/valueTypes/YearMonthDuration';
 import { IAST } from '../parsing/astHelper';
 import { BinaryEvaluationFunction } from './binaryEvaluationFunction';
