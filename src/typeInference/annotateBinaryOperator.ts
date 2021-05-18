@@ -1,12 +1,17 @@
 import { SequenceType, sequenceTypeToString, ValueType } from '../expressions/dataTypes/Value';
-import { addDuration as addDurationToDateTime } from '../expressions/dataTypes/valueTypes/DateTime';
+import {
+	addDuration as addDurationToDateTime,
+	subtractDuration as subDurationFromDateTime,
+} from '../expressions/dataTypes/valueTypes/DateTime';
 import {
 	add as dayTimeDurationAdd,
+	subtract as dayTimeDurationSub,
 	divideByDayTimeDuration as dayTimeDurationDivideByDayTimeDuration,
 	multiply as dayTimeDurationMultiply,
 } from '../expressions/dataTypes/valueTypes/DayTimeDuration';
 import {
 	add as yearMonthDurationAdd,
+	subtract as yearMonthDurationSub,
 	divide as yearMonthDurationDivide,
 	divideByYearMonthDuration as yearMonthDurationDivideByYearMonthDuration,
 	multiply as yearMonthDurationMultiply,
@@ -83,6 +88,62 @@ const BINOP_EVAL_FUNCTIONS: EvalFuncTable = {
 	],
 	[hash(ValueType.XSTIME, ValueType.XSDAYTIMEDURATION, 'add')]: [
 		addDurationToDateTime,
+		ValueType.XSDATETIME,
+	],
+	[hash(ValueType.XSINTEGER, ValueType.XSINTEGER, 'sub')]: [
+		(l: number, r: number) => l - r,
+		ValueType.XSINTEGER,
+	],
+	[hash(ValueType.XSFLOAT, ValueType.XSFLOAT, 'sub')]: [
+		(l: number, r: number) => l - r,
+		ValueType.XSFLOAT,
+	],
+	[hash(ValueType.XSDOUBLE, ValueType.XSDOUBLE, 'sub')]: [
+		(l: number, r: number) => l - r,
+		ValueType.XSDOUBLE,
+	],
+	[hash(ValueType.XSDECIMAL, ValueType.XSDECIMAL, 'sub')]: [
+		(l: number, r: number) => l - r,
+		ValueType.XSDECIMAL,
+	],
+	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'sub')]: [
+		(l: number, r: number) => l - r,
+		ValueType.XSDECIMAL,
+	],
+	[hash(ValueType.XSYEARMONTHDURATION, ValueType.XSYEARMONTHDURATION, 'sub')]: [
+		yearMonthDurationSub,
+		ValueType.XSYEARMONTHDURATION,
+	],
+	[hash(ValueType.XSDAYTIMEDURATION, ValueType.XSDAYTIMEDURATION, 'sub')]: [
+		dayTimeDurationSub,
+		ValueType.XSDAYTIMEDURATION,
+	],
+	[hash(ValueType.XSDATETIME, ValueType.XSYEARMONTHDURATION, 'sub')]: [
+		subDurationFromDateTime,
+		ValueType.XSDATETIME,
+	],
+	[hash(ValueType.XSDATETIME, ValueType.XSDAYTIMEDURATION, 'sub')]: [
+		subDurationFromDateTime,
+		ValueType.XSDATETIME,
+	],
+	[hash(ValueType.XSDATE, ValueType.XSYEARMONTHDURATION, 'sub')]: [
+		subDurationFromDateTime,
+		ValueType.XSDATE,
+	],
+	[hash(ValueType.XSDATE, ValueType.XSDAYTIMEDURATION, 'sub')]: [
+		subDurationFromDateTime,
+		ValueType.XSDATE,
+	],
+	[hash(ValueType.XSTIME, ValueType.XSDAYTIMEDURATION, 'sub')]: [
+		subDurationFromDateTime,
+		ValueType.XSTIME,
+	],
+	[hash(ValueType.XSDATETIME, ValueType.XSYEARMONTHDURATION, 'sub')]: [
+		subDurationFromDateTime,
+		ValueType.XSDATETIME,
+	],
+	[hash(ValueType.XSTIME, ValueType.XSDAYTIMEDURATION, 'sub')]: [
+		subDurationFromDateTime,
 		ValueType.XSDATETIME,
 	],
 	[hash(ValueType.XSINTEGER, ValueType.XSINTEGER, 'mod')]: [
