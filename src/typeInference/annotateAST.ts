@@ -24,9 +24,11 @@ export function annotate(ast: IAST): SequenceType | undefined {
 		case 'addOp':
 		case 'divOp':
 		case 'modOp':
+		case 'multiplyOp':
 			const left = annotate(ast[1][1] as IAST);
 			const right = annotate(ast[2][1] as IAST);
 			return annotateBinOp(ast, left, right, ast[0]);
+		}
 		case 'integerConstantExpr':
 			const integerSequenceType = {
 				type: ValueType.XSINTEGER,
