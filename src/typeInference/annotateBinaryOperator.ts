@@ -92,7 +92,9 @@ export function annotateBinOp(
 		throw new Error("Multiplicities in binary addition operator don't match");
 	}
 
-	const funcData = BINOP_EVAL_FUNCTIONS[hash(left.type, right.type, operator)];
+	const funcData: [BinaryEvaluationFunction, ValueType] | undefined =
+		BINOP_EVAL_FUNCTIONS[hash(left.type, right.type, operator)];
+
 	if (funcData) {
 		const type = { type: funcData[1], mult: left.mult };
 		insertAttribute(ast, 'type', type);
