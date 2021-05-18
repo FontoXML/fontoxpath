@@ -1,342 +1,531 @@
+import AtomicValue from '../expressions/dataTypes/AtomicValue';
+import castToType from '../expressions/dataTypes/castToType';
+import createAtomicValue from '../expressions/dataTypes/createAtomicValue';
+import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
 import { SequenceType, sequenceTypeToString, ValueType } from '../expressions/dataTypes/Value';
 import {
 	addDuration as addDurationToDateTime,
-	subtractDuration as subDurationFromDateTime,
+	subtract as dateTimeSubtract,
+	subtractDuration as subtractDurationFromDateTime,
 } from '../expressions/dataTypes/valueTypes/DateTime';
 import {
 	add as dayTimeDurationAdd,
+	divide as dayTimeDurationDivide,
 	divideByDayTimeDuration as dayTimeDurationDivideByDayTimeDuration,
 	multiply as dayTimeDurationMultiply,
-	subtract as dayTimeDurationSub,
+	subtract as dayTimeDurationSubtract,
 } from '../expressions/dataTypes/valueTypes/DayTimeDuration';
 import {
 	add as yearMonthDurationAdd,
 	divide as yearMonthDurationDivide,
 	divideByYearMonthDuration as yearMonthDurationDivideByYearMonthDuration,
 	multiply as yearMonthDurationMultiply,
-	subtract as yearMonthDurationSub,
+	subtract as yearMonthDurationSubtract,
 } from '../expressions/dataTypes/valueTypes/YearMonthDuration';
 import { IAST } from '../parsing/astHelper';
-import { BinaryEvaluationFunction } from './binaryEvaluationFunction';
 import { insertAttribute } from './insertAttribute';
 
-function hash(left: ValueType, right: ValueType, op: string): number {
-	return (
-		((left as number) << 20) +
-		((right as number) << 12) +
-		(op.charCodeAt(0) << 8) +
-		op.charCodeAt(1)
-	);
+function determineReturnType(typeA: ValueType, typeB: ValueType): ValueType {
+	if (isSubtypeOf(typeA, ValueType.XSINTEGER) && isSubtypeOf(typeB, ValueType.XSINTEGER)) {
+		return ValueType.XSINTEGER;
+	}
+	if (isSubtypeOf(typeA, ValueType.XSDECIMAL) && isSubtypeOf(typeB, ValueType.XSDECIMAL)) {
+		return ValueType.XSDECIMAL;
+	}
+	if (isSubtypeOf(typeA, ValueType.XSFLOAT) && isSubtypeOf(typeB, ValueType.XSFLOAT)) {
+		return ValueType.XSFLOAT;
+	}
+	return ValueType.XSDOUBLE;
 }
 
-type EvalFuncTable = {
-	[key: number]: [BinaryEvaluationFunction, ValueType];
-};
+function generateBinaryOperatorFunction(
+	operator,
+	typeA: ValueType,
+	typeB: ValueType
+): [(a: any, b: any) => AtomicValue, ValueType] {
+	let castFunctionForValueA = null;
+	let castFunctionForValueB = null;
 
-const BINOP_EVAL_FUNCTIONS: EvalFuncTable = {
-	[hash(ValueType.XSINTEGER, ValueType.XSINTEGER, 'add')]: [
-		(l: number, r: number) => l + r,
-		ValueType.XSINTEGER,
-	],
-	[hash(ValueType.XSFLOAT, ValueType.XSFLOAT, 'add')]: [
-		(l: number, r: number) => l + r,
-		ValueType.XSFLOAT,
-	],
-	[hash(ValueType.XSDOUBLE, ValueType.XSDOUBLE, 'add')]: [
-		(l: number, r: number) => l + r,
-		ValueType.XSDOUBLE,
-	],
-	[hash(ValueType.XSDECIMAL, ValueType.XSDECIMAL, 'add')]: [
-		(l: number, r: number) => l + r,
-		ValueType.XSDECIMAL,
-	],
-	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'add')]: [
-		(l: number, r: number) => l + r,
-		ValueType.XSDECIMAL,
-	],
-	[hash(ValueType.XSYEARMONTHDURATION, ValueType.XSYEARMONTHDURATION, 'add')]: [
-		yearMonthDurationAdd,
-		ValueType.XSYEARMONTHDURATION,
-	],
-	[hash(ValueType.XSDAYTIMEDURATION, ValueType.XSDAYTIMEDURATION, 'add')]: [
-		dayTimeDurationAdd,
-		ValueType.XSDAYTIMEDURATION,
-	],
-	[hash(ValueType.XSDATETIME, ValueType.XSYEARMONTHDURATION, 'add')]: [
-		addDurationToDateTime,
-		ValueType.XSDATETIME,
-	],
-	[hash(ValueType.XSDATETIME, ValueType.XSDAYTIMEDURATION, 'add')]: [
-		addDurationToDateTime,
-		ValueType.XSDATETIME,
-	],
-	[hash(ValueType.XSDATE, ValueType.XSYEARMONTHDURATION, 'add')]: [
-		addDurationToDateTime,
-		ValueType.XSDATE,
-	],
-	[hash(ValueType.XSDATE, ValueType.XSDAYTIMEDURATION, 'add')]: [
-		addDurationToDateTime,
-		ValueType.XSDATE,
-	],
-	[hash(ValueType.XSTIME, ValueType.XSDAYTIMEDURATION, 'add')]: [
-		addDurationToDateTime,
-		ValueType.XSTIME,
-	],
-	[hash(ValueType.XSDATETIME, ValueType.XSYEARMONTHDURATION, 'add')]: [
-		addDurationToDateTime,
-		ValueType.XSDATETIME,
-	],
-	[hash(ValueType.XSTIME, ValueType.XSDAYTIMEDURATION, 'add')]: [
-		addDurationToDateTime,
-		ValueType.XSDATETIME,
-	],
-	[hash(ValueType.XSINTEGER, ValueType.XSINTEGER, 'sub')]: [
-		(l: number, r: number) => l - r,
-		ValueType.XSINTEGER,
-	],
-	[hash(ValueType.XSFLOAT, ValueType.XSFLOAT, 'sub')]: [
-		(l: number, r: number) => l - r,
-		ValueType.XSFLOAT,
-	],
-	[hash(ValueType.XSDOUBLE, ValueType.XSDOUBLE, 'sub')]: [
-		(l: number, r: number) => l - r,
-		ValueType.XSDOUBLE,
-	],
-	[hash(ValueType.XSDECIMAL, ValueType.XSDECIMAL, 'sub')]: [
-		(l: number, r: number) => l - r,
-		ValueType.XSDECIMAL,
-	],
-	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'sub')]: [
-		(l: number, r: number) => l - r,
-		ValueType.XSDECIMAL,
-	],
-	[hash(ValueType.XSYEARMONTHDURATION, ValueType.XSYEARMONTHDURATION, 'sub')]: [
-		yearMonthDurationSub,
-		ValueType.XSYEARMONTHDURATION,
-	],
-	[hash(ValueType.XSDAYTIMEDURATION, ValueType.XSDAYTIMEDURATION, 'sub')]: [
-		dayTimeDurationSub,
-		ValueType.XSDAYTIMEDURATION,
-	],
-	[hash(ValueType.XSDATETIME, ValueType.XSYEARMONTHDURATION, 'sub')]: [
-		subDurationFromDateTime,
-		ValueType.XSDATETIME,
-	],
-	[hash(ValueType.XSDATETIME, ValueType.XSDAYTIMEDURATION, 'sub')]: [
-		subDurationFromDateTime,
-		ValueType.XSDATETIME,
-	],
-	[hash(ValueType.XSDATE, ValueType.XSYEARMONTHDURATION, 'sub')]: [
-		subDurationFromDateTime,
-		ValueType.XSDATE,
-	],
-	[hash(ValueType.XSDATE, ValueType.XSDAYTIMEDURATION, 'sub')]: [
-		subDurationFromDateTime,
-		ValueType.XSDATE,
-	],
-	[hash(ValueType.XSTIME, ValueType.XSDAYTIMEDURATION, 'sub')]: [
-		subDurationFromDateTime,
-		ValueType.XSTIME,
-	],
-	[hash(ValueType.XSDATETIME, ValueType.XSYEARMONTHDURATION, 'sub')]: [
-		subDurationFromDateTime,
-		ValueType.XSDATETIME,
-	],
-	[hash(ValueType.XSTIME, ValueType.XSDAYTIMEDURATION, 'sub')]: [
-		subDurationFromDateTime,
-		ValueType.XSDATETIME,
-	],
-	[hash(ValueType.XSINTEGER, ValueType.XSINTEGER, 'mod')]: [
-		(l: number, r: number) => l % r,
-		ValueType.XSINTEGER,
-	],
-	[hash(ValueType.XSDOUBLE, ValueType.XSDOUBLE, 'mod')]: [
-		(l: number, r: number) => l % r,
-		ValueType.XSDOUBLE,
-	],
-	[hash(ValueType.XSFLOAT, ValueType.XSFLOAT, 'mod')]: [
-		(l: number, r: number) => l % r,
-		ValueType.XSFLOAT,
-	],
-	[hash(ValueType.XSDECIMAL, ValueType.XSDECIMAL, 'mod')]: [
-		(l: number, r: number) => l % r,
-		ValueType.XSDECIMAL,
-	],
-	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'multiply')]: [
-		(l: number, r: number) => l * r,
-		ValueType.XSINTEGER,
-	],
-	[hash(ValueType.XSFLOAT, ValueType.XSFLOAT, 'multiply')]: [
-		(l: number, r: number) => l * r,
-		ValueType.XSFLOAT,
-	],
-	[hash(ValueType.XSDOUBLE, ValueType.XSDOUBLE, 'multiply')]: [
-		(l: number, r: number) => l * r,
-		ValueType.XSDOUBLE,
-	],
-	[hash(ValueType.XSDECIMAL, ValueType.XSDECIMAL, 'multiply')]: [
-		(l: number, r: number) => l * r,
-		ValueType.XSDECIMAL,
-	],
-	[hash(ValueType.XSINTEGER, ValueType.XSINTEGER, 'multiply')]: [
-		(l: number, r: number) => l * r,
-		ValueType.XSDECIMAL,
-	],
-	[hash(ValueType.XSYEARMONTHDURATION, ValueType.XSNUMERIC, 'multiply')]: [
-		yearMonthDurationMultiply,
-		ValueType.XSYEARMONTHDURATION,
-	],
-	[hash(ValueType.XSNUMERIC, ValueType.XSYEARMONTHDURATION, 'multiply')]: [
-		yearMonthDurationMultiply,
-		ValueType.XSYEARMONTHDURATION,
-	],
-	[hash(ValueType.XSDAYTIMEDURATION, ValueType.XSNUMERIC, 'multiply')]: [
-		dayTimeDurationMultiply,
-		ValueType.XSDAYTIMEDURATION,
-	],
-	[hash(ValueType.XSNUMERIC, ValueType.XSDAYTIMEDURATION, 'multiply')]: [
-		dayTimeDurationMultiply,
-		ValueType.XSDAYTIMEDURATION,
-	],
-	[hash(ValueType.XSINTEGER, ValueType.XSINTEGER, 'div')]: [
-		(l: number, r: number) => l / r,
-		ValueType.XSDECIMAL,
-	],
-	[hash(ValueType.XSINTEGER, ValueType.XSDOUBLE, 'div')]: [
-		(l: number, r: number) => l / r,
-		ValueType.XSDOUBLE,
-	],
-	[hash(ValueType.XSFLOAT, ValueType.XSFLOAT, 'div')]: [
-		(l: number, r: number) => l / r,
-		ValueType.XSFLOAT,
-	],
-	[hash(ValueType.XSDOUBLE, ValueType.XSDOUBLE, 'div')]: [
-		(l: number, r: number) => l / r,
-		ValueType.XSDOUBLE,
-	],
-	[hash(ValueType.XSDECIMAL, ValueType.XSDECIMAL, 'div')]: [
-		(l: number, r: number) => l / r,
-		ValueType.XSDECIMAL,
-	],
-	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'div')]: [
-		(l: number, r: number) => l / r,
-		ValueType.XSDOUBLE,
-	],
-	[hash(ValueType.XSYEARMONTHDURATION, ValueType.XSYEARMONTHDURATION, 'div')]: [
-		yearMonthDurationDivideByYearMonthDuration,
-		ValueType.XSDECIMAL,
-	],
-	[hash(ValueType.XSYEARMONTHDURATION, ValueType.XSINTEGER, 'div')]: [
-		yearMonthDurationDivide,
-		ValueType.XSYEARMONTHDURATION,
-	],
-	[hash(ValueType.XSYEARMONTHDURATION, ValueType.XSFLOAT, 'div')]: [
-		yearMonthDurationDivide,
-		ValueType.XSYEARMONTHDURATION,
-	],
-	[hash(ValueType.XSYEARMONTHDURATION, ValueType.XSDOUBLE, 'div')]: [
-		yearMonthDurationDivide,
-		ValueType.XSYEARMONTHDURATION,
-	],
-	[hash(ValueType.XSYEARMONTHDURATION, ValueType.XSDECIMAL, 'div')]: [
-		yearMonthDurationDivide,
-		ValueType.XSYEARMONTHDURATION,
-	],
-	[hash(ValueType.XSYEARMONTHDURATION, ValueType.XSNUMERIC, 'div')]: [
-		yearMonthDurationDivide,
-		ValueType.XSYEARMONTHDURATION,
-	],
-	[hash(ValueType.XSDAYTIMEDURATION, ValueType.XSDAYTIMEDURATION, 'div')]: [
-		dayTimeDurationDivideByDayTimeDuration,
-		ValueType.XSDECIMAL,
-	],
-	[hash(ValueType.XSDAYTIMEDURATION, ValueType.XSINTEGER, 'div')]: [
-		yearMonthDurationDivide,
-		ValueType.XSDAYTIMEDURATION,
-	],
-	[hash(ValueType.XSDAYTIMEDURATION, ValueType.XSFLOAT, 'div')]: [
-		yearMonthDurationDivide,
-		ValueType.XSDAYTIMEDURATION,
-	],
-	[hash(ValueType.XSDAYTIMEDURATION, ValueType.XSDOUBLE, 'div')]: [
-		yearMonthDurationDivide,
-		ValueType.XSDAYTIMEDURATION,
-	],
-	[hash(ValueType.XSDAYTIMEDURATION, ValueType.XSDECIMAL, 'div')]: [
-		yearMonthDurationDivide,
-		ValueType.XSDAYTIMEDURATION,
-	],
-	[hash(ValueType.XSDAYTIMEDURATION, ValueType.XSNUMERIC, 'div')]: [
-		yearMonthDurationDivide,
-		ValueType.XSDAYTIMEDURATION,
-	],
+	if (isSubtypeOf(typeA, ValueType.XSUNTYPEDATOMIC)) {
+		castFunctionForValueA = (value) => castToType(value, ValueType.XSDOUBLE);
+		typeA = ValueType.XSDOUBLE;
+	}
+	if (isSubtypeOf(typeB, ValueType.XSUNTYPEDATOMIC)) {
+		castFunctionForValueB = (value) => castToType(value, ValueType.XSDOUBLE);
+		typeB = ValueType.XSDOUBLE;
+	}
 
-	// Integer Division, numerator and denominator of the same type
-	[hash(ValueType.XSINTEGER, ValueType.XSINTEGER, 'idiv')]: [
-		(l: number, r: number) => Math.trunc(l / r),
-		ValueType.XSINTEGER,
-	],
-	[hash(ValueType.XSFLOAT, ValueType.XSFLOAT, 'idiv')]: [
-		(l: number, r: number) => Math.trunc(l / r),
-		ValueType.XSINTEGER,
-	],
-	[hash(ValueType.XSDOUBLE, ValueType.XSDOUBLE, 'idiv')]: [
-		(l: number, r: number) => Math.trunc(l / r),
-		ValueType.XSINTEGER,
-	],
-	[hash(ValueType.XSDECIMAL, ValueType.XSDECIMAL, 'idiv')]: [
-		(l: number, r: number) => Math.trunc(l / r),
-		ValueType.XSINTEGER,
-	],
-	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'idiv')]: [
-		(l: number, r: number) => Math.trunc(l / r),
-		ValueType.XSINTEGER,
-	],
+	function applyCastFunctions(valueA: AtomicValue, valueB: AtomicValue) {
+		return {
+			castA: castFunctionForValueA ? castFunctionForValueA(valueA) : valueA,
+			castB: castFunctionForValueB ? castFunctionForValueB(valueB) : valueB,
+		};
+	}
 
-	// Integer Division, float over integer
-	[hash(ValueType.XSFLOAT, ValueType.XSINTEGER, 'idiv')]: [
-		(l: number, r: number) => Math.trunc(l / r),
-		ValueType.XSINTEGER,
-	],
-	// Integer Division, integer over float
-	[hash(ValueType.XSINTEGER, ValueType.XSFLOAT, 'idiv')]: [
-		(l: number, r: number) => Math.trunc(l / r),
-		ValueType.XSINTEGER,
-	],
+	if (isSubtypeOf(typeA, ValueType.XSNUMERIC) && isSubtypeOf(typeB, ValueType.XSNUMERIC)) {
+		switch (operator) {
+			case 'addOp': {
+				const returnType = determineReturnType(typeA, typeB);
+				return [
+					(a, b) => {
+						const { castA, castB } = applyCastFunctions(a, b);
 
-	// Integer Division, double over integer
-	[hash(ValueType.XSDOUBLE, ValueType.XSINTEGER, 'idiv')]: [
-		(l: number, r: number) => Math.trunc(l / r),
-		ValueType.XSINTEGER,
-	],
-	// Integer Division, integer over double
-	[hash(ValueType.XSINTEGER, ValueType.XSDOUBLE, 'idiv')]: [
-		(l: number, r: number) => Math.trunc(l / r),
-		ValueType.XSINTEGER,
-	],
+						return createAtomicValue(castA.value + castB.value, returnType);
+					},
+					returnType,
+				];
+			}
+			case 'subtractOp': {
+				const returnType = determineReturnType(typeA, typeB);
+				return [
+					(a, b) => {
+						const { castA, castB } = applyCastFunctions(a, b);
+						return createAtomicValue(castA.value - castB.value, returnType);
+					},
+					returnType,
+				];
+			}
+			case 'multiplyOp': {
+				const returnType = determineReturnType(typeA, typeB);
+				return [
+					(a, b) => {
+						const { castA, castB } = applyCastFunctions(a, b);
+						return createAtomicValue(castA.value * castB.value, returnType);
+					},
+					returnType,
+				];
+			}
+			case 'divOp': {
+				let returnType = determineReturnType(typeA, typeB);
+				if (returnType === ValueType.XSINTEGER) {
+					returnType = ValueType.XSDECIMAL;
+				}
+				return [
+					(a, b) => {
+						const { castA, castB } = applyCastFunctions(a, b);
+						return createAtomicValue(castA.value / castB.value, returnType);
+					},
+					returnType,
+				];
+			}
+			case 'idivOp':
+				return [
+					(a, b) => {
+						const { castA, castB } = applyCastFunctions(a, b);
+						if (castB.value === 0) {
+							throw new Error('FOAR0001: Divisor of idiv operator cannot be (-)0');
+						}
+						if (
+							Number.isNaN(castA.value) ||
+							Number.isNaN(castB.value) ||
+							!Number.isFinite(castA.value)
+						) {
+							throw new Error(
+								'FOAR0002: One of the operands of idiv is NaN or the first operand is (-)INF'
+							);
+						}
+						if (Number.isFinite(castA.value) && !Number.isFinite(castB.value)) {
+							return createAtomicValue(0, ValueType.XSINTEGER);
+						}
+						return createAtomicValue(
+							Math.trunc(castA.value / castB.value),
+							ValueType.XSINTEGER
+						);
+					},
+					ValueType.XSINTEGER,
+				];
+			case 'modOp': {
+				const returnType = determineReturnType(typeA, typeB);
 
-	// Integer Division, decimal over integer
-	[hash(ValueType.XSDECIMAL, ValueType.XSINTEGER, 'idiv')]: [
-		(l: number, r: number) => Math.trunc(l / r),
-		ValueType.XSINTEGER,
-	],
-	// Integer Division, integer over decimal
-	[hash(ValueType.XSINTEGER, ValueType.XSDECIMAL, 'idiv')]: [
-		(l: number, r: number) => Math.trunc(l / r),
-		ValueType.XSINTEGER,
-	],
+				return [
+					(a, b) => {
+						const { castA, castB } = applyCastFunctions(a, b);
+						return createAtomicValue(castA.value % castB.value, returnType);
+					},
+					returnType,
+				];
+			}
+		}
+	}
 
-	// Integer Division, numeric over integer
-	[hash(ValueType.XSNUMERIC, ValueType.XSINTEGER, 'idiv')]: [
-		(l: number, r: number) => Math.trunc(l / r),
-		ValueType.XSINTEGER,
-	],
-	// Integer Division, integer over numeric
-	[hash(ValueType.XSINTEGER, ValueType.XSNUMERIC, 'idiv')]: [
-		(l: number, r: number) => Math.trunc(l / r),
-		ValueType.XSINTEGER,
-	],
-};
+	if (
+		isSubtypeOf(typeA, ValueType.XSYEARMONTHDURATION) &&
+		isSubtypeOf(typeB, ValueType.XSYEARMONTHDURATION)
+	) {
+		switch (operator) {
+			case 'addOp':
+				return [
+					(a, b) => {
+						const { castA, castB } = applyCastFunctions(a, b);
+						return createAtomicValue(
+							yearMonthDurationAdd(castA.value, castB.value),
+							ValueType.XSYEARMONTHDURATION
+						);
+					},
+					ValueType.XSYEARMONTHDURATION,
+				];
+			case 'subtractOp':
+				return [
+					(a, b) => {
+						const { castA, castB } = applyCastFunctions(a, b);
+						return createAtomicValue(
+							yearMonthDurationSubtract(castA.value, castB.value),
+							ValueType.XSYEARMONTHDURATION
+						);
+					},
+					ValueType.XSYEARMONTHDURATION,
+				];
+			case 'divOp':
+				return [
+					(a, b) => {
+						const { castA, castB } = applyCastFunctions(a, b);
+						return createAtomicValue(
+							yearMonthDurationDivideByYearMonthDuration(castA.value, castB.value),
+							ValueType.XSDECIMAL
+						);
+					},
+					ValueType.XSDECIMAL,
+				];
+		}
+	}
+
+	if (
+		isSubtypeOf(typeA, ValueType.XSYEARMONTHDURATION) &&
+		isSubtypeOf(typeB, ValueType.XSNUMERIC)
+	) {
+		switch (operator) {
+			case 'multiplyOp':
+				return [
+					(a, b) => {
+						const { castA, castB } = applyCastFunctions(a, b);
+						return createAtomicValue(
+							yearMonthDurationMultiply(castA.value, castB.value),
+							ValueType.XSYEARMONTHDURATION
+						);
+					},
+					ValueType.XSYEARMONTHDURATION,
+				];
+			case 'divOp':
+				return [
+					(a, b) => {
+						const { castA, castB } = applyCastFunctions(a, b);
+						return createAtomicValue(
+							yearMonthDurationDivide(castA.value, castB.value),
+							ValueType.XSYEARMONTHDURATION
+						);
+					},
+					ValueType.XSYEARMONTHDURATION,
+				];
+		}
+	}
+
+	if (
+		isSubtypeOf(typeA, ValueType.XSNUMERIC) &&
+		isSubtypeOf(typeB, ValueType.XSYEARMONTHDURATION)
+	) {
+		if (operator === 'multiplyOp') {
+			return [
+				(a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return createAtomicValue(
+						yearMonthDurationMultiply(castB.value, castA.value),
+						ValueType.XSYEARMONTHDURATION
+					);
+				},
+				ValueType.XSYEARMONTHDURATION,
+			];
+		}
+	}
+
+	if (
+		isSubtypeOf(typeA, ValueType.XSDAYTIMEDURATION) &&
+		isSubtypeOf(typeB, ValueType.XSDAYTIMEDURATION)
+	) {
+		switch (operator) {
+			case 'addOp':
+				return [
+					(a, b) => {
+						const { castA, castB } = applyCastFunctions(a, b);
+						return createAtomicValue(
+							dayTimeDurationAdd(castA.value, castB.value),
+							ValueType.XSDAYTIMEDURATION
+						);
+					},
+					ValueType.XSDAYTIMEDURATION,
+				];
+			case 'subtractOp':
+				return [
+					(a, b) => {
+						const { castA, castB } = applyCastFunctions(a, b);
+						return createAtomicValue(
+							dayTimeDurationSubtract(castA.value, castB.value),
+							ValueType.XSDAYTIMEDURATION
+						);
+					},
+					ValueType.XSDAYTIMEDURATION,
+				];
+			case 'divOp':
+				return [
+					(a, b) => {
+						const { castA, castB } = applyCastFunctions(a, b);
+						return createAtomicValue(
+							dayTimeDurationDivideByDayTimeDuration(castA.value, castB.value),
+							ValueType.XSDECIMAL
+						);
+					},
+					ValueType.XSDECIMAL,
+				];
+		}
+	}
+	if (
+		isSubtypeOf(typeA, ValueType.XSDAYTIMEDURATION) &&
+		isSubtypeOf(typeB, ValueType.XSNUMERIC)
+	) {
+		switch (operator) {
+			case 'multiplyOp':
+				return [
+					(a, b) => {
+						const { castA, castB } = applyCastFunctions(a, b);
+						return createAtomicValue(
+							dayTimeDurationMultiply(castA.value, castB.value),
+							ValueType.XSDAYTIMEDURATION
+						);
+					},
+					ValueType.XSDAYTIMEDURATION,
+				];
+			case 'divOp':
+				return [
+					(a, b) => {
+						const { castA, castB } = applyCastFunctions(a, b);
+						return createAtomicValue(
+							dayTimeDurationDivide(castA.value, castB.value),
+							ValueType.XSDAYTIMEDURATION
+						);
+					},
+					ValueType.XSDAYTIMEDURATION,
+				];
+		}
+	}
+	if (
+		isSubtypeOf(typeA, ValueType.XSNUMERIC) &&
+		isSubtypeOf(typeB, ValueType.XSDAYTIMEDURATION)
+	) {
+		if (operator === 'multiplyOp') {
+			return [
+				(a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return createAtomicValue(
+						dayTimeDurationMultiply(castB.value, castA.value),
+						ValueType.XSDAYTIMEDURATION
+					);
+				},
+				ValueType.XSDAYTIMEDURATION,
+			];
+		}
+	}
+
+	if (
+		(isSubtypeOf(typeA, ValueType.XSDATETIME) && isSubtypeOf(typeB, ValueType.XSDATETIME)) ||
+		(isSubtypeOf(typeA, ValueType.XSDATE) && isSubtypeOf(typeB, ValueType.XSDATE)) ||
+		(isSubtypeOf(typeA, ValueType.XSTIME) && isSubtypeOf(typeB, ValueType.XSTIME))
+	) {
+		if (operator === 'subtractOp') {
+			return [
+				(a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return createAtomicValue(
+						dateTimeSubtract(castA.value, castB.value),
+						ValueType.XSDAYTIMEDURATION
+					);
+				},
+				ValueType.XSDAYTIMEDURATION,
+			];
+		}
+
+		throw new Error(`XPTY0004: ${operator} not available for types ${typeA} and ${typeB}`);
+	}
+
+	if (
+		(isSubtypeOf(typeA, ValueType.XSDATETIME) &&
+			isSubtypeOf(typeB, ValueType.XSYEARMONTHDURATION)) ||
+		(isSubtypeOf(typeA, ValueType.XSDATETIME) &&
+			isSubtypeOf(typeB, ValueType.XSDAYTIMEDURATION))
+	) {
+		if (operator === 'addOp') {
+			return [
+				(a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return createAtomicValue(
+						addDurationToDateTime(castA.value, castB.value),
+						ValueType.XSDATETIME
+					);
+				},
+				ValueType.XSDATETIME,
+			];
+		}
+		if (operator === 'subtractOp') {
+			return [
+				(a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return createAtomicValue(
+						subtractDurationFromDateTime(castA.value, castB.value),
+						ValueType.XSDATETIME
+					);
+				},
+				ValueType.XSDATETIME,
+			];
+		}
+	}
+
+	if (
+		(isSubtypeOf(typeA, ValueType.XSDATE) &&
+			isSubtypeOf(typeB, ValueType.XSYEARMONTHDURATION)) ||
+		(isSubtypeOf(typeA, ValueType.XSDATE) && isSubtypeOf(typeB, ValueType.XSDAYTIMEDURATION))
+	) {
+		if (operator === 'addOp') {
+			return [
+				(a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return createAtomicValue(
+						addDurationToDateTime(castA.value, castB.value),
+						ValueType.XSDATE
+					);
+				},
+				ValueType.XSDATE,
+			];
+		}
+		if (operator === 'subtractOp') {
+			return [
+				(a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return createAtomicValue(
+						subtractDurationFromDateTime(castA.value, castB.value),
+						ValueType.XSDATE
+					);
+				},
+				ValueType.XSDATE,
+			];
+		}
+	}
+
+	if (isSubtypeOf(typeA, ValueType.XSTIME) && isSubtypeOf(typeB, ValueType.XSDAYTIMEDURATION)) {
+		if (operator === 'addOp') {
+			return [
+				(a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return createAtomicValue(
+						addDurationToDateTime(castA.value, castB.value),
+						ValueType.XSTIME
+					);
+				},
+				ValueType.XSTIME,
+			];
+		}
+		if (operator === 'subtractOp') {
+			return [
+				(a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return createAtomicValue(
+						subtractDurationFromDateTime(castA.value, castB.value),
+						ValueType.XSTIME
+					);
+				},
+				ValueType.XSTIME,
+			];
+		}
+	}
+
+	if (
+		(isSubtypeOf(typeB, ValueType.XSYEARMONTHDURATION) &&
+			isSubtypeOf(typeA, ValueType.XSDATETIME)) ||
+		(isSubtypeOf(typeB, ValueType.XSDAYTIMEDURATION) &&
+			isSubtypeOf(typeA, ValueType.XSDATETIME))
+	) {
+		if (operator === 'addOp') {
+			return [
+				(a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return createAtomicValue(
+						addDurationToDateTime(castB.value, castA.value),
+						ValueType.XSDATETIME
+					);
+				},
+				ValueType.XSDATETIME,
+			];
+		}
+		if (operator === 'subtractOp') {
+			return [
+				(a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return createAtomicValue(
+						subtractDurationFromDateTime(castB.value, castA.value),
+						ValueType.XSDATETIME
+					);
+				},
+				ValueType.XSDATETIME,
+			];
+		}
+	}
+
+	if (
+		(isSubtypeOf(typeB, ValueType.XSDAYTIMEDURATION) && isSubtypeOf(typeA, ValueType.XSDATE)) ||
+		(isSubtypeOf(typeB, ValueType.XSYEARMONTHDURATION) && isSubtypeOf(typeA, ValueType.XSDATE))
+	) {
+		if (operator === 'addOp') {
+			return [
+				(a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return createAtomicValue(
+						addDurationToDateTime(castB.value, castA.value),
+						ValueType.XSDATE
+					);
+				},
+				ValueType.XSDATE,
+			];
+		}
+		if (operator === 'subtractOp') {
+			return [
+				(a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return createAtomicValue(
+						subtractDurationFromDateTime(castB.value, castA.value),
+						ValueType.XSDATE
+					);
+				},
+				ValueType.XSDATE,
+			];
+		}
+	}
+
+	if (isSubtypeOf(typeB, ValueType.XSDAYTIMEDURATION) && isSubtypeOf(typeA, ValueType.XSTIME)) {
+		if (operator === 'addOp') {
+			return [
+				(a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return createAtomicValue(
+						addDurationToDateTime(castB.value, castA.value),
+						ValueType.XSTIME
+					);
+				},
+				ValueType.XSTIME,
+			];
+		}
+		if (operator === 'subtractOp') {
+			return [
+				(a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return createAtomicValue(
+						subtractDurationFromDateTime(castB.value, castA.value),
+						ValueType.XSTIME
+					);
+				},
+				ValueType.XSTIME,
+			];
+		}
+	}
+
+	throw new Error(`XPTY0004: ${operator} not available for types ${typeA} and ${typeB}`);
+}
 
 export function annotateBinOp(
 	ast: IAST,
@@ -352,8 +541,7 @@ export function annotateBinOp(
 		throw new Error("Multiplicities in binary addition operator don't match");
 	}
 
-	const funcData: [BinaryEvaluationFunction, ValueType] | undefined =
-		BINOP_EVAL_FUNCTIONS[hash(left.type, right.type, operator)];
+	const funcData = generateBinaryOperatorFunction(operator, left.type, right.type);
 
 	if (funcData) {
 		const type = { type: funcData[1], mult: left.mult };

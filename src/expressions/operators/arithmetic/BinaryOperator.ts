@@ -506,10 +506,7 @@ class BinaryOperator extends Expression {
 
 				if (this._evaluateFunction && this.type) {
 					return sequenceFactory.singleton(
-						createAtomicValue(
-							this._evaluateFunction(firstValue.value, secondValue.value),
-							this.type.type
-						)
+						this._evaluateFunction(firstValue, secondValue)
 					);
 				}
 
