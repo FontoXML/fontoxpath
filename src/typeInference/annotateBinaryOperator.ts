@@ -86,6 +86,22 @@ const BINOP_EVAL_FUNCTIONS: EvalFuncTable = {
 		(l: number, r: number) => l * r,
 		ValueType.XSINTEGER,
 	],
+	[hash(ValueType.XSFLOAT, ValueType.XSFLOAT, 'multiply')]: [
+		(l: number, r: number) => l * r,
+		ValueType.XSFLOAT,
+	],
+	[hash(ValueType.XSDOUBLE, ValueType.XSDOUBLE, 'multiply')]: [
+		(l: number, r: number) => l * r,
+		ValueType.XSDOUBLE,
+	],
+	[hash(ValueType.XSDECIMAL, ValueType.XSDECIMAL, 'multiply')]: [
+		(l: number, r: number) => l * r,
+		ValueType.XSDECIMAL,
+	],
+	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'multiply')]: [
+		(l: number, r: number) => l * r,
+		ValueType.XSDECIMAL,
+	],
 	[hash(ValueType.XSYEARMONTHDURATION, ValueType.XSNUMERIC, 'multiply')]: [
 		yearMonthDurationMultiply,
 		ValueType.XSYEARMONTHDURATION,
