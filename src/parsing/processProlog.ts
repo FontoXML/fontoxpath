@@ -147,8 +147,8 @@ export default function processProlog(
 
 	astHelper.getChildren(prolog, 'functionDecl').forEach((declaration) => {
 		const functionName = astHelper.getFirstChild(declaration, 'functionName');
-		const declarationPrefix = astHelper.getAttribute(functionName, 'prefix');
-		let declarationNamespaceURI = astHelper.getAttribute(functionName, 'URI');
+		const declarationPrefix = astHelper.getAttribute(functionName, 'prefix') as string;
+		let declarationNamespaceURI = astHelper.getAttribute(functionName, 'URI') as string;
 		const declarationLocalName = astHelper.getTextContent(functionName);
 
 		if (declarationNamespaceURI === null) {
@@ -221,8 +221,8 @@ export default function processProlog(
 
 			const staticContextLeaf = new StaticContext(staticContext);
 			const parameterBindingNames = paramNames.map((param) => {
-				let namespaceURI = astHelper.getAttribute(param, 'URI');
-				const prefix = astHelper.getAttribute(param, 'prefix');
+				let namespaceURI = astHelper.getAttribute(param, 'URI') as string;
+				const prefix = astHelper.getAttribute(param, 'prefix') as string;
 				const localName = astHelper.getTextContent(param);
 
 				if (prefix && namespaceURI === null) {

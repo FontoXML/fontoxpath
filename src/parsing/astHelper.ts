@@ -167,7 +167,7 @@ function followPath(ast: IAST, path: string[]): IAST | null {
 /**
  * Get the value of the given attribute
  */
-function getAttribute(ast: IAST, attributeName: string): string | null {
+function getAttribute(ast: IAST, attributeName: string): string | SequenceType | null {
 	if (!Array.isArray(ast)) {
 		return null;
 	}
@@ -185,8 +185,8 @@ function getAttribute(ast: IAST, attributeName: string): string | null {
 function getQName(ast: IAST): QName {
 	return {
 		localName: getTextContent(ast),
-		namespaceURI: getAttribute(ast, 'URI'),
-		prefix: getAttribute(ast, 'prefix') || '',
+		namespaceURI: getAttribute(ast, 'URI') as string,
+		prefix: (getAttribute(ast, 'prefix') as string) || '',
 	};
 }
 

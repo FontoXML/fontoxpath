@@ -1,6 +1,7 @@
 import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
 import { SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import { IAST } from '../parsing/astHelper';
+import { insertAttribute } from './insertAttribute';
 
 /**
  * Adds the unary minus operator type annotation to the AST
@@ -22,7 +23,8 @@ export function annotateUnaryMinus(
 			type: valueType.type,
 			mult: valueType.mult,
 		};
-		ast.push(['type', type]);
+
+		insertAttribute(ast, type);
 		return type;
 	}
 
@@ -49,7 +51,8 @@ export function annotateUnaryPlus(
 			type: valueType.type,
 			mult: valueType.mult,
 		};
-		ast.push(['type', type]);
+
+		insertAttribute(ast, type);
 		return type;
 	}
 
