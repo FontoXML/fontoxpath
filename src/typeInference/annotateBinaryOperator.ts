@@ -35,7 +35,7 @@ export function annotateAddOp(
 			type: BINOP_LOOKUP[left.type + right.type * 1000] || ValueType.XSDECIMAL,
 			mult: left.mult,
 		};
-		insertAttribute(ast, type);
+		insertAttribute(ast, 'type', type);
 		return type;
 	}
 
@@ -47,7 +47,7 @@ export function annotateAddOp(
 			type: ValueType.XSYEARMONTHDURATION,
 			mult: left.mult,
 		};
-		insertAttribute(ast, yearMonthDurationSequenceType);
+		insertAttribute(ast, 'type', yearMonthDurationSequenceType);
 		return yearMonthDurationSequenceType;
 	}
 
@@ -59,7 +59,7 @@ export function annotateAddOp(
 			type: ValueType.XSYEARMONTHDURATION,
 			mult: left.mult,
 		};
-		insertAttribute(ast, yearMonthDurationSequenceType);
+		insertAttribute(ast, 'type', yearMonthDurationSequenceType);
 		return yearMonthDurationSequenceType;
 	}
 
@@ -72,7 +72,7 @@ export function annotateAddOp(
 			mult: left.mult,
 		};
 
-		insertAttribute(ast, yearMonthDurationSequenceType);
+		insertAttribute(ast, 'type', yearMonthDurationSequenceType);
 		return yearMonthDurationSequenceType;
 	}
 
@@ -82,7 +82,7 @@ export function annotateAddOp(
 			mult: left.mult,
 		};
 
-		insertAttribute(ast, dayTimeDurationSequenceType);
+		insertAttribute(ast, 'type', dayTimeDurationSequenceType);
 		return dayTimeDurationSequenceType;
 	}
 
@@ -96,7 +96,7 @@ export function annotateAddOp(
 			mult: left.mult,
 		};
 
-		insertAttribute(ast, dayTimeSequenceType);
+		insertAttribute(ast, 'type', dayTimeSequenceType);
 		return dayTimeSequenceType;
 	}
 
@@ -110,7 +110,7 @@ export function annotateAddOp(
 			mult: left.mult,
 		};
 
-		insertAttribute(ast, dateSequenceType);
+		insertAttribute(ast, 'type', dateSequenceType);
 		return dateSequenceType;
 	}
 
@@ -120,7 +120,7 @@ export function annotateAddOp(
 			mult: left.mult,
 		};
 
-		insertAttribute(ast, timeSequenceType);
+		insertAttribute(ast, 'type', timeSequenceType);
 		return timeSequenceType;
 	}
 
@@ -134,7 +134,7 @@ export function annotateAddOp(
 			mult: left.mult,
 		};
 
-		insertAttribute(ast, dayTimeSequenceType);
+		insertAttribute(ast, 'type', dayTimeSequenceType);
 		return dayTimeSequenceType;
 	}
 
@@ -147,7 +147,7 @@ export function annotateAddOp(
 			mult: left.mult,
 		};
 
-		insertAttribute(ast, dateSequenceType);
+		insertAttribute(ast, 'type', dateSequenceType);
 		return dateSequenceType;
 	}
 
@@ -157,7 +157,7 @@ export function annotateAddOp(
 			mult: left.mult,
 		};
 
-		insertAttribute(ast, timeSequenceType);
+		insertAttribute(ast, 'type', timeSequenceType);
 		return timeSequenceType;
 	}
 

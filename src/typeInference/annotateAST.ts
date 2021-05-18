@@ -14,7 +14,7 @@ function annotateUnaryMinusOp(ast: IAST): SequenceType | undefined {
 
 	if (!child) return undefined;
 
-	insertAttribute(ast, child);
+	insertAttribute(ast, 'type', child);
 	return child;
 }
 
@@ -41,7 +41,7 @@ export function annotate(ast: IAST): SequenceType | undefined {
 				mult: SequenceMultiplicity.EXACTLY_ONE,
 			};
 
-			insertAttribute(ast, integerSequenceType);
+			insertAttribute(ast, 'type', integerSequenceType);
 			return integerSequenceType;
 		case 'doubleConstantExpr':
 			const doubleSequenceType = {
@@ -49,7 +49,7 @@ export function annotate(ast: IAST): SequenceType | undefined {
 				mult: SequenceMultiplicity.EXACTLY_ONE,
 			};
 
-			insertAttribute(ast, doubleSequenceType);
+			insertAttribute(ast, 'type', doubleSequenceType);
 			return doubleSequenceType;
 		case 'decimalConstantExpr':
 			const decimalSequenceType = {
@@ -57,7 +57,7 @@ export function annotate(ast: IAST): SequenceType | undefined {
 				mult: SequenceMultiplicity.EXACTLY_ONE,
 			};
 
-			insertAttribute(ast, decimalSequenceType);
+			insertAttribute(ast, 'type', decimalSequenceType);
 			return decimalSequenceType;
 		case 'stringConstantExpr':
 			const stringSequenceType = {
@@ -65,7 +65,7 @@ export function annotate(ast: IAST): SequenceType | undefined {
 				mult: SequenceMultiplicity.EXACTLY_ONE,
 			};
 
-			insertAttribute(ast, stringSequenceType);
+			insertAttribute(ast, 'type', stringSequenceType);
 			return stringSequenceType;
 		default:
 			for (let i = 1; i < ast.length; i++) {

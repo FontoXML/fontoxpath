@@ -24,7 +24,7 @@ export function annotateUnaryMinus(
 			mult: valueType.mult,
 		};
 
-		insertAttribute(ast, type);
+		insertAttribute(ast, 'type', type);
 		return type;
 	}
 
@@ -52,7 +52,7 @@ export function annotateUnaryPlus(
 			mult: valueType.mult,
 		};
 
-		insertAttribute(ast, type);
+		insertAttribute(ast, 'type', type);
 		return type;
 	}
 
