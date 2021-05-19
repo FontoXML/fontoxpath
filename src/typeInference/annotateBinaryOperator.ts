@@ -38,6 +38,40 @@ function determineReturnType(typeA: ValueType, typeB: ValueType): ValueType {
 	return ValueType.XSDOUBLE;
 }
 
+const allTypes = [
+	ValueType.XSNUMERIC,
+	ValueType.XSYEARMONTHDURATION,
+	ValueType.XSDAYTIMEDURATION,
+	ValueType.XSDATETIME,
+	ValueType.XSDATE,
+	ValueType.XSTIME,
+];
+
+function hash(left: ValueType, right: ValueType, op: string): number {
+	return (
+		((left as number) << 20) +
+		((right as number) << 12) +
+		(op.charCodeAt(0) << 8) +
+		op.charCodeAt(1)
+	);
+}
+
+type EvalFuncTable = {
+	[key: number]: [Function, ValueType];
+};
+
+const ruleMap: EvalFuncTable = {
+	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'addOp')]: [(a, b) => a + b, undefined],
+	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'subtractOp')]: [(a, b) => a - b, undefined],
+	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'multiplyOp')]: [(a, b) => a * b, undefined],
+	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'divOp')]: [(a, b) => a / b, undefined],
+	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'idivOp')]: [
+		(a, b) => a / b,
+		ValueType.XSINTEGER,
+	],
+	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'modOp')]: [(a, b) => a % b, undefined],
+};
+
 function generateBinaryOperatorFunction(
 	operator,
 	typeA: ValueType,
@@ -55,6 +89,9 @@ function generateBinaryOperatorFunction(
 		typeB = ValueType.XSDOUBLE;
 	}
 
+	let parentTypesOfA = allTypes.filter((e) => isSubtypeOf(typeA, e));
+	let parentTypesOfB = allTypes.filter((e) => isSubtypeOf(typeB, e));
+
 	function applyCastFunctions(valueA: AtomicValue, valueB: AtomicValue) {
 		return {
 			castA: castFunctionForValueA ? castFunctionForValueA(valueA) : valueA,
@@ -62,7 +99,44 @@ function generateBinaryOperatorFunction(
 		};
 	}
 
-	if (isSubtypeOf(typeA, ValueType.XSNUMERIC) && isSubtypeOf(typeB, ValueType.XSNUMERIC)) {
+	if (
+		parentTypesOfA.includes(ValueType.XSNUMERIC) &&
+		parentTypesOfB.includes(ValueType.XSNUMERIC)
+	) {
+		let [fun, retType] = ruleMap[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, operator)];
+		let idDivOp = false;
+		if (!retType) retType = determineReturnType(typeA, typeB);
+		if (operator === 'divOp' && retType === ValueType.XSINTEGER) retType = ValueType.XSDECIMAL;
+		if (operator === 'idivOp') idDivOp = true;
+		return [
+			(a, b) => {
+				const { castA, castB } = applyCastFunctions(a, b);
+				if (castB.value === 0 && idDivOp) {
+					throw new Error('FOAR0001: Divisor of idiv operator cannot be (-)0');
+				}
+				if (
+					(Number.isNaN(castA.value) ||
+						Number.isNaN(castB.value) ||
+						!Number.isFinite(castA.value)) &&
+					idDivOp
+				) {
+					throw new Error(
+						'FOAR0002: One of the operands of idiv is NaN or the first operand is (-)INF'
+					);
+				}
+				if (Number.isFinite(castA.value) && !Number.isFinite(castB.value) && idDivOp) {
+					return createAtomicValue(0, ValueType.XSINTEGER);
+				} else if (idDivOp) {
+					return createAtomicValue(
+						Math.trunc(castA.value / castB.value),
+						ValueType.XSINTEGER
+					);
+				}
+
+				return createAtomicValue(fun(castA.value, castB.value), retType);
+			},
+			retType,
+		];
 		switch (operator) {
 			case 'addOp': {
 				const returnType = determineReturnType(typeA, typeB);
