@@ -6,7 +6,7 @@ import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import PossiblyUpdatingExpression, {
-	separateXDMValueFromUpdatingExpressionResult
+	separateXDMValueFromUpdatingExpressionResult,
 } from '../PossiblyUpdatingExpression';
 import Specificity from '../Specificity';
 import StaticContext from '../StaticContext';
