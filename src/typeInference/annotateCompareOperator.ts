@@ -1,9 +1,5 @@
-import Value, {
-	SequenceType,
-	ValueType,
-	SequenceMultiplicity,
-} from 'src/expressions/dataTypes/Value';
-import { IAST } from 'src/parsing/astHelper';
+import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
+import astHelper, { IAST } from '../parsing/astHelper';
 
 export function annotateGeneralCompare(
 	ast: IAST,
@@ -16,6 +12,8 @@ export function annotateGeneralCompare(
 		type: ValueType.XSBOOLEAN,
 		mult: SequenceMultiplicity.EXACTLY_ONE,
 	};
+
+	astHelper.insertAttribute(ast, 'type', seqType);
 
 	return seqType;
 }
@@ -32,6 +30,8 @@ export function annotateValueCompare(
 		mult: SequenceMultiplicity.EXACTLY_ONE,
 	};
 
+	astHelper.insertAttribute(ast, 'type', seqType);
+
 	return seqType;
 }
 
@@ -46,6 +46,8 @@ export function annotateNodeCompare(
 		type: ValueType.XSBOOLEAN,
 		mult: SequenceMultiplicity.EXACTLY_ONE,
 	};
+
+	astHelper.insertAttribute(ast, 'type', seqType);
 
 	return seqType;
 }

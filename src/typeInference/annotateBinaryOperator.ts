@@ -1,7 +1,6 @@
 import { SequenceType, sequenceTypeToString } from '../expressions/dataTypes/Value';
 import { getBinaryPrefabOperator } from '../expressions/operators/arithmetic/BinaryOperator';
-import { IAST } from '../parsing/astHelper';
-import { insertAttribute } from './insertAttribute';
+import astHelper, { IAST } from '../parsing/astHelper';
 
 export function annotateBinOp(
 	ast: IAST,
@@ -21,8 +20,8 @@ export function annotateBinOp(
 
 	if (funcData) {
 		const type = { type: funcData[1], mult: left.mult };
-		insertAttribute(ast, 'type', type);
-		insertAttribute(ast, 'evalFunc', funcData[0]);
+		astHelper.insertAttribute(ast, 'type', type);
+		astHelper.insertAttribute(ast, 'evalFunc', funcData[0]);
 		return type;
 	}
 

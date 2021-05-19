@@ -1,6 +1,9 @@
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
-import { IAST } from '../parsing/astHelper';
+import StaticContext from '../expressions/StaticContext';
+import astHelper, { IAST } from '../parsing/astHelper';
 import { annotateBinOp } from './annotateBinaryOperator';
+import { annotateCastableOperator, annotateCastOperator } from './annotateCastOperators';
+import { annotateFunctionCall } from './annotateFunctionCall';
 import { annotateUnaryMinus, annotateUnaryPlus } from './annotateUnaryOperator';
 import {
 	annotateNodeCompare,
@@ -9,33 +12,50 @@ import {
 } from './annotateCompareOperator';
 import { insertAttribute } from './insertAttribute';
 
-export default function annotateAst(ast: IAST): SequenceType | undefined {
-	const type = annotate(ast);
+export default function annotateAst(
+	ast: IAST,
+	staticContext?: StaticContext
+): SequenceType | undefined {
+	const type = annotate(ast, staticContext);
 	return type;
 }
 
-export function annotate(ast: IAST): SequenceType | undefined {
+export function annotate(ast: IAST, staticContext: StaticContext): SequenceType | undefined {
 	if (!ast) {
 		return undefined;
 	}
 
-	switch (ast[0]) {
-		//Unary arithmetic operators
+	const astNodeName = ast[0];
+
+	switch (astNodeName) {
 		case 'unaryMinusOp':
-			const minVal = annotate(ast[1][1] as IAST);
+			const minVal = annotate(
+				astHelper.getFirstChild(ast, 'operand')[1] as IAST,
+				staticContext
+			);
 			return annotateUnaryMinus(ast, minVal);
 		case 'unaryPlusOp':
-			const plusVal = annotate(ast[1][1] as IAST);
+			const plusVal = annotate(
+				astHelper.getFirstChild(ast, 'operand')[1] as IAST,
+				staticContext
+			);
 			return annotateUnaryPlus(ast, plusVal);
 		//Binary arithmetic operators
 		case 'addOp':
+		case 'subtractOp':
 		case 'divOp':
 		case 'idivOp':
 		case 'modOp':
 		case 'multiplyOp': {
-			const left = annotate(ast[1][1] as IAST);
-			const right = annotate(ast[2][1] as IAST);
-			return annotateBinOp(ast, left, right, ast[0]);
+			const left = annotate(
+				astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST,
+				staticContext
+			);
+			const right = annotate(
+				astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST,
+				staticContext
+			);
+			return annotateBinOp(ast, left, right, astNodeName);
 		}
 		//Comparison operators
 		case 'equalOp':
@@ -44,8 +64,14 @@ export function annotate(ast: IAST): SequenceType | undefined {
 		case 'lessThanOp':
 		case 'greaterThanOrEqualOp':
 		case 'greaterThanOp': {
-			const left = annotate(ast[1][1] as IAST);
-			const right = annotate(ast[2][1] as IAST);
+			const left = annotate(
+				astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST,
+				staticContext
+			);
+			const right = annotate(
+				astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST,
+				staticContext
+			);
 			return annotateGeneralCompare(ast, left, right);
 		}
 		case 'eqOp':
@@ -54,14 +80,26 @@ export function annotate(ast: IAST): SequenceType | undefined {
 		case 'leOp':
 		case 'gtOp':
 		case 'geOp': {
-			const left = annotate(ast[1][1] as IAST);
-			const right = annotate(ast[2][1] as IAST);
+			const left = annotate(
+				astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST,
+				staticContext
+			);
+			const right = annotate(
+				astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST,
+				staticContext
+			);
 			return annotateValueCompare(ast, left, right);
 		}
 		case 'nodeBeforeOp':
 		case 'nodeAfterOp': {
-			const left = annotate(ast[1][1] as IAST);
-			const right = annotate(ast[2][1] as IAST);
+			const left = annotate(
+				astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST,
+				staticContext
+			);
+			const right = annotate(
+				astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST,
+				staticContext
+			);
 			return annotateNodeCompare(ast, left, right);
 		}
 		//Constant expressions
@@ -71,7 +109,7 @@ export function annotate(ast: IAST): SequenceType | undefined {
 				mult: SequenceMultiplicity.EXACTLY_ONE,
 			};
 
-			insertAttribute(ast, 'type', integerSequenceType);
+			astHelper.insertAttribute(ast, 'type', integerSequenceType);
 			return integerSequenceType;
 		case 'doubleConstantExpr':
 			const doubleSequenceType = {
@@ -79,7 +117,7 @@ export function annotate(ast: IAST): SequenceType | undefined {
 				mult: SequenceMultiplicity.EXACTLY_ONE,
 			};
 
-			insertAttribute(ast, 'type', doubleSequenceType);
+			astHelper.insertAttribute(ast, 'type', doubleSequenceType);
 			return doubleSequenceType;
 		case 'decimalConstantExpr':
 			const decimalSequenceType = {
@@ -87,7 +125,7 @@ export function annotate(ast: IAST): SequenceType | undefined {
 				mult: SequenceMultiplicity.EXACTLY_ONE,
 			};
 
-			insertAttribute(ast, 'type', decimalSequenceType);
+			astHelper.insertAttribute(ast, 'type', decimalSequenceType);
 			return decimalSequenceType;
 		case 'stringConstantExpr':
 			const stringSequenceType = {
@@ -95,12 +133,18 @@ export function annotate(ast: IAST): SequenceType | undefined {
 				mult: SequenceMultiplicity.EXACTLY_ONE,
 			};
 
-			insertAttribute(ast, 'type', stringSequenceType);
+			astHelper.insertAttribute(ast, 'type', stringSequenceType);
 			return stringSequenceType;
+		case 'functionCallExpr':
+			return annotateFunctionCall(ast, staticContext);
+		case 'castExpr':
+			return annotateCastOperator(ast);
+		case 'castableExpr':
+			return annotateCastableOperator(ast);
 		// Current node cannot be annotated, but maybe deeper ones can.
 		default:
 			for (let i = 1; i < ast.length; i++) {
-				annotate(ast[i] as IAST);
+				annotate(ast[i] as IAST, staticContext);
 			}
 			return undefined;
 	}
