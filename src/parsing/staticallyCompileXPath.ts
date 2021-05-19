@@ -1,6 +1,7 @@
 import ExecutionSpecificStaticContext from '../expressions/ExecutionSpecificStaticContext';
 import Expression from '../expressions/Expression';
 import StaticContext from '../expressions/StaticContext';
+import annotateAst from '../typeInference/annotateAST';
 import { FunctionNameResolver } from '../types/Options';
 import astHelper from './astHelper';
 import compileAstToExpression from './compileAstToExpression';
@@ -57,6 +58,10 @@ export default function staticallyCompileXPath(
 	} else {
 		// We can not use anything from the cache, parse + compile
 		const ast = parseExpression(xpathString, compilationOptions);
+
+		if (compilationOptions.annotateAst) {
+			annotateAst(ast, rootStaticContext);
+		}
 
 		const mainModule = astHelper.getFirstChild(ast, 'mainModule');
 		if (!mainModule) {

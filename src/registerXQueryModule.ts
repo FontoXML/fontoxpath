@@ -22,7 +22,6 @@ export default function registerXQueryModule(
 	const parsedModule = parseExpression(moduleString, {
 		allowXQuery: true,
 		debug: options['debug'],
-		annotateAst: true,
 	});
 
 	const libraryModule = astHelper.getFirstChild(parsedModule, 'libraryModule');

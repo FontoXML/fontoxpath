@@ -58,7 +58,6 @@ const fontoxpathEvaluate: FunctionDefinitionType = (
 				const ast = parseExpression(queryString, {
 					allowXQuery: false,
 					debug: executionParameters.debug,
-					annotateAst: true,
 				});
 
 				const prolog = astHelper.followPath(ast, ['mainModule', 'prolog']);

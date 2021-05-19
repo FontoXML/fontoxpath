@@ -161,7 +161,6 @@ export default function parseScript<TElement extends Element>(
 	const ast = parseExpression(script, {
 		allowXQuery: options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE,
 		debug: options.debug,
-		annotateAst: options.annotateAst,
 	});
 
 	return parseNode(documentWriter, simpleNodesFactory, ast, null) as TElement;
