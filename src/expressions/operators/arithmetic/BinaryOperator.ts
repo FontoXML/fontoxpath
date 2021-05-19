@@ -232,9 +232,12 @@ function generateBinaryOperatorFunction(
 		typeB = ValueType.XSDOUBLE;
 	}
 
+<<<<<<< HEAD
 	const parentTypesOfA = allTypes.filter((e) => isSubtypeOf(typeA, e));
 	const parentTypesOfB = allTypes.filter((e) => isSubtypeOf(typeB, e));
 
+=======
+>>>>>>> Proof-of-concept
 	function applyCastFunctions(valueA: AtomicValue, valueB: AtomicValue) {
 		return {
 			castA: castFunctionForValueA ? castFunctionForValueA(valueA) : valueA,
@@ -242,10 +245,141 @@ function generateBinaryOperatorFunction(
 		};
 	}
 
+<<<<<<< HEAD
+=======
+	if (isSubtypeOf(typeA, ValueType.XSNUMERIC) && isSubtypeOf(typeB, ValueType.XSNUMERIC)) {
+		switch (operator) {
+			case 'addOp': {
+				const returnType = determineReturnType(typeA, typeB);
+				return [
+					(a, b) => {
+						const { castA, castB } = applyCastFunctions(a, b);
+
+						return createAtomicValue(castA.value + castB.value, returnType);
+					},
+					returnType,
+				];
+			}
+			case 'subtractOp': {
+				const returnType = determineReturnType(typeA, typeB);
+				return [
+					(a, b) => {
+						const { castA, castB } = applyCastFunctions(a, b);
+						return createAtomicValue(castA.value - castB.value, returnType);
+					},
+					returnType,
+				];
+			}
+			case 'multiplyOp': {
+				const returnType = determineReturnType(typeA, typeB);
+				return [
+					(a, b) => {
+						const { castA, castB } = applyCastFunctions(a, b);
+						return createAtomicValue(castA.value * castB.value, returnType);
+					},
+					returnType,
+				];
+			}
+			case 'divOp': {
+				let returnType = determineReturnType(typeA, typeB);
+				if (returnType === ValueType.XSINTEGER) {
+					returnType = ValueType.XSDECIMAL;
+				}
+				return [
+					(a, b) => {
+						const { castA, castB } = applyCastFunctions(a, b);
+						return createAtomicValue(castA.value / castB.value, returnType);
+					},
+					returnType,
+				];
+			}
+			case 'idivOp':
+				return [
+					(a, b) => {
+						const { castA, castB } = applyCastFunctions(a, b);
+						if (castB.value === 0) {
+							throw new Error('FOAR0001: Divisor of idiv operator cannot be (-)0');
+						}
+						if (
+							Number.isNaN(castA.value) ||
+							Number.isNaN(castB.value) ||
+							!Number.isFinite(castA.value)
+						) {
+							throw new Error(
+								'FOAR0002: One of the operands of idiv is NaN or the first operand is (-)INF'
+							);
+						}
+						if (Number.isFinite(castA.value) && !Number.isFinite(castB.value)) {
+							return createAtomicValue(0, ValueType.XSINTEGER);
+						}
+						return createAtomicValue(
+							Math.trunc(castA.value / castB.value),
+							ValueType.XSINTEGER
+						);
+					},
+					ValueType.XSINTEGER,
+				];
+			case 'modOp': {
+				const returnType = determineReturnType(typeA, typeB);
+
+				return [
+					(a, b) => {
+						const { castA, castB } = applyCastFunctions(a, b);
+						return createAtomicValue(castA.value % castB.value, returnType);
+					},
+					returnType,
+				];
+			}
+		}
+	}
+
+	if (
+		isSubtypeOf(typeA, ValueType.XSYEARMONTHDURATION) &&
+		isSubtypeOf(typeB, ValueType.XSYEARMONTHDURATION)
+	) {
+		switch (operator) {
+			case 'addOp':
+				return [
+					(a, b) => {
+						const { castA, castB } = applyCastFunctions(a, b);
+						return createAtomicValue(
+							yearMonthDurationAdd(castA.value, castB.value),
+							ValueType.XSYEARMONTHDURATION
+						);
+					},
+					ValueType.XSYEARMONTHDURATION,
+				];
+			case 'subtractOp':
+				return [
+					(a, b) => {
+						const { castA, castB } = applyCastFunctions(a, b);
+						return createAtomicValue(
+							yearMonthDurationSubtract(castA.value, castB.value),
+							ValueType.XSYEARMONTHDURATION
+						);
+					},
+					ValueType.XSYEARMONTHDURATION,
+				];
+			case 'divOp':
+				return [
+					(a, b) => {
+						const { castA, castB } = applyCastFunctions(a, b);
+						return createAtomicValue(
+							yearMonthDurationDivideByYearMonthDuration(castA.value, castB.value),
+							ValueType.XSDECIMAL
+						);
+					},
+					ValueType.XSDECIMAL,
+				];
+		}
+	}
+
+>>>>>>> Proof-of-concept
 	if (
 		parentTypesOfA.includes(ValueType.XSNUMERIC) &&
 		parentTypesOfB.includes(ValueType.XSNUMERIC)
 	) {
+<<<<<<< HEAD
 		const result = ruleMap[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, operator)];
 		const fun = result[0];
 		let retType = result[1];
@@ -261,8 +395,160 @@ function generateBinaryOperatorFunction(
 		];
 	}
 	if (parentTypesOfB.length === 0 || parentTypesOfA.length === 0)
+=======
+		switch (operator) {
+			case 'multiplyOp':
+				return [
+					(a, b) => {
+						const { castA, castB } = applyCastFunctions(a, b);
+						return createAtomicValue(
+							yearMonthDurationMultiply(castA.value, castB.value),
+							ValueType.XSYEARMONTHDURATION
+						);
+					},
+					ValueType.XSYEARMONTHDURATION,
+				];
+			case 'divOp':
+				return [
+					(a, b) => {
+						const { castA, castB } = applyCastFunctions(a, b);
+						return createAtomicValue(
+							yearMonthDurationDivide(castA.value, castB.value),
+							ValueType.XSYEARMONTHDURATION
+						);
+					},
+					ValueType.XSYEARMONTHDURATION,
+				];
+		}
+	}
+
+	if (
+		isSubtypeOf(typeA, ValueType.XSNUMERIC) &&
+		isSubtypeOf(typeB, ValueType.XSYEARMONTHDURATION)
+	) {
+		if (operator === 'multiplyOp') {
+			return [
+				(a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return createAtomicValue(
+						yearMonthDurationMultiply(castB.value, castA.value),
+						ValueType.XSYEARMONTHDURATION
+					);
+				},
+				ValueType.XSYEARMONTHDURATION,
+			];
+		}
+	}
+
+	if (
+		isSubtypeOf(typeA, ValueType.XSDAYTIMEDURATION) &&
+		isSubtypeOf(typeB, ValueType.XSDAYTIMEDURATION)
+	) {
+		switch (operator) {
+			case 'addOp':
+				return [
+					(a, b) => {
+						const { castA, castB } = applyCastFunctions(a, b);
+						return createAtomicValue(
+							dayTimeDurationAdd(castA.value, castB.value),
+							ValueType.XSDAYTIMEDURATION
+						);
+					},
+					ValueType.XSDAYTIMEDURATION,
+				];
+			case 'subtractOp':
+				return [
+					(a, b) => {
+						const { castA, castB } = applyCastFunctions(a, b);
+						return createAtomicValue(
+							dayTimeDurationSubtract(castA.value, castB.value),
+							ValueType.XSDAYTIMEDURATION
+						);
+					},
+					ValueType.XSDAYTIMEDURATION,
+				];
+			case 'divOp':
+				return [
+					(a, b) => {
+						const { castA, castB } = applyCastFunctions(a, b);
+						return createAtomicValue(
+							dayTimeDurationDivideByDayTimeDuration(castA.value, castB.value),
+							ValueType.XSDECIMAL
+						);
+					},
+					ValueType.XSDECIMAL,
+				];
+		}
+	}
+	if (
+		isSubtypeOf(typeA, ValueType.XSDAYTIMEDURATION) &&
+		isSubtypeOf(typeB, ValueType.XSNUMERIC)
+	) {
+		switch (operator) {
+			case 'multiplyOp':
+				return [
+					(a, b) => {
+						const { castA, castB } = applyCastFunctions(a, b);
+						return createAtomicValue(
+							dayTimeDurationMultiply(castA.value, castB.value),
+							ValueType.XSDAYTIMEDURATION
+						);
+					},
+					ValueType.XSDAYTIMEDURATION,
+				];
+			case 'divOp':
+				return [
+					(a, b) => {
+						const { castA, castB } = applyCastFunctions(a, b);
+						return createAtomicValue(
+							dayTimeDurationDivide(castA.value, castB.value),
+							ValueType.XSDAYTIMEDURATION
+						);
+					},
+					ValueType.XSDAYTIMEDURATION,
+				];
+		}
+	}
+	if (
+		isSubtypeOf(typeA, ValueType.XSNUMERIC) &&
+		isSubtypeOf(typeB, ValueType.XSDAYTIMEDURATION)
+	) {
+		if (operator === 'multiplyOp') {
+			return [
+				(a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return createAtomicValue(
+						dayTimeDurationMultiply(castB.value, castA.value),
+						ValueType.XSDAYTIMEDURATION
+					);
+				},
+				ValueType.XSDAYTIMEDURATION,
+			];
+		}
+	}
+
+	if (
+		(isSubtypeOf(typeA, ValueType.XSDATETIME) && isSubtypeOf(typeB, ValueType.XSDATETIME)) ||
+		(isSubtypeOf(typeA, ValueType.XSDATE) && isSubtypeOf(typeB, ValueType.XSDATE)) ||
+		(isSubtypeOf(typeA, ValueType.XSTIME) && isSubtypeOf(typeB, ValueType.XSTIME))
+	) {
+		if (operator === 'subtractOp') {
+			return [
+				(a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return createAtomicValue(
+						dateTimeSubtract(castA.value, castB.value),
+						ValueType.XSDAYTIMEDURATION
+					);
+				},
+				ValueType.XSDAYTIMEDURATION,
+			];
+		}
+
+>>>>>>> Proof-of-concept
 		throw new Error(`XPTY0004: ${operator} not available for types ${typeA} and ${typeB}`);
 
+<<<<<<< HEAD
 	for (const typeOfA of parentTypesOfA) {
 		for (const typeOfB of parentTypesOfB) {
 			const result = ruleMap[hash(typeOfA, typeOfB, operator)];
@@ -275,11 +561,101 @@ function generateBinaryOperatorFunction(
 					result[1],
 				];
 			}
+=======
+	if (
+		(isSubtypeOf(typeA, ValueType.XSDATETIME) &&
+			isSubtypeOf(typeB, ValueType.XSYEARMONTHDURATION)) ||
+		(isSubtypeOf(typeA, ValueType.XSDATETIME) &&
+			isSubtypeOf(typeB, ValueType.XSDAYTIMEDURATION))
+	) {
+		if (operator === 'addOp') {
+			return [
+				(a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return createAtomicValue(
+						addDurationToDateTime(castA.value, castB.value),
+						ValueType.XSDATETIME
+					);
+				},
+				ValueType.XSDATETIME,
+			];
+		}
+		if (operator === 'subtractOp') {
+			return [
+				(a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return createAtomicValue(
+						subtractDurationFromDateTime(castA.value, castB.value),
+						ValueType.XSDATETIME
+					);
+				},
+				ValueType.XSDATETIME,
+			];
+		}
+	}
+
+	if (
+		(isSubtypeOf(typeA, ValueType.XSDATE) &&
+			isSubtypeOf(typeB, ValueType.XSYEARMONTHDURATION)) ||
+		(isSubtypeOf(typeA, ValueType.XSDATE) && isSubtypeOf(typeB, ValueType.XSDAYTIMEDURATION))
+	) {
+		if (operator === 'addOp') {
+			return [
+				(a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return createAtomicValue(
+						addDurationToDateTime(castA.value, castB.value),
+						ValueType.XSDATE
+					);
+				},
+				ValueType.XSDATE,
+			];
+		}
+		if (operator === 'subtractOp') {
+			return [
+				(a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return createAtomicValue(
+						subtractDurationFromDateTime(castA.value, castB.value),
+						ValueType.XSDATE
+					);
+				},
+				ValueType.XSDATE,
+			];
+		}
+	}
+
+	if (isSubtypeOf(typeA, ValueType.XSTIME) && isSubtypeOf(typeB, ValueType.XSDAYTIMEDURATION)) {
+		if (operator === 'addOp') {
+			return [
+				(a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return createAtomicValue(
+						addDurationToDateTime(castA.value, castB.value),
+						ValueType.XSTIME
+					);
+				},
+				ValueType.XSTIME,
+			];
+		}
+		if (operator === 'subtractOp') {
+			return [
+				(a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return createAtomicValue(
+						subtractDurationFromDateTime(castA.value, castB.value),
+						ValueType.XSTIME
+					);
+				},
+				ValueType.XSTIME,
+			];
+>>>>>>> Proof-of-concept
 		}
 	}
 	throw new Error(`XPTY0004: ${operator} not available for types ${typeA} and ${typeB}`);
 }
 
+<<<<<<< HEAD
 function idDivOpChecksFunction(
 	applyCastFunctions: (a, b) => any,
 	fun: (a, b) => any
@@ -326,11 +702,126 @@ export function getBinaryPrefabOperator(
 			leftType,
 			rightType
 		);
+=======
+	if (
+		(isSubtypeOf(typeB, ValueType.XSYEARMONTHDURATION) &&
+			isSubtypeOf(typeA, ValueType.XSDATETIME)) ||
+		(isSubtypeOf(typeB, ValueType.XSDAYTIMEDURATION) &&
+			isSubtypeOf(typeA, ValueType.XSDATETIME))
+	) {
+		if (operator === 'addOp') {
+			return [
+				(a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return createAtomicValue(
+						addDurationToDateTime(castB.value, castA.value),
+						ValueType.XSDATETIME
+					);
+				},
+				ValueType.XSDATETIME,
+			];
+		}
+		if (operator === 'subtractOp') {
+			return [
+				(a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return createAtomicValue(
+						subtractDurationFromDateTime(castB.value, castA.value),
+						ValueType.XSDATETIME
+					);
+				},
+				ValueType.XSDATETIME,
+			];
+		}
+	}
+
+	if (
+		(isSubtypeOf(typeB, ValueType.XSDAYTIMEDURATION) && isSubtypeOf(typeA, ValueType.XSDATE)) ||
+		(isSubtypeOf(typeB, ValueType.XSYEARMONTHDURATION) && isSubtypeOf(typeA, ValueType.XSDATE))
+	) {
+		if (operator === 'addOp') {
+			return [
+				(a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return createAtomicValue(
+						addDurationToDateTime(castB.value, castA.value),
+						ValueType.XSDATE
+					);
+				},
+				ValueType.XSDATE,
+			];
+		}
+		if (operator === 'subtractOp') {
+			return [
+				(a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return createAtomicValue(
+						subtractDurationFromDateTime(castB.value, castA.value),
+						ValueType.XSDATE
+					);
+				},
+				ValueType.XSDATE,
+			];
+		}
+	}
+
+	if (isSubtypeOf(typeB, ValueType.XSDAYTIMEDURATION) && isSubtypeOf(typeA, ValueType.XSTIME)) {
+		if (operator === 'addOp') {
+			return [
+				(a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return createAtomicValue(
+						addDurationToDateTime(castB.value, castA.value),
+						ValueType.XSTIME
+					);
+				},
+				ValueType.XSTIME,
+			];
+		}
+		if (operator === 'subtractOp') {
+			return [
+				(a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return createAtomicValue(
+						subtractDurationFromDateTime(castB.value, castA.value),
+						ValueType.XSTIME
+					);
+				},
+				ValueType.XSTIME,
+			];
+		}
+>>>>>>> Proof-of-concept
 	}
 
 	return prefabOperator;
 }
 
+<<<<<<< HEAD
+=======
+const operatorsByTypingKey: Record<string, [BinaryEvaluationFunction, ValueType]> = Object.create(
+	null
+);
+
+export function getBinaryPrefabOperator(
+	leftType: ValueType,
+	rightType: ValueType,
+	operator: string
+) {
+	const typingKey = `${leftType}~${rightType}~${operator}`;
+
+	let prefabOperator = operatorsByTypingKey[typingKey];
+	if (!prefabOperator) {
+		prefabOperator = operatorsByTypingKey[typingKey] = generateBinaryOperatorFunction(
+			operator,
+			leftType,
+			rightType
+		);
+	}
+
+	return prefabOperator;
+}
+
+>>>>>>> Proof-of-concept
 class BinaryOperator extends Expression {
 	private _evaluateFunction?: BinaryEvaluationFunction;
 	private _firstValueExpr: Expression;
