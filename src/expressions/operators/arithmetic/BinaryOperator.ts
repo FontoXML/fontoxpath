@@ -41,6 +41,9 @@ function determineReturnType(typeA: ValueType, typeB: ValueType): ValueType {
 	return ValueType.XSDOUBLE;
 }
 
+/**
+ * An array with every possible parent type contained in the ruleMap.
+ */
 const allTypes = [
 	ValueType.XSNUMERIC,
 	ValueType.XSYEARMONTHDURATION,
@@ -50,6 +53,13 @@ const allTypes = [
 	ValueType.XSTIME,
 ];
 
+/**
+ * A hash function that is used to create the keys for the ruleMap.
+ * @param left the ValueType of the left part of the operator
+ * @param right the ValueType of the right part of the operator
+ * @param op the operator
+ * @returns a number that can be used as a key
+ */
 function hash(left: ValueType, right: ValueType, op: string): number {
 	return (
 		((left as number) << 20) +
@@ -63,6 +73,10 @@ type EvalFuncTable = {
 	[key: number]: [(a: any, b: any) => any, ValueType];
 };
 
+/**
+ * The map with every possible combination of operands.
+ * returns both a function that needs to be applied to the operands and the returnType of the operation.
+ */
 const ruleMap: EvalFuncTable = {
 	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'addOp')]: [(a, b) => a + b, undefined],
 	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'subtractOp')]: [(a, b) => a - b, undefined],
@@ -215,6 +229,13 @@ const ruleMap: EvalFuncTable = {
 	],
 };
 
+/**
+ * Generates the BinaryOperatorFunction given the 3 input values.
+ * @param operator The operator of the operation.
+ * @param typeA The type of the left part of the operation
+ * @param typeB The type of the right part of the operation
+ * @returns A tuple of a function that needs to be applied to the operands and the returnType of the operation.
+ */
 function generateBinaryOperatorFunction(
 	operator: string,
 	typeA: ValueType,
@@ -232,6 +253,7 @@ function generateBinaryOperatorFunction(
 		typeB = ValueType.XSDOUBLE;
 	}
 
+	// Filter all the possible types to only those which the operands are a subtype of.
 	const parentTypesOfA = allTypes.filter((e) => isSubtypeOf(typeA, e));
 	const parentTypesOfB = allTypes.filter((e) => isSubtypeOf(typeB, e));
 
@@ -242,6 +264,7 @@ function generateBinaryOperatorFunction(
 		};
 	}
 
+	// As the Numeric operands need some checks done beforehand we need to evaluate them seperatly.
 	if (
 		parentTypesOfA.includes(ValueType.XSNUMERIC) &&
 		parentTypesOfB.includes(ValueType.XSNUMERIC)
@@ -251,7 +274,7 @@ function generateBinaryOperatorFunction(
 		let retType = result[1];
 		if (!retType) retType = determineReturnType(typeA, typeB);
 		if (operator === 'divOp' && retType === ValueType.XSINTEGER) retType = ValueType.XSDECIMAL;
-		if (operator === 'idivOp') return idDivOpChecksFunction(applyCastFunctions, fun);
+		if (operator === 'idivOp') return iDivOpChecksFunction(applyCastFunctions, fun);
 		return [
 			(a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
@@ -260,9 +283,12 @@ function generateBinaryOperatorFunction(
 			retType,
 		];
 	}
+
+	// check if the types have at least 1 applicable parent type each.
 	if (parentTypesOfB.length === 0 || parentTypesOfA.length === 0)
 		throw new Error(`XPTY0004: ${operator} not available for types ${typeA} and ${typeB}`);
 
+	// Loop through the 2 arrays to find a combination of parentTypes and operand that has an entry in the ruleMap.
 	for (const typeOfA of parentTypesOfA) {
 		for (const typeOfB of parentTypesOfB) {
 			const result = ruleMap[hash(typeOfA, typeOfB, operator)];
@@ -280,7 +306,13 @@ function generateBinaryOperatorFunction(
 	throw new Error(`XPTY0004: ${operator} not available for types ${typeA} and ${typeB}`);
 }
 
-function idDivOpChecksFunction(
+/**
+ * The integerDivision needs some seperate more ellaborate checks so is moved into a seperate function.
+ * @param applyCastFunctions The casting function
+ * @param fun The function retrieved from the map
+ * @returns A tuple of a function that needs to be applied to the operands and the returnType of the integerDivision.
+ */
+function iDivOpChecksFunction(
 	applyCastFunctions: (a, b) => any,
 	fun: (a, b) => any
 ): [(a: any, b: any) => AtomicValue, ValueType] {
@@ -308,6 +340,9 @@ function idDivOpChecksFunction(
 	];
 }
 
+/**
+ * A cache to store the generatered functions.
+ */
 const operatorsByTypingKey: Record<string, [BinaryEvaluationFunction, ValueType]> = Object.create(
 	null
 );
@@ -331,6 +366,9 @@ export function getBinaryPrefabOperator(
 	return prefabOperator;
 }
 
+/**
+ * A class representing a BinaryOperationExpression
+ */
 class BinaryOperator extends Expression {
 	private _evaluateFunction?: BinaryEvaluationFunction;
 	private _firstValueExpr: Expression;
@@ -366,6 +404,12 @@ class BinaryOperator extends Expression {
 		this._evaluateFunction = evaluateFunction;
 	}
 
+	/**
+	 * A method to evaluate the BinaryOperation.
+	 * @param dynamicContext The context in which it will be evaluated
+	 * @param executionParameters options
+	 * @returns The value to which the operation evaluates.
+	 */
 	public evaluate(dynamicContext, executionParameters) {
 		const firstValueSequence = atomize(
 			this._firstValueExpr.evaluateMaybeStatically(dynamicContext, executionParameters),
