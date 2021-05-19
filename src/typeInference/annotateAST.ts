@@ -2,7 +2,6 @@ import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/da
 import astHelper, { IAST } from '../parsing/astHelper';
 import { annotateBinOp } from './annotateBinaryOperator';
 import { annotateUnaryMinus, annotateUnaryPlus } from './annotateUnaryOperator';
-import { insertAttribute } from './insertAttribute';
 
 export default function annotateAst(ast: IAST): SequenceType | undefined {
 	const type = annotate(ast);
@@ -38,7 +37,7 @@ export function annotate(ast: IAST): SequenceType | undefined {
 				mult: SequenceMultiplicity.EXACTLY_ONE,
 			};
 
-			insertAttribute(ast, 'type', integerSequenceType);
+			astHelper.insertAttribute(ast, 'type', integerSequenceType);
 			return integerSequenceType;
 		case 'doubleConstantExpr':
 			const doubleSequenceType = {
@@ -46,7 +45,7 @@ export function annotate(ast: IAST): SequenceType | undefined {
 				mult: SequenceMultiplicity.EXACTLY_ONE,
 			};
 
-			insertAttribute(ast, 'type', doubleSequenceType);
+			astHelper.insertAttribute(ast, 'type', doubleSequenceType);
 			return doubleSequenceType;
 		case 'decimalConstantExpr':
 			const decimalSequenceType = {
@@ -54,7 +53,7 @@ export function annotate(ast: IAST): SequenceType | undefined {
 				mult: SequenceMultiplicity.EXACTLY_ONE,
 			};
 
-			insertAttribute(ast, 'type', decimalSequenceType);
+			astHelper.insertAttribute(ast, 'type', decimalSequenceType);
 			return decimalSequenceType;
 		case 'stringConstantExpr':
 			const stringSequenceType = {
@@ -62,7 +61,7 @@ export function annotate(ast: IAST): SequenceType | undefined {
 				mult: SequenceMultiplicity.EXACTLY_ONE,
 			};
 
-			insertAttribute(ast, 'type', stringSequenceType);
+			astHelper.insertAttribute(ast, 'type', stringSequenceType);
 			return stringSequenceType;
 		default:
 			for (let i = 1; i < ast.length; i++) {

@@ -195,6 +195,23 @@ function getQName(ast: IAST): QName {
 	};
 }
 
+/**
+ * Insert an attribute with a given name and value to the AST.
+ *
+ * @param ast The ast node to insert the attribute to
+ * @param name The name of the attribute
+ * @param data The data of the attribute
+ */
+function insertAttribute(ast: IAST, name: string, data: any) {
+	if (typeof ast[1] === 'object' && !Array.isArray(ast[1])) {
+		ast[1][name] = data;
+	} else {
+		const obj = {};
+		obj[name] = data;
+		ast.splice(1, 0, obj);
+	}
+}
+
 export default {
 	followPath,
 	getAttribute,
@@ -203,4 +220,5 @@ export default {
 	getQName,
 	getTextContent,
 	getTypeDeclaration,
+	insertAttribute,
 };
