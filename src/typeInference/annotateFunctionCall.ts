@@ -1,7 +1,6 @@
 import { SequenceType } from '../expressions/dataTypes/Value';
 import StaticContext from '../expressions/StaticContext';
 import astHelper, { IAST } from '../parsing/astHelper';
-import { insertAttribute } from './insertAttribute';
 
 export function annotateFunctionCall(
 	ast: IAST,
@@ -31,6 +30,6 @@ export function annotateFunctionCall(
 
 	if (!functionProps) return undefined;
 
-	insertAttribute(ast, 'type', functionProps.returnType);
+	astHelper.insertAttribute(ast, 'type', functionProps.returnType);
 	return functionProps.returnType;
 }
