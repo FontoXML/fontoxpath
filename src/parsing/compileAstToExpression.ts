@@ -622,11 +622,15 @@ function functionCall(
 ) {
 	const functionName = astHelper.getFirstChild(ast, 'functionName');
 	const functionArguments = astHelper.getChildren(astHelper.getFirstChild(ast, 'arguments'), '*');
+
+	const returnType = astHelper.followPath(ast, ['type']);
+
 	return new FunctionCall(
 		new NamedFunctionRef(astHelper.getQName(functionName), functionArguments.length),
 		functionArguments.map((arg) =>
 			arg[0] === 'argumentPlaceholder' ? null : compile(arg, compilationOptions)
-		)
+		),
+		returnType ? (returnType[1] as SequenceType) : undefined
 	);
 }
 

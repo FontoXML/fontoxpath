@@ -13,6 +13,7 @@ export default class ExecutionParameters {
 		public readonly documentWriter: IDocumentWriter,
 		public readonly currentContext: any,
 		public readonly rootPointerByRootNodeMap: Map<ConcreteNode | TinyNode, NodePointer>,
-		public readonly logger?: Logger
+		public readonly logger?: Logger,
+		public readonly annotateAst: boolean = true
 	) {}
 }

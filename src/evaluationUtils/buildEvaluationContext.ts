@@ -198,7 +198,8 @@ export default function buildEvaluationContext(
 		documentWriter,
 		externalOptions['currentContext'],
 		new Map(),
-		internalOptions.logger
+		internalOptions.logger,
+		true
 	);
 
 	return {
