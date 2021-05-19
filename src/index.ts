@@ -59,8 +59,6 @@ import {
 	Text,
 } from './types/Types';
 
-evaluateXPath('5.0 cast as xs:integer');
-
 function parseXPath(xpathString: string) {
 	const cachedExpression = getAnyStaticCompilationResultFromCache(xpathString, 'XPath', false);
 	if (cachedExpression) {
