@@ -111,6 +111,8 @@ function compareSpecificity(xpathStringA: string, xpathStringB: string): -1 | 0 
 	return parseXPath(xpathStringA).specificity.compareTo(parseXPath(xpathStringB).specificity);
 }
 
+evaluateXPath('1 - 1');
+
 /**
  * @public
  */

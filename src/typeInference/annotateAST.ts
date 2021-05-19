@@ -1,5 +1,5 @@
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
-import { IAST } from '../parsing/astHelper';
+import astHelper, { IAST } from '../parsing/astHelper';
 import { annotateBinOp } from './annotateBinaryOperator';
 import { annotateUnaryMinus, annotateUnaryPlus } from './annotateUnaryOperator';
 import { insertAttribute } from './insertAttribute';
@@ -14,21 +14,24 @@ export function annotate(ast: IAST): SequenceType | undefined {
 		return undefined;
 	}
 
-	switch (ast[0]) {
+	const astNodeName = ast[0];
+
+	switch (astNodeName) {
 		case 'unaryMinusOp':
-			const minVal = annotate(ast[1][1] as IAST);
+			const minVal = annotate(astHelper.getFirstChild(ast, 'operand')[1] as IAST);
 			return annotateUnaryMinus(ast, minVal);
 		case 'unaryPlusOp':
-			const plusVal = annotate(ast[1][1] as IAST);
+			const plusVal = annotate(astHelper.getFirstChild(ast, 'operand')[1] as IAST);
 			return annotateUnaryPlus(ast, plusVal);
 		case 'addOp':
+		case 'subtractOp':
 		case 'divOp':
 		case 'idivOp':
 		case 'modOp':
 		case 'multiplyOp':
-			const left = annotate(ast[1][1] as IAST);
-			const right = annotate(ast[2][1] as IAST);
-			return annotateBinOp(ast, left, right, ast[0]);
+			const left = annotate(astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST);
+			const right = annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST);
+			return annotateBinOp(ast, left, right, astNodeName);
 		case 'integerConstantExpr':
 			const integerSequenceType = {
 				type: ValueType.XSINTEGER,
