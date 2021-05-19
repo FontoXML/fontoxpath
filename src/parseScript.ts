@@ -2,6 +2,7 @@ import domBackedDocumentWriter from './documentWriter/domBackedDocumentWriter';
 import IDocumentWriter from './documentWriter/IDocumentWriter';
 import ISimpleNodesFactory from './nodesFactory/ISimpleNodesFactory';
 import parseExpression from './parsing/parseExpression';
+import annotateAst from './typeInference/annotateAST';
 import { Language, Options } from './types/Options';
 import { Element, Text } from './types/Types';
 
@@ -162,6 +163,10 @@ export default function parseScript<TElement extends Element>(
 		allowXQuery: options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE,
 		debug: options.debug,
 	});
+
+	if (options.annotateAst) {
+		annotateAst(ast);
+	}
 
 	return parseNode(documentWriter, simpleNodesFactory, ast, null) as TElement;
 }

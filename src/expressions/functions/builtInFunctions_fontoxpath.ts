@@ -3,6 +3,7 @@ import astHelper from '../../parsing/astHelper';
 import compileAstToExpression from '../../parsing/compileAstToExpression';
 import parseExpression from '../../parsing/parseExpression';
 import processProlog from '../../parsing/processProlog';
+import annotateAst from '../../typeInference/annotateAST';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
@@ -59,6 +60,10 @@ const fontoxpathEvaluate: FunctionDefinitionType = (
 					allowXQuery: false,
 					debug: executionParameters.debug,
 				});
+
+				if (executionParameters.annotateAst) {
+					annotateAst(ast, innerStaticContext);
+				}
 
 				const prolog = astHelper.followPath(ast, ['mainModule', 'prolog']);
 				if (prolog) {

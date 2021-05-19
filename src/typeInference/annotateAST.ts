@@ -8,7 +8,7 @@ import { insertAttribute } from './insertAttribute';
 
 export default function annotateAst(
 	ast: IAST,
-	staticContext: StaticContext
+	staticContext?: StaticContext
 ): SequenceType | undefined {
 	const type = annotate(ast, staticContext);
 	return type;
