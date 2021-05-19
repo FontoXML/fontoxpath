@@ -6,7 +6,7 @@ import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import PossiblyUpdatingExpression, {
-	separateXDMValueFromUpdatingExpressionResult,
+	separateXDMValueFromUpdatingExpressionResult
 } from '../PossiblyUpdatingExpression';
 import Specificity from '../Specificity';
 import StaticContext from '../StaticContext';
@@ -124,7 +124,7 @@ class FunctionCall extends PossiblyUpdatingExpression {
 	 * @param  functionReference  Reference to the function to execute.
 	 * @param  args               The arguments to be evaluated and passed to the function
 	 */
-	constructor(functionReference: Expression, args: (Expression | null)[]) {
+	constructor(functionReference: Expression, args: (Expression | null)[], type?: SequenceType) {
 		super(
 			new Specificity({
 				[Specificity.EXTERNAL_KIND]: 1,
@@ -135,7 +135,8 @@ class FunctionCall extends PossiblyUpdatingExpression {
 				peer: false,
 				subtree: false,
 				canBeStaticallyEvaluated: false, // args.every(arg => arg.canBeStaticallyEvaluated) && functionReference.canBeStaticallyEvaluated
-			}
+			},
+			type
 		);
 
 		this._callArity = args.length;
