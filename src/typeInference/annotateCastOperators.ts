@@ -5,19 +5,18 @@ import {
 	ValueType,
 } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
-import { insertAttribute } from './insertAttribute';
 
 export function annotateCastOperator(ast: IAST): SequenceType | undefined {
 	const targetTypeString = getTargetTypeFromAST(ast);
 	const targetValueType = stringToValueType(targetTypeString);
 	const sequenceType = { type: targetValueType, mult: SequenceMultiplicity.EXACTLY_ONE };
-	insertAttribute(ast, 'type', sequenceType);
+	astHelper.insertAttribute(ast, 'type', sequenceType);
 	return sequenceType;
 }
 
 export function annotateCastableOperator(ast: IAST): SequenceType {
 	const sequenceType = { type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE };
-	insertAttribute(ast, 'type', sequenceType);
+	astHelper.insertAttribute(ast, 'type', sequenceType);
 	return sequenceType;
 }
 
