@@ -65,11 +65,35 @@ const ruleMap: EvalFuncTable = {
 	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'subtractOp')]: [(a, b) => a - b, undefined],
 	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'multiplyOp')]: [(a, b) => a * b, undefined],
 	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'divOp')]: [(a, b) => a / b, undefined],
+	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'modOp')]: [(a, b) => a % b, undefined],
 	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'idivOp')]: [
-		(a, b) => a / b,
+		(a, b) => Math.trunc(a / b),
 		ValueType.XSINTEGER,
 	],
-	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'modOp')]: [(a, b) => a % b, undefined],
+	[hash(ValueType.XSYEARMONTHDURATION, ValueType.XSYEARMONTHDURATION, 'addOp')]: [
+		yearMonthDurationAdd,
+		ValueType.XSYEARMONTHDURATION,
+	],
+	[hash(ValueType.XSYEARMONTHDURATION, ValueType.XSYEARMONTHDURATION, 'subtractOp')]: [
+		yearMonthDurationSubtract,
+		ValueType.XSYEARMONTHDURATION,
+	],
+	[hash(ValueType.XSYEARMONTHDURATION, ValueType.XSYEARMONTHDURATION, 'divOp')]: [
+		yearMonthDurationDivideByYearMonthDuration,
+		ValueType.XSDECIMAL,
+	],
+	[hash(ValueType.XSYEARMONTHDURATION, ValueType.XSNUMERIC, 'multiplyOp')]: [
+		yearMonthDurationMultiply,
+		ValueType.XSYEARMONTHDURATION,
+	],
+	[hash(ValueType.XSYEARMONTHDURATION, ValueType.XSNUMERIC, 'divOp')]: [
+		yearMonthDurationDivide,
+		ValueType.XSYEARMONTHDURATION,
+	],
+	[hash(ValueType.XSNUMERIC, ValueType.XSYEARMONTHDURATION, 'multiplyOp')]: [
+		yearMonthDurationMultiply,
+		ValueType.XSYEARMONTHDURATION,
+	],
 };
 
 function generateBinaryOperatorFunction(
@@ -104,211 +128,64 @@ function generateBinaryOperatorFunction(
 		parentTypesOfB.includes(ValueType.XSNUMERIC)
 	) {
 		let [fun, retType] = ruleMap[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, operator)];
-		let idDivOp = false;
 		if (!retType) retType = determineReturnType(typeA, typeB);
 		if (operator === 'divOp' && retType === ValueType.XSINTEGER) retType = ValueType.XSDECIMAL;
-		if (operator === 'idivOp') idDivOp = true;
+		if (operator === 'idivOp') return idDivOpChecksFunction(applyCastFunctions, fun);
 		return [
 			(a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
-				if (castB.value === 0 && idDivOp) {
-					throw new Error('FOAR0001: Divisor of idiv operator cannot be (-)0');
-				}
-				if (
-					(Number.isNaN(castA.value) ||
-						Number.isNaN(castB.value) ||
-						!Number.isFinite(castA.value)) &&
-					idDivOp
-				) {
-					throw new Error(
-						'FOAR0002: One of the operands of idiv is NaN or the first operand is (-)INF'
-					);
-				}
-				if (Number.isFinite(castA.value) && !Number.isFinite(castB.value) && idDivOp) {
-					return createAtomicValue(0, ValueType.XSINTEGER);
-				} else if (idDivOp) {
-					return createAtomicValue(
-						Math.trunc(castA.value / castB.value),
-						ValueType.XSINTEGER
-					);
-				}
-
 				return createAtomicValue(fun(castA.value, castB.value), retType);
 			},
 			retType,
 		];
-		switch (operator) {
-			case 'addOp': {
-				const returnType = determineReturnType(typeA, typeB);
-				return [
-					(a, b) => {
-						const { castA, castB } = applyCastFunctions(a, b);
-
-						return createAtomicValue(castA.value + castB.value, returnType);
-					},
-					returnType,
-				];
-			}
-			case 'subtractOp': {
-				const returnType = determineReturnType(typeA, typeB);
-				return [
-					(a, b) => {
-						const { castA, castB } = applyCastFunctions(a, b);
-						return createAtomicValue(castA.value - castB.value, returnType);
-					},
-					returnType,
-				];
-			}
-			case 'multiplyOp': {
-				const returnType = determineReturnType(typeA, typeB);
-				return [
-					(a, b) => {
-						const { castA, castB } = applyCastFunctions(a, b);
-						return createAtomicValue(castA.value * castB.value, returnType);
-					},
-					returnType,
-				];
-			}
-			case 'divOp': {
-				let returnType = determineReturnType(typeA, typeB);
-				if (returnType === ValueType.XSINTEGER) {
-					returnType = ValueType.XSDECIMAL;
-				}
-				return [
-					(a, b) => {
-						const { castA, castB } = applyCastFunctions(a, b);
-						return createAtomicValue(castA.value / castB.value, returnType);
-					},
-					returnType,
-				];
-			}
-			case 'idivOp':
-				return [
-					(a, b) => {
-						const { castA, castB } = applyCastFunctions(a, b);
-						if (castB.value === 0) {
-							throw new Error('FOAR0001: Divisor of idiv operator cannot be (-)0');
-						}
-						if (
-							Number.isNaN(castA.value) ||
-							Number.isNaN(castB.value) ||
-							!Number.isFinite(castA.value)
-						) {
-							throw new Error(
-								'FOAR0002: One of the operands of idiv is NaN or the first operand is (-)INF'
-							);
-						}
-						if (Number.isFinite(castA.value) && !Number.isFinite(castB.value)) {
-							return createAtomicValue(0, ValueType.XSINTEGER);
-						}
-						return createAtomicValue(
-							Math.trunc(castA.value / castB.value),
-							ValueType.XSINTEGER
-						);
-					},
-					ValueType.XSINTEGER,
-				];
-			case 'modOp': {
-				const returnType = determineReturnType(typeA, typeB);
-
-				return [
-					(a, b) => {
-						const { castA, castB } = applyCastFunctions(a, b);
-						return createAtomicValue(castA.value % castB.value, returnType);
-					},
-					returnType,
-				];
-			}
-		}
 	}
 
 	if (
-		isSubtypeOf(typeA, ValueType.XSYEARMONTHDURATION) &&
-		isSubtypeOf(typeB, ValueType.XSYEARMONTHDURATION)
+		parentTypesOfA.includes(ValueType.XSYEARMONTHDURATION) &&
+		parentTypesOfB.includes(ValueType.XSYEARMONTHDURATION)
 	) {
-		switch (operator) {
-			case 'addOp':
-				return [
-					(a, b) => {
-						const { castA, castB } = applyCastFunctions(a, b);
-						return createAtomicValue(
-							yearMonthDurationAdd(castA.value, castB.value),
-							ValueType.XSYEARMONTHDURATION
-						);
-					},
-					ValueType.XSYEARMONTHDURATION,
-				];
-			case 'subtractOp':
-				return [
-					(a, b) => {
-						const { castA, castB } = applyCastFunctions(a, b);
-						return createAtomicValue(
-							yearMonthDurationSubtract(castA.value, castB.value),
-							ValueType.XSYEARMONTHDURATION
-						);
-					},
-					ValueType.XSYEARMONTHDURATION,
-				];
-			case 'divOp':
-				return [
-					(a, b) => {
-						const { castA, castB } = applyCastFunctions(a, b);
-						return createAtomicValue(
-							yearMonthDurationDivideByYearMonthDuration(castA.value, castB.value),
-							ValueType.XSDECIMAL
-						);
-					},
-					ValueType.XSDECIMAL,
-				];
-		}
+		let [fun, retType] = ruleMap[
+			hash(ValueType.XSYEARMONTHDURATION, ValueType.XSYEARMONTHDURATION, operator)
+		];
+		return [
+			(a, b) => {
+				const { castA, castB } = applyCastFunctions(a, b);
+				return createAtomicValue(fun(castA.value, castB.value), retType);
+			},
+			retType,
+		];
 	}
 
 	if (
-		isSubtypeOf(typeA, ValueType.XSYEARMONTHDURATION) &&
-		isSubtypeOf(typeB, ValueType.XSNUMERIC)
+		parentTypesOfA.includes(ValueType.XSYEARMONTHDURATION) &&
+		parentTypesOfB.includes(ValueType.XSNUMERIC)
 	) {
-		switch (operator) {
-			case 'multiplyOp':
-				return [
-					(a, b) => {
-						const { castA, castB } = applyCastFunctions(a, b);
-						return createAtomicValue(
-							yearMonthDurationMultiply(castA.value, castB.value),
-							ValueType.XSYEARMONTHDURATION
-						);
-					},
-					ValueType.XSYEARMONTHDURATION,
-				];
-			case 'divOp':
-				return [
-					(a, b) => {
-						const { castA, castB } = applyCastFunctions(a, b);
-						return createAtomicValue(
-							yearMonthDurationDivide(castA.value, castB.value),
-							ValueType.XSYEARMONTHDURATION
-						);
-					},
-					ValueType.XSYEARMONTHDURATION,
-				];
-		}
+		let [fun, retType] = ruleMap[
+			hash(ValueType.XSYEARMONTHDURATION, ValueType.XSNUMERIC, operator)
+		];
+		return [
+			(a, b) => {
+				const { castA, castB } = applyCastFunctions(a, b);
+				return createAtomicValue(fun(castA.value, castB.value), retType);
+			},
+			retType,
+		];
 	}
 
 	if (
-		isSubtypeOf(typeA, ValueType.XSNUMERIC) &&
-		isSubtypeOf(typeB, ValueType.XSYEARMONTHDURATION)
+		parentTypesOfA.includes(ValueType.XSNUMERIC) &&
+		parentTypesOfB.includes(ValueType.XSYEARMONTHDURATION)
 	) {
-		if (operator === 'multiplyOp') {
-			return [
-				(a, b) => {
-					const { castA, castB } = applyCastFunctions(a, b);
-					return createAtomicValue(
-						yearMonthDurationMultiply(castB.value, castA.value),
-						ValueType.XSYEARMONTHDURATION
-					);
-				},
-				ValueType.XSYEARMONTHDURATION,
-			];
-		}
+		let [fun, retType] = ruleMap[
+			hash(ValueType.XSNUMERIC, ValueType.XSYEARMONTHDURATION, operator)
+		];
+		return [
+			(a, b) => {
+				const { castA, castB } = applyCastFunctions(a, b);
+				return createAtomicValue(fun(castB.value, castA.value), retType);
+			},
+			retType,
+		];
 	}
 
 	if (
@@ -599,6 +476,34 @@ function generateBinaryOperatorFunction(
 	}
 
 	throw new Error(`XPTY0004: ${operator} not available for types ${typeA} and ${typeB}`);
+}
+
+function idDivOpChecksFunction(
+	applyCastFunctions: Function,
+	fun: Function
+): [(a: any, b: any) => AtomicValue, ValueType] {
+	return [
+		(a, b) => {
+			const { castA, castB } = applyCastFunctions(a, b);
+			if (castB.value === 0) {
+				throw new Error('FOAR0001: Divisor of idiv operator cannot be (-)0');
+			}
+			if (
+				Number.isNaN(castA.value) ||
+				Number.isNaN(castB.value) ||
+				!Number.isFinite(castA.value)
+			) {
+				throw new Error(
+					'FOAR0002: One of the operands of idiv is NaN or the first operand is (-)INF'
+				);
+			}
+			if (Number.isFinite(castA.value) && !Number.isFinite(castB.value)) {
+				return createAtomicValue(0, ValueType.XSINTEGER);
+			}
+			return createAtomicValue(fun(castA.value, castB.value), ValueType.XSINTEGER);
+		},
+		ValueType.XSINTEGER,
+	];
 }
 
 export function annotateBinOp(
