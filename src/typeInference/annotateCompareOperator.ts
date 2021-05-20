@@ -1,13 +1,14 @@
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
 
-export function annotateGeneralCompare(
-	ast: IAST,
-	left: SequenceType | undefined,
-	right: SequenceType | undefined
-): SequenceType | undefined {
-	if (!left || !right) return undefined;
-
+/**
+ * Annotates the AST for the general comparison operator.
+ *
+ * @param ast The ast to re-insert the annotation into
+ * @returns At the moment this always returns a boolean, because regardless
+ * of the input, that's what a comparison will return
+ */
+export function annotateGeneralCompare(ast: IAST): SequenceType | undefined {
 	const seqType = {
 		type: ValueType.XSBOOLEAN,
 		mult: SequenceMultiplicity.EXACTLY_ONE,
@@ -18,13 +19,14 @@ export function annotateGeneralCompare(
 	return seqType;
 }
 
-export function annotateValueCompare(
-	ast: IAST,
-	left: SequenceType | undefined,
-	right: SequenceType | undefined
-): SequenceType | undefined {
-	if (!left || !right) return undefined;
-
+/**
+ * Annotates the AST for the value comparison operator.
+ *
+ * @param ast The ast to re-insert the annotation into
+ * @returns At the moment this always returns a boolean, because regardless
+ * of the input, that's what a comparison will return
+ */
+export function annotateValueCompare(ast: IAST): SequenceType | undefined {
 	const seqType = {
 		type: ValueType.XSBOOLEAN,
 		mult: SequenceMultiplicity.EXACTLY_ONE,
@@ -35,13 +37,14 @@ export function annotateValueCompare(
 	return seqType;
 }
 
-export function annotateNodeCompare(
-	ast: IAST,
-	left: SequenceType | undefined,
-	right: SequenceType | undefined
-): SequenceType | undefined {
-	if (!left || !right) return undefined;
-
+/**
+ * Annotates the AST for the node comparison operator.
+ *
+ * @param ast The ast to re-insert the annotation into
+ * @returns At the moment this always returns a boolean, because regardless
+ * of the input, that's what a comparison will return
+ */
+export function annotateNodeCompare(ast: IAST): SequenceType | undefined {
 	const seqType = {
 		type: ValueType.XSBOOLEAN,
 		mult: SequenceMultiplicity.EXACTLY_ONE,

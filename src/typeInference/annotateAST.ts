@@ -63,45 +63,18 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 		case 'lessThanOrEqualOp':
 		case 'lessThanOp':
 		case 'greaterThanOrEqualOp':
-		case 'greaterThanOp': {
-			const left = annotate(
-				astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST,
-				staticContext
-			);
-			const right = annotate(
-				astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST,
-				staticContext
-			);
-			return annotateGeneralCompare(ast, left, right);
-		}
+		case 'greaterThanOp':
+			return annotateGeneralCompare(ast);
 		case 'eqOp':
 		case 'neOp':
 		case 'ltOp':
 		case 'leOp':
 		case 'gtOp':
-		case 'geOp': {
-			const left = annotate(
-				astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST,
-				staticContext
-			);
-			const right = annotate(
-				astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST,
-				staticContext
-			);
-			return annotateValueCompare(ast, left, right);
-		}
+		case 'geOp':
+			return annotateValueCompare(ast);
 		case 'nodeBeforeOp':
-		case 'nodeAfterOp': {
-			const left = annotate(
-				astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST,
-				staticContext
-			);
-			const right = annotate(
-				astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST,
-				staticContext
-			);
-			return annotateNodeCompare(ast, left, right);
-		}
+		case 'nodeAfterOp':
+			return annotateNodeCompare(ast);
 		//Constant expressions
 		case 'integerConstantExpr':
 			const integerSequenceType = {
