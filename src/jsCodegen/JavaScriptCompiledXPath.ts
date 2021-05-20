@@ -22,21 +22,27 @@ export function acceptAst(code: string, variables?: string[]): PartiallyCompiled
  * Result for failing to compile XPath to JavaScript.
  * @beta
  */
-export type AstRejected = { isAstAccepted: false; reason: string };
+export declare interface IAstRejected {
+	isAstAccepted: false;
+	reason: string;
+}
 
-export function rejectAst(reason: string): AstRejected {
+export function rejectAst(reason: string): IAstRejected {
 	return { isAstAccepted: false, reason };
 }
 
-export type PartialCompilationResult = PartiallyCompiledAstAccepted | AstRejected;
+export type PartialCompilationResult = PartiallyCompiledAstAccepted | IAstRejected;
 
 /**
  * Successfully JavaScript compiled XPath.
  * @beta
  */
-export type AstAccepted = { code: string; isAstAccepted: true };
+export declare interface IAstAccepted {
+	code: string;
+	isAstAccepted: true;
+}
 
-export function acceptFullyCompiledAst(code: string): AstAccepted {
+export function acceptFullyCompiledAst(code: string): IAstAccepted {
 	return { code, isAstAccepted: true };
 }
 
@@ -44,4 +50,4 @@ export function acceptFullyCompiledAst(code: string): AstAccepted {
  * Result for compiling XPath to JavaScript
  * @beta
  */
-export type JavaScriptCompiledXPathResult = AstAccepted | AstRejected;
+export type JavaScriptCompiledXPathResult = IAstAccepted | IAstRejected;

@@ -19,8 +19,8 @@ import { getBucketsForNode } from './getBuckets';
 import compileXPathToJavaScript from './jsCodegen/compileXPathToJavaScript';
 import executeJavaScriptCompiledXPath from './jsCodegen/executeJavaScriptCompiledXPath';
 import {
-	AstAccepted,
-	AstRejected,
+	IAstAccepted,
+	IAstRejected,
 	JavaScriptCompiledXPathResult,
 } from './jsCodegen/JavaScriptCompiledXPath';
 import INodesFactory from './nodesFactory/INodesFactory';
@@ -176,8 +176,6 @@ type ExternalTypedValueFactory = (
 export const createTypedValueFactory = internalCreateTypedValueFactory as ExternalTypedValueFactory;
 
 export {
-	AstAccepted,
-	AstRejected,
 	Attr,
 	CDATASection,
 	CharacterData,
@@ -187,6 +185,8 @@ export {
 	EvaluateXPath,
 	ExternalTypedValueFactory,
 	FunctionNameResolver,
+	IAstAccepted,
+	IAstRejected,
 	IDocumentWriter,
 	IDomFacade,
 	INodesFactory,
