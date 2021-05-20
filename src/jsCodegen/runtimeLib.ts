@@ -20,13 +20,13 @@ export function determinePredicateTruthValue(iterator: { next: () => IterationRe
 
 // Make sure Closure Compiler does not change property names.
 declare interface IRuntimeLib {
-	adaptSingleJavaScriptValue: any;
-	determinePredicateTruthValue: any;
-	DONE_TOKEN: any;
-	getEffectiveBooleanValue: any;
-	isSubtypeOf: any;
-	ready: any;
-	XPDY0002: any;
+	adaptSingleJavaScriptValue: typeof adaptSingleJavaScriptValue;
+	determinePredicateTruthValue: typeof determinePredicateTruthValue;
+	DONE_TOKEN: typeof DONE_TOKEN;
+	getEffectiveBooleanValue: typeof getEffectiveBooleanValue;
+	isSubtypeOf: typeof isSubtypeOf;
+	ready: typeof ready;
+	XPDY0002: typeof XPDY0002;
 }
 
 const runtimeLib: IRuntimeLib = {
