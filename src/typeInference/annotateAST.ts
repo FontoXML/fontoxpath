@@ -3,14 +3,13 @@ import StaticContext from '../expressions/StaticContext';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { annotateBinOp } from './annotateBinaryOperator';
 import { annotateCastableOperator, annotateCastOperator } from './annotateCastOperators';
-import { annotateFunctionCall } from './annotateFunctionCall';
-import { annotateUnaryMinus, annotateUnaryPlus } from './annotateUnaryOperator';
 import {
+	annotateGeneralCompare,
 	annotateNodeCompare,
 	annotateValueCompare,
-	annotateGeneralCompare,
 } from './annotateCompareOperator';
-import { insertAttribute } from './insertAttribute';
+import { annotateFunctionCall } from './annotateFunctionCall';
+import { annotateUnaryMinus, annotateUnaryPlus } from './annotateUnaryOperator';
 
 export default function annotateAst(
 	ast: IAST,
@@ -28,6 +27,7 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 	const astNodeName = ast[0];
 
 	switch (astNodeName) {
+		// Unary arithmetic operators
 		case 'unaryMinusOp':
 			const minVal = annotate(
 				astHelper.getFirstChild(ast, 'operand')[1] as IAST,
@@ -40,7 +40,7 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 				staticContext
 			);
 			return annotateUnaryPlus(ast, plusVal);
-		//Binary arithmetic operators
+		// Binary arithmetic operators
 		case 'addOp':
 		case 'subtractOp':
 		case 'divOp':
@@ -57,25 +57,34 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 			);
 			return annotateBinOp(ast, left, right, astNodeName);
 		}
-		//Comparison operators
+		// Comparison operators
 		case 'equalOp':
 		case 'notEqualOp':
 		case 'lessThanOrEqualOp':
 		case 'lessThanOp':
 		case 'greaterThanOrEqualOp':
-		case 'greaterThanOp':
+		case 'greaterThanOp': {
+			annotate(astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST, staticContext);
+			annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, staticContext);
 			return annotateGeneralCompare(ast);
+		}
 		case 'eqOp':
 		case 'neOp':
 		case 'ltOp':
 		case 'leOp':
 		case 'gtOp':
-		case 'geOp':
+		case 'geOp': {
+			annotate(astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST, staticContext);
+			annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, staticContext);
 			return annotateValueCompare(ast);
+		}
 		case 'nodeBeforeOp':
-		case 'nodeAfterOp':
+		case 'nodeAfterOp': {
+			annotate(astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST, staticContext);
+			annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, staticContext);
 			return annotateNodeCompare(ast);
-		//Constant expressions
+		}
+		// Constant expressions
 		case 'integerConstantExpr':
 			const integerSequenceType = {
 				type: ValueType.XSINTEGER,
