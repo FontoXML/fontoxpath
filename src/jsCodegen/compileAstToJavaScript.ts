@@ -54,7 +54,7 @@ function emitReturnTypeConversion(
 
 function wrapCompiledCode(code: string): string {
 	return `
-	return (contextItem, domFacade, runtimeLibrary) => {
+	return (contextItem, domFacade, runtimeLib) => {
 		const {
 			DONE_TOKEN,
 			ValueType,
@@ -63,7 +63,7 @@ function wrapCompiledCode(code: string): string {
 			determinePredicateTruthValue,
 			isSubtypeOf,
 			ready,
-		} = runtimeLibrary;
+		} = runtimeLib;
 
 		if (!contextItem) {
 			throw XPDY0002("Context is needed to evaluate the given path expression.");

@@ -31,7 +31,6 @@ function compileXPathToJavaScript(
 	const expressionString = normalizeEndOfLines(selector);
 
 	const parserOptions = {
-		allowUpdating: options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE,
 		allowXQuery:
 			options['language'] === Language.XQUERY_3_1_LANGUAGE ||
 			options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE,

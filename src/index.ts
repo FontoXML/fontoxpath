@@ -128,11 +128,12 @@ declare var fontoxpathGlobal: { [s: string]: any };
 /* istanbul ignore next */
 if (typeof fontoxpathGlobal !== 'undefined') {
 	fontoxpathGlobal['compareSpecificity'] = compareSpecificity;
+	fontoxpathGlobal['compileXPathToJavaScript'] = compileXPathToJavaScript;
 	fontoxpathGlobal['domFacade'] = domFacade;
 	fontoxpathGlobal['evaluateXPath'] = evaluateXPath;
 	fontoxpathGlobal['evaluateXPathToArray'] = evaluateXPathToArray;
-	fontoxpathGlobal['evaluateXPathToBoolean'] = evaluateXPathToBoolean;
 	fontoxpathGlobal['evaluateXPathToAsyncIterator'] = evaluateXPathToAsyncIterator;
+	fontoxpathGlobal['evaluateXPathToBoolean'] = evaluateXPathToBoolean;
 	fontoxpathGlobal['evaluateXPathToFirstNode'] = evaluateXPathToFirstNode;
 	fontoxpathGlobal['evaluateXPathToMap'] = evaluateXPathToMap;
 	fontoxpathGlobal['evaluateXPathToNodes'] = evaluateXPathToNodes;
@@ -142,6 +143,7 @@ if (typeof fontoxpathGlobal !== 'undefined') {
 	fontoxpathGlobal['evaluateXPathToStrings'] = evaluateXPathToStrings;
 	fontoxpathGlobal['evaluateUpdatingExpression'] = evaluateUpdatingExpression;
 	fontoxpathGlobal['evaluateUpdatingExpressionSync'] = evaluateUpdatingExpressionSync;
+	fontoxpathGlobal['executeJavaScriptCompiledXPath'] = executeJavaScriptCompiledXPath;
 	fontoxpathGlobal['executePendingUpdateList'] = executePendingUpdateList;
 	fontoxpathGlobal['getBucketForSelector'] = getBucketForSelector;
 	fontoxpathGlobal['getBucketsForNode'] = getBucketsForNode;
@@ -174,6 +176,8 @@ type ExternalTypedValueFactory = (
 export const createTypedValueFactory = internalCreateTypedValueFactory as ExternalTypedValueFactory;
 
 export {
+	AstAccepted,
+	AstRejected,
 	Attr,
 	CDATASection,
 	CharacterData,
@@ -188,6 +192,7 @@ export {
 	INodesFactory,
 	IReturnTypes,
 	ISimpleNodesFactory,
+	JavaScriptCompiledXPathResult,
 	Language,
 	LexicalQualifiedName,
 	Logger,
@@ -204,6 +209,7 @@ export {
 	ValidValue,
 	XPathPerformanceMeasurement,
 	compareSpecificity,
+	compileXPathToJavaScript,
 	domFacade,
 	evaluateUpdatingExpression,
 	evaluateUpdatingExpressionSync,
@@ -218,6 +224,7 @@ export {
 	evaluateXPathToNumbers,
 	evaluateXPathToString,
 	evaluateXPathToStrings,
+	executeJavaScriptCompiledXPath,
 	executePendingUpdateList,
 	getBucketForSelector,
 	getBucketsForNode,
@@ -226,9 +233,4 @@ export {
 	profiler,
 	registerCustomXPathFunction,
 	registerXQueryModule,
-	compileXPathToJavaScript,
-	executeJavaScriptCompiledXPath,
-	JavaScriptCompiledXPathResult,
-	AstAccepted,
-	AstRejected,
 };

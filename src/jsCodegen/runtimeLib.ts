@@ -18,11 +18,14 @@ export function determinePredicateTruthValue(iterator: { next: () => IterationRe
 	return getEffectiveBooleanValue(firstResult.value);
 }
 
-export {
-	ready,
-	DONE_TOKEN,
-	isSubtypeOf,
-	getEffectiveBooleanValue,
-	adaptSingleJavaScriptValue,
-	XPDY0002,
+const runtimeLib = {
+	['DONE_TOKEN']: DONE_TOKEN,
+	['XPDY0002']: XPDY0002,
+	['adaptSingleJavaScriptValue']: adaptSingleJavaScriptValue,
+	['determinePredicateTruthValue']: determinePredicateTruthValue,
+	['getEffectiveBooleanValue']: getEffectiveBooleanValue,
+	['isSubtypeOf']: isSubtypeOf,
+	['ready']: ready,
 };
+
+export default runtimeLib;

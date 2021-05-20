@@ -523,14 +523,14 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 	}
 }
 
-function getJsCodegenBackendAsserterForTest(baseUrl: string, testCase, language) {
-	const assertNode = evaluateXPathToFirstNode('./result/*', testCase);
-	return createAsserterForJsCodegen(baseUrl, assertNode, language);
-}
-
 function getExpressionBackendAsserterForTest(baseUrl: string, testCase, language) {
 	const assertNode = evaluateXPathToFirstNode('./result/*', testCase);
 	return createAsserterForExpression(baseUrl, assertNode, language);
+}
+
+function getJsCodegenBackendAsserterForTest(baseUrl: string, testCase, language) {
+	const assertNode = evaluateXPathToFirstNode('./result/*', testCase);
+	return createAsserterForJsCodegen(baseUrl, assertNode, language);
 }
 
 const registeredModuleURIByFileName = Object.create(null);
