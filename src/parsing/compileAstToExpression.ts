@@ -374,7 +374,8 @@ function binaryOperator(ast: IAST, compilationOptions: CompilationOptions) {
 		astHelper.followPath(ast, ['secondOperand', '*']),
 		'type'
 	) as SequenceType;
-	let firstType, secondType;
+	let firstType;
+	let secondType;
 	let evaluateFunction;
 	if (first && second) {
 		firstType = first.type;

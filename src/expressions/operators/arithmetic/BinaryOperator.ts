@@ -8,7 +8,7 @@ import atomize from '../../dataTypes/atomize';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
 import { SequenceType } from '../../dataTypes/Value';
 import Expression from '../../Expression';
-import { ruleMap, hash } from '../arithmetic/BinaryEvaluationFunctionMap';
+import { hash, ruleMap } from '../arithmetic/BinaryEvaluationFunctionMap';
 
 function determineReturnType(typeA: ValueType, typeB: ValueType): ValueType {
 	if (isSubtypeOf(typeA, ValueType.XSINTEGER) && isSubtypeOf(typeB, ValueType.XSINTEGER)) {
