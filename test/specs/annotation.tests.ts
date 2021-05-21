@@ -49,3 +49,9 @@ describe('Annotating binary expressions', () => {
 	it('add integer and decimal results in decimal', () =>
 		assertValueType('1 + 0.1', ValueType.XSDECIMAL));
 });
+
+describe('Annotating cast expressions', () => {
+	it('simple cast expression', () => assertValueType('5 cast as xs:double', ValueType.XSDOUBLE));
+	it('unknown child cast expression', () =>
+		assertValueType('$x cast as xs:integer', ValueType.XSINTEGER));
+});
