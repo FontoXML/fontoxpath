@@ -21,7 +21,6 @@ export function annotateBinOp(
 	if (funcData) {
 		const type = { type: funcData[1], mult: left.mult };
 		astHelper.insertAttribute(ast, 'type', type);
-		astHelper.insertAttribute(ast, 'evalFunc', funcData[0]);
 		return type;
 	}
 
