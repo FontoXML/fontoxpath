@@ -3,12 +3,30 @@ import castToType from '../../../expressions/dataTypes/castToType';
 import createAtomicValue from '../../../expressions/dataTypes/createAtomicValue';
 import isSubtypeOf from '../../../expressions/dataTypes/isSubtypeOf';
 import { ValueType } from '../../../expressions/dataTypes/Value';
+import {
+	addDuration as addDurationToDateTime,
+	subtract as dateTimeSubtract,
+	subtractDuration as subtractDurationFromDateTime,
+} from '../../../expressions/dataTypes/valueTypes/DateTime';
+import {
+	add as dayTimeDurationAdd,
+	divide as dayTimeDurationDivide,
+	divideByDayTimeDuration as dayTimeDurationDivideByDayTimeDuration,
+	multiply as dayTimeDurationMultiply,
+	subtract as dayTimeDurationSubtract,
+} from '../../../expressions/dataTypes/valueTypes/DayTimeDuration';
+import {
+	add as yearMonthDurationAdd,
+	divide as yearMonthDurationDivide,
+	divideByYearMonthDuration as yearMonthDurationDivideByYearMonthDuration,
+	multiply as yearMonthDurationMultiply,
+	subtract as yearMonthDurationSubtract,
+} from '../../../expressions/dataTypes/valueTypes/YearMonthDuration';
 import { BinaryEvaluationFunction } from '../../../typeInference/binaryEvaluationFunction';
 import atomize from '../../dataTypes/atomize';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
 import { SequenceType } from '../../dataTypes/Value';
 import Expression from '../../Expression';
-import { hash, ruleMap } from '../arithmetic/BinaryEvaluationFunctionMap';
 
 function determineReturnType(typeA: ValueType, typeB: ValueType): ValueType {
 	if (isSubtypeOf(typeA, ValueType.XSINTEGER) && isSubtypeOf(typeB, ValueType.XSINTEGER)) {
@@ -34,7 +52,7 @@ const allTypes = [
 	ValueType.XSDATE,
 	ValueType.XSTIME,
 ];
-
+/*
  * A hash function that is used to create the keys for the operationsMap and the returnTypeMap.
  * @param left the ValueType of the left part of the operator
  * @param right the ValueType of the right part of the operator
@@ -252,7 +270,7 @@ const operationMap: { [key: number]: (a, b) => any } = {
 	)]: subtractDurationFromDateTime,
 };
 
-
+/*
  * Generates the BinaryOperatorFunction given the 3 input values.
  * @param operator The operator of the operation.
  * @param typeA The type of the left part of the operation
