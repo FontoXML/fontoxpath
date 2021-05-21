@@ -8,7 +8,7 @@ import atomize from '../../dataTypes/atomize';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
 import { SequenceType } from '../../dataTypes/Value';
 import Expression from '../../Expression';
-import { hash, ruleMap } from '../arithmetic/BinaryEvaluationFunctionMap';
+import { hash, operationMap, returnTypeMap } from './BinaryEvaluationFunctionMap';
 
 function determineReturnType(typeA: ValueType, typeB: ValueType): ValueType {
 	if (isSubtypeOf(typeA, ValueType.XSINTEGER) && isSubtypeOf(typeB, ValueType.XSINTEGER)) {
@@ -24,7 +24,7 @@ function determineReturnType(typeA: ValueType, typeB: ValueType): ValueType {
 }
 
 /**
- * An array with every possible parent type contained in the ruleMap.
+ * An array with every possible parent type contained in the returnTypeMap and the operationsMap.
  */
 const allTypes = [
 	ValueType.XSNUMERIC,
@@ -35,7 +35,7 @@ const allTypes = [
 	ValueType.XSTIME,
 ];
 
-/**
+/*
  * Generates the BinaryOperatorFunction given the 3 input values.
  * @param operator The operator of the operation.
  * @param typeA The type of the left part of the operation
@@ -75,9 +75,8 @@ export function generateBinaryOperatorFunction(
 		parentTypesOfA.includes(ValueType.XSNUMERIC) &&
 		parentTypesOfB.includes(ValueType.XSNUMERIC)
 	) {
-		const result = ruleMap[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, operator)];
-		const fun = result[0];
-		let retType = result[1];
+		const fun = operationMap[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, operator)];
+		let retType = returnTypeMap[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, operator)];
 		if (!retType) retType = determineReturnType(typeA, typeB);
 		if (operator === 'divOp' && retType === ValueType.XSINTEGER) retType = ValueType.XSDECIMAL;
 		if (operator === 'idivOp') return iDivOpChecksFunction(applyCastFunctions, fun);
@@ -94,17 +93,18 @@ export function generateBinaryOperatorFunction(
 	if (parentTypesOfB.length === 0 || parentTypesOfA.length === 0)
 		throw new Error(`XPTY0004: ${operator} not available for types ${typeA} and ${typeB}`);
 
-	// Loop through the 2 arrays to find a combination of parentTypes and operand that has an entry in the ruleMap.
+	// Loop through the 2 arrays to find a combination of parentTypes and operand that has an entry in the operationsMap and the returnTypeMap.
 	for (const typeOfA of parentTypesOfA) {
 		for (const typeOfB of parentTypesOfB) {
-			const result = ruleMap[hash(typeOfA, typeOfB, operator)];
-			if (result) {
+			const func = operationMap[hash(typeOfA, typeOfB, operator)];
+			const ret = returnTypeMap[hash(typeOfA, typeOfB, operator)];
+			if (func && ret) {
 				return [
 					(a, b) => {
 						const { castA, castB } = applyCastFunctions(a, b);
-						return createAtomicValue(result[0](castA.value, castB.value), result[1]);
+						return createAtomicValue(func(castA.value, castB.value), ret);
 					},
-					result[1],
+					ret,
 				];
 			}
 		}
