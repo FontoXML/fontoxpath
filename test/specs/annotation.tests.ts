@@ -50,6 +50,15 @@ describe('Annotating binary expressions', () => {
 		assertValueType('1 + 0.1', ValueType.XSDECIMAL));
 });
 
+describe('Annotating compare expressions', () => {
+	it('eqOp', () => assertValueType('1 = 2', ValueType.XSBOOLEAN));
+	it('neOp', () => assertValueType('1 != 2', ValueType.XSBOOLEAN));
+	it('leOp', () => assertValueType('1 <= 2', ValueType.XSBOOLEAN));
+	it('ltOp', () => assertValueType('1 < 2', ValueType.XSBOOLEAN));
+	it('geOp', () => assertValueType('1 >= 2', ValueType.XSBOOLEAN));
+	it('gtOp', () => assertValueType('1 > 2', ValueType.XSBOOLEAN));
+});
+
 describe('Annotating cast expressions', () => {
 	it('simple cast expression', () => assertValueType('5 cast as xs:double', ValueType.XSDOUBLE));
 	it('unknown child cast expression', () =>
