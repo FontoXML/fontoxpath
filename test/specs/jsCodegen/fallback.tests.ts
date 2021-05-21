@@ -3,7 +3,7 @@ import * as slimdom from 'slimdom';
 
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
-import { ReturnType, compileXPathToJavaScript, executeJavaScriptCompiledXPath } from 'fontoxpath';
+import { compileXPathToJavaScript, executeJavaScriptCompiledXPath, ReturnType } from 'fontoxpath';
 
 function namespaceResolver(prefix: string) {
 	if (prefix === 'as') {
