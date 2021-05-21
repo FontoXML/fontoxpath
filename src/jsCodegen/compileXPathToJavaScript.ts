@@ -16,6 +16,7 @@ import { StaticContext } from './StaticContext';
  * @beta
  *
  * @param selector - The selector to compile. @param returnType - One of the return types indicating the value to be returned when executing the query.
+ * @param returnType - Type compiled code should return.
  * @param options - Extra options for compiling this XPath.
  *
  * @returns A string JavaScript code representing the given selector.
@@ -40,7 +41,7 @@ function compileXPathToJavaScript(
 	const ast = parseExpression(expressionString, parserOptions);
 
 	const staticContext: StaticContext = {
-		resolveNamespace: options.namespaceResolver || createDefaultNamespaceResolver(null),
+		resolveNamespace: options['namespaceResolver'] || createDefaultNamespaceResolver(null),
 	};
 
 	return compileAstToJavaScript(ast, returnType, staticContext);

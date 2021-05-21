@@ -6,6 +6,14 @@ import { SequenceMultiplicity, ValueType } from '../expressions/dataTypes/Value'
 import { IReturnTypes } from '../parsing/convertXDMReturnValue';
 import runtimeLib from './runtimeLib';
 
+// Here we tell Closure Compiler what attributes NOT to mangle/obfuscate, since these are
+// used in generated code.
+declare interface IInternalDomFacadeUnmangled {
+	getAllAttributes: typeof DomFacade.prototype.getAllAttributes;
+	getChildNodes: typeof DomFacade.prototype.getChildNodes;
+	getParentNode: typeof DomFacade.prototype.getParentNode;
+}
+
 /**
  * Execute XPath compiled to JavaScript that is evaluated to a function. For
  * compiling XPath to JavaScript, see {@link compileXPathToJavaScript}.
@@ -38,7 +46,11 @@ const executeJavaScriptCompiledXPath = <
 
 	contextItem = contextArray[0];
 
-	return compiledJavaScriptFunction()(contextItem, wrappedDomFacade, runtimeLib);
+	return compiledJavaScriptFunction()(
+		contextItem,
+		wrappedDomFacade as IInternalDomFacadeUnmangled,
+		runtimeLib
+	);
 };
 
 export default executeJavaScriptCompiledXPath;
