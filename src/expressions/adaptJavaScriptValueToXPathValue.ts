@@ -25,7 +25,7 @@ import createDoublyIterableSequence from './util/createDoublyIterableSequence';
  * @return Null if the value is absent and the empty sequence should be
  * output instead
  */
-function adaptSingleJavaScriptValue(value: ValidValue, domFacade: DomFacade): Value | null {
+export function adaptSingleJavaScriptValue(value: ValidValue, domFacade: DomFacade): Value | null {
 	if (value === null) {
 		return null;
 	}

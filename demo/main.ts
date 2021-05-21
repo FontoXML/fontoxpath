@@ -4,6 +4,7 @@ const allowXQuery = document.getElementById('allowXQuery') as HTMLInputElement;
 const allowXQueryUpdateFacility = document.getElementById(
 	'allowXQueryUpdateFacility'
 ) as HTMLInputElement;
+const useJsCodegenBackend = document.getElementById('useJsCodegenBackend') as HTMLInputElement;
 const astJsonMl = document.getElementById('astJsonMl');
 const astXml = document.getElementById('astXml');
 const bucketField = document.getElementById('bucketField');
@@ -197,6 +198,22 @@ async function runNormalXPath(script: string, asXQuery: boolean) {
 	resultText.innerText = JSON.stringify(raw, jsonXmlReplacer, '  ');
 }
 
+async function runXPathWithJsCodegen(xpath: string) {
+	const compiledXPathResult = fontoxpath.compileXPathToJavaScript(
+		xpath,
+		fontoxpath.ReturnType.NODES
+	);
+
+	if (compiledXPathResult.isAstAccepted === true) {
+		// tslint:disable-next-line
+		const evalFunction = new Function(compiledXPathResult.code) as () => any;
+		const result = fontoxpath.executeJavaScriptCompiledXPath(evalFunction, xmlDoc);
+		resultText.innerText = JSON.stringify(result, jsonXmlReplacer, '  ');
+	} else {
+		resultText.innerText = JSON.stringify(compiledXPathResult.reason, jsonXmlReplacer, '  ');
+	}
+}
+
 async function rerunXPath() {
 	// Clear results from previous run
 	astJsonMl.innerText = '';
@@ -233,10 +250,14 @@ async function rerunXPath() {
 		astXml.innerText = prettiedXml;
 		(window as any).hljs.highlightBlock(astXml);
 
-		if (allowXQueryUpdateFacility.checked) {
-			await runUpdatingXQuery(xpath);
+		if (useJsCodegenBackend.checked) {
+			await runXPathWithJsCodegen(xpath);
 		} else {
-			await runNormalXPath(xpath, allowXQuery.checked);
+			if (allowXQueryUpdateFacility.checked) {
+				await runUpdatingXQuery(xpath);
+			} else {
+				await runNormalXPath(xpath, allowXQuery.checked);
+			}
 		}
 
 		(window as any).hljs.highlightBlock(resultText);
