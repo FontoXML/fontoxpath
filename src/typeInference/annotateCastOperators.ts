@@ -21,9 +21,6 @@ export function annotateCastableOperator(ast: IAST): SequenceType {
 }
 
 function getTargetTypeFromAST(ast: IAST): string {
-	// ast[2][1] (castExpr, singleType, atomicType) contains the type information
-	// ast[2][1][1]['prefix'] the prefix 'xs' and then ast[2][1][2] is the targetType
-
 	const typeInfoNode = astHelper.followPath(ast, ['singleType', 'atomicType']);
 	const prefix = astHelper.getAttribute(typeInfoNode, 'prefix');
 	const targetType = typeInfoNode[2];

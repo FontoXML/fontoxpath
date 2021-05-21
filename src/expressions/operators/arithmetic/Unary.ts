@@ -64,6 +64,7 @@ class Unary extends Expression {
 
 			const value = atomizedValues[0];
 
+			// We could infer the return type during annotation so we can early return here
 			if (this.type) {
 				return sequenceFactory.singleton(
 					createAtomicValue(

@@ -13,16 +13,19 @@ export function annotateUnaryMinus(
 	ast: IAST,
 	valueType: SequenceType | undefined
 ): SequenceType | undefined {
+	// If we don't now the child type, we can't infer the current type
 	if (!valueType) {
 		return undefined;
 	}
 
+	// Make sure we are actually working with numbers here
 	if (isSubtypeOf(valueType.type, ValueType.XSNUMERIC)) {
 		const type = {
 			type: valueType.type,
 			mult: valueType.mult,
 		};
 
+		// Attach the type to the AST
 		astHelper.insertAttribute(ast, 'type', type);
 		return type;
 	}

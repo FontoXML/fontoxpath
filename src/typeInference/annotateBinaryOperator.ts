@@ -8,10 +8,12 @@ export function annotateBinOp(
 	right: SequenceType | undefined,
 	operator: string
 ): SequenceType | undefined {
+	// If we don't have the left and right type, we cannot infer the current type
 	if (!left || !right) {
 		return undefined;
 	}
 
+	// If the multiplicities don't match, we can't add them
 	if (left.mult !== right.mult) {
 		throw new Error("Multiplicities in binary addition operator don't match");
 	}
