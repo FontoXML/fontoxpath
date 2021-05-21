@@ -353,7 +353,11 @@ function andOp(ast: IAST, compilationOptions: CompilationOptions) {
 }
 
 function orOp(ast: IAST, compilationOptions: CompilationOptions) {
-	return new OrOperator(unwrapBinaryOperator('orOp', ast, disallowUpdating(compilationOptions)));
+	const typeNode = astHelper.followPath(ast, ['type']);
+	return new OrOperator(
+		unwrapBinaryOperator('orOp', ast, disallowUpdating(compilationOptions)),
+		typeNode ? (typeNode[1] as SequenceType) : undefined
+	);
 }
 
 function binaryOperator(ast: IAST, compilationOptions: CompilationOptions) {
