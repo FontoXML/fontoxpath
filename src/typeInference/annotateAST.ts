@@ -11,21 +11,30 @@ import {
 import { annotateFunctionCall } from './annotateFunctionCall';
 import { annotateUnaryMinus, annotateUnaryPlus } from './annotateUnaryOperator';
 
-export default function annotateAst(
-	ast: IAST,
-	staticContext?: StaticContext
-): SequenceType | undefined {
-	const type = annotate(ast, staticContext);
-	return type;
+/**
+ * Annotate an AST with additional type information. It tried to infer as much of the types as possible.
+ * @param ast The AST to annotate
+ * @param staticContext The static context used for function lookups
+ */
+export default function annotateAst(ast: IAST, staticContext?: StaticContext) {
+	annotate(ast, staticContext);
 }
 
+/**
+ * This is the recursive function used to annotate any AST node.
+ * @param ast The AST to annotate
+ * @param staticContext The static constext to use for function lookups
+ * @returns The type of the AST node
+ */
 export function annotate(ast: IAST, staticContext: StaticContext): SequenceType | undefined {
+	// Check if we actually have an AST
 	if (!ast) {
 		return undefined;
 	}
 
 	const astNodeName = ast[0];
 
+	// Switch on the current node name
 	switch (astNodeName) {
 		// Unary arithmetic operators
 		case 'unaryMinusOp':
@@ -123,8 +132,8 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 			return annotateCastOperator(ast);
 		case 'castableExpr':
 			return annotateCastableOperator(ast);
-		// Current node cannot be annotated, but maybe deeper ones can.
 		default:
+			// Current node cannot be annotated, but maybe deeper ones can.
 			for (let i = 1; i < ast.length; i++) {
 				annotate(ast[i] as IAST, staticContext);
 			}
