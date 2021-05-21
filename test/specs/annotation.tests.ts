@@ -1,37 +1,51 @@
 import * as chai from 'chai';
-import {
-	SequenceMultiplicity,
-	SequenceType,
-	ValueType,
-} from 'fontoxpath/expressions/dataTypes/Value';
+import { SequenceType, ValueType } from 'fontoxpath/expressions/dataTypes/Value';
 import astHelper, { IAST } from 'fontoxpath/parsing/astHelper';
 import parseExpression from 'fontoxpath/parsing/parseExpression';
 import annotateAst from 'fontoxpath/typeInference/annotateAST';
 
-function assertType(expression: string, expectedType: SequenceType) {
+function assertValueType(expression: string, expectedType: ValueType) {
 	const ast = parseExpression(expression, {});
 	annotateAst(ast, undefined);
 
 	const queryBody = astHelper.followPath(ast, ['mainModule', 'queryBody']);
-	chai.assert.deepEqual(astHelper.getAttribute(queryBody[1] as IAST, 'type'), expectedType);
+	const resultType = astHelper.getAttribute(queryBody[1] as IAST, 'type') as SequenceType;
+	chai.assert.deepEqual(resultType.type, expectedType);
 }
 
 describe('Annotating constants', () => {
-	it('annotates an integer constant', () =>
-		assertType('1', { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.EXACTLY_ONE }));
-	it('annotates a string constant', () =>
-		assertType("'test'", {
-			type: ValueType.XSSTRING,
-			mult: SequenceMultiplicity.EXACTLY_ONE,
-		}));
-	it('annotates decimal constant', () =>
-		assertType('0.5', {
-			type: ValueType.XSDECIMAL,
-			mult: SequenceMultiplicity.EXACTLY_ONE,
-		}));
-	it('annotates double constant', () =>
-		assertType('1.0e7', {
-			type: ValueType.XSDOUBLE,
-			mult: SequenceMultiplicity.EXACTLY_ONE,
-		}));
+	it('annotates an integer constant', () => assertValueType('1', ValueType.XSINTEGER));
+	it('annotates a string constant', () => assertValueType("'test'", ValueType.XSSTRING));
+	it('annotates decimal constant', () => assertValueType('0.5', ValueType.XSDECIMAL));
+	it('annotates double constant', () => assertValueType('1.0e7', ValueType.XSDOUBLE));
+});
+
+describe('Annotating unary expressions', () => {
+	it('annotates unary plus operator', () => assertValueType('+1', ValueType.XSINTEGER));
+	it('annotates chained unary plus operator', () => assertValueType('+++1', ValueType.XSINTEGER));
+	it('annotates unary minus operator', () => assertValueType('-1', ValueType.XSINTEGER));
+	it('annotates chained unary minus operator', () =>
+		assertValueType('---1', ValueType.XSINTEGER));
+	it('annotates unary plus operator on decimal', () =>
+		assertValueType('+0.1', ValueType.XSDECIMAL));
+	it('annotates unary minus operator on decimal', () =>
+		assertValueType('-0.1', ValueType.XSDECIMAL));
+});
+
+describe('Annotating binary expressions', () => {
+	it('simple add operator', () => assertValueType('1 + 2', ValueType.XSINTEGER));
+	it('simple sub operator', () => assertValueType('1 - 2', ValueType.XSINTEGER));
+	it('simple mul operator', () => assertValueType('1 * 2', ValueType.XSINTEGER));
+	it('simple div operator', () => assertValueType('1 div 2', ValueType.XSDECIMAL));
+	it('simple idiv operator', () => assertValueType('1 idiv 2', ValueType.XSINTEGER));
+	it('simple mod operator', () => assertValueType('1 mod 2', ValueType.XSINTEGER));
+	it('simple chained add operator', () => assertValueType('1 + 2 + 3', ValueType.XSINTEGER));
+	it('simple chained sub operator', () => assertValueType('1 - 2 - 3', ValueType.XSINTEGER));
+	it('simple chained mul operator', () => assertValueType('1 * 2 * 3', ValueType.XSINTEGER));
+	it('simple chained div operator', () => assertValueType('1 div 2 div 3', ValueType.XSDECIMAL));
+	it('simple chained idiv operator', () =>
+		assertValueType('1 idiv 2 idiv 3', ValueType.XSINTEGER));
+	it('simple chained mod operator', () => assertValueType('1 mod 2 mod 3', ValueType.XSINTEGER));
+	it('add integer and decimal results in decimal', () =>
+		assertValueType('1 + 0.1', ValueType.XSDECIMAL));
 });
