@@ -4,8 +4,9 @@ import astHelper, { IAST } from '../parsing/astHelper';
 
 /**
  * Adds the unary minus operator type annotation to the AST
- * The unary minus returns the value of its operand with the sign negated (-2 = -2 and --2 = 2)
- * @param ast A reference to the AST, so a new node can be inserted
+ * The unary minus returns the value of its operand with the sign negated (-2 = -2 and --2 = 2).
+ *
+ * @param ast A reference to the AST, so a new node can be inserted.
  * @param valueType The type of the value that the operator is called on.
  * @returns An appropriate SequenceType if the operation was valid, undefined if not.
  */
@@ -35,8 +36,9 @@ export function annotateUnaryMinus(
 
 /**
  * Adds the unary plus operator type annotation to the AST.
- * The unary plus returns the value of its operand with the sign unchanged (+2 = 2 and +-2 = -2)
- * @param ast A reference to the AST, so a new node can be inserted
+ * The unary plus returns the value of its operand with the sign unchanged (+2 = 2 and +-2 = -2).
+ *
+ * @param ast A reference to the AST, so a new node can be inserted.
  * @param valueType The type of the value that the operator is called on.
  * @returns An appropriate SequenceType if the operation was valid, undefined if not.
  */
