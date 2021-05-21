@@ -23,7 +23,9 @@ import LetExpression from '../expressions/LetExpression';
 import Literal from '../expressions/literals/Literal';
 import MapConstructor from '../expressions/maps/MapConstructor';
 import NamedFunctionRef from '../expressions/NamedFunctionRef';
-import BinaryOperator from '../expressions/operators/arithmetic/BinaryOperator';
+import BinaryOperator, {
+	generateBinaryOperatorFunction,
+} from '../expressions/operators/arithmetic/BinaryOperator';
 import Unary from '../expressions/operators/arithmetic/Unary';
 import AndOperator from '../expressions/operators/boolean/AndOperator';
 import OrOperator from '../expressions/operators/boolean/OrOperator';
@@ -364,7 +366,21 @@ function binaryOperator(ast: IAST, compilationOptions: CompilationOptions) {
 	);
 
 	const attributeType = astHelper.getAttribute(ast, 'type');
-	const evaluateFunction = astHelper.getAttribute(ast, 'evalFunc');
+	const first = astHelper.getAttribute(
+		astHelper.followPath(ast, ['firstOperand', '*']),
+		'type'
+	) as SequenceType;
+	const second = astHelper.getAttribute(
+		astHelper.followPath(ast, ['secondOperand', '*']),
+		'type'
+	) as SequenceType;
+	let firstType, secondType;
+	let evaluateFunction;
+	if (first && second) {
+		firstType = first.type;
+		secondType = second.type;
+		evaluateFunction = generateBinaryOperatorFunction(kind, firstType, secondType)[0];
+	}
 
 	return new BinaryOperator(
 		kind,
