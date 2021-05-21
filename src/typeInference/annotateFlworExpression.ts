@@ -1,7 +1,6 @@
 import { SequenceType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { AnnotationContext } from './AnnotatationContext';
-import { annotate } from './annotateAST';
 
 export function annotateFlworExpression(
 	ast: IAST,
@@ -14,7 +13,8 @@ export function annotateFlworExpression(
 			case 'letClause':
 				annotateLetClause(ast[i] as IAST, annotationContext);
 			case 'returnClause':
-				returnType = annotate(ast[i] as IAST, annotationContext);
+				// unable to execute, circular import
+				// returnType = annotate(ast[i] as IAST, annotationContext);
 				astHelper.insertAttribute(ast, 'type', returnType);
 		}
 	}
@@ -30,7 +30,8 @@ function annotateLetClause(ast: IAST, annotationContext: AnnotationContext): voi
 	const pathToVarType: string[] = ['letClauseItem', 'letExpr'];
 	const varTypeNode: IAST = astHelper.followPath(ast, pathToVarType);
 
-	const varType: SequenceType = annotate(varTypeNode[1] as IAST, annotationContext);
+	// unable to execute, circular import
+	// const varType: SequenceType = annotate(varTypeNode[1] as IAST, annotationContext);
 
-	annotationContext.insertVariable(varName, varType);
+	// annotationContext.insertVariable(varName, varType);
 }
