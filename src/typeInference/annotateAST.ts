@@ -1,6 +1,7 @@
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import StaticContext from '../expressions/StaticContext';
 import astHelper, { IAST } from '../parsing/astHelper';
+import { annotateAndOperator } from './annotateAndOperator';
 import { annotateBinOp } from './annotateBinaryOperator';
 import { annotateCastableOperator, annotateCastOperator } from './annotateCastOperators';
 import {
@@ -66,6 +67,13 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 			);
 			return annotateBinOp(ast, left, right, astNodeName);
 		}
+
+		//And + Or operators
+		case 'andOp':
+			annotate(astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST, staticContext);
+			annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, staticContext);
+			return annotateAndOperator(ast);
+
 		// Comparison operators
 		case 'equalOp':
 		case 'notEqualOp':

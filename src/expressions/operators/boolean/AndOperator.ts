@@ -4,7 +4,7 @@ import { falseBoolean, trueBoolean } from '../../dataTypes/createAtomicValue';
 import ISequence from '../../dataTypes/ISequence';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import { ValueType } from '../../dataTypes/Value';
+import { SequenceType, ValueType } from '../../dataTypes/Value';
 import DynamicContext from '../../DynamicContext';
 import ExecutionParameters from '../../ExecutionParameters';
 import Expression from '../../Expression';
@@ -13,7 +13,7 @@ import { DONE_TOKEN, ready } from '../../util/iterators';
 
 class AndOperator extends Expression {
 	private _subExpressions: Expression[];
-	constructor(expressions: Expression[]) {
+	constructor(expressions: Expression[], type: SequenceType) {
 		super(
 			expressions.reduce((specificity, selector) => {
 				return specificity.add(selector.specificity);
@@ -23,7 +23,9 @@ class AndOperator extends Expression {
 				canBeStaticallyEvaluated: expressions.every(
 					(selector) => selector.canBeStaticallyEvaluated
 				),
-			}
+			},
+			false,
+			type
 		);
 		this._subExpressions = expressions;
 	}

@@ -345,8 +345,10 @@ function unwrapBinaryOperator(
 }
 
 function andOp(ast: IAST, compilationOptions: CompilationOptions) {
+	const typeNode = astHelper.followPath(ast, ['type']);
 	return new AndOperator(
-		unwrapBinaryOperator('andOp', ast, disallowUpdating(compilationOptions))
+		unwrapBinaryOperator('andOp', ast, disallowUpdating(compilationOptions)),
+		typeNode ? (typeNode[1] as SequenceType) : undefined
 	);
 }
 
