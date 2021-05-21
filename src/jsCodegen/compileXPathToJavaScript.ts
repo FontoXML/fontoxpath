@@ -35,7 +35,9 @@ function compileXPathToJavaScript(
 		allowXQuery:
 			options['language'] === Language.XQUERY_3_1_LANGUAGE ||
 			options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE,
-		debug: !!options['debug'],
+		// Debugging inserts xs:stackTrace in the AST, but this is not supported
+		// yet by the js-codegen backend.
+		debug: false,
 	};
 
 	const ast = parseExpression(expressionString, parserOptions);
