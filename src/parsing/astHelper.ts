@@ -5,12 +5,11 @@ import {
 	ValueType,
 } from '../expressions/dataTypes/Value';
 import { SourceRange } from '../expressions/debug/StackTraceGenerator';
-import { BinaryEvaluationFunction } from '../typeInference/binaryEvaluationFunction';
 
 type QName = { localName: string; namespaceURI: string | null; prefix: string };
 
 export interface IAST
-	extends Array<string | object | SourceRange | IAST | SequenceType | BinaryEvaluationFunction> {
+	extends Array<string | object | SourceRange | IAST | SequenceType> {
 	0: string;
 }
 

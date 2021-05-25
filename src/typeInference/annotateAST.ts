@@ -35,11 +35,6 @@ export default function annotateAst(ast: IAST, staticContext?: StaticContext) {
  * @returns The type of the AST node or `undefined` when the type cannot be annotated.
  */
 export function annotate(ast: IAST, staticContext: StaticContext): SequenceType | undefined {
-	// Check if we actually have an AST
-	if (!ast) {
-		return undefined;
-	}
-
 	const astNodeName = ast[0];
 
 	// Switch on the current node name
@@ -151,7 +146,9 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 		default:
 			// Current node cannot be annotated, but maybe deeper ones can.
 			for (let i = 1; i < ast.length; i++) {
-				annotate(ast[i] as IAST, staticContext);
+				if (ast) {
+					annotate(ast[i] as IAST, staticContext);
+				}
 			}
 			return undefined;
 	}
