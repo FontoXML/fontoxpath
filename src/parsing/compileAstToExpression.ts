@@ -741,11 +741,13 @@ function instanceOf(
 	const expression = compile(astHelper.followPath(ast, ['argExpr', '*']), compilationOptions);
 	const sequenceType = astHelper.followPath(ast, ['sequenceType', '*']);
 	const occurrence = astHelper.followPath(ast, ['sequenceType', 'occurrenceIndicator']);
+	const typeNode = astHelper.followPath(ast, ['type']);
 
 	return new InstanceOfOperator(
 		expression,
 		compile(sequenceType, disallowUpdating(compilationOptions)),
-		occurrence ? astHelper.getTextContent(occurrence) : ''
+		occurrence ? astHelper.getTextContent(occurrence) : '',
+		typeNode ? (typeNode[1] as SequenceType) : undefined
 	);
 }
 

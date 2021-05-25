@@ -146,6 +146,10 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 			annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, staticContext);
 			return annotateNodeCompare(ast);
 		}
+		case 'instanceOfExpr': {
+			annotate(astHelper.getFirstChild(ast, 'argExpr'), staticContext);
+			annotate(astHelper.getFirstChild(ast, 'sequenceType'), staticContext);
+		}
 		// Constant expressions
 		case 'integerConstantExpr':
 			const integerSequenceType = {
