@@ -1,7 +1,7 @@
 import { sortNodeValues } from '../dataTypes/documentOrderUtils';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { ValueType } from '../dataTypes/Value';
+import { SequenceType, ValueType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
@@ -16,18 +16,24 @@ import { mergeSortedSequences } from '../util/sortedSequenceUtils';
 class Union extends Expression {
 	private _subExpressions: Expression[];
 
-	constructor(expressions: Expression[]) {
+	constructor(expressions: Expression[], type: SequenceType) {
 		const maxSpecificity = expressions.reduce((maxSpecificitySoFar, expression) => {
 			if (maxSpecificitySoFar.compareTo(expression.specificity) > 0) {
 				return maxSpecificitySoFar;
 			}
 			return expression.specificity;
 		}, new Specificity({}));
-		super(maxSpecificity, expressions, {
-			canBeStaticallyEvaluated: expressions.every(
-				(expression) => expression.canBeStaticallyEvaluated
-			),
-		});
+		super(
+			maxSpecificity,
+			expressions,
+			{
+				canBeStaticallyEvaluated: expressions.every(
+					(expression) => expression.canBeStaticallyEvaluated
+				),
+			},
+			false,
+			type
+		);
 
 		this._subExpressions = expressions;
 	}

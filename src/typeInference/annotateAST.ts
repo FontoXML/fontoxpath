@@ -11,6 +11,7 @@ import {
 import { annotateFunctionCall } from './annotateFunctionCall';
 import { annotateLogicalOperator } from './annotateLogicalOperator';
 import { annotateSequenceOperator } from './annotateSequenceOperator';
+import { annotateSetOperator } from './annotateSetOperators';
 import { annotateUnaryMinus, annotateUnaryPlus } from './annotateUnaryOperator';
 
 /**
@@ -58,6 +59,7 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 				staticContext
 			);
 			return annotateUnaryPlus(ast, plusVal);
+
 		// Binary arithmetic operators
 		case 'addOp':
 		case 'subtractOp':
@@ -88,6 +90,20 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 			const children = astHelper.getChildren(ast, '*');
 			children.map((arg) => annotate(arg, staticContext));
 			return annotateSequenceOperator(ast, children.length);
+
+		// Set operations (union, intersect, except)
+		case 'unionOp':
+		case 'intersectOp':
+		case 'exceptOp':
+			const l = annotate(
+				astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST,
+				staticContext
+			);
+			const r = annotate(
+				astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST,
+				staticContext
+			);
+			return annotateSetOperator(ast, l, r);
 
 		// Comparison operators
 		case 'equalOp':

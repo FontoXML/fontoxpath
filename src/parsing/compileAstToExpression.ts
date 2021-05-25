@@ -1091,19 +1091,24 @@ function unaryMinus(
 }
 
 function unionOp(ast: IAST, compilationOptions: CompilationOptions) {
-	return new Union([
-		compile(
-			astHelper.followPath(ast, ['firstOperand', '*']),
-			disallowUpdating(compilationOptions)
-		),
-		compile(
-			astHelper.followPath(ast, ['secondOperand', '*']),
-			disallowUpdating(compilationOptions)
-		),
-	]);
+	const typeNode = astHelper.followPath(ast, ['type']);
+	return new Union(
+		[
+			compile(
+				astHelper.followPath(ast, ['firstOperand', '*']),
+				disallowUpdating(compilationOptions)
+			),
+			compile(
+				astHelper.followPath(ast, ['secondOperand', '*']),
+				disallowUpdating(compilationOptions)
+			),
+		],
+		typeNode ? (typeNode[1] as SequenceType) : undefined
+	);
 }
 
 function intersectExcept(ast: IAST, compilationOptions: CompilationOptions) {
+	const typeNode = astHelper.followPath(ast, ['type']);
 	return new IntersectExcept(
 		ast[0],
 		compile(
@@ -1113,7 +1118,8 @@ function intersectExcept(ast: IAST, compilationOptions: CompilationOptions) {
 		compile(
 			astHelper.followPath(ast, ['secondOperand', '*']),
 			disallowUpdating(compilationOptions)
-		)
+		),
+		typeNode ? (typeNode[1] as SequenceType) : undefined
 	);
 }
 
