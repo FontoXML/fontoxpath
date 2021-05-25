@@ -1,3 +1,4 @@
+import { NODE_TYPES } from '../domFacade/ConcreteNode';
 import astHelper, { IAST } from '../parsing/astHelper';
 import {
 	acceptAst,
@@ -47,9 +48,15 @@ function emitAttributeAxis(
 	nestLevel: number,
 	nestedCode: string
 ): PartialCompilationResult {
-	const contextNodesCode = `const ${attributeAxisContextNodesIdentifier}${nestLevel} = domFacade.getAllAttributes(contextItem${
+	// Only element nodes can have attributes.
+	const contextNodesCode = `
+	let ${attributeAxisContextNodesIdentifier}${nestLevel};
+	if (contextItem && contextItem${nestLevel - 1}.nodeType === ${NODE_TYPES.ELEMENT_NODE}) {
+		${attributeAxisContextNodesIdentifier}${nestLevel} =  domFacade.getAllAttributes(contextItem${
 		nestLevel - 1
-	});`;
+	});
+	}
+	`;
 
 	return emitMultipleNodeAxis(
 		test,
@@ -112,15 +119,19 @@ function emitMultipleNodeAxis(
 	contextItemIdentifier: ContextItemIdentifier,
 	contextNodeCode: string
 ): PartialCompilationResult {
-	const indexReset = nestLevel !== 1 ? `i${nestLevel} = 0;` : ``;
+	const whileConditions = formatConditions(
+		`${contextItemIdentifier}${nestLevel}`,
+		`i${nestLevel} < ${contextItemIdentifier}${nestLevel}.length`
+	);
 
+	const indexReset = nestLevel !== 1 ? `i${nestLevel} = 0;` : ``;
 	const nullCheckCode = `contextItem${nestLevel}`;
 
 	const conditions = formatConditions(nullCheckCode, test, predicates);
 
 	const axisCode = `
 	${contextNodeCode}
-	while (i${nestLevel} < ${contextItemIdentifier}${nestLevel}.length) {
+	while (${whileConditions}) {
 		const contextItem${nestLevel} = ${contextItemIdentifier}${nestLevel}[i${nestLevel}];
 		if (!(${conditions})) {
 			i${nestLevel}++;
