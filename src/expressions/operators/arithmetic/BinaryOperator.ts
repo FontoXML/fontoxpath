@@ -35,18 +35,18 @@ const allTypes = [
 	ValueType.XSTIME,
 ];
 
-/*
- * Generates the BinaryOperatorFunction given the 3 input values.
- * @param operator The operator of the operation.
- * @param typeA The type of the left part of the operation
- * @param typeB The type of the right part of the operation
- * @returns A tuple of a function that needs to be applied to the operands and the returnType of the operation.
+/**
+ * Generate the return function of the binary operator.
+ * @param operator The binary operator
+ * @param typeA the left part of the operation
+ * @param typeB the right part of the operation
+ * @returns The function used to evaluate the binary operator
  */
 export function generateBinaryOperatorFunction(
 	operator: string,
 	typeA: ValueType,
 	typeB: ValueType
-): [BinaryEvaluationFunction, ValueType] {
+): BinaryEvaluationFunction {
 	let castFunctionForValueA = null;
 	let castFunctionForValueB = null;
 
@@ -79,14 +79,75 @@ export function generateBinaryOperatorFunction(
 		let retType = returnTypeMap[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, operator)];
 		if (!retType) retType = determineReturnType(typeA, typeB);
 		if (operator === 'divOp' && retType === ValueType.XSINTEGER) retType = ValueType.XSDECIMAL;
-		if (operator === 'idivOp') return iDivOpChecksFunction(applyCastFunctions, fun);
-		return [
-			(a, b) => {
-				const { castA, castB } = applyCastFunctions(a, b);
-				return createAtomicValue(fun(castA.value, castB.value), retType);
-			},
-			retType,
-		];
+		if (operator === 'idivOp') return iDivOpChecksFunction(applyCastFunctions, fun)[0];
+		return (a, b) => {
+			const { castA, castB } = applyCastFunctions(a, b);
+			return createAtomicValue(fun(castA.value, castB.value), retType);
+		};
+	}
+
+	// Loop through the 2 arrays to find a combination of parentTypes and operand that has an entry in the operationsMap and the returnTypeMap.
+	for (const typeOfA of parentTypesOfA) {
+		for (const typeOfB of parentTypesOfB) {
+			const func = operationMap[hash(typeOfA, typeOfB, operator)];
+			const ret = returnTypeMap[hash(typeOfA, typeOfB, operator)];
+			if (func && ret !== undefined) {
+				return (a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return createAtomicValue(func(castA.value, castB.value), ret);
+				};
+			}
+		}
+	}
+	throw new Error(`XPTY0004: ${operator} not available for types ${typeA} and ${typeB}`);
+}
+
+/**
+ * Generate the return type of the function.
+ * @param operator The binary operator
+ * @param typeA the left part of the operation
+ * @param typeB the right part of the operation
+ * @returns The type of the entire binary operation
+ */
+export function generateBinaryOperatorType(
+	operator: string,
+	typeA: ValueType,
+	typeB: ValueType
+): ValueType {
+	let castFunctionForValueA = null;
+	let castFunctionForValueB = null;
+
+	if (isSubtypeOf(typeA, ValueType.XSUNTYPEDATOMIC)) {
+		castFunctionForValueA = (value) => castToType(value, ValueType.XSDOUBLE);
+		typeA = ValueType.XSDOUBLE;
+	}
+	if (isSubtypeOf(typeB, ValueType.XSUNTYPEDATOMIC)) {
+		castFunctionForValueB = (value) => castToType(value, ValueType.XSDOUBLE);
+		typeB = ValueType.XSDOUBLE;
+	}
+
+	function applyCastFunctions(valueA: AtomicValue, valueB: AtomicValue) {
+		return {
+			castA: castFunctionForValueA ? castFunctionForValueA(valueA) : valueA,
+			castB: castFunctionForValueB ? castFunctionForValueB(valueB) : valueB,
+		};
+	}
+
+	// Filter all the possible types to only those which the operands are a subtype of.
+	const parentTypesOfA = allTypes.filter((e) => isSubtypeOf(typeA, e));
+	const parentTypesOfB = allTypes.filter((e) => isSubtypeOf(typeB, e));
+
+	// As the Numeric operands need some checks done beforehand we need to evaluate them seperatly.
+	if (
+		parentTypesOfA.includes(ValueType.XSNUMERIC) &&
+		parentTypesOfB.includes(ValueType.XSNUMERIC)
+	) {
+		let retType = returnTypeMap[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, operator)];
+		if (retType === undefined) retType = determineReturnType(typeA, typeB);
+		if (operator === 'divOp' && retType === ValueType.XSINTEGER) retType = ValueType.XSDECIMAL;
+		if (operator === 'idivOp')
+			return iDivOpChecksFunction(applyCastFunctions, (a, b) => Math.trunc(a / b))[1];
+		return retType;
 	}
 
 	// check if the types have at least 1 applicable parent type each.
@@ -96,16 +157,9 @@ export function generateBinaryOperatorFunction(
 	// Loop through the 2 arrays to find a combination of parentTypes and operand that has an entry in the operationsMap and the returnTypeMap.
 	for (const typeOfA of parentTypesOfA) {
 		for (const typeOfB of parentTypesOfB) {
-			const func = operationMap[hash(typeOfA, typeOfB, operator)];
 			const ret = returnTypeMap[hash(typeOfA, typeOfB, operator)];
-			if (func && ret) {
-				return [
-					(a, b) => {
-						const { castA, castB } = applyCastFunctions(a, b);
-						return createAtomicValue(func(castA.value, castB.value), ret);
-					},
-					ret,
-				];
+			if (ret !== undefined) {
+				return ret;
 			}
 		}
 	}
@@ -149,15 +203,20 @@ function iDivOpChecksFunction(
 /**
  * A cache to store the generated functions.
  */
-const operatorsByTypingKey: Record<string, [BinaryEvaluationFunction, ValueType]> = Object.create(
-	null
-);
+const operatorsByTypingKey: Record<string, BinaryEvaluationFunction> = Object.create(null);
 
+/**
+ * retrieve the function used to evaluate a binary operator.
+ * @param leftType the left part of the operation
+ * @param rightType the right part of the operation
+ * @param operator the kind of operation
+ * @returns the function of the binOp
+ */
 export function getBinaryPrefabOperator(
 	leftType: ValueType,
 	rightType: ValueType,
 	operator: string
-) {
+): BinaryEvaluationFunction {
 	const typingKey = `${leftType}~${rightType}~${operator}`;
 
 	let prefabOperator = operatorsByTypingKey[typingKey];
@@ -258,7 +317,7 @@ class BinaryOperator extends Expression {
 					firstValue.type,
 					secondValue.type,
 					this._operator
-				)[0];
+				);
 
 				return sequenceFactory.singleton(prefabOperator(firstValue, secondValue));
 			});
