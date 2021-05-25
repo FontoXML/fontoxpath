@@ -10,6 +10,7 @@ import {
 } from './annotateCompareOperator';
 import { annotateFunctionCall } from './annotateFunctionCall';
 import { annotateLogicalOperator } from './annotateLogicalOperator';
+import { annotateRangeSequenceOperator } from './annotateRangeSequenceOperator';
 import { annotateSequenceOperator } from './annotateSequenceOperator';
 import { annotateSetOperator } from './annotateSetOperators';
 import { annotateStringConcatenateOperator } from './annotateStringConcatenateOperator';
@@ -111,6 +112,15 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 			annotate(astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST, staticContext);
 			annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, staticContext);
 			return annotateStringConcatenateOperator(ast);
+
+		// Range operator
+		case 'rangeSequenceExpr':
+			const start = annotate(
+				astHelper.getFirstChild(ast, 'startExpr')[1] as IAST,
+				staticContext
+			);
+			const end = annotate(astHelper.getFirstChild(ast, 'endExpr')[1] as IAST, staticContext);
+			return annotateRangeSequenceOperator(ast, start, end);
 
 		// Comparison operators
 		case 'equalOp':

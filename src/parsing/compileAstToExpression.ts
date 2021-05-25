@@ -1033,6 +1033,7 @@ function stringConcatenateOp(ast: IAST, compilationOptions: CompilationOptions) 
 }
 
 function rangeSequenceExpr(ast: IAST, compilationOptions: CompilationOptions) {
+	const typeNode = astHelper.followPath(ast, ['type']);
 	const args = [
 		astHelper.getFirstChild(ast, 'startExpr')[1] as IAST,
 		astHelper.getFirstChild(ast, 'endExpr')[1] as IAST,
@@ -1049,7 +1050,8 @@ function rangeSequenceExpr(ast: IAST, compilationOptions: CompilationOptions) {
 
 	return new FunctionCall(
 		ref,
-		args.map((arg) => compile(arg, disallowUpdating(compilationOptions)))
+		args.map((arg) => compile(arg, disallowUpdating(compilationOptions))),
+		typeNode ? (typeNode[1] as SequenceType) : undefined
 	);
 }
 
