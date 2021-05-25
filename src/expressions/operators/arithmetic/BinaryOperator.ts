@@ -84,7 +84,7 @@ export function generateBinaryOperatorFunction(
 		for (const typeOfB of parentTypesOfB) {
 			const func = operationMap[hash(typeOfA, typeOfB, operator)];
 			const ret = returnTypeMap[hash(typeOfA, typeOfB, operator)];
-			if (func && ret) {
+			if (func && ret !== undefined) {
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return createAtomicValue(func(castA.value, castB.value), ret);
@@ -130,6 +130,7 @@ export function generateBinaryOperatorType(
 	) {
 		let retType = returnTypeMap[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, operator)];
 		if (retType === undefined) retType = determineReturnType(typeA, typeB);
+		if (operator === 'divOp' && retType === ValueType.XSINTEGER) retType = ValueType.XSDECIMAL;
 		if (operator === 'idivOp')
 			return iDivOpChecksFunction(applyCastFunctions, (a, b) => Math.trunc(a / b))[1];
 		return retType;

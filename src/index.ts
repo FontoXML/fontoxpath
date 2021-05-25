@@ -224,3 +224,4 @@ export {
 	registerCustomXPathFunction,
 	registerXQueryModule,
 };
+annotateAst(parseExpression('1 div 2', {}), undefined);

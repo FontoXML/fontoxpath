@@ -35,7 +35,7 @@ export function annotateBinOp(
 
 	const funcData = generateBinaryOperatorType(operator, left.type, right.type);
 
-	if (funcData) {
+	if (funcData !== undefined) {
 		const type = { type: funcData, mult: left.mult };
 		astHelper.insertAttribute(ast, 'type', type);
 		return type;
