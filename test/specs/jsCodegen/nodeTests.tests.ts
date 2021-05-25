@@ -6,7 +6,7 @@ import jsonMlMapper from 'test-helpers/jsonMlMapper';
 import { ReturnType } from 'fontoxpath';
 import evaluateXPathWithJsCodegen from './evaluateXPathWithJsCodegen';
 
-describe('kind tests', () => {
+describe('node tests', () => {
 	let documentNode: slimdom.Document;
 	beforeEach(() => {
 		documentNode = new slimdom.Document();
@@ -90,5 +90,16 @@ describe('kind tests', () => {
 			evaluateXPathWithJsCodegen('/*:xml', documentNode, null, ReturnType.FIRST_NODE),
 			documentNode.firstChild
 		);
+	});
+
+	it('handles detached nodes', () => {
+		documentNode = new slimdom.Document();
+		jsonMlMapper.parse(
+			['row'],
+			documentNode
+		);
+		const row = documentNode.firstChild;
+		row.parentNode = null;
+		chai.assert.isFalse(evaluateXPathWithJsCodegen('self::Q{}row[parent::Q{}thead]', row, null, ReturnType.BOOLEAN));
 	});
 });
