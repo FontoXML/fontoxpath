@@ -380,7 +380,7 @@ function binaryOperator(ast: IAST, compilationOptions: CompilationOptions) {
 	if (first && second) {
 		firstType = first.type;
 		secondType = second.type;
-		evaluateFunction = generateBinaryOperatorFunction(kind, firstType, secondType)[0];
+		evaluateFunction = generateBinaryOperatorFunction(kind, firstType, secondType);
 	}
 
 	return new BinaryOperator(

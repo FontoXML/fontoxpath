@@ -1,5 +1,8 @@
 import { SequenceType, sequenceTypeToString } from '../expressions/dataTypes/Value';
-import { getBinaryPrefabOperator } from '../expressions/operators/arithmetic/BinaryOperator';
+import {
+	generateBinaryOperatorType,
+	getBinaryPrefabOperator,
+} from '../expressions/operators/arithmetic/BinaryOperator';
 import astHelper, { IAST } from '../parsing/astHelper';
 
 export function annotateBinOp(
@@ -18,10 +21,10 @@ export function annotateBinOp(
 		throw new Error("Multiplicities in binary addition operator don't match");
 	}
 
-	const funcData = getBinaryPrefabOperator(left.type, right.type, operator);
+	const funcData = generateBinaryOperatorType(operator, left.type, right.type);
 
 	if (funcData) {
-		const type = { type: funcData[1], mult: left.mult };
+		const type = { type: funcData, mult: left.mult };
 		astHelper.insertAttribute(ast, 'type', type);
 		return type;
 	}
