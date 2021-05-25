@@ -9,10 +9,14 @@ import {
 	annotateValueCompare,
 } from './annotateCompareOperator';
 import { annotateFunctionCall } from './annotateFunctionCall';
+import { annotateLogicalOperator } from './annotateLogicalOperator';
 import { annotateUnaryMinus, annotateUnaryPlus } from './annotateUnaryOperator';
 
 /**
- * Annotate an AST with additional type information. It tried to infer as much of the types as possible.
+ * Recursively traverse the AST in the depth first, pre-order to infer type and annotate AST;
+ * Annotates as much type information as possible to the AST nodes.
+ * Inserts attribute `type` to the corresponding node if type is inferred.
+ *
  * @param ast The AST to annotate
  * @param staticContext The static context used for function lookups
  */
@@ -21,10 +25,14 @@ export default function annotateAst(ast: IAST, staticContext?: StaticContext) {
 }
 
 /**
- * This is the recursive function used to annotate any AST node.
- * @param ast The AST to annotate
- * @param staticContext The static constext to use for function lookups
- * @returns The type of the AST node
+ * Recursively traverse the AST in the depth first, pre-order to infer type and annotate AST;
+ * Annotates as much type information as possible to the AST nodes.
+ * Inserts attribute `type` to the corresponding node if type is inferred.
+ *
+ * @param ast The AST to annotate.
+ * @param staticContext The static context to use for function lookups.
+ * @throws errors when attempts to annotate fail.
+ * @returns The type of the AST node or `undefined` when the type cannot be annotated.
  */
 export function annotate(ast: IAST, staticContext: StaticContext): SequenceType | undefined {
 	// Check if we actually have an AST
@@ -66,6 +74,14 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 			);
 			return annotateBinOp(ast, left, right, astNodeName);
 		}
+
+		// And + Or operators
+		case 'andOp':
+		case 'orOp':
+			annotate(astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST, staticContext);
+			annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, staticContext);
+			return annotateLogicalOperator(ast);
+
 		// Comparison operators
 		case 'equalOp':
 		case 'notEqualOp':

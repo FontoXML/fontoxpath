@@ -186,7 +186,7 @@ function iDivOpChecksFunction(
 }
 
 /**
- * A cache to store the generatered functions.
+ * A cache to store the generated functions.
  */
 const operatorsByTypingKey: Record<string, BinaryEvaluationFunction> = Object.create(null);
 

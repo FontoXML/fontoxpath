@@ -3,7 +3,7 @@ import { falseBoolean, trueBoolean } from '../../dataTypes/createAtomicValue';
 import ISequence from '../../dataTypes/ISequence';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import { ValueType } from '../../dataTypes/Value';
+import { SequenceType, ValueType } from '../../dataTypes/Value';
 import Expression from '../../Expression';
 import Specificity from '../../Specificity';
 import { DONE_TOKEN, ready } from '../../util/iterators';
@@ -12,7 +12,7 @@ class OrOperator extends Expression {
 	private _bucket: string;
 	private _subExpressions: Expression[];
 
-	constructor(expressions: Expression[]) {
+	constructor(expressions: Expression[], type: SequenceType) {
 		const maxSpecificity = expressions.reduce((currentMaxSpecificity, selector) => {
 			if (currentMaxSpecificity.compareTo(selector.specificity) > 0) {
 				return currentMaxSpecificity;
@@ -20,11 +20,17 @@ class OrOperator extends Expression {
 			return selector.specificity;
 		}, new Specificity({}));
 
-		super(maxSpecificity, expressions, {
-			canBeStaticallyEvaluated: expressions.every(
-				(selector) => selector.canBeStaticallyEvaluated
-			),
-		});
+		super(
+			maxSpecificity,
+			expressions,
+			{
+				canBeStaticallyEvaluated: expressions.every(
+					(selector) => selector.canBeStaticallyEvaluated
+				),
+			},
+			false,
+			type
+		);
 
 		// If all subExpressions define the same bucket: use that one, else, use no bucket.
 		let bucket: string;

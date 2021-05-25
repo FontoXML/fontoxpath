@@ -2,6 +2,14 @@ import { SequenceType } from '../expressions/dataTypes/Value';
 import StaticContext from '../expressions/StaticContext';
 import astHelper, { IAST } from '../parsing/astHelper';
 
+/**
+ * Annotate the function calls by extracting the function info from the static context
+ * and inserting the return type to the AST as new attribute `type`.
+ *
+ * @param ast the AST to be annotated.
+ * @param staticContext from witch the function info is extracted.
+ * @returns the inferred type or `undefined` when function properties cannot be inferred.
+ */
 export function annotateFunctionCall(
 	ast: IAST,
 	staticContext: StaticContext
