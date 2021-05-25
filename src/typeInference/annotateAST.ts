@@ -156,11 +156,11 @@ export function annotate(
 			return annotateCastableOperator(ast);
 		// Current node cannot be annotated, but maybe deeper ones can.
 		case 'flworExpr':
-			return annotateFlworExpression(ast, annotationContext);
+			return annotateFlworExpression(ast, annotationContext, annotate);
 		default:
 			// Current node cannot be annotated, but maybe deeper ones can.
 			for (let i = 1; i < ast.length; i++) {
-				annotate(ast[i] as IAST, annotationContext);
+				const returnType = annotate(ast[i] as IAST, annotationContext);
 			}
 			return undefined;
 	}
