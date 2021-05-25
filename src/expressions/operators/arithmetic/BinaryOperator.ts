@@ -205,6 +205,13 @@ function iDivOpChecksFunction(
  */
 const operatorsByTypingKey: Record<string, BinaryEvaluationFunction> = Object.create(null);
 
+/**
+ * retrieve the function used to evaluate a binary operator.
+ * @param leftType the left part of the operation
+ * @param rightType the right part of the operation
+ * @param operator the kind of operation
+ * @returns the function of the binOp
+ */
 export function getBinaryPrefabOperator(
 	leftType: ValueType,
 	rightType: ValueType,
