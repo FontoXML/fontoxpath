@@ -995,8 +995,11 @@ function sequence(ast: IAST, compilationOptions: CompilationOptions) {
 	if (childExpressions.length === 1) {
 		return childExpressions[0];
 	}
+
+	const typeNode = astHelper.followPath(ast, ['type']);
 	return new SequenceOperator(
-		astHelper.getChildren(ast, '*').map((arg) => compile(arg, compilationOptions))
+		astHelper.getChildren(ast, '*').map((arg) => compile(arg, compilationOptions)),
+		typeNode ? (typeNode[1] as SequenceType) : undefined
 	);
 }
 
@@ -1010,6 +1013,7 @@ function simpleMap(ast: IAST, compilationOptions: CompilationOptions) {
 }
 
 function stringConcatenateOp(ast: IAST, compilationOptions: CompilationOptions) {
+	const typeNode = astHelper.followPath(ast, ['type']);
 	const args = [
 		astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST,
 		astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST,
@@ -1023,11 +1027,13 @@ function stringConcatenateOp(ast: IAST, compilationOptions: CompilationOptions) 
 			},
 			args.length
 		),
-		args.map((arg) => compile(arg, disallowUpdating(compilationOptions)))
+		args.map((arg) => compile(arg, disallowUpdating(compilationOptions))),
+		typeNode ? (typeNode[1] as SequenceType) : undefined
 	);
 }
 
 function rangeSequenceExpr(ast: IAST, compilationOptions: CompilationOptions) {
+	const typeNode = astHelper.followPath(ast, ['type']);
 	const args = [
 		astHelper.getFirstChild(ast, 'startExpr')[1] as IAST,
 		astHelper.getFirstChild(ast, 'endExpr')[1] as IAST,
@@ -1044,7 +1050,8 @@ function rangeSequenceExpr(ast: IAST, compilationOptions: CompilationOptions) {
 
 	return new FunctionCall(
 		ref,
-		args.map((arg) => compile(arg, disallowUpdating(compilationOptions)))
+		args.map((arg) => compile(arg, disallowUpdating(compilationOptions))),
+		typeNode ? (typeNode[1] as SequenceType) : undefined
 	);
 }
 
@@ -1088,19 +1095,24 @@ function unaryMinus(
 }
 
 function unionOp(ast: IAST, compilationOptions: CompilationOptions) {
-	return new Union([
-		compile(
-			astHelper.followPath(ast, ['firstOperand', '*']),
-			disallowUpdating(compilationOptions)
-		),
-		compile(
-			astHelper.followPath(ast, ['secondOperand', '*']),
-			disallowUpdating(compilationOptions)
-		),
-	]);
+	const typeNode = astHelper.followPath(ast, ['type']);
+	return new Union(
+		[
+			compile(
+				astHelper.followPath(ast, ['firstOperand', '*']),
+				disallowUpdating(compilationOptions)
+			),
+			compile(
+				astHelper.followPath(ast, ['secondOperand', '*']),
+				disallowUpdating(compilationOptions)
+			),
+		],
+		typeNode ? (typeNode[1] as SequenceType) : undefined
+	);
 }
 
 function intersectExcept(ast: IAST, compilationOptions: CompilationOptions) {
+	const typeNode = astHelper.followPath(ast, ['type']);
 	return new IntersectExcept(
 		ast[0],
 		compile(
@@ -1110,7 +1122,8 @@ function intersectExcept(ast: IAST, compilationOptions: CompilationOptions) {
 		compile(
 			astHelper.followPath(ast, ['secondOperand', '*']),
 			disallowUpdating(compilationOptions)
-		)
+		),
+		typeNode ? (typeNode[1] as SequenceType) : undefined
 	);
 }
 

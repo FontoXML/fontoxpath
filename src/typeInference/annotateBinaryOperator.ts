@@ -28,11 +28,6 @@ export function annotateBinOp(
 		return undefined;
 	}
 
-	// If the multiplicities don't match, we can't add them
-	if (left.mult !== right.mult) {
-		throw new Error("Multiplicities in binary addition operator don't match");
-	}
-
 	const funcData = generateBinaryOperatorType(operator, left.type, right.type);
 
 	if (funcData !== undefined) {
