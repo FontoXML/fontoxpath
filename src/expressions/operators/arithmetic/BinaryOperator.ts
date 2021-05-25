@@ -35,6 +35,13 @@ const allTypes = [
 	ValueType.XSTIME,
 ];
 
+/**
+ * Generate the return function of the binary operator.
+ * @param operator The binary operator
+ * @param typeA the left part of the operation
+ * @param typeB the right part of the operation
+ * @returns The function used to evaluate the binary operator
+ */
 export function generateBinaryOperatorFunction(
 	operator: string,
 	typeA: ValueType,
@@ -95,6 +102,13 @@ export function generateBinaryOperatorFunction(
 	throw new Error(`XPTY0004: ${operator} not available for types ${typeA} and ${typeB}`);
 }
 
+/**
+ * Generate the return type of the function.
+ * @param operator The binary operator
+ * @param typeA the left part of the operation
+ * @param typeB the right part of the operation
+ * @returns The type of the entire binary operation
+ */
 export function generateBinaryOperatorType(
 	operator: string,
 	typeA: ValueType,
