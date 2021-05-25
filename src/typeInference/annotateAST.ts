@@ -10,6 +10,7 @@ import {
 } from './annotateCompareOperator';
 import { annotateFunctionCall } from './annotateFunctionCall';
 import { annotateLogicalOperator } from './annotateLogicalOperator';
+import { annotateSequenceOperator } from './annotateSequenceOperator';
 import { annotateUnaryMinus, annotateUnaryPlus } from './annotateUnaryOperator';
 
 /**
@@ -81,6 +82,12 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 			annotate(astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST, staticContext);
 			annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, staticContext);
 			return annotateLogicalOperator(ast);
+
+		// Sequences
+		case 'sequenceExpr':
+			const children = astHelper.getChildren(ast, '*');
+			children.map((arg) => annotate(arg, staticContext));
+			return annotateSequenceOperator(ast, children.length);
 
 		// Comparison operators
 		case 'equalOp':

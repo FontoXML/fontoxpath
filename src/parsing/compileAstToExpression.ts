@@ -995,8 +995,11 @@ function sequence(ast: IAST, compilationOptions: CompilationOptions) {
 	if (childExpressions.length === 1) {
 		return childExpressions[0];
 	}
+
+	const typeNode = astHelper.followPath(ast, ['type']);
 	return new SequenceOperator(
-		astHelper.getChildren(ast, '*').map((arg) => compile(arg, compilationOptions))
+		astHelper.getChildren(ast, '*').map((arg) => compile(arg, compilationOptions)),
+		typeNode ? (typeNode[1] as SequenceType) : undefined
 	);
 }
 
