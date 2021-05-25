@@ -146,7 +146,7 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 		default:
 			// Current node cannot be annotated, but maybe deeper ones can.
 			for (let i = 1; i < ast.length; i++) {
-				if (ast) {
+				if (ast[i]) {
 					annotate(ast[i] as IAST, staticContext);
 				}
 			}

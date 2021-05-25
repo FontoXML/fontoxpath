@@ -8,8 +8,7 @@ import { SourceRange } from '../expressions/debug/StackTraceGenerator';
 
 type QName = { localName: string; namespaceURI: string | null; prefix: string };
 
-export interface IAST
-	extends Array<string | object | SourceRange | IAST | SequenceType> {
+export interface IAST extends Array<string | object | SourceRange | IAST | SequenceType> {
 	0: string;
 }
 
@@ -168,10 +167,7 @@ function followPath(ast: IAST, path: string[]): IAST | null {
 /**
  * Get the value of the given attribute
  */
-function getAttribute(
-	ast: IAST,
-	attributeName: string
-): string | SequenceType | BinaryEvaluationFunction | null {
+function getAttribute(ast: IAST, attributeName: string): string | SequenceType | null {
 	if (!Array.isArray(ast)) {
 		return null;
 	}
