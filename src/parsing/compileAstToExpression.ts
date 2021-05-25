@@ -1,3 +1,4 @@
+import { isUndefined } from 'util';
 import CurlyArrayConstructor from '../expressions/arrays/CurlyArrayConstructor';
 import SquareArrayConstructor from '../expressions/arrays/SquareArrayConstructor';
 import AncestorAxis from '../expressions/axes/AncestorAxis';
@@ -1423,6 +1424,8 @@ function typeswitchExpr(ast: IAST, compilationOptions: CompilationOptions) {
 		throw new Error('XPST0003: Use of XQuery functionality is not allowed in XPath context');
 	}
 
+	const typeNode = astHelper.followPath(ast, ['type']);
+
 	const argExpr = compile(
 		astHelper.getFirstChild(astHelper.getFirstChild(ast, 'argExpr'), '*'),
 		compilationOptions
@@ -1471,7 +1474,12 @@ function typeswitchExpr(ast: IAST, compilationOptions: CompilationOptions) {
 		compilationOptions
 	) as PossiblyUpdatingExpression;
 
-	return new TypeSwitchExpression(argExpr, caseClauseExpressions, defaultExpression);
+	return new TypeSwitchExpression(
+		argExpr,
+		caseClauseExpressions,
+		defaultExpression,
+		typeNode ? (typeNode[1] as SequenceType) : undefined
+	);
 }
 
 export default function (xPathAst: IAST, compilationOptions: CompilationOptions): Expression {

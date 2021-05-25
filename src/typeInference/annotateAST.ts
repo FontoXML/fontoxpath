@@ -185,6 +185,16 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 			return annotateCastOperator(ast);
 		case 'castableExpr':
 			return annotateCastableOperator(ast);
+		case 'typeSwitchExpr':
+			const arg = annotate(astHelper.getFirstChild(ast, 'argExpr') as IAST, staticContext);
+			const clauses = (astHelper.getChildren(
+				ast,
+				'typeswitchExprCaseClause'
+			) as IAST[]).map((a) => annotate(a, staticContext));
+			const defaultCase = annotate(
+				astHelper.getFirstChild(ast, 'typeSwitchExprDefaultClause') as IAST,
+				staticContext
+			);
 		default:
 			// Current node cannot be annotated, but maybe deeper ones can.
 			for (let i = 1; i < ast.length; i++) {
