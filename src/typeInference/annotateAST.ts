@@ -9,6 +9,7 @@ import {
 	annotateValueCompare,
 } from './annotateCompareOperator';
 import { annotateFunctionCall } from './annotateFunctionCall';
+import { annotateLogicalOperator } from './annotateLogicalOperator';
 import { annotateUnaryMinus, annotateUnaryPlus } from './annotateUnaryOperator';
 
 /**
@@ -73,6 +74,14 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 			);
 			return annotateBinOp(ast, left, right, astNodeName);
 		}
+
+		// And + Or operators
+		case 'andOp':
+		case 'orOp':
+			annotate(astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST, staticContext);
+			annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, staticContext);
+			return annotateLogicalOperator(ast);
+
 		// Comparison operators
 		case 'equalOp':
 		case 'notEqualOp':
