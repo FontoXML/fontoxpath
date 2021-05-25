@@ -9,6 +9,7 @@ import {
 	annotateValueCompare,
 } from './annotateCompareOperator';
 import { annotateFunctionCall } from './annotateFunctionCall';
+import { annotateInstanceOfExpr } from './annotateInstanceOfExpr';
 import { annotateLogicalOperator } from './annotateLogicalOperator';
 import { annotateRangeSequenceOperator } from './annotateRangeSequenceOperator';
 import { annotateSequenceOperator } from './annotateSequenceOperator';
@@ -146,6 +147,11 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 			annotate(astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST, staticContext);
 			annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, staticContext);
 			return annotateNodeCompare(ast);
+		}
+		case 'instanceOfExpr': {
+			annotate(astHelper.getFirstChild(ast, 'argExpr'), staticContext);
+			annotate(astHelper.getFirstChild(ast, 'sequenceType'), staticContext);
+			annotateInstanceOfExpr(ast);
 		}
 		// Constant expressions
 		case 'integerConstantExpr':
