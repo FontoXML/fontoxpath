@@ -12,6 +12,7 @@ import { annotateFunctionCall } from './annotateFunctionCall';
 import { annotateLogicalOperator } from './annotateLogicalOperator';
 import { annotateSequenceOperator } from './annotateSequenceOperator';
 import { annotateSetOperator } from './annotateSetOperators';
+import { annotateStringConcatenateOperator } from './annotateStringConcatenateOperator';
 import { annotateUnaryMinus, annotateUnaryPlus } from './annotateUnaryOperator';
 
 /**
@@ -104,6 +105,12 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 				staticContext
 			);
 			return annotateSetOperator(ast, l, r);
+
+		// String concatentation
+		case 'stringConcatenateOp':
+			annotate(astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST, staticContext);
+			annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, staticContext);
+			return annotateStringConcatenateOperator(ast);
 
 		// Comparison operators
 		case 'equalOp':
