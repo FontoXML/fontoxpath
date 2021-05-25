@@ -2,7 +2,7 @@ import AtomicValue from '../../../expressions/dataTypes/AtomicValue';
 import castToType from '../../../expressions/dataTypes/castToType';
 import createAtomicValue from '../../../expressions/dataTypes/createAtomicValue';
 import isSubtypeOf from '../../../expressions/dataTypes/isSubtypeOf';
-import { ValueType } from '../../../expressions/dataTypes/Value';
+import { ValueType, valueTypeToString } from '../../../expressions/dataTypes/Value';
 import { BinaryEvaluationFunction } from '../../../typeInference/binaryEvaluationFunction';
 import atomize from '../../dataTypes/atomize';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
@@ -99,7 +99,11 @@ export function generateBinaryOperatorFunction(
 			}
 		}
 	}
-	throw new Error(`XPTY0004: ${operator} not available for types ${typeA} and ${typeB}`);
+	throw new Error(
+		`XPTY0004: ${operator} not available for types ${valueTypeToString(
+			typeA
+		)} and ${valueTypeToString(typeB)}`
+	);
 }
 
 /**
@@ -150,10 +154,6 @@ export function generateBinaryOperatorType(
 		return retType;
 	}
 
-	// check if the types have at least 1 applicable parent type each.
-	if (parentTypesOfB.length === 0 || parentTypesOfA.length === 0)
-		throw new Error(`XPTY0004: ${operator} not available for types ${typeA} and ${typeB}`);
-
 	// Loop through the 2 arrays to find a combination of parentTypes and operand that has an entry in the operationsMap and the returnTypeMap.
 	for (const typeOfA of parentTypesOfA) {
 		for (const typeOfB of parentTypesOfB) {
@@ -163,7 +163,11 @@ export function generateBinaryOperatorType(
 			}
 		}
 	}
-	throw new Error(`XPTY0004: ${operator} not available for types ${typeA} and ${typeB}`);
+	throw new Error(
+		`XPTY0004: ${operator} not available for types ${valueTypeToString(
+			typeA
+		)} and ${valueTypeToString(typeB)}`
+	);
 }
 
 /**

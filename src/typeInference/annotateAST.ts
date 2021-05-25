@@ -10,6 +10,7 @@ import {
 } from './annotateCompareOperator';
 import { annotateFunctionCall } from './annotateFunctionCall';
 import { annotateLogicalOperator } from './annotateLogicalOperator';
+import { annotatePathExpr } from './annotatePathExpr';
 import { annotateRangeSequenceOperator } from './annotateRangeSequenceOperator';
 import { annotateSequenceOperator } from './annotateSequenceOperator';
 import { annotateSetOperator } from './annotateSetOperators';
@@ -146,6 +147,14 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 			annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, staticContext);
 			return annotateNodeCompare(ast);
 		}
+
+		// Path Expression
+		case 'pathExpr':
+			const root = astHelper.getFirstChild(ast, 'rootExpr');
+			if (root) annotate(root[1] as IAST, staticContext);
+			astHelper.getChildren(ast, 'stepExpr').map((arg) => annotate(arg, staticContext));
+			return annotatePathExpr(ast);
+
 		// Constant expressions
 		case 'integerConstantExpr':
 			const integerSequenceType = {
