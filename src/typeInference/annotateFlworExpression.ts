@@ -5,21 +5,20 @@ import { AnnotationContext } from './AnnotatationContext';
 export function annotateFlworExpression(
 	ast: IAST,
 	annotationContext: AnnotationContext
-): SequenceType {
-	let returnType = undefined;
-
+): SequenceType | undefined {
 	for (let i = 1; i < ast.length; i++) {
 		switch (ast[i][0]) {
 			case 'letClause':
 				annotateLetClause(ast[i] as IAST, annotationContext);
 			case 'returnClause':
-				// unable to execute, circular import
-				// returnType = annotate(ast[i] as IAST, annotationContext);
-				astHelper.insertAttribute(ast, 'type', returnType);
+			// unable to execute, circular import
+			// returnType = annotate(ast[i] as IAST, annotationContext);
+			// astHelper.insertAttribute(ast, 'type', returnType);
+			// return returnType
 		}
 	}
 
-	return returnType;
+	return undefined;
 }
 
 function annotateLetClause(ast: IAST, annotationContext: AnnotationContext): void {
