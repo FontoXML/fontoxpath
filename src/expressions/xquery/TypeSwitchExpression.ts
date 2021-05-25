@@ -1,9 +1,10 @@
 import ISequence from '../dataTypes/ISequence';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import { SequenceType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
-import PossiblyUpdatingExpression from '../PossiblyUpdatingExpression';
+import PossiblyUpdatingExpression, { SequenceCallbacks } from '../PossiblyUpdatingExpression';
 import Specificity from '../Specificity';
 import StaticContext from '../StaticContext';
 import { errXUST0001 } from '../xquery-update/XQueryUpdateFacilityErrors';
@@ -26,7 +27,8 @@ class TypeSwitchExpression extends PossiblyUpdatingExpression {
 	constructor(
 		argExpression: Expression,
 		caseClauses: TypeSwitchCaseClause[],
-		defaultExpression: PossiblyUpdatingExpression
+		defaultExpression: PossiblyUpdatingExpression,
+		type: SequenceType
 	) {
 		const specificity = new Specificity({});
 		super(
@@ -45,7 +47,8 @@ class TypeSwitchExpression extends PossiblyUpdatingExpression {
 				peer: false,
 				resultOrder: RESULT_ORDERINGS.UNSORTED,
 				subtree: false,
-			}
+			},
+			type
 		);
 		this._argExpression = argExpression;
 		this._amountOfCases = caseClauses.length;

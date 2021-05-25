@@ -14,6 +14,7 @@ import { annotateRangeSequenceOperator } from './annotateRangeSequenceOperator';
 import { annotateSequenceOperator } from './annotateSequenceOperator';
 import { annotateSetOperator } from './annotateSetOperators';
 import { annotateStringConcatenateOperator } from './annotateStringConcatenateOperator';
+import { annotateTypeSwitchOperator } from './annotateTypeSwitchOperator';
 import { annotateUnaryMinus, annotateUnaryPlus } from './annotateUnaryOperator';
 
 /**
@@ -90,7 +91,7 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 		// Sequences
 		case 'sequenceExpr':
 			const children = astHelper.getChildren(ast, '*');
-			children.map((arg) => annotate(arg, staticContext));
+			children.map((a) => annotate(a, staticContext));
 			return annotateSequenceOperator(ast, children.length);
 
 		// Set operations (union, intersect, except)
@@ -185,6 +186,16 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 			return annotateCastOperator(ast);
 		case 'castableExpr':
 			return annotateCastableOperator(ast);
+		case 'typeSwitchExpr':
+			const arg = annotate(astHelper.getFirstChild(ast, 'argExpr') as IAST, staticContext);
+			const clauses = astHelper
+				.getChildren(ast, 'typeswitchExprCaseClause')
+				.map((a) => annotate(a, staticContext));
+			const defaultCase = annotate(
+				astHelper.getFirstChild(ast, 'typeSwitchExprDefaultClause') as IAST,
+				staticContext
+			);
+			annotateTypeSwitchOperator(ast);
 		default:
 			// Current node cannot be annotated, but maybe deeper ones can.
 			for (let i = 1; i < ast.length; i++) {
