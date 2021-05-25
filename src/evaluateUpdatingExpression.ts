@@ -18,6 +18,7 @@ import { Language, Logger } from './types/Options';
  * @public
  */
 export type UpdatingOptions = {
+	annotateAst?: boolean;
 	debug?: boolean;
 	disableCache?: boolean;
 	documentWriter?: IDocumentWriter;
@@ -48,7 +49,9 @@ export default async function evaluateUpdatingExpression(
 	variables?: { [s: string]: any } | null,
 	options?: UpdatingOptions | null
 ): Promise<{ pendingUpdateList: object[]; xdmValue: any[] }> {
-	options = options || {};
+	options = options || {
+		annotateAst: true,
+	};
 
 	let dynamicContext: DynamicContext;
 	let executionParameters: ExecutionParameters;
@@ -65,6 +68,7 @@ export default async function evaluateUpdatingExpression(
 				allowXQuery: true,
 				debug: !!options['debug'],
 				disableCache: !!options['disableCache'],
+				annotateAst: !!options['annotateAst'],
 			}
 		);
 		dynamicContext = context.dynamicContext;

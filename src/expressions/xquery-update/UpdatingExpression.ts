@@ -1,4 +1,5 @@
 import ISequence from '../dataTypes/ISequence';
+import { SequenceType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { OptimizationOptions } from '../Expression';
@@ -11,9 +12,10 @@ abstract class UpdatingExpression extends Expression {
 	constructor(
 		specificity: Specificity,
 		childExpressions: Expression[],
-		optimizationOptions: OptimizationOptions
+		optimizationOptions: OptimizationOptions,
+		type?: SequenceType
 	) {
-		super(specificity, childExpressions, optimizationOptions, true);
+		super(specificity, childExpressions, optimizationOptions, true, type);
 
 		this.isUpdating = true;
 	}

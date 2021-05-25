@@ -37,6 +37,7 @@ export default function parseExpression(
 				storeParseResultInCache(xPathString, language, ast);
 			}
 		}
+
 		return ast;
 	} catch (error) {
 		if (error instanceof SyntaxError) {

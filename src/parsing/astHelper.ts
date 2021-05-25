@@ -5,10 +5,12 @@ import {
 	ValueType,
 } from '../expressions/dataTypes/Value';
 import { SourceRange } from '../expressions/debug/StackTraceGenerator';
+import { BinaryEvaluationFunction } from '../typeInference/binaryEvaluationFunction';
 
 type QName = { localName: string; namespaceURI: string | null; prefix: string };
 
-export interface IAST extends Array<string | object | SourceRange | IAST> {
+export interface IAST
+	extends Array<string | object | SourceRange | IAST | SequenceType | BinaryEvaluationFunction> {
 	0: string;
 }
 
@@ -69,7 +71,7 @@ function getTextContent(ast: IAST): string {
 	if (typeof ast[1] === 'object') {
 		return (ast[2] || '') as string;
 	}
-	return ast[1] || '';
+	return (ast[1] as string) || '';
 }
 
 /**
@@ -167,7 +169,10 @@ function followPath(ast: IAST, path: string[]): IAST | null {
 /**
  * Get the value of the given attribute
  */
-function getAttribute(ast: IAST, attributeName: string): string | null {
+function getAttribute(
+	ast: IAST,
+	attributeName: string
+): string | SequenceType | BinaryEvaluationFunction | null {
 	if (!Array.isArray(ast)) {
 		return null;
 	}
@@ -185,9 +190,26 @@ function getAttribute(ast: IAST, attributeName: string): string | null {
 function getQName(ast: IAST): QName {
 	return {
 		localName: getTextContent(ast),
-		namespaceURI: getAttribute(ast, 'URI'),
-		prefix: getAttribute(ast, 'prefix') || '',
+		namespaceURI: getAttribute(ast, 'URI') as string,
+		prefix: (getAttribute(ast, 'prefix') as string) || '',
 	};
+}
+
+/**
+ * Insert an attribute with a given name and value to the AST.
+ *
+ * @param ast The ast node to insert the attribute to
+ * @param name The name of the attribute
+ * @param data The data of the attribute
+ */
+function insertAttribute(ast: IAST, name: string, data: any) {
+	if (typeof ast[1] === 'object' && !Array.isArray(ast[1])) {
+		ast[1][name] = data;
+	} else {
+		const obj = {};
+		obj[name] = data;
+		ast.splice(1, 0, obj);
+	}
 }
 
 export default {
@@ -198,4 +220,5 @@ export default {
 	getQName,
 	getTextContent,
 	getTypeDeclaration,
+	insertAttribute,
 };

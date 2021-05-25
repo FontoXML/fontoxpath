@@ -30,6 +30,7 @@ type ExpressionArguments = [
 	any,
 	Object,
 	{
+		annotateAst?: boolean;
 		debug?: boolean;
 		returnType?: any;
 		language?: EvaluateXPath['XPATH_3_1_LANGUAGE'] | EvaluateXPath['XQUERY_3_1_LANGUAGE'];

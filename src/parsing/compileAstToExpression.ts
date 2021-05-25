@@ -11,7 +11,7 @@ import PrecedingAxis from '../expressions/axes/PrecedingAxis';
 import PrecedingSiblingAxis from '../expressions/axes/PrecedingSiblingAxis';
 import SelfAxis from '../expressions/axes/SelfAxis';
 import IfExpression from '../expressions/conditional/IfExpression';
-import { SequenceType, ValueType } from '../expressions/dataTypes/Value';
+import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import QName from '../expressions/dataTypes/valueTypes/QName';
 import StackTraceGenerator, { SourceRange } from '../expressions/debug/StackTraceGenerator';
 import Expression, { RESULT_ORDERINGS } from '../expressions/Expression';
@@ -23,7 +23,9 @@ import LetExpression from '../expressions/LetExpression';
 import Literal from '../expressions/literals/Literal';
 import MapConstructor from '../expressions/maps/MapConstructor';
 import NamedFunctionRef from '../expressions/NamedFunctionRef';
-import BinaryOperator from '../expressions/operators/arithmetic/BinaryOperator';
+import BinaryOperator, {
+	generateBinaryOperatorFunction,
+} from '../expressions/operators/arithmetic/BinaryOperator';
 import Unary from '../expressions/operators/arithmetic/Unary';
 import AndOperator from '../expressions/operators/boolean/AndOperator';
 import OrOperator from '../expressions/operators/boolean/OrOperator';
@@ -62,6 +64,7 @@ import ElementConstructor from '../expressions/xquery/ElementConstructor';
 import PIConstructor from '../expressions/xquery/PIConstructor';
 import TextConstructor from '../expressions/xquery/TextConstructor';
 import TypeSwitchExpression from '../expressions/xquery/TypeSwitchExpression';
+import { BinaryEvaluationFunction } from '../typeInference/binaryEvaluationFunction';
 import astHelper, { IAST } from './astHelper';
 
 const COMPILATION_OPTIONS = {
@@ -342,13 +345,19 @@ function unwrapBinaryOperator(
 }
 
 function andOp(ast: IAST, compilationOptions: CompilationOptions) {
+	const typeNode = astHelper.followPath(ast, ['type']);
 	return new AndOperator(
-		unwrapBinaryOperator('andOp', ast, disallowUpdating(compilationOptions))
+		unwrapBinaryOperator('andOp', ast, disallowUpdating(compilationOptions)),
+		typeNode ? (typeNode[1] as SequenceType) : undefined
 	);
 }
 
 function orOp(ast: IAST, compilationOptions: CompilationOptions) {
-	return new OrOperator(unwrapBinaryOperator('orOp', ast, disallowUpdating(compilationOptions)));
+	const typeNode = astHelper.followPath(ast, ['type']);
+	return new OrOperator(
+		unwrapBinaryOperator('orOp', ast, disallowUpdating(compilationOptions)),
+		typeNode ? (typeNode[1] as SequenceType) : undefined
+	);
 }
 
 function binaryOperator(ast: IAST, compilationOptions: CompilationOptions) {
@@ -362,14 +371,41 @@ function binaryOperator(ast: IAST, compilationOptions: CompilationOptions) {
 		disallowUpdating(compilationOptions)
 	);
 
-	return new BinaryOperator(kind, a, b);
+	const attributeType = astHelper.getAttribute(ast, 'type');
+	const first = astHelper.getAttribute(
+		astHelper.followPath(ast, ['firstOperand', '*']),
+		'type'
+	) as SequenceType;
+	const second = astHelper.getAttribute(
+		astHelper.followPath(ast, ['secondOperand', '*']),
+		'type'
+	) as SequenceType;
+	let firstType;
+	let secondType;
+	let evaluateFunction;
+	if (first && second) {
+		firstType = first.type;
+		secondType = second.type;
+		evaluateFunction = generateBinaryOperatorFunction(kind, firstType, secondType)[0];
+	}
+
+	return new BinaryOperator(
+		kind,
+		a,
+		b,
+		attributeType as SequenceType,
+		evaluateFunction as BinaryEvaluationFunction
+	);
 }
 
 function compileLookup(ast: IAST, compilationOptions: CompilationOptions): '*' | Expression {
 	const keyExpression = astHelper.getFirstChild(ast, '*');
 	switch (keyExpression[0]) {
 		case 'NCName':
-			return new Literal(astHelper.getTextContent(keyExpression), ValueType.XSSTRING);
+			return new Literal(astHelper.getTextContent(keyExpression), {
+				type: ValueType.XSSTRING,
+				mult: SequenceMultiplicity.EXACTLY_ONE,
+			});
 		case 'star':
 			return '*';
 		default:
@@ -609,11 +645,15 @@ function functionCall(
 ) {
 	const functionName = astHelper.getFirstChild(ast, 'functionName');
 	const functionArguments = astHelper.getChildren(astHelper.getFirstChild(ast, 'arguments'), '*');
+
+	const returnType = astHelper.followPath(ast, ['type']);
+
 	return new FunctionCall(
 		new NamedFunctionRef(astHelper.getQName(functionName), functionArguments.length),
 		functionArguments.map((arg) =>
 			arg[0] === 'argumentPlaceholder' ? null : compile(arg, compilationOptions)
-		)
+		),
+		returnType ? (returnType[1] as SequenceType) : undefined
 	);
 }
 
@@ -710,31 +750,31 @@ function instanceOf(
 }
 
 function integerConstantExpr(ast: IAST, _compilationOptions: CompilationOptions) {
-	return new Literal(
-		astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')),
-		ValueType.XSINTEGER
-	);
+	return new Literal(astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')), {
+		type: ValueType.XSINTEGER,
+		mult: SequenceMultiplicity.EXACTLY_ONE,
+	});
 }
 
 function stringConstantExpr(ast: IAST, _compilationOptions: CompilationOptions) {
-	return new Literal(
-		astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')),
-		ValueType.XSSTRING
-	);
+	return new Literal(astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')), {
+		type: ValueType.XSSTRING,
+		mult: SequenceMultiplicity.EXACTLY_ONE,
+	});
 }
 
 function decimalConstantExpr(ast: IAST, _compilationOptions: CompilationOptions) {
-	return new Literal(
-		astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')),
-		ValueType.XSDECIMAL
-	);
+	return new Literal(astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')), {
+		type: ValueType.XSDECIMAL,
+		mult: SequenceMultiplicity.EXACTLY_ONE,
+	});
 }
 
 function doubleConstantExpr(ast: IAST, _compilationOptions: CompilationOptions) {
-	return new Literal(
-		astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')),
-		ValueType.XSDOUBLE
-	);
+	return new Literal(astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')), {
+		type: ValueType.XSDOUBLE,
+		mult: SequenceMultiplicity.EXACTLY_ONE,
+	});
 }
 
 function nameTest(ast: IAST, _compilationOptions: CompilationOptions) {
@@ -1026,7 +1066,12 @@ function unaryPlus(
 	compilationOptions: { allowUpdating?: boolean; allowXQuery?: boolean }
 ) {
 	const operand = astHelper.getFirstChild(astHelper.getFirstChild(ast, 'operand'), '*');
-	return new Unary('+', compile(operand, compilationOptions));
+	const typeNode = astHelper.followPath(ast, ['type']);
+	return new Unary(
+		'+',
+		compile(operand, compilationOptions),
+		typeNode ? (typeNode[1] as SequenceType) : undefined
+	);
 }
 
 function unaryMinus(
@@ -1034,7 +1079,12 @@ function unaryMinus(
 	compilationOptions: { allowUpdating?: boolean; allowXQuery?: boolean }
 ) {
 	const operand = astHelper.getFirstChild(astHelper.getFirstChild(ast, 'operand'), '*');
-	return new Unary('-', compile(operand, compilationOptions));
+	const typeNode = astHelper.followPath(ast, ['type']);
+	return new Unary(
+		'-',
+		compile(operand, compilationOptions),
+		typeNode ? (typeNode[1] as SequenceType) : undefined
+	);
 }
 
 function unionOp(ast: IAST, compilationOptions: CompilationOptions) {
@@ -1148,7 +1198,10 @@ function dirElementConstructor(ast: IAST, compilationOptions: CompilationOptions
 
 function CDataSection(ast: IAST, _compilationOptions: CompilationOptions) {
 	// Walks like a stringliteral, talks like a stringliteral, it's a stringliteral
-	return new Literal(astHelper.getTextContent(ast), ValueType.XSSTRING);
+	return new Literal(astHelper.getTextContent(ast), {
+		type: ValueType.XSSTRING,
+		mult: SequenceMultiplicity.EXACTLY_ONE,
+	});
 }
 
 function attributeConstructor(ast: IAST, compilationOptions: CompilationOptions) {
