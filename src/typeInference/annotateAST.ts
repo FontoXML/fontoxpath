@@ -22,7 +22,10 @@ import { annotateUnaryMinus, annotateUnaryPlus } from './annotateUnaryOperator';
  * @param ast The AST to annotate
  * @param staticContext The static context used for function lookups
  */
-export function annotateAST(ast: IAST, staticContext: StaticContext): SequenceType | undefined {
+export default function annotateAST(
+	ast: IAST,
+	staticContext: StaticContext
+): SequenceType | undefined {
 	const annotationContext: AnnotationContext = new AnnotationContext(staticContext);
 	const type = annotate(ast, annotationContext);
 	return type;
