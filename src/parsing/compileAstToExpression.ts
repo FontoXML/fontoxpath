@@ -1,4 +1,3 @@
-import { isUndefined } from 'util';
 import CurlyArrayConstructor from '../expressions/arrays/CurlyArrayConstructor';
 import SquareArrayConstructor from '../expressions/arrays/SquareArrayConstructor';
 import AncestorAxis from '../expressions/axes/AncestorAxis';
