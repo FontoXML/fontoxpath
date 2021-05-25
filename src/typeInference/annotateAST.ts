@@ -115,12 +115,9 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 
 		// Range operator
 		case 'rangeSequenceExpr':
-			const start = annotate(
-				astHelper.getFirstChild(ast, 'startExpr')[1] as IAST,
-				staticContext
-			);
-			const end = annotate(astHelper.getFirstChild(ast, 'endExpr')[1] as IAST, staticContext);
-			return annotateRangeSequenceOperator(ast, start, end);
+			annotate(astHelper.getFirstChild(ast, 'startExpr')[1] as IAST, staticContext);
+			annotate(astHelper.getFirstChild(ast, 'endExpr')[1] as IAST, staticContext);
+			return annotateRangeSequenceOperator(ast);
 
 		// Comparison operators
 		case 'equalOp':
