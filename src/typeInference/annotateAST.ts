@@ -152,7 +152,7 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 		case 'pathExpr':
 			const root = astHelper.getFirstChild(ast, 'rootExpr');
 			if (root) annotate(root[1] as IAST, staticContext);
-			astHelper.getChildren(ast, 'stepExpr').map((arg) => annotate(arg, staticContext));
+			astHelper.getChildren(ast, 'stepExpr').map((b) => annotate(b, staticContext));
 			return annotatePathExpr(ast);
 
 		// Constant expressions
