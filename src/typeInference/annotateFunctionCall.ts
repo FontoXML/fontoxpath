@@ -15,7 +15,7 @@ export function annotateFunctionCall(
 	annotationContext: AnnotationContext
 ): SequenceType | undefined {
 	// We need the context to lookup the function information
-	if (!annotationContext) return undefined;
+	if (!annotationContext || !annotationContext.staticContext) return undefined;
 
 	const functionName = astHelper.getFirstChild(ast, 'functionName')[2];
 	const functionPrefix = astHelper.getFirstChild(ast, 'functionName')[1];
