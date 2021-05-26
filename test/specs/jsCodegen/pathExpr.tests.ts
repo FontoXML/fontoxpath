@@ -19,4 +19,12 @@ describe('paths (js-codegen)', () => {
 			[documentNode]
 		);
 	});
+
+	it('uses the document root if absolute', () => {
+		const xmlNode = documentNode.firstChild;
+		chai.assert.isTrue(evaluateXPathWithJsCodegen('/xml', xmlNode, null, ReturnType.BOOLEAN));
+		chai.assert.isFalse(
+			evaluateXPathWithJsCodegen('/does-not-exist', xmlNode, null, ReturnType.BOOLEAN)
+		);
+	});
 });

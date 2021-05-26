@@ -1,3 +1,4 @@
+import { NODE_TYPES } from '../domFacade/ConcreteNode';
 import astHelper, { IAST } from '../parsing/astHelper';
 import emitStep from './emitStep';
 import emitTest, { tests } from './emitTest';
@@ -137,6 +138,24 @@ function emitPathExpr(
 	identifier: FunctionIdentifier,
 	staticContext: StaticContext
 ): PartialCompilationResult {
+	// Find the root node from the context.
+	const isAbsolute = astHelper.getFirstChild(ast, 'rootExpr');
+	let absoluteCode = '';
+	if (isAbsolute) {
+		// TODO/FIXME: this causes an infinite loop in some cases, but not when
+		// unittested in FontoXPath (test/specs/jsCodegen/pathExpr.tests.ts).
+		absoluteCode = `
+		let documentNode = contextItem;
+		while (documentNode.nodeType !== ${NODE_TYPES.DOCUMENT_NODE}) {
+			documentNode = domFacade.getParentNode(contextItem);
+			if (documentNode === null) {
+				throw new Error('XPDY0050: the root node of the context node is not a document node.');
+			}
+		}
+		contextItem = documentNode;
+		`;
+	}
+
 	const emittedSteps = emitSteps(astHelper.getChildren(ast, 'stepExpr'), staticContext);
 	if (!emittedSteps.isAstAccepted) {
 		return emittedSteps;
@@ -144,6 +163,7 @@ function emitPathExpr(
 
 	const pathExprCode = `
 	function ${identifier}(contextItem) {
+		${absoluteCode}
 		${emittedSteps.variables.join('\n')}
 		const next = () => {
 			${emittedSteps.code}

@@ -65,4 +65,12 @@ describe('return values', () => {
 		);
 		chai.assert.equal(node, documentNode.firstChild);
 	});
+
+	it('evaluates absolute paths ', () => {
+		const xmlNode = documentNode.firstChild;
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen('/html/body/footer', xmlNode, null, ReturnType.FIRST_NODE),
+			null
+		);
+	});
 });
