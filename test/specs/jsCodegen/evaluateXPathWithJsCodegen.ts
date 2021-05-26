@@ -13,7 +13,7 @@ function generateKey(query: string, returnType: ReturnType) {
 	return `${query} ${returnType}`;
 }
 
-const cache = {};
+const compiledXPathCache = new Map();
 
 const evaluateXPathWithJsCodegen = <
 	TNode extends Node,
@@ -26,22 +26,24 @@ const evaluateXPathWithJsCodegen = <
 	options?: Options,
 ): IReturnTypes<TNode>[TReturnType] => {
 	returnType = returnType || (ReturnType.ANY as any);
-	const cachedQuery = cache[generateKey(query, returnType)];
 
-	if (!cachedQuery) {
+	const cacheKey = generateKey(query, returnType);
+	const cachedCompiledXPath = compiledXPathCache.get(cacheKey);
+
+	if (!cachedCompiledXPath) {
 		const compiledXPathResult = compileXPathToJavaScript(query, returnType, options);
 		if (compiledXPathResult.isAstAccepted === true) {
 			// tslint:disable-next-line
-			const evalFunction = new Function(compiledXPathResult.code) as any;
+			const evalFunction = new Function(compiledXPathResult.code);
 
-			cache[generateKey(query, returnType)] = evalFunction;
+			compiledXPathCache.set(cacheKey, evalFunction);
 
 			return executeJavaScriptCompiledXPath(evalFunction, contextItem, domFacade);
 		} else {
 			throw new Error(compiledXPathResult.reason);
 		}
 	} else {
-		return executeJavaScriptCompiledXPath(cachedQuery, contextItem, domFacade);
+		return executeJavaScriptCompiledXPath(cachedCompiledXPath, contextItem, domFacade);
 	}
 };
 

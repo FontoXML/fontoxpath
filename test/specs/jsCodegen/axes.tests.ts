@@ -44,7 +44,7 @@ describe('axes (js-codegen)', () => {
 		);
 	});
 
-	it('evaluates with the attribute axis when there are no attributes', () => {
+	it('evaluates the attribute axis when there are no attributes', () => {
 		documentNode = new slimdom.Document();
 		jsonMlMapper.parse(['xml', 'Some text'], documentNode);
 

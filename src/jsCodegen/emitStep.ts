@@ -98,7 +98,7 @@ function emitParentAxis(
 }
 
 function formatConditions(...conditions: string[]) {
-	return conditions.filter((c) => c !== '').join(' && '); 
+	return conditions.filter((c) => c !== '').join(' && ');
 }
 
 function emitMultipleNodeAxis(

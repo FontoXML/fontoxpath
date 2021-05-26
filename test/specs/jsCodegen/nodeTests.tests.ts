@@ -92,7 +92,7 @@ describe('node tests', () => {
 		);
 	});
 
-	it('handles detached nodes', () => {
+	it('handles detached nodes without a parent', () => {
 		documentNode = new slimdom.Document();
 		jsonMlMapper.parse(
 			['row'],
