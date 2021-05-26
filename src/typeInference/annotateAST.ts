@@ -11,6 +11,7 @@ import {
 import { annotateFunctionCall } from './annotateFunctionCall';
 import { annotateInstanceOfExpr } from './annotateInstanceOfExpr';
 import { annotateLogicalOperator } from './annotateLogicalOperator';
+import { annotatePathExpr } from './annotatePathExpr';
 import { annotateRangeSequenceOperator } from './annotateRangeSequenceOperator';
 import { annotateSequenceOperator } from './annotateSequenceOperator';
 import { annotateSetOperator } from './annotateSetOperators';
@@ -148,11 +149,20 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 			annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, staticContext);
 			return annotateNodeCompare(ast);
 		}
+
+		// Path Expression
+		case 'pathExpr':
+			const root = astHelper.getFirstChild(ast, 'rootExpr');
+			if (root) annotate(root[1] as IAST, staticContext);
+			astHelper.getChildren(ast, 'stepExpr').map((b) => annotate(b, staticContext));
+			return annotatePathExpr(ast);
+
 		case 'instanceOfExpr': {
 			annotate(astHelper.getFirstChild(ast, 'argExpr'), staticContext);
 			annotate(astHelper.getFirstChild(ast, 'sequenceType'), staticContext);
 			annotateInstanceOfExpr(ast);
 		}
+
 		// Constant expressions
 		case 'integerConstantExpr':
 			const integerSequenceType = {
@@ -186,12 +196,18 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 
 			astHelper.insertAttribute(ast, 'type', stringSequenceType);
 			return stringSequenceType;
+
+		// Functions
 		case 'functionCallExpr':
 			return annotateFunctionCall(ast, staticContext);
+
+		// Casting
 		case 'castExpr':
 			return annotateCastOperator(ast);
 		case 'castableExpr':
 			return annotateCastableOperator(ast);
+
+		// TypeSwitch
 		case 'typeSwitchExpr':
 			const arg = annotate(astHelper.getFirstChild(ast, 'argExpr') as IAST, staticContext);
 			const clauses = astHelper
@@ -202,6 +218,7 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 				staticContext
 			);
 			annotateTypeSwitchOperator(ast);
+
 		default:
 			// Current node cannot be annotated, but maybe deeper ones can.
 			for (let i = 1; i < ast.length; i++) {

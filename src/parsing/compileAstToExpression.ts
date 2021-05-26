@@ -11,7 +11,11 @@ import PrecedingAxis from '../expressions/axes/PrecedingAxis';
 import PrecedingSiblingAxis from '../expressions/axes/PrecedingSiblingAxis';
 import SelfAxis from '../expressions/axes/SelfAxis';
 import IfExpression from '../expressions/conditional/IfExpression';
-import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
+import Value, {
+	SequenceMultiplicity,
+	SequenceType,
+	ValueType,
+} from '../expressions/dataTypes/Value';
 import QName from '../expressions/dataTypes/valueTypes/QName';
 import StackTraceGenerator, { SourceRange } from '../expressions/debug/StackTraceGenerator';
 import Expression, { RESULT_ORDERINGS } from '../expressions/Expression';
@@ -380,22 +384,13 @@ function binaryOperator(ast: IAST, compilationOptions: CompilationOptions) {
 		astHelper.followPath(ast, ['secondOperand', '*']),
 		'type'
 	) as SequenceType;
-	let firstType;
-	let secondType;
-	let evaluateFunction;
-	if (first && second) {
-		firstType = first.type;
-		secondType = second.type;
-		evaluateFunction = generateBinaryOperatorFunction(kind, firstType, secondType);
+
+	let evaluateFunction: BinaryEvaluationFunction;
+	if (first && second && astHelper.getAttribute(ast, 'type')) {
+		evaluateFunction = generateBinaryOperatorFunction(kind, first.type, second.type);
 	}
 
-	return new BinaryOperator(
-		kind,
-		a,
-		b,
-		attributeType as SequenceType,
-		evaluateFunction as BinaryEvaluationFunction
-	);
+	return new BinaryOperator(kind, a, b, attributeType as SequenceType, evaluateFunction);
 }
 
 function compileLookup(ast: IAST, compilationOptions: CompilationOptions): '*' | Expression {
@@ -792,6 +787,7 @@ function anyItemTest() {
 }
 
 function pathExpr(ast: IAST, compilationOptions: CompilationOptions) {
+	const typeNode = astHelper.followPath(ast, ['type']);
 	const rawSteps = astHelper.getChildren(ast, 'stepExpr');
 	let hasAxisStep = false;
 	const steps = rawSteps.map((step) => {
@@ -894,6 +890,7 @@ function pathExpr(ast: IAST, compilationOptions: CompilationOptions) {
 			}
 		}
 
+		stepExpression.type = typeNode ? (typeNode[1] as SequenceType) : undefined;
 		return stepExpression;
 	});
 
