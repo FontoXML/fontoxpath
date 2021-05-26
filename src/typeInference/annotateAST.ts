@@ -1,6 +1,7 @@
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import StaticContext from '../expressions/StaticContext';
 import astHelper, { IAST } from '../parsing/astHelper';
+import { annotateArrowExpr } from './annotateArrowExpr';
 import { annotateBinOp } from './annotateBinaryOperator';
 import { annotateCastableOperator, annotateCastOperator } from './annotateCastOperators';
 import {
@@ -205,6 +206,8 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 		// Functions
 		case 'functionCallExpr':
 			return annotateFunctionCall(ast, staticContext);
+		case 'arrowExpr':
+			return annotateArrowExpr(ast, staticContext);
 
 		// Casting
 		case 'castExpr':
