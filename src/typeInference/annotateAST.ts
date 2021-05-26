@@ -208,7 +208,10 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 			return annotateFunctionCall(ast, staticContext);
 		case 'namedFunctionRef':
 			return annotateNamedFunctionRef(ast, staticContext);
-
+		case 'inlineFunctionExpr':
+			annotate(astHelper.getFirstChild(ast, 'functionBody')[1] as IAST, staticContext);
+			return { type: ValueType.FUNCTION, mult: SequenceMultiplicity.EXACTLY_ONE };
+      
 		// Casting
 		case 'castExpr':
 			return annotateCastOperator(ast);
