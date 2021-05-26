@@ -12,6 +12,7 @@ import { annotateContextItemExpr } from './annotateContextItemExpr';
 import { annotateFunctionCall } from './annotateFunctionCall';
 import { annotateInstanceOfExpr } from './annotateInstanceOfExpr';
 import { annotateLogicalOperator } from './annotateLogicalOperator';
+import { annotateNamedFunctionRef } from './annotateNamedFunctionRef';
 import { annotatePathExpr } from './annotatePathExpr';
 import { annotateRangeSequenceOperator } from './annotateRangeSequenceOperator';
 import { annotateSequenceOperator } from './annotateSequenceOperator';
@@ -205,6 +206,8 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 		// Functions
 		case 'functionCallExpr':
 			return annotateFunctionCall(ast, staticContext);
+		case 'namedFunctionRef':
+			return annotateNamedFunctionRef(ast, staticContext);
 
 		// Casting
 		case 'castExpr':
