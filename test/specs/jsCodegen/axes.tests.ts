@@ -48,7 +48,6 @@ describe('axes (js-codegen)', () => {
 		documentNode = new slimdom.Document();
 		jsonMlMapper.parse(['xml', 'Some text'], documentNode);
 
-		// Type is "any" to be able to assign null to the attributes property.
 		const xmlNode: any = documentNode.firstChild;
 
 		chai.assert.isFalse(

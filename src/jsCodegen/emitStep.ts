@@ -98,17 +98,7 @@ function emitParentAxis(
 }
 
 function formatConditions(...conditions: string[]) {
-	return conditions.reduce((formatted, current, index) => {
-		if (current !== '') {
-			if (index === 0) {
-				return `${current}`;
-			} else {
-				return `${formatted} && ${current}`;
-			}
-		}
-
-		return formatted;
-	}, '');
+	return conditions.filter((c) => c !== '').join(' && '); 
 }
 
 function emitMultipleNodeAxis(
@@ -154,7 +144,7 @@ function emitSingleNodeAxis(
 	nestedCode: string,
 	contextNodeCode: string
 ): PartialCompilationResult {
-	const isFirstPassCode = `i${nestLevel} == 0`;
+	const isFirstPassCode = `i${nestLevel} === 0`;
 
 	const nullCheckCode = `contextItem${nestLevel}`;
 
