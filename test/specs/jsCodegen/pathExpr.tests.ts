@@ -21,10 +21,10 @@ describe('paths (js-codegen)', () => {
 	});
 
 	it('uses the document root if absolute', () => {
-		const xmlNode = documentNode.firstChild;
-		chai.assert.isTrue(evaluateXPathWithJsCodegen('/xml', xmlNode, null, ReturnType.BOOLEAN));
+		const titleNode = documentNode.firstChild.firstChild;
+		chai.assert.isTrue(evaluateXPathWithJsCodegen('/xml/title', titleNode, null, ReturnType.BOOLEAN));
 		chai.assert.isFalse(
-			evaluateXPathWithJsCodegen('/does-not-exist', xmlNode, null, ReturnType.BOOLEAN)
+			evaluateXPathWithJsCodegen('/does-not-exist', titleNode, null, ReturnType.BOOLEAN)
 		);
 	});
 });

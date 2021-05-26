@@ -142,12 +142,10 @@ function emitPathExpr(
 	const isAbsolute = astHelper.getFirstChild(ast, 'rootExpr');
 	let absoluteCode = '';
 	if (isAbsolute) {
-		// TODO/FIXME: this causes an infinite loop in some cases, but not when
-		// unittested in FontoXPath (test/specs/jsCodegen/pathExpr.tests.ts).
 		absoluteCode = `
 		let documentNode = contextItem;
 		while (documentNode.nodeType !== ${NODE_TYPES.DOCUMENT_NODE}) {
-			documentNode = domFacade.getParentNode(contextItem);
+			documentNode = domFacade.getParentNode(documentNode);
 			if (documentNode === null) {
 				throw new Error('XPDY0050: the root node of the context node is not a document node.');
 			}
