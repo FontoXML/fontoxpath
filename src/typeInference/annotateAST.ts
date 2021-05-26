@@ -10,6 +10,7 @@ import {
 	annotateValueCompare,
 } from './annotateCompareOperator';
 import { annotateContextItemExpr } from './annotateContextItemExpr';
+import { annotateDynamicFunctionInvocationExpr } from './annotateDynamicFunctionInvocationExpr';
 import { annotateFunctionCall } from './annotateFunctionCall';
 import { annotateInstanceOfExpr } from './annotateInstanceOfExpr';
 import { annotateLogicalOperator } from './annotateLogicalOperator';
@@ -208,6 +209,16 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 			return annotateFunctionCall(ast, staticContext);
 		case 'arrowExpr':
 			return annotateArrowExpr(ast, staticContext);
+		case 'dynamicFunctionInvocationExpr':
+			const functionItem: SequenceType = annotate(
+				astHelper.followPath(ast, ['functionItem', '*']),
+				staticContext
+			);
+			const args: SequenceType = annotate(
+				astHelper.getFirstChild(ast, 'arguments'),
+				staticContext
+			);
+			return annotateDynamicFunctionInvocationExpr(ast, staticContext, functionItem, args);
 
 		// Casting
 		case 'castExpr':

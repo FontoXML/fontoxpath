@@ -685,7 +685,7 @@ function arrowExpr(ast: IAST, compilationOptions: CompilationOptions) {
 
 function dynamicFunctionInvocationExpr(ast: IAST, compilationOptions: CompilationOptions) {
 	const functionItemContent = astHelper.followPath(ast, ['functionItem', '*']);
-
+	const retType: IAST = astHelper.followPath(ast, ['type']);
 	const argumentsAst = astHelper.getFirstChild(ast, 'arguments');
 	let args = [];
 	if (argumentsAst) {
@@ -695,7 +695,11 @@ function dynamicFunctionInvocationExpr(ast: IAST, compilationOptions: Compilatio
 		);
 	}
 
-	return new FunctionCall(compile(functionItemContent, compilationOptions), args);
+	return new FunctionCall(
+		compile(functionItemContent, compilationOptions),
+		args,
+		retType ? (retType[1] as SequenceType) : undefined
+	);
 }
 
 function namedFunctionRef(ast: IAST, _compilationOptions: CompilationOptions) {
