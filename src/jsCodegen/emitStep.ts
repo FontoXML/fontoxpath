@@ -97,7 +97,7 @@ function emitParentAxis(
 	return emitSingleNodeAxis(test, predicates, nestLevel, nestedCode, contextNodeCode);
 }
 
-function formatConditions(...conditions: string[]) {
+function formatConditions(...conditions: string[]): string {
 	return conditions.filter((c) => c !== '').join(' && ');
 }
 

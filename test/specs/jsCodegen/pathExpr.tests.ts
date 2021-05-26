@@ -20,7 +20,7 @@ describe('paths (js-codegen)', () => {
 		);
 	});
 
-	it('uses the document root if absolute', () => {
+	it('evaluates absolute paths by going "up" to the document node', () => {
 		const titleNode = documentNode.firstChild.firstChild;
 		chai.assert.isTrue(evaluateXPathWithJsCodegen('/xml/title', titleNode, null, ReturnType.BOOLEAN));
 		chai.assert.isFalse(
