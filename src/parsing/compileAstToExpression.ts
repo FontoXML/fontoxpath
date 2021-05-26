@@ -654,6 +654,7 @@ function functionCall(
 }
 
 function arrowExpr(ast: IAST, compilationOptions: CompilationOptions) {
+	const typeNode = astHelper.followPath(ast, ['type']);
 	const argExpr = astHelper.followPath(ast, ['argExpr', '*']);
 
 	// Each part an EQName, expression, or arguments passed to the previous part
@@ -677,7 +678,7 @@ function arrowExpr(ast: IAST, compilationOptions: CompilationOptions) {
 			parts[i][0] === 'EQName'
 				? new NamedFunctionRef(astHelper.getQName(parts[i]), args.length)
 				: compile(parts[i], disallowUpdating(compilationOptions));
-		args = [new FunctionCall(func, args)];
+		args = [new FunctionCall(func, args, typeNode ? (typeNode[1] as SequenceType) : undefined)];
 	}
 	return args[0];
 }
