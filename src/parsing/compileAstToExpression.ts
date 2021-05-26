@@ -316,6 +316,7 @@ function arrayConstructor(ast: IAST, compilationOptions: CompilationOptions) {
 }
 
 function mapConstructor(ast: IAST, compilationOptions: CompilationOptions) {
+	const typeNode = astHelper.followPath(ast, ['type']);
 	return new MapConstructor(
 		astHelper.getChildren(ast, 'mapConstructorEntry').map((keyValuePair) => ({
 			key: compile(
@@ -326,7 +327,8 @@ function mapConstructor(ast: IAST, compilationOptions: CompilationOptions) {
 				astHelper.followPath(keyValuePair, ['mapValueExpr', '*']),
 				disallowUpdating(compilationOptions)
 			),
-		}))
+		})),
+		typeNode ? (typeNode[1] as SequenceType) : undefined
 	);
 }
 
