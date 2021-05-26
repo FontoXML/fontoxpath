@@ -9,12 +9,14 @@ import {
 	annotateValueCompare,
 } from './annotateCompareOperator';
 import { annotateFunctionCall } from './annotateFunctionCall';
+import { annotateInstanceOfExpr } from './annotateInstanceOfExpr';
 import { annotateLogicalOperator } from './annotateLogicalOperator';
 import { annotatePathExpr } from './annotatePathExpr';
 import { annotateRangeSequenceOperator } from './annotateRangeSequenceOperator';
 import { annotateSequenceOperator } from './annotateSequenceOperator';
 import { annotateSetOperator } from './annotateSetOperators';
 import { annotateStringConcatenateOperator } from './annotateStringConcatenateOperator';
+import { annotateTypeSwitchOperator } from './annotateTypeSwitchOperator';
 import { annotateUnaryMinus, annotateUnaryPlus } from './annotateUnaryOperator';
 
 /**
@@ -91,7 +93,7 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 		// Sequences
 		case 'sequenceExpr':
 			const children = astHelper.getChildren(ast, '*');
-			children.map((arg) => annotate(arg, staticContext));
+			children.map((a) => annotate(a, staticContext));
 			return annotateSequenceOperator(ast, children.length);
 
 		// Set operations (union, intersect, except)
@@ -155,13 +157,19 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 			astHelper.getChildren(ast, 'stepExpr').map((b) => annotate(b, staticContext));
 			return annotatePathExpr(ast);
 
+		case 'instanceOfExpr': {
+			annotate(astHelper.getFirstChild(ast, 'argExpr'), staticContext);
+			annotate(astHelper.getFirstChild(ast, 'sequenceType'), staticContext);
+			annotateInstanceOfExpr(ast);
+		}
+      
 		// Constant expressions
 		case 'integerConstantExpr':
 			const integerSequenceType = {
 				type: ValueType.XSINTEGER,
 				mult: SequenceMultiplicity.EXACTLY_ONE,
 			};
-
+      
 			astHelper.insertAttribute(ast, 'type', integerSequenceType);
 			return integerSequenceType;
 		case 'doubleConstantExpr':
@@ -188,12 +196,29 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 
 			astHelper.insertAttribute(ast, 'type', stringSequenceType);
 			return stringSequenceType;
+    
+    // Functions
 		case 'functionCallExpr':
 			return annotateFunctionCall(ast, staticContext);
+     
+    // Casting
 		case 'castExpr':
 			return annotateCastOperator(ast);
 		case 'castableExpr':
 			return annotateCastableOperator(ast);
+    
+    // TypeSwitch
+		case 'typeSwitchExpr':
+			const arg = annotate(astHelper.getFirstChild(ast, 'argExpr') as IAST, staticContext);
+			const clauses = astHelper
+				.getChildren(ast, 'typeswitchExprCaseClause')
+				.map((a) => annotate(a, staticContext));
+			const defaultCase = annotate(
+				astHelper.getFirstChild(ast, 'typeSwitchExprDefaultClause') as IAST,
+				staticContext
+			);
+			annotateTypeSwitchOperator(ast);
+      
 		default:
 			// Current node cannot be annotated, but maybe deeper ones can.
 			for (let i = 1; i < ast.length; i++) {

@@ -736,11 +736,13 @@ function instanceOf(
 	const expression = compile(astHelper.followPath(ast, ['argExpr', '*']), compilationOptions);
 	const sequenceType = astHelper.followPath(ast, ['sequenceType', '*']);
 	const occurrence = astHelper.followPath(ast, ['sequenceType', 'occurrenceIndicator']);
+	const typeNode = astHelper.followPath(ast, ['type']);
 
 	return new InstanceOfOperator(
 		expression,
 		compile(sequenceType, disallowUpdating(compilationOptions)),
-		occurrence ? astHelper.getTextContent(occurrence) : ''
+		occurrence ? astHelper.getTextContent(occurrence) : '',
+		typeNode ? (typeNode[1] as SequenceType) : undefined
 	);
 }
 
@@ -1420,6 +1422,8 @@ function typeswitchExpr(ast: IAST, compilationOptions: CompilationOptions) {
 		throw new Error('XPST0003: Use of XQuery functionality is not allowed in XPath context');
 	}
 
+	const typeNode = astHelper.followPath(ast, ['type']);
+
 	const argExpr = compile(
 		astHelper.getFirstChild(astHelper.getFirstChild(ast, 'argExpr'), '*'),
 		compilationOptions
@@ -1468,7 +1472,12 @@ function typeswitchExpr(ast: IAST, compilationOptions: CompilationOptions) {
 		compilationOptions
 	) as PossiblyUpdatingExpression;
 
-	return new TypeSwitchExpression(argExpr, caseClauseExpressions, defaultExpression);
+	return new TypeSwitchExpression(
+		argExpr,
+		caseClauseExpressions,
+		defaultExpression,
+		typeNode ? (typeNode[1] as SequenceType) : undefined
+	);
 }
 
 export default function (xPathAst: IAST, compilationOptions: CompilationOptions): Expression {
