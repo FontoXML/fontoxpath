@@ -1,3 +1,4 @@
+import { NODE_TYPES } from '../domFacade/ConcreteNode';
 import astHelper, { IAST } from '../parsing/astHelper';
 import {
 	acceptAst,
@@ -47,9 +48,15 @@ function emitAttributeAxis(
 	nestLevel: number,
 	nestedCode: string
 ): PartialCompilationResult {
-	const contextNodesCode = `const ${attributeAxisContextNodesIdentifier}${nestLevel} = domFacade.getAllAttributes(contextItem${
+	// Only element nodes can have attributes.
+	const contextNodesCode = `
+	let ${attributeAxisContextNodesIdentifier}${nestLevel};
+	if (contextItem && contextItem${nestLevel - 1}.nodeType === ${NODE_TYPES.ELEMENT_NODE}) {
+		${attributeAxisContextNodesIdentifier}${nestLevel} =  domFacade.getAllAttributes(contextItem${
 		nestLevel - 1
-	});`;
+	});
+	}
+	`;
 
 	return emitMultipleNodeAxis(
 		test,
@@ -90,8 +97,8 @@ function emitParentAxis(
 	return emitSingleNodeAxis(test, predicates, nestLevel, nestedCode, contextNodeCode);
 }
 
-function formatConditionCode(condition: string) {
-	return condition.length !== 0 ? `&& ${condition}` : '';
+function formatConditions(...conditions: string[]): string {
+	return conditions.filter((c) => c !== '').join(' && ');
 }
 
 function emitMultipleNodeAxis(
@@ -102,14 +109,21 @@ function emitMultipleNodeAxis(
 	contextItemIdentifier: ContextItemIdentifier,
 	contextNodeCode: string
 ): PartialCompilationResult {
+	const whileConditions = formatConditions(
+		`${contextItemIdentifier}${nestLevel}`,
+		`i${nestLevel} < ${contextItemIdentifier}${nestLevel}.length`
+	);
+
 	const indexReset = nestLevel !== 1 ? `i${nestLevel} = 0;` : ``;
-	const predicateConditionCode = formatConditionCode(predicates);
+	const nullCheckCode = `contextItem${nestLevel}`;
+
+	const conditions = formatConditions(nullCheckCode, test, predicates);
 
 	const axisCode = `
 	${contextNodeCode}
-	while (i${nestLevel} < ${contextItemIdentifier}${nestLevel}.length) {
+	while (${whileConditions}) {
 		const contextItem${nestLevel} = ${contextItemIdentifier}${nestLevel}[i${nestLevel}];
-		if (!(${test} ${predicateConditionCode})) {
+		if (!(${conditions})) {
 			i${nestLevel}++;
 			continue;
 		}
@@ -130,13 +144,16 @@ function emitSingleNodeAxis(
 	nestedCode: string,
 	contextNodeCode: string
 ): PartialCompilationResult {
-	const testEvaluatationCode = formatConditionCode(test);
-	const predicateEvaluationCode = formatConditionCode(predicates);
+	const isFirstPassCode = `i${nestLevel} === 0`;
+
+	const nullCheckCode = `contextItem${nestLevel}`;
+
+	const conditions = formatConditions(isFirstPassCode, nullCheckCode, test, predicates);
 
 	return acceptAst(
 		`
 		${contextNodeCode}
-		if (i${nestLevel} == 0 ${testEvaluatationCode} ${predicateEvaluationCode}) {
+		if (${conditions}) {
 			${nestedCode}
 		}
 		`,

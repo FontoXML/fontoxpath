@@ -32,7 +32,11 @@ function emitEvaluationToBoolean(identifier: string): PartiallyCompiledAstAccept
 
 function emitEvaluationToFirstNode(identifier: string): PartiallyCompiledAstAccepted {
 	return acceptAst(`
-	return ${identifier}(contextItem).next().value.value.node
+	const firstResult = ${identifier}(contextItem).next();
+	if (!firstResult.done) {
+		return firstResult.value.value.node
+	}
+	return null;
 	`);
 }
 
