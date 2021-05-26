@@ -1,4 +1,4 @@
-import { SequenceType, ValueType, SequenceMultiplicity } from '../expressions/dataTypes/Value';
+import { SequenceType } from '../expressions/dataTypes/Value';
 import StaticContext from '../expressions/StaticContext';
 import astHelper, { IAST } from '../parsing/astHelper';
 
@@ -45,7 +45,7 @@ export function annotateNamedFunctionRef(
 	// If there are no function properties, there is no type inference
 	if (!functionProperties) return undefined;
 
-	//Insert the type info into the AST and return
+	// Insert the type info into the AST and return
 	astHelper.insertAttribute(ast, 'type', functionProperties.returnType);
 	return functionProperties.returnType;
 }
