@@ -162,14 +162,14 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 			annotate(astHelper.getFirstChild(ast, 'sequenceType'), staticContext);
 			annotateInstanceOfExpr(ast);
 		}
-      
+
 		// Constant expressions
 		case 'integerConstantExpr':
 			const integerSequenceType = {
 				type: ValueType.XSINTEGER,
 				mult: SequenceMultiplicity.EXACTLY_ONE,
 			};
-      
+
 			astHelper.insertAttribute(ast, 'type', integerSequenceType);
 			return integerSequenceType;
 		case 'doubleConstantExpr':
@@ -196,18 +196,18 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 
 			astHelper.insertAttribute(ast, 'type', stringSequenceType);
 			return stringSequenceType;
-    
-    // Functions
+
+		// Functions
 		case 'functionCallExpr':
 			return annotateFunctionCall(ast, staticContext);
-     
-    // Casting
+
+		// Casting
 		case 'castExpr':
 			return annotateCastOperator(ast);
 		case 'castableExpr':
 			return annotateCastableOperator(ast);
-    
-    // TypeSwitch
+
+		// TypeSwitch
 		case 'typeSwitchExpr':
 			const arg = annotate(astHelper.getFirstChild(ast, 'argExpr') as IAST, staticContext);
 			const clauses = astHelper
@@ -218,7 +218,7 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 				staticContext
 			);
 			annotateTypeSwitchOperator(ast);
-      
+
 		default:
 			// Current node cannot be annotated, but maybe deeper ones can.
 			for (let i = 1; i < ast.length; i++) {
