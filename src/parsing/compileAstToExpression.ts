@@ -142,7 +142,8 @@ function compile(ast: IAST, compilationOptions: CompilationOptions): Expression 
 		case 'pathExpr':
 			return pathExpr(ast, compilationOptions);
 		case 'contextItemExpr':
-			return new ContextItemExpression();
+			const typeNode = astHelper.followPath(ast, ['type']);
+			return new ContextItemExpression(typeNode ? (typeNode[1] as SequenceType) : undefined);
 
 		// Functions
 		case 'functionCallExpr':

@@ -8,6 +8,7 @@ import {
 	annotateNodeCompare,
 	annotateValueCompare,
 } from './annotateCompareOperator';
+import { annotateContextItemExpr } from './annotateContextItemExpr';
 import { annotateFunctionCall } from './annotateFunctionCall';
 import { annotateInstanceOfExpr } from './annotateInstanceOfExpr';
 import { annotateLogicalOperator } from './annotateLogicalOperator';
@@ -156,6 +157,10 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 			if (root) annotate(root[1] as IAST, staticContext);
 			astHelper.getChildren(ast, 'stepExpr').map((b) => annotate(b, staticContext));
 			return annotatePathExpr(ast);
+
+		// Context Item
+		case 'contextItemExpr':
+			return annotateContextItemExpr(ast);
 
 		case 'instanceOfExpr': {
 			annotate(astHelper.getFirstChild(ast, 'argExpr'), staticContext);
