@@ -205,7 +205,9 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 		// Functions
 		case 'functionCallExpr':
 			return annotateFunctionCall(ast, staticContext);
-
+		case 'inlineFunctionExpr':
+			annotate(astHelper.getFirstChild(ast, 'functionBody')[1] as IAST, staticContext);
+			return { type: ValueType.FUNCTION, mult: SequenceMultiplicity.EXACTLY_ONE };
 		// Casting
 		case 'castExpr':
 			return annotateCastOperator(ast);
