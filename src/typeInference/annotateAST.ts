@@ -23,6 +23,7 @@ import { annotateSequenceOperator } from './annotateSequenceOperator';
 import { annotateSetOperator } from './annotateSetOperators';
 import { annotateStringConcatenateOperator } from './annotateStringConcatenateOperator';
 import { annotateTypeSwitchOperator } from './annotateTypeSwitchOperator';
+import { annotateUnaryLookup } from './annotateUnaryLookup';
 import { annotateUnaryMinus, annotateUnaryPlus } from './annotateUnaryOperator';
 
 /**
@@ -254,6 +255,11 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 				.getChildren(astHelper.getFirstChild(ast, '*'), 'arrayElem')
 				.map((arrayElem) => annotate(arrayElem, staticContext));
 			return annotateArrayConstructor(ast);
+
+		// Unary Lookup
+		case 'unaryLookup':
+			const ncName = astHelper.getFirstChild(ast, 'NCName');
+			return annotateUnaryLookup(ast, ncName);
 
 		// TypeSwitch
 		case 'typeSwitchExpr':

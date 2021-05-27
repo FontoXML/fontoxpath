@@ -1,4 +1,5 @@
 import EmptySequence from '../dataTypes/Sequences/EmptySequence';
+import { SequenceType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression from '../Expression';
@@ -8,13 +9,15 @@ import evaluateLookup from './evaluateLookup';
 class UnaryLookup extends Expression {
 	private readonly _keySpecifier: '*' | Expression;
 
-	constructor(keySpecifier: '*' | Expression) {
+	constructor(keySpecifier: '*' | Expression, type: SequenceType) {
 		super(
 			new Specificity({
 				[Specificity.EXTERNAL_KIND]: 1,
 			}),
 			keySpecifier === '*' ? [] : [keySpecifier],
-			{ canBeStaticallyEvaluated: false }
+			{ canBeStaticallyEvaluated: false },
+			false,
+			type
 		);
 
 		this._keySpecifier = keySpecifier;

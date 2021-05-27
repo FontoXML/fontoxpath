@@ -198,7 +198,11 @@ function compile(ast: IAST, compilationOptions: CompilationOptions): Expression 
 			return arrayConstructor(ast, compilationOptions);
 
 		case 'unaryLookup':
-			return new UnaryLookup(compileLookup(ast, compilationOptions));
+			const returnType = astHelper.followPath(ast, ['type']);
+			return new UnaryLookup(
+				compileLookup(ast, compilationOptions),
+				returnType ? (returnType[1] as SequenceType) : undefined
+			);
 
 		case 'typeswitchExpr':
 			return typeswitchExpr(ast, compilationOptions);
