@@ -19,6 +19,7 @@ import { annotateLogicalOperator } from './annotateLogicalOperator';
 import { annotateMapConstructor } from './annotateMapConstructor';
 import { annotateNamedFunctionRef } from './annotateNamedFunctionRef';
 import { annotatePathExpr } from './annotatePathExpr';
+import { annotateQuantifiedExpr } from './annotateQuantifiedExpr';
 import { annotateRangeSequenceOperator } from './annotateRangeSequenceOperator';
 import { annotateSequenceOperator } from './annotateSequenceOperator';
 import { annotateSetOperator } from './annotateSetOperators';
@@ -291,6 +292,10 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 				staticContext
 			);
 			annotateTypeSwitchOperator(ast);
+
+		case 'quantifiedExpr':
+			astHelper.getChildren(ast, '*').map((a) => annotate(a, staticContext));
+			return annotateQuantifiedExpr(ast);
 
 		default:
 			// Current node cannot be annotated, but maybe deeper ones can.
