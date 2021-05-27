@@ -64,3 +64,8 @@ describe('Annotating cast expressions', () => {
 	it('unknown child cast expression', () =>
 		assertValueType('$x cast as xs:integer', ValueType.XSINTEGER));
 });
+
+describe('Annotate maps', () => {
+	it('mapConstructor', () => assertValueType('map{a:1, b:2}', ValueType.MAP));
+	it('simpleMapExpr', () => assertValueType('$a ! ( //b)', ValueType.MAP));
+});
