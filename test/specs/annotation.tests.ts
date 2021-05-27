@@ -69,9 +69,15 @@ describe('Annotating cast expressions', () => {
 		assertValueType('$x cast as xs:integer', ValueType.XSINTEGER));
 });
 
-describe('Annotate quantifiedExpr', () => {
-	it('quantifiedExpr', () =>
-		assertValueType('every $x in true() satisfies $x', ValueType.XSBOOLEAN));
+describe('Annotate Array', () => {
+	it('annotate simple square array', () => assertValueType('[3, 5, 4]', ValueType.ARRAY));
+	it('annotate simple curly array', () =>
+		assertValueType('["hello", (3, 4, 5)]', ValueType.ARRAY));
+});
+
+describe('Annotate maps', () => {
+	it('mapConstructor', () => assertValueType('map{a:1, b:2}', ValueType.MAP));
+	it('simpleMapExpr', () => assertValueType('$a ! ( //b)', ValueType.MAP));
 });
 
 describe('Annotating ifThenElse expressions', () => {
@@ -80,7 +86,7 @@ describe('Annotating ifThenElse expressions', () => {
 	it('ifThenElse type is not known', () => assertValueType('if (3) then "hello" else 5', null));
 });
 
-describe('Annotate maps', () => {
-	it('mapConstructor', () => assertValueType('map{a:1, b:2}', ValueType.MAP));
-	it('simpleMapExpr', () => assertValueType('$a ! ( //b)', ValueType.MAP));
+describe('Annotate quantifiedExpr', () => {
+	it('quantifiedExpr', () =>
+		assertValueType('every $x in true() satisfies $x', ValueType.XSBOOLEAN));
 });
