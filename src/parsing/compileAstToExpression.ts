@@ -663,6 +663,7 @@ function functionCall(
 }
 
 function arrowExpr(ast: IAST, compilationOptions: CompilationOptions) {
+	const typeNode = astHelper.followPath(ast, ['type']);
 	const argExpr = astHelper.followPath(ast, ['argExpr', '*']);
 
 	// Each part an EQName, expression, or arguments passed to the previous part
@@ -686,14 +687,14 @@ function arrowExpr(ast: IAST, compilationOptions: CompilationOptions) {
 			parts[i][0] === 'EQName'
 				? new NamedFunctionRef(astHelper.getQName(parts[i]), args.length)
 				: compile(parts[i], disallowUpdating(compilationOptions));
-		args = [new FunctionCall(func, args)];
+		args = [new FunctionCall(func, args, typeNode ? (typeNode[1] as SequenceType) : undefined)];
 	}
 	return args[0];
 }
 
 function dynamicFunctionInvocationExpr(ast: IAST, compilationOptions: CompilationOptions) {
 	const functionItemContent = astHelper.followPath(ast, ['functionItem', '*']);
-
+	const retType: IAST = astHelper.followPath(ast, ['type']);
 	const argumentsAst = astHelper.getFirstChild(ast, 'arguments');
 	let args = [];
 	if (argumentsAst) {
@@ -703,7 +704,11 @@ function dynamicFunctionInvocationExpr(ast: IAST, compilationOptions: Compilatio
 		);
 	}
 
-	return new FunctionCall(compile(functionItemContent, compilationOptions), args);
+	return new FunctionCall(
+		compile(functionItemContent, compilationOptions),
+		args,
+		retType ? (retType[1] as SequenceType) : undefined
+	);
 }
 
 function namedFunctionRef(ast: IAST, _compilationOptions: CompilationOptions) {
