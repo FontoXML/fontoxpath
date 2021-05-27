@@ -3,7 +3,7 @@ import astHelper, { IAST } from '../parsing/astHelper';
 
 /**
  * Inserting the array type of multiplicity exactly one to the ast;
- * as array return type of the array constructor is array.
+ * as the return type of the array constructor is array.
  *
  * @param ast the AST to be annotated.
  * @returns the inferred SequenceType
