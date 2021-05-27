@@ -69,3 +69,8 @@ describe('Annotate quantifiedExpr', () => {
 	it('quantifiedExpr', () =>
 		assertValueType('every $x in true() satisfies $x', ValueType.XSBOOLEAN));
 });
+
+describe('Annotate maps', () => {
+	it('mapConstructor', () => assertValueType('map{a:1, b:2}', ValueType.MAP));
+	it('simpleMapExpr', () => assertValueType('$a ! ( //b)', ValueType.MAP));
+});
