@@ -2,7 +2,6 @@ import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/da
 import astHelper, { IAST } from '../parsing/astHelper';
 
 /**
- *
  * Annotate the ast by inserting boolean sequence type of exactly one multiplicity.
  * Quantified Expression evaluates if a statement satisfies the quantifier;
  * therefore its value is a boolean.
