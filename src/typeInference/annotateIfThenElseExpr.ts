@@ -1,12 +1,17 @@
 import { SequenceType } from '../expressions/dataTypes/Value';
-import { IAST } from '../parsing/astHelper';
+import astHelper, { IAST } from '../parsing/astHelper';
 
 export function annotateIfThenElseExpr(
 	ast: IAST,
-	ifClause: SequenceType,
 	elseClause: SequenceType,
 	thenClause: SequenceType
 ): SequenceType {
-	if (elseClause === thenClause) return elseClause;
-	else return undefined;
+	if (!elseClause || !thenClause) {
+		return undefined;
+	}
+	if (elseClause.type === thenClause.type && elseClause.mult === thenClause.mult) {
+		astHelper.insertAttribute(ast, 'type', elseClause);
+		return elseClause;
+	}
+	return undefined;
 }
