@@ -1,6 +1,7 @@
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import StaticContext from '../expressions/StaticContext';
 import astHelper, { IAST } from '../parsing/astHelper';
+import { annotateArrayConstructor } from './annotateArrayConstructor';
 import { annotateArrowExpr } from './annotateArrowExpr';
 import { annotateBinOp } from './annotateBinaryOperator';
 import { annotateCastableOperator, annotateCastOperator } from './annotateCastOperators';
@@ -14,6 +15,7 @@ import { annotateDynamicFunctionInvocationExpr } from './annotateDynamicFunction
 import { annotateFunctionCall } from './annotateFunctionCall';
 import { annotateInstanceOfExpr } from './annotateInstanceOfExpr';
 import { annotateLogicalOperator } from './annotateLogicalOperator';
+import { annotateMapConstructor } from './annotateMapConstructor';
 import { annotatePathExpr } from './annotatePathExpr';
 import { annotateRangeSequenceOperator } from './annotateRangeSequenceOperator';
 import { annotateSequenceOperator } from './annotateSequenceOperator';
@@ -228,6 +230,27 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 			return annotateCastOperator(ast);
 		case 'castableExpr':
 			return annotateCastableOperator(ast);
+
+		// Maps
+		case 'mapConstructor':
+			astHelper.getChildren(ast, 'mapConstructorEntry').map((keyValuePair) => ({
+				key: annotate(
+					astHelper.followPath(keyValuePair, ['mapKeyExpr', '*']),
+					staticContext
+				),
+				value: annotate(
+					astHelper.followPath(keyValuePair, ['mapValueExpr', '*']),
+					staticContext
+				),
+			}));
+			return annotateMapConstructor(ast);
+
+		// Arrays
+		case 'arrayConstructor':
+			astHelper
+				.getChildren(astHelper.getFirstChild(ast, '*'), 'arrayElem')
+				.map((arrayElem) => annotate(arrayElem, staticContext));
+			return annotateArrayConstructor(ast);
 
 		// TypeSwitch
 		case 'typeSwitchExpr':
