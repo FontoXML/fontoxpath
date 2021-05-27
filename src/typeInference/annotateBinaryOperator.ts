@@ -1,4 +1,4 @@
-import { SequenceType, sequenceTypeToString } from '../expressions/dataTypes/Value';
+import { SequenceType, sequenceTypeToString, ValueType } from '../expressions/dataTypes/Value';
 import {
 	generateBinaryOperatorType,
 	getBinaryPrefabOperator,
@@ -27,6 +27,9 @@ export function annotateBinOp(
 	if (!left || !right) {
 		return undefined;
 	}
+
+	// TODO: Fix this hack (pathExpr returns a node in 1 case, which cannot be added to an integer)
+	if (left.type === ValueType.NODE || right.type === ValueType.NODE) return undefined;
 
 	const funcData = generateBinaryOperatorType(operator, left.type, right.type);
 

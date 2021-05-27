@@ -138,7 +138,8 @@ function compile(ast: IAST, compilationOptions: CompilationOptions): Expression 
 		case 'pathExpr':
 			return pathExpr(ast, compilationOptions);
 		case 'contextItemExpr':
-			return new ContextItemExpression();
+			const typeNode = astHelper.followPath(ast, ['type']);
+			return new ContextItemExpression(typeNode ? (typeNode[1] as SequenceType) : undefined);
 
 		// Functions
 		case 'functionCallExpr':
@@ -193,7 +194,11 @@ function compile(ast: IAST, compilationOptions: CompilationOptions): Expression 
 			return arrayConstructor(ast, compilationOptions);
 
 		case 'unaryLookup':
-			return new UnaryLookup(compileLookup(ast, compilationOptions));
+			const returnType = astHelper.followPath(ast, ['type']);
+			return new UnaryLookup(
+				compileLookup(ast, compilationOptions),
+				returnType ? (returnType[1] as SequenceType) : undefined
+			);
 
 		case 'typeswitchExpr':
 			return typeswitchExpr(ast, compilationOptions);
@@ -287,6 +292,7 @@ function stackTrace(ast: IAST, compilationOptions: CompilationOptions) {
 }
 
 function arrayConstructor(ast: IAST, compilationOptions: CompilationOptions) {
+	const typeNode = astHelper.followPath(ast, ['type']);
 	const arrConstructor = astHelper.getFirstChild(ast, '*');
 	const members = astHelper
 		.getChildren(arrConstructor, 'arrayElem')
@@ -295,15 +301,22 @@ function arrayConstructor(ast: IAST, compilationOptions: CompilationOptions) {
 		);
 	switch (arrConstructor[0]) {
 		case 'curlyArray':
-			return new CurlyArrayConstructor(members);
+			return new CurlyArrayConstructor(
+				members,
+				typeNode ? (typeNode[1] as SequenceType) : undefined
+			);
 		case 'squareArray':
-			return new SquareArrayConstructor(members);
+			return new SquareArrayConstructor(
+				members,
+				typeNode ? (typeNode[1] as SequenceType) : undefined
+			);
 		default:
 			throw new Error('Unrecognized arrayType: ' + arrConstructor[0]);
 	}
 }
 
 function mapConstructor(ast: IAST, compilationOptions: CompilationOptions) {
+	const typeNode = astHelper.followPath(ast, ['type']);
 	return new MapConstructor(
 		astHelper.getChildren(ast, 'mapConstructorEntry').map((keyValuePair) => ({
 			key: compile(
@@ -314,7 +327,8 @@ function mapConstructor(ast: IAST, compilationOptions: CompilationOptions) {
 				astHelper.followPath(keyValuePair, ['mapValueExpr', '*']),
 				disallowUpdating(compilationOptions)
 			),
-		}))
+		})),
+		typeNode ? (typeNode[1] as SequenceType) : undefined
 	);
 }
 
@@ -380,22 +394,13 @@ function binaryOperator(ast: IAST, compilationOptions: CompilationOptions) {
 		astHelper.followPath(ast, ['secondOperand', '*']),
 		'type'
 	) as SequenceType;
-	let firstType;
-	let secondType;
-	let evaluateFunction;
-	if (first && second) {
-		firstType = first.type;
-		secondType = second.type;
-		evaluateFunction = generateBinaryOperatorFunction(kind, firstType, secondType);
+
+	let evaluateFunction: BinaryEvaluationFunction;
+	if (first && second && astHelper.getAttribute(ast, 'type')) {
+		evaluateFunction = generateBinaryOperatorFunction(kind, first.type, second.type);
 	}
 
-	return new BinaryOperator(
-		kind,
-		a,
-		b,
-		attributeType as SequenceType,
-		evaluateFunction as BinaryEvaluationFunction
-	);
+	return new BinaryOperator(kind, a, b, attributeType as SequenceType, evaluateFunction);
 }
 
 function compileLookup(ast: IAST, compilationOptions: CompilationOptions): '*' | Expression {
@@ -455,6 +460,7 @@ function compare(ast: IAST, compilationOptions: CompilationOptions) {
 }
 
 function IfThenElseExpr(ast: IAST, compilationOptions: CompilationOptions) {
+	const retType = astHelper.getAttribute(ast, 'type');
 	return new IfExpression(
 		compile(
 			astHelper.getFirstChild(astHelper.getFirstChild(ast, 'ifClause'), '*'),
@@ -467,7 +473,8 @@ function IfThenElseExpr(ast: IAST, compilationOptions: CompilationOptions) {
 		compile(
 			astHelper.getFirstChild(astHelper.getFirstChild(ast, 'elseClause'), '*'),
 			compilationOptions
-		) as PossiblyUpdatingExpression
+		) as PossiblyUpdatingExpression,
+		retType ? (retType[1] as SequenceType) : undefined
 	);
 }
 
@@ -649,7 +656,11 @@ function functionCall(
 	const returnType = astHelper.followPath(ast, ['type']);
 
 	return new FunctionCall(
-		new NamedFunctionRef(astHelper.getQName(functionName), functionArguments.length),
+		new NamedFunctionRef(
+			astHelper.getQName(functionName),
+			functionArguments.length,
+			returnType ? (returnType[1] as SequenceType) : undefined
+		),
 		functionArguments.map((arg) =>
 			arg[0] === 'argumentPlaceholder' ? null : compile(arg, compilationOptions)
 		),
@@ -658,8 +669,8 @@ function functionCall(
 }
 
 function arrowExpr(ast: IAST, compilationOptions: CompilationOptions) {
+	const typeNode = astHelper.followPath(ast, ['type']);
 	const argExpr = astHelper.followPath(ast, ['argExpr', '*']);
-
 	// Each part an EQName, expression, or arguments passed to the previous part
 	const parts = astHelper.getChildren(ast, '*').slice(1);
 
@@ -679,16 +690,20 @@ function arrowExpr(ast: IAST, compilationOptions: CompilationOptions) {
 
 		const func =
 			parts[i][0] === 'EQName'
-				? new NamedFunctionRef(astHelper.getQName(parts[i]), args.length)
+				? new NamedFunctionRef(
+						astHelper.getQName(parts[i]),
+						args.length,
+						typeNode ? (typeNode[1] as SequenceType) : undefined
+				  )
 				: compile(parts[i], disallowUpdating(compilationOptions));
-		args = [new FunctionCall(func, args)];
+		args = [new FunctionCall(func, args, typeNode ? (typeNode[1] as SequenceType) : undefined)];
 	}
 	return args[0];
 }
 
 function dynamicFunctionInvocationExpr(ast: IAST, compilationOptions: CompilationOptions) {
 	const functionItemContent = astHelper.followPath(ast, ['functionItem', '*']);
-
+	const retType: IAST = astHelper.followPath(ast, ['type']);
 	const argumentsAst = astHelper.getFirstChild(ast, 'arguments');
 	let args = [];
 	if (argumentsAst) {
@@ -698,15 +713,24 @@ function dynamicFunctionInvocationExpr(ast: IAST, compilationOptions: Compilatio
 		);
 	}
 
-	return new FunctionCall(compile(functionItemContent, compilationOptions), args);
+	return new FunctionCall(
+		compile(functionItemContent, compilationOptions),
+		args,
+		retType ? (retType[1] as SequenceType) : undefined
+	);
 }
 
 function namedFunctionRef(ast: IAST, _compilationOptions: CompilationOptions) {
 	const functionName = astHelper.getFirstChild(ast, 'functionName');
+	const typeNode = astHelper.followPath(ast, ['type']);
 	const arity = astHelper.getTextContent(
 		astHelper.followPath(ast, ['integerConstantExpr', 'value'])
 	);
-	return new NamedFunctionRef(astHelper.getQName(functionName), parseInt(arity, 10));
+	return new NamedFunctionRef(
+		astHelper.getQName(functionName),
+		parseInt(arity, 10),
+		typeNode ? (typeNode[1] as SequenceType) : undefined
+	);
 }
 
 function inlineFunction(
@@ -741,11 +765,13 @@ function instanceOf(
 	const expression = compile(astHelper.followPath(ast, ['argExpr', '*']), compilationOptions);
 	const sequenceType = astHelper.followPath(ast, ['sequenceType', '*']);
 	const occurrence = astHelper.followPath(ast, ['sequenceType', 'occurrenceIndicator']);
+	const typeNode = astHelper.followPath(ast, ['type']);
 
 	return new InstanceOfOperator(
 		expression,
 		compile(sequenceType, disallowUpdating(compilationOptions)),
-		occurrence ? astHelper.getTextContent(occurrence) : ''
+		occurrence ? astHelper.getTextContent(occurrence) : '',
+		typeNode ? (typeNode[1] as SequenceType) : undefined
 	);
 }
 
@@ -790,6 +816,7 @@ function anyItemTest() {
 }
 
 function pathExpr(ast: IAST, compilationOptions: CompilationOptions) {
+	const typeNode = astHelper.followPath(ast, ['type']);
 	const rawSteps = astHelper.getChildren(ast, 'stepExpr');
 	let hasAxisStep = false;
 	const steps = rawSteps.map((step) => {
@@ -892,6 +919,7 @@ function pathExpr(ast: IAST, compilationOptions: CompilationOptions) {
 			}
 		}
 
+		stepExpression.type = typeNode ? (typeNode[1] as SequenceType) : undefined;
 		return stepExpression;
 	});
 
@@ -968,6 +996,7 @@ function textTest(_ast: IAST, _compilationOptions: CompilationOptions) {
 }
 
 function quantified(ast: IAST, compilationOptions: CompilationOptions) {
+	const typeNode: IAST = astHelper.followPath(ast, ['type']);
 	const quantifier = astHelper.getTextContent(astHelper.getFirstChild(ast, 'quantifier'));
 	const predicateExpr = astHelper.followPath(ast, ['predicateExpr', '*']);
 	const quantifierInClauses = astHelper
@@ -984,7 +1013,8 @@ function quantified(ast: IAST, compilationOptions: CompilationOptions) {
 	return new QuantifiedExpression(
 		quantifier,
 		quantifierInClauses,
-		compile(predicateExpr, disallowUpdating(compilationOptions))
+		compile(predicateExpr, disallowUpdating(compilationOptions)),
+		typeNode ? (typeNode[1] as SequenceType) : undefined
 	);
 }
 
@@ -1004,11 +1034,16 @@ function sequence(ast: IAST, compilationOptions: CompilationOptions) {
 }
 
 function simpleMap(ast: IAST, compilationOptions: CompilationOptions) {
+	const typeNode = astHelper.followPath(ast, ['type']);
 	return astHelper.getChildren(ast, '*').reduce((lhs: Expression, rhs: IAST) => {
 		if (lhs === null) {
 			return compile(rhs, disallowUpdating(compilationOptions));
 		}
-		return new SimpleMapOperator(lhs, compile(rhs, disallowUpdating(compilationOptions)));
+		return new SimpleMapOperator(
+			lhs,
+			compile(rhs, disallowUpdating(compilationOptions)),
+			typeNode ? (typeNode[1] as SequenceType) : undefined
+		);
 	}, null);
 }
 
@@ -1025,7 +1060,8 @@ function stringConcatenateOp(ast: IAST, compilationOptions: CompilationOptions) 
 				namespaceURI: 'http://www.w3.org/2005/xpath-functions',
 				prefix: '',
 			},
-			args.length
+			args.length,
+			typeNode ? (typeNode[1] as SequenceType) : undefined
 		),
 		args.map((arg) => compile(arg, disallowUpdating(compilationOptions))),
 		typeNode ? (typeNode[1] as SequenceType) : undefined
@@ -1045,7 +1081,8 @@ function rangeSequenceExpr(ast: IAST, compilationOptions: CompilationOptions) {
 			namespaceURI: 'http://fontoxpath/operators',
 			prefix: '',
 		},
-		args.length
+		args.length,
+		typeNode ? (typeNode[1] as SequenceType) : undefined
 	);
 
 	return new FunctionCall(
@@ -1423,6 +1460,8 @@ function typeswitchExpr(ast: IAST, compilationOptions: CompilationOptions) {
 		throw new Error('XPST0003: Use of XQuery functionality is not allowed in XPath context');
 	}
 
+	const typeNode = astHelper.followPath(ast, ['type']);
+
 	const argExpr = compile(
 		astHelper.getFirstChild(astHelper.getFirstChild(ast, 'argExpr'), '*'),
 		compilationOptions
@@ -1471,7 +1510,12 @@ function typeswitchExpr(ast: IAST, compilationOptions: CompilationOptions) {
 		compilationOptions
 	) as PossiblyUpdatingExpression;
 
-	return new TypeSwitchExpression(argExpr, caseClauseExpressions, defaultExpression);
+	return new TypeSwitchExpression(
+		argExpr,
+		caseClauseExpressions,
+		defaultExpression,
+		typeNode ? (typeNode[1] as SequenceType) : undefined
+	);
 }
 
 export default function (xPathAst: IAST, compilationOptions: CompilationOptions): Expression {
