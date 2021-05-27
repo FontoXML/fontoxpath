@@ -25,13 +25,13 @@ export function annotateArrowExpr(
 	}
 
 	// Sometimes there is no prefix given, hence we need to check for that case and give an empty prefix
-	let functionName;
-	let functionPrefix;
+	let functionName: string;
+	let functionPrefix: string;
 	if (func.length === 3) {
-		functionName = func[2];
-		functionPrefix = func[1];
+		functionName = func[2] as string;
+		functionPrefix = func[1] as string;
 	} else {
-		functionName = func[1];
+		functionName = func[1] as string;
 		functionPrefix = '';
 	}
 
@@ -40,7 +40,7 @@ export function annotateArrowExpr(
 	// Lookup the namespace URI
 	const resolvedName = staticContext.resolveFunctionName(
 		{
-			localName: functionName as string,
+			localName: functionName,
 			prefix: functionPrefix['prefix'] as string,
 		},
 		functionArguments.length
