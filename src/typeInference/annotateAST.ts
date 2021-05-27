@@ -165,7 +165,20 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 		// Context Item
 		case 'contextItemExpr':
 			return annotateContextItemExpr(ast);
-
+		case 'ifThenElseExpr': {
+			const ifClause = annotate(
+				astHelper.getFirstChild(astHelper.getFirstChild(ast, 'ifClause'), '*'),
+				staticContext
+			);
+			const thenClause = annotate(
+				astHelper.getFirstChild(astHelper.getFirstChild(ast, 'thenClause'), '*'),
+				staticContext
+			);
+			const elseClause = annotate(
+				astHelper.getFirstChild(astHelper.getFirstChild(ast, 'elseClause'), '*'),
+				staticContext
+			);
+		}
 		case 'instanceOfExpr': {
 			annotate(astHelper.getFirstChild(ast, 'argExpr'), staticContext);
 			annotate(astHelper.getFirstChild(ast, 'sequenceType'), staticContext);
