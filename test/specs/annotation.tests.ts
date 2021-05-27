@@ -72,6 +72,7 @@ describe('Annotating cast expressions', () => {
 describe('Annotate quantifiedExpr', () => {
 	it('quantifiedExpr', () =>
 		assertValueType('every $x in true() satisfies $x', ValueType.XSBOOLEAN));
+});
 
 describe('Annotating ifThenElse expressions', () => {
 	it('ifThenElse type is known', () =>
