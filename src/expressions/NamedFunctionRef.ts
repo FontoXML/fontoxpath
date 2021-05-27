@@ -24,7 +24,7 @@ class NamedFunctionRef extends Expression {
 	constructor(
 		functionReference: { localName: string; namespaceURI: string | null; prefix: string },
 		arity: number,
-		type?: SequenceType
+		type: SequenceType
 	) {
 		super(
 			new Specificity({
