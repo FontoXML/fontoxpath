@@ -11,11 +11,7 @@ import PrecedingAxis from '../expressions/axes/PrecedingAxis';
 import PrecedingSiblingAxis from '../expressions/axes/PrecedingSiblingAxis';
 import SelfAxis from '../expressions/axes/SelfAxis';
 import IfExpression from '../expressions/conditional/IfExpression';
-import Value, {
-	SequenceMultiplicity,
-	SequenceType,
-	ValueType,
-} from '../expressions/dataTypes/Value';
+import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import QName from '../expressions/dataTypes/valueTypes/QName';
 import StackTraceGenerator, { SourceRange } from '../expressions/debug/StackTraceGenerator';
 import Expression, { RESULT_ORDERINGS } from '../expressions/Expression';
@@ -994,6 +990,7 @@ function textTest(_ast: IAST, _compilationOptions: CompilationOptions) {
 }
 
 function quantified(ast: IAST, compilationOptions: CompilationOptions) {
+	const typeNode: IAST = astHelper.followPath(ast, ['type']);
 	const quantifier = astHelper.getTextContent(astHelper.getFirstChild(ast, 'quantifier'));
 	const predicateExpr = astHelper.followPath(ast, ['predicateExpr', '*']);
 	const quantifierInClauses = astHelper
@@ -1010,7 +1007,8 @@ function quantified(ast: IAST, compilationOptions: CompilationOptions) {
 	return new QuantifiedExpression(
 		quantifier,
 		quantifierInClauses,
-		compile(predicateExpr, disallowUpdating(compilationOptions))
+		compile(predicateExpr, disallowUpdating(compilationOptions)),
+		typeNode ? (typeNode[1] as SequenceType) : undefined
 	);
 }
 
