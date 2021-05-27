@@ -1,6 +1,6 @@
 import ISequence from '../dataTypes/ISequence';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value from '../dataTypes/Value';
+import Value, { SequenceType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
@@ -15,23 +15,30 @@ class IfExpression extends PossiblyUpdatingExpression {
 	constructor(
 		testExpression: Expression,
 		thenExpression: PossiblyUpdatingExpression,
-		elseExpression: PossiblyUpdatingExpression
+		elseExpression: PossiblyUpdatingExpression,
+		type: SequenceType
 	) {
 		const specificity = testExpression.specificity
 			.add(thenExpression.specificity)
 			.add(elseExpression.specificity);
-		super(specificity, [testExpression, thenExpression, elseExpression], {
-			canBeStaticallyEvaluated:
-				testExpression.canBeStaticallyEvaluated &&
-				thenExpression.canBeStaticallyEvaluated &&
-				elseExpression.canBeStaticallyEvaluated,
-			peer: thenExpression.peer === elseExpression.peer && thenExpression.peer,
-			resultOrder:
-				thenExpression.expectedResultOrder === elseExpression.expectedResultOrder
-					? thenExpression.expectedResultOrder
-					: RESULT_ORDERINGS.UNSORTED,
-			subtree: thenExpression.subtree === elseExpression.subtree && thenExpression.subtree,
-		});
+		super(
+			specificity,
+			[testExpression, thenExpression, elseExpression],
+			{
+				canBeStaticallyEvaluated:
+					testExpression.canBeStaticallyEvaluated &&
+					thenExpression.canBeStaticallyEvaluated &&
+					elseExpression.canBeStaticallyEvaluated,
+				peer: thenExpression.peer === elseExpression.peer && thenExpression.peer,
+				resultOrder:
+					thenExpression.expectedResultOrder === elseExpression.expectedResultOrder
+						? thenExpression.expectedResultOrder
+						: RESULT_ORDERINGS.UNSORTED,
+				subtree:
+					thenExpression.subtree === elseExpression.subtree && thenExpression.subtree,
+			},
+			type
+		);
 
 		this._testExpression = testExpression;
 	}
