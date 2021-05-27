@@ -654,7 +654,11 @@ function functionCall(
 	const returnType = astHelper.followPath(ast, ['type']);
 
 	return new FunctionCall(
-		new NamedFunctionRef(astHelper.getQName(functionName), functionArguments.length),
+		new NamedFunctionRef(
+			astHelper.getQName(functionName),
+			functionArguments.length,
+			returnType ? (returnType[1] as SequenceType) : undefined
+		),
 		functionArguments.map((arg) =>
 			arg[0] === 'argumentPlaceholder' ? null : compile(arg, compilationOptions)
 		),
@@ -665,7 +669,6 @@ function functionCall(
 function arrowExpr(ast: IAST, compilationOptions: CompilationOptions) {
 	const typeNode = astHelper.followPath(ast, ['type']);
 	const argExpr = astHelper.followPath(ast, ['argExpr', '*']);
-
 	// Each part an EQName, expression, or arguments passed to the previous part
 	const parts = astHelper.getChildren(ast, '*').slice(1);
 
@@ -685,7 +688,11 @@ function arrowExpr(ast: IAST, compilationOptions: CompilationOptions) {
 
 		const func =
 			parts[i][0] === 'EQName'
-				? new NamedFunctionRef(astHelper.getQName(parts[i]), args.length)
+				? new NamedFunctionRef(
+						astHelper.getQName(parts[i]),
+						args.length,
+						typeNode ? (typeNode[1] as SequenceType) : undefined
+				  )
 				: compile(parts[i], disallowUpdating(compilationOptions));
 		args = [new FunctionCall(func, args, typeNode ? (typeNode[1] as SequenceType) : undefined)];
 	}
@@ -713,10 +720,15 @@ function dynamicFunctionInvocationExpr(ast: IAST, compilationOptions: Compilatio
 
 function namedFunctionRef(ast: IAST, _compilationOptions: CompilationOptions) {
 	const functionName = astHelper.getFirstChild(ast, 'functionName');
+	const typeNode = astHelper.followPath(ast, ['type']);
 	const arity = astHelper.getTextContent(
 		astHelper.followPath(ast, ['integerConstantExpr', 'value'])
 	);
-	return new NamedFunctionRef(astHelper.getQName(functionName), parseInt(arity, 10));
+	return new NamedFunctionRef(
+		astHelper.getQName(functionName),
+		parseInt(arity, 10),
+		typeNode ? (typeNode[1] as SequenceType) : undefined
+	);
 }
 
 function inlineFunction(
@@ -1039,7 +1051,8 @@ function stringConcatenateOp(ast: IAST, compilationOptions: CompilationOptions) 
 				namespaceURI: 'http://www.w3.org/2005/xpath-functions',
 				prefix: '',
 			},
-			args.length
+			args.length,
+			typeNode ? (typeNode[1] as SequenceType) : undefined
 		),
 		args.map((arg) => compile(arg, disallowUpdating(compilationOptions))),
 		typeNode ? (typeNode[1] as SequenceType) : undefined
@@ -1059,7 +1072,8 @@ function rangeSequenceExpr(ast: IAST, compilationOptions: CompilationOptions) {
 			namespaceURI: 'http://fontoxpath/operators',
 			prefix: '',
 		},
-		args.length
+		args.length,
+		typeNode ? (typeNode[1] as SequenceType) : undefined
 	);
 
 	return new FunctionCall(

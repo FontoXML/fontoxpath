@@ -16,6 +16,7 @@ import { annotateFunctionCall } from './annotateFunctionCall';
 import { annotateInstanceOfExpr } from './annotateInstanceOfExpr';
 import { annotateLogicalOperator } from './annotateLogicalOperator';
 import { annotateMapConstructor } from './annotateMapConstructor';
+import { annotateNamedFunctionRef } from './annotateNamedFunctionRef';
 import { annotatePathExpr } from './annotatePathExpr';
 import { annotateRangeSequenceOperator } from './annotateRangeSequenceOperator';
 import { annotateSequenceOperator } from './annotateSequenceOperator';
@@ -221,6 +222,8 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 				staticContext
 			);
 			return annotateDynamicFunctionInvocationExpr(ast, staticContext, functionItem, args);
+		case 'namedFunctionRef':
+			return annotateNamedFunctionRef(ast, staticContext);
 		case 'inlineFunctionExpr':
 			annotate(astHelper.getFirstChild(ast, 'functionBody')[1] as IAST, staticContext);
 			return { type: ValueType.FUNCTION, mult: SequenceMultiplicity.EXACTLY_ONE };
