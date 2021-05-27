@@ -3,7 +3,7 @@ import StaticContext from '../expressions/StaticContext';
 import { IAST } from '../parsing/astHelper';
 
 /**
- * At this moment there is no way to infre the return type of this function as
+ * At this moment there is no way to infer the return type of this function as
  * this would require the query to be executed. Therefore, the it would return undefined.
  *
  * @param ast The ast we need to check the type of.

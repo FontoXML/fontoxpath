@@ -20,7 +20,7 @@ class InstanceOfOperator extends Expression {
 			expression.specificity,
 			[expression],
 			{ canBeStaticallyEvaluated: false },
-			undefined,
+			false,
 			type
 		);
 
