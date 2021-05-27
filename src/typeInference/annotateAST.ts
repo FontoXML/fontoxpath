@@ -269,10 +269,7 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 			annotateTypeSwitchOperator(ast);
 
 		case 'quantifiedExpr':
-			// Variable amount of children from this AST node, solution: looping through them
-			for (let iterationCounter = 1; iterationCounter < ast.length; iterationCounter++) {
-				annotate(ast[iterationCounter] as IAST, staticContext);
-			}
+			astHelper.getChildren(ast, '*').map((a) => annotate(a, staticContext));
 			return annotateQuantifiedExpr(ast);
 
 		default:

@@ -64,3 +64,8 @@ describe('Annotating cast expressions', () => {
 	it('unknown child cast expression', () =>
 		assertValueType('$x cast as xs:integer', ValueType.XSINTEGER));
 });
+
+describe('Annotate quantifiedExpr', () => {
+	it('quantifiedExpr', () =>
+		assertValueType('every $x in true() satisfies $x', ValueType.XSBOOLEAN));
+});
