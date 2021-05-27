@@ -1030,11 +1030,16 @@ function sequence(ast: IAST, compilationOptions: CompilationOptions) {
 }
 
 function simpleMap(ast: IAST, compilationOptions: CompilationOptions) {
+	const typeNode = astHelper.followPath(ast, ['type']);
 	return astHelper.getChildren(ast, '*').reduce((lhs: Expression, rhs: IAST) => {
 		if (lhs === null) {
 			return compile(rhs, disallowUpdating(compilationOptions));
 		}
-		return new SimpleMapOperator(lhs, compile(rhs, disallowUpdating(compilationOptions)));
+		return new SimpleMapOperator(
+			lhs,
+			compile(rhs, disallowUpdating(compilationOptions)),
+			typeNode ? (typeNode[1] as SequenceType) : undefined
+		);
 	}, null);
 }
 
