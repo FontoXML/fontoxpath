@@ -21,6 +21,7 @@ import { annotatePathExpr } from './annotatePathExpr';
 import { annotateRangeSequenceOperator } from './annotateRangeSequenceOperator';
 import { annotateSequenceOperator } from './annotateSequenceOperator';
 import { annotateSetOperator } from './annotateSetOperators';
+import { annotateSimpleMapExpr } from './annotateSimpleMapExpr';
 import { annotateStringConcatenateOperator } from './annotateStringConcatenateOperator';
 import { annotateTypeSwitchOperator } from './annotateTypeSwitchOperator';
 import { annotateUnaryMinus, annotateUnaryPlus } from './annotateUnaryOperator';
@@ -235,6 +236,9 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 			return annotateCastableOperator(ast);
 
 		// Maps
+		case 'simpleMapExpr':
+			astHelper.getChildren(ast, 'pathExpr').map((c) => annotate(c, staticContext));
+			return annotateSimpleMapExpr(ast);
 		case 'mapConstructor':
 			astHelper.getChildren(ast, 'mapConstructorEntry').map((keyValuePair) => ({
 				key: annotate(
