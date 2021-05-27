@@ -188,7 +188,7 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 		case 'instanceOfExpr': {
 			annotate(astHelper.getFirstChild(ast, 'argExpr'), staticContext);
 			annotate(astHelper.getFirstChild(ast, 'sequenceType'), staticContext);
-			annotateInstanceOfExpr(ast);
+			return annotateInstanceOfExpr(ast);
 		}
 
 		// Constant expressions
@@ -291,7 +291,7 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 				astHelper.getFirstChild(ast, 'typeSwitchExprDefaultClause') as IAST,
 				staticContext
 			);
-			annotateTypeSwitchOperator(ast);
+			return annotateTypeSwitchOperator(ast);
 
 		case 'quantifiedExpr':
 			astHelper.getChildren(ast, '*').map((a) => annotate(a, staticContext));
