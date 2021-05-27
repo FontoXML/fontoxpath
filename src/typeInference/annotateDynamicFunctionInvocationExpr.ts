@@ -1,6 +1,6 @@
-import { SequenceType } from '../expressions/dataTypes/Value';
+import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import StaticContext from '../expressions/StaticContext';
-import { IAST } from '../parsing/astHelper';
+import astHelper, { IAST } from '../parsing/astHelper';
 
 /**
  * At this moment there is no way to infer the return type of this function as
@@ -18,5 +18,13 @@ export function annotateDynamicFunctionInvocationExpr(
 	functionItem: SequenceType,
 	args: SequenceType
 ): SequenceType {
-	return undefined;
+	// return undefined;
+	const seqType = {
+		type: ValueType.ITEM,
+		mult: SequenceMultiplicity.ZERO_OR_MORE,
+	};
+
+	astHelper.insertAttribute(ast, 'type', seqType);
+
+	return seqType;
 }
