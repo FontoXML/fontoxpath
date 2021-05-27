@@ -71,8 +71,13 @@ describe('Annotating cast expressions', () => {
 
 describe('Annotate Array', () => {
 	it('annotate simple square array', () => assertValueType('[3, 5, 4]', ValueType.ARRAY));
-	it('annotate simple curly array', () =>
-		assertValueType('["hello", (3, 4, 5)]', ValueType.ARRAY));
+	it('annotate complex array', () => assertValueType('["hello", (3, 4, 5)]', ValueType.ARRAY));
+});
+
+describe('annotate Sequence', () => {
+	it('annotate simple sequence', () => assertValueType('(4, 3, hello)', ValueType.ITEM));
+	it('annotate complex sequence', () =>
+		assertValueType('(4, 3, hello, (43, (256, "help")))', ValueType.ITEM));
 });
 
 describe('Annotate maps', () => {
