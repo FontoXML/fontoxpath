@@ -292,6 +292,7 @@ function stackTrace(ast: IAST, compilationOptions: CompilationOptions) {
 }
 
 function arrayConstructor(ast: IAST, compilationOptions: CompilationOptions) {
+	const typeNode = astHelper.followPath(ast, ['type']);
 	const arrConstructor = astHelper.getFirstChild(ast, '*');
 	const members = astHelper
 		.getChildren(arrConstructor, 'arrayElem')
@@ -300,15 +301,22 @@ function arrayConstructor(ast: IAST, compilationOptions: CompilationOptions) {
 		);
 	switch (arrConstructor[0]) {
 		case 'curlyArray':
-			return new CurlyArrayConstructor(members);
+			return new CurlyArrayConstructor(
+				members,
+				typeNode ? (typeNode[1] as SequenceType) : undefined
+			);
 		case 'squareArray':
-			return new SquareArrayConstructor(members);
+			return new SquareArrayConstructor(
+				members,
+				typeNode ? (typeNode[1] as SequenceType) : undefined
+			);
 		default:
 			throw new Error('Unrecognized arrayType: ' + arrConstructor[0]);
 	}
 }
 
 function mapConstructor(ast: IAST, compilationOptions: CompilationOptions) {
+	const typeNode = astHelper.followPath(ast, ['type']);
 	return new MapConstructor(
 		astHelper.getChildren(ast, 'mapConstructorEntry').map((keyValuePair) => ({
 			key: compile(
@@ -319,7 +327,8 @@ function mapConstructor(ast: IAST, compilationOptions: CompilationOptions) {
 				astHelper.followPath(keyValuePair, ['mapValueExpr', '*']),
 				disallowUpdating(compilationOptions)
 			),
-		}))
+		})),
+		typeNode ? (typeNode[1] as SequenceType) : undefined
 	);
 }
 
@@ -658,8 +667,8 @@ function functionCall(
 }
 
 function arrowExpr(ast: IAST, compilationOptions: CompilationOptions) {
-	const argExpr = astHelper.followPath(ast, ['argExpr', '*']);
 	const typeNode = astHelper.followPath(ast, ['type']);
+	const argExpr = astHelper.followPath(ast, ['argExpr', '*']);
 	// Each part an EQName, expression, or arguments passed to the previous part
 	const parts = astHelper.getChildren(ast, '*').slice(1);
 
@@ -685,14 +694,14 @@ function arrowExpr(ast: IAST, compilationOptions: CompilationOptions) {
 						typeNode ? (typeNode[1] as SequenceType) : undefined
 				  )
 				: compile(parts[i], disallowUpdating(compilationOptions));
-		args = [new FunctionCall(func, args)];
+		args = [new FunctionCall(func, args, typeNode ? (typeNode[1] as SequenceType) : undefined)];
 	}
 	return args[0];
 }
 
 function dynamicFunctionInvocationExpr(ast: IAST, compilationOptions: CompilationOptions) {
 	const functionItemContent = astHelper.followPath(ast, ['functionItem', '*']);
-
+	const retType: IAST = astHelper.followPath(ast, ['type']);
 	const argumentsAst = astHelper.getFirstChild(ast, 'arguments');
 	let args = [];
 	if (argumentsAst) {
@@ -702,7 +711,11 @@ function dynamicFunctionInvocationExpr(ast: IAST, compilationOptions: Compilatio
 		);
 	}
 
-	return new FunctionCall(compile(functionItemContent, compilationOptions), args);
+	return new FunctionCall(
+		compile(functionItemContent, compilationOptions),
+		args,
+		retType ? (retType[1] as SequenceType) : undefined
+	);
 }
 
 function namedFunctionRef(ast: IAST, _compilationOptions: CompilationOptions) {

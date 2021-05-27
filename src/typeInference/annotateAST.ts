@@ -1,6 +1,8 @@
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import StaticContext from '../expressions/StaticContext';
 import astHelper, { IAST } from '../parsing/astHelper';
+import { annotateArrayConstructor } from './annotateArrayConstructor';
+import { annotateArrowExpr } from './annotateArrowExpr';
 import { annotateBinOp } from './annotateBinaryOperator';
 import { annotateCastableOperator, annotateCastOperator } from './annotateCastOperators';
 import {
@@ -9,9 +11,11 @@ import {
 	annotateValueCompare,
 } from './annotateCompareOperator';
 import { annotateContextItemExpr } from './annotateContextItemExpr';
+import { annotateDynamicFunctionInvocationExpr } from './annotateDynamicFunctionInvocationExpr';
 import { annotateFunctionCall } from './annotateFunctionCall';
 import { annotateInstanceOfExpr } from './annotateInstanceOfExpr';
 import { annotateLogicalOperator } from './annotateLogicalOperator';
+import { annotateMapConstructor } from './annotateMapConstructor';
 import { annotateNamedFunctionRef } from './annotateNamedFunctionRef';
 import { annotatePathExpr } from './annotatePathExpr';
 import { annotateRangeSequenceOperator } from './annotateRangeSequenceOperator';
@@ -206,6 +210,18 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 		// Functions
 		case 'functionCallExpr':
 			return annotateFunctionCall(ast, staticContext);
+		case 'arrowExpr':
+			return annotateArrowExpr(ast, staticContext);
+		case 'dynamicFunctionInvocationExpr':
+			const functionItem: SequenceType = annotate(
+				astHelper.followPath(ast, ['functionItem', '*']),
+				staticContext
+			);
+			const args: SequenceType = annotate(
+				astHelper.getFirstChild(ast, 'arguments'),
+				staticContext
+			);
+			return annotateDynamicFunctionInvocationExpr(ast, staticContext, functionItem, args);
 		case 'namedFunctionRef':
 			return annotateNamedFunctionRef(ast, staticContext);
 		case 'inlineFunctionExpr':
@@ -217,6 +233,27 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 			return annotateCastOperator(ast);
 		case 'castableExpr':
 			return annotateCastableOperator(ast);
+
+		// Maps
+		case 'mapConstructor':
+			astHelper.getChildren(ast, 'mapConstructorEntry').map((keyValuePair) => ({
+				key: annotate(
+					astHelper.followPath(keyValuePair, ['mapKeyExpr', '*']),
+					staticContext
+				),
+				value: annotate(
+					astHelper.followPath(keyValuePair, ['mapValueExpr', '*']),
+					staticContext
+				),
+			}));
+			return annotateMapConstructor(ast);
+
+		// Arrays
+		case 'arrayConstructor':
+			astHelper
+				.getChildren(astHelper.getFirstChild(ast, '*'), 'arrayElem')
+				.map((arrayElem) => annotate(arrayElem, staticContext));
+			return annotateArrayConstructor(ast);
 
 		// TypeSwitch
 		case 'typeSwitchExpr':
