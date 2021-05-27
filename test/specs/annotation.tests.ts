@@ -10,7 +10,11 @@ function assertValueType(expression: string, expectedType: ValueType) {
 
 	const queryBody = astHelper.followPath(ast, ['mainModule', 'queryBody']);
 	const resultType = astHelper.getAttribute(queryBody[1] as IAST, 'type') as SequenceType;
-	chai.assert.deepEqual(resultType.type, expectedType);
+	if (!resultType) {
+		chai.assert.isTrue(!expectedType);
+	} else {
+		chai.assert.deepEqual(resultType.type, expectedType);
+	}
 }
 
 describe('Annotating constants', () => {
@@ -63,6 +67,12 @@ describe('Annotating cast expressions', () => {
 	it('simple cast expression', () => assertValueType('5 cast as xs:double', ValueType.XSDOUBLE));
 	it('unknown child cast expression', () =>
 		assertValueType('$x cast as xs:integer', ValueType.XSINTEGER));
+});
+
+describe('Annotating ifThenElse expressions', () => {
+	it('ifThenElse type is known', () =>
+		assertValueType('if (3) then 3 else 5', ValueType.XSINTEGER));
+	it('ifThenElse type is not known', () => assertValueType('if (3) then "hello" else 5', null));
 });
 
 describe('Annotate maps', () => {

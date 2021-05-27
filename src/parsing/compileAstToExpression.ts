@@ -460,6 +460,7 @@ function compare(ast: IAST, compilationOptions: CompilationOptions) {
 }
 
 function IfThenElseExpr(ast: IAST, compilationOptions: CompilationOptions) {
+	const retType = astHelper.getAttribute(ast, 'type');
 	return new IfExpression(
 		compile(
 			astHelper.getFirstChild(astHelper.getFirstChild(ast, 'ifClause'), '*'),
@@ -472,7 +473,8 @@ function IfThenElseExpr(ast: IAST, compilationOptions: CompilationOptions) {
 		compile(
 			astHelper.getFirstChild(astHelper.getFirstChild(ast, 'elseClause'), '*'),
 			compilationOptions
-		) as PossiblyUpdatingExpression
+		) as PossiblyUpdatingExpression,
+		retType ? (retType[1] as SequenceType) : undefined
 	);
 }
 

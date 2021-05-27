@@ -13,6 +13,7 @@ import {
 import { annotateContextItemExpr } from './annotateContextItemExpr';
 import { annotateDynamicFunctionInvocationExpr } from './annotateDynamicFunctionInvocationExpr';
 import { annotateFunctionCall } from './annotateFunctionCall';
+import { annotateIfThenElseExpr } from './annotateIfThenElseExpr';
 import { annotateInstanceOfExpr } from './annotateInstanceOfExpr';
 import { annotateLogicalOperator } from './annotateLogicalOperator';
 import { annotateMapConstructor } from './annotateMapConstructor';
@@ -167,7 +168,21 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 		// Context Item
 		case 'contextItemExpr':
 			return annotateContextItemExpr(ast);
-
+		case 'ifThenElseExpr': {
+			const ifClause = annotate(
+				astHelper.getFirstChild(astHelper.getFirstChild(ast, 'ifClause'), '*'),
+				staticContext
+			);
+			const thenClause = annotate(
+				astHelper.getFirstChild(astHelper.getFirstChild(ast, 'thenClause'), '*'),
+				staticContext
+			);
+			const elseClause = annotate(
+				astHelper.getFirstChild(astHelper.getFirstChild(ast, 'elseClause'), '*'),
+				staticContext
+			);
+			return annotateIfThenElseExpr(ast, thenClause, elseClause);
+		}
 		case 'instanceOfExpr': {
 			annotate(astHelper.getFirstChild(ast, 'argExpr'), staticContext);
 			annotate(astHelper.getFirstChild(ast, 'sequenceType'), staticContext);
