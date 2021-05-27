@@ -17,10 +17,12 @@ import { annotateIfThenElseExpr } from './annotateIfThenElseExpr';
 import { annotateInstanceOfExpr } from './annotateInstanceOfExpr';
 import { annotateLogicalOperator } from './annotateLogicalOperator';
 import { annotateMapConstructor } from './annotateMapConstructor';
+import { annotateNamedFunctionRef } from './annotateNamedFunctionRef';
 import { annotatePathExpr } from './annotatePathExpr';
 import { annotateRangeSequenceOperator } from './annotateRangeSequenceOperator';
 import { annotateSequenceOperator } from './annotateSequenceOperator';
 import { annotateSetOperator } from './annotateSetOperators';
+import { annotateSimpleMapExpr } from './annotateSimpleMapExpr';
 import { annotateStringConcatenateOperator } from './annotateStringConcatenateOperator';
 import { annotateTypeSwitchOperator } from './annotateTypeSwitchOperator';
 import { annotateUnaryMinus, annotateUnaryPlus } from './annotateUnaryOperator';
@@ -236,6 +238,8 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 				staticContext
 			);
 			return annotateDynamicFunctionInvocationExpr(ast, staticContext, functionItem, args);
+		case 'namedFunctionRef':
+			return annotateNamedFunctionRef(ast, staticContext);
 		case 'inlineFunctionExpr':
 			annotate(astHelper.getFirstChild(ast, 'functionBody')[1] as IAST, staticContext);
 			return { type: ValueType.FUNCTION, mult: SequenceMultiplicity.EXACTLY_ONE };
@@ -247,6 +251,9 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 			return annotateCastableOperator(ast);
 
 		// Maps
+		case 'simpleMapExpr':
+			astHelper.getChildren(ast, 'pathExpr').map((c) => annotate(c, staticContext));
+			return annotateSimpleMapExpr(ast);
 		case 'mapConstructor':
 			astHelper.getChildren(ast, 'mapConstructorEntry').map((keyValuePair) => ({
 				key: annotate(

@@ -74,3 +74,8 @@ describe('Annotating ifThenElse expressions', () => {
 		assertValueType('if (3) then 3 else 5', ValueType.XSINTEGER));
 	it('ifThenElse type is not known', () => assertValueType('if (3) then "hello" else 5', null));
 });
+
+describe('Annotate maps', () => {
+	it('mapConstructor', () => assertValueType('map{a:1, b:2}', ValueType.MAP));
+	it('simpleMapExpr', () => assertValueType('$a ! ( //b)', ValueType.MAP));
+});
