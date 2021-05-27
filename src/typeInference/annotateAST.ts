@@ -1,6 +1,7 @@
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import StaticContext from '../expressions/StaticContext';
 import astHelper, { IAST } from '../parsing/astHelper';
+import { annotateArrowExpr } from './annotateArrowExpr';
 import { annotateBinOp } from './annotateBinaryOperator';
 import { annotateCastableOperator, annotateCastOperator } from './annotateCastOperators';
 import {
@@ -9,6 +10,7 @@ import {
 	annotateValueCompare,
 } from './annotateCompareOperator';
 import { annotateContextItemExpr } from './annotateContextItemExpr';
+import { annotateDynamicFunctionInvocationExpr } from './annotateDynamicFunctionInvocationExpr';
 import { annotateFunctionCall } from './annotateFunctionCall';
 import { annotateInstanceOfExpr } from './annotateInstanceOfExpr';
 import { annotateLogicalOperator } from './annotateLogicalOperator';
@@ -205,9 +207,22 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 		// Functions
 		case 'functionCallExpr':
 			return annotateFunctionCall(ast, staticContext);
+		case 'arrowExpr':
+			return annotateArrowExpr(ast, staticContext);
+		case 'dynamicFunctionInvocationExpr':
+			const functionItem: SequenceType = annotate(
+				astHelper.followPath(ast, ['functionItem', '*']),
+				staticContext
+			);
+			const args: SequenceType = annotate(
+				astHelper.getFirstChild(ast, 'arguments'),
+				staticContext
+			);
+			return annotateDynamicFunctionInvocationExpr(ast, staticContext, functionItem, args);
 		case 'inlineFunctionExpr':
 			annotate(astHelper.getFirstChild(ast, 'functionBody')[1] as IAST, staticContext);
 			return { type: ValueType.FUNCTION, mult: SequenceMultiplicity.EXACTLY_ONE };
+
 		// Casting
 		case 'castExpr':
 			return annotateCastOperator(ast);
