@@ -25,7 +25,7 @@ export default function registerXQueryModule(
 		debug: options['debug'],
 	});
 
-	annotateAst(parsedModule, { staticContext: undefined, totalNodes: [], totalAnnotated: [] });
+	annotateAst(parsedModule, { staticContext: undefined, totalNodes: 0, totalAnnotated: [] });
 
 	const libraryModule = astHelper.getFirstChild(parsedModule, 'libraryModule');
 	if (!libraryModule) {

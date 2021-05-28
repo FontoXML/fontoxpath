@@ -62,8 +62,8 @@ export default function staticallyCompileXPath(
 		if (compilationOptions.annotateAst) {
 			annotateAst(ast, {
 				staticContext: rootStaticContext,
+				totalNodes: 0,
 				totalAnnotated: [],
-				totalNodes: [],
 			});
 		}
 

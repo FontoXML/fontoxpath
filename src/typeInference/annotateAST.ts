@@ -31,7 +31,7 @@ import { annotateUnaryMinus, annotateUnaryPlus } from './annotateUnaryOperator';
 
 export type AnnotationContext = {
 	staticContext?: StaticContext;
-	totalNodes: number[];
+	totalNodes: number;
 	totalAnnotated: number[];
 };
 
@@ -44,6 +44,9 @@ export type AnnotationContext = {
  * @param context The static context used for function lookups
  */
 export default function annotateAst(ast: IAST, context: AnnotationContext) {
+	context.totalAnnotated.push(0);
+	context.totalNodes = 0;
+
 	annotate(ast, context);
 }
 
@@ -65,7 +68,7 @@ function annotate(ast: IAST, context: AnnotationContext): SequenceType | undefin
 
 	const astNodeName = ast[0];
 
-	// context.
+	context.totalNodes++;
 
 	// Switch on the current node name
 	switch (astNodeName) {
