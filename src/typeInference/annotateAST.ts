@@ -1,4 +1,4 @@
-import StaticContext from 'src/expressions/StaticContext';
+import StaticContext from '../expressions/StaticContext';
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { annotateArrayConstructor } from './annotateArrayConstructor';
@@ -43,26 +43,29 @@ export type AnnotationContext = {
  * @param ast The AST to annotate
  * @param context The static context used for function lookups
  */
-export default function annotateAst(ast: IAST, context: AnnotationContext) {
-	context.totalAnnotated.push(0);
-	context.totalNodes = 0;
-
+export default function annotateAst(ast: IAST, context: AnnotationContext): number {
 	for (let i = 0; i < 10; i++) {
+		context.totalAnnotated.push(0);
+		context.totalNodes = 0;
+
 		annotate(ast, context);
 
 		if (
-			context.totalAnnotated[context.totalAnnotated.length - 2] ===
-			context.totalAnnotated[context.totalAnnotated.length - 1]
+			(context.totalAnnotated.length > 1 &&
+				context.totalAnnotated[context.totalAnnotated.length - 2] ===
+					context.totalAnnotated[context.totalAnnotated.length - 1]) ||
+			context.totalAnnotated[context.totalAnnotated.length - 1] === context.totalNodes
 		) {
 			break;
 		}
 	}
 
-	console.error(
-		context.totalAnnotated.length +
-			' passes ' +
-			context.totalAnnotated[context.totalAnnotated.length - 1] / context.totalNodes
-	);
+	// console.error(
+	// 	context.totalAnnotated.length +
+	// 		' passes ' +
+	// 		context.totalAnnotated[context.totalAnnotated.length - 1] / context.totalNodes
+	// );
+	return context.totalAnnotated[context.totalAnnotated.length - 1] / context.totalNodes;
 }
 
 /**
@@ -242,9 +245,19 @@ function annotate(ast: IAST, context: AnnotationContext): SequenceType | undefin
 
 		// Functions
 		case 'functionCallExpr':
-			return annotateFunctionCall(ast, context);
+			const argumentTypes: SequenceType[] = (astHelper.getChildren(
+				ast,
+				'*'
+			)[1] as IAST[]).map((x) => annotate(x, context));
+
+			return annotateFunctionCall(ast, argumentTypes, context);
 		case 'arrowExpr':
-			return annotateArrowExpr(ast, context);
+			const functionCallExpr: SequenceType = annotate(
+				astHelper.getFirstChild(ast, 'argExpr')[1] as IAST,
+				context
+			);
+
+			return annotateArrowExpr(ast, functionCallExpr, context);
 		case 'dynamicFunctionInvocationExpr':
 			const functionItem: SequenceType = annotate(
 				astHelper.followPath(ast, ['functionItem', '*']),
@@ -308,6 +321,7 @@ function annotate(ast: IAST, context: AnnotationContext): SequenceType | undefin
 			for (let i = 1; i < ast.length; i++) {
 				annotate(ast[i] as IAST, context);
 			}
+			context.totalNodes--;
 			return undefined;
 	}
 }

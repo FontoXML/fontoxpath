@@ -13,13 +13,22 @@ import { AnnotationContext } from './annotateAST';
  */
 export function annotateFunctionCall(
 	ast: IAST,
+	argumentTypes: SequenceType[],
 	context: AnnotationContext
 ): SequenceType | undefined {
 	// We need the context to lookup the function information
 	if (!context.staticContext) return undefined;
 
-	const functionName = astHelper.getFirstChild(ast, 'functionName')[2];
-	const functionPrefix = astHelper.getFirstChild(ast, 'functionName')[1];
+	const func = astHelper.getFirstChild(ast, 'functionName');
+	let functionName: string;
+	let functionPrefix: string;
+	if (func.length === 3) {
+		functionName = func[2] as string;
+		functionPrefix = func[1] as string;
+	} else {
+		functionName = func[1] as string;
+		functionPrefix = '';
+	}
 	const functionArguments = astHelper.getChildren(astHelper.getFirstChild(ast, 'arguments'), '*');
 
 	// Lookup the namespace URI

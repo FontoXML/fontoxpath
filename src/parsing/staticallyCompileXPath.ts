@@ -85,6 +85,18 @@ export default function staticallyCompileXPath(
 			processProlog(prolog, rootStaticContext);
 		}
 
+		if (compilationOptions.annotateAst) {
+			if (
+				annotateAst(ast, {
+					staticContext: rootStaticContext,
+					totalNodes: 0,
+					totalAnnotated: [],
+				}) < 0.5
+			) {
+				console.error(xpathString);
+			}
+		}
+
 		expression = compileAstToExpression(queryBodyContents, compilationOptions);
 	}
 

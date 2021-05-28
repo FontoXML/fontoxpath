@@ -11,7 +11,11 @@ import { AnnotationContext } from './annotateAST';
  * @param staticContext from witch the function info is extracted.
  * @returns the inferred type or `undefined` when function properties cannot be inferred.
  */
-export function annotateArrowExpr(ast: IAST, context: AnnotationContext): SequenceType | undefined {
+export function annotateArrowExpr(
+	ast: IAST,
+	functionCallExpr: SequenceType,
+	context: AnnotationContext
+): SequenceType | undefined {
 	// We need the context to lookup the function information
 	if (!context.staticContext) return undefined;
 
@@ -50,7 +54,8 @@ export function annotateArrowExpr(ast: IAST, context: AnnotationContext): Sequen
 	const functionProps = context.staticContext.lookupFunction(
 		resolvedName.namespaceURI,
 		resolvedName.localName,
-		functionArguments.length
+		// Since this is an arrowExpr, we add one for the implicit argument
+		functionArguments.length + 1
 	);
 
 	if (!functionProps) return undefined;
