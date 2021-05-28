@@ -5,16 +5,29 @@ import astHelper, { IAST } from 'fontoxpath/parsing/astHelper';
 import parseExpression from 'fontoxpath/parsing/parseExpression';
 import annotateAst from 'fontoxpath/typeInference/annotateAST';
 
+/**
+ *
+ * @param expression
+ * @param expectedType
+ * @param staticContext
+ * @param followSpecificPath optional, used to pinpoint the nodes that requires type assertions
+ * as sometimes it is hard to have queries that produce ast that is purely about the item under test.
+ */
 function assertValueType(
 	expression: string,
 	expectedType: ValueType,
-	staticContext: StaticContext
+	staticContext: StaticContext,
+	followSpecificPath?: string[]
 ) {
 	const ast = parseExpression(expression, {});
 	annotateAst(ast, staticContext);
 
-	const queryBody = astHelper.followPath(ast, ['mainModule', 'queryBody']);
+	const queryBody = astHelper.followPath(
+		ast,
+		followSpecificPath ? followSpecificPath : ['mainModule', 'queryBody']
+	);
 	const resultType = astHelper.getAttribute(queryBody[1] as IAST, 'type') as SequenceType;
+
 	if (!resultType) {
 		chai.assert.isTrue(expectedType === null || expectedType === undefined);
 	} else {
@@ -43,6 +56,26 @@ describe('Annotating unary expressions', () => {
 		assertValueType('+0.1', ValueType.XSDECIMAL, undefined));
 	it('annotates unary minus operator on decimal', () =>
 		assertValueType('-0.1', ValueType.XSDECIMAL, undefined));
+});
+
+describe('Annotate unary lookup', () => {
+	it('unary look up test', () => {
+		assertValueType('map{"num":1}[?num]', undefined, undefined, [
+			'mainModule',
+			'queryBody',
+			'pathExpr',
+			'stepExpr',
+			'predicates',
+			'unaryLookup',
+		]);
+	});
+});
+
+describe('Path expression test', () => {
+	it('Path expression test', () => {
+		// The same query also triggers the path expression
+		assertValueType('map{"num":1}[?num]', ValueType.NODE, undefined);
+	});
 });
 
 describe('Annotating binary expressions', () => {
@@ -120,4 +153,135 @@ describe('Annotate arrowExpr', () => {
 		assertValueType('array:tail([1]) => array:size()', undefined, undefined));
 });
 
-describe('complexer querries', () => {});
+describe('Annotate dynamic function invocation expression test', () => {
+	it('dynamic function invocation', () => {
+		assertValueType('$f()', undefined, undefined, [
+			'mainModule',
+			'queryBody',
+			'pathExpr',
+			'stepExpr',
+			'filterExpr',
+			'dynamicFunctionInvocationExpr',
+		]);
+	});
+});
+
+describe('Annotating Logical Operator', () => {
+	it('annotate or operator test', () =>
+		assertValueType('true() or true()', ValueType.XSBOOLEAN, undefined));
+	it('annotate and operator test', () =>
+		assertValueType('true() and false()', ValueType.XSBOOLEAN, undefined));
+	it('annotate mixed logical operator test', () =>
+		assertValueType('true() (: and false() :) or true()', ValueType.XSBOOLEAN, undefined));
+});
+
+describe('Annotating Comparison operator', () => {
+	it('equal operator', () => assertValueType('1 = 1', ValueType.XSBOOLEAN, undefined));
+	it('not equal operator', () => assertValueType('1 != 1', ValueType.XSBOOLEAN, undefined));
+	it('greater than operator', () => assertValueType('1 > 1', ValueType.XSBOOLEAN, undefined));
+	it('greater than or equal operator', () =>
+		assertValueType('1 >= 1', ValueType.XSBOOLEAN, undefined));
+	it('less than operator', () => assertValueType('1 < 1', ValueType.XSBOOLEAN, undefined));
+	it('less than or equal operator', () =>
+		assertValueType('1 <= 1', ValueType.XSBOOLEAN, undefined));
+});
+
+// Halted: left and right is node returns undefined
+describe('Annotating Set operator', () => {
+	it('union of non nodes test', () => {
+		assertValueType('array {a} union array {c}', undefined, undefined);
+	});
+	it('intersect of non nodes test', () => {
+		assertValueType('array {a, b} intersect array {b, c}', undefined, undefined);
+	});
+	it('except of non nodes test', () => {
+		assertValueType('[a] except [a]', undefined, undefined);
+	});
+
+	// Generating left and right nodes using pathExpr (which returns a node)
+	it('union test', () => {
+		assertValueType('//*[@someAttribute] union //b', ValueType.NODE, undefined);
+	});
+	it('intersect test', () => {
+		assertValueType('(//*[@someAttribute] intersect //b)', ValueType.NODE, undefined);
+	});
+	it('except test', () => {
+		assertValueType('//*[@someAttribute] except //b', ValueType.NODE, undefined);
+	});
+});
+
+describe('Annotating Node compare operator test', () => {
+	it('Node before', () => {
+		assertValueType('//firstElement << //secondElement', ValueType.XSBOOLEAN, undefined);
+	});
+	it('Node after', () => {
+		assertValueType('//firstElement >> //secondElement', ValueType.XSBOOLEAN, undefined);
+	});
+});
+
+describe('Annotating StringConcatenateOp', () => {
+	it('Concatenate strings', () => {
+		assertValueType('"con" || "cat" || "enate"', ValueType.XSSTRING, undefined);
+	});
+});
+
+describe('Annotating RangeSequenceExpr', () => {
+	it('RangeSequenceExpr', () => {
+		assertValueType('(1 to 10)', ValueType.XSINTEGER, undefined);
+	});
+});
+
+describe('Annotating Instance of', () => {
+	it('Instance of positive test', () => {
+		assertValueType('true() instance of xs:boolean*', ValueType.XSBOOLEAN, undefined);
+	});
+	it('Instance of negative test', () => {
+		assertValueType('() instance of xs:boolean*', ValueType.XSBOOLEAN, undefined);
+	});
+	it('Instance of array', () => {
+		assertValueType(
+			'array { true(), false()} instance of xs:array*',
+			ValueType.XSBOOLEAN,
+			undefined
+		);
+	});
+});
+
+describe('Annotating contextItemExpr', () => {
+	it('plain contextItemExpr test', () => {
+		// . is the contextItem symbol? Annotation function returns only undefined right now
+		assertValueType('.', undefined, undefined, []);
+	});
+});
+
+describe('Annotating castable', () => {
+	it('castable test', () => {
+		assertValueType('"5" castable as xs:integer', ValueType.XSBOOLEAN, undefined);
+	});
+});
+
+describe('Annotating function call without context', () => {
+	it('array function call without context', () => {
+		assertValueType('array:size([])', undefined, undefined);
+	});
+	it('array function call without context', () => {
+		assertValueType('fn:concat#2', undefined, undefined);
+	});
+});
+
+describe('Annotating inline functions', () => {
+	it('in line function test', () => {
+		assertValueType('function() {}', ValueType.FUNCTION, undefined);
+	});
+});
+
+// Type switch is not tested, type switch is reserved in XPath but not yet used
+// Annotation of `functionCallExpr` and `namedFunctionRef` with context is not tested
+
+// Test case template
+// describe('Annotating ', () => {
+// 	it('',
+// 		() => {
+//			// assertValueType('', ValueType. , undefined)
+// 		});
+// });
