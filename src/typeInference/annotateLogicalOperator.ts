@@ -1,17 +1,18 @@
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
+import { AnnotationContext } from './annotateAST';
 
 /**
  * Switch cases that take care of the operators under the logical operator category.
  *
  * @param ast The AST to annotate.
  */
-export function annotateLogicalOperator(ast: IAST): SequenceType {
+export function annotateLogicalOperator(ast: IAST, context: AnnotationContext): SequenceType {
 	switch (ast[0]) {
 		case 'andOp':
-			return annotateAndOperator(ast);
+			return annotateAndOperator(ast, context);
 		case 'orOp':
-			return annotateOrOperator(ast);
+			return annotateOrOperator(ast, context);
 	}
 }
 
@@ -21,12 +22,13 @@ export function annotateLogicalOperator(ast: IAST): SequenceType {
  * @param ast the AST to be annotated.
  * @returns `SequenceType` of type boolean and multiplicity of `Exactly_ONE`.
  */
-function annotateOrOperator(ast: IAST): SequenceType {
+function annotateOrOperator(ast: IAST, context: AnnotationContext): SequenceType {
 	const seqType = {
 		type: ValueType.XSBOOLEAN,
 		mult: SequenceMultiplicity.EXACTLY_ONE,
 	};
 
+	context.totalAnnotated[context.totalAnnotated.length - 1]++;
 	astHelper.insertAttribute(ast, 'type', seqType);
 
 	return seqType;
@@ -38,12 +40,13 @@ function annotateOrOperator(ast: IAST): SequenceType {
  * @param ast the AST to be annotated.
  * @returns `SequenceType` of type boolean and multiplicity of `Exactly_ONE`.
  */
-function annotateAndOperator(ast: IAST): SequenceType {
+function annotateAndOperator(ast: IAST, context: AnnotationContext): SequenceType {
 	const seqType = {
 		type: ValueType.XSBOOLEAN,
 		mult: SequenceMultiplicity.EXACTLY_ONE,
 	};
 
+	context.totalAnnotated[context.totalAnnotated.length - 1]++;
 	astHelper.insertAttribute(ast, 'type', seqType);
 
 	return seqType;

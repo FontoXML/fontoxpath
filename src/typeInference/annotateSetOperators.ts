@@ -1,5 +1,6 @@
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
+import { AnnotationContext } from './annotateAST';
 
 /**
  * Annotates the union, intersect and except operators with a sequence of nodes.
@@ -12,7 +13,8 @@ import astHelper, { IAST } from '../parsing/astHelper';
 export function annotateSetOperator(
 	ast: IAST,
 	left: SequenceType,
-	right: SequenceType
+	right: SequenceType,
+	context: AnnotationContext
 ): SequenceType | undefined {
 	if (!left || !right) return undefined;
 	if (left.type !== ValueType.NODE || right.type !== ValueType.NODE) {
@@ -21,40 +23,43 @@ export function annotateSetOperator(
 
 	switch (ast[0]) {
 		case 'unionOp':
-			return annotateUnionOperator(ast);
+			return annotateUnionOperator(ast, context);
 		case 'intersectOp':
-			return annotateIntersectOperator(ast);
+			return annotateIntersectOperator(ast, context);
 		case 'exceptOp':
-			return annotateExceptOperator(ast);
+			return annotateExceptOperator(ast, context);
 	}
 }
 
-function annotateUnionOperator(ast: IAST): SequenceType {
+function annotateUnionOperator(ast: IAST, context: AnnotationContext): SequenceType {
 	const seqType = {
 		type: ValueType.NODE,
 		mult: SequenceMultiplicity.ZERO_OR_MORE,
 	};
 
+	context.totalAnnotated[context.totalAnnotated.length - 1]++;
 	astHelper.insertAttribute(ast, 'type', seqType);
 	return seqType;
 }
 
-function annotateIntersectOperator(ast: IAST): SequenceType {
+function annotateIntersectOperator(ast: IAST, context: AnnotationContext): SequenceType {
 	const seqType = {
 		type: ValueType.NODE,
 		mult: SequenceMultiplicity.ZERO_OR_MORE,
 	};
 
+	context.totalAnnotated[context.totalAnnotated.length - 1]++;
 	astHelper.insertAttribute(ast, 'type', seqType);
 	return seqType;
 }
 
-function annotateExceptOperator(ast: IAST): SequenceType {
+function annotateExceptOperator(ast: IAST, context: AnnotationContext): SequenceType {
 	const seqType = {
 		type: ValueType.NODE,
 		mult: SequenceMultiplicity.ZERO_OR_MORE,
 	};
 
+	context.totalAnnotated[context.totalAnnotated.length - 1]++;
 	astHelper.insertAttribute(ast, 'type', seqType);
 	return seqType;
 }

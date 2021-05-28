@@ -4,6 +4,7 @@ import {
 	getBinaryPrefabOperator,
 } from '../expressions/operators/arithmetic/BinaryOperator';
 import astHelper, { IAST } from '../parsing/astHelper';
+import { AnnotationContext } from './annotateAST';
 
 /**
  * Annotate the binary operators on the numeric and date types
@@ -21,7 +22,8 @@ export function annotateBinOp(
 	ast: IAST,
 	left: SequenceType | undefined,
 	right: SequenceType | undefined,
-	operator: string
+	operator: string,
+	context: AnnotationContext
 ): SequenceType | undefined {
 	// If we don't have the left and right type, we cannot infer the current type
 	if (!left || !right) {
@@ -35,6 +37,7 @@ export function annotateBinOp(
 
 	if (funcData !== undefined) {
 		const type = { type: funcData, mult: left.mult };
+		context.totalAnnotated[context.totalAnnotated.length - 1]++;
 		astHelper.insertAttribute(ast, 'type', type);
 		return type;
 	}

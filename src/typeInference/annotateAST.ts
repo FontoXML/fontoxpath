@@ -48,6 +48,8 @@ export default function annotateAst(ast: IAST, context: AnnotationContext) {
 	context.totalNodes = 0;
 
 	annotate(ast, context);
+
+	console.error(context.totalAnnotated[context.totalAnnotated.length - 1] / context.totalNodes);
 }
 
 /**
@@ -75,10 +77,10 @@ function annotate(ast: IAST, context: AnnotationContext): SequenceType | undefin
 		// Unary arithmetic operators
 		case 'unaryMinusOp':
 			const minVal = annotate(astHelper.getFirstChild(ast, 'operand')[1] as IAST, context);
-			return annotateUnaryMinus(ast, minVal);
+			return annotateUnaryMinus(ast, minVal, context);
 		case 'unaryPlusOp':
 			const plusVal = annotate(astHelper.getFirstChild(ast, 'operand')[1] as IAST, context);
-			return annotateUnaryPlus(ast, plusVal);
+			return annotateUnaryPlus(ast, plusVal, context);
 
 		// Binary arithmetic operators
 		case 'addOp':
@@ -92,7 +94,7 @@ function annotate(ast: IAST, context: AnnotationContext): SequenceType | undefin
 				astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST,
 				context
 			);
-			return annotateBinOp(ast, left, right, astNodeName);
+			return annotateBinOp(ast, left, right, astNodeName, context);
 		}
 
 		// And + Or operators
@@ -100,13 +102,13 @@ function annotate(ast: IAST, context: AnnotationContext): SequenceType | undefin
 		case 'orOp':
 			annotate(astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST, context);
 			annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, context);
-			return annotateLogicalOperator(ast);
+			return annotateLogicalOperator(ast, context);
 
 		// Sequences
 		case 'sequenceExpr':
 			const children = astHelper.getChildren(ast, '*');
 			children.map((a) => annotate(a, context));
-			return annotateSequenceOperator(ast, children.length);
+			return annotateSequenceOperator(ast, children.length, context);
 
 		// Set operations (union, intersect, except)
 		case 'unionOp':
@@ -114,19 +116,19 @@ function annotate(ast: IAST, context: AnnotationContext): SequenceType | undefin
 		case 'exceptOp':
 			const l = annotate(astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST, context);
 			const r = annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, context);
-			return annotateSetOperator(ast, l, r);
+			return annotateSetOperator(ast, l, r, context);
 
 		// String concatentation
 		case 'stringConcatenateOp':
 			annotate(astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST, context);
 			annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, context);
-			return annotateStringConcatenateOperator(ast);
+			return annotateStringConcatenateOperator(ast, context);
 
 		// Range operator
 		case 'rangeSequenceExpr':
 			annotate(astHelper.getFirstChild(ast, 'startExpr')[1] as IAST, context);
 			annotate(astHelper.getFirstChild(ast, 'endExpr')[1] as IAST, context);
-			return annotateRangeSequenceOperator(ast);
+			return annotateRangeSequenceOperator(ast, context);
 
 		// Comparison operators
 		case 'equalOp':
@@ -137,7 +139,7 @@ function annotate(ast: IAST, context: AnnotationContext): SequenceType | undefin
 		case 'greaterThanOp': {
 			annotate(astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST, context);
 			annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, context);
-			return annotateGeneralCompare(ast);
+			return annotateGeneralCompare(ast, context);
 		}
 		case 'eqOp':
 		case 'neOp':
@@ -147,13 +149,13 @@ function annotate(ast: IAST, context: AnnotationContext): SequenceType | undefin
 		case 'geOp': {
 			annotate(astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST, context);
 			annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, context);
-			return annotateValueCompare(ast);
+			return annotateValueCompare(ast, context);
 		}
 		case 'nodeBeforeOp':
 		case 'nodeAfterOp': {
 			annotate(astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST, context);
 			annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, context);
-			return annotateNodeCompare(ast);
+			return annotateNodeCompare(ast, context);
 		}
 
 		// Path Expression
@@ -161,7 +163,7 @@ function annotate(ast: IAST, context: AnnotationContext): SequenceType | undefin
 			const root = astHelper.getFirstChild(ast, 'rootExpr');
 			if (root) annotate(root[1] as IAST, context);
 			astHelper.getChildren(ast, 'stepExpr').map((b) => annotate(b, context));
-			return annotatePathExpr(ast);
+			return annotatePathExpr(ast, context);
 
 		// Context Item
 		case 'contextItemExpr':
@@ -179,12 +181,12 @@ function annotate(ast: IAST, context: AnnotationContext): SequenceType | undefin
 				astHelper.getFirstChild(astHelper.getFirstChild(ast, 'elseClause'), '*'),
 				context
 			);
-			return annotateIfThenElseExpr(ast, thenClause, elseClause);
+			return annotateIfThenElseExpr(ast, thenClause, elseClause, context);
 		}
 		case 'instanceOfExpr': {
 			annotate(astHelper.getFirstChild(ast, 'argExpr'), context);
 			annotate(astHelper.getFirstChild(ast, 'sequenceType'), context);
-			return annotateInstanceOfExpr(ast);
+			return annotateInstanceOfExpr(ast, context);
 		}
 
 		// Constant expressions
@@ -194,6 +196,7 @@ function annotate(ast: IAST, context: AnnotationContext): SequenceType | undefin
 				mult: SequenceMultiplicity.EXACTLY_ONE,
 			};
 
+			context.totalAnnotated[context.totalAnnotated.length - 1]++;
 			astHelper.insertAttribute(ast, 'type', integerSequenceType);
 			return integerSequenceType;
 		case 'doubleConstantExpr':
@@ -202,6 +205,7 @@ function annotate(ast: IAST, context: AnnotationContext): SequenceType | undefin
 				mult: SequenceMultiplicity.EXACTLY_ONE,
 			};
 
+			context.totalAnnotated[context.totalAnnotated.length - 1]++;
 			astHelper.insertAttribute(ast, 'type', doubleSequenceType);
 			return doubleSequenceType;
 		case 'decimalConstantExpr':
@@ -210,6 +214,7 @@ function annotate(ast: IAST, context: AnnotationContext): SequenceType | undefin
 				mult: SequenceMultiplicity.EXACTLY_ONE,
 			};
 
+			context.totalAnnotated[context.totalAnnotated.length - 1]++;
 			astHelper.insertAttribute(ast, 'type', decimalSequenceType);
 			return decimalSequenceType;
 		case 'stringConstantExpr':
@@ -218,6 +223,7 @@ function annotate(ast: IAST, context: AnnotationContext): SequenceType | undefin
 				mult: SequenceMultiplicity.EXACTLY_ONE,
 			};
 
+			context.totalAnnotated[context.totalAnnotated.length - 1]++;
 			astHelper.insertAttribute(ast, 'type', stringSequenceType);
 			return stringSequenceType;
 
@@ -241,27 +247,27 @@ function annotate(ast: IAST, context: AnnotationContext): SequenceType | undefin
 
 		// Casting
 		case 'castExpr':
-			return annotateCastOperator(ast);
+			return annotateCastOperator(ast, context);
 		case 'castableExpr':
-			return annotateCastableOperator(ast);
+			return annotateCastableOperator(ast, context);
 
 		// Maps
 		case 'simpleMapExpr':
 			astHelper.getChildren(ast, 'pathExpr').map((c) => annotate(c, context));
-			return annotateSimpleMapExpr(ast);
+			return annotateSimpleMapExpr(ast, context);
 		case 'mapConstructor':
 			astHelper.getChildren(ast, 'mapConstructorEntry').map((keyValuePair) => ({
 				key: annotate(astHelper.followPath(keyValuePair, ['mapKeyExpr', '*']), context),
 				value: annotate(astHelper.followPath(keyValuePair, ['mapValueExpr', '*']), context),
 			}));
-			return annotateMapConstructor(ast);
+			return annotateMapConstructor(ast, context);
 
 		// Arrays
 		case 'arrayConstructor':
 			astHelper
 				.getChildren(astHelper.getFirstChild(ast, '*'), 'arrayElem')
 				.map((arrayElem) => annotate(arrayElem, context));
-			return annotateArrayConstructor(ast);
+			return annotateArrayConstructor(ast, context);
 
 		// Unary Lookup
 		case 'unaryLookup':
@@ -282,7 +288,7 @@ function annotate(ast: IAST, context: AnnotationContext): SequenceType | undefin
 
 		case 'quantifiedExpr':
 			astHelper.getChildren(ast, '*').map((a) => annotate(a, context));
-			return annotateQuantifiedExpr(ast);
+			return annotateQuantifiedExpr(ast, context);
 
 		default:
 			// Current node cannot be annotated, but maybe deeper ones can.

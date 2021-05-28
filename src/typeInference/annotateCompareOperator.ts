@@ -1,5 +1,6 @@
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
+import { AnnotationContext } from './annotateAST';
 
 /**
  * Annotates the AST for the general comparison operator:
@@ -9,12 +10,13 @@ import astHelper, { IAST } from '../parsing/astHelper';
  * @returns At the moment this always returns a boolean, because regardless.
  * of the input, that's what a comparison will return.
  */
-export function annotateGeneralCompare(ast: IAST): SequenceType {
+export function annotateGeneralCompare(ast: IAST, context: AnnotationContext): SequenceType {
 	const seqType = {
 		type: ValueType.XSBOOLEAN,
 		mult: SequenceMultiplicity.EXACTLY_ONE,
 	};
 
+	context.totalAnnotated[context.totalAnnotated.length - 1]++;
 	astHelper.insertAttribute(ast, 'type', seqType);
 
 	return seqType;
@@ -28,12 +30,13 @@ export function annotateGeneralCompare(ast: IAST): SequenceType {
  * @returns At the moment this always returns a boolean, because regardless.
  * of the input, that's what a comparison will return.
  */
-export function annotateValueCompare(ast: IAST): SequenceType {
+export function annotateValueCompare(ast: IAST, context: AnnotationContext): SequenceType {
 	const seqType = {
 		type: ValueType.XSBOOLEAN,
 		mult: SequenceMultiplicity.EXACTLY_ONE,
 	};
 
+	context.totalAnnotated[context.totalAnnotated.length - 1]++;
 	astHelper.insertAttribute(ast, 'type', seqType);
 
 	return seqType;
@@ -47,12 +50,13 @@ export function annotateValueCompare(ast: IAST): SequenceType {
  * @returns At the moment this always returns a boolean, because regardless.
  * of the input, that's what a comparison will return.
  */
-export function annotateNodeCompare(ast: IAST): SequenceType {
+export function annotateNodeCompare(ast: IAST, context: AnnotationContext): SequenceType {
 	const seqType = {
 		type: ValueType.XSBOOLEAN,
 		mult: SequenceMultiplicity.EXACTLY_ONE,
 	};
 
+	context.totalAnnotated[context.totalAnnotated.length - 1]++;
 	astHelper.insertAttribute(ast, 'type', seqType);
 
 	return seqType;
