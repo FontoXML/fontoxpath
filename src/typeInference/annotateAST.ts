@@ -47,9 +47,22 @@ export default function annotateAst(ast: IAST, context: AnnotationContext) {
 	context.totalAnnotated.push(0);
 	context.totalNodes = 0;
 
-	annotate(ast, context);
+	for (let i = 0; i < 10; i++) {
+		annotate(ast, context);
 
-	console.error(context.totalAnnotated[context.totalAnnotated.length - 1] / context.totalNodes);
+		if (
+			context.totalAnnotated[context.totalAnnotated.length - 2] ===
+			context.totalAnnotated[context.totalAnnotated.length - 1]
+		) {
+			break;
+		}
+	}
+
+	console.error(
+		context.totalAnnotated.length +
+			' passes ' +
+			context.totalAnnotated[context.totalAnnotated.length - 1] / context.totalNodes
+	);
 }
 
 /**
