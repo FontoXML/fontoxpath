@@ -165,7 +165,7 @@ export default function parseScript<TElement extends Element>(
 	});
 
 	if (options.annotateAst) {
-		annotateAst(ast);
+		annotateAst(ast, { staticContext: undefined, totalNodes: [], totalAnnotated: [] });
 	}
 
 	return parseNode(documentWriter, simpleNodesFactory, ast, null) as TElement;

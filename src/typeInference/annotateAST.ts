@@ -1,5 +1,5 @@
+import StaticContext from 'src/expressions/StaticContext';
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
-import StaticContext from '../expressions/StaticContext';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { annotateArrayConstructor } from './annotateArrayConstructor';
 import { annotateArrowExpr } from './annotateArrowExpr';
@@ -29,16 +29,22 @@ import { annotateTypeSwitchOperator } from './annotateTypeSwitchOperator';
 import { annotateUnaryLookup } from './annotateUnaryLookup';
 import { annotateUnaryMinus, annotateUnaryPlus } from './annotateUnaryOperator';
 
+export type AnnotationContext = {
+	staticContext?: StaticContext;
+	totalNodes: number[];
+	totalAnnotated: number[];
+};
+
 /**
  * Recursively traverse the AST in the depth first, pre-order to infer type and annotate AST;
  * Annotates as much type information as possible to the AST nodes.
  * Inserts attribute `type` to the corresponding node if type is inferred.
  *
  * @param ast The AST to annotate
- * @param staticContext The static context used for function lookups
+ * @param context The static context used for function lookups
  */
-export default function annotateAst(ast: IAST, staticContext?: StaticContext) {
-	annotate(ast, staticContext);
+export default function annotateAst(ast: IAST, context: AnnotationContext) {
+	annotate(ast, context);
 }
 
 /**
@@ -47,11 +53,11 @@ export default function annotateAst(ast: IAST, staticContext?: StaticContext) {
  * Inserts attribute `type` to the corresponding node if type is inferred.
  *
  * @param ast The AST to annotate.
- * @param staticContext The static context to use for function lookups.
+ * @param context The static context to use for function lookups.
  * @throws errors when attempts to annotate fail.
  * @returns The type of the AST node or `undefined` when the type cannot be annotated.
  */
-export function annotate(ast: IAST, staticContext: StaticContext): SequenceType | undefined {
+export function annotate(ast: IAST, context: AnnotationContext): SequenceType | undefined {
 	// Check if we actually have an AST
 	if (!ast) {
 		return undefined;
@@ -63,16 +69,10 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 	switch (astNodeName) {
 		// Unary arithmetic operators
 		case 'unaryMinusOp':
-			const minVal = annotate(
-				astHelper.getFirstChild(ast, 'operand')[1] as IAST,
-				staticContext
-			);
+			const minVal = annotate(astHelper.getFirstChild(ast, 'operand')[1] as IAST, context);
 			return annotateUnaryMinus(ast, minVal);
 		case 'unaryPlusOp':
-			const plusVal = annotate(
-				astHelper.getFirstChild(ast, 'operand')[1] as IAST,
-				staticContext
-			);
+			const plusVal = annotate(astHelper.getFirstChild(ast, 'operand')[1] as IAST, context);
 			return annotateUnaryPlus(ast, plusVal);
 
 		// Binary arithmetic operators
@@ -82,13 +82,10 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 		case 'idivOp':
 		case 'modOp':
 		case 'multiplyOp': {
-			const left = annotate(
-				astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST,
-				staticContext
-			);
+			const left = annotate(astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST, context);
 			const right = annotate(
 				astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST,
-				staticContext
+				context
 			);
 			return annotateBinOp(ast, left, right, astNodeName);
 		}
@@ -96,40 +93,34 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 		// And + Or operators
 		case 'andOp':
 		case 'orOp':
-			annotate(astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST, staticContext);
-			annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, staticContext);
+			annotate(astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST, context);
+			annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, context);
 			return annotateLogicalOperator(ast);
 
 		// Sequences
 		case 'sequenceExpr':
 			const children = astHelper.getChildren(ast, '*');
-			children.map((a) => annotate(a, staticContext));
+			children.map((a) => annotate(a, context));
 			return annotateSequenceOperator(ast, children.length);
 
 		// Set operations (union, intersect, except)
 		case 'unionOp':
 		case 'intersectOp':
 		case 'exceptOp':
-			const l = annotate(
-				astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST,
-				staticContext
-			);
-			const r = annotate(
-				astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST,
-				staticContext
-			);
+			const l = annotate(astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST, context);
+			const r = annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, context);
 			return annotateSetOperator(ast, l, r);
 
 		// String concatentation
 		case 'stringConcatenateOp':
-			annotate(astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST, staticContext);
-			annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, staticContext);
+			annotate(astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST, context);
+			annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, context);
 			return annotateStringConcatenateOperator(ast);
 
 		// Range operator
 		case 'rangeSequenceExpr':
-			annotate(astHelper.getFirstChild(ast, 'startExpr')[1] as IAST, staticContext);
-			annotate(astHelper.getFirstChild(ast, 'endExpr')[1] as IAST, staticContext);
+			annotate(astHelper.getFirstChild(ast, 'startExpr')[1] as IAST, context);
+			annotate(astHelper.getFirstChild(ast, 'endExpr')[1] as IAST, context);
 			return annotateRangeSequenceOperator(ast);
 
 		// Comparison operators
@@ -139,8 +130,8 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 		case 'lessThanOp':
 		case 'greaterThanOrEqualOp':
 		case 'greaterThanOp': {
-			annotate(astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST, staticContext);
-			annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, staticContext);
+			annotate(astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST, context);
+			annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, context);
 			return annotateGeneralCompare(ast);
 		}
 		case 'eqOp':
@@ -149,22 +140,22 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 		case 'leOp':
 		case 'gtOp':
 		case 'geOp': {
-			annotate(astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST, staticContext);
-			annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, staticContext);
+			annotate(astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST, context);
+			annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, context);
 			return annotateValueCompare(ast);
 		}
 		case 'nodeBeforeOp':
 		case 'nodeAfterOp': {
-			annotate(astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST, staticContext);
-			annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, staticContext);
+			annotate(astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST, context);
+			annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, context);
 			return annotateNodeCompare(ast);
 		}
 
 		// Path Expression
 		case 'pathExpr':
 			const root = astHelper.getFirstChild(ast, 'rootExpr');
-			if (root) annotate(root[1] as IAST, staticContext);
-			astHelper.getChildren(ast, 'stepExpr').map((b) => annotate(b, staticContext));
+			if (root) annotate(root[1] as IAST, context);
+			astHelper.getChildren(ast, 'stepExpr').map((b) => annotate(b, context));
 			return annotatePathExpr(ast);
 
 		// Context Item
@@ -173,21 +164,21 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 		case 'ifThenElseExpr': {
 			const ifClause = annotate(
 				astHelper.getFirstChild(astHelper.getFirstChild(ast, 'ifClause'), '*'),
-				staticContext
+				context
 			);
 			const thenClause = annotate(
 				astHelper.getFirstChild(astHelper.getFirstChild(ast, 'thenClause'), '*'),
-				staticContext
+				context
 			);
 			const elseClause = annotate(
 				astHelper.getFirstChild(astHelper.getFirstChild(ast, 'elseClause'), '*'),
-				staticContext
+				context
 			);
 			return annotateIfThenElseExpr(ast, thenClause, elseClause);
 		}
 		case 'instanceOfExpr': {
-			annotate(astHelper.getFirstChild(ast, 'argExpr'), staticContext);
-			annotate(astHelper.getFirstChild(ast, 'sequenceType'), staticContext);
+			annotate(astHelper.getFirstChild(ast, 'argExpr'), context);
+			annotate(astHelper.getFirstChild(ast, 'sequenceType'), context);
 			return annotateInstanceOfExpr(ast);
 		}
 
@@ -227,23 +218,20 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 
 		// Functions
 		case 'functionCallExpr':
-			return annotateFunctionCall(ast, staticContext);
+			return annotateFunctionCall(ast, context);
 		case 'arrowExpr':
-			return annotateArrowExpr(ast, staticContext);
+			return annotateArrowExpr(ast, context);
 		case 'dynamicFunctionInvocationExpr':
 			const functionItem: SequenceType = annotate(
 				astHelper.followPath(ast, ['functionItem', '*']),
-				staticContext
+				context
 			);
-			const args: SequenceType = annotate(
-				astHelper.getFirstChild(ast, 'arguments'),
-				staticContext
-			);
-			return annotateDynamicFunctionInvocationExpr(ast, staticContext, functionItem, args);
+			const args: SequenceType = annotate(astHelper.getFirstChild(ast, 'arguments'), context);
+			return annotateDynamicFunctionInvocationExpr(ast, context, functionItem, args);
 		case 'namedFunctionRef':
-			return annotateNamedFunctionRef(ast, staticContext);
+			return annotateNamedFunctionRef(ast, context);
 		case 'inlineFunctionExpr':
-			annotate(astHelper.getFirstChild(ast, 'functionBody')[1] as IAST, staticContext);
+			annotate(astHelper.getFirstChild(ast, 'functionBody')[1] as IAST, context);
 			return { type: ValueType.FUNCTION, mult: SequenceMultiplicity.EXACTLY_ONE };
 
 		// Casting
@@ -254,18 +242,12 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 
 		// Maps
 		case 'simpleMapExpr':
-			astHelper.getChildren(ast, 'pathExpr').map((c) => annotate(c, staticContext));
+			astHelper.getChildren(ast, 'pathExpr').map((c) => annotate(c, context));
 			return annotateSimpleMapExpr(ast);
 		case 'mapConstructor':
 			astHelper.getChildren(ast, 'mapConstructorEntry').map((keyValuePair) => ({
-				key: annotate(
-					astHelper.followPath(keyValuePair, ['mapKeyExpr', '*']),
-					staticContext
-				),
-				value: annotate(
-					astHelper.followPath(keyValuePair, ['mapValueExpr', '*']),
-					staticContext
-				),
+				key: annotate(astHelper.followPath(keyValuePair, ['mapKeyExpr', '*']), context),
+				value: annotate(astHelper.followPath(keyValuePair, ['mapValueExpr', '*']), context),
 			}));
 			return annotateMapConstructor(ast);
 
@@ -273,7 +255,7 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 		case 'arrayConstructor':
 			astHelper
 				.getChildren(astHelper.getFirstChild(ast, '*'), 'arrayElem')
-				.map((arrayElem) => annotate(arrayElem, staticContext));
+				.map((arrayElem) => annotate(arrayElem, context));
 			return annotateArrayConstructor(ast);
 
 		// Unary Lookup
@@ -283,24 +265,24 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 
 		// TypeSwitch
 		case 'typeSwitchExpr':
-			const arg = annotate(astHelper.getFirstChild(ast, 'argExpr') as IAST, staticContext);
+			const arg = annotate(astHelper.getFirstChild(ast, 'argExpr') as IAST, context);
 			const clauses = astHelper
 				.getChildren(ast, 'typeswitchExprCaseClause')
-				.map((a) => annotate(a, staticContext));
+				.map((a) => annotate(a, context));
 			const defaultCase = annotate(
 				astHelper.getFirstChild(ast, 'typeSwitchExprDefaultClause') as IAST,
-				staticContext
+				context
 			);
 			return annotateTypeSwitchOperator(ast);
 
 		case 'quantifiedExpr':
-			astHelper.getChildren(ast, '*').map((a) => annotate(a, staticContext));
+			astHelper.getChildren(ast, '*').map((a) => annotate(a, context));
 			return annotateQuantifiedExpr(ast);
 
 		default:
 			// Current node cannot be annotated, but maybe deeper ones can.
 			for (let i = 1; i < ast.length; i++) {
-				annotate(ast[i] as IAST, staticContext);
+				annotate(ast[i] as IAST, context);
 			}
 			return undefined;
 	}

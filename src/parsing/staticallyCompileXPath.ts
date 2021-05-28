@@ -60,7 +60,11 @@ export default function staticallyCompileXPath(
 		const ast = parseExpression(xpathString, compilationOptions);
 
 		if (compilationOptions.annotateAst) {
-			annotateAst(ast, rootStaticContext);
+			annotateAst(ast, {
+				staticContext: rootStaticContext,
+				totalAnnotated: [],
+				totalNodes: [],
+			});
 		}
 
 		const mainModule = astHelper.getFirstChild(ast, 'mainModule');
