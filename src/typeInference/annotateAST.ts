@@ -57,13 +57,15 @@ export default function annotateAst(ast: IAST, context: AnnotationContext) {
  * @throws errors when attempts to annotate fail.
  * @returns The type of the AST node or `undefined` when the type cannot be annotated.
  */
-export function annotate(ast: IAST, context: AnnotationContext): SequenceType | undefined {
+function annotate(ast: IAST, context: AnnotationContext): SequenceType | undefined {
 	// Check if we actually have an AST
 	if (!ast) {
 		return undefined;
 	}
 
 	const astNodeName = ast[0];
+
+	// context.
 
 	// Switch on the current node name
 	switch (astNodeName) {

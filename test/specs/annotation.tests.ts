@@ -6,7 +6,7 @@ import annotateAst from 'fontoxpath/typeInference/annotateAST';
 
 function assertValueType(expression: string, expectedType: ValueType) {
 	const ast = parseExpression(expression, {});
-	annotateAst(ast, undefined);
+	annotateAst(ast, { staticContext: undefined, totalNodes: [], totalAnnotated: [] });
 
 	const queryBody = astHelper.followPath(ast, ['mainModule', 'queryBody']);
 	const resultType = astHelper.getAttribute(queryBody[1] as IAST, 'type') as SequenceType;
