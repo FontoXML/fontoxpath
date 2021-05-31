@@ -15,7 +15,6 @@ export function annotatePathExpr(ast: IAST, context: AnnotationContext): Sequenc
 		mult: SequenceMultiplicity.ZERO_OR_MORE,
 	};
 
-	context.totalAnnotated[context.totalAnnotated.length - 1]++;
 	astHelper.insertAttribute(ast, 'type', seqType);
 	return seqType;
 }

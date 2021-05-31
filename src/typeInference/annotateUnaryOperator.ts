@@ -29,7 +29,7 @@ export function annotateUnaryMinus(
 		};
 
 		// Attach the type to the AST
-		context.totalAnnotated[context.totalAnnotated.length - 1]++;
+
 		astHelper.insertAttribute(ast, 'type', type);
 		return type;
 	}
@@ -38,7 +38,7 @@ export function annotateUnaryMinus(
 		type: ValueType.XSDOUBLE,
 		mult: SequenceMultiplicity.EXACTLY_ONE,
 	};
-	context.totalAnnotated[context.totalAnnotated.length - 1]++;
+
 	astHelper.insertAttribute(ast, 'type', doubleType);
 	return doubleType;
 }
@@ -66,7 +66,6 @@ export function annotateUnaryPlus(
 			mult: valueType.mult,
 		};
 
-		context.totalAnnotated[context.totalAnnotated.length - 1]++;
 		astHelper.insertAttribute(ast, 'type', type);
 		return type;
 	}
@@ -75,7 +74,7 @@ export function annotateUnaryPlus(
 		type: ValueType.XSDOUBLE,
 		mult: SequenceMultiplicity.EXACTLY_ONE,
 	};
-	context.totalAnnotated[context.totalAnnotated.length - 1]++;
+
 	astHelper.insertAttribute(ast, 'type', doubleType);
 	return doubleType;
 }

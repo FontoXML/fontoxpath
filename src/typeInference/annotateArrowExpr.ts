@@ -60,7 +60,6 @@ export function annotateArrowExpr(
 
 	if (!functionProps) return undefined;
 
-	context.totalAnnotated[context.totalAnnotated.length - 1]++;
 	astHelper.insertAttribute(ast, 'type', functionProps.returnType);
 	return functionProps.returnType;
 }

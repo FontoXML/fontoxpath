@@ -70,7 +70,7 @@ function parseXPath(xpathString: string) {
 
 	const ast = parseExpression(xpathString, { allowXQuery: false });
 
-	annotateAst(ast, { staticContext: undefined, totalAnnotated: [], totalNodes: 0 });
+	annotateAst(ast, { staticContext: undefined });
 
 	const queryBody = astHelper.followPath(ast, ['mainModule', 'queryBody', '*']);
 

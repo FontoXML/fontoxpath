@@ -18,7 +18,7 @@ export function annotateCastOperator(ast: IAST, context: AnnotationContext): Seq
 	const targetTypeString = getTargetTypeFromAST(ast);
 	const targetValueType = stringToValueType(targetTypeString);
 	const sequenceType = { type: targetValueType, mult: SequenceMultiplicity.EXACTLY_ONE };
-	context.totalAnnotated[context.totalAnnotated.length - 1]++;
+
 	astHelper.insertAttribute(ast, 'type', sequenceType);
 	return sequenceType;
 }
@@ -31,7 +31,7 @@ export function annotateCastOperator(ast: IAST, context: AnnotationContext): Seq
  */
 export function annotateCastableOperator(ast: IAST, context: AnnotationContext): SequenceType {
 	const sequenceType = { type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE };
-	context.totalAnnotated[context.totalAnnotated.length - 1]++;
+
 	astHelper.insertAttribute(ast, 'type', sequenceType);
 	return sequenceType;
 }

@@ -38,7 +38,6 @@ function annotateUnionOperator(ast: IAST, context: AnnotationContext): SequenceT
 		mult: SequenceMultiplicity.ZERO_OR_MORE,
 	};
 
-	context.totalAnnotated[context.totalAnnotated.length - 1]++;
 	astHelper.insertAttribute(ast, 'type', seqType);
 	return seqType;
 }
@@ -49,7 +48,6 @@ function annotateIntersectOperator(ast: IAST, context: AnnotationContext): Seque
 		mult: SequenceMultiplicity.ZERO_OR_MORE,
 	};
 
-	context.totalAnnotated[context.totalAnnotated.length - 1]++;
 	astHelper.insertAttribute(ast, 'type', seqType);
 	return seqType;
 }
@@ -60,7 +58,6 @@ function annotateExceptOperator(ast: IAST, context: AnnotationContext): Sequence
 		mult: SequenceMultiplicity.ZERO_OR_MORE,
 	};
 
-	context.totalAnnotated[context.totalAnnotated.length - 1]++;
 	astHelper.insertAttribute(ast, 'type', seqType);
 	return seqType;
 }

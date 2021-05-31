@@ -62,8 +62,6 @@ export default function staticallyCompileXPath(
 		if (compilationOptions.annotateAst) {
 			annotateAst(ast, {
 				staticContext: rootStaticContext,
-				totalNodes: 0,
-				totalAnnotated: [],
 			});
 		}
 
@@ -86,16 +84,14 @@ export default function staticallyCompileXPath(
 		}
 
 		if (compilationOptions.annotateAst) {
-			const score = annotateAst(ast, {
+			annotateAst(ast, {
 				staticContext: rootStaticContext,
-				totalNodes: 0,
-				totalAnnotated: [],
 			});
 
 			const type = astHelper.getAttribute(queryBodyContents, 'type');
 
 			if (!type) {
-				console.error(score + ' | ' + xpathString);
+				console.error(xpathString);
 			}
 		}
 

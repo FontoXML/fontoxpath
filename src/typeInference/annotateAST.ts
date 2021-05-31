@@ -31,8 +31,6 @@ import { annotateUnaryMinus, annotateUnaryPlus } from './annotateUnaryOperator';
 
 export type AnnotationContext = {
 	staticContext?: StaticContext;
-	totalNodes: number;
-	totalAnnotated: number[];
 };
 
 /**
@@ -43,29 +41,8 @@ export type AnnotationContext = {
  * @param ast The AST to annotate
  * @param context The static context used for function lookups
  */
-export default function annotateAst(ast: IAST, context: AnnotationContext): number {
-	for (let i = 0; i < 10; i++) {
-		context.totalAnnotated.push(0);
-		context.totalNodes = 0;
-
-		annotate(ast, context);
-
-		if (
-			(context.totalAnnotated.length > 1 &&
-				context.totalAnnotated[context.totalAnnotated.length - 2] ===
-					context.totalAnnotated[context.totalAnnotated.length - 1]) ||
-			context.totalAnnotated[context.totalAnnotated.length - 1] === context.totalNodes
-		) {
-			break;
-		}
-	}
-
-	// console.error(
-	// 	context.totalAnnotated.length +
-	// 		' passes ' +
-	// 		context.totalAnnotated[context.totalAnnotated.length - 1] / context.totalNodes
-	// );
-	return context.totalAnnotated[context.totalAnnotated.length - 1] / context.totalNodes;
+export default function annotateAst(ast: IAST, context: AnnotationContext) {
+	annotate(ast, context);
 }
 
 /**
@@ -85,8 +62,6 @@ function annotate(ast: IAST, context: AnnotationContext): SequenceType | undefin
 	}
 
 	const astNodeName = ast[0];
-
-	context.totalNodes++;
 
 	// Switch on the current node name
 	switch (astNodeName) {
@@ -213,7 +188,6 @@ function annotate(ast: IAST, context: AnnotationContext): SequenceType | undefin
 				mult: SequenceMultiplicity.EXACTLY_ONE,
 			};
 
-			context.totalAnnotated[context.totalAnnotated.length - 1]++;
 			astHelper.insertAttribute(ast, 'type', integerSequenceType);
 			return integerSequenceType;
 		case 'doubleConstantExpr':
@@ -222,7 +196,6 @@ function annotate(ast: IAST, context: AnnotationContext): SequenceType | undefin
 				mult: SequenceMultiplicity.EXACTLY_ONE,
 			};
 
-			context.totalAnnotated[context.totalAnnotated.length - 1]++;
 			astHelper.insertAttribute(ast, 'type', doubleSequenceType);
 			return doubleSequenceType;
 		case 'decimalConstantExpr':
@@ -231,7 +204,6 @@ function annotate(ast: IAST, context: AnnotationContext): SequenceType | undefin
 				mult: SequenceMultiplicity.EXACTLY_ONE,
 			};
 
-			context.totalAnnotated[context.totalAnnotated.length - 1]++;
 			astHelper.insertAttribute(ast, 'type', decimalSequenceType);
 			return decimalSequenceType;
 		case 'stringConstantExpr':
@@ -240,7 +212,6 @@ function annotate(ast: IAST, context: AnnotationContext): SequenceType | undefin
 				mult: SequenceMultiplicity.EXACTLY_ONE,
 			};
 
-			context.totalAnnotated[context.totalAnnotated.length - 1]++;
 			astHelper.insertAttribute(ast, 'type', stringSequenceType);
 			return stringSequenceType;
 
@@ -321,7 +292,6 @@ function annotate(ast: IAST, context: AnnotationContext): SequenceType | undefin
 		case 'queryBody':
 			const type = annotate(ast[1] as IAST, context);
 			if (type) {
-				context.totalAnnotated[context.totalAnnotated.length - 1]++;
 				astHelper.insertAttribute(ast, 'type', type);
 			}
 			return type;
@@ -330,7 +300,6 @@ function annotate(ast: IAST, context: AnnotationContext): SequenceType | undefin
 			for (let i = 1; i < ast.length; i++) {
 				annotate(ast[i] as IAST, context);
 			}
-			context.totalNodes--;
 			return undefined;
 	}
 }

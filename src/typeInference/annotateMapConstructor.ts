@@ -15,7 +15,6 @@ export function annotateMapConstructor(ast: IAST, context: AnnotationContext): S
 		mult: SequenceMultiplicity.EXACTLY_ONE,
 	};
 
-	context.totalAnnotated[context.totalAnnotated.length - 1]++;
 	astHelper.insertAttribute(ast, 'type', seqType);
 	return seqType;
 }

@@ -15,7 +15,6 @@ export function annotateSimpleMapExpr(ast: IAST, context: AnnotationContext): Se
 		mult: SequenceMultiplicity.EXACTLY_ONE,
 	};
 
-	context.totalAnnotated[context.totalAnnotated.length - 1]++;
 	astHelper.insertAttribute(ast, 'type', seqType);
 	return seqType;
 }

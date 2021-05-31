@@ -51,7 +51,7 @@ export function annotateNamedFunctionRef(
 	if (!functionProperties) return undefined;
 
 	// Insert the type info into the AST and return
-	context.totalAnnotated[context.totalAnnotated.length - 1]++;
+
 	astHelper.insertAttribute(ast, 'type', functionProperties.returnType);
 	return functionProperties.returnType;
 }

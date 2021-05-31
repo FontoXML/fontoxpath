@@ -64,8 +64,6 @@ const fontoxpathEvaluate: FunctionDefinitionType = (
 				if (executionParameters.annotateAst) {
 					annotateAst(ast, {
 						staticContext: innerStaticContext,
-						totalNodes: 0,
-						totalAnnotated: [],
 					});
 				}
 
