@@ -40,11 +40,6 @@ export function hash(left: ValueType, right: ValueType, op: string): number {
  * returns a the return type of the operation.
  */
 export const returnTypeMap: { [key: number]: ValueType } = {
-	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'addOp')]: undefined,
-	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'subtractOp')]: undefined,
-	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'multiplyOp')]: undefined,
-	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'divOp')]: undefined,
-	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'modOp')]: undefined,
 	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'idivOp')]: ValueType.XSINTEGER,
 	[hash(
 		ValueType.XSYEARMONTHDURATION,
