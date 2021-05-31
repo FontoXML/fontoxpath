@@ -69,7 +69,7 @@ function getTextContent(ast: IAST): string {
 	if (typeof ast[1] === 'object') {
 		return (ast[2] || '') as string;
 	}
-	return (ast[1] as string) || '';
+	return ast[1] || '';
 }
 
 /**
