@@ -317,6 +317,12 @@ function annotate(ast: IAST, context: AnnotationContext): SequenceType | undefin
 			astHelper.getChildren(ast, '*').map((a) => annotate(a, context));
 			return annotateQuantifiedExpr(ast, context);
 
+		case 'queryBody':
+			const type = annotate(ast[1] as IAST, context);
+			if (type) {
+				astHelper.insertAttribute(ast, 'type', type);
+			}
+			return type;
 		default:
 			// Current node cannot be annotated, but maybe deeper ones can.
 			for (let i = 1; i < ast.length; i++) {
