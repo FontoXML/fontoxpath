@@ -1,6 +1,6 @@
 import ISequence from './dataTypes/ISequence';
 import sequenceFactory from './dataTypes/sequenceFactory';
-import Value, { SequenceMultiplicity, ValueType } from './dataTypes/Value';
+import Value, { ValueType } from './dataTypes/Value';
 import DynamicContext from './DynamicContext';
 import ExecutionParameters from './ExecutionParameters';
 import Expression from './Expression';
@@ -60,7 +60,7 @@ class ForExpression extends FlworExpression {
 		executionParameters: ExecutionParameters,
 		createReturnSequence: (dynamicContextIterator: IIterator<DynamicContext>) => ISequence
 	): ISequence {
-		let clauseIterator = null;
+		let clauseIterator: IIterator<Value> = null;
 		let currentDynamicContext: DynamicContext = null;
 
 		let position = 0;

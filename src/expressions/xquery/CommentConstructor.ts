@@ -1,10 +1,12 @@
-import { TinyCommentNode } from '../../domClone/Pointer';
+import { CommentNodePointer, TinyCommentNode } from '../../domClone/Pointer';
 import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import createPointerValue from '../dataTypes/createPointerValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { ValueType } from '../dataTypes/Value';
+import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
 
@@ -19,13 +21,16 @@ class CommentConstructor extends Expression {
 		this._expr = expr;
 	}
 
-	public evaluate(_dynamicContext, executionParameters) {
+	public evaluate(_dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
 		const tinyCommentNode: TinyCommentNode = {
 			data: '',
 			isTinyNode: true,
 			nodeType: NODE_TYPES.COMMENT_NODE,
 		};
-		const commentNodePointer = { node: tinyCommentNode, graftAncestor: null };
+		const commentNodePointer: CommentNodePointer = {
+			node: tinyCommentNode,
+			graftAncestor: null,
+		};
 		if (!this._expr) {
 			return sequenceFactory.singleton(
 				createPointerValue(commentNodePointer, executionParameters.domFacade)

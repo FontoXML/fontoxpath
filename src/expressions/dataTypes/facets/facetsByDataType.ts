@@ -2,7 +2,7 @@ import { ValueType } from '../Value';
 import decimalComparator from './comparators/decimalComparator';
 
 // fractionDigits
-function validateFractionDigits(value, fractionDigits) {
+function validateFractionDigits(value: string, fractionDigits: number) {
 	const stringValue = value.toString();
 	if (stringValue.indexOf('.') > -1 && fractionDigits === 0) {
 		return false;
@@ -18,29 +18,31 @@ function validateFractionDigits(value, fractionDigits) {
 	return match[2].length <= fractionDigits;
 }
 
+type ComparatorFunction = (input: number, bound: number) => -1 | 0 | 1;
+
 // maxInclusive, maxExclusive, minInclusive, minExclusive
-function createMaxInclusiveFacet(comperator) {
-	return function validateMaxInclusive(value, maxInclusive) {
+function createMaxInclusiveFacet(comperator: ComparatorFunction) {
+	return function validateMaxInclusive(value: number, maxInclusive: number) {
 		return comperator(value, maxInclusive) < 1;
 	};
 }
-function createMaxExclusiveFacet(comperator) {
-	return function validateMaxExclusive(value, maxExclusive) {
+function createMaxExclusiveFacet(comperator: ComparatorFunction) {
+	return function validateMaxExclusive(value: number, maxExclusive: number) {
 		return comperator(value, maxExclusive) < 0;
 	};
 }
-function createMinInclusiveFacet(comperator) {
-	return function validateMinInclusive(value, minInclusive) {
+function createMinInclusiveFacet(comperator: ComparatorFunction) {
+	return function validateMinInclusive(value: number, minInclusive: number) {
 		return comperator(value, minInclusive) > -1;
 	};
 }
-function createMinExclusiveFacet(comperator) {
-	return function validateMinExclusive(value, minExclusive) {
+function createMinExclusiveFacet(comperator: ComparatorFunction) {
+	return function validateMinExclusive(value: number, minExclusive: number) {
 		return comperator(value, minExclusive) > 0;
 	};
 }
 
-function validateExplicitTimeZone(value, option) {
+function validateExplicitTimeZone(value: string, option: string) {
 	switch (option) {
 		case 'required':
 			return /(Z)|([+-])([01]\d):([0-5]\d)$/.test(value.toString());

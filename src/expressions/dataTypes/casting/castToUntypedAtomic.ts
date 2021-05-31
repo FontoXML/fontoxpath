@@ -1,11 +1,11 @@
 import createAtomicValue from '../createAtomicValue';
-import { SequenceMultiplicity, ValueType } from '../Value';
+import { ValueType } from '../Value';
 import CastResult from './CastResult';
 import castToStringLikeType from './castToStringLikeType';
 
 export default function castToUntypedAtomic(
 	instanceOf: (typeName: ValueType) => boolean
-): (value) => CastResult {
+): (value: any) => CastResult {
 	const caster = castToStringLikeType(instanceOf);
 	return (value) => {
 		const castResult = caster(value);

@@ -7,7 +7,7 @@ import {
 	validatePattern,
 	validateRestrictions,
 } from '../typeHelpers';
-import { ValueType, valueTypeToString } from '../Value';
+import Value, { ValueType, valueTypeToString } from '../Value';
 import CastResult from './CastResult';
 import castToAnyURI from './castToAnyURI';
 import castToBase64Binary from './castToBase64Binary';
@@ -37,7 +37,7 @@ const TREAT_AS_PRIMITIVE = [
 	ValueType.XSYEARMONTHDURATION,
 ];
 
-function castToPrimitiveType(from: ValueType, to: ValueType): (value) => CastResult {
+function castToPrimitiveType(from: ValueType, to: ValueType): (value: Value) => CastResult {
 	const instanceOf = (type: ValueType) => isSubtypeOf(from, type);
 
 	if (to === ValueType.XSERROR) {
@@ -101,7 +101,7 @@ function castToPrimitiveType(from: ValueType, to: ValueType): (value) => CastRes
 
 const precomputedCastFunctorsByTypeString = Object.create(null);
 
-function createCastingFunction(from: ValueType, to: ValueType) {
+function createCastingFunction(from: ValueType, to: ValueType): (value: Value) => CastResult {
 	if (from === ValueType.XSUNTYPEDATOMIC && to === ValueType.XSSTRING) {
 		return (val) => ({
 			successful: true,
@@ -143,10 +143,8 @@ function createCastingFunction(from: ValueType, to: ValueType) {
 		});
 	}
 
-	const primitiveFrom: ValueType = TREAT_AS_PRIMITIVE.includes(from)
-		? from
-		: getPrimitiveTypeName(from);
-	const primitiveTo: ValueType = TREAT_AS_PRIMITIVE.includes(to) ? to : getPrimitiveTypeName(to);
+	const primitiveFrom = TREAT_AS_PRIMITIVE.includes(from) ? from : getPrimitiveTypeName(from);
+	const primitiveTo = TREAT_AS_PRIMITIVE.includes(to) ? to : getPrimitiveTypeName(to);
 
 	if (primitiveTo === null || primitiveFrom === null) {
 		return (_val) => ({
@@ -159,11 +157,12 @@ function createCastingFunction(from: ValueType, to: ValueType) {
 		});
 	}
 
-	const converters = [];
+	const converters: ((value: AtomicValue) => CastResult)[] = [];
 
 	if (primitiveFrom === ValueType.XSSTRING || primitiveFrom === ValueType.XSUNTYPEDATOMIC) {
 		// We are dealing with string-like types. Check whitespace / pattern
-		converters.push((value) => {
+		// TODO: This code seems broken!
+		converters.push((value: any) => {
 			const strValue = normalizeWhitespace(value, to);
 			if (!validatePattern(strValue, to)) {
 				return {
@@ -175,7 +174,7 @@ function createCastingFunction(from: ValueType, to: ValueType) {
 			}
 			return {
 				successful: true,
-				value: strValue,
+				value: strValue as any,
 			};
 		});
 	}
@@ -189,7 +188,8 @@ function createCastingFunction(from: ValueType, to: ValueType) {
 		}));
 	}
 	if (primitiveTo === ValueType.XSUNTYPEDATOMIC || primitiveTo === ValueType.XSSTRING) {
-		converters.push((typedValue) => {
+		// TODO: This code seems broken!
+		converters.push((typedValue: any) => {
 			if (!validatePattern(typedValue, to)) {
 				return {
 					successful: false,
@@ -204,7 +204,8 @@ function createCastingFunction(from: ValueType, to: ValueType) {
 			};
 		});
 	}
-	converters.push((typedValue) => {
+	// TODO: This code seems broken!
+	converters.push((typedValue: any) => {
 		if (!validateRestrictions(typedValue, to)) {
 			return {
 				successful: false,
@@ -229,9 +230,9 @@ function createCastingFunction(from: ValueType, to: ValueType) {
 	}));
 
 	return (value) => {
-		let result = { successful: true, value };
+		let result: CastResult = { successful: true, value };
 		for (let i = 0, l = converters.length; i < l; ++i) {
-			result = converters[i].call(undefined, result.value);
+			result = converters[i](result.value);
 			if (result.successful === false) {
 				return result;
 			}

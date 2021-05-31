@@ -1,6 +1,6 @@
 import AtomicValue from '../AtomicValue';
 import createAtomicValue from '../createAtomicValue';
-import { SequenceMultiplicity, ValueType } from '../Value';
+import { ValueType } from '../Value';
 import DateTime from '../valueTypes/DateTime';
 import CastResult from './CastResult';
 
@@ -9,7 +9,7 @@ const createGYearMonthValue = (value: any): AtomicValue =>
 
 export default function castToGYearMonth(
 	instanceOf: (typeName: ValueType) => boolean
-): (value: DateTime) => CastResult {
+): (value: any) => CastResult {
 	if (instanceOf(ValueType.XSDATE) || instanceOf(ValueType.XSDATETIME)) {
 		return (value) => ({
 			successful: true,

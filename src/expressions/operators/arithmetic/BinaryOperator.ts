@@ -7,6 +7,28 @@ import { BinaryEvaluationFunction } from '../../../typeInference/binaryEvaluatio
 import atomize from '../../dataTypes/atomize';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
 import { SequenceType } from '../../dataTypes/Value';
+import Value, { ValueType } from '../../dataTypes/Value';
+import {
+	addDuration as addDurationToDateTime,
+	subtract as dateTimeSubtract,
+	subtractDuration as subtractDurationFromDateTime,
+} from '../../dataTypes/valueTypes/DateTime';
+import {
+	add as dayTimeDurationAdd,
+	divide as dayTimeDurationDivide,
+	divideByDayTimeDuration as dayTimeDurationDivideByDayTimeDuration,
+	multiply as dayTimeDurationMultiply,
+	subtract as dayTimeDurationSubtract,
+} from '../../dataTypes/valueTypes/DayTimeDuration';
+import {
+	add as yearMonthDurationAdd,
+	divide as yearMonthDurationDivide,
+	divideByYearMonthDuration as yearMonthDurationDivideByYearMonthDuration,
+	multiply as yearMonthDurationMultiply,
+	subtract as yearMonthDurationSubtract,
+} from '../../dataTypes/valueTypes/YearMonthDuration';
+import DynamicContext from '../../DynamicContext';
+import ExecutionParameters from '../../ExecutionParameters';
 import Expression from '../../Expression';
 import { hash, operationMap, returnTypeMap } from './BinaryEvaluationFunctionMap';
 
@@ -42,13 +64,9 @@ const allTypes = [
  * @param typeB the right part of the operation
  * @returns The function used to evaluate the binary operator
  */
-export function generateBinaryOperatorFunction(
-	operator: string,
-	typeA: ValueType,
-	typeB: ValueType
-): BinaryEvaluationFunction {
-	let castFunctionForValueA = null;
-	let castFunctionForValueB = null;
+function generateBinaryOperatorFunction(operator: string, typeA: ValueType, typeB: ValueType) {
+	let castFunctionForValueA: (value: Value) => Value = null;
+	let castFunctionForValueB: (value: Value) => Value = null;
 
 	if (isSubtypeOf(typeA, ValueType.XSUNTYPEDATOMIC)) {
 		castFunctionForValueA = (value) => castToType(value, ValueType.XSDOUBLE);
@@ -69,6 +87,7 @@ export function generateBinaryOperatorFunction(
 			castB: castFunctionForValueB ? castFunctionForValueB(valueB) : valueB,
 		};
 	}
+
 
 	// As the Numeric operands need some checks done beforehand we need to evaluate them seperatly.
 	if (
@@ -99,6 +118,7 @@ export function generateBinaryOperatorFunction(
 			}
 		}
 	}
+  
 	throw new Error(
 		`XPTY0004: ${operator} not available for types ${valueTypeToString(
 			typeA
@@ -146,6 +166,7 @@ export function generateBinaryOperatorType(
 		parentTypesOfA.includes(ValueType.XSNUMERIC) &&
 		parentTypesOfB.includes(ValueType.XSNUMERIC)
 	) {
+
 		let retType = returnTypeMap[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, operator)];
 		if (retType === undefined) retType = determineReturnType(typeA, typeB);
 		if (operator === 'divOp' && retType === ValueType.XSINTEGER) retType = ValueType.XSDECIMAL;
@@ -163,6 +184,7 @@ export function generateBinaryOperatorType(
 			}
 		}
 	}
+  
 	throw new Error(
 		`XPTY0004: ${operator} not available for types ${valueTypeToString(
 			typeA
@@ -195,9 +217,11 @@ function iDivOpChecksFunction(
 					'FOAR0002: One of the operands of idiv is NaN or the first operand is (-)INF'
 				);
 			}
+      
 			if (Number.isFinite(castA.value) && !Number.isFinite(castB.value)) {
 				return createAtomicValue(0, ValueType.XSINTEGER);
 			}
+      
 			return createAtomicValue(fun(castA.value, castB.value), ValueType.XSINTEGER);
 		},
 		ValueType.XSINTEGER,
@@ -210,7 +234,8 @@ function iDivOpChecksFunction(
 const operatorsByTypingKey: Record<string, BinaryEvaluationFunction> = Object.create(null);
 
 /**
- * retrieve the function used to evaluate a binary operator.
+ * Retrieve the function used to evaluate a binary operator.
+ *
  * @param leftType the left part of the operation
  * @param rightType the right part of the operation
  * @param operator the kind of operation
@@ -279,7 +304,7 @@ class BinaryOperator extends Expression {
 	 * @param executionParameters options
 	 * @returns The value to which the operation evaluates.
 	 */
-	public evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
 		const firstValueSequence = atomize(
 			this._firstValueExpr.evaluateMaybeStatically(dynamicContext, executionParameters),
 			executionParameters
