@@ -809,7 +809,7 @@ describe('registerCustomXPathFunction', () => {
 			chai.assert.throws(
 				() =>
 					registerCustomXPathFunction(
-						'test:func',
+						'a-random-prefix-test:func',
 						[],
 						'this-type::does-not-exist',
 						() => {}

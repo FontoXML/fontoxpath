@@ -13,9 +13,6 @@ export function annotateSequenceOperator(
 	length: number,
 	context: AnnotationContext
 ): SequenceType {
-	if (length === 0) {
-		return undefined;
-	}
 	const seqType = {
 		type: ValueType.ITEM,
 		mult: SequenceMultiplicity.ZERO_OR_MORE,

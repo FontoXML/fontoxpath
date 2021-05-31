@@ -1150,7 +1150,7 @@ InlineFunctionExpr
 
 // 170
 MapConstructor
- = "map" _ "{" _ entries:(first:MapConstructorEntry rest:(_ "," _ e:MapConstructorEntry {return e})*{return [first].concat(rest)})? _ "}" {return ["mapConstructor"].concat(entries)}
+ = "map" _ "{" _ entries:(first:MapConstructorEntry rest:(_ "," _ e:MapConstructorEntry {return e})*{return [first].concat(rest)})? _ "}" {return entries ? ["mapConstructor"].concat(entries) : ["mapConstructor"]}
 
 // 171
 MapConstructorEntry

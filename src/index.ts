@@ -60,6 +60,8 @@ import {
 	Text,
 } from './types/Types';
 
+evaluateXPath('map:contains(map{}, "a")');
+
 function parseXPath(xpathString: string) {
 	const cachedExpression = getAnyStaticCompilationResultFromCache(xpathString, 'XPath', false);
 	if (cachedExpression) {

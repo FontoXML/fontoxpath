@@ -245,10 +245,11 @@ function annotate(ast: IAST, context: AnnotationContext): SequenceType | undefin
 
 		// Functions
 		case 'functionCallExpr':
-			const argumentTypes: SequenceType[] = (astHelper.getChildren(
-				ast,
-				'*'
-			)[1] as IAST[]).map((x) => annotate(x, context));
+			const functionArguments = astHelper.getFirstChild(ast, 'arguments');
+			const argumentTypeNodes = astHelper.getChildren(functionArguments, '*');
+			const argumentTypes: SequenceType[] = argumentTypeNodes.map((x) =>
+				annotate(x, context)
+			);
 
 			return annotateFunctionCall(ast, argumentTypes, context);
 		case 'arrowExpr':
