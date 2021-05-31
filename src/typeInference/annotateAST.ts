@@ -321,6 +321,7 @@ function annotate(ast: IAST, context: AnnotationContext): SequenceType | undefin
 		case 'queryBody':
 			const type = annotate(ast[1] as IAST, context);
 			if (type) {
+				context.totalAnnotated[context.totalAnnotated.length - 1]++;
 				astHelper.insertAttribute(ast, 'type', type);
 			}
 			return type;

@@ -1,3 +1,4 @@
+import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { AnnotationContext } from './annotateAST';
@@ -17,7 +18,7 @@ export function annotateSetOperator(
 	context: AnnotationContext
 ): SequenceType | undefined {
 	if (!left || !right) return undefined;
-	if (left.type !== ValueType.NODE || right.type !== ValueType.NODE) {
+	if (!isSubtypeOf(left.type, ValueType.NODE) || !isSubtypeOf(right.type, ValueType.NODE)) {
 		return undefined;
 	}
 

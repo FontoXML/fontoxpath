@@ -60,7 +60,7 @@ import {
 	Text,
 } from './types/Types';
 
-evaluateXPath('+"something"');
+evaluateXPath('(() except ())');
 
 function parseXPath(xpathString: string) {
 	const cachedExpression = getAnyStaticCompilationResultFromCache(xpathString, 'XPath', false);

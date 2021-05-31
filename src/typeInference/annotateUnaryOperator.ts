@@ -38,6 +38,7 @@ export function annotateUnaryMinus(
 		type: ValueType.XSDOUBLE,
 		mult: SequenceMultiplicity.EXACTLY_ONE,
 	};
+	context.totalAnnotated[context.totalAnnotated.length - 1]++;
 	astHelper.insertAttribute(ast, 'type', doubleType);
 	return doubleType;
 }
@@ -74,6 +75,7 @@ export function annotateUnaryPlus(
 		type: ValueType.XSDOUBLE,
 		mult: SequenceMultiplicity.EXACTLY_ONE,
 	};
+	context.totalAnnotated[context.totalAnnotated.length - 1]++;
 	astHelper.insertAttribute(ast, 'type', doubleType);
 	return doubleType;
 }

@@ -13,10 +13,20 @@ export function annotateSequenceOperator(
 	length: number,
 	context: AnnotationContext
 ): SequenceType {
-	const seqType = {
-		type: ValueType.ITEM,
-		mult: SequenceMultiplicity.ZERO_OR_MORE,
-	};
+	let seqType;
+
+	if (length === 0) {
+		// We have an empty sequence here
+		seqType = {
+			type: ValueType.NODE,
+			mult: SequenceMultiplicity.ZERO_OR_MORE,
+		};
+	} else {
+		seqType = {
+			type: ValueType.ITEM,
+			mult: SequenceMultiplicity.ZERO_OR_MORE,
+		};
+	}
 
 	context.totalAnnotated[context.totalAnnotated.length - 1]++;
 	astHelper.insertAttribute(ast, 'type', seqType);
