@@ -7,25 +7,23 @@ export function annotateFlworExpression(
 	annotationContext: AnnotationContext,
 	annotate: (ast: IAST, annotationContext) => SequenceType
 ): SequenceType | undefined {
+	annotationContext.pushScope();
+
 	for (let i = 1; i < ast.length; i++) {
 		switch (ast[i][0]) {
 			case 'letClause':
 				annotateLetClause(ast[i] as IAST, annotationContext, annotate);
 				break;
-			case 'returnClause':
-				// ast[i][1] is the varRef child node from the returnClause node
-				const returnType = annotateFlworExpression(
-					ast[i] as IAST,
-					annotationContext,
-					annotate
-				);
-				astHelper.insertAttribute(ast, 'type', returnType);
-				return returnType;
-			case 'varRef':
-				return annotateReturnClause(ast[1] as IAST, annotationContext);
+			default:
+				const retType: SequenceType = annotate(ast[i] as IAST, annotationContext);
+				astHelper.insertAttribute(ast, 'type', retType);
+
+				annotationContext.popScope();
+				return retType;
 		}
 	}
 
+	annotationContext.popScope();
 	return undefined;
 }
 
@@ -46,12 +44,13 @@ function annotateLetClause(
 	annotationContext.insertVariable(varName, varType);
 }
 
-function annotateReturnClause(ast: IAST, annotationContext: AnnotationContext): SequenceType {
+export function annotateVarRef(ast: IAST, annotationContext: AnnotationContext): SequenceType {
 	// pass ast sub tree with the ast[0] as `varRef` to this function
 	// ast[1] here would be the array of the variables to be returned
 	// ast[1][0] always seems to be `name`?
-	const varName: string = ast[1][1];
+	const varName: string = ast[1] as string;
 	const varType: SequenceType = annotationContext.getVariable(varName);
+	astHelper.insertAttribute(ast, 'type', varType);
 
 	return varType;
 }

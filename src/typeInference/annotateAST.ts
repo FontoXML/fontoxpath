@@ -9,7 +9,7 @@ import {
 	annotateNodeCompare,
 	annotateValueCompare,
 } from './annotateCompareOperator';
-import { annotateFlworExpression } from './annotateFlworExpression';
+import { annotateFlworExpression, annotateVarRef } from './annotateFlworExpression';
 import { annotateFunctionCall } from './annotateFunctionCall';
 import { annotateLogicalOperator } from './annotateLogicalOperator';
 import { annotateUnaryMinus, annotateUnaryPlus } from './annotateUnaryOperator';
@@ -157,10 +157,18 @@ export function annotate(
 		// Current node cannot be annotated, but maybe deeper ones can.
 		case 'flworExpr':
 			return annotateFlworExpression(ast, annotationContext, annotate);
+		case 'varRef':
+			return annotateVarRef(ast[1] as IAST, annotationContext);
+		case 'returnClause':
+			const pathFollowed: IAST = astHelper.followPath(ast, ['*']);
+			const returnType = annotate(pathFollowed, annotationContext);
+			astHelper.insertAttribute(pathFollowed, 'type', returnType);
+			astHelper.insertAttribute(ast as IAST, 'type', returnType);
+			return returnType;
 		default:
 			// Current node cannot be annotated, but maybe deeper ones can.
 			for (let i = 1; i < ast.length; i++) {
-				const returnType = annotate(ast[i] as IAST, annotationContext);
+				annotate(ast[i] as IAST, annotationContext);
 			}
 			return undefined;
 	}
