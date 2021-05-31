@@ -809,7 +809,7 @@ describe('registerCustomXPathFunction', () => {
 			chai.assert.throws(
 				() =>
 					registerCustomXPathFunction(
-						'test:func',
+						'a-random-prefix-to-prevent-collisions:func',
 						[],
 						'this-type::does-not-exist',
 						() => {}
@@ -817,5 +817,5 @@ describe('registerCustomXPathFunction', () => {
 				'XPST0081: Invalid prefix for input this-type::does-not-exist'
 			);
 		});
-	});
+    });
 });
