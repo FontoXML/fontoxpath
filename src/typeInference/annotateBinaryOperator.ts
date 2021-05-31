@@ -1,5 +1,8 @@
-import { SequenceType, sequenceTypeToString } from '../expressions/dataTypes/Value';
-import { getBinaryPrefabOperator } from '../expressions/operators/arithmetic/BinaryOperator';
+import { SequenceType, sequenceTypeToString, ValueType } from '../expressions/dataTypes/Value';
+import {
+	generateBinaryOperatorType,
+	getBinaryPrefabOperator,
+} from '../expressions/operators/arithmetic/BinaryOperator';
 import astHelper, { IAST } from '../parsing/astHelper';
 
 /**
@@ -25,15 +28,13 @@ export function annotateBinOp(
 		return undefined;
 	}
 
-	// If the multiplicities don't match, we can't add them
-	if (left.mult !== right.mult) {
-		throw new Error("Multiplicities in binary addition operator don't match");
-	}
+	// TODO: Fix this hack (pathExpr returns a node in 1 case, which cannot be added to an integer)
+	if (left.type === ValueType.NODE || right.type === ValueType.NODE) return undefined;
 
-	const funcData = getBinaryPrefabOperator(left.type, right.type, operator);
+	const funcData = generateBinaryOperatorType(operator, left.type, right.type);
 
-	if (funcData) {
-		const type = { type: funcData[1], mult: left.mult };
+	if (funcData !== undefined) {
+		const type = { type: funcData, mult: left.mult };
 		astHelper.insertAttribute(ast, 'type', type);
 		return type;
 	}

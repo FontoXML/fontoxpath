@@ -1,4 +1,5 @@
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import { SequenceType } from '../dataTypes/Value';
 import Expression from '../Expression';
 
 type InClause = {
@@ -13,7 +14,12 @@ class QuantifiedExpression extends Expression {
 	public _quantifier: string;
 	public _satisfiesExpr: Expression;
 
-	constructor(quantifier: string, inClauses: InClause[], satisfiesExpr: Expression) {
+	constructor(
+		quantifier: string,
+		inClauses: InClause[],
+		satisfiesExpr: Expression,
+		type: SequenceType
+	) {
 		const inClauseExpressions = inClauses.map((inClause) => inClause.sourceExpr);
 		const inClauseNames = inClauses.map((inClause) => inClause.name);
 
@@ -21,9 +27,15 @@ class QuantifiedExpression extends Expression {
 			(summedSpecificity, inClause) => summedSpecificity.add(inClause.specificity),
 			satisfiesExpr.specificity
 		);
-		super(specificity, inClauseExpressions.concat(satisfiesExpr), {
-			canBeStaticallyEvaluated: false,
-		});
+		super(
+			specificity,
+			inClauseExpressions.concat(satisfiesExpr),
+			{
+				canBeStaticallyEvaluated: false,
+			},
+			false,
+			type
+		);
 
 		this._quantifier = quantifier;
 		this._inClauseNames = inClauseNames;
