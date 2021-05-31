@@ -9,7 +9,7 @@ function assertValueType(expression: string, expectedType: ValueType) {
 	annotateAst(ast, { staticContext: undefined, totalNodes: 0, totalAnnotated: [] });
 
 	const queryBody = astHelper.followPath(ast, ['mainModule', 'queryBody']);
-	const resultType = astHelper.getAttribute(queryBody[1] as IAST, 'type') as SequenceType;
+	const resultType = astHelper.getAttribute(queryBody, 'type') as SequenceType;
 	if (!resultType) {
 		chai.assert.isTrue(!expectedType);
 	} else {

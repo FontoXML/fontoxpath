@@ -167,6 +167,7 @@ function annotate(ast: IAST, context: AnnotationContext): SequenceType | undefin
 			annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, context);
 			return annotateValueCompare(ast, context);
 		}
+		case 'isOp':
 		case 'nodeBeforeOp':
 		case 'nodeAfterOp': {
 			annotate(astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST, context);
