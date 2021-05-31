@@ -60,6 +60,8 @@ import {
 	Text,
 } from './types/Types';
 
+evaluateXPath('+"something"');
+
 function parseXPath(xpathString: string) {
 	const cachedExpression = getAnyStaticCompilationResultFromCache(xpathString, 'XPath', false);
 	if (cachedExpression) {
