@@ -22,14 +22,13 @@ function convert(obj: any): ISequence {
 			if (obj === null) {
 				return sequenceFactory.empty();
 			}
-			const objThingy = obj as { [key: string]: any };
 			// Normal object
 			return sequenceFactory.singleton(
 				new MapValue(
-					Object.keys(objThingy).map((key) => {
+					Object.keys(obj as object).map((key) => {
 						return {
 							key: createAtomicValue(key, ValueType.XSSTRING),
-							value: createDoublyIterableSequence(convert(objThingy[key])),
+							value: createDoublyIterableSequence(convert((obj as object)[key])),
 						};
 					})
 				)

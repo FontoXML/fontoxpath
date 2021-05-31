@@ -4,9 +4,6 @@ import ISequence from '../../dataTypes/ISequence';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
 import { SequenceType, ValueType } from '../../dataTypes/Value';
-import { ValueType } from '../../dataTypes/Value';
-import DynamicContext from '../../DynamicContext';
-import ExecutionParameters from '../../ExecutionParameters';
 import Expression from '../../Expression';
 import Specificity from '../../Specificity';
 import { DONE_TOKEN, ready } from '../../util/iterators';
@@ -56,12 +53,12 @@ class OrOperator extends Expression {
 		this._subExpressions = expressions;
 	}
 
-	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
+	public evaluate(dynamicContext, executionParameters) {
 		let i = 0;
 		let resultSequence: ISequence = null;
 		let done = false;
 
-		let contextItemBuckets: string[] = null;
+		let contextItemBuckets = null;
 		if (dynamicContext !== null) {
 			const contextItem = dynamicContext.contextItem;
 			if (contextItem !== null && isSubtypeOf(contextItem.type, ValueType.NODE)) {

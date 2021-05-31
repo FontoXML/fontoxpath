@@ -385,9 +385,9 @@ const isString = (type: ValueType): boolean => {
 };
 
 const deepLessThan = (
-	dynamicContext: DynamicContext,
-	executionParameters: ExecutionParameters,
-	staticContext: StaticContext,
+	dynamicContext,
+	executionParameters,
+	staticContext,
 	valuesA: Value[],
 	valuesB: Value[]
 ): boolean => {
@@ -460,7 +460,7 @@ const arraySort: FunctionDefinitionType = (
 	});
 };
 
-function flattenItem(flatteneditems: ISequence, item: Value): ISequence {
+function flattenItem(flatteneditems: ISequence, item: Value) {
 	if (isSubtypeOf(item.type, ValueType.ARRAY)) {
 		return (item as ArrayValue).members.reduce(
 			(flatteneditemsOfMember, member) =>

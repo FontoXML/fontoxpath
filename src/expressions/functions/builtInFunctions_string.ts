@@ -6,10 +6,7 @@ import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value, { EllipsisType, SequenceMultiplicity, ValueType } from '../dataTypes/Value';
-import DynamicContext from '../DynamicContext';
-import ExecutionParameters from '../ExecutionParameters';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
-import StaticContext from '../StaticContext';
 import { DONE_TOKEN, ready } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
 import { BuiltinDeclarationType } from './builtInFunctions';
@@ -22,12 +19,7 @@ function collationError(): ISequence {
 	throw new Error('FOCH0002: No collations are supported');
 }
 
-function contextItemAsFirstArgument(
-	fn: FunctionDefinitionType,
-	dynamicContext: DynamicContext,
-	executionParameters: ExecutionParameters,
-	staticContext: StaticContext
-) {
+function contextItemAsFirstArgument(fn, dynamicContext, executionParameters, _staticContext) {
 	if (dynamicContext.contextItem === null) {
 		throw new Error(
 			'XPDY0002: The function which was called depends on dynamic context, which is absent.'
@@ -36,7 +28,7 @@ function contextItemAsFirstArgument(
 	return fn(
 		dynamicContext,
 		executionParameters,
-		staticContext,
+		_staticContext,
 		sequenceFactory.singleton(dynamicContext.contextItem)
 	);
 }
@@ -516,11 +508,9 @@ const fnIriToUri: FunctionDefinitionType = (
 			return sequenceFactory.create(createAtomicValue('', ValueType.XSSTRING));
 		}
 
-		const strValue = str.value as string;
-
 		return sequenceFactory.create(
 			createAtomicValue(
-				strValue.replace(
+				str.value.replace(
 					/([\u00A0-\uD7FF\uE000-\uFDCF\uFDF0-\uFFEF "<>{}|\\^`/\n\u007f\u0080-\u009f]|[\uD800-\uDBFF][\uDC00-\uDFFF])/g,
 					(a) => encodeURI(a)
 				),
@@ -685,12 +675,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: contextItemAsFirstArgument.bind(
 			null,
-			(
-				dynamicContext: DynamicContext,
-				executionParameters: ExecutionParameters,
-				staticContext: StaticContext,
-				contextItem: ISequence
-			) =>
+			(dynamicContext, executionParameters, staticContext, contextItem) =>
 				fnNormalizeSpace(
 					dynamicContext,
 					executionParameters,
@@ -844,12 +829,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.EXACTLY_ONE },
 		callFunction: contextItemAsFirstArgument.bind(
 			null,
-			(
-				dynamicContext: DynamicContext,
-				executionParameters: ExecutionParameters,
-				staticContext: StaticContext,
-				contextItem: ISequence
-			) =>
+			(dynamicContext, executionParameters, staticContext, contextItem) =>
 				fnStringLength(
 					dynamicContext,
 					executionParameters,

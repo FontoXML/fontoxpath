@@ -1,13 +1,12 @@
 {
 	"compilerOptions": {
-		"baseUrl": ".",
-		"declaration": true,
-		"lib": ["es6", "es2017", "esnext.asynciterable"],
-		"module": "commonjs",
-		"noImplicitAny": true,
 		"outDir": "./built",
-		"strict": false,
-		"target": "es2017"
+		"baseUrl": ".",
+		"lib": ["es6", "es2017", "esnext.asynciterable"],
+		"target": "es2017",
+		"module": "commonjs",
+		"declaration": true,
+		"strict": false
 	},
 	"include": ["./src/**/*"],
 	"exclude": ["./**/*.d.ts"]

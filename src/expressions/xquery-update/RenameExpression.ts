@@ -6,7 +6,6 @@ import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
-import StaticContext from '../StaticContext';
 import UpdatingExpressionResult from '../UpdatingExpressionResult';
 import { IIterator, IterationHint, ready } from '../util/iterators';
 import { evaluateNCNameExpression, evaluateQNameExpression } from '../xquery/nameExpression';
@@ -15,7 +14,7 @@ import { mergeUpdates } from './pulRoutines';
 import UpdatingExpression from './UpdatingExpression';
 import { errXUDY0023, errXUDY0027, errXUTY0012 } from './XQueryUpdateFacilityErrors';
 
-function evaluateTarget(targetXdmValue: Value[]) {
+function evaluateTarget(targetXdmValue) {
 	// TargetExpr is evaluated and checked as follows:
 
 	// If the result is an empty sequence,
@@ -40,12 +39,7 @@ function evaluateTarget(targetXdmValue: Value[]) {
 	return targetXdmValue[0];
 }
 
-function evaluateNewName(
-	staticContext: StaticContext,
-	executionParameters: ExecutionParameters,
-	newNameXdmValue: Value[],
-	target: Value
-) {
+function evaluateNewName(staticContext, executionParameters, newNameXdmValue, target: Value) {
 	// NewNameExpr is processed as follows:
 	const nameSequence = sequenceFactory.create(newNameXdmValue);
 
@@ -151,7 +145,7 @@ class RenameExpression extends UpdatingExpression {
 		};
 	}
 
-	public performStaticEvaluation(staticContext: StaticContext) {
+	public performStaticEvaluation(staticContext) {
 		this._staticContext = staticContext.cloneContext();
 		super.performStaticEvaluation(staticContext);
 	}

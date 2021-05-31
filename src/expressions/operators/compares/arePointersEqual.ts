@@ -1,6 +1,6 @@
-import { GraftPoint, NodePointer } from '../../../domClone/Pointer';
+import { NodePointer } from '../../../domClone/Pointer';
 
-function areGraftAncestorsSame(graftAncestor1: GraftPoint, graftAncestor2: GraftPoint): boolean {
+function areGraftAncestorsSame(graftAncestor1, graftAncestor2) {
 	if (graftAncestor1 === graftAncestor2) {
 		return true;
 	}

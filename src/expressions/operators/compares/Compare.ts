@@ -1,7 +1,5 @@
 import atomize from '../../dataTypes/atomize';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import DynamicContext from '../../DynamicContext';
-import ExecutionParameters from '../../ExecutionParameters';
 import Expression from '../../Expression';
 import generalCompare from './generalCompare';
 import nodeCompare from './nodeCompare';
@@ -48,7 +46,7 @@ class Compare extends Expression {
 		this._operator = kind;
 	}
 
-	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
+	public evaluate(dynamicContext, executionParameters) {
 		const firstSequence = this._firstExpression.evaluateMaybeStatically(
 			dynamicContext,
 			executionParameters

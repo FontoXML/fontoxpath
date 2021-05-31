@@ -1,12 +1,12 @@
 import createAtomicValue from '../createAtomicValue';
-import Value, { ValueType } from '../Value';
+import { ValueType } from '../Value';
 import CastResult from './CastResult';
 
-const createIntegerValue = (value: number) => createAtomicValue(value, ValueType.XSINTEGER);
+const createIntegerValue = (value) => createAtomicValue(value, ValueType.XSINTEGER);
 
 export default function castToInteger(
 	instanceOf: (typeName: ValueType) => boolean
-): (value: any) => CastResult {
+): (value) => CastResult {
 	if (instanceOf(ValueType.XSBOOLEAN)) {
 		return (value) => ({
 			successful: true,

@@ -4,9 +4,6 @@ import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { SequenceType, ValueType } from '../dataTypes/Value';
-import Value, { ValueType } from '../dataTypes/Value';
-import DynamicContext from '../DynamicContext';
-import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import { DONE_TOKEN, IterationHint, ready } from '../util/iterators';
 import arePointersEqual from './compares/arePointersEqual';
@@ -68,7 +65,7 @@ class IntersectExcept extends Expression {
 		this._expression2 = expression2;
 	}
 
-	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
+	public evaluate(dynamicContext, executionParameters) {
 		const firstResult = ensureSortedSequence(
 			this._intersectOrExcept,
 			executionParameters.domFacade,
@@ -85,8 +82,8 @@ class IntersectExcept extends Expression {
 		const firstIterator = firstResult.value;
 		const secondIterator = secondResult.value;
 
-		let firstValue: Value = null;
-		let secondValue: Value = null;
+		let firstValue = null;
+		let secondValue = null;
 
 		let done = false;
 		let secondIteratorDone = false;

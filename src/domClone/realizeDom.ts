@@ -139,7 +139,7 @@ export default function realizeDom(
 		return node;
 	}
 	const rootPointerByRootNode = executionParameters.rootPointerByRootNodeMap;
-	const pathToNodeFromRoot: string[] = [];
+	const pathToNodeFromRoot = [];
 	const rootPointer = getRootPointer(pointer, pathToNodeFromRoot, executionParameters.domFacade);
 	let newRootPointer = rootPointerByRootNode.get(rootPointer.node);
 	if (!newRootPointer) {

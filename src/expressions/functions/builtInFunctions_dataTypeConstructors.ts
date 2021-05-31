@@ -6,18 +6,15 @@ import sequenceFactory from '../dataTypes/sequenceFactory';
 import { normalizeWhitespace, validatePattern } from '../dataTypes/typeHelpers';
 import { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
-import DynamicContext from '../DynamicContext';
-import ExecutionParameters from '../ExecutionParameters';
 import { XMLSCHEMA_NAMESPACE_URI } from '../staticallyKnownNamespaces';
-import StaticContext from '../StaticContext';
 import { BuiltinDeclarationType } from './builtInFunctions';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
 function genericDataTypeConstructor(
 	dataType: ValueType,
-	_dynamicContext: DynamicContext,
-	_executionParameters: ExecutionParameters,
-	_staticContext: StaticContext,
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
 	sequence: ISequence
 ) {
 	if (sequence.isEmpty()) {

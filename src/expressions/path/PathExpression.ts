@@ -64,7 +64,7 @@ class PathExpression extends Expression {
 	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
 		let sequenceHasPeerProperty = true;
 		const result = this._stepExpressions.reduce<ISequence>(
-			(intermediateResultNodesSequence, selector, index) => {
+			(intermediateResultNodesSequence, selector) => {
 				let childContextIterator: IIterator<DynamicContext>;
 				if (intermediateResultNodesSequence === null) {
 					// first call, we should use the current dynamic context
@@ -85,17 +85,9 @@ class PathExpression extends Expression {
 							childContext.value.contextItem !== null &&
 							!isSubtypeOf(childContext.value.contextItem.type, ValueType.NODE)
 						) {
-							if (index > 0) {
-								// The result comes from the first expression: that's not allowed:
-								// XPTY0019.
-
-								// If the result comes from the zero-th expression, it is coming
-								// from outside. In that case, the axis step is supposed to error
-								// with XPTY0020
-								throw new Error(
-									'XPTY0019: The result of E1 in a path expression E1/E2 should not evaluate to a sequence of nodes.'
-								);
-							}
+							throw new Error(
+								'XPTY0019: The / operator can only be applied to xml/json nodes.'
+							);
 						}
 						return ready(
 							selector.evaluateMaybeStatically(

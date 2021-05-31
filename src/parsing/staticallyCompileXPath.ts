@@ -23,7 +23,7 @@ export default function staticallyCompileXPath(
 		disableCache: boolean | undefined;
 	},
 	namespaceResolver: (namespace: string) => string | null,
-	variables: { [varName: string]: any },
+	variables: object,
 	moduleImports: { [namespaceURI: string]: string },
 	defaultFunctionNamespaceURI: string,
 	functionNameResolver: FunctionNameResolver

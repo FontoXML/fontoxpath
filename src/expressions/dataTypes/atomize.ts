@@ -1,6 +1,12 @@
-import { TinyCharacterDataNode, TinyNode, TinyParentNode } from '../../domClone/Pointer';
+import {
+	TinyCharacterDataNode,
+	TinyChildNode,
+	TinyNode,
+	TinyParentNode,
+} from '../../domClone/Pointer';
 import {
 	ConcreteCharacterDataNode,
+	ConcreteChildNode,
 	ConcreteNode,
 	ConcreteParentNode,
 	NODE_TYPES,
@@ -13,7 +19,7 @@ import createAtomicValue from './createAtomicValue';
 import ISequence from './ISequence';
 import isSubtypeOf from './isSubtypeOf';
 import sequenceFactory from './sequenceFactory';
-import Value, { ValueType } from './Value';
+import Value, { SequenceMultiplicity, ValueType } from './Value';
 export function atomizeSingleValue(
 	value: Value,
 	executionParameters: ExecutionParameters
@@ -78,11 +84,11 @@ export function atomizeSingleValue(
 				return;
 			}
 			if (aNodeType === NODE_TYPES.ELEMENT_NODE || aNodeType === NODE_TYPES.DOCUMENT_NODE) {
-				const children = domFacade.getChildNodes(
+				const children: (ConcreteChildNode | TinyChildNode)[] = domFacade.getChildNodes(
 					aNode as ConcreteParentNode | TinyParentNode
 				);
 				children.forEach((child) => {
-					getTextNodes(child as ConcreteParentNode | TinyParentNode);
+					getTextNodes(child);
 				});
 			}
 		})(pointer.node);

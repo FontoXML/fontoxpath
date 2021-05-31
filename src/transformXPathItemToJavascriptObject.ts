@@ -7,16 +7,16 @@ import Value, { ValueType } from './expressions/dataTypes/Value';
 import DateTime from './expressions/dataTypes/valueTypes/DateTime';
 import QName from './expressions/dataTypes/valueTypes/QName';
 import ExecutionParameters from './expressions/ExecutionParameters';
-import { DONE_TOKEN, IIterator, IterationHint, ready } from './expressions/util/iterators';
+import { DONE_TOKEN, IIterator, ready } from './expressions/util/iterators';
 
 export function transformMapToObject(
 	map: MapValue,
 	executionParameters: ExecutionParameters
 ): IIterator<object> {
-	const mapObj: { [s: string]: Value } = {};
+	const mapObj = {};
 	let i = 0;
 	let done = false;
-	let transformedValueIterator: IIterator<Value> = null;
+	let transformedValueIterator = null;
 	return {
 		next: () => {
 			if (done) {
@@ -50,7 +50,7 @@ export function transformMapToObject(
 						executionParameters
 					);
 				}
-				const transformedValue = transformedValueIterator.next(IterationHint.NONE);
+				const transformedValue = transformedValueIterator.next();
 				transformedValueIterator = null;
 				mapObj[key] = transformedValue.value;
 				i++;
@@ -65,10 +65,10 @@ export function transformArrayToArray(
 	array: ArrayValue,
 	executionParameters: ExecutionParameters
 ): IIterator<any[]> {
-	const arr: Value[] = [];
+	const arr = [];
 	let i = 0;
 	let done = false;
-	let transformedMemberGenerator: IIterator<Value> = null;
+	let transformedMemberGenerator = null;
 	return {
 		next: () => {
 			if (done) {
@@ -95,7 +95,7 @@ export function transformArrayToArray(
 						executionParameters
 					);
 				}
-				const transformedValue = transformedMemberGenerator.next(IterationHint.NONE);
+				const transformedValue = transformedMemberGenerator.next();
 				transformedMemberGenerator = null;
 				arr[i++] = transformedValue.value;
 			}

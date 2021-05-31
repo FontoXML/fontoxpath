@@ -209,12 +209,7 @@ To run the fuzzer, run the following command in the root of this repository:
 npm run fuzzer
 ```
 
-The fuzzer is located in the `./fuzzer/` directory. The fuzzer is split across several components:
-
-1. `fuzzer.ts` - provides abstractions to support different type of fuzzer implementations.
-1. `engine.ts` - contains the runner which scales, monitors and reports progress of a fuzzer.
-1. `corpus_based_fuzzer.ts` - well, the name says it all.
-1. `index.ts` - main entry point for the `npm run fuzzer` command, currently executes a `CorpusBasedFuzzer` with the `iso_corpus.ts`.
+The fuzzer is located in the `fuzzzer/` directory, take a look at the source code for more details.
 
 ### Building
 

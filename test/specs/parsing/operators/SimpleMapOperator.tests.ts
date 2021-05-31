@@ -1,11 +1,9 @@
 import * as chai from 'chai';
-import {
-	evaluateXPath,
-	evaluateXPathToNodes,
-	evaluateXPathToString,
-	evaluateXPathToStrings,
-} from 'fontoxpath';
 import * as slimdom from 'slimdom';
+
+import { evaluateXPath, evaluateXPathToString, evaluateXPathToStrings } from 'fontoxpath';
+
+import evaluateXPathToAsyncSingleton from 'test-helpers/evaluateXPathToAsyncSingleton';
 
 let documentNode;
 beforeEach(() => {
@@ -69,30 +67,4 @@ describe('Simple map operator', () => {
 			evaluateXPathToStrings('("a", "b", "c")!position()!string()', documentNode),
 			['1', '2', '3']
 		));
-
-	it('throws the correct error when mapping numbers to a child path expresion', () =>
-		chai.assert.throws(() => evaluateXPathToNodes('0!child::a', documentNode), 'XPTY0020'));
-	it('throws the correct error when mapping numbers to a parent path expresion', () =>
-		chai.assert.throws(() => evaluateXPathToNodes('0!parent::a', documentNode), 'XPTY0020'));
-	it('throws the correct error when mapping numbers to a following path expresion', () =>
-		chai.assert.throws(() => evaluateXPathToNodes('0!following::a', documentNode), 'XPTY0020'));
-	it('throws the correct error when mapping numbers to a following sibling path expresion', () =>
-		chai.assert.throws(
-			() => evaluateXPathToNodes('0!following-sibling::a', documentNode),
-			'XPTY0020'
-		));
-	it('throws the correct error when mapping numbers to a preceding path expresion', () =>
-		chai.assert.throws(() => evaluateXPathToNodes('0!preceding::a', documentNode), 'XPTY0020'));
-	it('throws the correct error when mapping numbers to a descendant path expresion', () =>
-		chai.assert.throws(
-			() => evaluateXPathToNodes('0!descendant::a', documentNode),
-			'XPTY0020'
-		));
-	it('throws the correct error when mapping numbers to a preceding-sibling path expresion', () =>
-		chai.assert.throws(
-			() => evaluateXPathToNodes('0!preceding-sibling::a', documentNode),
-			'XPTY0020'
-		));
-	it('throws the correct error when mapping numbers to a ancestor path expresion', () =>
-		chai.assert.throws(() => evaluateXPathToNodes('0!ancestor::a', documentNode), 'XPTY0020'));
 });

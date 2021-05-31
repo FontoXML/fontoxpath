@@ -1,10 +1,10 @@
-import { TextNodePointer, TinyTextNode } from '../../domClone/Pointer';
+import { TinyTextNode } from '../../domClone/Pointer';
 import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import createPointerValue from '../dataTypes/createPointerValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { ValueType } from '../dataTypes/Value';
+import { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
@@ -39,7 +39,7 @@ class TextConstructor extends Expression {
 				isTinyNode: true,
 				nodeType: NODE_TYPES.TEXT_NODE,
 			};
-			const textNodePointer: TextNodePointer = { node: tinyTextNode, graftAncestor: null };
+			const textNodePointer = { node: tinyTextNode, graftAncestor: null };
 
 			return sequenceFactory.singleton(
 				createPointerValue(textNodePointer, executionParameters.domFacade)

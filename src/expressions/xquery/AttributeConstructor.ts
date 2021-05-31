@@ -1,13 +1,11 @@
-import { AttributeNodePointer, TinyAttributeNode } from '../../domClone/Pointer';
+import { TinyAttributeNode } from '../../domClone/Pointer';
 import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import atomize from '../dataTypes/atomize';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import createPointerValue from '../dataTypes/createPointerValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value, { ValueType } from '../dataTypes/Value';
+import Value, { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
-import DynamicContext from '../DynamicContext';
-import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
 import StaticContext from '../StaticContext';
@@ -17,7 +15,7 @@ import { errXPST0081 } from '../XPathErrors';
 import { evaluateQNameExpression } from './nameExpression';
 import { errXQDY0044 } from './XQueryErrors';
 
-function createAttribute(name: QName, value: string): AttributeNodePointer {
+function createAttribute(name, value) {
 	const tinyAttributeNode: TinyAttributeNode = {
 		nodeType: NODE_TYPES.ATTRIBUTE_NODE,
 		isTinyNode: true,
@@ -61,7 +59,7 @@ class AttributeConstructor extends Expression {
 		this._staticContext = undefined;
 	}
 
-	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
+	public evaluate(dynamicContext, executionParameters) {
 		let nameIterator: IIterator<Value>;
 		let name: QName;
 
@@ -152,7 +150,7 @@ class AttributeConstructor extends Expression {
 		});
 	}
 
-	public performStaticEvaluation(staticContext: StaticContext) {
+	public performStaticEvaluation(staticContext) {
 		this._staticContext = staticContext.cloneContext();
 		if (this.name) {
 			if (this.name.prefix && !this.name.namespaceURI) {

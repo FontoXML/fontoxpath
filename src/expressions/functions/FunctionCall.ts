@@ -220,9 +220,7 @@ class FunctionCall extends PossiblyUpdatingExpression {
 	public performFunctionalEvaluation(
 		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters,
-		[createFunctionReferenceSequence, ...createArgumentSequences]: ((
-			dynContext: DynamicContext
-		) => ISequence)[]
+		[createFunctionReferenceSequence, ...createArgumentSequences]
 	): ISequence {
 		if (this._functionReference) {
 			// We can assume this function is not updating

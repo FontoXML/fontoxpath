@@ -23,6 +23,7 @@ import {
 	UntypedExternalValue,
 } from '../types/createTypedValueFactory';
 import { LexicalQualifiedName, Options, ResolvedQualifiedName } from '../types/Options';
+import { Node } from '../types/Types';
 
 const generateGlobalVariableBindingName = (variableName: string) => `Q{}${variableName}[0]`;
 
@@ -37,14 +38,14 @@ builtInFunctions.forEach((builtInFunction) => {
 	);
 });
 
-export function createDefaultNamespaceResolver(contextItem: any): (s: string) => string {
+function createDefaultNamespaceResolver(contextItem: any): (s: string) => string {
 	if (!contextItem || typeof contextItem !== 'object' || !('lookupNamespaceURI' in contextItem)) {
 		return (_prefix) => null;
 	}
-	return (prefix) => contextItem['lookupNamespaceURI'](prefix || null);
+	return (prefix) => (contextItem as Node)['lookupNamespaceURI'](prefix || null);
 }
 
-export function normalizeEndOfLines(xpathString: string) {
+function normalizeEndOfLines(xpathString: string) {
 	// Replace all character sequences of 0xD followed by 0xA and all 0xD not followed by 0xA with 0xA.
 	return xpathString.replace(/(\x0D\x0A)|(\x0D(?!\x0A))/g, String.fromCharCode(0xa));
 }
@@ -172,7 +173,7 @@ export default function buildEvaluationContext(
 		Object.create(null) as { [s: string]: () => ISequence }
 	);
 
-	let dynamicContext: DynamicContext;
+	let dynamicContext;
 	for (const binding of expressionAndStaticContext.staticContext.getVariableBindings()) {
 		if (!variableBindings[binding]) {
 			variableBindings[binding] = () =>

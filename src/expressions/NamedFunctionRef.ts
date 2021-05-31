@@ -1,13 +1,12 @@
 import FunctionValue from './dataTypes/FunctionValue';
 import sequenceFactory from './dataTypes/sequenceFactory';
 import { SequenceType } from './dataTypes/Value';
-import QName from './dataTypes/valueTypes/QName';
 import Expression from './Expression';
 import { FunctionProperties, getAlternativesAsStringFor } from './functions/functionRegistry';
 import Specificity from './Specificity';
 import StaticContext from './StaticContext';
 
-function buildFormattedFunctionName(functionReference: QName) {
+function buildFormattedFunctionName(functionReference) {
 	return `${
 		functionReference.namespaceURI
 			? `Q{${functionReference.namespaceURI}}`

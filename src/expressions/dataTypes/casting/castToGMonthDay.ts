@@ -1,6 +1,6 @@
 import AtomicValue from '../AtomicValue';
 import createAtomicValue from '../createAtomicValue';
-import { ValueType } from '../Value';
+import { SequenceMultiplicity, ValueType } from '../Value';
 import DateTime from '../valueTypes/DateTime';
 import CastResult from './CastResult';
 
@@ -9,7 +9,7 @@ const createGMonthDayValue = (value: any): AtomicValue =>
 
 export default function castToGMonthDay(
 	instanceOf: (typeName: ValueType) => boolean
-): (value: any) => CastResult {
+): (value: DateTime) => CastResult {
 	if (instanceOf(ValueType.XSDATE) || instanceOf(ValueType.XSDATETIME)) {
 		return (value) => ({
 			successful: true,

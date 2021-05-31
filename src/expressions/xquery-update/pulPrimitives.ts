@@ -55,7 +55,7 @@ export const insertAttributes = (target: ElementNodePointer, content: AttributeN
 	return new InsertAttributesPendingUpdate(target, content);
 };
 
-export const rename = (target: ElementNodePointer, newName: QName) => {
+export const rename = (target, newName: QName) => {
 	return new RenamePendingUpdate(target, newName);
 };
 

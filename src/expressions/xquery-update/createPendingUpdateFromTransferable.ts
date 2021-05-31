@@ -1,12 +1,3 @@
-import {
-	ConcreteAttributeNode,
-	ConcreteChildNode,
-	ConcreteElementNode,
-	ConcreteParentNode,
-	ConcreteTextNode,
-} from '../../domFacade/ConcreteNode';
-import { Node } from '../../types/Types';
-import QName from '../dataTypes/valueTypes/QName';
 import { IPendingUpdate } from './IPendingUpdate';
 import { DeletePendingUpdate } from './pendingUpdates/DeletePendingUpdate';
 import { InsertAfterPendingUpdate } from './pendingUpdates/InsertAfterPendingUpdate';
@@ -20,99 +11,76 @@ import { ReplaceElementContentPendingUpdate } from './pendingUpdates/ReplaceElem
 import { ReplaceNodePendingUpdate } from './pendingUpdates/ReplaceNodePendingUpdate';
 import { ReplaceValuePendingUpdate } from './pendingUpdates/ReplaceValuePendingUpdate';
 
-export type TransferablePendingUpdate = {
-	content?: Node[];
-	newName?: QName;
-	replacement?: Node[];
-	'string-value'?: string;
-	target?: Node;
-	text?: Node;
-	type: string;
-};
-
-export default function createPendingUpdateFromTransferable(
-	transferable: TransferablePendingUpdate
-): IPendingUpdate {
+export default function createPendingUpdateFromTransferable(transferable: object): IPendingUpdate {
 	switch (transferable['type']) {
 		case 'delete':
 			return new DeletePendingUpdate({
-				node: transferable['target'] as ConcreteChildNode,
+				node: transferable['target'],
 				graftAncestor: null,
 			});
 		case 'insertAfter':
 			return new InsertAfterPendingUpdate(
-				{
-					node: transferable['target'] as ConcreteChildNode,
-					graftAncestor: null,
-				},
-				transferable['content'].map((contentNode: ConcreteChildNode) => {
+				{ node: transferable['target'], graftAncestor: null },
+				transferable['content'].map((contentNode) => {
 					return { node: contentNode, graftAncestor: null };
 				})
 			);
 		case 'insertBefore':
 			return new InsertBeforePendingUpdate(
-				{ node: transferable['target'] as ConcreteParentNode, graftAncestor: null },
-				transferable['content'].map((contentNode: ConcreteChildNode) => {
+				{ node: transferable['target'], graftAncestor: null },
+				transferable['content'].map((contentNode) => {
 					return { node: contentNode, graftAncestor: null };
 				})
 			);
 		case 'insertInto':
 			return new InsertIntoPendingUpdate(
-				{ node: transferable['target'] as ConcreteElementNode, graftAncestor: null },
-				transferable['content'].map((contentNode: ConcreteChildNode) => {
+				{ node: transferable['target'], graftAncestor: null },
+				transferable['content'].map((contentNode) => {
 					return { node: contentNode, graftAncestor: null };
 				})
 			);
 		case 'insertIntoAsFirst':
 			return new InsertIntoAsFirstPendingUpdate(
-				{ node: transferable['target'] as ConcreteElementNode, graftAncestor: null },
-				transferable['content'].map((contentNode: ConcreteChildNode) => {
+				{ node: transferable['target'], graftAncestor: null },
+				transferable['content'].map((contentNode) => {
 					return { node: contentNode, graftAncestor: null };
 				})
 			);
 		case 'insertIntoAsLast':
 			return new InsertIntoAsLastPendingUpdate(
-				{ node: transferable['target'] as ConcreteElementNode, graftAncestor: null },
-				transferable['content'].map((contentNode: ConcreteChildNode) => {
+				{ node: transferable['target'], graftAncestor: null },
+				transferable['content'].map((contentNode) => {
 					return { node: contentNode, graftAncestor: null };
 				})
 			);
 		case 'insertAttributes':
 			return new InsertAttributesPendingUpdate(
-				{ node: transferable['target'] as ConcreteElementNode, graftAncestor: null },
-				transferable['content'].map((contentNode: ConcreteAttributeNode) => {
+				{ node: transferable['target'], graftAncestor: null },
+				transferable['content'].map((contentNode) => {
 					return { node: contentNode, graftAncestor: null };
 				})
 			);
 		case 'rename':
 			return new RenamePendingUpdate(
-				{ node: transferable['target'] as ConcreteElementNode, graftAncestor: null },
+				{ node: transferable['target'], graftAncestor: null },
 				transferable['newName']
 			);
 		case 'replaceNode':
 			return new ReplaceNodePendingUpdate(
-				{
-					node: transferable['target'] as ConcreteChildNode,
-					graftAncestor: null,
-				},
-				transferable['replacement'].map((contentNode: ConcreteChildNode) => {
+				{ node: transferable['target'], graftAncestor: null },
+				transferable['replacement'].map((contentNode) => {
 					return { node: contentNode, graftAncestor: null };
 				})
 			);
 		case 'replaceValue':
 			return new ReplaceValuePendingUpdate(
-				{
-					node: transferable['target'] as ConcreteElementNode,
-					graftAncestor: null,
-				},
+				{ node: transferable['target'], graftAncestor: null },
 				transferable['string-value']
 			);
 		case 'replaceElementContent':
 			return new ReplaceElementContentPendingUpdate(
-				{ node: transferable['target'] as ConcreteElementNode, graftAncestor: null },
-				transferable['text']
-					? { node: transferable['text'] as ConcreteTextNode, graftAncestor: null }
-					: null
+				{ node: transferable['target'], graftAncestor: null },
+				transferable['text'] ? { node: transferable['text'], graftAncestor: null } : null
 			);
 		default:
 			throw new Error(

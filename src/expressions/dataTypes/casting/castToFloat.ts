@@ -1,5 +1,5 @@
 import createAtomicValue from '../createAtomicValue';
-import { ValueType } from '../Value';
+import { SequenceMultiplicity, ValueType } from '../Value';
 import CastResult from './CastResult';
 import castToFloatLikeType from './castToFloatLikeType';
 

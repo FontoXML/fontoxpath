@@ -11,7 +11,6 @@ import TestAbstractExpression from '../tests/TestAbstractExpression';
 import createChildGenerator from '../util/createChildGenerator';
 import createSingleValueIterator from '../util/createSingleValueIterator';
 import { DONE_TOKEN, IIterator, IterationHint, ready } from '../util/iterators';
-import validateContextNode from './validateContextNode';
 
 function createInclusiveDescendantGenerator(
 	domFacade: DomFacade,
@@ -85,14 +84,15 @@ class DescendantAxis extends Expression {
 		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters
 	): ISequence {
-		const domFacade = executionParameters.domFacade;
-		const contextPointer = validateContextNode(dynamicContext.contextItem);
+		if (dynamicContext.contextItem === null) {
+			throw new Error('XPDY0002: context is absent, it needs to be present to use axes.');
+		}
 
 		const inclusive = this._isInclusive;
 
 		const iterator = createInclusiveDescendantGenerator(
-			domFacade,
-			contextPointer as ChildNodePointer,
+			executionParameters.domFacade,
+			dynamicContext.contextItem.value,
 			this._descendantBucket
 		);
 		if (!inclusive) {

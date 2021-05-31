@@ -43,7 +43,7 @@ class InlineFunction extends Expression {
 		this._functionBody = functionBody;
 	}
 
-	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
+	public evaluate(dynamicContext, executionParameters): ISequence {
 		/**
 		 * @param  _unboundDynamicContext  The dynamic context at the moment of the function call. This will not be used because the context of a function is the context at the moment of declaration.
 		 *                                                                  This shall not be used

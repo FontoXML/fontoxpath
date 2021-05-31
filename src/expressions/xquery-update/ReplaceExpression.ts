@@ -1,14 +1,8 @@
-import {
-	AttributeNodePointer,
-	ChildNodePointer,
-	ElementNodePointer,
-	TextNodePointer,
-} from '../../domClone/Pointer';
 import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value, { ValueType } from '../dataTypes/Value';
+import { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
@@ -17,7 +11,6 @@ import UpdatingExpressionResult from '../UpdatingExpressionResult';
 import { DONE_TOKEN, IIterator, IterationHint, ready } from '../util/iterators';
 import parseContent from '../xquery/ElementConstructorContent';
 import { errXQDY0026, errXQDY0072 } from '../xquery/XQueryErrors';
-import { IPendingUpdate } from './IPendingUpdate';
 import { replaceElementContent, replaceNode, replaceValue } from './pulPrimitives';
 import { mergeUpdates } from './pulRoutines';
 import UpdatingExpression from './UpdatingExpression';
@@ -37,12 +30,9 @@ function evaluateReplaceNode(
 	replacementValueIterator: IIterator<UpdatingExpressionResult>
 ) {
 	const domFacade = executionParameters.domFacade;
-	let rlist: {
-		attributes: AttributeNodePointer[];
-		contentNodes: ChildNodePointer[];
-	};
-	let rlistUpdates: IPendingUpdate[];
-	let parent: ElementNodePointer;
+	let rlist;
+	let rlistUpdates;
+	let parent;
 	return {
 		next: () => {
 			if (!rlist) {
@@ -99,7 +89,7 @@ function evaluateReplaceNode(
 			parent = executionParameters.domFacade.getParentNodePointer(
 				tv.value.xdmValue[0].value,
 				null
-			) as ElementNodePointer;
+			);
 			if (parent === null) {
 				throw errXUDY0009(tv.value.xdmValue[0].value);
 			}
@@ -127,35 +117,32 @@ function evaluateReplaceNode(
 					throw errXUTY0011();
 				}
 
-				rlist.attributes.reduce(
-					(namespaceBindings: { [s: string]: string }, attributePointer) => {
-						const prefix = domFacade.getPrefix(attributePointer) || '';
-						const namespaceURI = domFacade.getNamespaceURI(attributePointer);
+				rlist.attributes.reduce((namespaceBindings, attributePointer) => {
+					const prefix = domFacade.getPrefix(attributePointer) || '';
+					const namespaceURI = domFacade.getNamespaceURI(attributePointer);
 
-						// No attribute node in $rlist may have a QName
-						// whose implied namespace binding conflicts with
-						// a namespace binding in the "namespaces"
-						// property of $parent [err:XUDY0023].
-						const boundNamespaceURI = (parent.node as any).lookupNamespaceURI(prefix);
-						if (boundNamespaceURI && boundNamespaceURI !== namespaceURI) {
-							throw errXUDY0023(namespaceURI);
+					// No attribute node in $rlist may have a QName
+					// whose implied namespace binding conflicts with
+					// a namespace binding in the "namespaces"
+					// property of $parent [err:XUDY0023].
+					const boundNamespaceURI = parent.node.lookupNamespaceURI(prefix);
+					if (boundNamespaceURI && boundNamespaceURI !== namespaceURI) {
+						throw errXUDY0023(namespaceURI);
+					}
+
+					// Multiple attribute nodes in $rlist may not have
+					// QNames whose implied namespace bindings
+					// conflict with each other [err:XUDY0024].
+					const alreadyDeclaredNamespace = namespaceBindings[prefix];
+					if (alreadyDeclaredNamespace) {
+						if (namespaceURI !== alreadyDeclaredNamespace) {
+							throw errXUDY0024(namespaceURI);
 						}
+					}
 
-						// Multiple attribute nodes in $rlist may not have
-						// QNames whose implied namespace bindings
-						// conflict with each other [err:XUDY0024].
-						const alreadyDeclaredNamespace = namespaceBindings[prefix];
-						if (alreadyDeclaredNamespace) {
-							if (namespaceURI !== alreadyDeclaredNamespace) {
-								throw errXUDY0024(namespaceURI);
-							}
-						}
-
-						namespaceBindings[prefix] = namespaceURI;
-						return namespaceBindings;
-					},
-					{}
-				);
+					namespaceBindings[prefix] = namespaceURI;
+					return namespaceBindings;
+				}, {});
 			}
 
 			// The result of the replace expression is an empty
@@ -167,7 +154,7 @@ function evaluateReplaceNode(
 			return ready({
 				xdmValue: [],
 				pendingUpdateList: mergeUpdates(
-					[replaceNode(target.value, [].concat(rlist.attributes, rlist.contentNodes))],
+					[replaceNode(target.value, rlist.attributes.concat(rlist.contentNodes))],
 					rlistUpdates,
 					targetUpdates
 				),
@@ -181,10 +168,10 @@ function evaluateReplaceNodeValue(
 	targetValueIterator: IIterator<UpdatingExpressionResult>,
 	replacementValueIterator: IIterator<UpdatingExpressionResult>
 ) {
-	let target: Value;
-	let targetUpdates: IPendingUpdate[];
-	let text: TextNodePointer;
-	let rlistUpdates: IPendingUpdate[];
+	let target;
+	let targetUpdates;
+	let text;
+	let rlistUpdates;
 	let done = false;
 	return {
 		next: () => {

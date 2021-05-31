@@ -10,7 +10,7 @@ const XQUERYX_UPDATING_NAMESPACE_URI = 'http://www.w3.org/2007/xquery-update-10'
 
 const XQUERYX_NAMESPACE_URI = 'http://www.w3.org/2005/XQueryX';
 
-const PREFERRED_PREFIX_BY_NAMESPACEURI: { [prefix: string]: string } = {
+const PREFERRED_PREFIX_BY_NAMESPACEURI = {
 	[XQUERYX_NAMESPACE_URI]: 'xqx',
 	[XQUERYX_UPDATING_NAMESPACE_URI]: 'xquf',
 };

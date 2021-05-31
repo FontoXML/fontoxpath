@@ -25,7 +25,6 @@ export type ConcreteTextNode = Text & { nodeType: NODE_TYPES.TEXT_NODE };
 export type ConcreteElementNode = Element & { nodeType: NODE_TYPES.ELEMENT_NODE };
 export type ConcreteCommentNode = Comment & { nodeType: NODE_TYPES.COMMENT_NODE };
 export type ConcreteCDATASectionNode = CDATASection & { nodeType: NODE_TYPES.CDATA_SECTION_NODE };
-export type ConcreteDocumentTypeNode = DocumentType & { nodeType: NODE_TYPES.DOCUMENT_TYPE_NODE };
 export type ConcreteAttributeNode = Attr & { nodeType: NODE_TYPES.ATTRIBUTE_NODE };
 export type ConcreteDocumentNode = Document & { nodeType: NODE_TYPES.DOCUMENT_NODE };
 export type ConcreteProcessingInstructionNode = ProcessingInstruction & {
@@ -43,8 +42,4 @@ export type ConcreteCharacterDataNode =
 	| ConcreteCDATASectionNode
 	| ConcreteProcessingInstructionNode
 	| ConcreteCommentNode;
-export type ConcreteNode =
-	| ConcreteChildNode
-	| ConcreteParentNode
-	| ConcreteAttributeNode
-	| ConcreteDocumentTypeNode;
+export type ConcreteNode = ConcreteChildNode | ConcreteParentNode | ConcreteAttributeNode;

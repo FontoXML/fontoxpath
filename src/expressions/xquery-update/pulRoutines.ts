@@ -1,6 +1,5 @@
 import IDocumentWriter from '../../documentWriter/IDocumentWriter';
-import { AttributeNodePointer } from '../../domClone/Pointer';
-import { ConcreteNode, NODE_TYPES } from '../../domFacade/ConcreteNode';
+import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import DomFacade from '../../domFacade/DomFacade';
 import INodesFactory from '../../nodesFactory/INodesFactory';
 import QName from '../dataTypes/valueTypes/QName';
@@ -33,8 +32,8 @@ import { errXUDY0015, errXUDY0016, errXUDY0017, errXUDY0024 } from './XQueryUpda
 
 export const applyUpdates = (
 	pul: IPendingUpdate[],
-	_revalidationModule: any,
-	_inheritNamespaces: any,
+	_revalidationModule,
+	_inheritNamespaces,
 	domFacade: DomFacade,
 	nodesFactory: INodesFactory,
 	documentWriter: IDocumentWriter
@@ -143,7 +142,7 @@ export const applyUpdates = (
 };
 
 const compatibilityCheck = (pul: IPendingUpdate[], domFacade: DomFacade) => {
-	function findDuplicateTargets(type: string, onFoundDuplicate: (node: ConcreteNode) => void) {
+	function findDuplicateTargets(type, onFoundDuplicate) {
 		const targets = new Set();
 		pul.filter((pu) => pu.type === type)
 			.map((pu) => pu.target)
@@ -183,7 +182,7 @@ const compatibilityCheck = (pul: IPendingUpdate[], domFacade: DomFacade) => {
 	// 6. Two or more primitives in $pul create conflicting namespace bindings for the same element node [err:XUDY0024].
 	// The following kinds of primitives create namespace bindings:
 	const newQNamesByElement = new Map();
-	const getAttributeName = (attribute: AttributeNodePointer) =>
+	const getAttributeName = (attribute) =>
 		new QName(
 			domFacade.getPrefix(attribute),
 			domFacade.getNamespaceURI(attribute),
@@ -227,8 +226,8 @@ const compatibilityCheck = (pul: IPendingUpdate[], domFacade: DomFacade) => {
 	});
 
 	newQNamesByElement.forEach((qNames, _element) => {
-		const prefixes: { [prefix: string]: string } = {};
-		qNames.forEach((qName: QName) => {
+		const prefixes = {};
+		qNames.forEach((qName) => {
 			if (!prefixes[qName.prefix]) {
 				prefixes[qName.prefix] = qName.namespaceURI;
 			}

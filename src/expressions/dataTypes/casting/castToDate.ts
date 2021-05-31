@@ -1,6 +1,6 @@
 import AtomicValue from '../AtomicValue';
 import createAtomicValue from '../createAtomicValue';
-import { ValueType } from '../Value';
+import Value, { SequenceMultiplicity, ValueType } from '../Value';
 import DateTime from '../valueTypes/DateTime';
 import CastResult from './CastResult';
 

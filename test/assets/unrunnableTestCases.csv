@@ -2046,8 +2046,13 @@ Axes111,Error: Not implemented: only module imports, namespace declarations, and
 Axes112,AssertionError: expected [Function] to throw error matching /XQST0134/ but got 'No selector counterpart for: namespaceTest.'
 Axes115,AssertionError: Expected executing the XPath "/*/attribute::namespace-node()" to resolve to one of the expected results, but got Error: No selector counterpart for: namespaceTest., AssertionError: expected [Function] to throw error matching /XPST0005/ but got 'No selector counterpart for: namespaceTest.'.
 Axes117,Error: No selector counterpart for: computedNamespaceConstructor.
+axis-err-1,AssertionError: expected [Function] to throw error matching /XPTY0020/ but got 'Cannot read property \'nodeType\' of undefined'
 K2-Axes-1,Error: No selector counterpart for: computedDocumentConstructor.
 K2-Axes-33,AssertionError: Expected executing the XPath "declare variable $myVar := document { <e/>}; empty($myVar/(/)/..)" to resolve to one of the expected results, but got Error: No selector counterpart for: computedDocumentConstructor., AssertionError: expected [Function] to throw error matching /XPST0005/ but got 'No selector counterpart for: computedDocumentConstructor.'.
+K2-Axes-38,AssertionError: expected [Function] to throw error matching /XPTY0020/ but got 'XPTY0019: The / operator can only be applied to xml/json nodes.'
+K2-Axes-39,AssertionError: expected [Function] to throw error matching /XPTY0020/ but got 'Cannot read property \'nodeType\' of undefined'
+K2-Axes-40,AssertionError: expected [Function] to throw error matching /XPTY0020/ but got 'XPTY0019: The / operator can only be applied to xml/json nodes.'
+K2-Axes-41,AssertionError: expected [Function] to throw error matching /XPTY0020/ but got 'XPTY0019: The / operator can only be applied to xml/json nodes.'
 K2-Axes-48,Error: No selector counterpart for: computedDocumentConstructor.
 K2-Axes-49,Error: No selector counterpart for: computedDocumentConstructor.
 K2-Axes-84,AssertionError: expected [Function] to throw error matching /XPST0008/ but got 'No selector counterpart for: schemaAttributeTest.'
@@ -2640,7 +2645,7 @@ eqname-033,Error: Not implemented: let expressions with namespace usage.
 eqname-034,AssertionError: Expected executing the XPath "          let $Q{$Q}a := 12, $Q{//}a := 13, $Q{*}a := 14          return $Q{$Q}a + $Q{//}a + $Q{*}a       " to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error matching /XQST0046/ but got 'Not implemented: let expressions with namespace usage.', Error: Not implemented: let expressions with namespace usage..
 eqname-910,AssertionError: expected [Function] to throw an error
 eqname-913,AssertionError: expected [Function] to throw an error
-ForExpr024,AssertionError: expected [Function] to throw error matching /XQST0089/ but got 'XPTY0019: The result of a E1 in a path expression E1/E2 should not evaluate to a sequence of nodes.'
+ForExpr024,AssertionError: expected [Function] to throw error matching /XQST0089/ but got 'XPTY0019: The / operator can only be applied to xml/json nodes.'
 ForExpr031,AssertionError: expected [Function] to throw an error
 K-ForExprWithout-27,AssertionError: expected [Function] to throw error matching /XPST0081/ but got 'XPST0008, The variable NOTEXIST is not in scope.'
 K-ForExprWithout-30,AssertionError: expected [Function] to throw error matching /XPST0081/ but got 'XPST0008, The variable NOTEXIST is not in scope.'
@@ -2762,6 +2767,8 @@ K-SeqExprInstanceOf-39,Error: No selector counterpart for: voidSequenceType.
 K-SeqExprInstanceOf-40,Error: No selector counterpart for: voidSequenceType.
 K-SeqExprInstanceOf-41,Error: No selector counterpart for: voidSequenceType.
 K-SeqExprInstanceOf-42,Error: No selector counterpart for: voidSequenceType.
+K-SeqExprInstanceOf-52,AssertionError: expected [Function] to throw error matching /XPST0051/ but got 'XPST0081: The type none could not be found.'
+K-SeqExprInstanceOf-53,AssertionError: expected [Function] to throw error matching /XPST0051/ but got 'XPST0081: The type void could not be found.'
 K-SeqExprInstanceOf-56,AssertionError: Expected executing the XPath "error() instance of xs:integer" to resolve to one of the expected results, but got Error: XPST0017: Function error with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?, AssertionError: expected [Function] to throw error matching /FOER0000/ but got 'XPST0017: Function error with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?'.
 K-SeqExprInstanceOf-57,AssertionError: Expected executing the XPath "error() instance of xs:integer*" to resolve to one of the expected results, but got Error: XPST0017: Function error with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?, AssertionError: expected [Function] to throw error matching /FOER0000/ but got 'XPST0017: Function error with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?'.
 K-SeqExprInstanceOf-58,AssertionError: Expected executing the XPath "error() instance of empty-sequence()" to resolve to one of the expected results, but got Error: No selector counterpart for: voidSequenceType., AssertionError: expected [Function] to throw error matching /FOER0000/ but got 'No selector counterpart for: voidSequenceType.'.
@@ -3380,6 +3387,7 @@ prolog-version-7-v31,Error: Not implemented: only module imports, namespace decl
 K-VersionProlog-5-v3,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 WhereExpr023,Error: XPST0003: Unable to parse: "          for $file in //File          count $c          where ($file//Allow/user = 'system\Aladin')           return $c       ". Expected " ", "!", "!=", "(", "(:", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "for", "ge", "group", "gt", "idiv", "instance", "intersect", "is", "le", "let", "lt", "mod", "ne", "or", "order", "return", "stable", "to", "treat", "union", "where", "|", or "||" but "c" found.           for $file in //File          [Error is around here]count $c          where ($file//Allow/user = 'system\Aladin')           return $c
 WhereExpr026,Error: XPST0003: Unable to parse: "          let $doc := (/)          return (11 to 15)!             (for $file in $doc//File             count $c             where $c = position()             return $file/FileName)       ". Expected " ", "!", "!=", "(", "(:", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "for", "ge", "group", "gt", "idiv", "instance", "intersect", "is", "le", "let", "lt", "mod", "ne", "or", "order", "return", "stable", "to", "treat", "union", "where", "|", or "||" but "c" found.           let $doc := (/)          return (11 to 15)!             (for $file in $doc//File             [Error is around here]count $c             where $c = position()             return $file/FileName)
+WhereExpr027,Error: XPTY0019: The / operator can only be applied to xml/json nodes.
 WhereExpr031,AssertionError:           declare variable $n external := 0;          for $x allowing empty in 1 to $n          where not($x = 5)          return concat("[", $x, "]")       : expected '' to equal '[]'
 K-WhereExpr-7,Error: No selector counterpart for: treatExpr.
 K-WhereExpr-8,Error: No selector counterpart for: treatExpr.
@@ -3447,6 +3455,7 @@ XPTY0004_37,AssertionError: expected [Function] to throw an error
 XPTY0004_38,AssertionError: expected [Function] to throw an error
 XPTY0004_39,AssertionError: expected [Function] to throw an error
 XPTY0004_40,AssertionError: expected [Function] to throw an error
+XPTY0020,AssertionError: expected [Function] to throw error matching /XPTY0020/ but got 'Cannot read property \'nodeType\' of undefined'
 XQDY0041,AssertionError: expected [Function] to throw an error
 XQDY0072,AssertionError: expected [Function] to throw an error
 XQDY0074_3,AssertionError: expected [Function] to throw an error

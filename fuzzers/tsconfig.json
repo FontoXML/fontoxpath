@@ -1,9 +1,6 @@
 {
 	"compilerOptions": {
 		"baseUrl": ".",
-		"lib": [
-			"ES2020"
-		],
 		"paths": {
 			"fontoxpath": [
 				"../dist/fontoxpath.esm.js"
@@ -15,11 +12,11 @@
 			"mocha",
 			"node"
 		],
-		"moduleResolution": "node",
 		"target": "es2020",
 		"esModuleInterop": true
 	},
 	"include": [
+		"../src/**/*.ts",
 		"./**/*.ts"
 	]
 }

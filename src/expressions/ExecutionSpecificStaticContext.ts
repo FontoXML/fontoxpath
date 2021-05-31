@@ -57,14 +57,14 @@ export default class ExecutionSpecificStaticContext implements IContext {
 
 	constructor(
 		namespaceResolver: (prefix: string) => string | null,
-		variableByName: { [varName: string]: any },
+		variableByName: object,
 		defaultFunctionNamespaceURI: string,
 		functionNameResolver: FunctionNameResolver
 	) {
 		this._namespaceResolver = namespaceResolver;
 
 		this._variableBindingByName = Object.keys(variableByName).reduce(
-			(bindings: { [varName: string]: string }, variableName) => {
+			(bindings, variableName) => {
 				if (variableByName[variableName] === undefined) {
 					return bindings;
 				}

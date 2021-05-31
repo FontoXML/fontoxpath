@@ -1,4 +1,4 @@
-import { NodePointer, TextNodePointer } from '../../domClone/Pointer';
+import { TextNodePointer } from '../../domClone/Pointer';
 import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import DomFacade from '../../domFacade/DomFacade';
 import ArrayValue from '../dataTypes/ArrayValue';
@@ -9,7 +9,7 @@ import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value, { ValueType } from '../dataTypes/Value';
+import Value, { SequenceMultiplicity, SequenceType, ValueType } from '../dataTypes/Value';
 import { equal } from '../dataTypes/valueTypes/DateTime';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
@@ -51,15 +51,15 @@ function asyncGenerateEvery<T>(
 	};
 }
 
-function filterElementAndTextNodes(node: NodePointer, domFacade: DomFacade) {
+function filterElementAndTextNodes(node, domFacade: DomFacade) {
 	const nodeType = domFacade.getNodeType(node);
 	return nodeType === NODE_TYPES.ELEMENT_NODE || nodeType === NODE_TYPES.TEXT_NODE;
 }
 
 function anyAtomicTypeDeepEqual(
-	_dynamicContext: DynamicContext,
-	_executionParameters: ExecutionParameters,
-	_staticContext: StaticContext,
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
 	item1: Value,
 	item2: Value
 ): boolean {

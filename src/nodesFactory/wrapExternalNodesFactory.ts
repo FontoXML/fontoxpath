@@ -3,19 +3,19 @@ import INodesFactory from './INodesFactory';
 class WrappingNodesFactory implements INodesFactory {
 	private _externalNodesFactory: INodesFactory;
 
-	constructor(externalNodesFactory: INodesFactory) {
+	constructor(externalNodesFactory) {
 		this._externalNodesFactory = externalNodesFactory;
 	}
 
-	public createAttributeNS(namespaceURI: string, name: string) {
+	public createAttributeNS(namespaceURI, name) {
 		return this._externalNodesFactory['createAttributeNS'](namespaceURI, name);
 	}
 
-	public createCDATASection(contents: string) {
+	public createCDATASection(contents) {
 		return this._externalNodesFactory['createCDATASection'](contents);
 	}
 
-	public createComment(contents: string) {
+	public createComment(contents) {
 		return this._externalNodesFactory['createComment'](contents);
 	}
 
@@ -23,19 +23,19 @@ class WrappingNodesFactory implements INodesFactory {
 		return this._externalNodesFactory['createDocument']();
 	}
 
-	public createElementNS(namespaceURI: string, name: string) {
+	public createElementNS(namespaceURI, name) {
 		return this._externalNodesFactory['createElementNS'](namespaceURI, name);
 	}
 
-	public createProcessingInstruction(target: string, data: string) {
+	public createProcessingInstruction(target, data) {
 		return this._externalNodesFactory['createProcessingInstruction'](target, data);
 	}
 
-	public createTextNode(contents: string) {
+	public createTextNode(contents) {
 		return this._externalNodesFactory['createTextNode'](contents);
 	}
 }
 
-export default function wrapExternalNodesFactory(externalNodesFactory: INodesFactory) {
+export default function wrapExternalNodesFactory(externalNodesFactory) {
 	return new WrappingNodesFactory(externalNodesFactory);
 }

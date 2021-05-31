@@ -8,9 +8,9 @@ import ISequence from '../expressions/dataTypes/ISequence';
 import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
 import MapValue from '../expressions/dataTypes/MapValue';
 import sequenceFactory from '../expressions/dataTypes/sequenceFactory';
-import Value, { ValueType } from '../expressions/dataTypes/Value';
+import { SequenceMultiplicity, ValueType } from '../expressions/dataTypes/Value';
 import ExecutionParameters from '../expressions/ExecutionParameters';
-import { IIterator, IterationHint } from '../expressions/util/iterators';
+import { IterationHint } from '../expressions/util/iterators';
 import transformXPathItemToJavascriptObject, {
 	transformArrayToArray,
 	transformMapToObject,
@@ -185,9 +185,9 @@ export default function convertXDMReturnValue<
 
 		case ReturnType.ASYNC_ITERATOR: {
 			const it = rawResults.value;
-			let transformedValueGenerator: IIterator<Value> = null;
+			let transformedValueGenerator = null;
 			let done = false;
-			const getNextResult = () => {
+			const getNextResult: () => Promise<IteratorResult<any>> = () => {
 				while (!done) {
 					if (!transformedValueGenerator) {
 						const value = it.next(IterationHint.NONE);
@@ -200,7 +200,7 @@ export default function convertXDMReturnValue<
 							executionParameters
 						);
 					}
-					const transformedValue = transformedValueGenerator.next(IterationHint.NONE);
+					const transformedValue = transformedValueGenerator.next();
 					transformedValueGenerator = null;
 					return transformedValue;
 				}

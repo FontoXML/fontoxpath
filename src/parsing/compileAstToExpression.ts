@@ -337,7 +337,7 @@ function unwrapBinaryOperator(
 	ast: IAST,
 	compilationOptions: CompilationOptions
 ) {
-	const compiledAstNodes: Expression[] = [];
+	const compiledAstNodes = [];
 	function unwrapInner(innerAst: IAST) {
 		const firstOperand = astHelper.getFirstChild(innerAst, 'firstOperand')[1] as IAST;
 		const secondOperand = astHelper.getFirstChild(innerAst, 'secondOperand')[1] as IAST;
@@ -705,7 +705,7 @@ function dynamicFunctionInvocationExpr(ast: IAST, compilationOptions: Compilatio
 	const functionItemContent = astHelper.followPath(ast, ['functionItem', '*']);
 	const retType: IAST = astHelper.followPath(ast, ['type']);
 	const argumentsAst = astHelper.getFirstChild(ast, 'arguments');
-	let args: Expression[] = [];
+	let args = [];
 	if (argumentsAst) {
 		const functionArguments = astHelper.getChildren(argumentsAst, '*');
 		args = functionArguments.map((arg) =>

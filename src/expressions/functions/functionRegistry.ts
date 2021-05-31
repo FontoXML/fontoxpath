@@ -19,7 +19,7 @@ export type FunctionProperties = {
 
 const registeredFunctionsByName: { [s: string]: FunctionProperties[] } = Object.create(null);
 
-function computeLevenshteinDistance(a: string, b: string) {
+function computeLevenshteinDistance(a, b) {
 	const computedDistances = [];
 	for (let i = 0; i < a.length + 1; ++i) {
 		computedDistances[i] = [];
@@ -154,11 +154,11 @@ export function getFunctionByArity(
 }
 
 export function registerFunction(
-	namespaceURI: string,
-	localName: string,
+	namespaceURI,
+	localName,
 	argumentTypes: ParameterType[],
 	returnType: SequenceType,
-	callFunction: FunctionSignature<ISequence>
+	callFunction
 ) {
 	if (!registeredFunctionsByName[namespaceURI + ':' + localName]) {
 		registeredFunctionsByName[namespaceURI + ':' + localName] = [];

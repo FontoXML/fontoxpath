@@ -5,7 +5,7 @@ import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression from '../Expression';
 import Specificity from '../Specificity';
-import { DONE_TOKEN, IterationHint, IterationResult } from '../util/iterators';
+import { IterationHint } from '../util/iterators';
 
 class SimpleMapOperator extends Expression {
 	private _expression1: Expression;
@@ -38,7 +38,7 @@ class SimpleMapOperator extends Expression {
 			executionParameters
 		);
 		const childContextIterator = dynamicContext.createSequenceIterator(sequence);
-		let childContext: IterationResult<DynamicContext> = null;
+		let childContext = null;
 		let sequenceValueIterator: ISequence = null;
 		let done = false;
 		return sequenceFactory.create({
@@ -48,7 +48,7 @@ class SimpleMapOperator extends Expression {
 						childContext = childContextIterator.next(hint);
 						if (childContext.done) {
 							done = true;
-							return DONE_TOKEN;
+							return childContext;
 						}
 					}
 

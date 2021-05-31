@@ -114,7 +114,7 @@ benchmarkRunner.compareBenchmarks(
 			}
 
 			const auction = document;
-			const nameContents: string[] = [];
+			const nameContents = [];
 			auction.childNodes.forEach((child) => {
 				if (child.nodeName !== 'site') {
 					return;
@@ -122,7 +122,7 @@ benchmarkRunner.compareBenchmarks(
 
 				const items = getDescendantItems(child, 'item');
 				for (const i of items) {
-					const descriptionElements: Node[] = [];
+					const descriptionElements = [];
 					i.childNodes.forEach((c) => {
 						if (c.nodeName === 'description') {
 							descriptionElements.push(c);

@@ -5,10 +5,9 @@ import { atomizeSingleValue } from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import createPointerValue from '../dataTypes/createPointerValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import Value, { ValueType } from '../dataTypes/Value';
+import Value, { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
 import ExecutionParameters from '../ExecutionParameters';
-
-function createTinyTextNode(content: string): TinyTextNode {
+function createTinyTextNode(content): TinyTextNode {
 	const tinyTextNode: TinyTextNode = {
 		data: content,
 		isTinyNode: true,
@@ -16,7 +15,6 @@ function createTinyTextNode(content: string): TinyTextNode {
 	};
 	return tinyTextNode;
 }
-
 function parseChildNodes(
 	childNodes: Value[],
 	executionParameters: ExecutionParameters,
@@ -79,7 +77,7 @@ function parseChildNodes(
 				return;
 			}
 			if (isSubtypeOf(childNode.type, ValueType.DOCUMENTNODE)) {
-				const docChildNodes: Value[] = [];
+				const docChildNodes = [];
 				domFacade
 					.getChildNodePointers(childNode.value)
 					.forEach((node) => docChildNodes.push(createPointerValue(node, domFacade)));
@@ -113,9 +111,12 @@ export default function parseContent(
 	allChildNodes: Value[][],
 	executionParameters: ExecutionParameters,
 	attributeError: (arg0: any, arg1?: any) => Error
-) {
-	const attributes: (ConcreteAttributeNode | TinyAttributeNode)[] = [];
-	const contentNodes: (ConcreteChildNode | TinyChildNode)[] = [];
+): {
+	attributes: (ConcreteAttributeNode | TinyAttributeNode)[];
+	contentNodes: (ConcreteChildNode | TinyChildNode)[];
+} {
+	const attributes = [];
+	const contentNodes = [];
 	let attributesDone = false;
 	// Plonk all childNodes, these are special though
 	allChildNodes.forEach((childNodes) => {

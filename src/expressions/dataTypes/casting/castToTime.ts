@@ -8,7 +8,7 @@ const createTimeValue = (value: any): AtomicValue => createAtomicValue(value, Va
 
 export default function castToTime(
 	instanceOf: (typeName: ValueType) => boolean
-): (value: any) => CastResult {
+): (value: DateTime) => CastResult {
 	if (instanceOf(ValueType.XSDATETIME)) {
 		return (value) => ({
 			successful: true,

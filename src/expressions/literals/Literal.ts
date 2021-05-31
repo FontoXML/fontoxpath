@@ -40,7 +40,7 @@ class Literal extends Expression {
 		this._createValueSequence = () => sequenceFactory.singleton(value);
 	}
 
-	public evaluate() {
+	public evaluate(_dynamicContext) {
 		return this._createValueSequence();
 	}
 }

@@ -87,7 +87,7 @@ function mergeSortedSequences(domFacade: DomFacade, sequences: IIterator<ISequen
 			val = sequences.next(IterationHint.NONE);
 		}
 	})();
-	let previousNode: Value = null;
+	let previousNode = null;
 
 	let allSequencesAreSorted = false;
 	return sequenceFactory.create({

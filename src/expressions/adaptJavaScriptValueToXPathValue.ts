@@ -25,7 +25,7 @@ import createDoublyIterableSequence from './util/createDoublyIterableSequence';
  * @return Null if the value is absent and the empty sequence should be
  * output instead
  */
-export function adaptSingleJavaScriptValue(value: ValidValue, domFacade: DomFacade): Value | null {
+function adaptSingleJavaScriptValue(value: ValidValue, domFacade: DomFacade): Value | null {
 	if (value === null) {
 		return null;
 	}
@@ -60,12 +60,11 @@ export function adaptSingleJavaScriptValue(value: ValidValue, domFacade: DomFaca
 				);
 			}
 			// Make it a map
-			const mapValue = value as { [s: string]: ValidValue };
 			return new MapValue(
-				Object.keys(mapValue)
-					.filter((key) => mapValue[key] !== undefined)
+				Object.keys(value)
+					.filter((key) => value[key] !== undefined)
 					.map((key) => {
-						const adaptedValue = adaptSingleJavaScriptValue(mapValue[key], domFacade);
+						const adaptedValue = adaptSingleJavaScriptValue(value[key], domFacade);
 						const adaptedSequence =
 							adaptedValue === null
 								? sequenceFactory.empty()

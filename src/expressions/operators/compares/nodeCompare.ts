@@ -1,4 +1,3 @@
-import DomFacade from '../../../domFacade/DomFacade';
 import { compareNodePositions } from '../../dataTypes/documentOrderUtils';
 import ISequence from '../../dataTypes/ISequence';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
@@ -9,7 +8,7 @@ import arePointersEqual from './arePointersEqual';
 
 export default function nodeCompare(
 	operator: string,
-	domFacade: DomFacade,
+	domFacade,
 	firstSequence: ISequence,
 	secondSequence: ISequence
 ): ISequence {

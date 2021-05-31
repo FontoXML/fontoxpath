@@ -1,4 +1,4 @@
-import { ElementNodePointer, isTinyNode, TinyElementNode } from '../../domClone/Pointer';
+import { isTinyNode, TinyElementNode } from '../../domClone/Pointer';
 import { ConcreteAttributeNode, ConcreteChildNode, NODE_TYPES } from '../../domFacade/ConcreteNode';
 import DomFacade from '../../domFacade/DomFacade';
 import createPointerValue from '../dataTypes/createPointerValue';
@@ -10,7 +10,6 @@ import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
-import StaticContext from '../StaticContext';
 import concatSequences from '../util/concatSequences';
 import { DONE_TOKEN, IIterator, IterationHint, ready } from '../util/iterators';
 import { errXPST0081 } from '../XPathErrors';
@@ -24,7 +23,7 @@ class ElementConstructor extends Expression {
 	private _contents: Expression[];
 	private _name: QName;
 	private _nameExpr: Expression;
-	private _namespacesInScope: { [prefix: string]: string };
+	private _namespacesInScope: {};
 	private _staticContext: any;
 
 	constructor(
@@ -51,7 +50,7 @@ class ElementConstructor extends Expression {
 		}
 
 		this._namespacesInScope = namespaceDeclarations.reduce(
-			(namespacesInScope: { [prefix: string]: string }, namespaceDecl) => {
+			(namespacesInScope, namespaceDecl) => {
 				if (namespaceDecl.prefix in namespacesInScope) {
 					throw new Error(
 						`XQST0071: The namespace declaration with the prefix ${namespaceDecl.prefix} has already been declared on the constructed element.`
@@ -164,7 +163,7 @@ class ElementConstructor extends Expression {
 					localName: this._name.localName,
 				};
 
-				const pointer: ElementNodePointer = { node: tinyElementNode, graftAncestor: null };
+				const pointer = { node: tinyElementNode, graftAncestor: null };
 
 				// // Plonk all attribute on the element
 				attributeNodes.forEach((attr) => {
@@ -224,7 +223,7 @@ class ElementConstructor extends Expression {
 		});
 	}
 
-	public performStaticEvaluation(staticContext: StaticContext) {
+	public performStaticEvaluation(staticContext) {
 		// Register namespace related things
 		staticContext.introduceScope();
 		Object.keys(this._namespacesInScope).forEach((prefix) =>
