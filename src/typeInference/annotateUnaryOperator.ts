@@ -1,5 +1,5 @@
 import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
-import { SequenceType, ValueType } from '../expressions/dataTypes/Value';
+import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { AnnotationContext } from './annotateAST';
 
@@ -34,7 +34,10 @@ export function annotateUnaryMinus(
 		return type;
 	}
 
-	return undefined;
+	return {
+		type: ValueType.XSDOUBLE,
+		mult: SequenceMultiplicity.EXACTLY_ONE,
+	};
 }
 
 /**
