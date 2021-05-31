@@ -244,7 +244,12 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 			return annotateNamedFunctionRef(ast, staticContext);
 		case 'inlineFunctionExpr':
 			annotate(astHelper.getFirstChild(ast, 'functionBody')[1] as IAST, staticContext);
-			return { type: ValueType.FUNCTION, mult: SequenceMultiplicity.EXACTLY_ONE };
+			const functionSeqType: SequenceType = {
+				type: ValueType.FUNCTION,
+				mult: SequenceMultiplicity.EXACTLY_ONE,
+			};
+			astHelper.insertAttribute(ast, 'type', functionSeqType);
+			return functionSeqType;
 
 		// Casting
 		case 'castExpr':
