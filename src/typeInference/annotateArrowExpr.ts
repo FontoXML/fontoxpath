@@ -1,6 +1,6 @@
 import { SequenceType } from '../expressions/dataTypes/Value';
-import StaticContext from '../expressions/StaticContext';
 import astHelper, { IAST } from '../parsing/astHelper';
+import { AnnotationContext } from './AnnotatationContext';
 
 /**
  * Annotate the arrowExpr by extracting the function info from the static context
@@ -12,10 +12,10 @@ import astHelper, { IAST } from '../parsing/astHelper';
  */
 export function annotateArrowExpr(
 	ast: IAST,
-	staticContext: StaticContext
+	annotationContext: AnnotationContext
 ): SequenceType | undefined {
 	// We need the context to lookup the function information
-	if (!staticContext) return undefined;
+	if (!annotationContext || !annotationContext.staticContext) return undefined;
 
 	const func = astHelper.getFirstChild(ast, 'EQName');
 
@@ -38,7 +38,7 @@ export function annotateArrowExpr(
 	const functionArguments = astHelper.getChildren(astHelper.getFirstChild(ast, 'arguments'), '*');
 
 	// Lookup the namespace URI
-	const resolvedName = staticContext.resolveFunctionName(
+	const resolvedName = annotationContext.staticContext.resolveFunctionName(
 		{
 			localName: functionName,
 			prefix: functionPrefix['prefix'] as string,
@@ -49,7 +49,7 @@ export function annotateArrowExpr(
 	if (!resolvedName) return undefined;
 
 	// Lookup the function properties (return type)
-	const functionProps = staticContext.lookupFunction(
+	const functionProps = annotationContext.staticContext.lookupFunction(
 		resolvedName.namespaceURI,
 		resolvedName.localName,
 		functionArguments.length
