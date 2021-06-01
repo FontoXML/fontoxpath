@@ -1,9 +1,11 @@
+import { fail } from 'assert';
 import * as chai from 'chai';
 import { SequenceType, ValueType } from 'fontoxpath/expressions/dataTypes/Value';
 import StaticContext from 'fontoxpath/expressions/StaticContext';
 import astHelper, { IAST } from 'fontoxpath/parsing/astHelper';
 import parseExpression from 'fontoxpath/parsing/parseExpression';
 import annotateAst from 'fontoxpath/typeInference/annotateAST';
+import { assert } from 'sinon';
 
 /**
  *
@@ -299,18 +301,12 @@ describe('Annotating flwor Expressions', () => {
 	});
 
 	it('annotate name shadowing for expression sequence different types', () => {
-		assertValueType(
-			'for $x in (3, "25", 5) let $x := "stuff" || $x return $x',
-			ValueType.ITEM,
-			undefined
-		);
-	});
-
-	it('annotate name shadowing for expression sequence different types', () => {
-		assertValueType(
-			'for $x in (3, "25", 5) let $y := $x + 3 return $x',
-			ValueType.ITEM,
-			undefined
+		chai.assert.throws(() =>
+			assertValueType(
+				'for $x in (3, "3", 5) let $y := $x + 3 return $x',
+				ValueType.ITEM,
+				undefined
+			)
 		);
 	});
 });

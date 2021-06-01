@@ -60,23 +60,36 @@ import {
 	Text,
 } from './types/Types';
 
-console.log(
-	evaluateXPathToString(
-		`for $i in (0, 3 ,2)
-			let $s := 'Hello' || $i
-			return $s`,
-		undefined,
-		undefined,
-		undefined,
-		{ language: Language.XQUERY_3_1_LANGUAGE, annotateAst: true }
-	)
-);
+// console.log(
+// 	evaluateXPathToString(
+// 		`for $i in (0, 3 ,2)
+// 			let $s := 'Hello' || $i
+// 			return $s`,
+// 		undefined,
+// 		undefined,
+// 		undefined,
+// 		{ language: Language.XQUERY_3_1_LANGUAGE, annotateAst: true }
+// 	)
+// );
 
 // for $i in 0
 // 			let $s := 'Hello' || $i
 // 			return $s
 
-// console.log(evaluateXPath('for $i in (10, 20), $j in (1, 2) return ($i + $j)'));
+// console.log(
+// 	evaluateXPathToString(
+// 		'for $x in (3, "25", 5) let $y := $x + 3 return $x',
+// 		undefined,
+// 		undefined,
+// 		undefined,
+// 		{
+// 			language: Language.XQUERY_UPDATE_3_1_LANGUAGE,
+// 			annotateAst: true,
+// 		}
+// 	)
+// );
+
+// evaluateXPath('for $x in (3, "25", 5) let $y := $x + 3 return $x');
 // for(int i = 0; i < something; i++) {
 // 	for (int)
 // }
