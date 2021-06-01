@@ -287,20 +287,37 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 			return annotateUnaryLookup(ast, ncName);
 
 		// TypeSwitch
-		case 'typeSwitchExpr':
-			const arg = annotate(astHelper.getFirstChild(ast, 'argExpr') as IAST, staticContext);
-			const clauses = astHelper
-				.getChildren(ast, 'typeswitchExprCaseClause')
-				.map((a) => annotate(a, staticContext));
-			const defaultCase = annotate(
-				astHelper.getFirstChild(ast, 'typeSwitchExprDefaultClause') as IAST,
+		case 'typeswitchExpr':
+			const argumentType = annotate(
+				astHelper.getFirstChild(ast, 'argExpr')[1] as IAST,
 				staticContext
 			);
-			return annotateTypeSwitchOperator(ast);
+			const caseClausesReturns = astHelper
+				.getChildren(ast, 'typeswitchExprCaseClause')
+				.map((a) =>
+					annotate(astHelper.followPath(a, ['resultExpr'])[1] as IAST, staticContext)
+				);
+			const defaultCaseReturn = annotate(
+				astHelper.followPath(ast, ['typeswitchExprDefaultClause', 'resultExpr'])[1] as IAST,
+				staticContext
+			);
+			return annotateTypeSwitchOperator(
+				ast,
+				argumentType,
+				caseClausesReturns,
+				defaultCaseReturn
+			);
 
 		case 'quantifiedExpr':
 			astHelper.getChildren(ast, '*').map((a) => annotate(a, staticContext));
 			return annotateQuantifiedExpr(ast);
+
+		// XQuery nodes
+		case 'x:stackTrace':
+			return annotate(astHelper.getChildren(ast, '*')[2], staticContext);
+
+		case 'resultExpr':
+			return annotate(astHelper.getChildren(ast, '*')[1], staticContext);
 
 		default:
 			// Current node cannot be annotated, but maybe deeper ones can.
