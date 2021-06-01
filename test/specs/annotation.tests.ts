@@ -1,12 +1,12 @@
 import * as chai from 'chai';
 import { SequenceType, ValueType } from 'fontoxpath/expressions/dataTypes/Value';
-import astHelper, { IAST } from 'fontoxpath/parsing/astHelper';
+import astHelper from 'fontoxpath/parsing/astHelper';
 import parseExpression from 'fontoxpath/parsing/parseExpression';
 import annotateAst from 'fontoxpath/typeInference/annotateAST';
 
 function assertValueType(expression: string, expectedType: ValueType) {
 	const ast = parseExpression(expression, {});
-	annotateAst(ast, { staticContext: undefined, totalNodes: 0, totalAnnotated: [] });
+	annotateAst(ast, { staticContext: undefined });
 
 	const queryBody = astHelper.followPath(ast, ['mainModule', 'queryBody']);
 	const resultType = astHelper.getAttribute(queryBody, 'type') as SequenceType;
