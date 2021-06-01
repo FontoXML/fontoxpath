@@ -76,18 +76,18 @@ import {
 // 			let $s := 'Hello' || $i
 // 			return $s
 
-// console.log(
-// 	evaluateXPathToString(
-// 		'for $x in (3, "25", 5) let $y := $x + 3 return $x',
-// 		undefined,
-// 		undefined,
-// 		undefined,
-// 		{
-// 			language: Language.XQUERY_UPDATE_3_1_LANGUAGE,
-// 			annotateAst: true,
-// 		}
-// 	)
-// );
+console.log(
+	evaluateXPathToString(
+		'for $x in (3, 5, 5) let $y := 5 return $x',
+		undefined,
+		undefined,
+		undefined,
+		{
+			language: Language.XQUERY_UPDATE_3_1_LANGUAGE,
+			annotateAst: true,
+		}
+	)
+);
 
 // evaluateXPath('for $x in (3, "25", 5) let $y := $x + 3 return $x');
 // for(int i = 0; i < something; i++) {

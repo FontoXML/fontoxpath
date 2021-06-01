@@ -7,6 +7,7 @@ export function annotateFlworExpression(
 	annotationContext: AnnotationContext,
 	annotate: (ast: IAST, annotationContext) => SequenceType
 ): SequenceType | undefined {
+	let hasFor = false;
 	for (let i = 1; i < ast.length; i++) {
 		switch (ast[i][0]) {
 			case 'letClause': {
@@ -18,13 +19,11 @@ export function annotateFlworExpression(
 				// `For` expression returns sequence type (XS:ITEM)
 				// However, the variable registration of the elements in the sequence is not properly handled
 				// We only registrate the variable types if they are all of the same type
+				hasFor = true;
 				annotationContext.pushScope();
 				annotateForClause(ast[i] as IAST, ast as IAST, annotationContext, annotate);
 				annotationContext.popScope();
-
-				const retType = { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE };
-				astHelper.insertAttribute(ast, 'type', retType);
-				return retType;
+				break;
 			}
 			// case 'whereClause': {
 			// 	// WIP
@@ -40,6 +39,9 @@ export function annotateFlworExpression(
 			// }
 			default: {
 				let retType: SequenceType = annotate(ast[i] as IAST, annotationContext);
+				if (hasFor) {
+					retType = { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE };
+				}
 				astHelper.insertAttribute(ast, 'type', retType);
 				return retType;
 			}
@@ -77,10 +79,8 @@ function annotateForClause(
 	// const pathToForBody = ['forClauseItem', 'for'];
 	const varName = astHelper.followPath(ast, pathToTypedVariableBinding)[1] as string;
 
-	let varTypeNode: IAST;
-	try {
-		varTypeNode = astHelper.followPath(ast, pathToForExpr);
-	} catch {
+	let varTypeNode: IAST = astHelper.followPath(ast, pathToForExpr);
+	if (!varTypeNode) {
 		return;
 	}
 
@@ -95,15 +95,10 @@ function annotateForClause(
 			) === index
 	);
 
-	const fullAstCopy: IAST[] = [];
-	fullAst.forEach((element) => fullAstCopy.push(element as IAST));
-
 	// Remove the first two indeces which (for clause related)
-	fullAstCopy.splice(1, 1);
 	if (types.length === 1) {
 		annotationContext.insertVariable(varName, types[0]);
 	}
-	annotateFlworExpression(fullAstCopy as IAST, annotationContext, annotate);
 }
 
 /**
