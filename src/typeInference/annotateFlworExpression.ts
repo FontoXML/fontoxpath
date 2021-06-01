@@ -21,7 +21,7 @@ export function annotateFlworExpression(
 				// We only registrate the variable types if they are all of the same type
 				hasFor = true;
 				annotationContext.pushScope();
-				annotateForClause(ast[i] as IAST, ast as IAST, annotationContext, annotate);
+				annotateForClause(ast[i] as IAST, annotationContext, annotate);
 				break;
 			}
 			case 'whereClause': {
@@ -29,12 +29,11 @@ export function annotateFlworExpression(
 				annotateWhereClause(ast[i] as IAST, annotationContext, annotate);
 				break;
 			}
-			// case 'orderByClause': {
-			// 	// WIP
-			// 	annotationContext.pushScope();
-			// 	annotateOrderByClause(ast[i] as IAST, annotationContext, annotate);
-			// 	break;
-			// }
+			case 'orderByClause': {
+				annotationContext.pushScope();
+				annotateOrderByClause(ast[i] as IAST, annotationContext, annotate);
+				break;
+			}
 			default: {
 				let retType: SequenceType = annotate(ast[i] as IAST, annotationContext);
 				if (hasFor) {
@@ -68,7 +67,6 @@ function annotateLetClause(
 
 function annotateForClause(
 	ast: IAST,
-	fullAst: IAST,
 	annotationContext: AnnotationContext,
 	annotate: (ast: IAST, annotationContext) => SequenceType
 ) {
