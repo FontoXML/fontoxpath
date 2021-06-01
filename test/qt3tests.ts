@@ -316,6 +316,9 @@ describe('qt3 test set', () => {
 									null,
 									{
 										baseUrl,
+									},
+									{
+										annotateAst: true,
 									}
 								);
 								moduleImports.forEach((moduleImport) => {
