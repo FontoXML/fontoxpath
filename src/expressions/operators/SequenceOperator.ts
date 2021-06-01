@@ -12,8 +12,7 @@ import concatSequences from '../util/concatSequences';
  * The Sequence selector evaluates its operands and returns them as a single sequence
  */
 class SequenceOperator extends PossiblyUpdatingExpression {
-	// TODO: make the type parameter NON-optional (made optional for not breaking too much code, while adding type annotation)
-	constructor(expressions: Expression[], type?: SequenceType) {
+	constructor(expressions: Expression[], type: SequenceType) {
 		super(
 			expressions.reduce((specificity, selector) => {
 				return specificity.add(selector.specificity);
