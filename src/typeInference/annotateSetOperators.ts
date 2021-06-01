@@ -1,5 +1,7 @@
+import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
+import { AnnotationContext } from './annotateAST';
 
 /**
  * Annotates the union, intersect and except operators with a sequence of nodes.
@@ -12,24 +14,25 @@ import astHelper, { IAST } from '../parsing/astHelper';
 export function annotateSetOperator(
 	ast: IAST,
 	left: SequenceType,
-	right: SequenceType
+	right: SequenceType,
+	context: AnnotationContext
 ): SequenceType | undefined {
 	if (!left || !right) return undefined;
-	if (left.type !== ValueType.NODE || right.type !== ValueType.NODE) {
+	if (!isSubtypeOf(left.type, ValueType.NODE) || !isSubtypeOf(right.type, ValueType.NODE)) {
 		return undefined;
 	}
 
 	switch (ast[0]) {
 		case 'unionOp':
-			return annotateUnionOperator(ast);
+			return annotateUnionOperator(ast, context);
 		case 'intersectOp':
-			return annotateIntersectOperator(ast);
+			return annotateIntersectOperator(ast, context);
 		case 'exceptOp':
-			return annotateExceptOperator(ast);
+			return annotateExceptOperator(ast, context);
 	}
 }
 
-function annotateUnionOperator(ast: IAST): SequenceType {
+function annotateUnionOperator(ast: IAST, context: AnnotationContext): SequenceType {
 	const seqType = {
 		type: ValueType.NODE,
 		mult: SequenceMultiplicity.ZERO_OR_MORE,
@@ -39,7 +42,7 @@ function annotateUnionOperator(ast: IAST): SequenceType {
 	return seqType;
 }
 
-function annotateIntersectOperator(ast: IAST): SequenceType {
+function annotateIntersectOperator(ast: IAST, context: AnnotationContext): SequenceType {
 	const seqType = {
 		type: ValueType.NODE,
 		mult: SequenceMultiplicity.ZERO_OR_MORE,
@@ -49,7 +52,7 @@ function annotateIntersectOperator(ast: IAST): SequenceType {
 	return seqType;
 }
 
-function annotateExceptOperator(ast: IAST): SequenceType {
+function annotateExceptOperator(ast: IAST, context: AnnotationContext): SequenceType {
 	const seqType = {
 		type: ValueType.NODE,
 		mult: SequenceMultiplicity.ZERO_OR_MORE,

@@ -1,5 +1,6 @@
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
+import { AnnotationContext } from './annotateAST';
 
 /**
  * Inserting the map type of multiplicity exactly one to the ast;
@@ -8,7 +9,7 @@ import astHelper, { IAST } from '../parsing/astHelper';
  * @param ast the AST to be annotated.
  * @returns the inferred SequenceType
  */
-export function annotateSimpleMapExpr(ast: IAST): SequenceType {
+export function annotateSimpleMapExpr(ast: IAST, context: AnnotationContext): SequenceType {
 	const seqType = {
 		type: ValueType.MAP,
 		mult: SequenceMultiplicity.EXACTLY_ONE,

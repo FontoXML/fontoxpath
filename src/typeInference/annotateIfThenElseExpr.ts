@@ -1,5 +1,6 @@
 import { SequenceType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
+import { AnnotationContext } from './annotateAST';
 
 /**
  * Checks the type and multiplicity of else clause and then clause
@@ -13,7 +14,8 @@ import astHelper, { IAST } from '../parsing/astHelper';
 export function annotateIfThenElseExpr(
 	ast: IAST,
 	elseClause: SequenceType,
-	thenClause: SequenceType
+	thenClause: SequenceType,
+	context: AnnotationContext
 ): SequenceType {
 	if (!elseClause || !thenClause) {
 		return undefined;

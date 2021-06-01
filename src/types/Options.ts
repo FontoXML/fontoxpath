@@ -142,6 +142,11 @@ export type Options = {
 	logger?: Logger;
 
 	/**
+	 * Log queries which didn't get completely annotated
+	 */
+	logUnannotatedQueries?: boolean;
+
+	/**
 	 * Additional modules to import. Imported modules are always statically known
 	 */
 	moduleImports?: { [s: string]: string };
