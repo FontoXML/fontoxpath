@@ -299,16 +299,6 @@ describe('Annotating flwor Expressions', () => {
 			undefined
 		);
 	});
-
-	it('annotate name shadowing for expression sequence different types', () => {
-		chai.assert.throws(() =>
-			assertValueType(
-				'for $x in (3, "3", 5) let $y := $x + 3 return $x',
-				ValueType.ITEM,
-				undefined
-			)
-		);
-	});
 });
 
 // Type switch is not tested, type switch is reserved in XPath but not yet used

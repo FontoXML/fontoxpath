@@ -18,7 +18,10 @@ export function annotateFlworExpression(
 				// `For` expression returns sequence type (XS:ITEM)
 				// However, the variable registration of the elements in the sequence is not properly handled
 				// We only registrate the variable types if they are all of the same type
+				annotationContext.pushScope();
 				annotateForClause(ast[i] as IAST, ast as IAST, annotationContext, annotate);
+				annotationContext.popScope();
+
 				const retType = { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE };
 				astHelper.insertAttribute(ast, 'type', retType);
 				return retType;
@@ -42,6 +45,7 @@ export function annotateFlworExpression(
 			}
 		}
 	}
+	annotationContext.popScope();
 	return undefined;
 }
 
@@ -77,7 +81,7 @@ function annotateForClause(
 	try {
 		varTypeNode = astHelper.followPath(ast, pathToForExpr);
 	} catch {
-		return undefined;
+		return;
 	}
 
 	// A set of all the SequenceType in the sequenceExpr
@@ -96,13 +100,10 @@ function annotateForClause(
 
 	// Remove the first two indeces which (for clause related)
 	fullAstCopy.splice(1, 1);
-
-	types.forEach((sequenceType) => {
-		annotationContext.pushScope();
-		annotationContext.insertVariable(varName, sequenceType);
-		annotateFlworExpression(fullAstCopy as IAST, annotationContext, annotate);
-		annotationContext.popScope();
-	});
+	if (types.length === 1) {
+		annotationContext.insertVariable(varName, types[0]);
+	}
+	annotateFlworExpression(fullAstCopy as IAST, annotationContext, annotate);
 }
 
 /**
