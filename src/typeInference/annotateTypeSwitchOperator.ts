@@ -24,7 +24,10 @@ export function annotateTypeSwitchOperator(
 				caseClausesReturns[i]
 			);
 			if (!result) continue;
-			else return result;
+			else {
+				astHelper.insertAttribute(ast, 'type', result);
+				return result;
+			}
 		} else if (caseClausesConditions[i][1][0] === 'sequenceTypeUnion') {
 			for (let j = 1; j <= 2; j++) {
 				const res = checkComparison(
@@ -33,10 +36,14 @@ export function annotateTypeSwitchOperator(
 					caseClausesReturns[i]
 				);
 				if (!res) continue;
-				else return res;
+				else {
+					astHelper.insertAttribute(ast, 'type', res);
+					return res;
+				}
 			}
 		}
 	}
+	astHelper.insertAttribute(ast, 'type', defaultCaseReturn);
 	return defaultCaseReturn;
 }
 

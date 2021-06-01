@@ -275,6 +275,21 @@ describe('Annotating inline functions', () => {
 	});
 });
 
+describe('Annotating typeswitch expression', () => {
+	it('first case matches', () => {
+		assertValueType('typeswitch(1) case xs:integer return 2 case xs:string return 42.0 default return a', ValueType.XSINTEGER, undefined);
+	})
+	it('not first case matches', () => {
+		assertValueType('typeswitch(1) case xs:string return 42.0 case xs:integer return 2 default return a', ValueType.XSINTEGER, undefined);
+	})
+	it('typeswitch with an OR in the condition', () => {
+		assertValueType('typeswitch(1) case xs:integer | xs:string return 2 default return 42.0', ValueType.XSINTEGER, undefined);
+	})
+	it('default case is returned', () => {
+		assertValueType('typeswitch(1) case xs:string return 42.0 default return 2', ValueType.XSINTEGER, undefined);
+	})
+})
+
 // Type switch is not tested, type switch is reserved in XPath but not yet used
 // Annotation of `functionCallExpr` and `namedFunctionRef` with context is not tested
 
