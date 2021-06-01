@@ -1,4 +1,4 @@
-import { SequenceType } from '../expressions/dataTypes/Value';
+import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import StaticContext from '../expressions/StaticContext';
 import astHelper, { IAST } from '../parsing/astHelper';
 
@@ -13,9 +13,16 @@ import astHelper, { IAST } from '../parsing/astHelper';
 export function annotateFunctionCall(
 	ast: IAST,
 	staticContext: StaticContext
-): SequenceType | undefined {
+): SequenceType {
+	const itemReturn = {
+		type: ValueType.ITEM,
+		mult: SequenceMultiplicity.ZERO_OR_MORE,
+	};
 	// We need the context to lookup the function information
-	if (!staticContext) return undefined;
+	if (!staticContext) {
+		astHelper.insertAttribute(ast, 'type', itemReturn);
+		return itemReturn;
+	}
 
 	const functionName = astHelper.getFirstChild(ast, 'functionName')[2];
 	const functionPrefix = astHelper.getFirstChild(ast, 'functionName')[1];
@@ -30,7 +37,10 @@ export function annotateFunctionCall(
 		functionArguments.length
 	);
 
-	if (!resolvedName) return undefined;
+	if (!resolvedName) {
+		astHelper.insertAttribute(ast, 'type', itemReturn);
+		return itemReturn;
+	}
 
 	// Lookup the function properties (return type)
 	const functionProps = staticContext.lookupFunction(
@@ -39,7 +49,10 @@ export function annotateFunctionCall(
 		functionArguments.length
 	);
 
-	if (!functionProps) return undefined;
+	if (!functionProps) {
+		astHelper.insertAttribute(ast, 'type', itemReturn);
+		return itemReturn;
+	}
 
 	astHelper.insertAttribute(ast, 'type', functionProps.returnType);
 	return functionProps.returnType;

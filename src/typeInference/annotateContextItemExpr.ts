@@ -1,5 +1,5 @@
-import { SequenceType } from '../expressions/dataTypes/Value';
-import { IAST } from '../parsing/astHelper';
+import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
+import astHelper, { IAST } from '../parsing/astHelper';
 
 /**
  * A context item expression evaluates to the context item. Hence the type that is returned is the one from the context item.
@@ -7,7 +7,12 @@ import { IAST } from '../parsing/astHelper';
  * @param ast the AST to be annotated.
  * @returns the type of the context item.
  */
-export function annotateContextItemExpr(ast: IAST): SequenceType | undefined {
+export function annotateContextItemExpr(ast: IAST): SequenceType {
 	// TODO: What type should be returned here?
-	return undefined;
+	const itemReturn = {
+		type: ValueType.ITEM,
+		mult: SequenceMultiplicity.ZERO_OR_MORE,
+	};
+	astHelper.insertAttribute(ast, 'type', itemReturn);
+	return itemReturn;
 }

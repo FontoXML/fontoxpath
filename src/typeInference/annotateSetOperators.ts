@@ -1,3 +1,4 @@
+import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
 
@@ -13,12 +14,7 @@ export function annotateSetOperator(
 	ast: IAST,
 	left: SequenceType,
 	right: SequenceType
-): SequenceType | undefined {
-	if (!left || !right) return undefined;
-	if (left.type !== ValueType.NODE || right.type !== ValueType.NODE) {
-		return undefined;
-	}
-
+): SequenceType {
 	switch (ast[0]) {
 		case 'unionOp':
 			return annotateUnionOperator(ast);

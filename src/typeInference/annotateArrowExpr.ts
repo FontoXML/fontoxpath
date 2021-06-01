@@ -1,4 +1,4 @@
-import { SequenceType } from '../expressions/dataTypes/Value';
+import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import StaticContext from '../expressions/StaticContext';
 import astHelper, { IAST } from '../parsing/astHelper';
 
@@ -10,18 +10,23 @@ import astHelper, { IAST } from '../parsing/astHelper';
  * @param staticContext from witch the function info is extracted.
  * @returns the inferred type or `undefined` when function properties cannot be inferred.
  */
-export function annotateArrowExpr(
-	ast: IAST,
-	staticContext: StaticContext
-): SequenceType | undefined {
+export function annotateArrowExpr(ast: IAST, staticContext: StaticContext): SequenceType {
+	const itemReturn = {
+		type: ValueType.ITEM,
+		mult: SequenceMultiplicity.ZERO_OR_MORE,
+	};
 	// We need the context to lookup the function information
-	if (!staticContext) return undefined;
+	if (!staticContext) {
+		astHelper.insertAttribute(ast, 'type', itemReturn);
+		return itemReturn;
+	}
 
 	const func = astHelper.getFirstChild(ast, 'EQName');
 
 	// There may be no name for the function
 	if (!func) {
-		return undefined;
+		astHelper.insertAttribute(ast, 'type', itemReturn);
+		return itemReturn;
 	}
 
 	// Sometimes there is no prefix given, hence we need to check for that case and give an empty prefix
@@ -46,7 +51,10 @@ export function annotateArrowExpr(
 		functionArguments.length
 	);
 
-	if (!resolvedName) return undefined;
+	if (!resolvedName) {
+		astHelper.insertAttribute(ast, 'type', itemReturn);
+		return itemReturn;
+	}
 
 	// Lookup the function properties (return type)
 	const functionProps = staticContext.lookupFunction(
@@ -55,7 +63,10 @@ export function annotateArrowExpr(
 		functionArguments.length
 	);
 
-	if (!functionProps) return undefined;
+	if (!functionProps) {
+		astHelper.insertAttribute(ast, 'type', itemReturn);
+		return itemReturn;
+	}
 
 	astHelper.insertAttribute(ast, 'type', functionProps.returnType);
 	return functionProps.returnType;

@@ -9,7 +9,13 @@ import astHelper, { IAST } from '../parsing/astHelper';
  */
 export function annotateSequenceOperator(ast: IAST, length: number): SequenceType {
 	if (length === 0) {
-		return undefined;
+		// return undefined;
+		const itemReturn = {
+			type: ValueType.ITEM,
+			mult: SequenceMultiplicity.ZERO_OR_MORE,
+		};
+		astHelper.insertAttribute(ast, 'type', itemReturn);
+		return itemReturn;
 	}
 	const seqType = {
 		type: ValueType.ITEM,

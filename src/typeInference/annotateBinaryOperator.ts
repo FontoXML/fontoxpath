@@ -1,4 +1,9 @@
-import { SequenceType, sequenceTypeToString, ValueType } from '../expressions/dataTypes/Value';
+import {
+	SequenceMultiplicity,
+	SequenceType,
+	sequenceTypeToString,
+	ValueType,
+} from '../expressions/dataTypes/Value';
 import {
 	generateBinaryOperatorType,
 	getBinaryPrefabOperator,
@@ -22,14 +27,26 @@ export function annotateBinOp(
 	left: SequenceType | undefined,
 	right: SequenceType | undefined,
 	operator: string
-): SequenceType | undefined {
+): SequenceType {
 	// If we don't have the left and right type, we cannot infer the current type
 	if (!left || !right) {
-		return undefined;
+		const itemReturn = {
+			type: ValueType.ITEM,
+			mult: SequenceMultiplicity.ZERO_OR_MORE,
+		};
+		astHelper.insertAttribute(ast, 'type', itemReturn);
+		return itemReturn;
 	}
 
 	// TODO: Fix this hack (pathExpr returns a node in 1 case, which cannot be added to an integer)
-	if (left.type === ValueType.NODE || right.type === ValueType.NODE) return undefined;
+	if (left.type === ValueType.NODE || right.type === ValueType.NODE) {
+		const itemReturn = {
+			type: ValueType.ITEM,
+			mult: SequenceMultiplicity.ZERO_OR_MORE,
+		};
+		astHelper.insertAttribute(ast, 'type', itemReturn);
+		return itemReturn;
+	}
 
 	const funcData = generateBinaryOperatorType(operator, left.type, right.type);
 

@@ -51,7 +51,7 @@ export default function annotateAst(ast: IAST, staticContext?: StaticContext) {
  * @throws errors when attempts to annotate fail.
  * @returns The type of the AST node or `undefined` when the type cannot be annotated.
  */
-export function annotate(ast: IAST, staticContext: StaticContext): SequenceType | undefined {
+export function annotate(ast: IAST, staticContext: StaticContext): SequenceType {
 	// Check if we actually have an AST
 	if (!ast) {
 		return undefined;
@@ -307,6 +307,9 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 			for (let i = 1; i < ast.length; i++) {
 				annotate(ast[i] as IAST, staticContext);
 			}
-			return undefined;
+			return {
+				type: ValueType.ITEM,
+				mult: SequenceMultiplicity.ZERO_OR_MORE,
+			};
 	}
 }

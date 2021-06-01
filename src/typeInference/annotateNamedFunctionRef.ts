@@ -1,4 +1,4 @@
-import { SequenceType } from '../expressions/dataTypes/Value';
+import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import StaticContext from '../expressions/StaticContext';
 import astHelper, { IAST } from '../parsing/astHelper';
 
@@ -10,12 +10,16 @@ import astHelper, { IAST } from '../parsing/astHelper';
  * @param staticContext from witch the function info is extracted.
  * @returns the inferred type or `undefined` when the named function reference type cannot be inferred.
  */
-export function annotateNamedFunctionRef(
-	ast: IAST,
-	staticContext: StaticContext
-): SequenceType | undefined {
+export function annotateNamedFunctionRef(ast: IAST, staticContext: StaticContext): SequenceType {
+	const itemReturn = {
+		type: ValueType.ITEM,
+		mult: SequenceMultiplicity.ZERO_OR_MORE,
+	};
 	// Can't find info about the function without the context.
-	if (!staticContext) return undefined;
+	if (!staticContext) {
+		astHelper.insertAttribute(ast, 'type', itemReturn);
+		return itemReturn;
+	}
 
 	// Get qualified function name
 	const functionQName = astHelper.getQName(astHelper.getFirstChild(ast, 'functionName'));
@@ -32,7 +36,8 @@ export function annotateNamedFunctionRef(
 		const functionName = staticContext.resolveFunctionName({ localName, prefix }, arity);
 
 		if (!functionName) {
-			return undefined;
+			astHelper.insertAttribute(ast, 'type', itemReturn);
+			return itemReturn;
 		}
 
 		localName = functionName.localName;
@@ -43,7 +48,10 @@ export function annotateNamedFunctionRef(
 	const functionProperties = staticContext.lookupFunction(namespaceURI, localName, arity) || null;
 
 	// If there are no function properties, there is no type inference
-	if (!functionProperties) return undefined;
+	if (!functionProperties) {
+		astHelper.insertAttribute(ast, 'type', itemReturn);
+		return itemReturn;
+	}
 
 	// Insert the type info into the AST and return
 	astHelper.insertAttribute(ast, 'type', functionProperties.returnType);
