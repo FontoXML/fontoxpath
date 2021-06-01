@@ -11,35 +11,38 @@ export function annotateTypeSwitchOperator(
 	argumentType: SequenceType,
 	caseClausesReturns: SequenceType[],
 	defaultCaseReturn: SequenceType
-): SequenceType {
+): SequenceType | undefined {
 	const caseClausesConditions = astHelper.getChildren(ast, 'typeswitchExprCaseClause');
 	// Do the switch case to see what will be returned
 	for (let i = 0; i < caseClausesReturns.length; i++) {
-		// The typeswitch either contains a sequenceType with a single type or an 'or' statement
-		if (caseClausesConditions[i][1][0] === 'sequenceType') {
-			const result = checkComparison(
-				caseClausesConditions[i][1],
-				argumentType,
-				caseClausesReturns[i]
-			);
-			if (!result) continue;
-			else {
-				astHelper.insertAttribute(ast, 'type', result);
-				return result;
-			}
-		} else if (caseClausesConditions[i][1][0] === 'sequenceTypeUnion') {
-			for (let j = 1; j <= 2; j++) {
-				const res = checkComparison(
-					caseClausesConditions[i][1][j],
+		// The typeswitch either contains a sequenceType with a single type or an 'or' statement (sequenceTypeUnion)
+		switch (caseClausesConditions[i][1][0]) {
+			case 'sequenceType':
+				const result = checkComparison(
+					caseClausesConditions[i][1],
 					argumentType,
 					caseClausesReturns[i]
 				);
-				if (!res) continue;
+				if (!result) continue;
 				else {
-					astHelper.insertAttribute(ast, 'type', res);
-					return res;
+					astHelper.insertAttribute(ast, 'type', result);
+					return result;
 				}
-			}
+			case 'sequenceTypeUnion':
+				for (let j = 1; j <= 2; j++) {
+					const res = checkComparison(
+						caseClausesConditions[i][1][j],
+						argumentType,
+						caseClausesReturns[i]
+					);
+					if (!res) continue;
+					else {
+						astHelper.insertAttribute(ast, 'type', res);
+						return res;
+					}
+				}
+			default:
+				return undefined;
 		}
 	}
 	astHelper.insertAttribute(ast, 'type', defaultCaseReturn);

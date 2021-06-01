@@ -316,9 +316,6 @@ export function annotate(ast: IAST, staticContext: StaticContext): SequenceType 
 		case 'x:stackTrace':
 			return annotate(astHelper.getChildren(ast, '*')[2], staticContext);
 
-		case 'resultExpr':
-			return annotate(astHelper.getChildren(ast, '*')[1], staticContext);
-
 		default:
 			// Current node cannot be annotated, but maybe deeper ones can.
 			for (let i = 1; i < ast.length; i++) {
