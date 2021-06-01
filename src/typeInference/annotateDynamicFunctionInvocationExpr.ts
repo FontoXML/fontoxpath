@@ -1,6 +1,7 @@
 import { SequenceType } from '../expressions/dataTypes/Value';
 import StaticContext from '../expressions/StaticContext';
 import { IAST } from '../parsing/astHelper';
+import { AnnotationContext } from './annotateAST';
 
 /**
  * At this moment there is no way to infer the return type of this function as
@@ -14,7 +15,7 @@ import { IAST } from '../parsing/astHelper';
  */
 export function annotateDynamicFunctionInvocationExpr(
 	ast: IAST,
-	staticContext: StaticContext,
+	context: AnnotationContext,
 	functionItem: SequenceType,
 	args: SequenceType
 ): SequenceType {

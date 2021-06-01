@@ -4,6 +4,7 @@ import {
 	getBinaryPrefabOperator,
 } from '../expressions/operators/arithmetic/BinaryOperator';
 import astHelper, { IAST } from '../parsing/astHelper';
+import { AnnotationContext } from './annotateAST';
 
 /**
  * Annotate the binary operators on the numeric and date types
@@ -21,7 +22,8 @@ export function annotateBinOp(
 	ast: IAST,
 	left: SequenceType | undefined,
 	right: SequenceType | undefined,
-	operator: string
+	operator: string,
+	context: AnnotationContext
 ): SequenceType | undefined {
 	// If we don't have the left and right type, we cannot infer the current type
 	if (!left || !right) {
@@ -30,11 +32,13 @@ export function annotateBinOp(
 
 	// TODO: Fix this hack (pathExpr returns a node in 1 case, which cannot be added to an integer)
 	if (left.type === ValueType.NODE || right.type === ValueType.NODE) return undefined;
+	if (left.type === ValueType.ITEM || right.type === ValueType.ITEM) return undefined;
 
 	const funcData = generateBinaryOperatorType(operator, left.type, right.type);
 
 	if (funcData !== undefined) {
 		const type = { type: funcData, mult: left.mult };
+
 		astHelper.insertAttribute(ast, 'type', type);
 		return type;
 	}

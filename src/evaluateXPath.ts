@@ -158,6 +158,7 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 				debug: !!options['debug'],
 				disableCache: !!options['disableCache'],
 				annotateAst: !!options['annotateAst'],
+				logUnannotatedQueries: !!options['logUnannotatedQueries'],
 			}
 		);
 		dynamicContext = context.dynamicContext;
