@@ -30,8 +30,8 @@ import { annotateUnaryLookup } from './annotateUnaryLookup';
 import { annotateUnaryMinus, annotateUnaryPlus } from './annotateUnaryOperator';
 
 export type AnnotationContext = {
-	staticContext?: StaticContext;
 	query?: string;
+	staticContext?: StaticContext;
 };
 
 /**

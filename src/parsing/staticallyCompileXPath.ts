@@ -96,6 +96,7 @@ export default function staticallyCompileXPath(
 				if (totalNodes !== annotatedNodes) {
 					// We are logging an error here so we can easily pipe the list of all failed queries into a file
 					// Example: `npm run test 2> failedQueries.txt`
+					// tslint:disable-next-line:no-console
 					console.error(xpathString);
 				}
 			}
