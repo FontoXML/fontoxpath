@@ -3,7 +3,7 @@ import { SequenceType, ValueType } from 'fontoxpath/expressions/dataTypes/Value'
 import StaticContext from 'fontoxpath/expressions/StaticContext';
 import astHelper from 'fontoxpath/parsing/astHelper';
 import parseExpression from 'fontoxpath/parsing/parseExpression';
-import annotateAst from 'fontoxpath/typeInference/annotateAST';
+import annotateAst, { countQueryBodyAnnotations } from 'fontoxpath/typeInference/annotateAST';
 
 /**
  *
@@ -271,6 +271,31 @@ describe('Annotating function call without context', () => {
 describe('Annotating inline functions', () => {
 	it('in line function test', () => {
 		assertValueType('function() {}', ValueType.FUNCTION, undefined);
+	});
+});
+
+describe('Annotation counting', () => {
+	it('correctly counts add expressions', () => {
+		const ast = parseExpression('2 + 1', {});
+		annotateAst(ast, {});
+		const [total, annotated] = countQueryBodyAnnotations(ast);
+		chai.assert.equal(total, annotated);
+	});
+	it('correctly counts unannotated expressions', () => {
+		const ast = parseExpression('$x + 1', {});
+		annotateAst(ast, {});
+		const [total, annotated] = countQueryBodyAnnotations(ast);
+		console.log(total, annotated);
+		chai.assert.equal(annotated, 1);
+		chai.assert.equal(total, 3);
+	});
+	it('correctly counts unannotated expressions 2', () => {
+		const ast = parseExpression('$b + math:sin($a)', {});
+		annotateAst(ast, {});
+		const [total, annotated] = countQueryBodyAnnotations(ast);
+		console.log(total, annotated);
+		chai.assert.equal(annotated, 0);
+		chai.assert.equal(total, 3);
 	});
 });
 
