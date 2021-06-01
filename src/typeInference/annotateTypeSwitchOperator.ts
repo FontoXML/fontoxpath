@@ -6,7 +6,6 @@ import {
 } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
 
-// TODO: Annotation not yet implemented. The docs don't mention it so we don't know the return types.
 export function annotateTypeSwitchOperator(
 	ast: IAST,
 	argumentType: SequenceType,
