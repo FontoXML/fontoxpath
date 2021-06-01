@@ -22,15 +22,13 @@ export function annotateFlworExpression(
 				hasFor = true;
 				annotationContext.pushScope();
 				annotateForClause(ast[i] as IAST, ast as IAST, annotationContext, annotate);
-				annotationContext.popScope();
 				break;
 			}
-			// case 'whereClause': {
-			// 	// WIP
-			// 	annotationContext.pushScope();
-			// 	annotateWhereClause(ast[i] as IAST, annotationContext, annotate);
-			// 	break;
-			// }
+			case 'whereClause': {
+				annotationContext.pushScope();
+				annotateWhereClause(ast[i] as IAST, annotationContext, annotate);
+				break;
+			}
 			// case 'orderByClause': {
 			// 	// WIP
 			// 	annotationContext.pushScope();
@@ -101,33 +99,23 @@ function annotateForClause(
 	}
 }
 
-/**
- * Get all the child nodes (elements in the for sequence expression), and return their unique types.
- *
- * @param varTypeNode the node that contains all children of sequenceExpr.
- * @return the unique types.
- */
-// function uniqueArray(varTypeNode: IAST): SequenceType[] {
-// A set of all the SequenceType in the sequenceExpr
-// const allTypes: SequenceType[] = astHelper
-// 	.getChildren(varTypeNode, '*')
-// 	.map((element) => annotate(element, annotationContext));
-// const types = allTypes.filter(
-// 	(current, index, array) =>
-// 		array.findIndex(
-// 			(element) => element.type === current.type && element.mult === current.mult
-// 		) === index
-// );
-// return types
-// }
-
 function annotateWhereClause(
 	ast: IAST,
 	annotationContext: AnnotationContext,
 	annotate: (ast: IAST, annotationContext) => SequenceType
 ) {
-	return undefined;
+	const seqType = {
+		type: ValueType.XSBOOLEAN,
+		mult: SequenceMultiplicity.EXACTLY_ONE,
+	};
+
+	// Annotate the child nodes
+	annotate(ast, annotationContext);
+
+	astHelper.insertAttribute(ast, 'type', seqType);
+	return seqType;
 }
+
 function annotateOrderByClause(
 	ast: IAST,
 	annotationContext: AnnotationContext,

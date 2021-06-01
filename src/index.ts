@@ -60,34 +60,33 @@ import {
 	Text,
 } from './types/Types';
 
-// console.log(
-// 	evaluateXPathToString(
-// 		`for $i in (0, 3 ,2)
-// 			let $s := 'Hello' || $i
-// 			return $s`,
-// 		undefined,
-// 		undefined,
-// 		undefined,
-// 		{ language: Language.XQUERY_3_1_LANGUAGE, annotateAst: true }
-// 	)
-// );
-
 // for $i in 0
 // 			let $s := 'Hello' || $i
 // 			return $s
 
-console.log(
-	evaluateXPathToString(
-		'for $x in (3, 5, 5) let $y := 5 return $x',
-		undefined,
-		undefined,
-		undefined,
-		{
-			language: Language.XQUERY_UPDATE_3_1_LANGUAGE,
-			annotateAst: true,
-		}
-	)
+evaluateXPathToString(
+	`for $i in (0,1,2)
+	where $i = 1
+	let $e := 'Hello'
+	return $e`,
+	null,
+	null,
+	null,
+	{ debug: true, language: evaluateXPath.XQUERY_3_1_LANGUAGE, annotateAst: true }
 );
+
+// console.log(
+// 	evaluateXPathToString(
+// 		'for $x in (3, 5, 5) let $y := 5 return $x',
+// 		undefined,
+// 		undefined,
+// 		undefined,
+// 		{
+// 			language: Language.XQUERY_UPDATE_3_1_LANGUAGE,
+// 			annotateAst: true,
+// 		}
+// 	)
+// );
 
 // evaluateXPath('for $x in (3, "25", 5) let $y := $x + 3 return $x');
 // for(int i = 0; i < something; i++) {

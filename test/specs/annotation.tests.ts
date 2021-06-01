@@ -292,6 +292,14 @@ describe('Annotating flwor Expressions', () => {
 		assertValueType('for $x in (3, 4, 5) return $x', ValueType.ITEM, undefined);
 	});
 
+	it('annotate complex for expression', () => {
+		assertValueType(
+			'for $x in (3, 4, 5) for $y in (2, 5) return $x + $y',
+			ValueType.ITEM,
+			undefined
+		);
+	});
+
 	it('annotate name shadowing for expression', () => {
 		assertValueType(
 			'for $x in (3, 25, 5) let $x := "stuff" || $x return $x',
