@@ -75,7 +75,7 @@ function annotateForClause(
 	// const pathToForBody = ['forClauseItem', 'for'];
 	const varName = astHelper.followPath(ast, pathToTypedVariableBinding)[1] as string;
 
-	let varTypeNode: IAST = astHelper.followPath(ast, pathToForExpr);
+	const varTypeNode: IAST = astHelper.followPath(ast, pathToForExpr);
 	if (!varTypeNode) {
 		return;
 	}

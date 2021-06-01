@@ -14,7 +14,6 @@ import {
 import { annotateContextItemExpr } from './annotateContextItemExpr';
 import { annotateDynamicFunctionInvocationExpr } from './annotateDynamicFunctionInvocationExpr';
 import { annotateFlworExpression } from './annotateFlworExpression';
-import { annotateVarRef } from './annotateVarRef';
 import { annotateFunctionCall } from './annotateFunctionCall';
 import { annotateIfThenElseExpr } from './annotateIfThenElseExpr';
 import { annotateInstanceOfExpr } from './annotateInstanceOfExpr';
@@ -31,6 +30,7 @@ import { annotateStringConcatenateOperator } from './annotateStringConcatenateOp
 import { annotateTypeSwitchOperator } from './annotateTypeSwitchOperator';
 import { annotateUnaryLookup } from './annotateUnaryLookup';
 import { annotateUnaryMinus, annotateUnaryPlus } from './annotateUnaryOperator';
+import { annotateVarRef } from './annotateVarRef';
 
 /**
  * Recursively traverse the AST in the depth first, pre-order to infer type and annotate AST;
