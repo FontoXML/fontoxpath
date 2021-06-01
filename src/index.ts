@@ -60,6 +60,27 @@ import {
 	Text,
 } from './types/Types';
 
+console.log(
+	evaluateXPathToString(
+		`for $i in (0, 3 ,2)
+			let $s := 'Hello' || $i
+			return $s`,
+		undefined,
+		undefined,
+		undefined,
+		{ language: Language.XQUERY_3_1_LANGUAGE, annotateAst: true }
+	)
+);
+
+// for $i in 0
+// 			let $s := 'Hello' || $i
+// 			return $s
+
+// console.log(evaluateXPath('for $i in (10, 20), $j in (1, 2) return ($i + $j)'));
+// for(int i = 0; i < something; i++) {
+// 	for (int)
+// }
+
 function parseXPath(xpathString: string) {
 	const cachedExpression = getAnyStaticCompilationResultFromCache(xpathString, 'XPath', false);
 	if (cachedExpression) {

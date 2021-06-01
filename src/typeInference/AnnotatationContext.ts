@@ -21,6 +21,19 @@ export class AnnotationContext {
 		throw new Error('XPST0008, The variable ' + varName + ' is not in scope.');
 	}
 
+	public removeVariable(varName: string): SequenceType {
+		for (let i = this._scopeIndex; i >= 0; i--) {
+			const variableType = this._variableScope[i][varName];
+			if (variableType) {
+				// Remove the element here
+				delete this._variableScope[i][varName];
+				return;
+			}
+		}
+
+		throw Error('XPST0008, The variable ' + varName + ' is not in scope.');
+	}
+
 	public insertVariable(varName: string, varType: SequenceType): void {
 		if (this._variableScope[this._scopeIndex][varName]) {
 			// TODO: change the error being thrown in here to adhere the "error code" code.

@@ -13,7 +13,8 @@ import {
 } from './annotateCompareOperator';
 import { annotateContextItemExpr } from './annotateContextItemExpr';
 import { annotateDynamicFunctionInvocationExpr } from './annotateDynamicFunctionInvocationExpr';
-import { annotateFlworExpression, annotateVarRef } from './annotateFlworExpression';
+import { annotateFlworExpression } from './annotateFlworExpression';
+import { annotateVarRef } from './annotateVarRef';
 import { annotateFunctionCall } from './annotateFunctionCall';
 import { annotateIfThenElseExpr } from './annotateIfThenElseExpr';
 import { annotateInstanceOfExpr } from './annotateInstanceOfExpr';
@@ -267,17 +268,6 @@ export function annotate(
 			return annotateCastOperator(ast);
 		case 'castableExpr':
 			return annotateCastableOperator(ast);
-		// Current node cannot be annotated, but maybe deeper ones can.
-		case 'flworExpr':
-			return annotateFlworExpression(ast, annotationContext, annotate);
-		case 'varRef':
-			return annotateVarRef(ast[1] as IAST, annotationContext);
-		case 'returnClause':
-			const pathFollowed: IAST = astHelper.followPath(ast, ['*']);
-			const returnType = annotate(pathFollowed, annotationContext);
-			astHelper.insertAttribute(pathFollowed, 'type', returnType);
-			astHelper.insertAttribute(ast as IAST, 'type', returnType);
-			return returnType;
 
 		// Maps
 		case 'simpleMapExpr':
@@ -326,6 +316,21 @@ export function annotate(
 		case 'quantifiedExpr':
 			astHelper.getChildren(ast, '*').map((a) => annotate(a, annotationContext));
 			return annotateQuantifiedExpr(ast);
+
+		// Flwor expressions
+		case 'flworExpr':
+			return annotateFlworExpression(ast, annotationContext, annotate);
+		case 'returnClause':
+			const pathFollowed: IAST = astHelper.followPath(ast, ['*']);
+			const returnType = annotate(pathFollowed, annotationContext);
+			astHelper.insertAttribute(pathFollowed, 'type', returnType);
+			astHelper.insertAttribute(ast as IAST, 'type', returnType);
+			return returnType;
+		case 'countClause':
+			throw new Error(`Not implemented: ${ast[0]} is not implemented yet.`);
+
+		case 'varRef':
+			return annotateVarRef(ast[1] as IAST, annotationContext);
 
 		default:
 			// Current node cannot be annotated, but maybe deeper ones can.

@@ -1,4 +1,4 @@
-import { SequenceType } from '../expressions/dataTypes/Value';
+import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { AnnotationContext } from './AnnotatationContext';
 
@@ -7,15 +7,35 @@ export function annotateFlworExpression(
 	annotationContext: AnnotationContext,
 	annotate: (ast: IAST, annotationContext) => SequenceType
 ): SequenceType | undefined {
-	annotationContext.pushScope();
-
+	let hasForClause: boolean = false;
 	for (let i = 1; i < ast.length; i++) {
 		switch (ast[i][0]) {
 			case 'letClause':
+				annotationContext.pushScope();
 				annotateLetClause(ast[i] as IAST, annotationContext, annotate);
 				break;
+			case 'forClause':
+				// `For` expression returns sequence type (XS:ITEM)
+				// TODO: Annotation not yet implemented
+				// However, the variable registration of the elements in the sequence is not properly handled
+				// We only registrate the variable types if they are all of the same type
+				//
+				hasForClause = true;
+				annotationContext.pushScope();
+				annotateForClause(ast[i] as IAST, ast as IAST, annotationContext, annotate);
+				return { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE };
+			case 'whereClause':
+				// WIP
+				annotationContext.pushScope();
+				annotateWhereClause(ast[i] as IAST, annotationContext, annotate);
+				break;
+			case 'orderByClause':
+				// WIP
+				annotationContext.pushScope();
+				annotateOrderByClause(ast[i] as IAST, annotationContext, annotate);
+				break;
 			default:
-				const retType: SequenceType = annotate(ast[i] as IAST, annotationContext);
+				let retType: SequenceType = annotate(ast[i] as IAST, annotationContext);
 				astHelper.insertAttribute(ast, 'type', retType);
 
 				annotationContext.popScope();
@@ -44,13 +64,61 @@ function annotateLetClause(
 	annotationContext.insertVariable(varName, varType);
 }
 
-export function annotateVarRef(ast: IAST, annotationContext: AnnotationContext): SequenceType {
-	// pass ast sub tree with the ast[0] as `varRef` to this function
-	// ast[1] here would be the array of the variables to be returned
-	// ast[1][0] always seems to be `name`?
-	const varName: string = ast[1] as string;
-	const varType: SequenceType = annotationContext.getVariable(varName);
-	astHelper.insertAttribute(ast, 'type', varType);
+function annotateForClause(
+	ast: IAST,
+	fullAst: IAST,
+	annotationContext: AnnotationContext,
+	annotate: (ast: IAST, annotationContext) => SequenceType
+) {
+	const pathToTypedVariableBinding = ['forClauseItem', 'typedVariableBinding', 'varName'];
+	const pathToForExpr = ['forClauseItem', 'forExpr', 'sequenceExpr'];
+	// const pathToForBody = ['forClauseItem', 'for'];
+	const varName = astHelper.followPath(ast, pathToTypedVariableBinding)[1] as string;
 
-	return varType;
+	let varTypeNode: IAST;
+	try {
+		varTypeNode = astHelper.followPath(ast, pathToForExpr);
+	} catch {
+		return undefined;
+	}
+
+	// A set of all the SequenceType in the sequenceExpr
+	const allTypes: SequenceType[] = astHelper
+		.getChildren(varTypeNode, '*')
+		.map((element) => annotate(element, annotationContext));
+	const types = allTypes.filter(
+		(current, index, array) =>
+			array.findIndex(
+				(element) => element.type === current.type && element.mult === current.mult
+			) === index
+	);
+
+	const fullAstCopy: IAST[] = [];
+	fullAst.forEach((element) => fullAstCopy.push(element as IAST));
+
+	// Remove the first index which is the for Clause
+	fullAstCopy.splice(0, 2);
+
+	// set = all diffrent types in elements
+	// for every type in set run annotateflworexpr
+
+	types.forEach((sequenceType) => {
+		annotationContext.insertVariable(varName, sequenceType);
+		annotateFlworExpression(fullAstCopy as IAST, annotationContext, annotate);
+		annotationContext.removeVariable(varName);
+	});
+}
+function annotateWhereClause(
+	ast: IAST,
+	annotationContext: AnnotationContext,
+	annotate: (ast: IAST, annotationContext) => SequenceType
+) {
+	return undefined;
+}
+function annotateOrderByClause(
+	ast: IAST,
+	annotationContext: AnnotationContext,
+	annotate: (ast: IAST, annotationContext) => SequenceType
+) {
+	return undefined;
 }

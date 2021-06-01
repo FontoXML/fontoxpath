@@ -275,6 +275,46 @@ describe('Annotating inline functions', () => {
 	});
 });
 
+describe('Annotating flwor Expressions', () => {
+	it('annotate simple let expression', () => {
+		assertValueType("let $s := 'Hello' return $s", ValueType.XSSTRING, undefined);
+	});
+	it('annotate complex let expression', () => {
+		assertValueType(
+			"let $s := 'Hello' return let $v := 3 return $s || $v",
+			ValueType.XSSTRING,
+			undefined
+		);
+	});
+	it('annotate simple for expression', () => {
+		assertValueType('for $x in (3, 4, 5) return $x', ValueType.ITEM, undefined);
+	});
+
+	it('annotate name shadowing for expression', () => {
+		assertValueType(
+			'for $x in (3, 25, 5) let $x := "stuff" || $x return $x',
+			ValueType.ITEM,
+			undefined
+		);
+	});
+
+	it('annotate name shadowing for expression sequence different types', () => {
+		assertValueType(
+			'for $x in (3, "25", 5) let $x := "stuff" || $x return $x',
+			ValueType.ITEM,
+			undefined
+		);
+	});
+
+	it('annotate name shadowing for expression sequence different types', () => {
+		assertValueType(
+			'for $x in (3, "25", 5) let $y := $x + 3 return $x',
+			ValueType.ITEM,
+			undefined
+		);
+	});
+});
+
 // Type switch is not tested, type switch is reserved in XPath but not yet used
 // Annotation of `functionCallExpr` and `namedFunctionRef` with context is not tested
 
