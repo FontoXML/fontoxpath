@@ -354,20 +354,23 @@ const annotationFunctions: {
 		return annotateUnaryLookup(ast, ncName);
 	},
 	// TypeSwitch
-	typeSwitchExpr: (ast: IAST, context: AnnotationContext): SequenceType => {
-		const arg = annotate(astHelper.getFirstChild(ast, 'argExpr') as IAST, context);
-		const clauses = astHelper
+	typeswitchExpr: (ast: IAST, context: AnnotationContext): SequenceType => {
+		const argumentType = annotate(astHelper.getFirstChild(ast, 'argExpr')[1] as IAST, context);
+		const caseClausesReturns = astHelper
 			.getChildren(ast, 'typeswitchExprCaseClause')
-			.map((a) => annotate(a, context));
-		const defaultCase = annotate(
-			astHelper.getFirstChild(ast, 'typeSwitchExprDefaultClause') as IAST,
+			.map((a) => annotate(astHelper.followPath(a, ['resultExpr'])[1] as IAST, context));
+		const defaultCaseReturn = annotate(
+			astHelper.followPath(ast, ['typeswitchExprDefaultClause', 'resultExpr'])[1] as IAST,
 			context
 		);
-		return annotateTypeSwitchOperator(ast);
+		return annotateTypeSwitchOperator(ast, argumentType, caseClausesReturns, defaultCaseReturn);
 	},
 	quantifiedExpr: (ast: IAST, context: AnnotationContext): SequenceType => {
 		astHelper.getChildren(ast, '*').map((a) => annotate(a, context));
 		return annotateQuantifiedExpr(ast, context);
+	},
+	'x:stackTrace': (ast: IAST, context: AnnotationContext): SequenceType => {
+		return annotate(astHelper.getChildren(ast, '*')[2], context);
 	},
 	queryBody: (ast: IAST, context: AnnotationContext): SequenceType => {
 		const type = annotate(ast[1] as IAST, context);

@@ -718,6 +718,7 @@ function inlineFunction(
 ) {
 	const params = astHelper.getChildren(astHelper.getFirstChild(ast, 'paramList'), '*');
 	const functionBody = astHelper.followPath(ast, ['functionBody', '*']);
+	const typeNode = astHelper.followPath(ast, ['type']);
 
 	return new InlineFunction(
 		params.map((param) => {
@@ -733,7 +734,7 @@ function inlineFunction(
 		astHelper.getTypeDeclaration(ast),
 		functionBody
 			? (compile(functionBody, compilationOptions) as PossiblyUpdatingExpression)
-			: new SequenceOperator([])
+			: new SequenceOperator([], typeNode ? (typeNode[1] as SequenceType) : undefined)
 	);
 }
 
@@ -1320,6 +1321,7 @@ function computedPIConstructor(ast: IAST, compilationOptions: CompilationOptions
 	const targetExpr = astHelper.getFirstChild(ast, 'piTargetExpr');
 	const target = astHelper.getFirstChild(ast, 'piTarget');
 	const piValueExpr = astHelper.getFirstChild(ast, 'piValueExpr');
+	const typeNode = astHelper.followPath(ast, ['type']);
 
 	return new PIConstructor(
 		{
@@ -1336,7 +1338,7 @@ function computedPIConstructor(ast: IAST, compilationOptions: CompilationOptions
 					astHelper.getFirstChild(piValueExpr, '*'),
 					disallowUpdating(compilationOptions)
 			  )
-			: new SequenceOperator([])
+			: new SequenceOperator([], typeNode ? (typeNode[1] as SequenceType) : undefined)
 	);
 }
 

@@ -185,8 +185,7 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		],
-		// TODO: this seems like a bug not sure though: xs:datetime instead of xs:datetimestamp
-		returnType: { type: ValueType.XSDATETIME, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		returnType: { type: ValueType.XSDATETIMESTAMP, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
 			ValueType.XSDATETIMESTAMP
