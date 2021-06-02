@@ -388,6 +388,9 @@ describe('annotating varRef', () => {
 	it('annotate complex varRef', () => {
 		assertValueType('$x + $y', ValueType.XSINTEGER, context);
 	});
+	it('annotate varRef not in context', () => {
+		assertValueType('$x + $l', undefined, context);
+	});
 	it('annotate varRef throws when types incorrect', () => {
 		chai.assert.throws(() => assertValueType('$x + $z', undefined, context));
 	});
