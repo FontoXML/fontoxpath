@@ -42,6 +42,18 @@ export function annotateFlworExpression(
 				annotateOrderByClause(ast[i] as IAST, annotationContext);
 				break;
 			}
+			case 'returnClause': {
+				let retType: SequenceType = annotateReturnType(
+					ast[i] as IAST,
+					annotationContext,
+					annotate
+				);
+				if (hasFor) {
+					retType = { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE };
+				}
+				astHelper.insertAttribute(ast, 'type', retType);
+				return retType;
+			}
 			default: {
 				let retType: SequenceType = annotate(ast[i] as IAST, annotationContext);
 				if (hasFor) {
@@ -156,4 +168,15 @@ function filterOnUniqueObjects(array: SequenceType[]): SequenceType[] {
 				(element) => element.type === current.type && element.mult === current.mult
 			) === index
 	);
+}
+function annotateReturnType(
+	ast: IAST,
+	context: AnnotationContext,
+	annotate: (ast: IAST, context: AnnotationContext) => SequenceType
+): SequenceType {
+	const pathFollowed: IAST = astHelper.followPath(ast, ['*']);
+	const returnType = annotate(pathFollowed, context);
+	astHelper.insertAttribute(pathFollowed, 'type', returnType);
+	astHelper.insertAttribute(ast as IAST, 'type', returnType);
+	return returnType;
 }

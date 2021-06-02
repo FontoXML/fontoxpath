@@ -376,13 +376,6 @@ const annotationFunctions: {
 		return annotateFlworExpression(ast, context, annotate);
 	},
 	varRef: (ast: IAST, context: AnnotationContext): SequenceType => {
-		return annotateVarRef(ast[1] as IAST, context);
-	},
-	returnClause: (ast: IAST, context: AnnotationContext): SequenceType => {
-		const pathFollowed: IAST = astHelper.followPath(ast, ['*']);
-		const returnType = annotate(pathFollowed, context);
-		astHelper.insertAttribute(pathFollowed, 'type', returnType);
-		astHelper.insertAttribute(ast as IAST, 'type', returnType);
-		return returnType;
+		return annotateVarRef(ast as IAST, context);
 	},
 };

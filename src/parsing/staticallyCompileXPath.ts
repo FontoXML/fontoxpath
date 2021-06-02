@@ -60,9 +60,9 @@ export default function staticallyCompileXPath(
 	} else {
 		// We can not use anything from the cache, parse + compile
 		const ast = parseExpression(xpathString, compilationOptions);
-
+		const context = new AnnotationContext(rootStaticContext);
 		if (compilationOptions.annotateAst) {
-			annotateAst(ast, new AnnotationContext(rootStaticContext));
+			annotateAst(ast, context);
 		}
 
 		const mainModule = astHelper.getFirstChild(ast, 'mainModule');
@@ -84,7 +84,7 @@ export default function staticallyCompileXPath(
 		}
 
 		if (compilationOptions.annotateAst) {
-			annotateAst(ast, new AnnotationContext(rootStaticContext));
+			annotateAst(ast, context);
 
 			if (compilationOptions.logUnannotatedQueries) {
 				const [totalNodes, annotatedNodes] = countQueryBodyAnnotations(ast);
