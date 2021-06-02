@@ -1,6 +1,7 @@
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import StaticContext from '../expressions/StaticContext';
 import astHelper, { IAST } from '../parsing/astHelper';
+import { AnnotationContext } from './annotateAST';
 
 /**
  * Annotate the arrowExpr by extracting the function info from the static context
@@ -10,18 +11,20 @@ import astHelper, { IAST } from '../parsing/astHelper';
  * @param staticContext from witch the function info is extracted.
  * @returns the inferred type or `undefined` when function properties cannot be inferred.
  */
-export function annotateArrowExpr(ast: IAST, staticContext: StaticContext): SequenceType {
-	const itemReturn = {
-		type: ValueType.ITEM,
-		mult: SequenceMultiplicity.ZERO_OR_MORE,
-	};
+export function annotateArrowExpr(
+	ast: IAST,
+	functionCallExpr: SequenceType,
+	context: AnnotationContext
+): SequenceType | undefined {
 	// We need the context to lookup the function information
-	if (!staticContext) {
-		astHelper.insertAttribute(ast, 'type', itemReturn);
-		return itemReturn;
-	}
+	if (!context.staticContext) return undefined;
 
 	const func = astHelper.getFirstChild(ast, 'EQName');
+
+	const itemReturn = {
+		type: ValueType.ITEM,
+		mult: SequenceMultiplicity.EXACTLY_ONE,
+	};
 
 	// There may be no name for the function
 	if (!func) {
@@ -43,7 +46,7 @@ export function annotateArrowExpr(ast: IAST, staticContext: StaticContext): Sequ
 	const functionArguments = astHelper.getChildren(astHelper.getFirstChild(ast, 'arguments'), '*');
 
 	// Lookup the namespace URI
-	const resolvedName = staticContext.resolveFunctionName(
+	const resolvedName = context.staticContext.resolveFunctionName(
 		{
 			localName: functionName,
 			prefix: functionPrefix['prefix'] as string,
@@ -57,10 +60,11 @@ export function annotateArrowExpr(ast: IAST, staticContext: StaticContext): Sequ
 	}
 
 	// Lookup the function properties (return type)
-	const functionProps = staticContext.lookupFunction(
+	const functionProps = context.staticContext.lookupFunction(
 		resolvedName.namespaceURI,
 		resolvedName.localName,
-		functionArguments.length
+		// Since this is an arrowExpr, we add one for the implicit argument
+		functionArguments.length + 1
 	);
 
 	if (!functionProps) {

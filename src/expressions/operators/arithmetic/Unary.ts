@@ -4,6 +4,8 @@ import createAtomicValue from '../../dataTypes/createAtomicValue';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
 import { SequenceType, ValueType } from '../../dataTypes/Value';
+import DynamicContext from '../../DynamicContext';
+import ExecutionParameters from '../../ExecutionParameters';
 import Expression from '../../Expression';
 
 type UnaryLookupTable = {
@@ -46,7 +48,7 @@ class Unary extends Expression {
 		this._kind = kind;
 	}
 
-	public evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
 		return atomize(
 			this._valueExpr.evaluateMaybeStatically(dynamicContext, executionParameters),
 			executionParameters
@@ -56,21 +58,18 @@ class Unary extends Expression {
 				return sequenceFactory.empty();
 			}
 
-			if (atomizedValues.length > 1) {
-				throw new Error(
-					'XPTY0004: The operand to a unary operator must be a sequence with a length less than one'
-				);
-			}
-
 			const value = atomizedValues[0];
 
 			// We could infer the return type during annotation so we can early return here
 			if (this.type) {
-				return sequenceFactory.singleton(
-					createAtomicValue(
-						this._kind === '+' ? value.value : -value.value,
-						UNARY_LOOKUP[value.type]
-					)
+				let finalValue = this._kind === '+' ? +value.value : -value.value;
+				if (value.type === ValueType.XSBOOLEAN) finalValue = Number.NaN;
+				return sequenceFactory.singleton(createAtomicValue(finalValue, this.type.type));
+			}
+
+			if (atomizedValues.length > 1) {
+				throw new Error(
+					'XPTY0004: The operand to a unary operator must be a sequence with a length less than one'
 				);
 			}
 

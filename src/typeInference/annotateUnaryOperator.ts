@@ -1,6 +1,7 @@
 import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
+import { AnnotationContext } from './annotateAST';
 
 /**
  * Adds the unary minus operator type annotation to the AST
@@ -10,17 +11,11 @@ import astHelper, { IAST } from '../parsing/astHelper';
  * @param valueType The type of the value that the operator is called on.
  * @returns An appropriate SequenceType if the operation was valid, undefined if not.
  */
-export function annotateUnaryMinus(ast: IAST, valueType: SequenceType | undefined): SequenceType {
-	const itemReturn = {
-		type: ValueType.ITEM,
-		mult: SequenceMultiplicity.ZERO_OR_MORE,
-	};
-	// If we don't now the child type, we can't infer the current type
-	if (!valueType) {
-		astHelper.insertAttribute(ast, 'type', itemReturn);
-		return itemReturn;
-	}
-
+export function annotateUnaryMinus(
+	ast: IAST,
+	valueType: SequenceType | undefined,
+	context: AnnotationContext
+): SequenceType | undefined {
 	// Make sure we are actually working with numbers here
 	if (isSubtypeOf(valueType.type, ValueType.XSNUMERIC)) {
 		const type = {
@@ -33,12 +28,13 @@ export function annotateUnaryMinus(ast: IAST, valueType: SequenceType | undefine
 		return type;
 	}
 
-	const doubleReturn = {
+	const doubleType = {
 		type: ValueType.XSDOUBLE,
 		mult: SequenceMultiplicity.EXACTLY_ONE,
 	};
-	astHelper.insertAttribute(ast, 'type', doubleReturn);
-	return doubleReturn;
+
+	astHelper.insertAttribute(ast, 'type', doubleType);
+	return doubleType;
 }
 
 /**
@@ -49,30 +45,28 @@ export function annotateUnaryMinus(ast: IAST, valueType: SequenceType | undefine
  * @param valueType The type of the value that the operator is called on.
  * @returns An appropriate SequenceType if the operation was valid, undefined if not.
  */
-export function annotateUnaryPlus(ast: IAST, valueType: SequenceType | undefined): SequenceType {
-	const itemReturn = {
-		type: ValueType.ITEM,
-		mult: SequenceMultiplicity.ZERO_OR_MORE,
-	};
-	if (!valueType) {
-		astHelper.insertAttribute(ast, 'type', itemReturn);
-		return itemReturn;
-	}
-
+export function annotateUnaryPlus(
+	ast: IAST,
+	valueType: SequenceType | undefined,
+	context: AnnotationContext
+): SequenceType | undefined {
+	// Make sure we are actually working with numbers here
 	if (isSubtypeOf(valueType.type, ValueType.XSNUMERIC)) {
 		const type = {
 			type: valueType.type,
 			mult: valueType.mult,
 		};
 
+		// Attach the type to the AST
 		astHelper.insertAttribute(ast, 'type', type);
 		return type;
 	}
 
-	const doubleReturn = {
+	const doubleType = {
 		type: ValueType.XSDOUBLE,
 		mult: SequenceMultiplicity.EXACTLY_ONE,
 	};
-	astHelper.insertAttribute(ast, 'type', doubleReturn);
-	return doubleReturn;
+
+	astHelper.insertAttribute(ast, 'type', doubleType);
+	return doubleType;
 }
