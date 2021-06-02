@@ -29,6 +29,26 @@ export function randomLanguage(): string {
 	}
 }
 
+// We use string values because they can be printed when reporting errors.
+export type Backend = 'expression' | 'js-codegen';
+
+/**
+ * Pick a random backend.
+ *
+ * @returns The randomly selected backend.
+ */
+export function randomBackend(): Backend {
+	const index = rand(2);
+	switch (index) {
+		case 0:
+			return 'expression';
+		case 1:
+			return 'js-codegen';
+		default:
+			throw new Error('Out of bounds');
+	}
+}
+
 const STRING_POOL =
 	'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-[]{}()<>,./?:;"\'|\\!@#$%^&*+=';
 function randomString(len: number): string {
