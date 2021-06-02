@@ -61,6 +61,7 @@ export function countQueryBodyAnnotations(
 
 	return [total, annotated];
 }
+
 /**
  * Recursively traverse the AST in the depth first, pre-order to infer type and annotate AST;
  * Annotates as much type information as possible to the AST nodes.
@@ -72,11 +73,6 @@ export function countQueryBodyAnnotations(
  * @returns The type of the AST node or `undefined` when the type cannot be annotated.
  */
 function annotate(ast: IAST, context: AnnotationContext): SequenceType | undefined {
-	// Check if we actually have an AST
-	if (!ast) {
-		return undefined;
-	}
-
 	const astNodeName = ast[0];
 
 	const annotationFunction = annotationFunctions[astNodeName];
@@ -84,7 +80,9 @@ function annotate(ast: IAST, context: AnnotationContext): SequenceType | undefin
 
 	// Current node cannot be annotated, but maybe deeper ones can.
 	for (let i = 1; i < ast.length; i++) {
-		annotate(ast[i] as IAST, context);
+		if (ast[i]) {
+			annotate(ast[i] as IAST, context);
+		}
 	}
 
 	return undefined;
@@ -219,7 +217,7 @@ const annotationFunctions: {
 	// Path Expression
 	pathExpr: (ast: IAST, context: AnnotationContext): SequenceType => {
 		const root = astHelper.getFirstChild(ast, 'rootExpr');
-		if (root) annotate(root[1] as IAST, context);
+		if (root && root[1]) annotate(root[1] as IAST, context);
 		astHelper.getChildren(ast, 'stepExpr').map((b) => annotate(b, context));
 		return annotatePathExpr(ast, context);
 	},
@@ -305,7 +303,8 @@ const annotationFunctions: {
 			astHelper.followPath(ast, ['functionItem', '*']),
 			context
 		);
-		const args: SequenceType = annotate(astHelper.getFirstChild(ast, 'arguments'), context);
+		const argNodes = astHelper.getFirstChild(ast, 'arguments');
+		const args: SequenceType = argNodes ? annotate(argNodes, context) : undefined;
 		return annotateDynamicFunctionInvocationExpr(ast, context, functionItem, args);
 	},
 	namedFunctionRef: (ast: IAST, context: AnnotationContext): SequenceType => {
@@ -363,7 +362,8 @@ const annotationFunctions: {
 		return annotateQuantifiedExpr(ast, context);
 	},
 	'x:stackTrace': (ast: IAST, context: AnnotationContext): SequenceType => {
-		return annotate(astHelper.getChildren(ast, '*')[2], context);
+		const children = astHelper.getChildren(ast, '*');
+		return annotate(children[0], context);
 	},
 	queryBody: (ast: IAST, context: AnnotationContext): SequenceType => {
 		const type = annotate(ast[1] as IAST, context);

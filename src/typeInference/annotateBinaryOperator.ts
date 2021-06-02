@@ -1,8 +1,5 @@
 import { SequenceType, sequenceTypeToString, ValueType } from '../expressions/dataTypes/Value';
-import {
-	generateBinaryOperatorType,
-	getBinaryPrefabOperator,
-} from '../expressions/operators/arithmetic/BinaryOperator';
+import { generateBinaryOperatorType } from '../expressions/operators/arithmetic/BinaryOperator';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { AnnotationContext } from './AnnotationContext';
 

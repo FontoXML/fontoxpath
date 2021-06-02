@@ -5,7 +5,6 @@ import {
 	ValueType,
 } from '../expressions/dataTypes/Value';
 import { SourceRange } from '../expressions/debug/StackTraceGenerator';
-import { BinaryEvaluationFunction } from '../typeInference/binaryEvaluationFunction';
 
 type QName = { localName: string; namespaceURI: string | null; prefix: string };
 
@@ -172,10 +171,7 @@ function followPath(ast: IAST, path: string[]): IAST | null {
 /**
  * Get the value of the given attribute
  */
-function getAttribute(
-	ast: IAST,
-	attributeName: string
-): string | SequenceType | BinaryEvaluationFunction | null {
+function getAttribute(ast: IAST, attributeName: string): string | SequenceType | null {
 	if (!Array.isArray(ast)) {
 		return null;
 	}

@@ -18,7 +18,14 @@ export function annotateUnaryMinus(
 ): SequenceType | undefined {
 	// If we don't now the child type, we can't infer the current type
 	if (!valueType) {
-		return undefined;
+		const type = {
+			type: ValueType.XSNUMERIC,
+			mult: SequenceMultiplicity.ZERO_OR_MORE,
+		};
+
+		// Attach the type to the AST
+		astHelper.insertAttribute(ast, 'type', type);
+		return type;
 	}
 
 	// Make sure we are actually working with numbers here
