@@ -1,7 +1,7 @@
 import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
-import { AnnotationContext } from './annotateAST';
+import { AnnotationContext } from './AnnotationContext';
 
 /**
  * Annotates the union, intersect and except operators with a sequence of nodes.

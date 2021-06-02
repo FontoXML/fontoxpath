@@ -8,6 +8,7 @@ import { loadModuleFile } from './parsing/globalModuleCache';
 import parseExpression from './parsing/parseExpression';
 import processProlog, { FunctionDeclaration } from './parsing/processProlog';
 import annotateAst from './typeInference/annotateAST';
+import { AnnotationContext } from './typeInference/AnnotationContext';
 
 /**
  * Register an XQuery module
@@ -25,7 +26,7 @@ export default function registerXQueryModule(
 		debug: options['debug'],
 	});
 
-	annotateAst(parsedModule, { staticContext: undefined });
+	annotateAst(parsedModule, new AnnotationContext(undefined));
 
 	const libraryModule = astHelper.getFirstChild(parsedModule, 'libraryModule');
 	if (!libraryModule) {

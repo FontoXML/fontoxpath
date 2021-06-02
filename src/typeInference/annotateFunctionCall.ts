@@ -1,6 +1,6 @@
 import { SequenceType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
-import { AnnotationContext } from './annotateAST';
+import { AnnotationContext } from './AnnotationContext';
 
 /**
  * Annotate the function calls by extracting the function info from the static context
@@ -12,11 +12,10 @@ import { AnnotationContext } from './annotateAST';
  */
 export function annotateFunctionCall(
 	ast: IAST,
-	argumentTypes: SequenceType[],
-	context: AnnotationContext
+	annotationContext: AnnotationContext
 ): SequenceType | undefined {
 	// We need the context to lookup the function information
-	if (!context.staticContext) return undefined;
+	if (!annotationContext || !annotationContext.staticContext) return undefined;
 
 	const func = astHelper.getFirstChild(ast, 'functionName');
 	let functionName: string;
@@ -31,7 +30,7 @@ export function annotateFunctionCall(
 	const functionArguments = astHelper.getChildren(astHelper.getFirstChild(ast, 'arguments'), '*');
 
 	// Lookup the namespace URI
-	const resolvedName = context.staticContext.resolveFunctionName(
+	const resolvedName = annotationContext.staticContext.resolveFunctionName(
 		{
 			localName: functionName,
 			prefix: functionPrefix['prefix'] as string,
@@ -42,7 +41,7 @@ export function annotateFunctionCall(
 	if (!resolvedName) return undefined;
 
 	// Lookup the function properties (return type)
-	const functionProps = context.staticContext.lookupFunction(
+	const functionProps = annotationContext.staticContext.lookupFunction(
 		resolvedName.namespaceURI,
 		resolvedName.localName,
 		functionArguments.length

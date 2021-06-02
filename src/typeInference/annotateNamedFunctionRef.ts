@@ -1,7 +1,6 @@
 import { SequenceType } from '../expressions/dataTypes/Value';
-import StaticContext from '../expressions/StaticContext';
 import astHelper, { IAST } from '../parsing/astHelper';
-import { AnnotationContext } from './annotateAST';
+import { AnnotationContext } from './AnnotationContext';
 
 /**
  * Annotate named function references by extracting the function info from the static context
@@ -13,10 +12,10 @@ import { AnnotationContext } from './annotateAST';
  */
 export function annotateNamedFunctionRef(
 	ast: IAST,
-	context: AnnotationContext
+	annotationContext: AnnotationContext
 ): SequenceType | undefined {
 	// Can't find info about the function without the context.
-	if (!context.staticContext) return undefined;
+	if (!annotationContext || !annotationContext.staticContext) return undefined;
 
 	// Get qualified function name
 	const functionQName = astHelper.getQName(astHelper.getFirstChild(ast, 'functionName'));
@@ -30,7 +29,7 @@ export function annotateNamedFunctionRef(
 
 	// If there is no namespace URI, resolve the function name
 	if (!namespaceURI) {
-		const functionName = context.staticContext.resolveFunctionName(
+		const functionName = annotationContext.staticContext.resolveFunctionName(
 			{ localName, prefix },
 			arity
 		);
@@ -45,7 +44,7 @@ export function annotateNamedFunctionRef(
 
 	// With all components there, look up the function properties
 	const functionProperties =
-		context.staticContext.lookupFunction(namespaceURI, localName, arity) || null;
+		annotationContext.staticContext.lookupFunction(namespaceURI, localName, arity) || null;
 
 	// If there are no function properties, there is no type inference
 	if (!functionProperties) return undefined;
