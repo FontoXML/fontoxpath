@@ -1,7 +1,7 @@
 import { SequenceType, sequenceTypeToString, ValueType } from '../expressions/dataTypes/Value';
 import { generateBinaryOperatorType } from '../expressions/operators/arithmetic/BinaryOperator';
 import astHelper, { IAST } from '../parsing/astHelper';
-import { AnnotationContext } from './annotateAST';
+import { AnnotationContext } from './AnnotationContext';
 
 /**
  * Annotate the binary operators on the numeric and date types

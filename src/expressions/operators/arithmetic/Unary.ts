@@ -4,6 +4,8 @@ import createAtomicValue from '../../dataTypes/createAtomicValue';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
 import { SequenceType, ValueType } from '../../dataTypes/Value';
+import DynamicContext from '../../DynamicContext';
+import ExecutionParameters from '../../ExecutionParameters';
 import Expression from '../../Expression';
 
 const UNARY_LOOKUP: { [key: number]: ValueType } = {
@@ -41,7 +43,7 @@ class Unary extends Expression {
 		this._kind = kind;
 	}
 
-	public evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
 		return atomize(
 			this._valueExpr.evaluateMaybeStatically(dynamicContext, executionParameters),
 			executionParameters
@@ -60,14 +62,14 @@ class Unary extends Expression {
 			const value = atomizedValues[0];
 
 			// We could infer the return type during annotation so we can early return here
-			if (this.type) {
-				return sequenceFactory.singleton(
-					createAtomicValue(
-						this._kind === '+' ? value.value : -value.value,
-						UNARY_LOOKUP[value.type]
-					)
-				);
-			}
+			// if (this.type) {
+			// 	return sequenceFactory.singleton(
+			// 		createAtomicValue(
+			// 			this._kind === '+' ? value.value : -value.value,
+			// 			UNARY_LOOKUP[value.type]
+			// 		)
+			// 	);
+			// }
 
 			if (isSubtypeOf(value.type, ValueType.XSUNTYPEDATOMIC)) {
 				const castValue = castToType(value, ValueType.XSDOUBLE).value as number;

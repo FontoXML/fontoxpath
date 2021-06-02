@@ -2,6 +2,7 @@ import ExecutionSpecificStaticContext from '../expressions/ExecutionSpecificStat
 import Expression from '../expressions/Expression';
 import StaticContext from '../expressions/StaticContext';
 import annotateAst, { countQueryBodyAnnotations } from '../typeInference/annotateAST';
+import { AnnotationContext } from '../typeInference/AnnotationContext';
 import { FunctionNameResolver } from '../types/Options';
 import astHelper from './astHelper';
 import compileAstToExpression from './compileAstToExpression';
@@ -24,7 +25,7 @@ export default function staticallyCompileXPath(
 		logUnannotatedQueries: boolean | undefined;
 	},
 	namespaceResolver: (namespace: string) => string | null,
-	variables: object,
+	variables: { [varName: string]: any },
 	moduleImports: { [namespaceURI: string]: string },
 	defaultFunctionNamespaceURI: string,
 	functionNameResolver: FunctionNameResolver
@@ -59,11 +60,9 @@ export default function staticallyCompileXPath(
 	} else {
 		// We can not use anything from the cache, parse + compile
 		const ast = parseExpression(xpathString, compilationOptions);
-
+		const context = new AnnotationContext(rootStaticContext);
 		if (compilationOptions.annotateAst) {
-			annotateAst(ast, {
-				staticContext: rootStaticContext,
-			});
+			annotateAst(ast, context);
 		}
 
 		const mainModule = astHelper.getFirstChild(ast, 'mainModule');
@@ -85,10 +84,7 @@ export default function staticallyCompileXPath(
 		}
 
 		if (compilationOptions.annotateAst) {
-			annotateAst(ast, {
-				staticContext: rootStaticContext,
-				query: xpathString,
-			});
+			annotateAst(ast, context);
 
 			if (compilationOptions.logUnannotatedQueries) {
 				const [totalNodes, annotatedNodes] = countQueryBodyAnnotations(ast);

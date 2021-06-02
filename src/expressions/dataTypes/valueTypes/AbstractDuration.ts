@@ -1,5 +1,5 @@
 abstract class AbstractDuration {
-	public equals(other) {
+	public equals(other: AbstractDuration) {
 		return (
 			this.getRawMonths() === other.getRawMonths() &&
 			this.getRawSeconds() === other.getRawSeconds()

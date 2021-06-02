@@ -1,6 +1,8 @@
 import ArrayValue from '../dataTypes/ArrayValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { SequenceType } from '../dataTypes/Value';
+import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
 import Expression from '../Expression';
 import Specificity from '../Specificity';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
@@ -25,7 +27,7 @@ class SquareArrayConstructor extends Expression {
 		this._members = members;
 	}
 
-	public evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
 		return sequenceFactory.singleton(
 			new ArrayValue(
 				this._members.map((entry) =>

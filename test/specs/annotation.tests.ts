@@ -1,9 +1,15 @@
 import * as chai from 'chai';
-import { SequenceType, ValueType } from 'fontoxpath/expressions/dataTypes/Value';
+import {
+	SequenceMultiplicity,
+	SequenceType,
+	ValueType,
+} from 'fontoxpath/expressions/dataTypes/Value';
 import StaticContext from 'fontoxpath/expressions/StaticContext';
 import astHelper from 'fontoxpath/parsing/astHelper';
 import parseExpression from 'fontoxpath/parsing/parseExpression';
 import annotateAst, { countQueryBodyAnnotations } from 'fontoxpath/typeInference/annotateAST';
+import { AnnotationContext } from 'fontoxpath/typeInference/AnnotationContext';
+import { type } from 'os';
 
 /**
  *
@@ -16,11 +22,12 @@ import annotateAst, { countQueryBodyAnnotations } from 'fontoxpath/typeInference
 function assertValueType(
 	expression: string,
 	expectedType: ValueType,
-	staticContext: StaticContext,
+	context: AnnotationContext,
 	followSpecificPath?: string[]
 ) {
 	const ast = parseExpression(expression, {});
-	annotateAst(ast, { staticContext: staticContext });
+	if (context) annotateAst(ast, context);
+	else annotateAst(ast, new AnnotationContext(undefined));
 
 	const queryBody = astHelper.followPath(
 		ast,
@@ -274,30 +281,141 @@ describe('Annotating inline functions', () => {
 	});
 });
 
+describe('Annotating typeswitch expression', () => {
+	it('first case matches', () => {
+		assertValueType(
+			'typeswitch(1) case xs:integer return 2 case xs:string return 42.0 default return a',
+			ValueType.XSINTEGER,
+			undefined
+		);
+	});
+	it('not first case matches', () => {
+		assertValueType(
+			'typeswitch(1) case xs:string return 42.0 case xs:integer return 2 default return a',
+			ValueType.XSINTEGER,
+			undefined
+		);
+	});
+	it('typeswitch with an OR in the condition', () => {
+		assertValueType(
+			'typeswitch(1) case xs:integer | xs:string return 2 default return 42.0',
+			ValueType.XSINTEGER,
+			undefined
+		);
+	});
+	it('default case is returned', () => {
+		assertValueType(
+			'typeswitch(1) case xs:string return 42.0 default return 2',
+			ValueType.XSINTEGER,
+			undefined
+		);
+	});
+});
+
 describe('Annotation counting', () => {
+	const context = new AnnotationContext(undefined);
+	insertVariables(context, [
+		['x', { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.EXACTLY_ONE }],
+		['a', { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.EXACTLY_ONE }],
+		['b', { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.EXACTLY_ONE }],
+	]);
 	it('correctly counts add expressions', () => {
 		const ast = parseExpression('2 + 1', {});
-		annotateAst(ast, {});
+		annotateAst(ast, new AnnotationContext(undefined));
 		const [total, annotated] = countQueryBodyAnnotations(ast);
 		chai.assert.equal(total, annotated);
 	});
 	it('correctly counts unannotated expressions', () => {
 		const ast = parseExpression('$x + 1', {});
-		annotateAst(ast, {});
+		annotateAst(ast, context);
 		const [total, annotated] = countQueryBodyAnnotations(ast);
 		console.log(total, annotated);
-		chai.assert.equal(annotated, 1);
-		chai.assert.equal(total, 3);
+		chai.assert.isTrue(annotated === total);
+		chai.assert.equal(total, 4);
 	});
 	it('correctly counts unannotated expressions 2', () => {
 		const ast = parseExpression('$b + math:sin($a)', {});
-		annotateAst(ast, {});
+		annotateAst(ast, context);
 		const [total, annotated] = countQueryBodyAnnotations(ast);
 		console.log(total, annotated);
-		chai.assert.equal(annotated, 0);
-		chai.assert.equal(total, 3);
+		chai.assert.equal(annotated, 2);
+		chai.assert.equal(total, 5);
 	});
 });
+
+describe('Annotating flwor Expressions', () => {
+	it('annotate simple let expression', () => {
+		assertValueType("let $s := 'Hello' return $s", ValueType.XSSTRING, undefined);
+	});
+	it('annotate complex let expression', () => {
+		assertValueType(
+			"let $s := 'Hello' return let $v := 3 return $s || $v",
+			ValueType.XSSTRING,
+			undefined
+		);
+	});
+	it('annotate simple for expression', () => {
+		assertValueType('for $x in (3, 4, 5) return $x', ValueType.ITEM, undefined);
+	});
+
+	it('annotate complex for expression', () => {
+		assertValueType(
+			'for $x in (3, 4, 5) for $y in (2, 5) return $x + $y',
+			ValueType.ITEM,
+			undefined
+		);
+	});
+
+	it('annotate name shadowing for expression', () => {
+		assertValueType(
+			'for $x in (3, 25, 5) let $x := "stuff" || $x return $x',
+			ValueType.ITEM,
+			undefined
+		);
+	});
+});
+
+describe('annotating varRef', () => {
+	const context = new AnnotationContext(undefined);
+	context.insertVariable('x', {
+		type: ValueType.XSINTEGER,
+		mult: SequenceMultiplicity.EXACTLY_ONE,
+	});
+	context.insertVariable('y', {
+		type: ValueType.XSINTEGER,
+		mult: SequenceMultiplicity.EXACTLY_ONE,
+	});
+	context.insertVariable('z', {
+		type: ValueType.XSSTRING,
+		mult: SequenceMultiplicity.EXACTLY_ONE,
+	});
+	it('annotate simple varRef', () => {
+		assertValueType('$x', ValueType.XSINTEGER, context);
+	});
+	it('annotate varRef + varRef', () => {
+		assertValueType('$x + $y', ValueType.XSINTEGER, context);
+	});
+	it('annotate complex varRef', () => {
+		assertValueType('$x + 1', ValueType.XSINTEGER, context);
+	});
+	it('annotate varRef not in context', () => {
+		assertValueType('$x + $l', undefined, context);
+	});
+	it('annotate varRef throws when types incorrect', () => {
+		chai.assert.throws(() => assertValueType('$x + $z', undefined, context));
+	});
+});
+
+/**
+ * An easy way to add multiple variables in a context
+ * @param context the context in which the variables are inserted
+ * @param variables
+ */
+function insertVariables(context: AnnotationContext, variables: Array<[string, SequenceType]>) {
+	variables.forEach((element) => {
+		context.insertVariable(element[0], element[1]);
+	});
+}
 
 // Type switch is not tested, type switch is reserved in XPath but not yet used
 // Annotation of `functionCallExpr` and `namedFunctionRef` with context is not tested

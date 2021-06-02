@@ -1,5 +1,6 @@
+import { ElementNodePointer } from '../../domClone/Pointer';
+import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import createPointerValue from '../dataTypes/createPointerValue';
-import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { ValueType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
@@ -7,6 +8,7 @@ import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
+import validateContextNode from './validateContextNode';
 
 class AttributeAxis extends Expression {
 	private _attributeTestExpression: TestAbstractExpression;
@@ -28,14 +30,10 @@ class AttributeAxis extends Expression {
 	}
 
 	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
-		const contextItem = dynamicContext.contextItem;
-		if (contextItem === null) {
-			throw new Error('XPDY0002: context is absent, it needs to be present to use axes.');
-		}
-
 		const domFacade = executionParameters.domFacade;
+		const contextItem = validateContextNode(dynamicContext.contextItem) as ElementNodePointer;
 
-		if (!isSubtypeOf(contextItem.type, ValueType.ELEMENT)) {
+		if (domFacade.getNodeType(contextItem) !== NODE_TYPES.ELEMENT_NODE) {
 			return sequenceFactory.empty();
 		}
 
@@ -45,7 +43,7 @@ class AttributeAxis extends Expression {
 		// This includes all of the "special" attributes (xml:lang, xml:space, xsi:type, etc.)
 		// but does not include namespace declarations (because they are not attributes).
 		const matchingAttributes = domFacade
-			.getAllAttributePointers(contextItem.value, this._attributeTestExpression.getBucket())
+			.getAllAttributePointers(contextItem, this._attributeTestExpression.getBucket())
 			.filter((attr) => domFacade.getNamespaceURI(attr) !== 'http://www.w3.org/2000/xmlns/')
 			.map((attribute) => createPointerValue(attribute, executionParameters.domFacade))
 			.filter((item) =>

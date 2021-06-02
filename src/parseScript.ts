@@ -3,6 +3,7 @@ import IDocumentWriter from './documentWriter/IDocumentWriter';
 import ISimpleNodesFactory from './nodesFactory/ISimpleNodesFactory';
 import parseExpression from './parsing/parseExpression';
 import annotateAst from './typeInference/annotateAST';
+import { AnnotationContext } from './typeInference/AnnotationContext';
 import { Language, Options } from './types/Options';
 import { Element, Text } from './types/Types';
 
@@ -10,7 +11,7 @@ const XQUERYX_UPDATING_NAMESPACE_URI = 'http://www.w3.org/2007/xquery-update-10'
 
 const XQUERYX_NAMESPACE_URI = 'http://www.w3.org/2005/XQueryX';
 
-const PREFERRED_PREFIX_BY_NAMESPACEURI = {
+const PREFERRED_PREFIX_BY_NAMESPACEURI: { [prefix: string]: string } = {
 	[XQUERYX_NAMESPACE_URI]: 'xqx',
 	[XQUERYX_UPDATING_NAMESPACE_URI]: 'xquf',
 };
@@ -165,7 +166,7 @@ export default function parseScript<TElement extends Element>(
 	});
 
 	if (options.annotateAst) {
-		annotateAst(ast, { staticContext: undefined });
+		annotateAst(ast, new AnnotationContext(undefined));
 	}
 
 	return parseNode(documentWriter, simpleNodesFactory, ast, null) as TElement;

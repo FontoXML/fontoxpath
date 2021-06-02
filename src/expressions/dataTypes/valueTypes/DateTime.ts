@@ -1,4 +1,4 @@
-import { SequenceMultiplicity, ValueType } from '../Value';
+import { ValueType } from '../Value';
 import AbstractDuration from './AbstractDuration';
 import DayTimeDuration from './DayTimeDuration';
 
@@ -75,6 +75,7 @@ class DateTime {
 		this._seconds = seconds;
 		this.secondFraction = secondFraction;
 		this._timezone = timezone;
+
 		this.type = type;
 	}
 

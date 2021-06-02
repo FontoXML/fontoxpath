@@ -23,6 +23,7 @@ export type UpdatingOptions = {
 	disableCache?: boolean;
 	documentWriter?: IDocumentWriter;
 	logger?: Logger;
+	logUnannotatedQueries?: boolean;
 	moduleImports?: { [s: string]: string };
 	namespaceResolver?: (s: string) => string | null;
 	nodesFactory?: INodesFactory;

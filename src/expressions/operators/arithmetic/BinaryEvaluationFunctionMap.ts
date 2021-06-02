@@ -122,7 +122,7 @@ export const returnTypeMap: { [key: number]: ValueType } = {
  * The map with every possible combination of operands.
  * returns a function that needs to be applied to the operands.
  */
-export const operationMap: { [key: number]: (a, b) => any } = {
+export const operationMap: { [key: number]: (a: any, b: any) => any } = {
 	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'addOp')]: (a, b) => a + b,
 	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'subtractOp')]: (a, b) => a - b,
 	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'multiplyOp')]: (a, b) => a * b,
