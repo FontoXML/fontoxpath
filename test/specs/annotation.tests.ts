@@ -2,10 +2,9 @@ import { fail } from 'assert';
 import * as chai from 'chai';
 import { SequenceType, ValueType } from 'fontoxpath/expressions/dataTypes/Value';
 import StaticContext from 'fontoxpath/expressions/StaticContext';
-import astHelper, { IAST } from 'fontoxpath/parsing/astHelper';
+import astHelper from 'fontoxpath/parsing/astHelper';
 import parseExpression from 'fontoxpath/parsing/parseExpression';
-import annotateAst from 'fontoxpath/typeInference/annotateAST';
-import { assert } from 'sinon';
+import annotateAst, { countQueryBodyAnnotations } from 'fontoxpath/typeInference/annotateAST';
 
 /**
  *
@@ -22,14 +21,13 @@ function assertValueType(
 	followSpecificPath?: string[]
 ) {
 	const ast = parseExpression(expression, {});
-	annotateAst(ast, staticContext);
+	annotateAst(ast, { staticContext: staticContext });
 
 	const queryBody = astHelper.followPath(
 		ast,
 		followSpecificPath ? followSpecificPath : ['mainModule', 'queryBody']
 	);
-	const resultType = astHelper.getAttribute(queryBody[1] as IAST, 'type') as SequenceType;
-
+	const resultType = astHelper.getAttribute(queryBody, 'type') as SequenceType;
 	if (!resultType) {
 		chai.assert.isTrue(expectedType === null || expectedType === undefined);
 	} else {
@@ -274,6 +272,62 @@ describe('Annotating function call without context', () => {
 describe('Annotating inline functions', () => {
 	it('in line function test', () => {
 		assertValueType('function() {}', ValueType.FUNCTION, undefined);
+	});
+});
+
+describe('Annotating typeswitch expression', () => {
+	it('first case matches', () => {
+		assertValueType(
+			'typeswitch(1) case xs:integer return 2 case xs:string return 42.0 default return a',
+			ValueType.XSINTEGER,
+			undefined
+		);
+	});
+	it('not first case matches', () => {
+		assertValueType(
+			'typeswitch(1) case xs:string return 42.0 case xs:integer return 2 default return a',
+			ValueType.XSINTEGER,
+			undefined
+		);
+	});
+	it('typeswitch with an OR in the condition', () => {
+		assertValueType(
+			'typeswitch(1) case xs:integer | xs:string return 2 default return 42.0',
+			ValueType.XSINTEGER,
+			undefined
+		);
+	});
+	it('default case is returned', () => {
+		assertValueType(
+			'typeswitch(1) case xs:string return 42.0 default return 2',
+			ValueType.XSINTEGER,
+			undefined
+		);
+	});
+});
+
+describe('Annotation counting', () => {
+	it('correctly counts add expressions', () => {
+		const ast = parseExpression('2 + 1', {});
+		annotateAst(ast, {});
+		const [total, annotated] = countQueryBodyAnnotations(ast);
+		chai.assert.equal(total, annotated);
+	});
+	it('correctly counts unannotated expressions', () => {
+		const ast = parseExpression('$x + 1', {});
+		annotateAst(ast, {});
+		const [total, annotated] = countQueryBodyAnnotations(ast);
+		console.log(total, annotated);
+		chai.assert.equal(annotated, 1);
+		chai.assert.equal(total, 3);
+	});
+	it('correctly counts unannotated expressions 2', () => {
+		const ast = parseExpression('$b + math:sin($a)', {});
+		annotateAst(ast, {});
+		const [total, annotated] = countQueryBodyAnnotations(ast);
+		console.log(total, annotated);
+		chai.assert.equal(annotated, 0);
+		chai.assert.equal(total, 3);
 	});
 });
 

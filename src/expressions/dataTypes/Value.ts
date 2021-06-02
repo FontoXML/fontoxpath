@@ -312,3 +312,16 @@ export function stringToSequenceType(input: string): SequenceType {
 			};
 	}
 }
+
+export function stringToSequenceMultiplicity(input: string): SequenceMultiplicity {
+	switch (input) {
+		case '*':
+			return SequenceMultiplicity.ZERO_OR_MORE;
+		case '?':
+			return SequenceMultiplicity.ZERO_OR_ONE;
+		case '+':
+			return SequenceMultiplicity.ONE_OR_MORE;
+		default:
+			return SequenceMultiplicity.EXACTLY_ONE;
+	}
+}

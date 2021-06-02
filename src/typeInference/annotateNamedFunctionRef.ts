@@ -50,6 +50,7 @@ export function annotateNamedFunctionRef(
 	if (!functionProperties) return undefined;
 
 	// Insert the type info into the AST and return
+
 	astHelper.insertAttribute(ast, 'type', functionProperties.returnType);
 	return functionProperties.returnType;
 }

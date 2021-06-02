@@ -52,7 +52,8 @@ export function annotateArrowExpr(
 	const functionProps = annotationContext.staticContext.lookupFunction(
 		resolvedName.namespaceURI,
 		resolvedName.localName,
-		functionArguments.length
+		// Since this is an arrowExpr, we add one for the implicit argument
+		functionArguments.length + 1
 	);
 
 	if (!functionProps) return undefined;

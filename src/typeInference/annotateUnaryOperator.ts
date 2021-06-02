@@ -1,6 +1,7 @@
 import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
-import { SequenceType, ValueType } from '../expressions/dataTypes/Value';
+import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
+import { AnnotationContext } from './annotateAST';
 
 /**
  * Adds the unary minus operator type annotation to the AST
@@ -12,7 +13,8 @@ import astHelper, { IAST } from '../parsing/astHelper';
  */
 export function annotateUnaryMinus(
 	ast: IAST,
-	valueType: SequenceType | undefined
+	valueType: SequenceType | undefined,
+	context: AnnotationContext
 ): SequenceType | undefined {
 	// If we don't now the child type, we can't infer the current type
 	if (!valueType) {
@@ -27,11 +29,18 @@ export function annotateUnaryMinus(
 		};
 
 		// Attach the type to the AST
+
 		astHelper.insertAttribute(ast, 'type', type);
 		return type;
 	}
 
-	return undefined;
+	const doubleType = {
+		type: ValueType.XSDOUBLE,
+		mult: SequenceMultiplicity.EXACTLY_ONE,
+	};
+
+	astHelper.insertAttribute(ast, 'type', doubleType);
+	return doubleType;
 }
 
 /**
@@ -44,7 +53,8 @@ export function annotateUnaryMinus(
  */
 export function annotateUnaryPlus(
 	ast: IAST,
-	valueType: SequenceType | undefined
+	valueType: SequenceType | undefined,
+	context: AnnotationContext
 ): SequenceType | undefined {
 	if (!valueType) {
 		return undefined;
@@ -60,5 +70,11 @@ export function annotateUnaryPlus(
 		return type;
 	}
 
-	return undefined;
+	const doubleType = {
+		type: ValueType.XSDOUBLE,
+		mult: SequenceMultiplicity.EXACTLY_ONE,
+	};
+
+	astHelper.insertAttribute(ast, 'type', doubleType);
+	return doubleType;
 }
