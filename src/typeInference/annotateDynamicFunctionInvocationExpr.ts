@@ -1,6 +1,6 @@
 import { SequenceType } from '../expressions/dataTypes/Value';
 import { IAST } from '../parsing/astHelper';
-import { AnnotationContext } from './AnnotatationContext';
+import { AnnotationContext } from './AnnotationContext';
 
 /**
  * At this moment there is no way to infer the return type of this function as

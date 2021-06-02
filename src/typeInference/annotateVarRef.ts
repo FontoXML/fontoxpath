@@ -1,6 +1,6 @@
 import { SequenceType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
-import { AnnotationContext } from './AnnotatationContext';
+import { AnnotationContext } from './AnnotationContext';
 
 export function annotateVarRef(ast: IAST, annotationContext: AnnotationContext): SequenceType {
 	// pass ast sub tree with the ast[0] as `varRef` to this function

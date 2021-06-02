@@ -1,7 +1,7 @@
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import StaticContext from '../expressions/StaticContext';
 import astHelper, { IAST } from '../parsing/astHelper';
-import { AnnotationContext } from './AnnotatationContext';
+import { AnnotationContext } from './AnnotationContext';
 import { annotateArrayConstructor } from './annotateArrayConstructor';
 import { annotateArrowExpr } from './annotateArrowExpr';
 import { annotateBinOp } from './annotateBinaryOperator';

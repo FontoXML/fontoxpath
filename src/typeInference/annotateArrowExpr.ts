@@ -1,6 +1,6 @@
 import { SequenceType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
-import { AnnotationContext } from './AnnotatationContext';
+import { AnnotationContext } from './AnnotationContext';
 
 /**
  * Annotate the arrowExpr by extracting the function info from the static context

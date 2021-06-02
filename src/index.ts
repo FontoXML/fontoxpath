@@ -60,39 +60,6 @@ import {
 	Text,
 } from './types/Types';
 
-// for $i in 0
-// 			let $s := 'Hello' || $i
-// 			return $s
-
-evaluateXPathToString(
-	`for $i in (0,1,2)
-	where $i = 1
-	let $e := 'Hello'
-	return $e`,
-	null,
-	null,
-	null,
-	{ debug: true, language: evaluateXPath.XQUERY_3_1_LANGUAGE, annotateAst: true }
-);
-
-// console.log(
-// 	evaluateXPathToString(
-// 		'for $x in (3, 5, 5) let $y := 5 return $x',
-// 		undefined,
-// 		undefined,
-// 		undefined,
-// 		{
-// 			language: Language.XQUERY_UPDATE_3_1_LANGUAGE,
-// 			annotateAst: true,
-// 		}
-// 	)
-// );
-
-// evaluateXPath('for $x in (3, "25", 5) let $y := $x + 3 return $x');
-// for(int i = 0; i < something; i++) {
-// 	for (int)
-// }
-
 function parseXPath(xpathString: string) {
 	const cachedExpression = getAnyStaticCompilationResultFromCache(xpathString, 'XPath', false);
 	if (cachedExpression) {
