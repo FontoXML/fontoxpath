@@ -93,10 +93,6 @@ export default function staticallyCompileXPath(
 			});
 
 			const type = astHelper.getAttribute(queryBodyContents, 'type');
-
-			if (!type) {
-				console.error(score + ' | ' + xpathString);
-			}
 		}
 
 		expression = compileAstToExpression(queryBodyContents, compilationOptions);

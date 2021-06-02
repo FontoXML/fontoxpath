@@ -41,8 +41,8 @@ export function annotateArrowExpr(
 	// Lookup the namespace URI
 	const resolvedName = context.staticContext.resolveFunctionName(
 		{
-			localName: functionName as string,
-			prefix: functionPrefix as string,
+			localName: functionName,
+			prefix: functionPrefix,
 		},
 		functionArguments.length
 	);

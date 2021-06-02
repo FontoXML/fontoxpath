@@ -19,9 +19,10 @@ export function annotateNamedFunctionRef(
 	if (!context.staticContext) return undefined;
 
 	// Get qualified function name
-	let { localName, namespaceURI, prefix }: QName = astHelper.getQName(
-		astHelper.getFirstChild(ast, 'functionName')
-	);
+	const qName: QName = astHelper.getQName(astHelper.getFirstChild(ast, 'functionName'));
+	let localName = qName.localName;
+	let namespaceURI = qName.namespaceURI;
+	const prefix = qName.prefix;
 
 	const arity: number = Number(
 		astHelper.followPath(ast, ['integerConstantExpr', 'value'])[1] as string

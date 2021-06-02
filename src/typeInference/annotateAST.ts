@@ -1,5 +1,5 @@
-import StaticContext from '../expressions/StaticContext';
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
+import StaticContext from '../expressions/StaticContext';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { annotateArrayConstructor } from './annotateArrayConstructor';
 import { annotateArrowExpr } from './annotateArrowExpr';
@@ -31,8 +31,8 @@ import { annotateUnaryMinus, annotateUnaryPlus } from './annotateUnaryOperator';
 
 export type AnnotationContext = {
 	staticContext?: StaticContext;
-	totalNodes: number;
 	totalAnnotated: number[];
+	totalNodes: number;
 };
 
 /**
