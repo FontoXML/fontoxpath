@@ -19,10 +19,10 @@ export interface IFuzzer {
  * A single executable fuzz case.
  */
 export class FuzzCase {
+	backend: Backend;
 	contextItem?: any | null;
 	language: string;
 	selector: string;
-	backend: Backend;
 
 	constructor(selector: string, language: string, backend: Backend, contextItem?: any | null) {
 		this.selector = selector;
