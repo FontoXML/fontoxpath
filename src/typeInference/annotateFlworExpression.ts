@@ -39,7 +39,7 @@ export function annotateFlworExpression(
 			}
 			case 'orderByClause': {
 				annotationContext.pushScope();
-				annotateOrderByClause(ast[i] as IAST, annotationContext, annotate);
+				annotateOrderByClause(ast[i] as IAST, annotationContext);
 				break;
 			}
 			default: {
@@ -139,11 +139,7 @@ function annotateWhereClause(
 	return seqType;
 }
 
-function annotateOrderByClause(
-	ast: IAST,
-	annotationContext: AnnotationContext,
-	annotate: (ast: IAST, annotationContext) => SequenceType
-): undefined {
+function annotateOrderByClause(ast: IAST, annotationContext: AnnotationContext): undefined {
 	return undefined;
 }
 
