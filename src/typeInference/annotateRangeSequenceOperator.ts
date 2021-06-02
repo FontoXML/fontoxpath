@@ -13,7 +13,6 @@ export function annotateRangeSequenceOperator(ast: IAST, context: AnnotationCont
 		mult: SequenceMultiplicity.ONE_OR_MORE,
 	};
 
-	context.totalAnnotated[context.totalAnnotated.length - 1]++;
 	astHelper.insertAttribute(ast, 'type', seqType);
 
 	return seqType;

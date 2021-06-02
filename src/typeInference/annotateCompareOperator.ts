@@ -16,7 +16,6 @@ export function annotateGeneralCompare(ast: IAST, context: AnnotationContext): S
 		mult: SequenceMultiplicity.EXACTLY_ONE,
 	};
 
-	context.totalAnnotated[context.totalAnnotated.length - 1]++;
 	astHelper.insertAttribute(ast, 'type', seqType);
 
 	return seqType;
@@ -36,7 +35,6 @@ export function annotateValueCompare(ast: IAST, context: AnnotationContext): Seq
 		mult: SequenceMultiplicity.EXACTLY_ONE,
 	};
 
-	context.totalAnnotated[context.totalAnnotated.length - 1]++;
 	astHelper.insertAttribute(ast, 'type', seqType);
 
 	return seqType;
@@ -56,7 +54,6 @@ export function annotateNodeCompare(ast: IAST, context: AnnotationContext): Sequ
 		mult: SequenceMultiplicity.EXACTLY_ONE,
 	};
 
-	context.totalAnnotated[context.totalAnnotated.length - 1]++;
 	astHelper.insertAttribute(ast, 'type', seqType);
 
 	return seqType;

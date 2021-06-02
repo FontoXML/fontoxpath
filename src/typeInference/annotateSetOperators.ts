@@ -1,3 +1,4 @@
+import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { AnnotationContext } from './annotateAST';
@@ -17,7 +18,7 @@ export function annotateSetOperator(
 	context: AnnotationContext
 ): SequenceType | undefined {
 	if (!left || !right) return undefined;
-	if (left.type !== ValueType.NODE || right.type !== ValueType.NODE) {
+	if (!isSubtypeOf(left.type, ValueType.NODE) || !isSubtypeOf(right.type, ValueType.NODE)) {
 		return undefined;
 	}
 
@@ -37,7 +38,6 @@ function annotateUnionOperator(ast: IAST, context: AnnotationContext): SequenceT
 		mult: SequenceMultiplicity.ZERO_OR_MORE,
 	};
 
-	context.totalAnnotated[context.totalAnnotated.length - 1]++;
 	astHelper.insertAttribute(ast, 'type', seqType);
 	return seqType;
 }
@@ -48,7 +48,6 @@ function annotateIntersectOperator(ast: IAST, context: AnnotationContext): Seque
 		mult: SequenceMultiplicity.ZERO_OR_MORE,
 	};
 
-	context.totalAnnotated[context.totalAnnotated.length - 1]++;
 	astHelper.insertAttribute(ast, 'type', seqType);
 	return seqType;
 }
@@ -59,7 +58,6 @@ function annotateExceptOperator(ast: IAST, context: AnnotationContext): Sequence
 		mult: SequenceMultiplicity.ZERO_OR_MORE,
 	};
 
-	context.totalAnnotated[context.totalAnnotated.length - 1]++;
 	astHelper.insertAttribute(ast, 'type', seqType);
 	return seqType;
 }

@@ -11,7 +11,6 @@ export function annotateStringConcatenateOperator(
 		mult: SequenceMultiplicity.EXACTLY_ONE,
 	};
 
-	context.totalAnnotated[context.totalAnnotated.length - 1]++;
 	astHelper.insertAttribute(ast, 'type', seqType);
 	return seqType;
 }

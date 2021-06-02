@@ -38,7 +38,7 @@ export function annotateBinOp(
 
 	if (funcData !== undefined) {
 		const type = { type: funcData, mult: left.mult };
-		context.totalAnnotated[context.totalAnnotated.length - 1]++;
+
 		astHelper.insertAttribute(ast, 'type', type);
 		return type;
 	}

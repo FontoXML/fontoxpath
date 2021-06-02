@@ -1,7 +1,7 @@
 import ExecutionSpecificStaticContext from '../expressions/ExecutionSpecificStaticContext';
 import Expression from '../expressions/Expression';
 import StaticContext from '../expressions/StaticContext';
-import annotateAst from '../typeInference/annotateAST';
+import annotateAst, { countQueryBodyAnnotations } from '../typeInference/annotateAST';
 import { FunctionNameResolver } from '../types/Options';
 import astHelper from './astHelper';
 import compileAstToExpression from './compileAstToExpression';
@@ -21,6 +21,7 @@ export default function staticallyCompileXPath(
 		annotateAst: boolean | undefined;
 		debug: boolean | undefined;
 		disableCache: boolean | undefined;
+		logUnannotatedQueries: boolean | undefined;
 	},
 	namespaceResolver: (namespace: string) => string | null,
 	variables: { [varName: string]: any },
@@ -62,8 +63,6 @@ export default function staticallyCompileXPath(
 		if (compilationOptions.annotateAst) {
 			annotateAst(ast, {
 				staticContext: rootStaticContext,
-				totalNodes: 0,
-				totalAnnotated: [],
 			});
 		}
 
@@ -86,13 +85,21 @@ export default function staticallyCompileXPath(
 		}
 
 		if (compilationOptions.annotateAst) {
-			const score = annotateAst(ast, {
+			annotateAst(ast, {
 				staticContext: rootStaticContext,
-				totalNodes: 0,
-				totalAnnotated: [],
+				query: xpathString,
 			});
 
-			const type = astHelper.getAttribute(queryBodyContents, 'type');
+			if (compilationOptions.logUnannotatedQueries) {
+				const [totalNodes, annotatedNodes] = countQueryBodyAnnotations(ast);
+
+				if (totalNodes !== annotatedNodes) {
+					// We are logging an error here so we can easily pipe the list of all failed queries into a file
+					// Example: `npm run test 2> failedQueries.txt`
+					// tslint:disable-next-line:no-console
+					console.error(xpathString);
+				}
+			}
 		}
 
 		expression = compileAstToExpression(queryBodyContents, compilationOptions);

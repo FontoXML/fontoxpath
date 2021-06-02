@@ -15,7 +15,6 @@ export function annotateArrayConstructor(ast: IAST, context: AnnotationContext):
 		mult: SequenceMultiplicity.EXACTLY_ONE,
 	};
 
-	context.totalAnnotated[context.totalAnnotated.length - 1]++;
 	astHelper.insertAttribute(ast, 'type', seqType);
 
 	return seqType;

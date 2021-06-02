@@ -8,12 +8,7 @@ import DynamicContext from '../../DynamicContext';
 import ExecutionParameters from '../../ExecutionParameters';
 import Expression from '../../Expression';
 
-type UnaryLookupTable = {
-	[key: number]: ValueType;
-};
-
-// TODO: fix this?
-const UNARY_LOOKUP: UnaryLookupTable = {
+const UNARY_LOOKUP: { [key: number]: ValueType } = {
 	[ValueType.XSINTEGER]: ValueType.XSINTEGER,
 	[ValueType.XSNONPOSITIVEINTEGER]: ValueType.XSINTEGER,
 	[ValueType.XSNEGATIVEINTEGER]: ValueType.XSINTEGER,
