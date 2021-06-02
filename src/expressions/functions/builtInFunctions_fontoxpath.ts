@@ -47,7 +47,7 @@ const fontoxpathEvaluate: FunctionDefinitionType = (
 
 				const executionSpecificStaticContext = new ExecutionSpecificStaticContext(
 					(prefix) => staticContext.resolveNamespace(prefix),
-					Object.keys(variables).reduce((vars, varName) => {
+					Object.keys(variables).reduce((vars: { [s: string]: string }, varName) => {
 						vars[varName] = varName;
 						return vars;
 					}, {}),

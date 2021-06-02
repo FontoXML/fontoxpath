@@ -1,14 +1,14 @@
 import createAtomicValue from '../createAtomicValue';
-import { SequenceMultiplicity, ValueType } from '../Value';
+import { ValueType } from '../Value';
 import YearMonthDuration from '../valueTypes/YearMonthDuration';
 import CastResult from './CastResult';
 
-const createYearMonthDurationValue = (value) =>
+const createYearMonthDurationValue = (value: YearMonthDuration) =>
 	createAtomicValue(value, ValueType.XSYEARMONTHDURATION);
 
 export default function castToYearMonthDuration(
 	instanceOf: (typeName: ValueType) => boolean
-): (value) => CastResult {
+): (value: any) => CastResult {
 	if (instanceOf(ValueType.XSDURATION) && !instanceOf(ValueType.XSDAYTIMEDURATION)) {
 		return (value) => ({
 			successful: true,

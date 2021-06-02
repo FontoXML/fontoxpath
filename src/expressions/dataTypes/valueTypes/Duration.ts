@@ -1,3 +1,4 @@
+import { ValueType } from '../Value';
 import AbstractDuration from './AbstractDuration';
 import DayTimeDuration from './DayTimeDuration';
 import YearMonthDuration from './YearMonthDuration';

@@ -4,6 +4,8 @@ import createAtomicValue from '../../dataTypes/createAtomicValue';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
 import { SequenceType, ValueType } from '../../dataTypes/Value';
+import DynamicContext from '../../DynamicContext';
+import ExecutionParameters from '../../ExecutionParameters';
 import Expression from '../../Expression';
 
 type UnaryLookupTable = {
@@ -46,7 +48,7 @@ class Unary extends Expression {
 		this._kind = kind;
 	}
 
-	public evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
 		return atomize(
 			this._valueExpr.evaluateMaybeStatically(dynamicContext, executionParameters),
 			executionParameters

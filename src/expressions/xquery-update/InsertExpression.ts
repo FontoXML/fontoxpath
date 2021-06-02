@@ -42,16 +42,18 @@ export enum TargetChoice {
 }
 
 function testNamespaceURIForAttribute(
-	targetElement,
+	targetElement: ElementNodePointer,
 	attributeNode: AttributeNodePointer,
-	namespaceBindings,
+	namespaceBindings: { [s: string]: string },
 	domFacade: DomFacade
 ): void {
 	const prefix = domFacade.getPrefix(attributeNode as any) || '';
 	const namespaceURI = domFacade.getNamespaceURI(attributeNode as any);
 
 	// b. No attribute node in $alist may have a QName whose implied namespace binding conflicts with a namespace binding in the "namespaces" property of $target [err:XUDY0023].
-	const boundNamespaceURI = prefix ? targetElement.node.lookupNamespaceURI(prefix) : null;
+	const boundNamespaceURI = prefix
+		? (targetElement.node as any).lookupNamespaceURI(prefix)
+		: null;
 	if (boundNamespaceURI && boundNamespaceURI !== namespaceURI) {
 		throw errXUDY0023(namespaceURI);
 	}
@@ -172,7 +174,7 @@ class InsertExpression extends UpdatingExpression {
 
 		let target: Value;
 		let targetUpdates: IPendingUpdate[];
-		let parent;
+		let parent: ElementNodePointer;
 		return {
 			next: () => {
 				if (!alist) {
@@ -230,7 +232,10 @@ class InsertExpression extends UpdatingExpression {
 						}
 
 						// d. If before or after is specified, the node returned by the target expression must have a non-empty parent property [err:XUDY0029].
-						parent = domFacade.getParentNodePointer(tv.value.xdmValue[0].value, null);
+						parent = domFacade.getParentNodePointer(
+							tv.value.xdmValue[0].value,
+							null
+						) as ElementNodePointer;
 						if (parent === null) {
 							throw errXUDY0029(tv.value.xdmValue[0].value);
 						}
@@ -255,19 +260,24 @@ class InsertExpression extends UpdatingExpression {
 						}
 					}
 
-					alist.reduce((namespaceBindings, attributeNode) => {
-						const prefix = domFacade.getPrefix(attributeNode as any) || '';
+					alist.reduce(
+						(namespaceBindings: { [prefix: string]: string }, attributeNode) => {
+							const prefix = domFacade.getPrefix(attributeNode as any) || '';
 
-						testNamespaceURIForAttribute(
-							target.value,
-							attributeNode,
-							namespaceBindings,
-							domFacade
-						);
+							testNamespaceURIForAttribute(
+								target.value,
+								attributeNode,
+								namespaceBindings,
+								domFacade
+							);
 
-						namespaceBindings[prefix] = domFacade.getNamespaceURI(attributeNode as any);
-						return namespaceBindings;
-					}, []);
+							namespaceBindings[prefix] = domFacade.getNamespaceURI(
+								attributeNode as any
+							);
+							return namespaceBindings;
+						},
+						{}
+					);
 				}
 
 				// 5. The result of the insert expression is an empty XDM instance and a pending update list constructed by merging the pending update lists returned by the SourceExpr and TargetExpr with the following update primitives using upd:mergeUpdates:
