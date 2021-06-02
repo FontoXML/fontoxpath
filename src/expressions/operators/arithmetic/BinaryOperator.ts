@@ -1,14 +1,14 @@
-import DynamicContext from 'src/expressions/DynamicContext';
-import ExecutionParameters from 'src/expressions/ExecutionParameters';
 import AtomicValue from '../../../expressions/dataTypes/AtomicValue';
 import castToType from '../../../expressions/dataTypes/castToType';
 import createAtomicValue from '../../../expressions/dataTypes/createAtomicValue';
 import isSubtypeOf from '../../../expressions/dataTypes/isSubtypeOf';
 import { ValueType, valueTypeToString } from '../../../expressions/dataTypes/Value';
+import ExecutionParameters from '../../../expressions/ExecutionParameters';
 import { BinaryEvaluationFunction } from '../../../typeInference/binaryEvaluationFunction';
 import atomize from '../../dataTypes/atomize';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
 import { SequenceType } from '../../dataTypes/Value';
+import DynamicContext from '../../DynamicContext';
 import Expression from '../../Expression';
 import { hash, operationMap, returnTypeMap } from './BinaryEvaluationFunctionMap';
 

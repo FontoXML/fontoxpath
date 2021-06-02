@@ -1,5 +1,4 @@
 import { SequenceType } from '../expressions/dataTypes/Value';
-import StaticContext from '../expressions/StaticContext';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { AnnotationContext } from './annotateAST';
 
@@ -35,7 +34,7 @@ export function annotateFunctionCall(
 	const resolvedName = context.staticContext.resolveFunctionName(
 		{
 			localName: functionName as string,
-			prefix: functionPrefix['prefix'] as string,
+			prefix: functionPrefix as string,
 		},
 		functionArguments.length
 	);

@@ -1,5 +1,4 @@
 import { SequenceType } from '../expressions/dataTypes/Value';
-import StaticContext from '../expressions/StaticContext';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { AnnotationContext } from './annotateAST';
 
@@ -42,8 +41,8 @@ export function annotateArrowExpr(
 	// Lookup the namespace URI
 	const resolvedName = context.staticContext.resolveFunctionName(
 		{
-			localName: functionName,
-			prefix: functionPrefix['prefix'] as string,
+			localName: functionName as string,
+			prefix: functionPrefix as string,
 		},
 		functionArguments.length
 	);
