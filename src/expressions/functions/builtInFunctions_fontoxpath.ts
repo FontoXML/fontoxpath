@@ -62,7 +62,9 @@ const fontoxpathEvaluate: FunctionDefinitionType = (
 				});
 
 				if (executionParameters.annotateAst) {
-					annotateAst(ast, innerStaticContext);
+					annotateAst(ast, {
+						staticContext: innerStaticContext,
+					});
 				}
 
 				const prolog = astHelper.followPath(ast, ['mainModule', 'prolog']);

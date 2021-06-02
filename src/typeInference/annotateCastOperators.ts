@@ -5,6 +5,7 @@ import {
 	ValueType,
 } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
+import { AnnotationContext } from './annotateAST';
 
 /**
  * Read the target type of the cast operator from the AST and
@@ -13,10 +14,11 @@ import astHelper, { IAST } from '../parsing/astHelper';
  * @param ast the AST to be annotated
  * @returns the inferred type
  */
-export function annotateCastOperator(ast: IAST): SequenceType {
+export function annotateCastOperator(ast: IAST, context: AnnotationContext): SequenceType {
 	const targetTypeString = getTargetTypeFromAST(ast);
 	const targetValueType = stringToValueType(targetTypeString);
 	const sequenceType = { type: targetValueType, mult: SequenceMultiplicity.EXACTLY_ONE };
+
 	astHelper.insertAttribute(ast, 'type', sequenceType);
 	return sequenceType;
 }
@@ -27,8 +29,9 @@ export function annotateCastOperator(ast: IAST): SequenceType {
  * @param ast the AST to be annotated
  * @returns `SequenceType` of type boolean and multiplicity of `Exactly_ONE`
  */
-export function annotateCastableOperator(ast: IAST): SequenceType {
+export function annotateCastableOperator(ast: IAST, context: AnnotationContext): SequenceType {
 	const sequenceType = { type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE };
+
 	astHelper.insertAttribute(ast, 'type', sequenceType);
 	return sequenceType;
 }

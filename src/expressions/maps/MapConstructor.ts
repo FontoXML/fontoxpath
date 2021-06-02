@@ -1,6 +1,7 @@
 import atomize from '../dataTypes/atomize';
 import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import { SequenceType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression from '../Expression';
@@ -13,7 +14,7 @@ class MapConstructor extends Expression {
 	/**
 	 * @param  entries  key-value tuples of expressions which will evaluate to key / value pairs
 	 */
-	constructor(entries: { key: Expression; value: Expression }[]) {
+	constructor(entries: { key: Expression; value: Expression }[], type: SequenceType) {
 		super(
 			new Specificity({
 				[Specificity.EXTERNAL_KIND]: 1,
@@ -24,7 +25,9 @@ class MapConstructor extends Expression {
 			),
 			{
 				canBeStaticallyEvaluated: false,
-			}
+			},
+			false,
+			type
 		);
 		this._entries = entries;
 	}

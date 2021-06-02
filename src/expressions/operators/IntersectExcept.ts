@@ -3,7 +3,7 @@ import { compareNodePositions, sortNodeValues } from '../dataTypes/documentOrder
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { ValueType } from '../dataTypes/Value';
+import { SequenceType, ValueType } from '../dataTypes/Value';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import { DONE_TOKEN, IterationHint, ready } from '../util/iterators';
 import arePointersEqual from './compares/arePointersEqual';
@@ -39,15 +39,26 @@ class IntersectExcept extends Expression {
 	private _expression1: Expression;
 	private _expression2: Expression;
 	private _intersectOrExcept: string;
-	constructor(intersectOrExcept: string, expression1: Expression, expression2: Expression) {
+	constructor(
+		intersectOrExcept: string,
+		expression1: Expression,
+		expression2: Expression,
+		type: SequenceType
+	) {
 		const maxSpecificity =
 			expression1.specificity.compareTo(expression2.specificity) > 0
 				? expression1.specificity
 				: expression2.specificity;
-		super(maxSpecificity, [expression1, expression2], {
-			canBeStaticallyEvaluated:
-				expression1.canBeStaticallyEvaluated && expression2.canBeStaticallyEvaluated,
-		});
+		super(
+			maxSpecificity,
+			[expression1, expression2],
+			{
+				canBeStaticallyEvaluated:
+					expression1.canBeStaticallyEvaluated && expression2.canBeStaticallyEvaluated,
+			},
+			false,
+			type
+		);
 
 		this._intersectOrExcept = intersectOrExcept;
 		this._expression1 = expression1;

@@ -1,3 +1,4 @@
+import { SequenceType } from '../../../expressions/dataTypes/Value';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
 import DynamicContext from '../../DynamicContext';
 import ExecutionParameters from '../../ExecutionParameters';
@@ -9,8 +10,19 @@ class InstanceOfOperator extends Expression {
 	private _multiplicity: string;
 	private _typeTest: Expression;
 
-	constructor(expression: Expression, typeTest: Expression, multiplicity: string) {
-		super(expression.specificity, [expression], { canBeStaticallyEvaluated: false });
+	constructor(
+		expression: Expression,
+		typeTest: Expression,
+		multiplicity: string,
+		type: SequenceType
+	) {
+		super(
+			expression.specificity,
+			[expression],
+			{ canBeStaticallyEvaluated: false },
+			false,
+			type
+		);
 
 		this._expression = expression;
 		this._typeTest = typeTest;

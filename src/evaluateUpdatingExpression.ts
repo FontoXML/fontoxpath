@@ -69,6 +69,7 @@ export default async function evaluateUpdatingExpression(
 				debug: !!options['debug'],
 				disableCache: !!options['disableCache'],
 				annotateAst: !!options['annotateAst'],
+				logUnannotatedQueries: !!options['logUnannotatedQueries'],
 			}
 		);
 		dynamicContext = context.dynamicContext;
