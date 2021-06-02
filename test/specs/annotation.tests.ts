@@ -1,5 +1,9 @@
 import * as chai from 'chai';
-import { SequenceType, ValueType } from 'fontoxpath/expressions/dataTypes/Value';
+import {
+	SequenceMultiplicity,
+	SequenceType,
+	ValueType,
+} from 'fontoxpath/expressions/dataTypes/Value';
 import StaticContext from 'fontoxpath/expressions/StaticContext';
 import astHelper from 'fontoxpath/parsing/astHelper';
 import parseExpression from 'fontoxpath/parsing/parseExpression';
@@ -17,11 +21,12 @@ import { AnnotationContext } from 'fontoxpath/typeInference/AnnotationContext';
 function assertValueType(
 	expression: string,
 	expectedType: ValueType,
-	staticContext: StaticContext,
+	context: AnnotationContext,
 	followSpecificPath?: string[]
 ) {
 	const ast = parseExpression(expression, {});
-	annotateAst(ast, new AnnotationContext(staticContext));
+	if (context) annotateAst(ast, context);
+	else annotateAst(ast, new AnnotationContext(undefined));
 
 	const queryBody = astHelper.followPath(
 		ast,
@@ -360,6 +365,31 @@ describe('Annotating flwor Expressions', () => {
 			ValueType.ITEM,
 			undefined
 		);
+	});
+});
+
+describe('annotating varRef', () => {
+	const context = new AnnotationContext(undefined);
+	context.insertVariable('x', {
+		type: ValueType.XSINTEGER,
+		mult: SequenceMultiplicity.EXACTLY_ONE,
+	});
+	context.insertVariable('y', {
+		type: ValueType.XSINTEGER,
+		mult: SequenceMultiplicity.EXACTLY_ONE,
+	});
+	context.insertVariable('z', {
+		type: ValueType.XSSTRING,
+		mult: SequenceMultiplicity.EXACTLY_ONE,
+	});
+	it('annotate simple varRef', () => {
+		assertValueType('$x', ValueType.XSINTEGER, context);
+	});
+	it('annotate complex varRef', () => {
+		assertValueType('$x + $y', ValueType.XSINTEGER, context);
+	});
+	it('annotate varRef throws when types incorrect', () => {
+		chai.assert.throws(() => assertValueType('$x + $z', undefined, context));
 	});
 });
 
