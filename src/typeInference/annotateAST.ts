@@ -76,9 +76,6 @@ export function countQueryBodyAnnotations(
  * @returns The type of the AST node or `undefined` when the type cannot be annotated.
  */
 function annotate(ast: IAST, context: AnnotationContext): SequenceType | undefined {
-	if (!ast) {
-		console.log('AAAA');
-	}
 	const astNodeName = ast[0];
 
 	const annotationFunction = annotationFunctions[astNodeName];
