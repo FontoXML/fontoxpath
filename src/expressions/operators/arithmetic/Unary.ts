@@ -62,14 +62,14 @@ class Unary extends Expression {
 			const value = atomizedValues[0];
 
 			// We could infer the return type during annotation so we can early return here
-			if (this.type) {
-				return sequenceFactory.singleton(
-					createAtomicValue(
-						this._kind === '+' ? value.value : -value.value,
-						UNARY_LOOKUP[value.type]
-					)
-				);
-			}
+			// if (this.type) {
+			// 	return sequenceFactory.singleton(
+			// 		createAtomicValue(
+			// 			this._kind === '+' ? value.value : -value.value,
+			// 			UNARY_LOOKUP[value.type]
+			// 		)
+			// 	);
+			// }
 
 			if (isSubtypeOf(value.type, ValueType.XSUNTYPEDATOMIC)) {
 				const castValue = castToType(value, ValueType.XSDOUBLE).value as number;
