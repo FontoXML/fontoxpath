@@ -1,6 +1,7 @@
+import QName from '../expressions/dataTypes/valueTypes/QName';
 import { SequenceType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
-import { AnnotationContext } from './AnnotationContext';
+import { AnnotationContext } from '../typeInference/AnnotationContext';
 
 /**
  * Annotate named function references by extracting the function info from the static context
