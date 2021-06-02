@@ -1,5 +1,5 @@
-import QName from '../expressions/dataTypes/valueTypes/QName';
 import { SequenceType } from '../expressions/dataTypes/Value';
+import QName from '../expressions/dataTypes/valueTypes/QName';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { AnnotationContext } from '../typeInference/AnnotationContext';
 
