@@ -33,7 +33,7 @@ export function annotateFunctionCall(
 	const resolvedName = annotationContext.staticContext.resolveFunctionName(
 		{
 			localName: functionName,
-			prefix: functionPrefix['prefix'] as string,
+			prefix: functionPrefix,
 		},
 		functionArguments.length
 	);

@@ -1,6 +1,7 @@
 import { SequenceType } from '../expressions/dataTypes/Value';
+import QName from '../expressions/dataTypes/valueTypes/QName';
 import astHelper, { IAST } from '../parsing/astHelper';
-import { AnnotationContext } from './AnnotationContext';
+import { AnnotationContext } from '../typeInference/AnnotationContext';
 
 /**
  * Annotate named function references by extracting the function info from the static context
@@ -18,14 +19,14 @@ export function annotateNamedFunctionRef(
 	if (!annotationContext || !annotationContext.staticContext) return undefined;
 
 	// Get qualified function name
-	const functionQName = astHelper.getQName(astHelper.getFirstChild(ast, 'functionName'));
+	const qName: QName = astHelper.getQName(astHelper.getFirstChild(ast, 'functionName'));
+	let localName = qName.localName;
+	let namespaceURI = qName.namespaceURI;
+	const prefix = qName.prefix;
 
-	// Spice the components up
-	let localName = functionQName[0];
-	let namespaceURI = functionQName[1];
-	const prefix = functionQName[2];
-
-	const arity = astHelper.getFirstChild(ast, 'integerConstantExpr')[1][1];
+	const arity: number = Number(
+		astHelper.followPath(ast, ['integerConstantExpr', 'value'])[1] as string
+	);
 
 	// If there is no namespace URI, resolve the function name
 	if (!namespaceURI) {

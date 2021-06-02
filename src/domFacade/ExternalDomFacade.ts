@@ -8,7 +8,7 @@ export default class ExternalDomFacade implements IDomFacade {
 		if (node.nodeType !== NODE_TYPES.ELEMENT_NODE) {
 			return [];
 		}
-		const attrs = (Array.from(node['attributes']) as unknown) as Attr[];
+		const attrs = (Array.from((node as any)['attributes']) as unknown) as Attr[];
 		if (bucket === null) {
 			return attrs;
 		}
@@ -18,10 +18,10 @@ export default class ExternalDomFacade implements IDomFacade {
 		if (node.nodeType !== NODE_TYPES.ELEMENT_NODE) {
 			return null;
 		}
-		return node['getAttribute'](attributeName);
+		return (node as any)['getAttribute'](attributeName);
 	}
 	public ['getChildNodes'](node: Node, bucket: string | null = null): Node[] {
-		const childNodes = Array.from(node['childNodes'] as Node[]);
+		const childNodes = Array.from((node as any)['childNodes'] as Node[]);
 
 		if (bucket === null) {
 			return childNodes;
@@ -30,10 +30,16 @@ export default class ExternalDomFacade implements IDomFacade {
 		return childNodes.filter((child) => getBucketsForNode(child).includes(bucket));
 	}
 	public ['getData'](node: Attr | CharacterData): string {
-		return node['nodeType'] === NODE_TYPES.ATTRIBUTE_NODE ? node['value'] : node['data'];
+		return (node as any)['nodeType'] === NODE_TYPES.ATTRIBUTE_NODE
+			? (node as any)['value']
+			: (node as any)['data'];
 	}
 	public ['getFirstChild'](node: Node, bucket: string | null = null): Node | null {
-		for (let child = node['firstChild'] as Node; child; child = child['nextSibling'] as Node) {
+		for (
+			let child = (node as any)['firstChild'] as Node;
+			child;
+			child = (child as any)['nextSibling'] as Node
+		) {
 			if (bucket === null || getBucketsForNode(child).includes(bucket)) {
 				return child;
 			}
@@ -43,9 +49,9 @@ export default class ExternalDomFacade implements IDomFacade {
 	}
 	public ['getLastChild'](node: Node, bucket: string | null = null): Node | null {
 		for (
-			let child = node['lastChild'] as Node;
+			let child = (node as any)['lastChild'] as Node;
 			child;
-			child = child['previousSibling'] as Node
+			child = (child as any)['previousSibling'] as Node
 		) {
 			if (bucket === null || getBucketsForNode(child).includes(bucket)) {
 				return child;
@@ -56,9 +62,9 @@ export default class ExternalDomFacade implements IDomFacade {
 	}
 	public ['getNextSibling'](node: Node, bucket: string | null = null): Node | null {
 		for (
-			let sibling = node['nextSibling'] as Node;
+			let sibling = (node as any)['nextSibling'] as Node;
 			sibling;
-			sibling = sibling['nextSibling'] as Node
+			sibling = (sibling as any)['nextSibling'] as Node
 		) {
 			if (bucket === null || getBucketsForNode(sibling).includes(bucket)) {
 				return sibling;
@@ -69,9 +75,9 @@ export default class ExternalDomFacade implements IDomFacade {
 	}
 	public ['getParentNode'](node: Node, bucket: string | null = null): Node | null {
 		const parentNode =
-			node['nodeType'] === NODE_TYPES.ATTRIBUTE_NODE
-				? node['ownerElement']
-				: (node['parentNode'] as Node);
+			(node as any)['nodeType'] === NODE_TYPES.ATTRIBUTE_NODE
+				? (node as any)['ownerElement']
+				: ((node as any)['parentNode'] as Node);
 
 		if (!parentNode) {
 			return null;
@@ -84,9 +90,9 @@ export default class ExternalDomFacade implements IDomFacade {
 	}
 	public ['getPreviousSibling'](node: Node, bucket: string | null = null): Node | null {
 		for (
-			let sibling = node['previousSibling'] as Node;
+			let sibling = (node as any)['previousSibling'] as Node;
 			sibling;
-			sibling = sibling['previousSibling'] as Node
+			sibling = (sibling as any)['previousSibling'] as Node
 		) {
 			if (bucket === null || getBucketsForNode(sibling).includes(bucket)) {
 				return sibling;

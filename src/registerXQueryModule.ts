@@ -9,6 +9,7 @@ import parseExpression from './parsing/parseExpression';
 import processProlog, { FunctionDeclaration } from './parsing/processProlog';
 import annotateAst from './typeInference/annotateAST';
 import { AnnotationContext } from './typeInference/AnnotationContext';
+import { NamespaceResolver } from './types/Options';
 
 /**
  * Register an XQuery module
@@ -38,7 +39,7 @@ export default function registerXQueryModule(
 	const prefixNode = astHelper.getFirstChild(moduleDecl, 'prefix')!;
 	const moduleTargetPrefix = astHelper.getTextContent(prefixNode);
 
-	const namespaceResolver = () => null;
+	const namespaceResolver: NamespaceResolver = () => null;
 	const staticContext = new StaticContext(
 		new ExecutionSpecificStaticContext(
 			namespaceResolver,

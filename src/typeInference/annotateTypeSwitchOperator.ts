@@ -16,25 +16,19 @@ export function annotateTypeSwitchOperator(
 	// Do the switch case to see what will be returned
 	for (let i = 0; i < caseClausesReturns.length; i++) {
 		// The typeswitch either contains a sequenceType with a single type or an 'or' statement (sequenceTypeUnion)
-		switch (caseClausesConditions[i][1][0]) {
+		const condition: IAST = astHelper.getFirstChild(caseClausesConditions[i], '*');
+		switch (condition[0]) {
 			case 'sequenceType':
-				const result = checkComparison(
-					caseClausesConditions[i][1],
-					argumentType,
-					caseClausesReturns[i]
-				);
+				const result = checkComparison(condition, argumentType, caseClausesReturns[i]);
 				if (!result) continue;
 				else {
 					astHelper.insertAttribute(ast, 'type', result);
 					return result;
 				}
 			case 'sequenceTypeUnion':
-				for (let j = 1; j <= 2; j++) {
-					const res = checkComparison(
-						caseClausesConditions[i][1][j],
-						argumentType,
-						caseClausesReturns[i]
-					);
+				const operands = astHelper.getChildren(condition, '*');
+				for (let j = 0; j < 2; j++) {
+					const res = checkComparison(operands[j], argumentType, caseClausesReturns[i]);
 					if (!res) continue;
 					else {
 						astHelper.insertAttribute(ast, 'type', res);
@@ -49,14 +43,28 @@ export function annotateTypeSwitchOperator(
 	return defaultCaseReturn;
 }
 
-function checkComparison(conditon, argumentType, returnType): SequenceType | undefined {
-	if (stringToValueType(conditon[1][1]['prefix'] + ':' + conditon[1][2]) === argumentType.type) {
-		if ((conditon as IAST[]).length === 2) {
+function checkComparison(
+	condition: IAST,
+	argumentType: SequenceType,
+	returnType: SequenceType
+): SequenceType | undefined {
+	const firstChild = astHelper.getFirstChild(condition, '*');
+	if (
+		stringToValueType(astHelper.getAttribute(firstChild, 'prefix') + ':' + firstChild[2]) ===
+		argumentType.type
+	) {
+		if (condition.length === 2) {
 			if (argumentType.mult === SequenceMultiplicity.EXACTLY_ONE) {
 				return returnType;
 			}
 		} else {
-			if (argumentType.mult === stringToSequenceMultiplicity(conditon[2][1])) {
+			// TODO: verify if this behaviour is correct
+			if (
+				argumentType.mult ===
+				stringToSequenceMultiplicity(
+					astHelper.getFirstChild(condition, 'occurrenceIndicator')[0]
+				)
+			) {
 				return returnType;
 			}
 		}

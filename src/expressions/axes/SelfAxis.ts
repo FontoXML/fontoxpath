@@ -1,6 +1,10 @@
+import ISequence from '../dataTypes/ISequence';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
+import validateContextNode from './validateContextNode';
 
 class SelfAxis extends Expression {
 	private _selector: TestAbstractExpression;
@@ -15,10 +19,11 @@ class SelfAxis extends Expression {
 		this._selector = selector;
 	}
 
-	public evaluate(dynamicContext, executionParameters) {
-		if (dynamicContext.contextItem === null) {
-			throw new Error('XPDY0002: context is absent, it needs to be present to use axes.');
-		}
+	public evaluate(
+		dynamicContext: DynamicContext,
+		executionParameters: ExecutionParameters
+	): ISequence {
+		validateContextNode(dynamicContext.contextItem);
 
 		const isMatch = this._selector.evaluateToBoolean(
 			dynamicContext,
