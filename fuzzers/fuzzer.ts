@@ -1,6 +1,6 @@
 import {
-	evaluateXPath,
 	compileXPathToJavaScript,
+	evaluateXPath,
 	executeJavaScriptCompiledXPath,
 } from 'fontoxpath';
 
