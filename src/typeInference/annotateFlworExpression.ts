@@ -17,7 +17,7 @@ export function annotateFlworExpression(
 ): SequenceType | undefined {
 	let hasFor = false;
 	for (let i = 1; i < ast.length; i++) {
-		switch ((ast[i] as IAST)[0] as string) {
+		switch ((ast[i] as IAST)[0]) {
 			case 'letClause': {
 				annotationContext.pushScope();
 				annotateLetClause(ast[i] as IAST, annotationContext, annotate);
