@@ -61,6 +61,7 @@ export function countQueryBodyAnnotations(
 
 	return [total, annotated];
 }
+
 /**
  * Recursively traverse the AST in the depth first, pre-order to infer type and annotate AST;
  * Annotates as much type information as possible to the AST nodes.
@@ -72,10 +73,6 @@ export function countQueryBodyAnnotations(
  * @returns The type of the AST node or `undefined` when the type cannot be annotated.
  */
 function annotate(ast: IAST, context: AnnotationContext): SequenceType | undefined {
-	if (!ast) {
-		return undefined;
-	}
-
 	const astNodeName = ast[0];
 
 	const annotationFunction = annotationFunctions[astNodeName];
@@ -365,7 +362,8 @@ const annotationFunctions: {
 		return annotateQuantifiedExpr(ast, context);
 	},
 	'x:stackTrace': (ast: IAST, context: AnnotationContext): SequenceType => {
-		return annotate(astHelper.getChildren(ast, '*')[2], context);
+		const children = astHelper.getChildren(ast, '*');
+		return annotate(children[0], context);
 	},
 	queryBody: (ast: IAST, context: AnnotationContext): SequenceType => {
 		const type = annotate(ast[1] as IAST, context);
