@@ -99,11 +99,8 @@ export function generateBinaryOperatorFunction(
 			}
 		}
 	}
-	throw new Error(
-		`XPTY0004: ${operator} not available for types ${valueTypeToString(
-			typeA
-		)} and ${valueTypeToString(typeB)}`
-	);
+
+	return undefined;
 }
 
 /**
@@ -163,11 +160,8 @@ export function generateBinaryOperatorType(
 			}
 		}
 	}
-	throw new Error(
-		`XPTY0004: ${operator} not available for types ${valueTypeToString(
-			typeA
-		)} and ${valueTypeToString(typeB)}`
-	);
+
+	return undefined;
 }
 
 /**
@@ -327,6 +321,14 @@ class BinaryOperator extends Expression {
 					secondValue.type,
 					this._operator
 				);
+
+				if (!prefabOperator) {
+					throw new Error(
+						`XPTY0004: ${this._operator} not available for types ${valueTypeToString(
+							firstValue.type
+						)} and ${valueTypeToString(firstValue.type)}`
+					);
+				}
 
 				return sequenceFactory.singleton(prefabOperator(firstValue, secondValue));
 			});

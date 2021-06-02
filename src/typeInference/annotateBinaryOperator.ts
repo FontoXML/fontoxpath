@@ -1,8 +1,5 @@
 import { SequenceType, sequenceTypeToString, ValueType } from '../expressions/dataTypes/Value';
-import {
-	generateBinaryOperatorType,
-	getBinaryPrefabOperator,
-} from '../expressions/operators/arithmetic/BinaryOperator';
+import { generateBinaryOperatorType } from '../expressions/operators/arithmetic/BinaryOperator';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { AnnotationContext } from './annotateAST';
 
@@ -33,10 +30,12 @@ export function annotateBinOp(
 	// TODO: Fix this hack (pathExpr returns a node in 1 case, which cannot be added to an integer)
 	if (left.type === ValueType.NODE || right.type === ValueType.NODE) return undefined;
 	if (left.type === ValueType.ITEM || right.type === ValueType.ITEM) return undefined;
+	if (left.type === ValueType.XSANYATOMICTYPE || right.type === ValueType.XSANYATOMICTYPE)
+		return undefined;
 
 	const funcData = generateBinaryOperatorType(operator, left.type, right.type);
 
-	if (funcData !== undefined) {
+	if (funcData) {
 		const type = { type: funcData, mult: left.mult };
 
 		astHelper.insertAttribute(ast, 'type', type);
