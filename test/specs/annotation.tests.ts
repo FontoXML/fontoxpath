@@ -9,6 +9,7 @@ import astHelper from 'fontoxpath/parsing/astHelper';
 import parseExpression from 'fontoxpath/parsing/parseExpression';
 import annotateAst, { countQueryBodyAnnotations } from 'fontoxpath/typeInference/annotateAST';
 import { AnnotationContext } from 'fontoxpath/typeInference/AnnotationContext';
+import { type } from 'os';
 
 /**
  *
@@ -312,6 +313,12 @@ describe('Annotating typeswitch expression', () => {
 });
 
 describe('Annotation counting', () => {
+	const context = new AnnotationContext(undefined);
+	insertVariables(context, [
+		['x', { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.EXACTLY_ONE }],
+		['a', { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.EXACTLY_ONE }],
+		['b', { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.EXACTLY_ONE }],
+	]);
 	it('correctly counts add expressions', () => {
 		const ast = parseExpression('2 + 1', {});
 		annotateAst(ast, new AnnotationContext(undefined));
@@ -320,18 +327,18 @@ describe('Annotation counting', () => {
 	});
 	it('correctly counts unannotated expressions', () => {
 		const ast = parseExpression('$x + 1', {});
-		annotateAst(ast, new AnnotationContext(undefined));
+		annotateAst(ast, context);
 		const [total, annotated] = countQueryBodyAnnotations(ast);
 		console.log(total, annotated);
-		chai.assert.equal(annotated, 1);
+		chai.assert.isTrue(annotated === total);
 		chai.assert.equal(total, 4);
 	});
 	it('correctly counts unannotated expressions 2', () => {
 		const ast = parseExpression('$b + math:sin($a)', {});
-		annotateAst(ast, new AnnotationContext(undefined));
+		annotateAst(ast, context);
 		const [total, annotated] = countQueryBodyAnnotations(ast);
 		console.log(total, annotated);
-		chai.assert.equal(annotated, 0);
+		chai.assert.equal(annotated, 2);
 		chai.assert.equal(total, 5);
 	});
 });
@@ -385,8 +392,11 @@ describe('annotating varRef', () => {
 	it('annotate simple varRef', () => {
 		assertValueType('$x', ValueType.XSINTEGER, context);
 	});
-	it('annotate complex varRef', () => {
+	it('annotate varRef + varRef', () => {
 		assertValueType('$x + $y', ValueType.XSINTEGER, context);
+	});
+	it('annotate complex varRef', () => {
+		assertValueType('$x + 1', ValueType.XSINTEGER, context);
 	});
 	it('annotate varRef not in context', () => {
 		assertValueType('$x + $l', undefined, context);
@@ -395,6 +405,17 @@ describe('annotating varRef', () => {
 		chai.assert.throws(() => assertValueType('$x + $z', undefined, context));
 	});
 });
+
+/**
+ * An easy way to add multiple variables in a context
+ * @param context the context in which the variables are inserted
+ * @param variables
+ */
+function insertVariables(context: AnnotationContext, variables: Array<[string, SequenceType]>) {
+	variables.forEach((element) => {
+		context.insertVariable(element[0], element[1]);
+	});
+}
 
 // Type switch is not tested, type switch is reserved in XPath but not yet used
 // Annotation of `functionCallExpr` and `namedFunctionRef` with context is not tested
