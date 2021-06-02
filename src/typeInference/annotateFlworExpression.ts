@@ -151,8 +151,8 @@ function annotateOrderByClause(ast: IAST, annotationContext: AnnotationContext):
  */
 function filterOnUniqueObjects(array: SequenceType[]): SequenceType[] {
 	return array.filter(
-		(current, index, array) =>
-			array.findIndex(
+		(current, index, arrayCopy) =>
+			arrayCopy.findIndex(
 				(element) => element.type === current.type && element.mult === current.mult
 			) === index
 	);

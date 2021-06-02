@@ -1,7 +1,5 @@
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
-import StaticContext from '../expressions/StaticContext';
 import astHelper, { IAST } from '../parsing/astHelper';
-import { AnnotationContext } from './AnnotationContext';
 import { annotateArrayConstructor } from './annotateArrayConstructor';
 import { annotateArrowExpr } from './annotateArrowExpr';
 import { annotateBinOp } from './annotateBinaryOperator';
@@ -31,7 +29,7 @@ import { annotateTypeSwitchOperator } from './annotateTypeSwitchOperator';
 import { annotateUnaryLookup } from './annotateUnaryLookup';
 import { annotateUnaryMinus, annotateUnaryPlus } from './annotateUnaryOperator';
 import { annotateVarRef } from './annotateVarRef';
-
+import { AnnotationContext } from './AnnotationContext';
 /**
  * Recursively traverse the AST in the depth first, pre-order to infer type and annotate AST;
  * Annotates as much type information as possible to the AST nodes.

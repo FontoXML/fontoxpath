@@ -1,8 +1,8 @@
-import { AnnotationContext } from '../typeInference/AnnotationContext';
 import ExecutionSpecificStaticContext from '../expressions/ExecutionSpecificStaticContext';
 import Expression from '../expressions/Expression';
 import StaticContext from '../expressions/StaticContext';
 import annotateAst, { countQueryBodyAnnotations } from '../typeInference/annotateAST';
+import { AnnotationContext } from '../typeInference/AnnotationContext';
 import { FunctionNameResolver } from '../types/Options';
 import astHelper from './astHelper';
 import compileAstToExpression from './compileAstToExpression';
