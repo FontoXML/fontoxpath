@@ -293,17 +293,14 @@ const annotationFunctions: {
 	functionCallExpr: (ast: IAST, context: AnnotationContext): SequenceType => {
 		const functionArguments = astHelper.getFirstChild(ast, 'arguments');
 		const argumentTypeNodes = astHelper.getChildren(functionArguments, '*');
-		const argumentTypes: SequenceType[] = argumentTypeNodes.map((x) => annotate(x, context));
+		argumentTypeNodes.map((x) => annotate(x, context));
 
-		return annotateFunctionCall(ast, argumentTypes, context);
+		return annotateFunctionCall(ast, context);
 	},
 	arrowExpr: (ast: IAST, context: AnnotationContext): SequenceType => {
-		const functionCallExpr: SequenceType = annotate(
-			astHelper.getFirstChild(ast, 'argExpr')[1] as IAST,
-			context
-		);
+		annotate(astHelper.getFirstChild(ast, 'argExpr')[1] as IAST, context);
 
-		return annotateArrowExpr(ast, functionCallExpr, context);
+		return annotateArrowExpr(ast, context);
 	},
 	dynamicFunctionInvocationExpr: (ast: IAST, context: AnnotationContext): SequenceType => {
 		const functionItem: SequenceType = annotate(
@@ -376,5 +373,11 @@ const annotationFunctions: {
 			astHelper.insertAttribute(ast, 'type', type);
 		}
 		return type;
+	},
+	flworExpr: (ast: IAST, context: AnnotationContext): SequenceType => {
+		return annotateFlworExpression(ast, context, annotate);
+	},
+	varRef: (ast: IAST, context: AnnotationContext): SequenceType => {
+		return annotateVarRef(ast, context);
 	},
 };

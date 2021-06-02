@@ -1,10 +1,10 @@
-import { fail } from 'assert';
 import * as chai from 'chai';
 import { SequenceType, ValueType } from 'fontoxpath/expressions/dataTypes/Value';
 import StaticContext from 'fontoxpath/expressions/StaticContext';
 import astHelper from 'fontoxpath/parsing/astHelper';
 import parseExpression from 'fontoxpath/parsing/parseExpression';
 import annotateAst, { countQueryBodyAnnotations } from 'fontoxpath/typeInference/annotateAST';
+import { AnnotationContext } from 'fontoxpath/typeInference/AnnotationContext';
 
 /**
  *
@@ -21,7 +21,7 @@ function assertValueType(
 	followSpecificPath?: string[]
 ) {
 	const ast = parseExpression(expression, {});
-	annotateAst(ast, { staticContext: staticContext });
+	annotateAst(ast, new AnnotationContext(staticContext));
 
 	const queryBody = astHelper.followPath(
 		ast,
@@ -309,25 +309,25 @@ describe('Annotating typeswitch expression', () => {
 describe('Annotation counting', () => {
 	it('correctly counts add expressions', () => {
 		const ast = parseExpression('2 + 1', {});
-		annotateAst(ast, {});
+		annotateAst(ast, new AnnotationContext(undefined));
 		const [total, annotated] = countQueryBodyAnnotations(ast);
 		chai.assert.equal(total, annotated);
 	});
 	it('correctly counts unannotated expressions', () => {
 		const ast = parseExpression('$x + 1', {});
-		annotateAst(ast, {});
+		annotateAst(ast, new AnnotationContext(undefined));
 		const [total, annotated] = countQueryBodyAnnotations(ast);
 		console.log(total, annotated);
 		chai.assert.equal(annotated, 1);
-		chai.assert.equal(total, 3);
+		chai.assert.equal(total, 4);
 	});
 	it('correctly counts unannotated expressions 2', () => {
 		const ast = parseExpression('$b + math:sin($a)', {});
-		annotateAst(ast, {});
+		annotateAst(ast, new AnnotationContext(undefined));
 		const [total, annotated] = countQueryBodyAnnotations(ast);
 		console.log(total, annotated);
 		chai.assert.equal(annotated, 0);
-		chai.assert.equal(total, 3);
+		chai.assert.equal(total, 5);
 	});
 });
 

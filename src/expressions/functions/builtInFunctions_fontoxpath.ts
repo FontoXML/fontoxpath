@@ -1,3 +1,4 @@
+import { AnnotationContext } from '../../typeInference/AnnotationContext';
 import { printAndRethrowError } from '../../evaluationUtils/printAndRethrowError';
 import astHelper from '../../parsing/astHelper';
 import compileAstToExpression from '../../parsing/compileAstToExpression';
@@ -62,9 +63,7 @@ const fontoxpathEvaluate: FunctionDefinitionType = (
 				});
 
 				if (executionParameters.annotateAst) {
-					annotateAst(ast, {
-						staticContext: innerStaticContext,
-					});
+					annotateAst(ast, new AnnotationContext(innerStaticContext));
 				}
 
 				const prolog = astHelper.followPath(ast, ['mainModule', 'prolog']);

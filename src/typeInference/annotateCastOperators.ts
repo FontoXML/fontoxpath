@@ -5,7 +5,7 @@ import {
 	ValueType,
 } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
-import { AnnotationContext } from './annotateAST';
+import { AnnotationContext } from './AnnotationContext';
 
 /**
  * Read the target type of the cast operator from the AST and

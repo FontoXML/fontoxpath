@@ -1,3 +1,4 @@
+import { AnnotationContext } from '../typeInference/AnnotationContext';
 import ExecutionSpecificStaticContext from '../expressions/ExecutionSpecificStaticContext';
 import Expression from '../expressions/Expression';
 import StaticContext from '../expressions/StaticContext';
@@ -61,9 +62,7 @@ export default function staticallyCompileXPath(
 		const ast = parseExpression(xpathString, compilationOptions);
 
 		if (compilationOptions.annotateAst) {
-			annotateAst(ast, {
-				staticContext: rootStaticContext,
-			});
+			annotateAst(ast, new AnnotationContext(rootStaticContext));
 		}
 
 		const mainModule = astHelper.getFirstChild(ast, 'mainModule');
@@ -85,10 +84,7 @@ export default function staticallyCompileXPath(
 		}
 
 		if (compilationOptions.annotateAst) {
-			annotateAst(ast, {
-				staticContext: rootStaticContext,
-				query: xpathString,
-			});
+			annotateAst(ast, new AnnotationContext(rootStaticContext));
 
 			if (compilationOptions.logUnannotatedQueries) {
 				const [totalNodes, annotatedNodes] = countQueryBodyAnnotations(ast);
