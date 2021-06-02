@@ -13,11 +13,11 @@ import { AnnotationContext } from './AnnotationContext';
 export function annotateFlworExpression(
 	ast: IAST,
 	annotationContext: AnnotationContext,
-	annotate: (ast: IAST, annotationContext) => SequenceType
+	annotate: (ast: IAST, annotationContext: AnnotationContext) => SequenceType
 ): SequenceType | undefined {
 	let hasFor = false;
 	for (let i = 1; i < ast.length; i++) {
-		switch (ast[i][0]) {
+		switch ((ast[i] as IAST)[0] as string) {
 			case 'letClause': {
 				annotationContext.pushScope();
 				annotateLetClause(ast[i] as IAST, annotationContext, annotate);
@@ -78,7 +78,7 @@ export function annotateFlworExpression(
 function annotateLetClause(
 	ast: IAST,
 	annotationContext: AnnotationContext,
-	annotate: (ast: IAST, annotationContext) => SequenceType
+	annotate: (ast: IAST, annotationContext: AnnotationContext) => SequenceType
 ): void {
 	const pathToVarName: string[] = ['letClauseItem', 'typedVariableBinding', 'varName'];
 	const varNameNode: IAST = astHelper.followPath(ast, pathToVarName);
@@ -101,7 +101,7 @@ function annotateLetClause(
 function annotateForClause(
 	ast: IAST,
 	annotationContext: AnnotationContext,
-	annotate: (ast: IAST, annotationContext) => SequenceType
+	annotate: (ast: IAST, annotationContext: AnnotationContext) => SequenceType
 ): void {
 	const pathToTypedVariableBinding = ['forClauseItem', 'typedVariableBinding', 'varName'];
 	const pathToForExpr = ['forClauseItem', 'forExpr', 'sequenceExpr'];
@@ -137,7 +137,7 @@ function annotateForClause(
 function annotateWhereClause(
 	ast: IAST,
 	annotationContext: AnnotationContext,
-	annotate: (ast: IAST, annotationContext) => SequenceType
+	annotate: (ast: IAST, annotationContext: AnnotationContext) => SequenceType
 ): SequenceType {
 	const seqType = {
 		type: ValueType.XSBOOLEAN,

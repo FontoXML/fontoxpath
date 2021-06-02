@@ -9,7 +9,7 @@ import { AnnotationContext } from './AnnotationContext';
  * @returns the type of the variable as SequenceType if it is contained in the context
  */
 export function annotateVarRef(ast: IAST, annotationContext: AnnotationContext): SequenceType {
-	const varName: string = ast[1][1] as string;
+	const varName: string = (ast[1] as IAST)[1] as string;
 	const varType: SequenceType = annotationContext.getVariable(varName);
 	astHelper.insertAttribute(ast, 'type', varType);
 
