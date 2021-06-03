@@ -11,12 +11,12 @@ const numericTypes = [
 
 export default function castToNumeric(): (value: any) => CastResult {
 	return (value) => {
-        for (const type of numericTypes) {
-            let result = castToPrimitiveType(value, type)(value);
-            if (result.successful) {
-                return result;
-            }
-        }
+		for (const type of numericTypes) {
+			const result = castToPrimitiveType(value, type)(value);
+			if (result.successful) {
+				return result;
+			}
+		}
 		return undefined;
 	};
 }
