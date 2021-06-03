@@ -13,12 +13,12 @@ import { AnnotationContext } from './AnnotationContext';
 export function annotateFunctionCall(
 	ast: IAST,
 	annotationContext: AnnotationContext
-): SequenceType | undefined {
+): SequenceType {
 	// We need the context to lookup the function information
 	const itemReturn = {
 		type: ValueType.ITEM,
 		mult: SequenceMultiplicity.EXACTLY_ONE,
-	}
+	};
 
 	if (!annotationContext || !annotationContext.staticContext) return itemReturn;
 

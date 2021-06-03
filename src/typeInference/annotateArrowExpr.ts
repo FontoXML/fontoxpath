@@ -10,10 +10,7 @@ import { AnnotationContext } from './AnnotationContext';
  * @param staticContext from witch the function info is extracted.
  * @returns the inferred type or `undefined` when function properties cannot be inferred.
  */
-export function annotateArrowExpr(
-	ast: IAST,
-	annotationContext: AnnotationContext
-): SequenceType | undefined {
+export function annotateArrowExpr(ast: IAST, annotationContext: AnnotationContext): SequenceType {
 	// We need the context to lookup the function information
 	const itemReturn = {
 		type: ValueType.ITEM,
@@ -22,7 +19,6 @@ export function annotateArrowExpr(
 	if (!annotationContext || !annotationContext.staticContext) return itemReturn;
 
 	const func = astHelper.getFirstChild(ast, 'EQName');
-
 
 	// There may be no name for the function
 	if (!func) {

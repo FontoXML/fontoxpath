@@ -5,7 +5,7 @@ import { AnnotationContext } from './AnnotationContext';
 export function annotateStringConcatenateOperator(
 	ast: IAST,
 	context: AnnotationContext
-): SequenceType | undefined {
+): SequenceType {
 	const seqType = {
 		type: ValueType.XSSTRING,
 		mult: SequenceMultiplicity.EXACTLY_ONE,

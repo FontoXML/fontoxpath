@@ -35,6 +35,7 @@ export function annotateTypeSwitchOperator(
 						return res;
 					}
 				}
+			// This should never be reached
 			default:
 				return undefined;
 		}

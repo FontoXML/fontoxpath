@@ -4,9 +4,7 @@ import {
 	sequenceTypeToString,
 	ValueType,
 } from '../expressions/dataTypes/Value';
-import {
-	generateBinaryOperatorType,
-} from '../expressions/operators/arithmetic/BinaryOperator';
+import { generateBinaryOperatorType } from '../expressions/operators/arithmetic/BinaryOperator';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { AnnotationContext } from './AnnotationContext';
 
@@ -28,7 +26,7 @@ export function annotateBinOp(
 	right: SequenceType | undefined,
 	operator: string,
 	context: AnnotationContext
-): SequenceType | undefined {
+): SequenceType {
 	// If we don't have the left and right type, we cannot infer the current type
 	if (!left || !right) {
 		const itemReturn = {

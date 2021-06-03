@@ -14,7 +14,7 @@ import { AnnotationContext } from '../typeInference/AnnotationContext';
 export function annotateNamedFunctionRef(
 	ast: IAST,
 	annotationContext: AnnotationContext
-): SequenceType | undefined {
+): SequenceType {
 	const itemReturn = {
 		type: ValueType.ITEM,
 		mult: SequenceMultiplicity.EXACTLY_ONE,
