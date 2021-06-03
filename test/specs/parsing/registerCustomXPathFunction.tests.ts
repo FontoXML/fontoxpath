@@ -1,6 +1,4 @@
 import * as chai from 'chai';
-import * as slimdom from 'slimdom';
-
 import {
 	createTypedValueFactory,
 	evaluateXPath,
@@ -10,8 +8,8 @@ import {
 	evaluateXPathToStrings,
 	registerCustomXPathFunction,
 } from 'fontoxpath';
-
 import IDomFacade from 'fontoxpath/domFacade/IDomFacade';
+import * as slimdom from 'slimdom';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 describe('registerCustomXPathFunction', () => {
@@ -809,7 +807,7 @@ describe('registerCustomXPathFunction', () => {
 			chai.assert.throws(
 				() =>
 					registerCustomXPathFunction(
-						'a-random-prefix-test:func',
+						'a-random-prefix-to-prevent-collisions:func',
 						[],
 						'this-type::does-not-exist',
 						() => {}

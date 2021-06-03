@@ -3,10 +3,12 @@ import castToType from '../../../expressions/dataTypes/castToType';
 import createAtomicValue from '../../../expressions/dataTypes/createAtomicValue';
 import isSubtypeOf from '../../../expressions/dataTypes/isSubtypeOf';
 import { ValueType, valueTypeToString } from '../../../expressions/dataTypes/Value';
+import ExecutionParameters from '../../../expressions/ExecutionParameters';
 import { BinaryEvaluationFunction } from '../../../typeInference/binaryEvaluationFunction';
 import atomize from '../../dataTypes/atomize';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
 import { SequenceType } from '../../dataTypes/Value';
+import DynamicContext from '../../DynamicContext';
 import Expression from '../../Expression';
 import { hash, operationMap, returnTypeMap } from './BinaryEvaluationFunctionMap';
 
@@ -37,6 +39,7 @@ const allTypes = [
 
 /**
  * Generate the return function of the binary operator.
+ *
  * @param operator The binary operator
  * @param typeA the left part of the operation
  * @param typeB the right part of the operation
@@ -47,15 +50,15 @@ export function generateBinaryOperatorFunction(
 	typeA: ValueType,
 	typeB: ValueType
 ): BinaryEvaluationFunction {
-	let castFunctionForValueA = null;
-	let castFunctionForValueB = null;
+	let castFunctionForValueA: any = null;
+	let castFunctionForValueB: any = null;
 
 	if (isSubtypeOf(typeA, ValueType.XSUNTYPEDATOMIC)) {
-		castFunctionForValueA = (value) => castToType(value, ValueType.XSDOUBLE);
+		castFunctionForValueA = (value: any) => castToType(value, ValueType.XSDOUBLE);
 		typeA = ValueType.XSDOUBLE;
 	}
 	if (isSubtypeOf(typeB, ValueType.XSUNTYPEDATOMIC)) {
-		castFunctionForValueB = (value) => castToType(value, ValueType.XSDOUBLE);
+		castFunctionForValueB = (value: any) => castToType(value, ValueType.XSDOUBLE);
 		typeB = ValueType.XSDOUBLE;
 	}
 
@@ -115,15 +118,15 @@ export function generateBinaryOperatorType(
 	typeA: ValueType,
 	typeB: ValueType
 ): ValueType {
-	let castFunctionForValueA = null;
-	let castFunctionForValueB = null;
+	let castFunctionForValueA: any = null;
+	let castFunctionForValueB: any = null;
 
 	if (isSubtypeOf(typeA, ValueType.XSUNTYPEDATOMIC)) {
-		castFunctionForValueA = (value) => castToType(value, ValueType.XSDOUBLE);
+		castFunctionForValueA = (value: any) => castToType(value, ValueType.XSDOUBLE);
 		typeA = ValueType.XSDOUBLE;
 	}
 	if (isSubtypeOf(typeB, ValueType.XSUNTYPEDATOMIC)) {
-		castFunctionForValueB = (value) => castToType(value, ValueType.XSDOUBLE);
+		castFunctionForValueB = (value: any) => castToType(value, ValueType.XSDOUBLE);
 		typeB = ValueType.XSDOUBLE;
 	}
 
@@ -171,8 +174,8 @@ export function generateBinaryOperatorType(
  * @returns A tuple of a function that needs to be applied to the operands and the returnType of the integerDivision.
  */
 function iDivOpChecksFunction(
-	applyCastFunctions: (a, b) => any,
-	fun: (a, b) => any
+	applyCastFunctions: (a: AtomicValue, b: AtomicValue) => any,
+	fun: (a: any, b: any) => any
 ): [(a: any, b: any) => AtomicValue, ValueType] {
 	return [
 		(a, b) => {
@@ -273,7 +276,7 @@ class BinaryOperator extends Expression {
 	 * @param executionParameters options
 	 * @returns The value to which the operation evaluates.
 	 */
-	public evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
 		const firstValueSequence = atomize(
 			this._firstValueExpr.evaluateMaybeStatically(dynamicContext, executionParameters),
 			executionParameters

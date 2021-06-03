@@ -57,7 +57,8 @@ const fnId: FunctionDefinitionType = (
 	const isMatchingIdById: { [s: string]: boolean } = idrefSequence
 		.getAllValues()
 		.reduce((byId, idrefValue) => {
-			idrefValue.value.split(/\s+/).forEach((id) => {
+			const idrefString = idrefValue.value as string;
+			idrefString.split(/\s+/).forEach((id) => {
 				byId[id] = true;
 			});
 			return byId;

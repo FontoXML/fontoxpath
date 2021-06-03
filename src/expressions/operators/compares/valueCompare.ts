@@ -330,7 +330,6 @@ export default function (
 	dynamicContext: DynamicContext
 ): boolean {
 	// https://www.w3.org/TR/xpath-3/#doc-xpath31-ValueComp
-	// TODO: Find a more errorproof solution, hash collisions can occur here
 	const typingKey = `${valueA.type as number}~${valueB.type as number}~${operator}`;
 	let prefabComparator = comparatorsByTypingKey[typingKey];
 	if (!prefabComparator) {

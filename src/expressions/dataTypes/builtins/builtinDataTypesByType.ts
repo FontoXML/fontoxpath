@@ -5,7 +5,9 @@ import builtinModels from './builtinModels';
 import { getValidatorForType } from './dataTypeValidatorByType';
 
 export type TypeModel = {
-	facetHandlers: object;
+	facetHandlers: {
+		[typeName: string]: (input: string | number, options: string | number) => boolean;
+	};
 	memberTypes: TypeModel[];
 	parent: TypeModel;
 	restrictionsByName: { [s: string]: number | string };

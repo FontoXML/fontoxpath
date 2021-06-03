@@ -1,4 +1,6 @@
 import deepCloneNode from '../../domClone/deepCloneNode';
+import { ChildNodePointer, NodePointer } from '../../domClone/Pointer';
+import DomFacade from '../../domFacade/DomFacade';
 import createPointerValue from '../dataTypes/createPointerValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
@@ -20,11 +22,15 @@ import { applyUpdates, mergeUpdates } from './pulRoutines';
 import UpdatingExpression from './UpdatingExpression';
 import { errXUDY0014, errXUDY0037, errXUTY0013 } from './XQueryUpdateFacilityErrors';
 
-function isCreatedNode(node, createdNodes, domFacade) {
+function isCreatedNode(
+	node: NodePointer,
+	createdNodes: NodePointer[],
+	domFacade: DomFacade
+): boolean {
 	if (createdNodes.find((cNode) => arePointersEqual(cNode, node))) {
 		return true;
 	}
-	const parent = domFacade.getParentNodePointer(node);
+	const parent = domFacade.getParentNodePointer(node as ChildNodePointer);
 	return parent ? isCreatedNode(parent, createdNodes, domFacade) : false;
 }
 
@@ -88,8 +94,8 @@ class TransformExpression extends UpdatingExpression {
 		let returnValueIterator: IIterator<UpdatingExpressionResult>;
 
 		let modifyPul: IPendingUpdate[];
-		const createdNodes = [];
-		const toMergePuls = [];
+		const createdNodes: NodePointer[] = [];
+		const toMergePuls: IPendingUpdate[][] = [];
 
 		return {
 			next: () => {
@@ -151,7 +157,7 @@ class TransformExpression extends UpdatingExpression {
 				modifyPul.forEach((pu) => {
 					// If the target node of any update primitive in $pul is a node that was not newly created in Step 1, a dynamic error is raised [err:XUDY0014].
 					if (pu.target && !isCreatedNode(pu.target, createdNodes, domFacade)) {
-						throw errXUDY0014(pu.target);
+						throw errXUDY0014(pu.target.node);
 					}
 
 					// If $pul contains a upd:put update primitive, a dynamic error is raised [err:XUDY0037].

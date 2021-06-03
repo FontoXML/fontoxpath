@@ -5,12 +5,12 @@ import {
 	ValueType,
 } from '../expressions/dataTypes/Value';
 import { SourceRange } from '../expressions/debug/StackTraceGenerator';
-import { BinaryEvaluationFunction } from '../typeInference/binaryEvaluationFunction';
 
 type QName = { localName: string; namespaceURI: string | null; prefix: string };
 
-export interface IAST
-	extends Array<string | object | SourceRange | IAST | SequenceType | BinaryEvaluationFunction> {
+type ASTAttributes = { [attrName: string]: string | SequenceType };
+
+export interface IAST extends Array<string | ASTAttributes | SourceRange | IAST> {
 	0: string;
 }
 
@@ -23,13 +23,14 @@ export interface IAST
  * @return  The matching children
  */
 function getChildren(ast: IAST, name: string): IAST[] {
-	const children = [];
+	const children: IAST[] = [];
 	for (let i = 1; i < ast.length; ++i) {
 		if (!Array.isArray(ast[i])) {
 			continue;
 		}
-		if (name === '*' || ast[i][0] === name) {
-			children.push(ast[i]);
+		const astPart = ast[i] as IAST;
+		if (name === '*' || astPart[0] === name) {
+			children.push(astPart);
 		}
 	}
 	return children;
@@ -51,8 +52,9 @@ function getFirstChild(ast: IAST, name: string | string[]): IAST | null {
 		if (!Array.isArray(ast[i])) {
 			continue;
 		}
-		if (name === '*' || name.includes(ast[i][0])) {
-			return ast[i] as IAST;
+		const astPart = ast[i] as IAST;
+		if (name === '*' || name.includes(astPart[0])) {
+			return astPart;
 		}
 	}
 	return null;
@@ -71,7 +73,7 @@ function getTextContent(ast: IAST): string {
 	if (typeof ast[1] === 'object') {
 		return (ast[2] || '') as string;
 	}
-	return (ast[1] as string) || '';
+	return ast[1] || '';
 }
 
 /**
@@ -169,17 +171,15 @@ function followPath(ast: IAST, path: string[]): IAST | null {
 /**
  * Get the value of the given attribute
  */
-function getAttribute(
-	ast: IAST,
-	attributeName: string
-): string | SequenceType | BinaryEvaluationFunction | null {
+function getAttribute(ast: IAST, attributeName: string): string | SequenceType | null {
 	if (!Array.isArray(ast)) {
 		return null;
 	}
-	const attrs = ast[1];
-	if (typeof attrs !== 'object' || Array.isArray(attrs)) {
+	const maybeAttrs = ast[1];
+	if (typeof maybeAttrs !== 'object' || Array.isArray(maybeAttrs)) {
 		return null;
 	}
+	const attrs = maybeAttrs as ASTAttributes;
 
 	return attributeName in attrs ? attrs[attributeName] : null;
 }
@@ -204,9 +204,9 @@ function getQName(ast: IAST): QName {
  */
 function insertAttribute(ast: IAST, name: string, data: any) {
 	if (typeof ast[1] === 'object' && !Array.isArray(ast[1])) {
-		ast[1][name] = data;
+		(ast[1] as ASTAttributes)[name] = data;
 	} else {
-		const obj = {};
+		const obj: ASTAttributes = {};
 		obj[name] = data;
 		ast.splice(1, 0, obj);
 	}

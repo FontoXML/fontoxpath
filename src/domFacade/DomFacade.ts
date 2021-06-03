@@ -110,7 +110,7 @@ class DomFacade {
 	public getChildNodes(
 		parentNode: ConcreteParentNode | TinyParentNode,
 		bucket: string | null = null
-	): (ConcreteChildNode | TinyChildNode)[] {
+	) {
 		const childNodes = isTinyNode(parentNode)
 			? parentNode.childNodes
 			: this._domFacade['getChildNodes'](parentNode, bucket);
@@ -118,10 +118,10 @@ class DomFacade {
 		if (parentNode.nodeType === NODE_TYPES.DOCUMENT_NODE) {
 			return childNodes.filter(
 				(childNode) => childNode['nodeType'] !== NODE_TYPES.DOCUMENT_TYPE_NODE
-			) as (ConcreteChildNode | TinyChildNode)[];
+			);
 		}
 
-		return childNodes as (ConcreteChildNode | TinyChildNode)[];
+		return childNodes;
 	}
 
 	public getData(
@@ -227,7 +227,7 @@ class DomFacade {
 
 				return nextSibling
 					? {
-							node: nextSibling,
+							node: nextSibling as ConcreteChildNode,
 							graftAncestor: null,
 					  }
 					: null;
@@ -236,7 +236,7 @@ class DomFacade {
 
 		return nextSibling
 			? createPointer(
-					nextSibling,
+					nextSibling as ConcreteChildNode,
 					parentPointer || this.getParentNodePointer(pointer, bucket),
 					nextSiblingIndex
 			  )
@@ -349,7 +349,7 @@ class DomFacade {
 
 				return previousSibling
 					? {
-							node: previousSibling,
+							node: previousSibling as ConcreteChildNode,
 							graftAncestor: null,
 					  }
 					: null;
@@ -358,7 +358,7 @@ class DomFacade {
 
 		return previousSibling
 			? createPointer(
-					previousSibling,
+					previousSibling as ConcreteChildNode,
 					parentPointer || this.getParentNodePointer(pointer, bucket),
 					previousSiblingIndex
 			  )
@@ -366,7 +366,10 @@ class DomFacade {
 	}
 
 	// Can be used to create an extra frame when tracking dependencies
-	public getRelatedNodes(node, callback) {
+	public getRelatedNodes(
+		node: Node[],
+		callback: (nodes: Node[], domFacade: DomFacade) => Node[]
+	) {
 		return callback(node, this);
 	}
 
