@@ -29,21 +29,23 @@ export function randomLanguage(): string {
 	}
 }
 
-// We use string values because they can be printed when reporting errors.
-export type Backend = 'expression' | 'js-codegen';
+export enum BACKEND {
+	EXPRESSION = 'expression',
+	JS_CODEGEN = 'js-codegen',
+}
 
 /**
  * Pick a random backend.
  *
  * @returns The randomly selected backend.
  */
-export function randomBackend(): Backend {
+export function randomBackend(): BACKEND {
 	const index = rand(2);
 	switch (index) {
 		case 0:
-			return 'expression';
+			return BACKEND.EXPRESSION;
 		case 1:
-			return 'js-codegen';
+			return BACKEND.JS_CODEGEN;
 		default:
 			throw new Error('Out of bounds');
 	}

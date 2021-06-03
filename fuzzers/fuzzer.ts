@@ -4,7 +4,7 @@ import {
 	executeJavaScriptCompiledXPath,
 } from 'fontoxpath';
 
-import { Backend } from 'mutators';
+import { BACKEND } from 'mutators';
 
 /**
  * Interface for fuzzer which are run by the {@link Engine}.
@@ -19,12 +19,12 @@ export interface IFuzzer {
  * A single executable fuzz case.
  */
 export class FuzzCase {
-	backend: Backend;
+	backend: BACKEND;
 	contextItem?: any | null;
 	language: string;
 	selector: string;
 
-	constructor(selector: string, language: string, backend: Backend, contextItem?: any | null) {
+	constructor(selector: string, language: string, backend: BACKEND, contextItem?: any | null) {
 		this.selector = selector;
 		this.language = language;
 		this.backend = backend;
@@ -38,9 +38,9 @@ export class FuzzCase {
 		};
 
 		// Execute the expression using the given backend.
-		if (this.backend === 'expression') {
+		if (this.backend === BACKEND.EXPRESSION) {
 			evaluateXPath(this.selector, this.contextItem, null, null, null, options);
-		} else if (this.backend === 'js-codegen') {
+		} else if (this.backend === BACKEND.JS_CODEGEN) {
 			const compiledXPathResult = compileXPathToJavaScript(
 				this.selector,
 				evaluateXPath.BOOLEAN_TYPE,
