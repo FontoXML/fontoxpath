@@ -19,6 +19,10 @@ import {
 	subtract as yearMonthDurationSubtract,
 } from '../../../expressions/dataTypes/valueTypes/YearMonthDuration';
 
+const SHIFT_FIRST_ARGUMENT_OF_HASH_BY = 20;
+const SHIFT_SECOND_ARGUMENT_OF_HASH_BY = 12;
+const SHIFT_THIRD_ARGUMENT_OF_HASH_BY = 8;
+
 /**
  * A hash function that is used to create the keys for the ruleMap.
  * @param left the ValueType of the left part of the operator
@@ -28,9 +32,9 @@ import {
  */
 export function hash(left: ValueType, right: ValueType, op: string): number {
 	return (
-		((left as number) << 20) +
-		((right as number) << 12) +
-		(op.charCodeAt(0) << 8) +
+		((left as number) << SHIFT_FIRST_ARGUMENT_OF_HASH_BY) +
+		((right as number) << SHIFT_SECOND_ARGUMENT_OF_HASH_BY) +
+		(op.charCodeAt(0) << SHIFT_THIRD_ARGUMENT_OF_HASH_BY) +
 		op.charCodeAt(1)
 	);
 }
