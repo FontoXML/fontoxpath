@@ -3,6 +3,7 @@ import {
 	SequenceType,
 	stringToSequenceMultiplicity,
 	stringToValueType,
+	ValueType,
 } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
 
@@ -12,6 +13,10 @@ export function annotateTypeSwitchOperator(
 	caseClausesReturns: SequenceType[],
 	defaultCaseReturn: SequenceType
 ): SequenceType | undefined {
+	// TODO: check this case in more detail (anyKindTest for example returns undefined)
+	if (!argumentType || caseClausesReturns.includes(undefined)) {
+		return undefined;
+	}
 	const caseClausesConditions = astHelper.getChildren(ast, 'typeswitchExprCaseClause');
 	// Do the switch case to see what will be returned
 	for (let i = 0; i < caseClausesReturns.length; i++) {
@@ -50,7 +55,15 @@ function checkComparison(
 	returnType: SequenceType
 ): SequenceType | undefined {
 	const children = astHelper.getChildren(condition, '*');
-	const firstChild = children[0];
+	const firstChild = astHelper.getFirstChild(condition, 'atomicType');
+	// TODO: check this behaviours here as well (happens together with the TODO above)
+	if (!firstChild) {
+		const itemReturn = {
+			type: ValueType.ITEM,
+			mult: SequenceMultiplicity.EXACTLY_ONE,
+		};
+		return itemReturn;
+	}
 	if (
 		stringToValueType(astHelper.getAttribute(firstChild, 'prefix') + ':' + firstChild[2]) ===
 		argumentType.type

@@ -118,7 +118,7 @@ const setOpAnnotateCb = (ast: IAST, context: AnnotationContext): SequenceType =>
 /**
  * The function lambda for annotating general compare operators
  */
-const generalComporeAnnotateCb = (ast: IAST, context: AnnotationContext): SequenceType => {
+const generalCompareAnnotateCb = (ast: IAST, context: AnnotationContext): SequenceType => {
 	annotate(astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST, context);
 	annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, context);
 	return annotateGeneralCompare(ast, context);
@@ -198,12 +198,12 @@ const annotationFunctions: {
 	},
 
 	// Comparison operators
-	equalOp: generalComporeAnnotateCb,
-	notEqualOp: generalComporeAnnotateCb,
-	lessThanOrEqualOp: generalComporeAnnotateCb,
-	lessThanOp: generalComporeAnnotateCb,
-	greaterThanOrEqualOp: generalComporeAnnotateCb,
-	greaterThanOp: generalComporeAnnotateCb,
+	equalOp: generalCompareAnnotateCb,
+	notEqualOp: generalCompareAnnotateCb,
+	lessThanOrEqualOp: generalCompareAnnotateCb,
+	lessThanOp: generalCompareAnnotateCb,
+	greaterThanOrEqualOp: generalCompareAnnotateCb,
+	greaterThanOp: generalCompareAnnotateCb,
 	eqOp: valueCompareAnnotateCb,
 	neOp: valueCompareAnnotateCb,
 	ltOp: valueCompareAnnotateCb,
