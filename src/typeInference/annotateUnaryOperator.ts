@@ -14,9 +14,9 @@ import { AnnotationContext } from './AnnotationContext';
 export function annotateUnaryMinus(
 	ast: IAST,
 	valueType: SequenceType | undefined,
-	context: AnnotationContext
+	_context: AnnotationContext
 ): SequenceType | undefined {
-	// If we don't now the child type, we can't infer the current type
+	// If we don't know the child type, we can't infer the current type
 	if (!valueType) {
 		const type = {
 			type: ValueType.XSNUMERIC,
@@ -60,9 +60,9 @@ export function annotateUnaryMinus(
 export function annotateUnaryPlus(
 	ast: IAST,
 	valueType: SequenceType | undefined,
-	context: AnnotationContext
+	_context: AnnotationContext
 ): SequenceType | undefined {
-	// If we don't now the child type, we can't infer the current type
+	// If we don't know the child type, we can't infer the current type
 	if (!valueType) {
 		const type = {
 			type: ValueType.XSNUMERIC,
