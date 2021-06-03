@@ -21,7 +21,7 @@ export function annotateNamedFunctionRef(
 	};
 
 	// Can't find info about the function without the context.
-	if (!annotationContext || !annotationContext.staticContext) return undefined;
+	if (!annotationContext || !annotationContext.staticContext) return itemReturn;
 
 	// Get qualified function name
 	const qName: QName = astHelper.getQName(astHelper.getFirstChild(ast, 'functionName'));

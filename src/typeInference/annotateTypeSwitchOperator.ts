@@ -48,23 +48,22 @@ function checkComparison(
 	argumentType: SequenceType,
 	returnType: SequenceType
 ): SequenceType | undefined {
-	const firstChild = astHelper.getFirstChild(condition, '*');
+	const children = astHelper.getChildren(condition, '*');
+	const firstChild = children[0];
 	if (
 		stringToValueType(astHelper.getAttribute(firstChild, 'prefix') + ':' + firstChild[2]) ===
 		argumentType.type
 	) {
-		if (condition.length === 2) {
+		if (children.length === 1) {
 			if (argumentType.mult === SequenceMultiplicity.EXACTLY_ONE) {
 				return returnType;
 			}
 		} else {
-			// TODO: verify if this behaviour is correct
-			if (
-				argumentType.mult ===
-				stringToSequenceMultiplicity(
-					astHelper.getFirstChild(condition, 'occurrenceIndicator')[0]
-				)
-			) {
+			const multiplicity = astHelper.getFirstChild(
+				condition,
+				'occurrenceIndicator'
+			)[1] as string;
+			if (argumentType.mult === stringToSequenceMultiplicity(multiplicity)) {
 				return returnType;
 			}
 		}
