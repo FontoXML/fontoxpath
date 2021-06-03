@@ -4,12 +4,10 @@ import {
 	SequenceType,
 	ValueType,
 } from 'fontoxpath/expressions/dataTypes/Value';
-import StaticContext from 'fontoxpath/expressions/StaticContext';
 import astHelper from 'fontoxpath/parsing/astHelper';
 import parseExpression from 'fontoxpath/parsing/parseExpression';
 import annotateAst, { countQueryBodyAnnotations } from 'fontoxpath/typeInference/annotateAST';
 import { AnnotationContext } from 'fontoxpath/typeInference/AnnotationContext';
-import { type } from 'os';
 
 /**
  *
@@ -270,7 +268,7 @@ describe('Annotating function call without context', () => {
 	it('array function call without context', () => {
 		assertValueType('array:size([])', undefined, undefined);
 	});
-	it('array function call without context', () => {
+	it('name function call without context', () => {
 		assertValueType('fn:concat#2', undefined, undefined);
 	});
 });
