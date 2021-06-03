@@ -268,7 +268,7 @@ describe('Annotating function call without context', () => {
 	it('array function call without context', () => {
 		assertValueType('array:size([])', ValueType.ITEM, undefined);
 	});
-	it('array function call without context', () => {
+	it('name function call without context', () => {
 		assertValueType('fn:concat#2', ValueType.ITEM, undefined);
 	});
 });

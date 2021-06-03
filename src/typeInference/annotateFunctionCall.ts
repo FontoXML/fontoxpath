@@ -1,4 +1,5 @@
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
+import QName from '../expressions/dataTypes/valueTypes/QName';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { AnnotationContext } from './AnnotationContext';
 
@@ -22,23 +23,18 @@ export function annotateFunctionCall(
 
 	if (!annotationContext || !annotationContext.staticContext) return itemReturn;
 
-	const func = astHelper.getFirstChild(ast, 'functionName');
-	let functionName: string;
-	let functionPrefix: string;
-	if (func.length === 3) {
-		functionName = func[2] as string;
-		functionPrefix = func[1] as string;
-	} else {
-		functionName = func[1] as string;
-		functionPrefix = '';
-	}
+	// Get qualified function name
+	const qName: QName = astHelper.getQName(astHelper.getFirstChild(ast, 'functionName'));
+	const localName = qName.localName;
+	const prefix = qName.prefix;
+
 	const functionArguments = astHelper.getChildren(astHelper.getFirstChild(ast, 'arguments'), '*');
 
 	// Lookup the namespace URI
 	const resolvedName = annotationContext.staticContext.resolveFunctionName(
 		{
-			localName: functionName,
-			prefix: functionPrefix,
+			localName,
+			prefix,
 		},
 		functionArguments.length
 	);
