@@ -290,7 +290,11 @@ async function runTestCase(testName: string, testCase: Node) {
 			new slimdom.Document(),
 			null,
 			variables,
-			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE, returnType: evaluateXPath.STRING_TYPE },
+			{
+				language: evaluateXPath.XQUERY_3_1_LANGUAGE,
+				returnType: evaluateXPath.STRING_TYPE,
+				annotateAst: true,
+			},
 		];
 
 		try {

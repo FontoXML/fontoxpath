@@ -53,23 +53,20 @@ class Unary extends Expression {
 				return sequenceFactory.empty();
 			}
 
+			const value = atomizedValues[0];
+
+			// We could infer the return type during annotation so we can early return here
+			if (this.type) {
+				let finalValue = this._kind === '+' ? +value.value : -value.value;
+				if (value.type === ValueType.XSBOOLEAN) finalValue = Number.NaN;
+				return sequenceFactory.singleton(createAtomicValue(finalValue, this.type.type));
+			}
+
 			if (atomizedValues.length > 1) {
 				throw new Error(
 					'XPTY0004: The operand to a unary operator must be a sequence with a length less than one'
 				);
 			}
-
-			const value = atomizedValues[0];
-
-			// We could infer the return type during annotation so we can early return here
-			// if (this.type) {
-			// 	return sequenceFactory.singleton(
-			// 		createAtomicValue(
-			// 			this._kind === '+' ? value.value : -value.value,
-			// 			UNARY_LOOKUP[value.type]
-			// 		)
-			// 	);
-			// }
 
 			if (isSubtypeOf(value.type, ValueType.XSUNTYPEDATOMIC)) {
 				const castValue = castToType(value, ValueType.XSDOUBLE).value as number;

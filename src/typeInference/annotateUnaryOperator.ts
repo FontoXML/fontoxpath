@@ -14,9 +14,9 @@ import { AnnotationContext } from './AnnotationContext';
 export function annotateUnaryMinus(
 	ast: IAST,
 	valueType: SequenceType | undefined,
-	context: AnnotationContext
+	_context: AnnotationContext
 ): SequenceType | undefined {
-	// If we don't now the child type, we can't infer the current type
+	// If we don't know the child type, we can't infer the current type
 	if (!valueType) {
 		const type = {
 			type: ValueType.XSNUMERIC,
@@ -36,7 +36,6 @@ export function annotateUnaryMinus(
 		};
 
 		// Attach the type to the AST
-
 		astHelper.insertAttribute(ast, 'type', type);
 		return type;
 	}
@@ -61,18 +60,28 @@ export function annotateUnaryMinus(
 export function annotateUnaryPlus(
 	ast: IAST,
 	valueType: SequenceType | undefined,
-	context: AnnotationContext
+	_context: AnnotationContext
 ): SequenceType | undefined {
+	// If we don't know the child type, we can't infer the current type
 	if (!valueType) {
-		return undefined;
+		const type = {
+			type: ValueType.XSNUMERIC,
+			mult: SequenceMultiplicity.ZERO_OR_MORE,
+		};
+
+		// Attach the type to the AST
+		astHelper.insertAttribute(ast, 'type', type);
+		return type;
 	}
 
+	// Make sure we are actually working with numbers here
 	if (isSubtypeOf(valueType.type, ValueType.XSNUMERIC)) {
 		const type = {
 			type: valueType.type,
 			mult: valueType.mult,
 		};
 
+		// Attach the type to the AST
 		astHelper.insertAttribute(ast, 'type', type);
 		return type;
 	}

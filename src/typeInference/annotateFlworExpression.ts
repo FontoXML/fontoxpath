@@ -118,6 +118,11 @@ function annotateForClause(
 		.getChildren(varTypeNode, '*')
 		.map((element) => annotate(element, annotationContext));
 
+	if (allTypes.includes(undefined)) {
+		// Includes undefined so we can't annotate this
+		return;
+	}
+
 	// filter on unique types
 	const types = filterOnUniqueObjects(allTypes);
 
