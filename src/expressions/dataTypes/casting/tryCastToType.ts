@@ -62,7 +62,7 @@ export function castToPrimitiveType(from: ValueType, to: ValueType): (value: Val
 		case ValueType.XSINTEGER:
 			return castToInteger(instanceOf);
 		case ValueType.XSNUMERIC:
-			return castToNumeric();
+			return castToNumeric(castToPrimitiveType);
 		case ValueType.XSDURATION:
 			return castToDuration(instanceOf);
 		case ValueType.XSYEARMONTHDURATION:

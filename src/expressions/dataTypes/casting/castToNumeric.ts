@@ -1,6 +1,5 @@
 import { ValueType } from '../Value';
 import CastResult from './CastResult';
-import { castToPrimitiveType } from './tryCastToType';
 
 const numericTypes = [
 	ValueType.XSDOUBLE,
@@ -9,14 +8,16 @@ const numericTypes = [
 	ValueType.XSINTEGER,
 ];
 
-export default function castToNumeric(): (value: any) => CastResult {
+export default function castToNumeric(
+	castToPrimitiveType: (_value: any, _type: ValueType) => (value: any) => CastResult
+): (value: any) => CastResult {
 	return (value) => {
-        for (const type of numericTypes) {
-            let result = castToPrimitiveType(value, type)(value);
-            if (result.successful) {
-                return result;
-            }
-        }
+		for (const type of numericTypes) {
+			const result = castToPrimitiveType(value, type)(value);
+			if (result.successful) {
+				return result;
+			}
+		}
 		return undefined;
 	};
 }
