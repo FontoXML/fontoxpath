@@ -67,14 +67,6 @@ class Unary extends Expression {
 					'XPTY0004: The operand to a unary operator must be a sequence with a length less than one'
 				);
 			}
-			// if (this.type) {
-			// 	return sequenceFactory.singleton(
-			// 		createAtomicValue(
-			// 			this._kind === '+' ? value.value : -value.value,
-			// 			UNARY_LOOKUP[value.type]
-			// 		)
-			// 	);
-			// }
 
 			if (isSubtypeOf(value.type, ValueType.XSUNTYPEDATOMIC)) {
 				const castValue = castToType(value, ValueType.XSDOUBLE).value as number;

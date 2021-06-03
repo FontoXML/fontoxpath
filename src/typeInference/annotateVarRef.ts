@@ -11,7 +11,9 @@ import { AnnotationContext } from './AnnotationContext';
 export function annotateVarRef(ast: IAST, annotationContext: AnnotationContext): SequenceType {
 	const varName: string = (ast[1] as IAST)[1] as string;
 	const varType: SequenceType = annotationContext.getVariable(varName);
-	astHelper.insertAttribute(ast, 'type', varType);
+	if (varType) {
+		astHelper.insertAttribute(ast, 'type', varType);
+	}
 
 	return varType;
 }
