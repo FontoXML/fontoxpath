@@ -24,6 +24,7 @@ import Literal from '../expressions/literals/Literal';
 import MapConstructor from '../expressions/maps/MapConstructor';
 import NamedFunctionRef from '../expressions/NamedFunctionRef';
 import BinaryOperator, {
+	BinaryEvaluationFunction,
 	generateBinaryOperatorFunction,
 } from '../expressions/operators/arithmetic/BinaryOperator';
 import Unary from '../expressions/operators/arithmetic/Unary';
@@ -64,7 +65,6 @@ import ElementConstructor from '../expressions/xquery/ElementConstructor';
 import PIConstructor from '../expressions/xquery/PIConstructor';
 import TextConstructor from '../expressions/xquery/TextConstructor';
 import TypeSwitchExpression from '../expressions/xquery/TypeSwitchExpression';
-import { BinaryEvaluationFunction } from '../typeInference/binaryEvaluationFunction';
 import astHelper, { IAST } from './astHelper';
 
 const COMPILATION_OPTIONS = {

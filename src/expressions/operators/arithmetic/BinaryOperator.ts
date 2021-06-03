@@ -2,15 +2,19 @@ import AtomicValue from '../../../expressions/dataTypes/AtomicValue';
 import castToType from '../../../expressions/dataTypes/castToType';
 import createAtomicValue from '../../../expressions/dataTypes/createAtomicValue';
 import isSubtypeOf from '../../../expressions/dataTypes/isSubtypeOf';
-import { ValueType, valueTypeToString } from '../../../expressions/dataTypes/Value';
+import { ValueType, valueTypeToString, ValueValue } from '../../../expressions/dataTypes/Value';
 import ExecutionParameters from '../../../expressions/ExecutionParameters';
-import { BinaryEvaluationFunction } from '../../../typeInference/binaryEvaluationFunction';
 import atomize from '../../dataTypes/atomize';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
 import { SequenceType } from '../../dataTypes/Value';
 import DynamicContext from '../../DynamicContext';
 import Expression from '../../Expression';
 import { hash, operationMap, returnTypeMap } from './BinaryEvaluationFunctionMap';
+
+/**
+ * Lambda helper function to the binary operator
+ */
+export type BinaryEvaluationFunction = (left: ValueValue, right: ValueValue) => ValueValue;
 
 function determineReturnType(typeA: ValueType, typeB: ValueType): ValueType {
 	if (isSubtypeOf(typeA, ValueType.XSINTEGER) && isSubtypeOf(typeB, ValueType.XSINTEGER)) {
