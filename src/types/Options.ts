@@ -63,6 +63,7 @@ export type Options = {
 	/**
 	 * Whether or not the AST should get annotated after parsing an expression. The annotation adds
 	 * additional type information to the AST.
+	 * @beta
 	 */
 	annotateAst?: boolean;
 
