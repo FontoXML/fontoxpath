@@ -16,12 +16,7 @@ export function annotateSetOperator(
 	left: SequenceType,
 	right: SequenceType,
 	context: AnnotationContext
-): SequenceType | undefined {
-	if (!left || !right) return undefined;
-	if (!isSubtypeOf(left.type, ValueType.NODE) || !isSubtypeOf(right.type, ValueType.NODE)) {
-		return undefined;
-	}
-
+): SequenceType {
 	switch (ast[0]) {
 		case 'unionOp':
 			return annotateUnionOperator(ast, context);
