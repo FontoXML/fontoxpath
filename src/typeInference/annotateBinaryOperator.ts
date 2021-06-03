@@ -6,10 +6,9 @@ import {
 } from '../expressions/dataTypes/Value';
 import {
 	generateBinaryOperatorType,
-	getBinaryPrefabOperator,
 } from '../expressions/operators/arithmetic/BinaryOperator';
 import astHelper, { IAST } from '../parsing/astHelper';
-import { AnnotationContext } from './annotateAST';
+import { AnnotationContext } from './AnnotationContext';
 
 /**
  * Annotate the binary operators on the numeric and date types

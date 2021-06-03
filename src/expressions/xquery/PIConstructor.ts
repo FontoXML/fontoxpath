@@ -1,4 +1,7 @@
-import { TinyProcessingInstructionNode } from '../../domClone/Pointer';
+import {
+	ProcessingInstructionNodePointer,
+	TinyProcessingInstructionNode,
+} from '../../domClone/Pointer';
 import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
@@ -12,13 +15,13 @@ import Specificity from '../Specificity';
 import { IterationHint, ready } from '../util/iterators';
 import { evaluateNCNameExpression } from './nameExpression';
 
-function assertValidTarget(target) {
+function assertValidTarget(target: string) {
 	if (/^xml$/i.test(target)) {
 		throw new Error(`XQDY0064: The target of a created PI may not be "${target}"`);
 	}
 }
 
-function createPIPointer(target: string, data: string) {
+function createPIPointer(target: string, data: string): ProcessingInstructionNodePointer {
 	const tinyPINode: TinyProcessingInstructionNode = {
 		data,
 		isTinyNode: true,

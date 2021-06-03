@@ -1,7 +1,6 @@
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
-import StaticContext from '../expressions/StaticContext';
 import astHelper, { IAST } from '../parsing/astHelper';
-import { AnnotationContext } from './annotateAST';
+import { AnnotationContext } from './AnnotationContext';
 
 /**
  * Annotate the arrowExpr by extracting the function info from the static context
@@ -13,18 +12,17 @@ import { AnnotationContext } from './annotateAST';
  */
 export function annotateArrowExpr(
 	ast: IAST,
-	functionCallExpr: SequenceType,
-	context: AnnotationContext
+	annotationContext: AnnotationContext
 ): SequenceType | undefined {
 	// We need the context to lookup the function information
-	if (!context.staticContext) return undefined;
-
-	const func = astHelper.getFirstChild(ast, 'EQName');
-
 	const itemReturn = {
 		type: ValueType.ITEM,
 		mult: SequenceMultiplicity.EXACTLY_ONE,
 	};
+	if (!annotationContext || !annotationContext.staticContext) return itemReturn;
+
+	const func = astHelper.getFirstChild(ast, 'EQName');
+
 
 	// There may be no name for the function
 	if (!func) {
@@ -46,10 +44,10 @@ export function annotateArrowExpr(
 	const functionArguments = astHelper.getChildren(astHelper.getFirstChild(ast, 'arguments'), '*');
 
 	// Lookup the namespace URI
-	const resolvedName = context.staticContext.resolveFunctionName(
+	const resolvedName = annotationContext.staticContext.resolveFunctionName(
 		{
 			localName: functionName,
-			prefix: functionPrefix['prefix'] as string,
+			prefix: functionPrefix,
 		},
 		functionArguments.length
 	);
@@ -60,7 +58,7 @@ export function annotateArrowExpr(
 	}
 
 	// Lookup the function properties (return type)
-	const functionProps = context.staticContext.lookupFunction(
+	const functionProps = annotationContext.staticContext.lookupFunction(
 		resolvedName.namespaceURI,
 		resolvedName.localName,
 		// Since this is an arrowExpr, we add one for the implicit argument

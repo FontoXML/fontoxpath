@@ -10,7 +10,7 @@ import {
 
 // Format used is JsonML (http://www.jsonml.org/)
 
-interface JsonML extends Array<string | object | JsonML> {
+interface JsonML extends Array<string | { [key: string]: string } | JsonML> {
 	0: string;
 }
 
@@ -150,7 +150,7 @@ function serialize(node: Node): JsonML | string {
 			const jsonml = [node.nodeName] as JsonML;
 
 			if ((node as Element).attributes && (node as Element).attributes.length) {
-				const attributes = {};
+				const attributes: { [key: string]: string} = {};
 
 				for (let i = 0, l = (node as Element).attributes.length; i < l; ++i) {
 					const attr = (node as Element).attributes[i];

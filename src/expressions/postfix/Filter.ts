@@ -1,11 +1,11 @@
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { ValueType } from '../dataTypes/Value';
+import Value, { ValueType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression from '../Expression';
-import { DONE_TOKEN, IterationHint, ready } from '../util/iterators';
+import { DONE_TOKEN, IterationHint, IterationResult, ready } from '../util/iterators';
 
 class Filter extends Expression {
 	private _filterExpression: Expression;
@@ -84,7 +84,7 @@ class Filter extends Expression {
 		}
 
 		const iteratorToFilter = valuesToFilter.value;
-		let iteratorItem = null;
+		let iteratorItem: IterationResult<Value> = null;
 		let i = 0;
 		let filterResultSequence: ISequence = null;
 		return sequenceFactory.create({

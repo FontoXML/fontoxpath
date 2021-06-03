@@ -1,6 +1,6 @@
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
-import { AnnotationContext } from './annotateAST';
+import { AnnotationContext } from './AnnotationContext';
 
 /**
  * Annotate the ast by inserting boolean sequence type of exactly one multiplicity.

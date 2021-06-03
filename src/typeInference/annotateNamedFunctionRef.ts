@@ -1,7 +1,7 @@
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
-import StaticContext from '../expressions/StaticContext';
+import QName from '../expressions/dataTypes/valueTypes/QName';
 import astHelper, { IAST } from '../parsing/astHelper';
-import { AnnotationContext } from './annotateAST';
+import { AnnotationContext } from '../typeInference/AnnotationContext';
 
 /**
  * Annotate named function references by extracting the function info from the static context
@@ -13,7 +13,7 @@ import { AnnotationContext } from './annotateAST';
  */
 export function annotateNamedFunctionRef(
 	ast: IAST,
-	context: AnnotationContext
+	annotationContext: AnnotationContext
 ): SequenceType | undefined {
 	const itemReturn = {
 		type: ValueType.ITEM,
@@ -21,21 +21,21 @@ export function annotateNamedFunctionRef(
 	};
 
 	// Can't find info about the function without the context.
-	if (!context.staticContext) return undefined;
+	if (!annotationContext || !annotationContext.staticContext) return undefined;
 
 	// Get qualified function name
-	const functionQName = astHelper.getQName(astHelper.getFirstChild(ast, 'functionName'));
+	const qName: QName = astHelper.getQName(astHelper.getFirstChild(ast, 'functionName'));
+	let localName = qName.localName;
+	let namespaceURI = qName.namespaceURI;
+	const prefix = qName.prefix;
 
-	// Spice the components up
-	let localName = functionQName[0];
-	let namespaceURI = functionQName[1];
-	const prefix = functionQName[2];
-
-	const arity = astHelper.getFirstChild(ast, 'integerConstantExpr')[1][1];
+	const arity: number = Number(
+		astHelper.followPath(ast, ['integerConstantExpr', 'value'])[1] as string
+	);
 
 	// If there is no namespace URI, resolve the function name
 	if (!namespaceURI) {
-		const functionName = context.staticContext.resolveFunctionName(
+		const functionName = annotationContext.staticContext.resolveFunctionName(
 			{ localName, prefix },
 			arity
 		);
@@ -51,7 +51,7 @@ export function annotateNamedFunctionRef(
 
 	// With all components there, look up the function properties
 	const functionProperties =
-		context.staticContext.lookupFunction(namespaceURI, localName, arity) || null;
+		annotationContext.staticContext.lookupFunction(namespaceURI, localName, arity) || null;
 
 	// If there are no function properties, there is no type inference
 	if (!functionProperties) {

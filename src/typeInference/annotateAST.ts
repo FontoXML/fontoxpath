@@ -1,5 +1,4 @@
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
-import StaticContext from '../expressions/StaticContext';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { annotateArrayConstructor } from './annotateArrayConstructor';
 import { annotateArrowExpr } from './annotateArrowExpr';
@@ -12,6 +11,7 @@ import {
 } from './annotateCompareOperator';
 import { annotateContextItemExpr } from './annotateContextItemExpr';
 import { annotateDynamicFunctionInvocationExpr } from './annotateDynamicFunctionInvocationExpr';
+import { annotateFlworExpression } from './annotateFlworExpression';
 import { annotateFunctionCall } from './annotateFunctionCall';
 import { annotateIfThenElseExpr } from './annotateIfThenElseExpr';
 import { annotateInstanceOfExpr } from './annotateInstanceOfExpr';
@@ -28,12 +28,8 @@ import { annotateStringConcatenateOperator } from './annotateStringConcatenateOp
 import { annotateTypeSwitchOperator } from './annotateTypeSwitchOperator';
 import { annotateUnaryLookup } from './annotateUnaryLookup';
 import { annotateUnaryMinus, annotateUnaryPlus } from './annotateUnaryOperator';
-
-export type AnnotationContext = {
-	query?: string;
-	staticContext?: StaticContext;
-};
-
+import { annotateVarRef } from './annotateVarRef';
+import { AnnotationContext } from './AnnotationContext';
 /**
  * Recursively traverse the AST in the depth first, pre-order to infer type and annotate AST;
  * Annotates as much type information as possible to the AST nodes.
@@ -65,6 +61,7 @@ export function countQueryBodyAnnotations(
 
 	return [total, annotated];
 }
+
 /**
  * Recursively traverse the AST in the depth first, pre-order to infer type and annotate AST;
  * Annotates as much type information as possible to the AST nodes.
@@ -76,11 +73,6 @@ export function countQueryBodyAnnotations(
  * @returns The type of the AST node or `undefined` when the type cannot be annotated.
  */
 function annotate(ast: IAST, context: AnnotationContext): SequenceType | undefined {
-	// Check if we actually have an AST
-	if (!ast) {
-		return undefined;
-	}
-
 	const astNodeName = ast[0];
 
 	const annotationFunction = annotationFunctions[astNodeName];
@@ -88,7 +80,9 @@ function annotate(ast: IAST, context: AnnotationContext): SequenceType | undefin
 
 	// Current node cannot be annotated, but maybe deeper ones can.
 	for (let i = 1; i < ast.length; i++) {
-		annotate(ast[i] as IAST, context);
+		if (ast[i]) {
+			annotate(ast[i] as IAST, context);
+		}
 	}
 
 	return undefined;
@@ -223,7 +217,7 @@ const annotationFunctions: {
 	// Path Expression
 	pathExpr: (ast: IAST, context: AnnotationContext): SequenceType => {
 		const root = astHelper.getFirstChild(ast, 'rootExpr');
-		if (root) annotate(root[1] as IAST, context);
+		if (root && root[1]) annotate(root[1] as IAST, context);
 		astHelper.getChildren(ast, 'stepExpr').map((b) => annotate(b, context));
 		return annotatePathExpr(ast, context);
 	},
@@ -295,24 +289,22 @@ const annotationFunctions: {
 	functionCallExpr: (ast: IAST, context: AnnotationContext): SequenceType => {
 		const functionArguments = astHelper.getFirstChild(ast, 'arguments');
 		const argumentTypeNodes = astHelper.getChildren(functionArguments, '*');
-		const argumentTypes: SequenceType[] = argumentTypeNodes.map((x) => annotate(x, context));
+		argumentTypeNodes.map((x) => annotate(x, context));
 
-		return annotateFunctionCall(ast, argumentTypes, context);
+		return annotateFunctionCall(ast, context);
 	},
 	arrowExpr: (ast: IAST, context: AnnotationContext): SequenceType => {
-		const functionCallExpr: SequenceType = annotate(
-			astHelper.getFirstChild(ast, 'argExpr')[1] as IAST,
-			context
-		);
+		annotate(astHelper.getFirstChild(ast, 'argExpr')[1] as IAST, context);
 
-		return annotateArrowExpr(ast, functionCallExpr, context);
+		return annotateArrowExpr(ast, context);
 	},
 	dynamicFunctionInvocationExpr: (ast: IAST, context: AnnotationContext): SequenceType => {
 		const functionItem: SequenceType = annotate(
 			astHelper.followPath(ast, ['functionItem', '*']),
 			context
 		);
-		const args: SequenceType = annotate(astHelper.getFirstChild(ast, 'arguments'), context);
+		const argNodes = astHelper.getFirstChild(ast, 'arguments');
+		const args: SequenceType = argNodes ? annotate(argNodes, context) : undefined;
 		return annotateDynamicFunctionInvocationExpr(ast, context, functionItem, args);
 	},
 	namedFunctionRef: (ast: IAST, context: AnnotationContext): SequenceType => {
@@ -370,7 +362,8 @@ const annotationFunctions: {
 		return annotateQuantifiedExpr(ast, context);
 	},
 	'x:stackTrace': (ast: IAST, context: AnnotationContext): SequenceType => {
-		return annotate(astHelper.getChildren(ast, '*')[2], context);
+		const children = astHelper.getChildren(ast, '*');
+		return annotate(children[0], context);
 	},
 	queryBody: (ast: IAST, context: AnnotationContext): SequenceType => {
 		const type = annotate(ast[1] as IAST, context);
@@ -378,5 +371,11 @@ const annotationFunctions: {
 			astHelper.insertAttribute(ast, 'type', type);
 		}
 		return type;
+	},
+	flworExpr: (ast: IAST, context: AnnotationContext): SequenceType => {
+		return annotateFlworExpression(ast, context, annotate);
+	},
+	varRef: (ast: IAST, context: AnnotationContext): SequenceType => {
+		return annotateVarRef(ast as IAST, context);
 	},
 };

@@ -2,7 +2,7 @@ import atomize from '../dataTypes/atomize';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value, { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
+import Value, { ValueType } from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
 import ExecutionParameters from '../ExecutionParameters';
 import StaticContext from '../StaticContext';
@@ -21,7 +21,7 @@ const NC_NAME_CHAR = new RegExp(
 );
 const NC_NAME = new RegExp(`${NC_NAME_START_CHAR.source}${NC_NAME_CHAR.source}*`, 'g');
 
-const isValidNCName = (name) => {
+const isValidNCName = (name: string) => {
 	const matches = name.match(NC_NAME);
 	return matches ? matches.length === 1 : false;
 };

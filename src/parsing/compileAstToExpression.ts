@@ -328,7 +328,7 @@ function unwrapBinaryOperator(
 	ast: IAST,
 	compilationOptions: CompilationOptions
 ) {
-	const compiledAstNodes = [];
+	const compiledAstNodes: Expression[] = [];
 	function unwrapInner(innerAst: IAST) {
 		const firstOperand = astHelper.getFirstChild(innerAst, 'firstOperand')[1] as IAST;
 		const secondOperand = astHelper.getFirstChild(innerAst, 'secondOperand')[1] as IAST;
@@ -451,7 +451,7 @@ function compare(ast: IAST, compilationOptions: CompilationOptions) {
 }
 
 function IfThenElseExpr(ast: IAST, compilationOptions: CompilationOptions) {
-	const retType = astHelper.getAttribute(ast, 'type');
+	const retType = astHelper.getAttribute(ast, 'type') as SequenceType;
 	return new IfExpression(
 		compile(
 			astHelper.getFirstChild(astHelper.getFirstChild(ast, 'ifClause'), '*'),
@@ -465,7 +465,7 @@ function IfThenElseExpr(ast: IAST, compilationOptions: CompilationOptions) {
 			astHelper.getFirstChild(astHelper.getFirstChild(ast, 'elseClause'), '*'),
 			compilationOptions
 		) as PossiblyUpdatingExpression,
-		retType ? (retType[1] as SequenceType) : undefined
+		retType
 	);
 }
 
@@ -692,7 +692,7 @@ function dynamicFunctionInvocationExpr(ast: IAST, compilationOptions: Compilatio
 	const functionItemContent = astHelper.followPath(ast, ['functionItem', '*']);
 	const retType = astHelper.getAttribute(ast, 'type') as SequenceType;
 	const argumentsAst = astHelper.getFirstChild(ast, 'arguments');
-	let args = [];
+	let args: Expression[] = [];
 	if (argumentsAst) {
 		const functionArguments = astHelper.getChildren(argumentsAst, '*');
 		args = functionArguments.map((arg) =>
@@ -718,7 +718,7 @@ function inlineFunction(
 ) {
 	const params = astHelper.getChildren(astHelper.getFirstChild(ast, 'paramList'), '*');
 	const functionBody = astHelper.followPath(ast, ['functionBody', '*']);
-	const typeNode = astHelper.followPath(ast, ['type']);
+	const type = astHelper.getAttribute(ast, 'type') as SequenceType;
 
 	return new InlineFunction(
 		params.map((param) => {
@@ -734,7 +734,7 @@ function inlineFunction(
 		astHelper.getTypeDeclaration(ast),
 		functionBody
 			? (compile(functionBody, compilationOptions) as PossiblyUpdatingExpression)
-			: new SequenceOperator([], typeNode ? (typeNode[1] as SequenceType) : undefined)
+			: new SequenceOperator([], type)
 	);
 }
 
@@ -1321,7 +1321,7 @@ function computedPIConstructor(ast: IAST, compilationOptions: CompilationOptions
 	const targetExpr = astHelper.getFirstChild(ast, 'piTargetExpr');
 	const target = astHelper.getFirstChild(ast, 'piTarget');
 	const piValueExpr = astHelper.getFirstChild(ast, 'piValueExpr');
-	const typeNode = astHelper.followPath(ast, ['type']);
+	const type = astHelper.getAttribute(ast, 'type') as SequenceType;
 
 	return new PIConstructor(
 		{
@@ -1338,7 +1338,7 @@ function computedPIConstructor(ast: IAST, compilationOptions: CompilationOptions
 					astHelper.getFirstChild(piValueExpr, '*'),
 					disallowUpdating(compilationOptions)
 			  )
-			: new SequenceOperator([], typeNode ? (typeNode[1] as SequenceType) : undefined)
+			: new SequenceOperator([], type)
 	);
 }
 

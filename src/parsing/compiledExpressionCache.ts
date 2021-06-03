@@ -72,7 +72,7 @@ export function getStaticCompilationResultFromCache(
 	selectorString: string,
 	language: string,
 	namespaceResolver: (namespace: string) => string | null,
-	variables: object,
+	variables: { [varName: string]: any },
 	moduleImports: { [x: string]: string },
 	debug: boolean,
 	defaultFunctionNamespaceURI: string,

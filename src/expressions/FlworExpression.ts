@@ -12,6 +12,7 @@ import StaticContext from './StaticContext';
 import UpdatingExpressionResult from './UpdatingExpressionResult';
 import createSingleValueIterator from './util/createSingleValueIterator';
 import { DONE_TOKEN, IIterator, IterationHint, ready } from './util/iterators';
+import { IPendingUpdate } from './xquery-update/IPendingUpdate';
 import { mergeUpdates } from './xquery-update/pulRoutines';
 import { errXUST0001 } from './xquery-update/XQueryUpdateFacilityErrors';
 
@@ -42,7 +43,7 @@ abstract class FlworExpression extends Expression {
 		outerDynamicContextIterator: IIterator<DynamicContext>,
 		executionParameters: ExecutionParameters
 	): IIterator<UpdatingExpressionResult> {
-		let updateList = [];
+		let updateList: IPendingUpdate[] = [];
 		const sequence = this.doFlworExpression(
 			outerDynamicContext,
 			outerDynamicContextIterator,
@@ -131,7 +132,7 @@ abstract class FlworExpression extends Expression {
 					);
 				}
 
-				let currentSequenceIterator = null;
+				let currentSequenceIterator: IIterator<Value> = null;
 				return sequenceFactory.create({
 					next: (hint) => {
 						while (true) {
@@ -204,7 +205,7 @@ abstract class FlworExpression extends Expression {
 						executionParameters
 					);
 				}
-				let currentSequenceIterator = null;
+				let currentSequenceIterator: IIterator<Value> = null;
 				return sequenceFactory.create({
 					next: (_hint) => {
 						while (true) {
@@ -220,7 +221,7 @@ abstract class FlworExpression extends Expression {
 								).value;
 							}
 
-							const nextValue = currentSequenceIterator.next();
+							const nextValue = currentSequenceIterator.next(IterationHint.NONE);
 							if (nextValue.done) {
 								currentSequenceIterator = null;
 								continue;

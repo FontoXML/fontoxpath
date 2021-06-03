@@ -16,6 +16,13 @@ import evaluateXPathToString from './evaluateXPathToString';
 import evaluateXPathToStrings from './evaluateXPathToStrings';
 import executePendingUpdateList from './executePendingUpdateList';
 import { getBucketsForNode } from './getBuckets';
+import compileXPathToJavaScript from './jsCodegen/compileXPathToJavaScript';
+import executeJavaScriptCompiledXPath from './jsCodegen/executeJavaScriptCompiledXPath';
+import {
+	IAstAccepted,
+	IAstRejected,
+	JavaScriptCompiledXPathResult,
+} from './jsCodegen/JavaScriptCompiledXPath';
 import INodesFactory from './nodesFactory/INodesFactory';
 import ISimpleNodesFactory from './nodesFactory/ISimpleNodesFactory';
 import parseScript from './parseScript';
@@ -32,6 +39,7 @@ import precompileXPath from './precompileXPath';
 import registerCustomXPathFunction from './registerCustomXPathFunction';
 import registerXQueryModule from './registerXQueryModule';
 import annotateAst from './typeInference/annotateAST';
+import { AnnotationContext } from './typeInference/AnnotationContext';
 // We do want to deviate from the actual name which is used internally as we do not want to expose
 // the types which it uses in the public API
 // tslint:disable-next-line: match-default-export-name
@@ -68,7 +76,7 @@ function parseXPath(xpathString: string) {
 
 	const ast = parseExpression(xpathString, { allowXQuery: false });
 
-	annotateAst(ast, { staticContext: undefined });
+	annotateAst(ast, new AnnotationContext(undefined));
 
 	const queryBody = astHelper.followPath(ast, ['mainModule', 'queryBody', '*']);
 
@@ -120,16 +128,17 @@ function compareSpecificity(xpathStringA: string, xpathStringB: string): -1 | 0 
 const domFacade = new ExternalDomFacade() as IDomFacade;
 
 // This declaration is needed, as we don't depend anymore on lib.dom.
-declare var fontoxpathGlobal;
+declare var fontoxpathGlobal: { [s: string]: any };
 
 /* istanbul ignore next */
 if (typeof fontoxpathGlobal !== 'undefined') {
 	fontoxpathGlobal['compareSpecificity'] = compareSpecificity;
+	fontoxpathGlobal['compileXPathToJavaScript'] = compileXPathToJavaScript;
 	fontoxpathGlobal['domFacade'] = domFacade;
 	fontoxpathGlobal['evaluateXPath'] = evaluateXPath;
 	fontoxpathGlobal['evaluateXPathToArray'] = evaluateXPathToArray;
-	fontoxpathGlobal['evaluateXPathToBoolean'] = evaluateXPathToBoolean;
 	fontoxpathGlobal['evaluateXPathToAsyncIterator'] = evaluateXPathToAsyncIterator;
+	fontoxpathGlobal['evaluateXPathToBoolean'] = evaluateXPathToBoolean;
 	fontoxpathGlobal['evaluateXPathToFirstNode'] = evaluateXPathToFirstNode;
 	fontoxpathGlobal['evaluateXPathToMap'] = evaluateXPathToMap;
 	fontoxpathGlobal['evaluateXPathToNodes'] = evaluateXPathToNodes;
@@ -139,6 +148,7 @@ if (typeof fontoxpathGlobal !== 'undefined') {
 	fontoxpathGlobal['evaluateXPathToStrings'] = evaluateXPathToStrings;
 	fontoxpathGlobal['evaluateUpdatingExpression'] = evaluateUpdatingExpression;
 	fontoxpathGlobal['evaluateUpdatingExpressionSync'] = evaluateUpdatingExpressionSync;
+	fontoxpathGlobal['executeJavaScriptCompiledXPath'] = executeJavaScriptCompiledXPath;
 	fontoxpathGlobal['executePendingUpdateList'] = executePendingUpdateList;
 	fontoxpathGlobal['getBucketForSelector'] = getBucketForSelector;
 	fontoxpathGlobal['getBucketsForNode'] = getBucketsForNode;
@@ -180,11 +190,14 @@ export {
 	EvaluateXPath,
 	ExternalTypedValueFactory,
 	FunctionNameResolver,
+	IAstAccepted,
+	IAstRejected,
 	IDocumentWriter,
 	IDomFacade,
 	INodesFactory,
 	IReturnTypes,
 	ISimpleNodesFactory,
+	JavaScriptCompiledXPathResult,
 	Language,
 	LexicalQualifiedName,
 	Logger,
@@ -201,6 +214,7 @@ export {
 	ValidValue,
 	XPathPerformanceMeasurement,
 	compareSpecificity,
+	compileXPathToJavaScript,
 	domFacade,
 	evaluateUpdatingExpression,
 	evaluateUpdatingExpressionSync,
@@ -215,6 +229,7 @@ export {
 	evaluateXPathToNumbers,
 	evaluateXPathToString,
 	evaluateXPathToStrings,
+	executeJavaScriptCompiledXPath,
 	executePendingUpdateList,
 	getBucketForSelector,
 	getBucketsForNode,
