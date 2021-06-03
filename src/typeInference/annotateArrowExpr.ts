@@ -17,7 +17,10 @@ export function annotateArrowExpr(ast: IAST, annotationContext: AnnotationContex
 		type: ValueType.ITEM,
 		mult: SequenceMultiplicity.EXACTLY_ONE,
 	};
-	if (!annotationContext || !annotationContext.staticContext) return itemReturn;
+	if (!annotationContext || !annotationContext.staticContext) {
+		astHelper.insertAttribute(ast, 'type', itemReturn);
+		return itemReturn;
+	}
 
 	const func = astHelper.getFirstChild(ast, 'EQName');
 

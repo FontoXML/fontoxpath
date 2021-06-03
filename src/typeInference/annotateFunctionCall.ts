@@ -21,7 +21,10 @@ export function annotateFunctionCall(
 		mult: SequenceMultiplicity.EXACTLY_ONE,
 	};
 
-	if (!annotationContext || !annotationContext.staticContext) return itemReturn;
+	if (!annotationContext || !annotationContext.staticContext) {
+		astHelper.insertAttribute(ast, 'type', itemReturn);
+		return itemReturn;
+	}
 
 	// Get qualified function name
 	const qName: QName = astHelper.getQName(astHelper.getFirstChild(ast, 'functionName'));

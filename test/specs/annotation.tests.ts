@@ -336,7 +336,7 @@ describe('Annotation counting', () => {
 		annotateAst(ast, context);
 		const [total, annotated] = countQueryBodyAnnotations(ast);
 		console.log(total, annotated);
-		chai.assert.equal(annotated, 2);
+		chai.assert.equal(annotated, 3);
 		chai.assert.equal(total, 5);
 	});
 });
