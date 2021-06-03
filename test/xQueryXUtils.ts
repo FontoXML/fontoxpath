@@ -95,7 +95,7 @@ export function buildTestCase(
 					expected,
 					actual,
 				},
-				{ annotateAst: true }
+				{ annotateAst: false }
 			)
 		) {
 			try {
