@@ -1,4 +1,4 @@
-import { SequenceType } from '../expressions/dataTypes/Value';
+import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { AnnotationContext } from './AnnotationContext';
 
@@ -14,15 +14,20 @@ import { AnnotationContext } from './AnnotationContext';
 export function annotateIfThenElseExpr(
 	ast: IAST,
 	elseClause: SequenceType,
-	thenClause: SequenceType,
-	context: AnnotationContext
+	thenClause: SequenceType
 ): SequenceType {
 	if (!elseClause || !thenClause) {
-		return undefined;
+		return {
+			type: ValueType.ITEM,
+			mult: SequenceMultiplicity.ZERO_OR_MORE,
+		};
 	}
 	if (elseClause.type === thenClause.type && elseClause.mult === thenClause.mult) {
 		astHelper.insertAttribute(ast, 'type', elseClause);
 		return elseClause;
 	}
-	return undefined;
+	return {
+		type: ValueType.ITEM,
+		mult: SequenceMultiplicity.ZERO_OR_MORE,
+	};
 }

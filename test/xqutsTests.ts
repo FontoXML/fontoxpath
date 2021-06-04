@@ -293,7 +293,7 @@ async function runTestCase(testName: string, testCase: Node) {
 			{
 				language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 				returnType: evaluateXPath.STRING_TYPE,
-				annotateAst: true,
+				annotateAst: false,
 			},
 		];
 

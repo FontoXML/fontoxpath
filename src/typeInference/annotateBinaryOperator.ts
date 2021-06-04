@@ -1,4 +1,9 @@
-import { SequenceType, sequenceTypeToString, ValueType } from '../expressions/dataTypes/Value';
+import {
+	SequenceMultiplicity,
+	SequenceType,
+	sequenceTypeToString,
+	ValueType,
+} from '../expressions/dataTypes/Value';
 import { generateBinaryOperatorType } from '../expressions/operators/arithmetic/BinaryOperator';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { AnnotationContext } from './AnnotationContext';
@@ -21,10 +26,13 @@ export function annotateBinOp(
 	right: SequenceType | undefined,
 	operator: string,
 	context: AnnotationContext
-): SequenceType | undefined {
+): SequenceType {
 	// If we don't have the left and right type, we cannot infer the current type
 	if (!left || !right) {
-		return undefined;
+		return {
+			type: ValueType.XSNUMERIC,
+			mult: SequenceMultiplicity.EXACTLY_ONE,
+		};
 	}
 
 	// TODO: Fix this hack (pathExpr returns a node in 1 case, which cannot be added to an integer)

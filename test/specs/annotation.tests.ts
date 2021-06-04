@@ -137,14 +137,14 @@ describe('annotate Sequence', () => {
 
 describe('Annotate maps', () => {
 	it('mapConstructor', () => assertValueType('map{a:1, b:2}', ValueType.MAP, undefined));
-	it('simpleMapExpr', () => assertValueType('$a ! ( //b)', ValueType.MAP, undefined));
+	it('simpleMapExpr', () => assertValueType('$a ! ( //b)', undefined, undefined));
 });
 
 describe('Annotating ifThenElse expressions', () => {
 	it('ifThenElse type is known', () =>
 		assertValueType('if (3) then 3 else 5', ValueType.XSINTEGER, undefined));
 	it('ifThenElse type is not known', () =>
-		assertValueType('if (3) then "hello" else 5', undefined, undefined));
+		assertValueType('if (3) then "hello" else 5', ValueType.ITEM, undefined));
 });
 
 describe('Annotate quantifiedExpr', () => {
@@ -154,7 +154,7 @@ describe('Annotate quantifiedExpr', () => {
 
 describe('Annotate arrowExpr', () => {
 	it('annotate tailFunction', () =>
-		assertValueType('array:tail([1]) => array:size()', undefined, undefined));
+		assertValueType('array:tail([1]) => array:size()', ValueType.ITEM, undefined));
 });
 
 describe('Annotate dynamic function invocation expression test', () => {
@@ -193,13 +193,13 @@ describe('Annotating Comparison operator', () => {
 // Halted: left and right is node returns undefined
 describe('Annotating Set operator', () => {
 	it('union of non nodes test', () => {
-		assertValueType('array {a} union array {c}', undefined, undefined);
+		assertValueType('array {a} union array {c}', ValueType.NODE, undefined);
 	});
 	it('intersect of non nodes test', () => {
-		assertValueType('array {a, b} intersect array {b, c}', undefined, undefined);
+		assertValueType('array {a, b} intersect array {b, c}', ValueType.NODE, undefined);
 	});
 	it('except of non nodes test', () => {
-		assertValueType('[a] except [a]', undefined, undefined);
+		assertValueType('[a] except [a]', ValueType.NODE, undefined);
 	});
 
 	// Generating left and right nodes using pathExpr (which returns a node)
@@ -266,10 +266,10 @@ describe('Annotating castable', () => {
 
 describe('Annotating function call without context', () => {
 	it('array function call without context', () => {
-		assertValueType('array:size([])', undefined, undefined);
+		assertValueType('array:size([])', ValueType.ITEM, undefined);
 	});
 	it('name function call without context', () => {
-		assertValueType('fn:concat#2', undefined, undefined);
+		assertValueType('fn:concat#2', ValueType.ITEM, undefined);
 	});
 });
 
@@ -397,7 +397,7 @@ describe('annotating varRef', () => {
 		assertValueType('$x + 1', ValueType.XSINTEGER, context);
 	});
 	it('annotate varRef not in context', () => {
-		assertValueType('$x + $l', undefined, context);
+		assertValueType('$x + $l', ValueType.XSNUMERIC, context);
 	});
 	it('annotate varRef throws when types incorrect', () => {
 		chai.assert.throws(() => assertValueType('$x + $z', undefined, context));

@@ -15,7 +15,7 @@ export function annotateUnaryMinus(
 	ast: IAST,
 	valueType: SequenceType | undefined,
 	_context: AnnotationContext
-): SequenceType | undefined {
+): SequenceType {
 	// If we don't know the child type, we can't infer the current type
 	if (!valueType) {
 		const type = {
@@ -60,8 +60,8 @@ export function annotateUnaryMinus(
 export function annotateUnaryPlus(
 	ast: IAST,
 	valueType: SequenceType | undefined,
-	_context: AnnotationContext
-): SequenceType | undefined {
+	context: AnnotationContext
+): SequenceType {
 	// If we don't know the child type, we can't infer the current type
 	if (!valueType) {
 		const type = {

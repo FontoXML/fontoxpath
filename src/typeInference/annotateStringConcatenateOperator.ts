@@ -1,11 +1,13 @@
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
-import { AnnotationContext } from './AnnotationContext';
 
-export function annotateStringConcatenateOperator(
-	ast: IAST,
-	context: AnnotationContext
-): SequenceType | undefined {
+/**
+ * Concatenates two strings to each other, hence it always returns a string.
+ * @param ast the AST to be annotated.
+ * @param context
+ * @returns a SequenceType with type XSSTRING and multiplicity EXACTLY_ONE.
+ */
+export function annotateStringConcatenateOperator(ast: IAST): SequenceType {
 	const seqType = {
 		type: ValueType.XSSTRING,
 		mult: SequenceMultiplicity.EXACTLY_ONE,

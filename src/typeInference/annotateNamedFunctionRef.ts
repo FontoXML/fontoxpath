@@ -1,4 +1,4 @@
-import { SequenceType } from '../expressions/dataTypes/Value';
+import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import QName from '../expressions/dataTypes/valueTypes/QName';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { AnnotationContext } from '../typeInference/AnnotationContext';
@@ -14,9 +14,14 @@ import { AnnotationContext } from '../typeInference/AnnotationContext';
 export function annotateNamedFunctionRef(
 	ast: IAST,
 	annotationContext: AnnotationContext
-): SequenceType | undefined {
+): SequenceType {
 	// Can't find info about the function without the context.
-	if (!annotationContext || !annotationContext.staticContext) return undefined;
+	if (!annotationContext || !annotationContext.staticContext) {
+		return {
+			type: ValueType.ITEM,
+			mult: SequenceMultiplicity.ZERO_OR_MORE,
+		};
+	}
 
 	// Get qualified function name
 	const qName: QName = astHelper.getQName(astHelper.getFirstChild(ast, 'functionName'));
@@ -36,7 +41,10 @@ export function annotateNamedFunctionRef(
 		);
 
 		if (!functionName) {
-			return undefined;
+			return {
+				type: ValueType.ITEM,
+				mult: SequenceMultiplicity.ZERO_OR_MORE,
+			};
 		}
 
 		localName = functionName.localName;
@@ -48,7 +56,12 @@ export function annotateNamedFunctionRef(
 		annotationContext.staticContext.lookupFunction(namespaceURI, localName, arity) || null;
 
 	// If there are no function properties, there is no type inference
-	if (!functionProperties) return undefined;
+	if (!functionProperties) {
+		return {
+			type: ValueType.ITEM,
+			mult: SequenceMultiplicity.ZERO_OR_MORE,
+		};
+	}
 
 	// Insert the type info into the AST and return
 

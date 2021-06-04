@@ -1,6 +1,5 @@
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
-import { AnnotationContext } from './AnnotationContext';
 
 /**
  * Inserting the array type of multiplicity exactly one to the ast;
@@ -9,7 +8,7 @@ import { AnnotationContext } from './AnnotationContext';
  * @param ast the AST to be annotated.
  * @returns the inferred SequenceType
  */
-export function annotateArrayConstructor(ast: IAST, context: AnnotationContext): SequenceType {
+export function annotateArrayConstructor(ast: IAST): SequenceType {
 	const seqType = {
 		type: ValueType.ARRAY,
 		mult: SequenceMultiplicity.EXACTLY_ONE,

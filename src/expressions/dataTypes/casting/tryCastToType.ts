@@ -26,18 +26,20 @@ import castToGYear from './castToGYear';
 import castToGYearMonth from './castToGYearMonth';
 import castToHexBinary from './castToHexBinary';
 import castToInteger from './castToInteger';
+import castToNumeric from './castToNumeric';
 import castToString from './castToString';
 import castToTime from './castToTime';
 import castToUntypedAtomic from './castToUntypedAtomic';
 import castToYearMonthDuration from './castToYearMonthDuration';
 
 const TREAT_AS_PRIMITIVE = [
+	ValueType.XSNUMERIC,
 	ValueType.XSINTEGER,
 	ValueType.XSDAYTIMEDURATION,
 	ValueType.XSYEARMONTHDURATION,
 ];
 
-function castToPrimitiveType(from: ValueType, to: ValueType): (value: Value) => CastResult {
+export function castToPrimitiveType(from: ValueType, to: ValueType): (value: Value) => CastResult {
 	const instanceOf = (type: ValueType) => isSubtypeOf(from, type);
 
 	if (to === ValueType.XSERROR) {
@@ -59,6 +61,8 @@ function castToPrimitiveType(from: ValueType, to: ValueType): (value: Value) => 
 			return castToDecimal(instanceOf);
 		case ValueType.XSINTEGER:
 			return castToInteger(instanceOf);
+		case ValueType.XSNUMERIC:
+			return castToNumeric(castToPrimitiveType);
 		case ValueType.XSDURATION:
 			return castToDuration(instanceOf);
 		case ValueType.XSYEARMONTHDURATION:

@@ -1,4 +1,4 @@
-import { SequenceType } from '../expressions/dataTypes/Value';
+import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import QName from '../expressions/dataTypes/valueTypes/QName';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { AnnotationContext } from './AnnotationContext';
@@ -14,9 +14,14 @@ import { AnnotationContext } from './AnnotationContext';
 export function annotateFunctionCall(
 	ast: IAST,
 	annotationContext: AnnotationContext
-): SequenceType | undefined {
+): SequenceType {
 	// We need the context to lookup the function information
-	if (!annotationContext || !annotationContext.staticContext) return undefined;
+	if (!annotationContext || !annotationContext.staticContext) {
+		return {
+			type: ValueType.ITEM,
+			mult: SequenceMultiplicity.ZERO_OR_MORE,
+		};
+	}
 
 	// Get qualified function name
 	const qName: QName = astHelper.getQName(astHelper.getFirstChild(ast, 'functionName'));
@@ -34,7 +39,12 @@ export function annotateFunctionCall(
 		functionArguments.length
 	);
 
-	if (!resolvedName) return undefined;
+	if (!resolvedName) {
+		return {
+			type: ValueType.ITEM,
+			mult: SequenceMultiplicity.ZERO_OR_MORE,
+		};
+	}
 
 	// Lookup the function properties (return type)
 	const functionProps = annotationContext.staticContext.lookupFunction(
@@ -43,8 +53,15 @@ export function annotateFunctionCall(
 		functionArguments.length
 	);
 
-	if (!functionProps) return undefined;
+	// If we did not find a returnType, we return item()*
+	if (!functionProps) {
+		return {
+			type: ValueType.ITEM,
+			mult: SequenceMultiplicity.ZERO_OR_MORE,
+		};
+	}
 
+	// If we found a return type, we annotate the AST with it
 	astHelper.insertAttribute(ast, 'type', functionProps.returnType);
 	return functionProps.returnType;
 }

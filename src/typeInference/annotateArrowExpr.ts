@@ -1,4 +1,4 @@
-import { SequenceType } from '../expressions/dataTypes/Value';
+import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import QName from '../expressions/dataTypes/valueTypes/QName';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { AnnotationContext } from './AnnotationContext';
@@ -11,18 +11,23 @@ import { AnnotationContext } from './AnnotationContext';
  * @param staticContext from witch the function info is extracted.
  * @returns the inferred type or `undefined` when function properties cannot be inferred.
  */
-export function annotateArrowExpr(
-	ast: IAST,
-	annotationContext: AnnotationContext
-): SequenceType | undefined {
+export function annotateArrowExpr(ast: IAST, annotationContext: AnnotationContext): SequenceType {
 	// We need the context to lookup the function information
-	if (!annotationContext || !annotationContext.staticContext) return undefined;
+	if (!annotationContext || !annotationContext.staticContext) {
+		return {
+			type: ValueType.ITEM,
+			mult: SequenceMultiplicity.ZERO_OR_MORE,
+		};
+	}
 
 	const func = astHelper.getFirstChild(ast, 'EQName');
 
 	// There may be no name for the function
 	if (!func) {
-		return undefined;
+		return {
+			type: ValueType.ITEM,
+			mult: SequenceMultiplicity.ZERO_OR_MORE,
+		};
 	}
 
 	// Get qualified function name
@@ -41,7 +46,13 @@ export function annotateArrowExpr(
 		functionArguments.length
 	);
 
-	if (!resolvedName) return undefined;
+	// If we did not find the function, we return item()*
+	if (!resolvedName) {
+		return {
+			type: ValueType.ITEM,
+			mult: SequenceMultiplicity.ZERO_OR_MORE,
+		};
+	}
 
 	// Lookup the function properties (return type)
 	const functionProps = annotationContext.staticContext.lookupFunction(
@@ -51,8 +62,15 @@ export function annotateArrowExpr(
 		functionArguments.length + 1
 	);
 
-	if (!functionProps) return undefined;
+	// If we did not find the returnType, we return item()*
+	if (!functionProps) {
+		return {
+			type: ValueType.ITEM,
+			mult: SequenceMultiplicity.ZERO_OR_MORE,
+		};
+	}
 
+	// If we found a returnType, we annotate the AST with it
 	astHelper.insertAttribute(ast, 'type', functionProps.returnType);
 	return functionProps.returnType;
 }

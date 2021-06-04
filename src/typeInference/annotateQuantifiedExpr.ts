@@ -1,6 +1,5 @@
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
-import { AnnotationContext } from './AnnotationContext';
 
 /**
  * Annotate the ast by inserting boolean sequence type of exactly one multiplicity.
@@ -10,7 +9,7 @@ import { AnnotationContext } from './AnnotationContext';
  * @param ast the ast node to be annotated.
  * @returns the annotated sequence type.
  */
-export function annotateQuantifiedExpr(ast: IAST, context: AnnotationContext): SequenceType {
+export function annotateQuantifiedExpr(ast: IAST): SequenceType {
 	const seqType = {
 		type: ValueType.XSBOOLEAN,
 		mult: SequenceMultiplicity.EXACTLY_ONE,

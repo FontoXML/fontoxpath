@@ -1,15 +1,14 @@
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
-import { AnnotationContext } from './AnnotationContext';
 
 /**
  * Inserting the node type of multiplicity zero or more to the ast;
- * as the path expr evaluates to node.
+ * as the path expr evaluates to a node.
  *
  * @param ast the AST to be annotated.
  * @returns the inferred SequenceType
  */
-export function annotatePathExpr(ast: IAST, context: AnnotationContext): SequenceType {
+export function annotatePathExpr(ast: IAST): SequenceType {
 	const seqType = {
 		type: ValueType.NODE,
 		mult: SequenceMultiplicity.ZERO_OR_MORE,
