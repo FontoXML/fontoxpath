@@ -24,7 +24,10 @@ export function annotateTypeSwitchOperator(
 ): SequenceType | undefined {
 	// TODO: check this case in more detail (anyKindTest for example returns undefined)
 	if (!argumentType || caseClausesReturns.includes(undefined)) {
-		return undefined;
+		return {
+			type: ValueType.ITEM,
+			mult: SequenceMultiplicity.ZERO_OR_MORE,
+		};
 	}
 	// Get the types of the conditions from the clauses
 	const caseClausesConditions = astHelper.getChildren(ast, 'typeswitchExprCaseClause');
@@ -58,7 +61,10 @@ export function annotateTypeSwitchOperator(
 				}
 			// This should never be reached
 			default:
-				return undefined;
+				return {
+					type: ValueType.ITEM,
+					mult: SequenceMultiplicity.ZERO_OR_MORE,
+				};
 		}
 	}
 	// Return the type from the default case
@@ -84,11 +90,10 @@ function checkComparison(
 	// TODO: check this behaviours here as well (happens together with the TODO above)
 	// If there is no atomicType, we cannot compare the types and hence cannot infer the type and return item()*
 	if (!firstChild) {
-		const itemReturn = {
+		return {
 			type: ValueType.ITEM,
-			mult: SequenceMultiplicity.EXACTLY_ONE,
+			mult: SequenceMultiplicity.ZERO_OR_MORE,
 		};
-		return itemReturn;
 	}
 	// Since the type in the atomicType is stored as a string, we need to fetch the data and compare it against our argumentType
 	if (

@@ -9,10 +9,8 @@ import astHelper, { IAST } from '../parsing/astHelper';
  */
 export function annotateContextItemExpr(ast: IAST): SequenceType {
 	// TODO: What type should be returned here?
-	const itemReturn = {
+	return {
 		type: ValueType.ITEM,
 		mult: SequenceMultiplicity.ZERO_OR_MORE,
 	};
-	astHelper.insertAttribute(ast, 'type', itemReturn);
-	return itemReturn;
 }

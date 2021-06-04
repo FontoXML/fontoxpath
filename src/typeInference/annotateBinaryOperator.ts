@@ -29,12 +29,10 @@ export function annotateBinOp(
 ): SequenceType {
 	// If we don't have the left and right type, we cannot infer the current type
 	if (!left || !right) {
-		const itemReturn = {
+		return {
 			type: ValueType.ITEM,
 			mult: SequenceMultiplicity.ZERO_OR_MORE,
 		};
-		astHelper.insertAttribute(ast, 'type', itemReturn);
-		return itemReturn;
 	}
 
 	// TODO: Fix this hack (pathExpr returns a node in 1 case, which cannot be added to an integer)

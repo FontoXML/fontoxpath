@@ -9,10 +9,8 @@ import astHelper, { IAST } from '../parsing/astHelper';
  * @returns A SequenceType of item()*.
  */
 export function annotateDynamicFunctionInvocationExpr(ast: IAST): SequenceType {
-	const itemReturn = {
+	return {
 		type: ValueType.ITEM,
 		mult: SequenceMultiplicity.ZERO_OR_MORE,
 	};
-	astHelper.insertAttribute(ast, 'type', itemReturn);
-	return itemReturn;
 }
