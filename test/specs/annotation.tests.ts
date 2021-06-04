@@ -397,7 +397,7 @@ describe('annotating varRef', () => {
 		assertValueType('$x + 1', ValueType.XSINTEGER, context);
 	});
 	it('annotate varRef not in context', () => {
-		assertValueType('$x + $l', ValueType.ITEM, context);
+		assertValueType('$x + $l', ValueType.XSNUMERIC, context);
 	});
 	it('annotate varRef throws when types incorrect', () => {
 		chai.assert.throws(() => assertValueType('$x + $z', undefined, context));
