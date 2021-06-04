@@ -30,8 +30,8 @@ export function annotateBinOp(
 	// If we don't have the left and right type, we cannot infer the current type
 	if (!left || !right) {
 		return {
-			type: ValueType.ITEM,
-			mult: SequenceMultiplicity.ZERO_OR_MORE,
+			type: ValueType.XSNUMERIC,
+			mult: SequenceMultiplicity.EXACTLY_ONE,
 		};
 	}
 
