@@ -15,15 +15,12 @@ export function annotateFunctionCall(
 	ast: IAST,
 	annotationContext: AnnotationContext
 ): SequenceType {
-	const itemReturn = {
-		type: ValueType.ITEM,
-		mult: SequenceMultiplicity.EXACTLY_ONE,
-	};
-
 	// We need the context to lookup the function information
 	if (!annotationContext || !annotationContext.staticContext) {
-		astHelper.insertAttribute(ast, 'type', itemReturn);
-		return itemReturn;
+		return {
+			type: ValueType.ITEM,
+			mult: SequenceMultiplicity.ZERO_OR_MORE,
+		};
 	}
 
 	// Get qualified function name
@@ -43,8 +40,10 @@ export function annotateFunctionCall(
 	);
 
 	if (!resolvedName) {
-		astHelper.insertAttribute(ast, 'type', itemReturn);
-		return itemReturn;
+		return {
+			type: ValueType.ITEM,
+			mult: SequenceMultiplicity.ZERO_OR_MORE,
+		};
 	}
 
 	// Lookup the function properties (return type)
@@ -54,10 +53,12 @@ export function annotateFunctionCall(
 		functionArguments.length
 	);
 
-	// If we did not find a returnType, we annotate with item()*
+	// If we did not find a returnType, we return item()*
 	if (!functionProps) {
-		astHelper.insertAttribute(ast, 'type', itemReturn);
-		return itemReturn;
+		return {
+			type: ValueType.ITEM,
+			mult: SequenceMultiplicity.ZERO_OR_MORE,
+		};
 	}
 
 	// If we found a return type, we annotate the AST with it

@@ -64,7 +64,7 @@ describe('Annotating unary expressions', () => {
 
 describe('Annotate unary lookup', () => {
 	it('unary look up test', () => {
-		assertValueType('map{"num":1}[?num]', ValueType.ITEM, undefined, [
+		assertValueType('map{"num":1}[?num]', undefined, undefined, [
 			'mainModule',
 			'queryBody',
 			'pathExpr',
@@ -159,7 +159,7 @@ describe('Annotate arrowExpr', () => {
 
 describe('Annotate dynamic function invocation expression test', () => {
 	it('dynamic function invocation', () => {
-		assertValueType('$f()', ValueType.ITEM, undefined, [
+		assertValueType('$f()', undefined, undefined, [
 			'mainModule',
 			'queryBody',
 			'pathExpr',
@@ -336,7 +336,7 @@ describe('Annotation counting', () => {
 		annotateAst(ast, context);
 		const [total, annotated] = countQueryBodyAnnotations(ast);
 		console.log(total, annotated);
-		chai.assert.equal(annotated, 3);
+		chai.assert.equal(annotated, 2);
 		chai.assert.equal(total, 5);
 	});
 });

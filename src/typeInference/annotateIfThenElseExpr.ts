@@ -16,19 +16,18 @@ export function annotateIfThenElseExpr(
 	elseClause: SequenceType,
 	thenClause: SequenceType
 ): SequenceType {
-	const itemReturn = {
-		type: ValueType.ITEM,
-		mult: SequenceMultiplicity.ZERO_OR_MORE,
-	};
-
 	if (!elseClause || !thenClause) {
-		astHelper.insertAttribute(ast, 'type', itemReturn);
-		return itemReturn;
+		return {
+			type: ValueType.ITEM,
+			mult: SequenceMultiplicity.ZERO_OR_MORE,
+		};
 	}
 	if (elseClause.type === thenClause.type && elseClause.mult === thenClause.mult) {
 		astHelper.insertAttribute(ast, 'type', elseClause);
 		return elseClause;
 	}
-	astHelper.insertAttribute(ast, 'type', itemReturn);
-	return itemReturn;
+	return {
+		type: ValueType.ITEM,
+		mult: SequenceMultiplicity.ZERO_OR_MORE,
+	};
 }

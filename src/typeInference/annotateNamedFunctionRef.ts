@@ -15,15 +15,12 @@ export function annotateNamedFunctionRef(
 	ast: IAST,
 	annotationContext: AnnotationContext
 ): SequenceType {
-	const itemReturn = {
-		type: ValueType.ITEM,
-		mult: SequenceMultiplicity.EXACTLY_ONE,
-	};
-
 	// Can't find info about the function without the context.
 	if (!annotationContext || !annotationContext.staticContext) {
-		astHelper.insertAttribute(ast, 'type', itemReturn);
-		return itemReturn;
+		return {
+			type: ValueType.ITEM,
+			mult: SequenceMultiplicity.ZERO_OR_MORE,
+		};
 	}
 
 	// Get qualified function name
@@ -44,8 +41,10 @@ export function annotateNamedFunctionRef(
 		);
 
 		if (!functionName) {
-			astHelper.insertAttribute(ast, 'type', itemReturn);
-			return itemReturn;
+			return {
+				type: ValueType.ITEM,
+				mult: SequenceMultiplicity.ZERO_OR_MORE,
+			};
 		}
 
 		localName = functionName.localName;
@@ -58,8 +57,10 @@ export function annotateNamedFunctionRef(
 
 	// If there are no function properties, there is no type inference
 	if (!functionProperties) {
-		astHelper.insertAttribute(ast, 'type', itemReturn);
-		return itemReturn;
+		return {
+			type: ValueType.ITEM,
+			mult: SequenceMultiplicity.ZERO_OR_MORE,
+		};
 	}
 
 	// Insert the type info into the AST and return

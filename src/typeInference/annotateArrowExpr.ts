@@ -13,21 +13,21 @@ import { AnnotationContext } from './AnnotationContext';
  */
 export function annotateArrowExpr(ast: IAST, annotationContext: AnnotationContext): SequenceType {
 	// We need the context to lookup the function information
-	const itemReturn = {
-		type: ValueType.ITEM,
-		mult: SequenceMultiplicity.EXACTLY_ONE,
-	};
 	if (!annotationContext || !annotationContext.staticContext) {
-		astHelper.insertAttribute(ast, 'type', itemReturn);
-		return itemReturn;
+		return {
+			type: ValueType.ITEM,
+			mult: SequenceMultiplicity.ZERO_OR_MORE,
+		};
 	}
 
 	const func = astHelper.getFirstChild(ast, 'EQName');
 
 	// There may be no name for the function
 	if (!func) {
-		astHelper.insertAttribute(ast, 'type', itemReturn);
-		return itemReturn;
+		return {
+			type: ValueType.ITEM,
+			mult: SequenceMultiplicity.ZERO_OR_MORE,
+		};
 	}
 
 	// Get qualified function name
@@ -48,8 +48,10 @@ export function annotateArrowExpr(ast: IAST, annotationContext: AnnotationContex
 
 	// If we did not find the function, we return item()*
 	if (!resolvedName) {
-		astHelper.insertAttribute(ast, 'type', itemReturn);
-		return itemReturn;
+		return {
+			type: ValueType.ITEM,
+			mult: SequenceMultiplicity.ZERO_OR_MORE,
+		};
 	}
 
 	// Lookup the function properties (return type)
@@ -62,8 +64,10 @@ export function annotateArrowExpr(ast: IAST, annotationContext: AnnotationContex
 
 	// If we did not find the returnType, we return item()*
 	if (!functionProps) {
-		astHelper.insertAttribute(ast, 'type', itemReturn);
-		return itemReturn;
+		return {
+			type: ValueType.ITEM,
+			mult: SequenceMultiplicity.ZERO_OR_MORE,
+		};
 	}
 
 	// If we found a returnType, we annotate the AST with it
