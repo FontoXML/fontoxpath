@@ -9,7 +9,7 @@ import { AnnotationContext } from './AnnotationContext';
  * @param ast the AST to be annotated.
  * @returns the inferred SequenceType
  */
-export function annotateMapConstructor(ast: IAST, context: AnnotationContext): SequenceType {
+export function annotateMapConstructor(ast: IAST): SequenceType {
 	const seqType = {
 		type: ValueType.MAP,
 		mult: SequenceMultiplicity.EXACTLY_ONE,

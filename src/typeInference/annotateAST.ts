@@ -103,16 +103,16 @@ const binopAnnotateCb = (ast: IAST, context: AnnotationContext): SequenceType =>
 const logicOpAnnotateCb = (ast: IAST, context: AnnotationContext): SequenceType => {
 	annotate(astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST, context);
 	annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, context);
-	return annotateLogicalOperator(ast, context);
+	return annotateLogicalOperator(ast);
 };
 
 /**
  * The function lambda for annotating set operators
  */
 const setOpAnnotateCb = (ast: IAST, context: AnnotationContext): SequenceType => {
-	const l = annotate(astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST, context);
-	const r = annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, context);
-	return annotateSetOperator(ast, l, r, context);
+	annotate(astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST, context);
+	annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, context);
+	return annotateSetOperator(ast);
 };
 
 /**
@@ -121,7 +121,7 @@ const setOpAnnotateCb = (ast: IAST, context: AnnotationContext): SequenceType =>
 const generalCompareAnnotateCb = (ast: IAST, context: AnnotationContext): SequenceType => {
 	annotate(astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST, context);
 	annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, context);
-	return annotateGeneralCompare(ast, context);
+	return annotateGeneralCompare(ast);
 };
 
 /**
@@ -130,7 +130,7 @@ const generalCompareAnnotateCb = (ast: IAST, context: AnnotationContext): Sequen
 const valueCompareAnnotateCb = (ast: IAST, context: AnnotationContext): SequenceType => {
 	annotate(astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST, context);
 	annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, context);
-	return annotateValueCompare(ast, context);
+	return annotateValueCompare(ast);
 };
 
 /**
@@ -139,7 +139,7 @@ const valueCompareAnnotateCb = (ast: IAST, context: AnnotationContext): Sequence
 const nodeCompareAnnotateCb = (ast: IAST, context: AnnotationContext): SequenceType => {
 	annotate(astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST, context);
 	annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, context);
-	return annotateNodeCompare(ast, context);
+	return annotateNodeCompare(ast);
 };
 
 /**
@@ -175,7 +175,7 @@ const annotationFunctions: {
 	sequenceExpr: (ast: IAST, context: AnnotationContext): SequenceType => {
 		const children = astHelper.getChildren(ast, '*');
 		children.map((a) => annotate(a, context));
-		return annotateSequenceOperator(ast, children.length, context);
+		return annotateSequenceOperator(ast, children.length);
 	},
 
 	// Set operations (union, intersect, except)
@@ -187,14 +187,14 @@ const annotationFunctions: {
 	stringConcatenateOp: (ast: IAST, context: AnnotationContext): SequenceType => {
 		annotate(astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST, context);
 		annotate(astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST, context);
-		return annotateStringConcatenateOperator(ast, context);
+		return annotateStringConcatenateOperator(ast);
 	},
 
 	// Range operator
 	rangeSequenceExpr: (ast: IAST, context: AnnotationContext): SequenceType => {
 		annotate(astHelper.getFirstChild(ast, 'startExpr')[1] as IAST, context);
 		annotate(astHelper.getFirstChild(ast, 'endExpr')[1] as IAST, context);
-		return annotateRangeSequenceOperator(ast, context);
+		return annotateRangeSequenceOperator(ast);
 	},
 
 	// Comparison operators
@@ -219,7 +219,7 @@ const annotationFunctions: {
 		const root = astHelper.getFirstChild(ast, 'rootExpr');
 		if (root && root[1]) annotate(root[1] as IAST, context);
 		astHelper.getChildren(ast, 'stepExpr').map((b) => annotate(b, context));
-		return annotatePathExpr(ast, context);
+		return annotatePathExpr(ast);
 	},
 
 	// Context Item
@@ -227,10 +227,8 @@ const annotationFunctions: {
 		return annotateContextItemExpr(ast);
 	},
 	ifThenElseExpr: (ast: IAST, context: AnnotationContext): SequenceType => {
-		const ifClause = annotate(
-			astHelper.getFirstChild(astHelper.getFirstChild(ast, 'ifClause'), '*'),
-			context
-		);
+		// If clause
+		annotate(astHelper.getFirstChild(astHelper.getFirstChild(ast, 'ifClause'), '*'), context);
 		const thenClause = annotate(
 			astHelper.getFirstChild(astHelper.getFirstChild(ast, 'thenClause'), '*'),
 			context
@@ -239,12 +237,12 @@ const annotationFunctions: {
 			astHelper.getFirstChild(astHelper.getFirstChild(ast, 'elseClause'), '*'),
 			context
 		);
-		return annotateIfThenElseExpr(ast, thenClause, elseClause, context);
+		return annotateIfThenElseExpr(ast, thenClause, elseClause);
 	},
 	instanceOfExpr: (ast: IAST, context: AnnotationContext): SequenceType => {
 		annotate(astHelper.getFirstChild(ast, 'argExpr'), context);
 		annotate(astHelper.getFirstChild(ast, 'sequenceType'), context);
-		return annotateInstanceOfExpr(ast, context);
+		return annotateInstanceOfExpr(ast);
 	},
 
 	// Constant expressions
@@ -305,7 +303,7 @@ const annotationFunctions: {
 		);
 		const argNodes = astHelper.getFirstChild(ast, 'arguments');
 		const args: SequenceType = argNodes ? annotate(argNodes, context) : undefined;
-		return annotateDynamicFunctionInvocationExpr(ast, context, functionItem, args);
+		return annotateDynamicFunctionInvocationExpr(ast);
 	},
 	namedFunctionRef: (ast: IAST, context: AnnotationContext): SequenceType => {
 		return annotateNamedFunctionRef(ast, context);
@@ -316,10 +314,10 @@ const annotationFunctions: {
 	},
 	// Casting
 	castExpr: (ast: IAST, context: AnnotationContext): SequenceType => {
-		return annotateCastOperator(ast, context);
+		return annotateCastOperator(ast);
 	},
 	castableExpr: (ast: IAST, context: AnnotationContext): SequenceType => {
-		return annotateCastableOperator(ast, context);
+		return annotateCastableOperator(ast);
 	},
 	// Maps
 	simpleMapExpr: (ast: IAST, context: AnnotationContext): SequenceType => {
@@ -331,14 +329,14 @@ const annotationFunctions: {
 			key: annotate(astHelper.followPath(keyValuePair, ['mapKeyExpr', '*']), context),
 			value: annotate(astHelper.followPath(keyValuePair, ['mapValueExpr', '*']), context),
 		}));
-		return annotateMapConstructor(ast, context);
+		return annotateMapConstructor(ast);
 	},
 	// Arrays
 	arrayConstructor: (ast: IAST, context: AnnotationContext): SequenceType => {
 		astHelper
 			.getChildren(astHelper.getFirstChild(ast, '*'), 'arrayElem')
 			.map((arrayElem) => annotate(arrayElem, context));
-		return annotateArrayConstructor(ast, context);
+		return annotateArrayConstructor(ast);
 	},
 	// Unary Lookup
 	unaryLookup: (ast: IAST, context: AnnotationContext): SequenceType => {
@@ -359,7 +357,7 @@ const annotationFunctions: {
 	},
 	quantifiedExpr: (ast: IAST, context: AnnotationContext): SequenceType => {
 		astHelper.getChildren(ast, '*').map((a) => annotate(a, context));
-		return annotateQuantifiedExpr(ast, context);
+		return annotateQuantifiedExpr(ast);
 	},
 	'x:stackTrace': (ast: IAST, context: AnnotationContext): SequenceType => {
 		const children = astHelper.getChildren(ast, '*');

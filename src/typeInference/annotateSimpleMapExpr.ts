@@ -3,9 +3,8 @@ import { IAST } from '../parsing/astHelper';
 import { AnnotationContext } from './AnnotationContext';
 
 /**
- * Inserting the map type of multiplicity exactly one to the ast;
- * as the simple map expr evaluates to map.
- *
+ * A simpleMapExpr is a .map() function, so it checks the type of the input,
+ * and with the scope and the further annotations, then inferres the type.
  * @param ast the AST to be annotated.
  * @returns the inferred SequenceType
  */

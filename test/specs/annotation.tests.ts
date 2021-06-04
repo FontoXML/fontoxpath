@@ -137,7 +137,7 @@ describe('annotate Sequence', () => {
 
 describe('Annotate maps', () => {
 	it('mapConstructor', () => assertValueType('map{a:1, b:2}', ValueType.MAP, undefined));
-	it('simpleMapExpr', () => assertValueType('$a ! ( //b)', ValueType.MAP, undefined));
+	it('simpleMapExpr', () => assertValueType('$a ! ( //b)', undefined, undefined));
 });
 
 describe('Annotating ifThenElse expressions', () => {

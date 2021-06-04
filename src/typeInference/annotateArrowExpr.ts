@@ -46,6 +46,7 @@ export function annotateArrowExpr(ast: IAST, annotationContext: AnnotationContex
 		functionArguments.length
 	);
 
+	// If we did not find the function, we return item()*
 	if (!resolvedName) {
 		astHelper.insertAttribute(ast, 'type', itemReturn);
 		return itemReturn;
@@ -59,11 +60,13 @@ export function annotateArrowExpr(ast: IAST, annotationContext: AnnotationContex
 		functionArguments.length + 1
 	);
 
+	// If we did not find the returnType, we return item()*
 	if (!functionProps) {
 		astHelper.insertAttribute(ast, 'type', itemReturn);
 		return itemReturn;
 	}
 
+	// If we found a returnType, we annotate the AST with it
 	astHelper.insertAttribute(ast, 'type', functionProps.returnType);
 	return functionProps.returnType;
 }

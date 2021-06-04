@@ -14,8 +14,7 @@ import { AnnotationContext } from './AnnotationContext';
 export function annotateIfThenElseExpr(
 	ast: IAST,
 	elseClause: SequenceType,
-	thenClause: SequenceType,
-	context: AnnotationContext
+	thenClause: SequenceType
 ): SequenceType {
 	const itemReturn = {
 		type: ValueType.ITEM,

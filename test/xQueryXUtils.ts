@@ -12,6 +12,7 @@ import { slimdom, sync } from 'slimdom-sax-parser';
 function removeInsignificantWhitespace(root) {
 	const nonSignificantWhitespace = evaluateXPathToNodes<Text>('//*/text()', root, null, null, {
 		language: evaluateXPath.XQUERY_3_1_LANGUAGE,
+		annotateAst: false,
 	});
 	for (const node of nonSignificantWhitespace) {
 		node.data = node.data.trim();
