@@ -82,7 +82,7 @@ describe('functions over strings', () => {
 				['', 'r', 'c', 'd', 'r', '']
 			));
 
-		it.only('wraps the error if the regex is invalid', () => {
+		it('wraps the error if the regex is invalid', () => {
 			chai.assert.throws(() => {
 				evaluateXPathToStrings(
 					'fn:tokenize("1, 15, 24,,50", ",sX#v6$KNkB\'%msql40>^|x-szaHzleL|*")',
