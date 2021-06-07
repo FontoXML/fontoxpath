@@ -35,8 +35,6 @@ export function annotateBinOp(
 		};
 	}
 
-	// TODO: Fix this hack (pathExpr returns a node in 1 case, which cannot be added to an integer)
-
 	const valueType = generateBinaryOperatorType(operator, left.type, right.type);
 
 	if (valueType) {
