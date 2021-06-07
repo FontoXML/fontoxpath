@@ -78,7 +78,7 @@ describe('Annotate unary lookup', () => {
 describe('Path expression test', () => {
 	it('Path expression test', () => {
 		// The same query also triggers the path expression
-		assertValueType('map{"num":1}[?num]', ValueType.ITEM, undefined);
+		assertValueType('map{"num":1}[?num]', ValueType.MAP, undefined);
 	});
 });
 
