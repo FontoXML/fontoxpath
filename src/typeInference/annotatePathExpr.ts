@@ -10,7 +10,7 @@ import astHelper, { IAST } from '../parsing/astHelper';
  */
 export function annotatePathExpr(ast: IAST): SequenceType {
 	const seqType = {
-		type: ValueType.NODE,
+		type: ValueType.ITEM,
 		mult: SequenceMultiplicity.ZERO_OR_MORE,
 	};
 
