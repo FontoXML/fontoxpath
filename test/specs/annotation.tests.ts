@@ -8,7 +8,6 @@ import astHelper from 'fontoxpath/parsing/astHelper';
 import parseExpression from 'fontoxpath/parsing/parseExpression';
 import annotateAst, { countQueryBodyAnnotations } from 'fontoxpath/typeInference/annotateAST';
 import { AnnotationContext } from 'fontoxpath/typeInference/AnnotationContext';
-import { slimdom } from 'slimdom-sax-parser';
 
 /**
  *
@@ -79,7 +78,22 @@ describe('Annotate unary lookup', () => {
 describe('Path expression test', () => {
 	it('Path expression test', () => {
 		// The same query also triggers the path expression
-		assertValueType('map{"num":1}[?num]', undefined, undefined);
+		assertValueType('map{"num":1}[?num]', ValueType.ITEM, undefined);
+	});
+
+	it('Path expression test get annotate as nodes', () => {
+		assertValueType('ancestor::someParentElement', ValueType.NODE, undefined);
+	});
+
+	it('Path expression test annotate nodes with function', () => {
+		assertValueType('self::element()', ValueType.NODE, undefined);
+	});
+
+	it('Path expression test annotate as nodes with test', () => {
+		assertValueType('//*[@someAttribute]', ValueType.ITEM, undefined);
+	});
+	it('Path expression test annotate as items with predicate', () => {
+		assertValueType('(array {1,2,3,4,5,6,7})?*[. mod 2 = 1]', ValueType.ITEM, undefined);
 	});
 });
 

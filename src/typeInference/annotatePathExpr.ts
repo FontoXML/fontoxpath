@@ -68,10 +68,10 @@ function annotateStep(step: IAST): SequenceType {
 
 		case 'predicate':
 		case 'predicates': {
-			seqType = astHelper.getAttribute(
-				astHelper.followPath(lastChild, ['*']),
-				'type'
-			) as SequenceType;
+			seqType = {
+				type: ValueType.ITEM,
+				mult: SequenceMultiplicity.ZERO_OR_MORE,
+			};
 			break;
 		}
 		case 'lookup': {
