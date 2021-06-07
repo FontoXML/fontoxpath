@@ -48,17 +48,25 @@ export function annotateFlworExpression(
 					annotationContext,
 					annotate
 				);
-				if (hasFor) {
+
+				if (!retType) {
 					retType = { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE };
+				} else if (hasFor) {
+					retType = { type: retType.type, mult: SequenceMultiplicity.ZERO_OR_MORE };
 				}
+
 				astHelper.insertAttribute(ast, 'type', retType);
 				return retType;
 			}
 			default: {
 				let retType: SequenceType = annotate(ast[i] as IAST, annotationContext);
-				if (hasFor) {
+
+				if (!retType) {
 					retType = { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE };
+				} else if (hasFor) {
+					retType = { type: retType.type, mult: SequenceMultiplicity.ZERO_OR_MORE };
 				}
+
 				astHelper.insertAttribute(ast, 'type', retType);
 				return retType;
 			}
@@ -105,7 +113,7 @@ function annotateForClause(
 ): void {
 	const pathToTypedVariableBinding = ['forClauseItem', 'typedVariableBinding', 'varName'];
 	const pathToForExpr = ['forClauseItem', 'forExpr', 'sequenceExpr'];
-	// const pathToForBody = ['forClauseItem', 'for'];
+
 	const varName = astHelper.followPath(ast, pathToTypedVariableBinding)[1] as string;
 
 	const varTypeNode: IAST = astHelper.followPath(ast, pathToForExpr);
