@@ -321,7 +321,6 @@ const annotationFunctions: {
 	},
 	// Maps
 	simpleMapExpr: (ast: IAST, context: AnnotationContext): SequenceType => {
-		astHelper.getChildren(ast, 'pathExpr').map((c) => annotate(c, context));
 		return annotateSimpleMapExpr(ast, context);
 	},
 	mapConstructor: (ast: IAST, context: AnnotationContext): SequenceType => {
@@ -365,9 +364,6 @@ const annotationFunctions: {
 	},
 	queryBody: (ast: IAST, context: AnnotationContext): SequenceType => {
 		const type = annotate(ast[1] as IAST, context);
-		if (type) {
-			astHelper.insertAttribute(ast, 'type', type);
-		}
 		return type;
 	},
 	flworExpr: (ast: IAST, context: AnnotationContext): SequenceType => {
