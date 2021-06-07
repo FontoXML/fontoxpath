@@ -122,6 +122,10 @@ export function generateBinaryOperatorType(
 	typeA: ValueType,
 	typeB: ValueType
 ): ValueType {
+	if (typeA === ValueType.XSNUMERIC || typeB === ValueType.XSNUMERIC) {
+		return ValueType.XSNUMERIC;
+	}
+
 	let castFunctionForValueA: any = null;
 	let castFunctionForValueB: any = null;
 

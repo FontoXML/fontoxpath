@@ -36,17 +36,24 @@ export function annotateBinOp(
 	}
 
 	// TODO: Fix this hack (pathExpr returns a node in 1 case, which cannot be added to an integer)
-	if (left.type === ValueType.NODE || right.type === ValueType.NODE) return undefined;
-	if (left.type === ValueType.ITEM || right.type === ValueType.ITEM) return undefined;
-	if (left.type === ValueType.XSANYATOMICTYPE || right.type === ValueType.XSANYATOMICTYPE)
-		return undefined;
+	if (
+		[ValueType.NODE, ValueType.ITEM, ValueType.XSANYATOMICTYPE].includes(left.type) ||
+		[ValueType.NODE, ValueType.ITEM, ValueType.XSANYATOMICTYPE].includes(right.type)
+	) {
+		return {
+			type: ValueType.XSNUMERIC,
+			mult: SequenceMultiplicity.EXACTLY_ONE,
+		};
+	}
 
-	const funcData = generateBinaryOperatorType(operator, left.type, right.type);
+	const valueType = generateBinaryOperatorType(operator, left.type, right.type);
 
-	if (funcData) {
-		const type = { type: funcData, mult: left.mult };
+	if (valueType) {
+		const type = { type: valueType, mult: left.mult };
 
-		astHelper.insertAttribute(ast, 'type', type);
+		if (valueType !== ValueType.XSNUMERIC) {
+			astHelper.insertAttribute(ast, 'type', type);
+		}
 		return type;
 	}
 
