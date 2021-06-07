@@ -3,7 +3,8 @@ import ExternalDomFacade from '../domFacade/ExternalDomFacade';
 import IDomFacade from '../domFacade/IDomFacade';
 import { adaptJavaScriptValueToArrayOfXPathValues } from '../expressions/adaptJavaScriptValueToXPathValue';
 import { SequenceMultiplicity, ValueType } from '../expressions/dataTypes/Value';
-import { IReturnTypes } from '../parsing/convertXDMReturnValue';
+import { IReturnTypes, ReturnType } from '../parsing/convertXDMReturnValue';
+import { Node } from '../types/Types';
 import runtimeLib from './runtimeLib';
 
 // Here we tell Closure Compiler what attributes NOT to mangle/obfuscate, since these are
@@ -29,9 +30,9 @@ declare interface IInternalDomFacadeUnmangled {
  */
 const executeJavaScriptCompiledXPath = <
 	TNode extends Node,
-	TReturnType extends keyof IReturnTypes<TNode>
+	TReturnType extends ReturnType
 >(
-	compiledJavaScriptFunction: any,
+	compiledJavaScriptFunction: () => (contextItem: unknown, domFacade: unknown, runtimeLib: unknown) => IReturnTypes<TNode>[TReturnType],
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null
 ): IReturnTypes<TNode>[TReturnType] => {
