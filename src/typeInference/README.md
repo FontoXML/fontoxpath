@@ -36,4 +36,4 @@ An additional CI/CD step has also been added to execute the qt3 test set with an
 
 ## Debugging
 
-We added an additional flag in the Options type which adds some logging capabilities. When the `logUnannotatedQueries` flag is turned on, at the end of each query, the annotation code checks if this query was annotated completely. If that is not the case, it logs this query using `console.error`. Logging to `console.error` allows for easy pipeing into a file. Example: `npm run test 2> output.txt`.
+We added an additional flag in the Options type which adds some logging capabilities. When the `logUnannotatedQueries` flag is turned on, at the end of each query, the annotation code checks if this query was annotated completely. If that is not the case, it logs this query using `console.error`. Logging to `console.error` allows for easy piping into a file. Example: `npm run test 2> output.txt`.
