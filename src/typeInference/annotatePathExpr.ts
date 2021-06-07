@@ -21,7 +21,6 @@ export function annotatePathExpr(ast: IAST): SequenceType {
 		retType = annotateStep(step);
 	}
 	astHelper.insertAttribute(ast, 'type', retType);
-	console.log(retType);
 	return retType;
 }
 
@@ -40,13 +39,33 @@ function annotateStep(step: IAST): SequenceType {
 			) as SequenceType;
 			break;
 		}
-		case 'xpathAxis': {
+		case 'xpathAxis':
+		case 'attributeTest':
+		case 'anyElementTest':
+		case 'piTest':
+		case 'documentTest':
+		case 'elementTest':
+		case 'commentTest':
+		case 'namespaceTest':
+		case 'anyKindTest':
+		case 'textTest':
+		case 'anyFunctionTest':
+		case 'typedFunctionTest':
+		case 'schemaAttributeTest':
+		case 'atomicType':
+		case 'anyItemType':
+		case 'parenthesizedItemType':
+		case 'typedMapTest':
+		case 'typedArrayTest':
+		case 'nameTest':
+		case 'Wildcard': {
 			seqType = {
 				type: ValueType.NODE,
 				mult: SequenceMultiplicity.ZERO_OR_MORE,
 			};
 			break;
 		}
+
 		case 'predicate':
 		case 'predicates': {
 			seqType = astHelper.getAttribute(
