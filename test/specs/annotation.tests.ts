@@ -27,11 +27,11 @@ function assertValueType(
 	if (context) annotateAst(ast, context);
 	else annotateAst(ast, new AnnotationContext(undefined));
 
-	const queryBody = astHelper.followPath(
+	const upperNode = astHelper.followPath(
 		ast,
-		followSpecificPath ? followSpecificPath : ['mainModule', 'queryBody']
+		followSpecificPath ? followSpecificPath : ['mainModule', 'queryBody', '*']
 	);
-	const resultType = astHelper.getAttribute(queryBody, 'type') as SequenceType;
+	const resultType = astHelper.getAttribute(upperNode, 'type') as SequenceType;
 	if (!resultType) {
 		chai.assert.isTrue(expectedType === null || expectedType === undefined);
 	} else {
@@ -144,7 +144,7 @@ describe('Annotating ifThenElse expressions', () => {
 	it('ifThenElse type is known', () =>
 		assertValueType('if (3) then 3 else 5', ValueType.XSINTEGER, undefined));
 	it('ifThenElse type is not known', () =>
-		assertValueType('if (3) then "hello" else 5', ValueType.ITEM, undefined));
+		assertValueType('if (3) then "hello" else 5', undefined, undefined));
 });
 
 describe('Annotate quantifiedExpr', () => {
@@ -154,7 +154,7 @@ describe('Annotate quantifiedExpr', () => {
 
 describe('Annotate arrowExpr', () => {
 	it('annotate tailFunction', () =>
-		assertValueType('array:tail([1]) => array:size()', ValueType.ITEM, undefined));
+		assertValueType('array:tail([1]) => array:size()', undefined, undefined));
 });
 
 describe('Annotate dynamic function invocation expression test', () => {
@@ -266,10 +266,10 @@ describe('Annotating castable', () => {
 
 describe('Annotating function call without context', () => {
 	it('array function call without context', () => {
-		assertValueType('array:size([])', ValueType.ITEM, undefined);
+		assertValueType('array:size([])', undefined, undefined);
 	});
 	it('name function call without context', () => {
-		assertValueType('fn:concat#2', ValueType.ITEM, undefined);
+		assertValueType('fn:concat#2', undefined, undefined);
 	});
 });
 
@@ -328,8 +328,8 @@ describe('Annotation counting', () => {
 		annotateAst(ast, context);
 		const [total, annotated] = countQueryBodyAnnotations(ast);
 		console.log(total, annotated);
-		chai.assert.isTrue(annotated === total);
-		chai.assert.equal(total, 4);
+		chai.assert.equal(annotated, total);
+		chai.assert.equal(total, 3);
 	});
 	it('correctly counts unannotated expressions 2', () => {
 		const ast = parseExpression('$b + math:sin($a)', {});
@@ -337,7 +337,7 @@ describe('Annotation counting', () => {
 		const [total, annotated] = countQueryBodyAnnotations(ast);
 		console.log(total, annotated);
 		chai.assert.equal(annotated, 2);
-		chai.assert.equal(total, 5);
+		chai.assert.equal(total, 4);
 	});
 });
 
@@ -353,13 +353,13 @@ describe('Annotating flwor Expressions', () => {
 		);
 	});
 	it('annotate simple for expression', () => {
-		assertValueType('for $x in (3, 4, 5) return $x', ValueType.ITEM, undefined);
+		assertValueType('for $x in (3, 4, 5) return $x', ValueType.XSINTEGER, undefined);
 	});
 
 	it('annotate complex for expression', () => {
 		assertValueType(
 			'for $x in (3, 4, 5) for $y in (2, 5) return $x + $y',
-			ValueType.ITEM,
+			ValueType.XSNUMERIC,
 			undefined
 		);
 	});
@@ -367,7 +367,7 @@ describe('Annotating flwor Expressions', () => {
 	it('annotate name shadowing for expression', () => {
 		assertValueType(
 			'for $x in (3, 25, 5) let $x := "stuff" || $x return $x',
-			ValueType.ITEM,
+			ValueType.XSSTRING,
 			undefined
 		);
 	});
@@ -397,7 +397,7 @@ describe('annotating varRef', () => {
 		assertValueType('$x + 1', ValueType.XSINTEGER, context);
 	});
 	it('annotate varRef not in context', () => {
-		assertValueType('$x + $l', ValueType.XSNUMERIC, context);
+		assertValueType('$x + $l', undefined, context);
 	});
 	it('annotate varRef throws when types incorrect', () => {
 		chai.assert.throws(() => assertValueType('$x + $z', undefined, context));
