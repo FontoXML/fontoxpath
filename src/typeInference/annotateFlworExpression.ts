@@ -50,8 +50,10 @@ export function annotateFlworExpression(
 				);
 
 				if (!retType) {
-					retType = { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE };
-				} else if (hasFor) {
+					return { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE };
+				}
+
+				if (hasFor) {
 					retType = { type: retType.type, mult: SequenceMultiplicity.ZERO_OR_MORE };
 				}
 
@@ -62,8 +64,10 @@ export function annotateFlworExpression(
 				let retType: SequenceType = annotate(ast[i] as IAST, annotationContext);
 
 				if (!retType) {
-					retType = { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE };
-				} else if (hasFor) {
+					return { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE };
+				}
+
+				if (hasFor) {
 					retType = { type: retType.type, mult: SequenceMultiplicity.ZERO_OR_MORE };
 				}
 

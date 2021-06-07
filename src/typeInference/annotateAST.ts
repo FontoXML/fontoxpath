@@ -54,7 +54,7 @@ export function countQueryBodyAnnotations(
 			[total, annotated] = countQueryBodyAnnotations(ast[i] as IAST, total, annotated);
 	}
 
-	if (nodeNames.includes(ast[0]) && ast[0] != 'queryBody') {
+	if (nodeNames.includes(ast[0]) && ast[0] !== 'queryBody') {
 		if (astHelper.getAttribute(ast, 'type')) annotated += 1;
 		total += 1;
 	}
