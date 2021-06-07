@@ -8,6 +8,7 @@ import astHelper from 'fontoxpath/parsing/astHelper';
 import parseExpression from 'fontoxpath/parsing/parseExpression';
 import annotateAst, { countQueryBodyAnnotations } from 'fontoxpath/typeInference/annotateAST';
 import { AnnotationContext } from 'fontoxpath/typeInference/AnnotationContext';
+import { slimdom } from 'slimdom-sax-parser';
 
 /**
  *
@@ -78,7 +79,7 @@ describe('Annotate unary lookup', () => {
 describe('Path expression test', () => {
 	it('Path expression test', () => {
 		// The same query also triggers the path expression
-		assertValueType('map{"num":1}[?num]', ValueType.MAP, undefined);
+		assertValueType('map{"num":1}[?num]', undefined, undefined);
 	});
 });
 
