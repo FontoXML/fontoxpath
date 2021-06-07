@@ -33,3 +33,7 @@ For instance: binary and unary operators can benefit from skipping the type chec
 The qt3 test suite has been adapted to allow for annotation. This can be enabled by passing an additional `--annotate` flag. All xpath queries will then use the annotation step at the start of their execution.
 
 An additional CI/CD step has also been added to execute the qt3 test set with annotation enabled to make sure the GitHub pipeline also tests this feature.
+
+## Debugging
+
+We added an additional flag in the Options type which adds some logging capabilities. When the `logUnannotatedQueries` flag is turned on, at the end of each query, the annotation code checks if this query was annotated completely. If that is not the case, it logs this query using `console.error`. Logging to `console.error` allows for easy pipeing into a file. Example: `npm run test 2> output.txt`.
