@@ -26,7 +26,6 @@ export function annotatePathExpr(ast: IAST): SequenceType {
 			};
 		}
 	}
-	if (seqType) console.log(seqType);
 	if (!seqType) {
 		seqType = {
 			type: ValueType.ITEM,
