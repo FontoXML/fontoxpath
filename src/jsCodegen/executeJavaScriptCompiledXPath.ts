@@ -16,23 +16,34 @@ declare interface IInternalDomFacadeUnmangled {
 }
 
 /**
+ * The (compiled) result of what {@link compileXPathToJavaScript} generated.
+ *
+ * @beta
+ */
+export type CompiledXPathFunction<
+	TNode extends Node = Node,
+	TReturnType extends ReturnType = ReturnType.ANY
+> = () => (
+	contextItem: unknown,
+	domFacade: unknown,
+	runtimeLib: unknown
+) => IReturnTypes<TNode>[TReturnType];
+
+/**
  * Execute XPath compiled to JavaScript that is evaluated to a function. For
  * compiling XPath to JavaScript, see {@link compileXPathToJavaScript}.
  *
  * @beta
  *
- * @param compiledJavaScriptFunction - A function containing compiled XPath in
+ * @param compiledXPathFunction - A function containing compiled XPath in
  * its body.
  * @param contextItem - The node from which to run the XPath.
  * @param domFacade - The domFacade (or DomFacade like interface) for retrieving relation.
  *
  * @returns The result of executing this XPath.
  */
-const executeJavaScriptCompiledXPath = <
-	TNode extends Node,
-	TReturnType extends ReturnType
->(
-	compiledJavaScriptFunction: () => (contextItem: unknown, domFacade: unknown, runtimeLib: unknown) => IReturnTypes<TNode>[TReturnType],
+const executeJavaScriptCompiledXPath = <TNode extends Node, TReturnType extends ReturnType>(
+	compiledXPathFunction: CompiledXPathFunction<TNode, TReturnType>,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null
 ): IReturnTypes<TNode>[TReturnType] => {
@@ -47,7 +58,7 @@ const executeJavaScriptCompiledXPath = <
 
 	contextItem = contextArray[0];
 
-	return compiledJavaScriptFunction()(
+	return compiledXPathFunction()(
 		contextItem,
 		wrappedDomFacade as IInternalDomFacadeUnmangled,
 		runtimeLib
