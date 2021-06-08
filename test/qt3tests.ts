@@ -9,9 +9,9 @@ import {
 	evaluateXPathToString,
 	executeJavaScriptCompiledXPath,
 	JavaScriptCompiledXPathResult,
+	Language,
 	registerXQueryModule,
 	ReturnType,
-	Language,
 } from 'fontoxpath';
 import { Element, Node, XMLSerializer } from 'slimdom';
 import { slimdom } from 'slimdom-sax-parser';
@@ -104,7 +104,7 @@ function createAsserterForExpression(baseUrl: string, assertNode, language, anno
 							namespaceResolver,
 							nodesFactory,
 							language,
-							annotateAst: annotateAst,
+							annotateAst,
 						});
 					},
 					errorCode === '*' ? /.*/ : new RegExp(errorCode),
@@ -120,7 +120,7 @@ function createAsserterForExpression(baseUrl: string, assertNode, language, anno
 							assertNode,
 							undefined,
 							{
-								annotateAst: annotateAst,
+								annotateAst,
 							}
 						)}`,
 						contextNode,
@@ -137,7 +137,7 @@ function createAsserterForExpression(baseUrl: string, assertNode, language, anno
 						namespaceResolver,
 						nodesFactory,
 						language,
-						annotateAst: annotateAst,
+						annotateAst,
 					}),
 					`Expected XPath ${xpath} to resolve to true`
 				);
@@ -192,7 +192,7 @@ function createAsserterForExpression(baseUrl: string, assertNode, language, anno
 						namespaceResolver,
 						nodesFactory,
 						language,
-						annotateAst: annotateAst,
+						annotateAst,
 					}),
 					`Expected XPath ${xpath} to resolve to false`
 				);
@@ -233,19 +233,19 @@ function createAsserterForExpression(baseUrl: string, assertNode, language, anno
 			let parsedFragment;
 			if (
 				evaluateXPathToBoolean('@file', assertNode, undefined, {
-					annotateAst: annotateAst,
+					annotateAst,
 				})
 			) {
 				parsedFragment = getFile(
 					evaluateXPathToString('$baseUrl || "/" || @file', assertNode, null, {
 						baseUrl,
-						annotateAst: annotateAst,
+						annotateAst,
 					})
 				);
 			} else {
 				parsedFragment = parser.parseFromString(
 					`<xml>${evaluateXPathToString('.', assertNode, undefined, {
-						annotateAst: annotateAst,
+						annotateAst,
 					})}</xml>`
 				).documentElement;
 			}
@@ -254,7 +254,7 @@ function createAsserterForExpression(baseUrl: string, assertNode, language, anno
 					namespaceResolver,
 					nodesFactory,
 					language,
-					annotateAst: annotateAst,
+					annotateAst,
 				}) as Node[];
 				chai.assert(
 					evaluateXPathToBoolean(
@@ -266,7 +266,7 @@ function createAsserterForExpression(baseUrl: string, assertNode, language, anno
 							b: Array.from(parsedFragment.childNodes),
 						},
 						{
-							annotateAst: annotateAst,
+							annotateAst,
 						}
 					),
 					`Expected XPath ${xpath} to resolve to the given XML. Expected ${results
@@ -291,7 +291,7 @@ function createAsserterForExpression(baseUrl: string, assertNode, language, anno
 						namespaceResolver,
 						nodesFactory,
 						language,
-						annotateAst: annotateAst,
+						annotateAst,
 					}),
 					expectedString,
 					xpath
@@ -607,7 +607,7 @@ function getExpressionBackendAsserterForTest(
 	annotateAst: boolean
 ) {
 	const assertNode = evaluateXPathToFirstNode('./result/*', testCase, undefined, {
-		annotateAst: annotateAst,
+		annotateAst,
 	});
 	return createAsserterForExpression(baseUrl, assertNode, language, annotateAst);
 }
@@ -667,6 +667,7 @@ function loadModule(testCase, baseUrl) {
 describe('qt3 test set', () => {
 	const annotateAst = process.argv.includes('--annotate');
 	if (annotateAst) {
+		// tslint:disable-next-line: no-console
 		console.log('Running tests using annotation');
 	}
 
