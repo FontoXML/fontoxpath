@@ -4189,3 +4189,8 @@ fo-test-array-subarray-006,Error: FOAY0001: subarray start out of bounds.
 fo-test-array-subarray-007,Error: FOAY0001: subarray start out of bounds.
 fo-test-array-fold-right-003,AssertionError: Expected XPath          array:fold-right([1,2,3], [], function($x, $y){[$x, $y]})        to (deep equally) resolve to [1, [2, [3, []]]]: expected false to be true
 fo-test-array-sort-002,Error: XPST0017: Function array:sort with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}sort (array(*))", "Q{http://www.w3.org/2001/XMLSchema}short (xs:anyAtomicType?)" or "Q{http://www.w3.org/2005/xpath-functions/math}sqrt (xs:double?)"?
+K-NumericAdd-37,AssertionError: expected [Function] to throw an error
+K-NumericAdd-39,AssertionError: Expected executing the XPath "1 + (1, 2)" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw an error, AssertionError: expected [Function] to throw an error.
+K2-NumericAdd-1,AssertionError: expected [Function] to throw an error
+K2-NodeTest-37,AssertionError: expected [Function] to throw error matching /XPTY0018/ but got 'Cannot read property \'type\' of null'
+XPTY0004_46,AssertionError: expected [Function] to throw an error
