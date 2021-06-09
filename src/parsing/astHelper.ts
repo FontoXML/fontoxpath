@@ -171,10 +171,8 @@ function followPath(ast: IAST, path: string[]): IAST | null {
 /**
  * Get the value of the given attribute
  */
-function getAttribute(
-	ast: IAST,
-	attributeName: 'type' | Omit<string, 'type'>
-): string | SequenceType | null;
+function getAttribute(ast: IAST, attributeName: 'type'): SequenceType | null;
+function getAttribute(ast: IAST, attributeName: Omit<string, 'type'>): string | SequenceType | null;
 function getAttribute(ast: IAST, attributeName: string): string | SequenceType | null {
 	if (!Array.isArray(ast)) {
 		return null;
