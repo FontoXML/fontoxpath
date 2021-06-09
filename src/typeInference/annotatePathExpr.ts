@@ -20,7 +20,14 @@ export function annotatePathExpr(ast: IAST): SequenceType {
 	for (const step of steps) {
 		retType = annotateStep(step);
 	}
-	astHelper.insertAttribute(ast, 'type', retType);
+
+	if (
+		retType !== undefined &&
+		retType.type !== ValueType.ITEM &&
+		retType.mult !== SequenceMultiplicity.ZERO_OR_MORE
+	) {
+		astHelper.insertAttribute(ast, 'type', retType);
+	}
 	return retType;
 }
 
