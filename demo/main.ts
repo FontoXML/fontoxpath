@@ -232,7 +232,6 @@ async function rerunXPath() {
 	const xpath = xpathField.innerText;
 
 	const annotateAst = useAstAnnotation.checked;
-	log.innerText = 'Using annotation: ' + annotateAst;
 
 	try {
 		// First try to get the AST as it has a higher change of succeeding
