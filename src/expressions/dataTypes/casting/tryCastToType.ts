@@ -118,7 +118,7 @@ function createCastingFunction(from: ValueType, to: ValueType): (value: Value) =
 			error: new Error('XPST0080: Casting to xs:NOTATION is not permitted.'),
 		});
 	}
-	
+
 	if (to === ValueType.XSERROR) {
 		return (_val) => ({
 			successful: false,
@@ -132,31 +132,31 @@ function createCastingFunction(from: ValueType, to: ValueType): (value: Value) =
 			error: new Error('XPST0080: Casting from or to xs:anySimpleType is not permitted.'),
 		});
 	}
-	
+
 	if (from === ValueType.XSANYATOMICTYPE || to === ValueType.XSANYATOMICTYPE) {
 		return (_val) => ({
 			successful: false,
 			error: new Error('XPST0080: Casting from or to xs:anyAtomicType is not permitted.'),
 		});
 	}
-	
+
 	if (isSubtypeOf(from, ValueType.FUNCTION) && to === ValueType.XSSTRING) {
 		return (_val) => ({
 			successful: false,
 			error: new Error('FOTY0014: Casting from function item to xs:string is not permitted.'),
 		});
 	}
-	
+
 	if (from === to) {
 		return (val) => ({
 			successful: true,
-			value: createAtomicValue(val, from)
+			value: createAtomicValue(val, from),
 		});
 	}
-	
+
 	const primitiveFrom = TREAT_AS_PRIMITIVE.includes(from) ? from : getPrimitiveTypeName(from);
 	const primitiveTo = TREAT_AS_PRIMITIVE.includes(to) ? to : getPrimitiveTypeName(to);
-	
+
 	if (primitiveTo === null || primitiveFrom === null) {
 		return (_val) => ({
 			successful: false,
