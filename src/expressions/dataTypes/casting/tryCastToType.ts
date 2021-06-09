@@ -62,10 +62,9 @@ export function castToPrimitiveType(from: ValueType, to: ValueType): (value: Val
 		case ValueType.XSINTEGER:
 			return castToInteger(instanceOf);
 		case ValueType.XSNUMERIC:
-			// This case exists because numeric is a union type,
-			// therefore it does not fit into the inheritance hierarchy
-			// normally and needs to be turned into something that does
-			// (almost always a double) first.
+			// This case exists because numeric is a union type.
+			// It needs to be turned into a concrete type
+			// (almost always a double).
 			return castToNumeric(castToPrimitiveType);
 		case ValueType.XSDURATION:
 			return castToDuration(instanceOf);
