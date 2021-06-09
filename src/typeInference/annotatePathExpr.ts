@@ -22,12 +22,13 @@ export function annotatePathExpr(ast: IAST): SequenceType {
 	}
 
 	if (
-		retType !== undefined &&
-		retType.type !== ValueType.ITEM &&
-		retType.mult !== SequenceMultiplicity.ZERO_OR_MORE
+		retType === undefined ||
+		retType === null ||
+		(retType.type !== ValueType.ITEM && retType.mult !== SequenceMultiplicity.ZERO_OR_MORE)
 	) {
-		astHelper.insertAttribute(ast, 'type', retType);
+		return retType;
 	}
+	astHelper.insertAttribute(ast, 'type', retType);
 	return retType;
 }
 
