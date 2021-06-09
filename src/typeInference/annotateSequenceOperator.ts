@@ -24,15 +24,15 @@ export function annotateSequenceOperator(
 			mult: SequenceMultiplicity.ZERO_OR_MORE,
 		};
 	} else {
-		const contatinsUndefinedOrNull = types.includes(undefined) || types.includes(null);
-		if (contatinsUndefinedOrNull) {
+		const contatinsUndefined = types.includes(undefined);
+		if (contatinsUndefined) {
 			seqType = {
 				type: ValueType.ITEM,
 				mult: SequenceMultiplicity.ZERO_OR_MORE,
 			};
 		} else {
 			const uniqueTypes = filterOnUniqueObjects(types);
-			if (uniqueTypes.length > 1 && !contatinsUndefinedOrNull) {
+			if (uniqueTypes.length > 1 && !contatinsUndefined) {
 				seqType = {
 					type: ValueType.ITEM,
 					mult: SequenceMultiplicity.ZERO_OR_MORE,
