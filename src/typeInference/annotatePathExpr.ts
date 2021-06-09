@@ -33,10 +33,7 @@ function annotateStep(step: IAST): SequenceType {
 	const lastChild = children[children.length - 1];
 	switch (lastChild[0]) {
 		case 'filterExpr': {
-			seqType = astHelper.getAttribute(
-				astHelper.followPath(lastChild, ['*']),
-				'type'
-			) as SequenceType;
+			seqType = astHelper.getAttribute(astHelper.followPath(lastChild, ['*']), 'type');
 			break;
 		}
 		case 'xpathAxis':
