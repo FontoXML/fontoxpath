@@ -147,10 +147,14 @@ function createCastingFunction(from: ValueType, to: ValueType): (value: Value) =
 		});
 	}
 
+	// If the two types are equal, no casting is required and we can just return the value as it is.
 	if (from === to) {
 		return (val) => ({
 			successful: true,
-			value: createAtomicValue(val, from),
+			value: {
+				type: to,
+				value: val,
+			},
 		});
 	}
 
