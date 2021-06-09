@@ -9,6 +9,7 @@ jobs:
   build:
         name: Compute bundle size
         runs-on: ubuntu-latest
+        if: github.owner == 'FontoXML'
 
         steps:
             - uses: actions/checkout@v2
