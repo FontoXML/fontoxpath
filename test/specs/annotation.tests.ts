@@ -166,14 +166,14 @@ describe('annotateSimpleMapExpr', () => {
 	const context = new AnnotationContext(undefined);
 	insertVariables(context, [
 		['numericValues', { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.ZERO_OR_MORE }],
-		['stringValues', { type: ValueType.NODE, mult: SequenceMultiplicity.ZERO_OR_MORE }],
+		['nodeValues', { type: ValueType.NODE, mult: SequenceMultiplicity.ZERO_OR_MORE }],
 	]);
 	it('annotate mapExpr of sequence', () =>
 		assertValueType('$numericValues ! 4 ! 3', ValueType.XSINTEGER, context));
 	it('annotate mapExpr of sequence contextItem mult', () =>
 		assertValueType('$numericValues!(.*.)', ValueType.XSNUMERIC, undefined));
 	it('annotate mapExpr contextItem union', () =>
-		assertValueType('$stringValues!(. union //b)', ValueType.NODE, undefined));
+		assertValueType('$nodeValues!(. union //b)', ValueType.NODE, undefined));
 	it('annotate mapExpr attributes of nodes', () =>
 		assertValueType('/ ! (@first, @middle, @last)', ValueType.NODE, undefined));
 	it('annotate mapExpr of strings', () =>
