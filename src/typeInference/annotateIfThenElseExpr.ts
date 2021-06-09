@@ -1,6 +1,5 @@
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
-import { AnnotationContext } from './AnnotationContext';
 
 /**
  * Checks the type and multiplicity of else clause and then clause

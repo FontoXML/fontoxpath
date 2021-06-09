@@ -37,9 +37,7 @@ export default function evaluateUpdatingExpressionSync<
 	variables?: { [s: string]: any } | null,
 	options?: UpdatingOptions | null
 ): { pendingUpdateList: object[]; xdmValue: IReturnTypes<TNode>[TReturnType] } {
-	options = options || {
-		annotateAst: true,
-	};
+	options = options || {};
 
 	let dynamicContext: DynamicContext;
 	let executionParameters: ExecutionParameters;

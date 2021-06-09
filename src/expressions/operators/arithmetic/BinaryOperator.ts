@@ -122,6 +122,20 @@ export function generateBinaryOperatorType(
 	typeA: ValueType,
 	typeB: ValueType
 ): ValueType {
+	const GENERIC_NUMERIC_VALUE_TYPES = [
+		ValueType.XSNUMERIC,
+		ValueType.NODE,
+		ValueType.ITEM,
+		ValueType.XSANYATOMICTYPE,
+	];
+
+	if (
+		GENERIC_NUMERIC_VALUE_TYPES.includes(typeA) ||
+		GENERIC_NUMERIC_VALUE_TYPES.includes(typeB)
+	) {
+		return ValueType.XSNUMERIC;
+	}
+
 	let castFunctionForValueA: any = null;
 	let castFunctionForValueB: any = null;
 

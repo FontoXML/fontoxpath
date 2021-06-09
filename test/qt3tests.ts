@@ -9,6 +9,7 @@ import {
 	evaluateXPathToString,
 	executeJavaScriptCompiledXPath,
 	JavaScriptCompiledXPathResult,
+	Language,
 	registerXQueryModule,
 	ReturnType,
 } from 'fontoxpath';
@@ -46,7 +47,7 @@ function createNodesFactory(assertNode: Node) {
 	return nodesFactory;
 }
 
-function createAsserterForExpression(baseUrl: string, assertNode, language) {
+function createAsserterForExpression(baseUrl: string, assertNode, language, annotateAst: boolean) {
 	const nodesFactory = createNodesFactory(assertNode);
 
 	switch (assertNode.localName) {
@@ -54,16 +55,16 @@ function createAsserterForExpression(baseUrl: string, assertNode, language) {
 			const asserts = evaluateXPathToNodes('*', assertNode, undefined, {
 				annotateAst: false,
 			}).map((innerAssertNode) =>
-				createAsserterForExpression(baseUrl, innerAssertNode, language)
+				createAsserterForExpression(baseUrl, innerAssertNode, language, annotateAst)
 			);
-			return (xpath, contextNode, variablesInScope, namespaceResolver) =>
+			return (xpath: string, contextNode, variablesInScope, namespaceResolver) =>
 				asserts.forEach((a) => a(xpath, contextNode, variablesInScope, namespaceResolver));
 		}
 		case 'any-of': {
 			const asserts = evaluateXPathToNodes('*', assertNode, undefined, {
 				annotateAst: false,
 			}).map((innerAssertNode) =>
-				createAsserterForExpression(baseUrl, innerAssertNode, language)
+				createAsserterForExpression(baseUrl, innerAssertNode, language, annotateAst)
 			);
 			return (xpath, contextNode, variablesInScope, namespaceResolver) => {
 				const errors = [];
@@ -103,7 +104,7 @@ function createAsserterForExpression(baseUrl: string, assertNode, language) {
 							namespaceResolver,
 							nodesFactory,
 							language,
-							annotateAst: false,
+							annotateAst,
 						});
 					},
 					errorCode === '*' ? /.*/ : new RegExp(errorCode),
@@ -119,7 +120,7 @@ function createAsserterForExpression(baseUrl: string, assertNode, language) {
 							assertNode,
 							undefined,
 							{
-								annotateAst: false,
+								annotateAst,
 							}
 						)}`,
 						contextNode,
@@ -136,7 +137,7 @@ function createAsserterForExpression(baseUrl: string, assertNode, language) {
 						namespaceResolver,
 						nodesFactory,
 						language,
-						annotateAst: false,
+						annotateAst,
 					}),
 					`Expected XPath ${xpath} to resolve to true`
 				);
@@ -151,7 +152,7 @@ function createAsserterForExpression(baseUrl: string, assertNode, language) {
 						contextNode,
 						null,
 						variablesInScope,
-						{ namespaceResolver, nodesFactory, language, annotateAst: false }
+						{ namespaceResolver, nodesFactory, language, annotateAst: annotateAst }
 					),
 					`Expected XPath ${xpath} to resolve to ${equalWith}`
 				);
@@ -167,7 +168,7 @@ function createAsserterForExpression(baseUrl: string, assertNode, language) {
 						contextNode,
 						null,
 						variablesInScope,
-						{ namespaceResolver, nodesFactory, language, annotateAst: false }
+						{ namespaceResolver, nodesFactory, language, annotateAst: annotateAst }
 					),
 					`Expected XPath ${xpath} to (deep equally) resolve to ${equalWith}`
 				);
@@ -180,7 +181,7 @@ function createAsserterForExpression(baseUrl: string, assertNode, language) {
 						contextNode,
 						null,
 						variablesInScope,
-						{ namespaceResolver, nodesFactory, language, annotateAst: false }
+						{ namespaceResolver, nodesFactory, language, annotateAst: annotateAst }
 					),
 					`Expected XPath ${xpath} to resolve to the empty sequence`
 				);
@@ -191,7 +192,7 @@ function createAsserterForExpression(baseUrl: string, assertNode, language) {
 						namespaceResolver,
 						nodesFactory,
 						language,
-						annotateAst: false,
+						annotateAst,
 					}),
 					`Expected XPath ${xpath} to resolve to false`
 				);
@@ -206,7 +207,7 @@ function createAsserterForExpression(baseUrl: string, assertNode, language) {
 						contextNode,
 						null,
 						variablesInScope,
-						{ namespaceResolver, nodesFactory, language, annotateAst: false }
+						{ namespaceResolver, nodesFactory, language, annotateAst: annotateAst }
 					),
 					expectedCount,
 					`Expected ${xpath} to resolve to ${expectedCount}`
@@ -223,7 +224,7 @@ function createAsserterForExpression(baseUrl: string, assertNode, language) {
 						contextNode,
 						null,
 						variablesInScope,
-						{ namespaceResolver, nodesFactory, language, annotateAst: false }
+						{ namespaceResolver, nodesFactory, language, annotateAst: annotateAst }
 					),
 					`Expected XPath ${xpath} to resolve to something of type ${expectedType}`
 				);
@@ -232,19 +233,19 @@ function createAsserterForExpression(baseUrl: string, assertNode, language) {
 			let parsedFragment;
 			if (
 				evaluateXPathToBoolean('@file', assertNode, undefined, {
-					annotateAst: false,
+					annotateAst,
 				})
 			) {
 				parsedFragment = getFile(
 					evaluateXPathToString('$baseUrl || "/" || @file', assertNode, null, {
 						baseUrl,
-						annotateAst: false,
+						annotateAst,
 					})
 				);
 			} else {
 				parsedFragment = parser.parseFromString(
 					`<xml>${evaluateXPathToString('.', assertNode, undefined, {
-						annotateAst: false,
+						annotateAst,
 					})}</xml>`
 				).documentElement;
 			}
@@ -253,7 +254,7 @@ function createAsserterForExpression(baseUrl: string, assertNode, language) {
 					namespaceResolver,
 					nodesFactory,
 					language,
-					annotateAst: false,
+					annotateAst,
 				}) as Node[];
 				chai.assert(
 					evaluateXPathToBoolean(
@@ -265,7 +266,7 @@ function createAsserterForExpression(baseUrl: string, assertNode, language) {
 							b: Array.from(parsedFragment.childNodes),
 						},
 						{
-							annotateAst: false,
+							annotateAst,
 						}
 					),
 					`Expected XPath ${xpath} to resolve to the given XML. Expected ${results
@@ -290,7 +291,7 @@ function createAsserterForExpression(baseUrl: string, assertNode, language) {
 						namespaceResolver,
 						nodesFactory,
 						language,
-						annotateAst: false,
+						annotateAst,
 					}),
 					expectedString,
 					xpath
@@ -599,11 +600,16 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 	}
 }
 
-function getExpressionBackendAsserterForTest(baseUrl: string, testCase, language) {
+function getExpressionBackendAsserterForTest(
+	baseUrl: string,
+	testCase,
+	language: Language,
+	annotateAst: boolean
+) {
 	const assertNode = evaluateXPathToFirstNode('./result/*', testCase, undefined, {
-		annotateAst: false,
+		annotateAst,
 	});
-	return createAsserterForExpression(baseUrl, assertNode, language);
+	return createAsserterForExpression(baseUrl, assertNode, language, annotateAst);
 }
 
 function getJsCodegenBackendAsserterForTest(baseUrl: string, testCase, language) {
@@ -659,28 +665,26 @@ function loadModule(testCase, baseUrl) {
 }
 
 describe('qt3 test set', () => {
+	const annotateAst = process.argv.includes('--annotate');
+	if (annotateAst) {
+		// tslint:disable-next-line: no-console
+		console.log('Running tests using annotation');
+	}
+
 	const expressionBackendLog = unrunnableTestCases;
 	getAllTestSets().forEach((testSetFileName) => {
 		const testSet = getFile(testSetFileName);
 
-		const testSetName = evaluateXPathToString('/test-set/@name', testSet, undefined, {
-			annotateAst: false,
-		});
+		const testSetName = evaluateXPathToString('/test-set/@name', testSet);
 
 		// Find all the tests we can run
-		const testCases: Node[] = evaluateXPathToNodes(ALL_TESTS_QUERY, testSet, undefined, {
-			annotateAst: false,
-		});
+		const testCases: Node[] = evaluateXPathToNodes(ALL_TESTS_QUERY, testSet);
 		if (!testCases.length) {
 			return;
 		}
 		const testName = evaluateXPathToString(
 			'/test-set/@name || /test-set/description!(if (string()) then "~" || . else "")',
-			testSet,
-			undefined,
-			{
-				annotateAst: false,
-			}
+			testSet
 		);
 
 		describe(`${testName} (expression backend)`, function () {
@@ -712,7 +716,8 @@ describe('qt3 test set', () => {
 							const asserter = getExpressionBackendAsserterForTest(
 								baseUrl,
 								testCase,
-								language
+								language,
+								annotateAst
 							);
 							asserter(testQuery, contextNode, variablesInScope, namespaceResolver);
 						} catch (e) {

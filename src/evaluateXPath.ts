@@ -136,9 +136,7 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 		throw new TypeError("Failed to execute 'evaluateXPath': xpathExpression must be a string.");
 	}
 
-	options = options || {
-		annotateAst: true,
-	};
+	options = options || {};
 
 	let dynamicContext: DynamicContext;
 	let executionParameters: ExecutionParameters;
