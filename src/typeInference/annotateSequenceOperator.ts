@@ -3,10 +3,11 @@ import astHelper, { IAST } from '../parsing/astHelper';
 import { filterOnUniqueObjects } from './annotateFlworExpression';
 
 /**
- * Inserts an item()* type to the AST, as sequence operator can contain multiple different ITEM types.
+ * If every type of alle the elements are the same we annotate the ast with that type *.
+ * else inserts an item()* type to the AST, as sequence operator can contain multiple different ITEM types.
  * If we have an empty sequence, we return a Node type.
  * @param ast the AST to be annotated.
- * @returns `SequenceType` of type ITEM with multiplicity of `ZERO_OR_MORE` or NODE in case we have an empty sequence.
+ * @returns `SequenceType` with multiplicity of `ZERO_OR_MORE`.
  */
 export function annotateSequenceOperator(
 	ast: IAST,
