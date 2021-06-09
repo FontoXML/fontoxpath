@@ -146,13 +146,37 @@ describe('Annotate Array', () => {
 describe('annotate Sequence', () => {
 	it('annotate simple sequence', () =>
 		assertValueType('(4, 3, hello)', ValueType.ITEM, undefined));
+	it('annotate simple sequence same type integer', () =>
+		assertValueType('(4, 3)', ValueType.XSINTEGER, undefined));
+	it('annotate simple sequence same type string', () =>
+		assertValueType('("4", "3")', ValueType.XSSTRING, undefined));
+	it('annotate complex sequence same type sequences', () =>
+		assertValueType('(("4", "he"), ("3", "hello"))', ValueType.XSSTRING, undefined));
+	it('annotate complex sequence different type sequences', () =>
+		assertValueType('(("4", "he"), ("3"))', ValueType.ITEM, undefined));
 	it('annotate complex sequence', () =>
 		assertValueType('(4, 3, hello, (43, (256, "help")))', ValueType.ITEM, undefined));
 });
 
 describe('Annotate maps', () => {
 	it('mapConstructor', () => assertValueType('map{a:1, b:2}', ValueType.MAP, undefined));
-	it('simpleMapExpr', () => assertValueType('$a ! ( //b)', undefined, undefined));
+});
+
+describe('annotateSimpleMapExpr', () => {
+	const context = new AnnotationContext(undefined);
+	insertVariables(context, [
+		['values', { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.ZERO_OR_MORE }],
+	]);
+	it('annotate mapExpr of sequence', () =>
+		assertValueType('$values ! 4 ! 3', ValueType.XSINTEGER, context));
+	it('annotate mapExpr of sequence', () =>
+		assertValueType('$values!(.*.)', undefined, undefined));
+	it('annotate mapExpr of stringConcatenations', () =>
+		assertValueType(
+			'child::div1 / child::para / string() ! concat("id-", .)',
+			undefined,
+			undefined
+		));
 });
 
 describe('Annotating ifThenElse expressions', () => {
