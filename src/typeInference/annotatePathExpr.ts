@@ -1,7 +1,6 @@
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
 
-const item = { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE };
 /**
  * The type of the pathExpr is the type of the last step,
  * The type of a stepExpr is the type of the last expression in that step
@@ -15,7 +14,7 @@ const item = { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE };
 export function annotatePathExpr(ast: IAST): SequenceType {
 	const steps = astHelper.getChildren(ast, 'stepExpr');
 	if (!steps) {
-		return item;
+		return { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE };
 	}
 	let retType;
 	for (const step of steps) {
@@ -27,6 +26,7 @@ export function annotatePathExpr(ast: IAST): SequenceType {
 
 function annotateStep(step: IAST): SequenceType {
 	let seqType;
+	const item = { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE };
 	if (!step) {
 		return item;
 	}
@@ -74,8 +74,7 @@ function annotateStep(step: IAST): SequenceType {
 			break;
 		}
 		default:
-			seqType = item;
-			return seqType;
+			return item;
 	}
 	astHelper.insertAttribute(step, 'type', seqType);
 	return seqType;
