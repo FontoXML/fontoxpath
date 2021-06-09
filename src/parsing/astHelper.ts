@@ -171,6 +171,8 @@ function followPath(ast: IAST, path: string[]): IAST | null {
 /**
  * Get the value of the given attribute
  */
+function getAttribute(ast: IAST, attributeName: 'type'): SequenceType | null;
+function getAttribute(ast: IAST, attributeName: Omit<string, 'type'>): string | SequenceType | null;
 function getAttribute(ast: IAST, attributeName: string): string | SequenceType | null {
 	if (!Array.isArray(ast)) {
 		return null;
@@ -202,7 +204,7 @@ function getQName(ast: IAST): QName {
  * @param name The name of the attribute
  * @param data The data of the attribute
  */
-function insertAttribute(ast: IAST, name: string, data: any) {
+function insertAttribute(ast: IAST, name: string, data: string | SequenceType) {
 	if (typeof ast[1] === 'object' && !Array.isArray(ast[1])) {
 		(ast[1] as ASTAttributes)[name] = data;
 	} else {
