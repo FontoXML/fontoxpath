@@ -231,6 +231,8 @@ async function rerunXPath() {
 
 	const xpath = xpathField.innerText;
 
+	// Since the rest of the code uses caching, there is a small bug where the demo
+	// keep returning cached annotated queries even though the annotation flag gets turned of.
 	const annotateAst = useAstAnnotation.checked;
 
 	try {
