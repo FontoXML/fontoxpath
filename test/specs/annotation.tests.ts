@@ -165,18 +165,19 @@ describe('Annotate maps', () => {
 describe('annotateSimpleMapExpr', () => {
 	const context = new AnnotationContext(undefined);
 	insertVariables(context, [
-		['values', { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.ZERO_OR_MORE }],
+		['numericValues', { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.ZERO_OR_MORE }],
+		['stringValues', { type: ValueType.NODE, mult: SequenceMultiplicity.ZERO_OR_MORE }],
 	]);
 	it('annotate mapExpr of sequence', () =>
-		assertValueType('$values ! 4 ! 3', ValueType.XSINTEGER, context));
-	it('annotate mapExpr of sequence', () =>
-		assertValueType('$values!(.*.)', undefined, undefined));
-	it('annotate mapExpr of stringConcatenations', () =>
-		assertValueType(
-			'child::div1 / child::para / string() ! concat("id-", .)',
-			undefined,
-			undefined
-		));
+		assertValueType('$numericValues ! 4 ! 3', ValueType.XSINTEGER, context));
+	it('annotate mapExpr of sequence contextItem mult', () =>
+		assertValueType('$numericValues!(.*.)', ValueType.XSNUMERIC, undefined));
+	it('annotate mapExpr contextItem union', () =>
+		assertValueType('$stringValues!(. union //b)', ValueType.NODE, undefined));
+	it('annotate mapExpr attributes of nodes', () =>
+		assertValueType('/ ! (@first, @middle, @last)', ValueType.NODE, undefined));
+	it('annotate mapExpr of strings', () =>
+		assertValueType('(1 to 5)!"*"', ValueType.XSSTRING, undefined));
 });
 
 describe('Annotating ifThenElse expressions', () => {

@@ -1,4 +1,9 @@
-import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
+import {
+	SequenceMultiplicity,
+	SequenceType,
+	sequenceTypeToString,
+	ValueType,
+} from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { AnnotationContext } from './AnnotationContext';
 
@@ -18,11 +23,13 @@ export function annotateSimpleMapExpr(
 	for (let i = 0; i < pathExpressions.length; i++) {
 		lastType = annotate(pathExpressions[i], context);
 	}
-	if (lastType) {
+	// throw Error(sequenceTypeToString(lastType));
+	if (lastType !== undefined && lastType !== null) {
 		const sequenceType: SequenceType = {
 			type: lastType.type,
 			mult: SequenceMultiplicity.ZERO_OR_MORE,
 		};
+		astHelper.insertAttribute(ast, 'type', lastType);
 		return sequenceType;
 	} else {
 		return { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE };
