@@ -81,6 +81,25 @@ class Compare extends Expression {
 			executionParameters
 		);
 
+		// If we have an evaluation function stored we can execute that immediately
+		// and make sure both sequences are of length 1
+		if (
+			this._evaluationFunction &&
+			firstSequence.getLength() === 1 &&
+			secondSequence.getLength() === 1
+		) {
+			const firstAtomizedSequence = atomize(firstSequence, executionParameters);
+			const secondAtomizedSequence = atomize(secondSequence, executionParameters);
+
+			// Execute the evaluation function and return either a true- or false-sequence
+			return this._evaluationFunction(
+				firstAtomizedSequence.first(),
+				secondAtomizedSequence.first()
+			)
+				? sequenceFactory.singletonTrueSequence()
+				: sequenceFactory.singletonFalseSequence();
+		}
+
 		return firstSequence.switchCases({
 			empty: () => {
 				if (this._compare === 'valueCompare' || this._compare === 'nodeCompare') {
@@ -97,15 +116,6 @@ class Compare extends Expression {
 						return sequenceFactory.singletonFalseSequence();
 					},
 					default: () => {
-						if (this._evaluationFunction) {
-							return this._evaluationFunction(
-								firstSequence.first(),
-								secondSequence.first()
-							)
-								? sequenceFactory.singletonTrueSequence()
-								: sequenceFactory.singletonFalseSequence();
-						}
-
 						if (this._compare === 'nodeCompare') {
 							return nodeCompare(
 								this._operator,
