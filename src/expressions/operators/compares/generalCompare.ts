@@ -67,7 +67,14 @@ export default function generalCompare(
 						}
 					}
 
-					if (valueCompare(operator, firstValue, secondValue, dynamicContext)) {
+					const compareFunction = valueCompare(
+						operator,
+						firstValue.type,
+						secondValue.type,
+						dynamicContext
+					);
+
+					if (compareFunction(firstValue, secondValue)) {
 						return true;
 					}
 				}
