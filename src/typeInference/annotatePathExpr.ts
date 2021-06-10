@@ -16,18 +16,17 @@ export function annotatePathExpr(ast: IAST): SequenceType {
 	if (!steps) {
 		return { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE };
 	}
-	let lastReturnType;
+	let retType;
 	for (const step of steps) {
-		lastReturnType = annotateStep(step);
-		// lastReturnType = astHelper.getAttribute(step, 'type');
+		annotateStep(step);
+		retType = astHelper.getAttribute(step, 'type');
 	}
 
-	// Item()* is the undefined therefore should not be annotated
-	if (lastReturnType !== undefined && lastReturnType.type !== ValueType.ITEM) {
-		astHelper.insertAttribute(ast, 'type', lastReturnType);
+	if (retType && retType.type !== ValueType.ITEM) {
+		astHelper.insertAttribute(ast, 'type', retType);
 	}
 
-	return lastReturnType;
+	return retType;
 }
 
 function annotateStep(step: IAST): SequenceType {
@@ -41,7 +40,6 @@ function annotateStep(step: IAST): SequenceType {
 	switch (lastChild[0]) {
 		case 'filterExpr': {
 			seqType = astHelper.getAttribute(astHelper.followPath(lastChild, ['*']), 'type');
-			astHelper.insertAttribute(step, 'type', seqType);
 			break;
 		}
 		case 'xpathAxis':
@@ -80,5 +78,10 @@ function annotateStep(step: IAST): SequenceType {
 		default:
 			return item;
 	}
+
+	if (seqType && seqType.type !== ValueType.ITEM) {
+		astHelper.insertAttribute(step, 'type', seqType);
+	}
+
 	return seqType;
 }
