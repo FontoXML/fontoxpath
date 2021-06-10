@@ -16,13 +16,8 @@ import { AnnotationContext } from './AnnotationContext';
 export function annotateSimpleMapExpr(
 	ast: IAST,
 	context: AnnotationContext,
-	annotate: (ast: IAST, context: AnnotationContext) => SequenceType
+	lastType: SequenceType
 ): SequenceType {
-	const pathExpressions: IAST[] = astHelper.getChildren(ast, 'pathExpr');
-	let lastType;
-	for (let i = 0; i < pathExpressions.length; i++) {
-		lastType = annotate(pathExpressions[i], context);
-	}
 	if (lastType !== undefined && lastType !== null) {
 		const sequenceType: SequenceType = {
 			type: lastType.type,

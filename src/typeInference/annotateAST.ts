@@ -323,7 +323,12 @@ const annotationFunctions: {
 	},
 	// Maps
 	simpleMapExpr: (ast: IAST, context: AnnotationContext): SequenceType => {
-		return annotateSimpleMapExpr(ast, context, annotate);
+		const pathExpressions: IAST[] = astHelper.getChildren(ast, 'pathExpr');
+		let lastType;
+		for (let i = 0; i < pathExpressions.length; i++) {
+			lastType = annotate(pathExpressions[i], context);
+		}
+		return annotateSimpleMapExpr(ast, context, lastType);
 	},
 	mapConstructor: (ast: IAST, context: AnnotationContext): SequenceType => {
 		astHelper.getChildren(ast, 'mapConstructorEntry').map((keyValuePair) => ({
