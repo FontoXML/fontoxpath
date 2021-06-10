@@ -23,10 +23,7 @@ import { Language, Logger } from './types/Options';
  * debug					- Sets the debug option for the evaluation context.
  * disableCache				- Sets if the cache should or should not be disabled.
  * documentWriter			- Sets the documentwriter object
- * logger					- Sets a logger object
- * logUnannotatedQueries	- Sets if queries should be logged if they are not
- * 							  fully annotated. Mostly for testing purposes and might
- * 							  be removed if debug benefit is gone.
+ * logger					- Sets a logger object.
  * moduleImports			- Sets all the module imports.
  * namespaceResolver		- Callback to do namespace resolving.
  * nodesFactory				- Reference to a nodes factory object.
@@ -38,7 +35,6 @@ export type UpdatingOptions = {
 	disableCache?: boolean;
 	documentWriter?: IDocumentWriter;
 	logger?: Logger;
-	logUnannotatedQueries?: boolean; // TODO: Remove once node annotation is finalized.
 	moduleImports?: { [s: string]: string };
 	namespaceResolver?: (s: string) => string | null;
 	nodesFactory?: INodesFactory;
@@ -83,7 +79,6 @@ export default async function evaluateUpdatingExpression(
 				debug: !!options['debug'],
 				disableCache: !!options['disableCache'],
 				annotateAst: !!options['annotateAst'],
-				logUnannotatedQueries: !!options['logUnannotatedQueries'],
 			}
 		);
 		dynamicContext = context.dynamicContext;
