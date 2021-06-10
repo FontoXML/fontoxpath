@@ -82,21 +82,9 @@ describe('functions over strings', () => {
 				['', 'r', 'c', 'd', 'r', '']
 			));
 
-		it('wraps the error if the regex is invalid', () => {
+		it('wraps the thrown error if the supplied $pattern is invalid', () => {
 			chai.assert.throws(() => {
-				evaluateXPathToStrings(
-					'fn:tokenize("1, 15, 24,,50", ",sX#v6$KNkB\'%msql40>^|x-szaHzleL|*")',
-					documentNode
-				);
-			}, 'FORX0002');
-			chai.assert.throws(() => {
-				evaluateXPathToStrings('fn:tokenize("The", "K|?iBDFvD3%_Ay_+;zs+")', documentNode);
-			}, 'FORX0002');
-			chai.assert.throws(() => {
-				evaluateXPathToStrings(
-					'fn:tokenize(" red green blue ", "s+|2v[{L-^e{A[cN|svK$hV%Uk!UG")',
-					documentNode
-				);
+				evaluateXPathToStrings('fn:tokenize("1", "0>^|*")', documentNode);
 			}, 'FORX0002');
 		});
 	});
