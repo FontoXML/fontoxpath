@@ -19,7 +19,7 @@ export function annotatePathExpr(ast: IAST): SequenceType {
 	let retType;
 	for (const step of steps) {
 		annotateStep(step);
-		retType = astHelper.getAttribute(step, 'type') as SequenceType;
+		retType = astHelper.getAttribute(step, 'type');
 	}
 
 	if (retType === undefined || retType === null) {
@@ -39,10 +39,7 @@ function annotateStep(step: IAST): SequenceType {
 	const lastChild = children[children.length - 1];
 	switch (lastChild[0]) {
 		case 'filterExpr': {
-			seqType = astHelper.getAttribute(
-				astHelper.followPath(lastChild, ['*']),
-				'type'
-			) as SequenceType;
+			seqType = astHelper.getAttribute(astHelper.followPath(lastChild, ['*']), 'type');
 			break;
 		}
 		case 'xpathAxis':
