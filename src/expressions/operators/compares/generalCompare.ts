@@ -1,8 +1,10 @@
+import atomize from '../../dataTypes/atomize';
+import ExecutionParameters from '../../ExecutionParameters';
 import castToType from '../../dataTypes/castToType';
 import ISequence from '../../dataTypes/ISequence';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import { ValueType } from '../../dataTypes/Value';
+import { SequenceType, ValueType } from '../../dataTypes/Value';
 import DynamicContext from '../../DynamicContext';
 import valueCompare from './valueCompare';
 
@@ -78,4 +80,75 @@ export default function generalCompare(
 				empty: () => sequenceFactory.singletonFalseSequence(),
 			})
 	);
+}
+
+//asume at this point the sequences are of length 1
+export function generatePrefabFunction(
+	operator: string,
+	firstType: ValueType,
+	secondType: ValueType
+): (
+	first: ISequence,
+	second: ISequence,
+	dynamicContex: DynamicContext,
+	executionParameters: ExecutionParameters
+) => ISequence {
+	operator = OPERATOR_TRANSLATION[operator];
+	let firstTargetType: ValueType;
+	let secondTargetType: ValueType;
+	if (
+		isSubtypeOf(firstType, ValueType.XSUNTYPEDATOMIC) ||
+		isSubtypeOf(secondType, ValueType.XSUNTYPEDATOMIC)
+	) {
+		if (isSubtypeOf(firstType, ValueType.XSNUMERIC)) {
+			secondTargetType = ValueType.XSDOUBLE;
+		} else if (isSubtypeOf(secondType, ValueType.XSNUMERIC)) {
+			firstTargetType = ValueType.XSDOUBLE;
+		} else if (isSubtypeOf(firstType, ValueType.XSDAYTIMEDURATION)) {
+			secondTargetType = ValueType.XSDAYTIMEDURATION;
+		} else if (isSubtypeOf(secondType, ValueType.XSDAYTIMEDURATION)) {
+			firstTargetType = ValueType.XSDAYTIMEDURATION;
+		} else if (isSubtypeOf(firstType, ValueType.XSYEARMONTHDURATION)) {
+			secondTargetType = ValueType.XSYEARMONTHDURATION;
+		} else if (isSubtypeOf(secondType, ValueType.XSYEARMONTHDURATION)) {
+			firstTargetType = ValueType.XSYEARMONTHDURATION;
+		} else if (isSubtypeOf(firstType, ValueType.XSUNTYPEDATOMIC)) {
+			firstTargetType = secondType;
+		} else if (isSubtypeOf(secondType, ValueType.XSUNTYPEDATOMIC)) {
+			secondTargetType = firstType;
+		}
+	}
+
+	return (
+		first: ISequence,
+		second: ISequence,
+		dynamicContex: DynamicContext,
+		executionParameters: ExecutionParameters
+	) => {
+		const atomizedFirst = atomize(first, executionParameters).first();
+		const atomizedSecond = atomize(second, executionParameters).first();
+		if (firstTargetType) {
+			const result = valueCompare(
+				operator,
+				castToType(atomizedFirst, firstTargetType),
+				atomizedSecond,
+				dynamicContex
+			);
+			if (result) {
+				return sequenceFactory.singletonTrueSequence();
+			}
+			return sequenceFactory.singletonFalseSequence();
+		} else if (secondTargetType) {
+			const result = valueCompare(
+				operator,
+				atomizedFirst,
+				castToType(atomizedSecond, firstTargetType),
+				dynamicContex
+			);
+			if (result) {
+				return sequenceFactory.singletonTrueSequence();
+			}
+		}
+		return sequenceFactory.singletonFalseSequence();
+	};
 }

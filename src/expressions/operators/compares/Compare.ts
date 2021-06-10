@@ -1,9 +1,11 @@
 import atomize from '../../dataTypes/atomize';
+import ISequence from '../../dataTypes/ISequence';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
+import { SequenceMultiplicity, SequenceType } from '../../dataTypes/Value';
 import DynamicContext from '../../DynamicContext';
 import ExecutionParameters from '../../ExecutionParameters';
 import Expression from '../../Expression';
-import generalCompare from './generalCompare';
+import generalCompare, { generatePrefabFunction } from './generalCompare';
 import nodeCompare from './nodeCompare';
 import valueCompare from './valueCompare';
 
@@ -12,8 +14,22 @@ class Compare extends Expression {
 	private _firstExpression: Expression;
 	private _operator: string;
 	private _secondExpression: Expression;
+	private _firstType: SequenceType;
+	private _secondType: SequenceType;
+	private _evaluationFunction: (
+		firstSequence: ISequence,
+		secondSequence: ISequence,
+		context: DynamicContext,
+		parameters: ExecutionParameters
+	) => ISequence;
 
-	constructor(kind: string, firstExpression: Expression, secondExpression: Expression) {
+	constructor(
+		kind: string,
+		firstExpression: Expression,
+		secondExpression: Expression,
+		firstType: SequenceType,
+		secondType: SequenceType
+	) {
 		super(
 			firstExpression.specificity.add(secondExpression.specificity),
 			[firstExpression, secondExpression],
@@ -23,6 +39,8 @@ class Compare extends Expression {
 		);
 		this._firstExpression = firstExpression;
 		this._secondExpression = secondExpression;
+		this._firstType = firstType;
+		this._secondType = secondType;
 
 		switch (kind) {
 			case 'equalOp':
@@ -32,6 +50,19 @@ class Compare extends Expression {
 			case 'greaterThanOrEqualOp':
 			case 'greaterThanOp':
 				this._compare = 'generalCompare';
+				if (
+					firstType &&
+					secondType &&
+					firstType.mult === SequenceMultiplicity.EXACTLY_ONE &&
+					secondType.mult === SequenceMultiplicity.EXACTLY_ONE
+				) {
+					this._evaluationFunction = generatePrefabFunction(
+						kind,
+						firstType.type,
+						secondType.type
+					);
+				}
+
 				break;
 			case 'eqOp':
 			case 'neOp':
@@ -40,6 +71,9 @@ class Compare extends Expression {
 			case 'gtOp':
 			case 'geOp':
 				this._compare = 'valueCompare';
+
+				this._evaluationFunction = null;
+
 				break;
 			default:
 				this._compare = 'nodeCompare';
@@ -57,6 +91,15 @@ class Compare extends Expression {
 			dynamicContext,
 			executionParameters
 		);
+
+		if (this._evaluationFunction) {
+			return this._evaluationFunction(
+				firstSequence,
+				secondSequence,
+				dynamicContext,
+				executionParameters
+			);
+		}
 
 		return firstSequence.switchCases({
 			empty: () => {
