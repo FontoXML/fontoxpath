@@ -23,7 +23,6 @@ export function annotateSimpleMapExpr(
 	for (let i = 0; i < pathExpressions.length; i++) {
 		lastType = annotate(pathExpressions[i], context);
 	}
-	// throw Error(sequenceTypeToString(lastType));
 	if (lastType !== undefined && lastType !== null) {
 		const sequenceType: SequenceType = {
 			type: lastType.type,
