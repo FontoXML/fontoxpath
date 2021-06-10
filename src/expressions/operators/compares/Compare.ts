@@ -1,5 +1,8 @@
+import AtomicValue from '../../dataTypes/AtomicValue';
 import atomize from '../../dataTypes/atomize';
+import ISequence from '../../dataTypes/ISequence';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
+import { SequenceType } from '../../dataTypes/Value';
 import DynamicContext from '../../DynamicContext';
 import ExecutionParameters from '../../ExecutionParameters';
 import Expression from '../../Expression';
@@ -12,8 +15,15 @@ class Compare extends Expression {
 	private _firstExpression: Expression;
 	private _operator: string;
 	private _secondExpression: Expression;
+	private _evaluationFunction: (firstValue: AtomicValue, secondValue: AtomicValue) => boolean;
 
-	constructor(kind: string, firstExpression: Expression, secondExpression: Expression) {
+	constructor(
+		kind: string,
+		firstExpression: Expression,
+		secondExpression: Expression,
+		firstType: SequenceType,
+		secondType: SequenceType
+	) {
 		super(
 			firstExpression.specificity.add(secondExpression.specificity),
 			[firstExpression, secondExpression],
@@ -40,6 +50,16 @@ class Compare extends Expression {
 			case 'gtOp':
 			case 'geOp':
 				this._compare = 'valueCompare';
+
+				if (firstType && secondType) {
+					this._evaluationFunction = valueCompare(
+						kind,
+						firstType.type,
+						secondType.type,
+						null
+					);
+				}
+
 				break;
 			default:
 				this._compare = 'nodeCompare';
@@ -48,7 +68,10 @@ class Compare extends Expression {
 		this._operator = kind;
 	}
 
-	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
+	public evaluate(
+		dynamicContext: DynamicContext,
+		executionParameters: ExecutionParameters
+	): ISequence {
 		const firstSequence = this._firstExpression.evaluateMaybeStatically(
 			dynamicContext,
 			executionParameters
@@ -57,6 +80,12 @@ class Compare extends Expression {
 			dynamicContext,
 			executionParameters
 		);
+
+		if (this._evaluationFunction) {
+			return this._evaluationFunction(firstSequence.first(), secondSequence.first())
+				? sequenceFactory.singletonTrueSequence()
+				: sequenceFactory.singletonFalseSequence();
+		}
 
 		return firstSequence.switchCases({
 			empty: () => {
@@ -93,15 +122,21 @@ class Compare extends Expression {
 									secondAtomizedSequence.switchCases({
 										singleton: () =>
 											firstAtomizedSequence.mapAll(([onlyFirstValue]) =>
-												secondAtomizedSequence.mapAll(([onlySecondValue]) =>
-													valueCompare(
-														this._operator,
-														onlyFirstValue,
-														onlySecondValue,
-														dynamicContext
-													)
-														? sequenceFactory.singletonTrueSequence()
-														: sequenceFactory.singletonFalseSequence()
+												secondAtomizedSequence.mapAll(
+													([onlySecondValue]) => {
+														const compareFunction = valueCompare(
+															this._operator,
+															onlyFirstValue.type,
+															onlySecondValue.type,
+															dynamicContext
+														);
+														return compareFunction(
+															onlyFirstValue,
+															onlySecondValue
+														)
+															? sequenceFactory.singletonTrueSequence()
+															: sequenceFactory.singletonFalseSequence();
+													}
 												)
 											),
 										default: () => {

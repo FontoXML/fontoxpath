@@ -325,21 +325,21 @@ const comparatorsByTypingKey = Object.create(null);
 
 export default function (
 	operator: string,
-	valueA: AtomicValue,
-	valueB: AtomicValue,
+	typeA: ValueType,
+	typeB: ValueType,
 	dynamicContext: DynamicContext
-): boolean {
+): (valueA: AtomicValue, valueB: AtomicValue) => boolean {
 	// https://www.w3.org/TR/xpath-3/#doc-xpath31-ValueComp
-	const typingKey = `${valueA.type as number}~${valueB.type as number}~${operator}`;
+	const typingKey = `${typeA as number}~${typeB as number}~${operator}`;
 	let prefabComparator = comparatorsByTypingKey[typingKey];
 	if (!prefabComparator) {
 		prefabComparator = comparatorsByTypingKey[typingKey] = generateCompareFunction(
 			operator,
-			valueA.type,
-			valueB.type,
+			typeA,
+			typeB,
 			dynamicContext
 		);
 	}
 
-	return prefabComparator(valueA, valueB);
+	return prefabComparator;
 }
