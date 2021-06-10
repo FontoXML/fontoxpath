@@ -32,7 +32,7 @@ export function annotateSequenceOperator(
 			};
 		} else {
 			const uniqueTypes = filterOnUniqueObjects(types);
-			if (uniqueTypes.length > 1 && !contatinsUndefinedOrNull) {
+			if (uniqueTypes.length > 1) {
 				seqType = {
 					type: ValueType.ITEM,
 					mult: SequenceMultiplicity.ZERO_OR_MORE,
