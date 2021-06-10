@@ -14,11 +14,16 @@ import astHelper, { IAST } from '../parsing/astHelper';
 export function annotatePathExpr(ast: IAST): SequenceType {
 	const steps = astHelper.getChildren(ast, 'stepExpr');
 	if (!steps) {
-		return undefined;
+		return { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE };
 	}
 	let retType;
 	for (const step of steps) {
-		retType = annotateStep(step);
+		annotateStep(step);
+		retType = astHelper.getAttribute(step, 'type') as SequenceType;
+	}
+
+	if (retType === undefined || retType === null) {
+		return retType;
 	}
 	astHelper.insertAttribute(ast, 'type', retType);
 	return retType;
@@ -26,8 +31,9 @@ export function annotatePathExpr(ast: IAST): SequenceType {
 
 function annotateStep(step: IAST): SequenceType {
 	let seqType;
+	const item = { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE };
 	if (!step) {
-		return undefined;
+		return item;
 	}
 	const children = astHelper.getChildren(step, '*');
 	const lastChild = children[children.length - 1];
@@ -64,26 +70,13 @@ function annotateStep(step: IAST): SequenceType {
 		}
 
 		case 'predicate':
-		case 'predicates': {
-			seqType = {
-				type: ValueType.ITEM,
-				mult: SequenceMultiplicity.ZERO_OR_MORE,
-			};
-			break;
-		}
+		case 'predicates':
 		case 'lookup': {
-			seqType = {
-				type: ValueType.ITEM,
-				mult: SequenceMultiplicity.ZERO_OR_MORE,
-			};
+			seqType = item;
 			break;
 		}
 		default:
-			seqType = {
-				type: ValueType.ITEM,
-				mult: SequenceMultiplicity.ZERO_OR_MORE,
-			};
-			return seqType;
+			return item;
 	}
 	astHelper.insertAttribute(step, 'type', seqType);
 	return seqType;
