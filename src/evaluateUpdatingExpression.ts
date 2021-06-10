@@ -38,7 +38,6 @@ export type UpdatingOptions = {
 	disableCache?: boolean;
 	documentWriter?: IDocumentWriter;
 	logger?: Logger;
-	logUnannotatedQueries?: boolean; // TODO: Remove once node annotation is finalized.
 	moduleImports?: { [s: string]: string };
 	namespaceResolver?: (s: string) => string | null;
 	nodesFactory?: INodesFactory;
@@ -83,7 +82,6 @@ export default async function evaluateUpdatingExpression(
 				debug: !!options['debug'],
 				disableCache: !!options['disableCache'],
 				annotateAst: !!options['annotateAst'],
-				logUnannotatedQueries: !!options['logUnannotatedQueries'],
 			}
 		);
 		dynamicContext = context.dynamicContext;
