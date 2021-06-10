@@ -12,10 +12,10 @@ import valueCompare from './valueCompare';
 
 class Compare extends Expression {
 	private _compare: 'generalCompare' | 'valueCompare' | 'nodeCompare';
+	private _evaluationFunction: (firstValue: AtomicValue, secondValue: AtomicValue) => boolean;
 	private _firstExpression: Expression;
 	private _operator: string;
 	private _secondExpression: Expression;
-	private _evaluationFunction: (firstValue: AtomicValue, secondValue: AtomicValue) => boolean;
 
 	constructor(
 		kind: string,
@@ -81,12 +81,6 @@ class Compare extends Expression {
 			executionParameters
 		);
 
-		if (this._evaluationFunction) {
-			return this._evaluationFunction(firstSequence.first(), secondSequence.first())
-				? sequenceFactory.singletonTrueSequence()
-				: sequenceFactory.singletonFalseSequence();
-		}
-
 		return firstSequence.switchCases({
 			empty: () => {
 				if (this._compare === 'valueCompare' || this._compare === 'nodeCompare') {
@@ -103,6 +97,15 @@ class Compare extends Expression {
 						return sequenceFactory.singletonFalseSequence();
 					},
 					default: () => {
+						if (this._evaluationFunction) {
+							return this._evaluationFunction(
+								firstSequence.first(),
+								secondSequence.first()
+							)
+								? sequenceFactory.singletonTrueSequence()
+								: sequenceFactory.singletonFalseSequence();
+						}
+
 						if (this._compare === 'nodeCompare') {
 							return nodeCompare(
 								this._operator,
