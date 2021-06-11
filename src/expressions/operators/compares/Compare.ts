@@ -8,7 +8,7 @@ import ExecutionParameters from '../../ExecutionParameters';
 import Expression from '../../Expression';
 import generalCompare from './generalCompare';
 import nodeCompare from './nodeCompare';
-import valueCompare, { getValueCompareEvaluationFunction } from './valueCompare';
+import valueCompareFunction, { getValueCompareEvaluationFunction } from './valueCompare';
 
 class Compare extends Expression {
 	private _compare: 'generalCompare' | 'valueCompare' | 'nodeCompare';
@@ -90,7 +90,7 @@ class Compare extends Expression {
 			const firstAtomizedSequence = atomize(firstSequence, executionParameters);
 			const secondAtomizedSequence = atomize(secondSequence, executionParameters);
 
-			if (firstAtomizedSequence.getLength() == 0 || secondAtomizedSequence.getLength() == 0) {
+			if (firstAtomizedSequence.isEmpty() || secondAtomizedSequence.isEmpty()) {
 				return sequenceFactory.empty();
 			}
 
@@ -141,7 +141,7 @@ class Compare extends Expression {
 											firstAtomizedSequence.mapAll(([onlyFirstValue]) =>
 												secondAtomizedSequence.mapAll(
 													([onlySecondValue]) => {
-														const compareFunction = valueCompare(
+														const compareFunction = valueCompareFunction(
 															this._operator,
 															onlyFirstValue.type,
 															onlySecondValue.type

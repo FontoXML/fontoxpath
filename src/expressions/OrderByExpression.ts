@@ -10,7 +10,7 @@ import ExecutionParameters from './ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from './Expression';
 import FlworExpression from './FlworExpression';
 import convertItemsToCommonType from './functions/convertItemsToCommonType';
-import getValueCompareFunction from './operators/compares/valueCompare';
+import valueCompareFunction from './operators/compares/valueCompare';
 import PossiblyUpdatingExpression from './PossiblyUpdatingExpression';
 import Specificity from './Specificity';
 import { DONE_TOKEN, IIterator, IterationHint, IterationResult, ready } from './util/iterators';
@@ -212,7 +212,7 @@ class OrderByExpression extends FlworExpression {
 								}
 							}
 
-							const compareFunction = getValueCompareFunction('gtOp', W.type, V.type);
+							const compareFunction = valueCompareFunction('gtOp', W.type, V.type);
 							if (compareFunction(W, V, dynamicContext)) {
 								[indices[firstItemIndex], indices[secondItemIndex]] = [
 									indices[secondItemIndex],

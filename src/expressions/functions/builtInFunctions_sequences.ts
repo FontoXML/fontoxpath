@@ -6,7 +6,7 @@ import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value, { SequenceMultiplicity, SequenceType, ValueType } from '../dataTypes/Value';
-import getValueCompareFunction from '../operators/compares/valueCompare';
+import valueCompareFunction from '../operators/compares/valueCompare';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { DONE_TOKEN, IIterator, IterationHint, ready } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
@@ -242,7 +242,7 @@ const fnIndexOf: FunctionDefinitionType = (
 	return search.mapAll(([onlySearchValue]) =>
 		atomize(sequence, executionParameters)
 			.map((element, i) => {
-				const compareFunction = getValueCompareFunction(
+				const compareFunction = valueCompareFunction(
 					'eqOp',
 					element.type,
 					onlySearchValue.type
