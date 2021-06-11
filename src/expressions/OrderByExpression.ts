@@ -212,13 +212,8 @@ class OrderByExpression extends FlworExpression {
 								}
 							}
 
-							const compareFunction = getValueCompareFunction(
-								'gtOp',
-								W.type,
-								V.type,
-								dynamicContext
-							);
-							if (compareFunction(W, V)) {
+							const compareFunction = getValueCompareFunction('gtOp', W.type, V.type);
+							if (compareFunction(W, V, dynamicContext)) {
 								[indices[firstItemIndex], indices[secondItemIndex]] = [
 									indices[secondItemIndex],
 									indices[firstItemIndex],

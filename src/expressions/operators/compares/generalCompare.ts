@@ -70,11 +70,10 @@ export default function generalCompare(
 					const compareFunction = valueCompare(
 						operator,
 						firstValue.type,
-						secondValue.type,
-						dynamicContext
+						secondValue.type
 					);
 
-					if (compareFunction(firstValue, secondValue)) {
+					if (compareFunction(firstValue, secondValue, dynamicContext)) {
 						return true;
 					}
 				}

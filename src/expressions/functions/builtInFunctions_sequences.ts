@@ -245,10 +245,9 @@ const fnIndexOf: FunctionDefinitionType = (
 				const compareFunction = getValueCompareFunction(
 					'eqOp',
 					element.type,
-					onlySearchValue.type,
-					dynamicContext
+					onlySearchValue.type
 				);
-				return compareFunction(element, onlySearchValue)
+				return compareFunction(element, onlySearchValue, dynamicContext)
 					? createAtomicValue(i + 1, ValueType.XSINTEGER)
 					: createAtomicValue(-1, ValueType.XSINTEGER);
 			})

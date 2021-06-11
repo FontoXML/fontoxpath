@@ -12,7 +12,11 @@ import valueCompare from './valueCompare';
 
 class Compare extends Expression {
 	private _compare: 'generalCompare' | 'valueCompare' | 'nodeCompare';
-	private _evaluationFunction: (firstValue: AtomicValue, secondValue: AtomicValue) => boolean;
+	private _evaluationFunction: (
+		firstValue: AtomicValue,
+		secondValue: AtomicValue,
+		dynamicContext: DynamicContext
+	) => boolean;
 	private _firstExpression: Expression;
 	private _operator: string;
 	private _secondExpression: Expression;
@@ -52,12 +56,15 @@ class Compare extends Expression {
 				this._compare = 'valueCompare';
 
 				if (firstType && secondType) {
-					this._evaluationFunction = valueCompare(
-						kind,
-						firstType.type,
-						secondType.type,
-						null
-					);
+					try {
+						this._evaluationFunction = valueCompare(
+							kind,
+							firstType.type,
+							secondType.type
+						);
+					} catch {
+						this._evaluationFunction = null;
+					}
 				}
 
 				break;
@@ -94,7 +101,8 @@ class Compare extends Expression {
 			// Execute the evaluation function and return either a true- or false-sequence
 			return this._evaluationFunction(
 				firstAtomizedSequence.first(),
-				secondAtomizedSequence.first()
+				secondAtomizedSequence.first(),
+				dynamicContext
 			)
 				? sequenceFactory.singletonTrueSequence()
 				: sequenceFactory.singletonFalseSequence();
@@ -140,12 +148,12 @@ class Compare extends Expression {
 														const compareFunction = valueCompare(
 															this._operator,
 															onlyFirstValue.type,
-															onlySecondValue.type,
-															dynamicContext
+															onlySecondValue.type
 														);
 														return compareFunction(
 															onlyFirstValue,
-															onlySecondValue
+															onlySecondValue,
+															dynamicContext
 														)
 															? sequenceFactory.singletonTrueSequence()
 															: sequenceFactory.singletonFalseSequence();
