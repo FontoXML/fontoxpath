@@ -108,12 +108,7 @@ export function generatePrefabFunction(
 	operator: string,
 	firstType: ValueType,
 	secondType: ValueType
-): (
-	first: ISequence,
-	second: ISequence,
-	dynamicContex: DynamicContext,
-	executionParameters: ExecutionParameters
-) => ISequence {
+): (first: ISequence, second: ISequence, dynamicContex: DynamicContext) => boolean {
 	operator = OPERATOR_TRANSLATION[operator];
 
 	const [firstTargetType, secondTargetType]: [ValueType, ValueType] = typeCheck(
@@ -124,11 +119,11 @@ export function generatePrefabFunction(
 	return (
 		firstSequence: ISequence,
 		secondSequence: ISequence,
-		dynamicContext: DynamicContext,
-		executionParameters: ExecutionParameters
-	): ISequence => {
+		dynamicContext: DynamicContext
+	): boolean => {
+		let result;
 		// Change operator to equivalent valueCompare operator
-		return firstSequence.switchCases({
+		result = firstSequence.switchCases({
 			empty: () => {
 				return sequenceFactory.singletonFalseSequence();
 			},
@@ -138,10 +133,8 @@ export function generatePrefabFunction(
 						return sequenceFactory.singletonFalseSequence();
 					},
 					default: () => {
-						const firstAtomizedSequence = atomize(firstSequence, executionParameters);
-						const secondAtomizedSequence = atomize(secondSequence, executionParameters);
-						return secondAtomizedSequence.mapAll((allSecondValues) =>
-							firstAtomizedSequence
+						return secondSequence.mapAll((allSecondValues) =>
+							firstSequence
 								.filter((firstValue) => {
 									for (let i = 0, l = allSecondValues.length; i < l; ++i) {
 										const secondValue = allSecondValues[i];
@@ -172,5 +165,6 @@ export function generatePrefabFunction(
 				});
 			},
 		});
+		return result.getEffectiveBooleanValue();
 	};
 }

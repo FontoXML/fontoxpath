@@ -14,9 +14,8 @@ class Compare extends Expression {
 	private _evaluationFunction: (
 		firstSequence: ISequence,
 		secondSequence: ISequence,
-		context: DynamicContext,
-		parameters: ExecutionParameters
-	) => ISequence;
+		context: DynamicContext
+	) => boolean;
 	private _firstExpression: Expression;
 	private _firstType: SequenceType;
 	private _operator: string;
@@ -95,12 +94,15 @@ class Compare extends Expression {
 		);
 
 		if (this._evaluationFunction) {
+			const firstAtomizedSequence = atomize(firstSequence, executionParameters);
+			const secondAtomizedSequence = atomize(secondSequence, executionParameters);
 			return this._evaluationFunction(
-				firstSequence,
-				secondSequence,
-				dynamicContext,
-				executionParameters
-			);
+				firstAtomizedSequence,
+				secondAtomizedSequence,
+				dynamicContext
+			)
+				? sequenceFactory.singletonTrueSequence()
+				: sequenceFactory.singletonFalseSequence;
 		}
 
 		return firstSequence.switchCases({
