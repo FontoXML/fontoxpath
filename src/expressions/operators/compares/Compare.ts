@@ -102,7 +102,7 @@ class Compare extends Expression {
 				dynamicContext
 			)
 				? sequenceFactory.singletonTrueSequence()
-				: sequenceFactory.singletonFalseSequence;
+				: sequenceFactory.singletonFalseSequence();
 		}
 
 		return firstSequence.switchCases({
