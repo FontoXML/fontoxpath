@@ -1,7 +1,7 @@
 import atomize from '../../dataTypes/atomize';
 import ISequence from '../../dataTypes/ISequence';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import { SequenceMultiplicity, SequenceType } from '../../dataTypes/Value';
+import { SequenceMultiplicity, SequenceType, ValueType } from '../../dataTypes/Value';
 import DynamicContext from '../../DynamicContext';
 import ExecutionParameters from '../../ExecutionParameters';
 import Expression from '../../Expression';
@@ -53,8 +53,10 @@ class Compare extends Expression {
 				if (
 					firstType &&
 					secondType &&
-					firstType.mult === SequenceMultiplicity.EXACTLY_ONE &&
-					secondType.mult === SequenceMultiplicity.EXACTLY_ONE
+					firstType.type !== ValueType.ITEM &&
+					secondType.type !== ValueType.ITEM &&
+					firstType.type !== ValueType.ARRAY &&
+					secondType.type !== ValueType.ARRAY
 				) {
 					this._evaluationFunction = generatePrefabFunction(
 						kind,

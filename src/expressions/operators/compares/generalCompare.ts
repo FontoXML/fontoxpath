@@ -17,6 +17,36 @@ const OPERATOR_TRANSLATION: { [s: string]: string } = {
 	['greaterThanOp']: 'gtOp',
 };
 
+function typeCheck(firstType: ValueType, secondType: ValueType): [ValueType, ValueType] {
+	let firstTargetType: ValueType;
+	let secondTargetType: ValueType;
+
+	if (
+		isSubtypeOf(firstType, ValueType.XSUNTYPEDATOMIC) ||
+		isSubtypeOf(secondType, ValueType.XSUNTYPEDATOMIC)
+	) {
+		if (isSubtypeOf(firstType, ValueType.XSNUMERIC)) {
+			secondTargetType = ValueType.XSDOUBLE;
+		} else if (isSubtypeOf(secondType, ValueType.XSNUMERIC)) {
+			firstTargetType = ValueType.XSDOUBLE;
+		} else if (isSubtypeOf(firstType, ValueType.XSDAYTIMEDURATION)) {
+			secondTargetType = ValueType.XSDAYTIMEDURATION;
+		} else if (isSubtypeOf(secondType, ValueType.XSDAYTIMEDURATION)) {
+			firstTargetType = ValueType.XSDAYTIMEDURATION;
+		} else if (isSubtypeOf(firstType, ValueType.XSYEARMONTHDURATION)) {
+			secondTargetType = ValueType.XSYEARMONTHDURATION;
+		} else if (isSubtypeOf(secondType, ValueType.XSYEARMONTHDURATION)) {
+			firstTargetType = ValueType.XSYEARMONTHDURATION;
+		} else if (isSubtypeOf(firstType, ValueType.XSUNTYPEDATOMIC)) {
+			firstTargetType = ValueType.XSUNTYPEDATOMIC;
+		} else if (isSubtypeOf(secondType, ValueType.XSUNTYPEDATOMIC)) {
+			secondTargetType = firstType;
+		}
+	}
+
+	return [firstTargetType, secondTargetType];
+}
+
 export default function generalCompare(
 	operator: string,
 	firstSequence: ISequence,
@@ -82,6 +112,35 @@ export default function generalCompare(
 	);
 }
 
+function generateGeneralCompareFunction(
+	operator: string,
+	firstSequence: ISequence,
+	secondSequence: ISequence,
+	dynamicContext: DynamicContext,
+	firstTargetType: ValueType,
+	secondTargetType: ValueType
+): ISequence {
+	return secondSequence.mapAll((allSecondValues) =>
+		firstSequence
+			.filter((firstValue) => {
+				for (let i = 0, l = allSecondValues.length; i < l; ++i) {
+					let secondValue = allSecondValues[i];
+					if (firstTargetType) castToType(firstValue, firstTargetType);
+					if (secondTargetType) castToType(secondValue, secondTargetType);
+
+					if (valueCompare(operator, firstValue, secondValue, dynamicContext)) {
+						return true;
+					}
+				}
+				return false;
+			})
+			.switchCases({
+				default: () => sequenceFactory.singletonTrueSequence(),
+				empty: () => sequenceFactory.singletonFalseSequence(),
+			})
+	);
+}
+
 //asume at this point the sequences are of length 1
 export function generatePrefabFunction(
 	operator: string,
@@ -94,61 +153,42 @@ export function generatePrefabFunction(
 	executionParameters: ExecutionParameters
 ) => ISequence {
 	operator = OPERATOR_TRANSLATION[operator];
-	let firstTargetType: ValueType;
-	let secondTargetType: ValueType;
-	if (
-		isSubtypeOf(firstType, ValueType.XSUNTYPEDATOMIC) ||
-		isSubtypeOf(secondType, ValueType.XSUNTYPEDATOMIC)
-	) {
-		if (isSubtypeOf(firstType, ValueType.XSNUMERIC)) {
-			secondTargetType = ValueType.XSDOUBLE;
-		} else if (isSubtypeOf(secondType, ValueType.XSNUMERIC)) {
-			firstTargetType = ValueType.XSDOUBLE;
-		} else if (isSubtypeOf(firstType, ValueType.XSDAYTIMEDURATION)) {
-			secondTargetType = ValueType.XSDAYTIMEDURATION;
-		} else if (isSubtypeOf(secondType, ValueType.XSDAYTIMEDURATION)) {
-			firstTargetType = ValueType.XSDAYTIMEDURATION;
-		} else if (isSubtypeOf(firstType, ValueType.XSYEARMONTHDURATION)) {
-			secondTargetType = ValueType.XSYEARMONTHDURATION;
-		} else if (isSubtypeOf(secondType, ValueType.XSYEARMONTHDURATION)) {
-			firstTargetType = ValueType.XSYEARMONTHDURATION;
-		} else if (isSubtypeOf(firstType, ValueType.XSUNTYPEDATOMIC)) {
-			firstTargetType = secondType;
-		} else if (isSubtypeOf(secondType, ValueType.XSUNTYPEDATOMIC)) {
-			secondTargetType = firstType;
-		}
-	}
+
+	const [firstTargetType, secondTargetType]: [ValueType, ValueType] = typeCheck(
+		firstType,
+		secondType
+	);
 
 	return (
-		first: ISequence,
-		second: ISequence,
-		dynamicContex: DynamicContext,
+		firstSequence: ISequence,
+		secondSequence: ISequence,
+		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters
-	) => {
-		const atomizedFirst = atomize(first, executionParameters).first();
-		const atomizedSecond = atomize(second, executionParameters).first();
-		if (firstTargetType) {
-			const result = valueCompare(
-				operator,
-				castToType(atomizedFirst, firstTargetType),
-				atomizedSecond,
-				dynamicContex
-			);
-			if (result) {
-				return sequenceFactory.singletonTrueSequence();
-			}
-			return sequenceFactory.singletonFalseSequence();
-		} else if (secondTargetType) {
-			const result = valueCompare(
-				operator,
-				atomizedFirst,
-				castToType(atomizedSecond, firstTargetType),
-				dynamicContex
-			);
-			if (result) {
-				return sequenceFactory.singletonTrueSequence();
-			}
-		}
-		return sequenceFactory.singletonFalseSequence();
+	): ISequence => {
+		// Change operator to equivalent valueCompare operator
+		return firstSequence.switchCases({
+			empty: () => {
+				return sequenceFactory.singletonFalseSequence();
+			},
+			default: () => {
+				return secondSequence.switchCases({
+					empty: () => {
+						return sequenceFactory.singletonFalseSequence();
+					},
+					default: () => {
+						const firstAtomizedSequence = atomize(firstSequence, executionParameters);
+						const secondAtomizedSequence = atomize(secondSequence, executionParameters);
+						return generateGeneralCompareFunction(
+							operator,
+							firstAtomizedSequence,
+							secondAtomizedSequence,
+							dynamicContext,
+							firstTargetType,
+							secondTargetType
+						);
+					},
+				});
+			},
+		});
 	};
 }
