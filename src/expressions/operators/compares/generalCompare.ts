@@ -1,12 +1,9 @@
-import atomize from '../../dataTypes/atomize';
 import castToType from '../../dataTypes/castToType';
 import ISequence from '../../dataTypes/ISequence';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
 import { ValueType } from '../../dataTypes/Value';
 import DynamicContext from '../../DynamicContext';
-import ExecutionParameters from '../../ExecutionParameters';
-import valueCompare from './valueCompare';
 import valueCompareFunction from './valueCompare';
 
 const OPERATOR_TRANSLATION: { [s: string]: string } = {
