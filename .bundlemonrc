@@ -9,12 +9,6 @@
 		}
 	],
 	"reportOutput": [
-		[
-			"github-pr",
-			{
-				"statusCheck": true,
-				"prComment": true
-			}
-		]
+		"github"
 	]
 }
