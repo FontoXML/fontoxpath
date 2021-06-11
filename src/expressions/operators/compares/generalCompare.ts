@@ -121,11 +121,6 @@ export function generatePrefabFunction(
 	);
 
 	let compareFunction: any;
-	// if (firstTargetType !== undefined)
-	// 	compareFunction = valueCompareFunction(operator, firstTargetType, secondType);
-	// else if (secondTargetType !== undefined)
-	// 	compareFunction = valueCompareFunction(operator, firstType, secondTargetType);
-	// else compareFunction = valueCompareFunction(operator, firstType, secondType);
 
 	return (
 		firstSequence: ISequence,
