@@ -138,7 +138,13 @@ export function generatePrefabFunction(
 						if (firstTargetType) castToType(firstValue, firstTargetType);
 						if (secondTargetType) castToType(secondValue, secondTargetType);
 
-						if (valueCompare(operator, firstValue, secondValue, dynamicContext)) {
+						const compareFunction = valueCompareFunction(
+							operator,
+							firstValue.type,
+							secondValue.type
+						);
+
+						if (compareFunction(firstValue, secondValue, dynamicContext)) {
 							return true;
 						}
 					}
