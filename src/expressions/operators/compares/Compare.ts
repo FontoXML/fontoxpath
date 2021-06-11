@@ -63,6 +63,15 @@ class Compare extends Expression {
 				break;
 			default:
 				this._compare = 'nodeCompare';
+
+				if (firstType && secondType) {
+					this._evaluationFunction = nodeCompare(
+						kind,
+						undefined,
+						firstType.type,
+						secondType.type
+					);
+				}
 		}
 
 		this._operator = kind;
@@ -117,12 +126,36 @@ class Compare extends Expression {
 					},
 					default: () => {
 						if (this._compare === 'nodeCompare') {
-							return nodeCompare(
-								this._operator,
-								executionParameters.domFacade,
-								firstSequence,
-								secondSequence
-							);
+							return firstSequence.switchCases({
+								default: () => {
+									throw new Error(
+										'XPTY0004: Sequences to compare are not singleton'
+									);
+								},
+								singleton: () => {
+									return secondSequence.switchCases({
+										default: () => {
+											throw new Error(
+												'XPTY0004: Sequences to compare are not singleton'
+											);
+										},
+										singleton: () => {
+											const compareFunction = nodeCompare(
+												this._operator,
+												executionParameters.domFacade,
+												firstSequence.first().type,
+												secondSequence.first().type
+											);
+											return compareFunction(
+												firstSequence.first(),
+												secondSequence.first()
+											)
+												? sequenceFactory.singletonTrueSequence()
+												: sequenceFactory.singletonFalseSequence();
+										},
+									});
+								},
+							});
 						}
 
 						// Atomize both sequences
