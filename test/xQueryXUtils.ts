@@ -12,6 +12,7 @@ import { slimdom, sync } from 'slimdom-sax-parser';
 function removeInsignificantWhitespace(root) {
 	const nonSignificantWhitespace = evaluateXPathToNodes<Text>('//*/text()', root, null, null, {
 		language: evaluateXPath.XQUERY_3_1_LANGUAGE,
+		annotateAst: false,
 	});
 	for (const node of nonSignificantWhitespace) {
 		node.data = node.data.trim();
@@ -39,7 +40,7 @@ export function buildTestCase(
 		try {
 			astElement = parseScript(
 				xQuery,
-				{ language: Language.XQUERY_UPDATE_3_1_LANGUAGE },
+				{ annotateAst: false, language: Language.XQUERY_UPDATE_3_1_LANGUAGE },
 				new slimdom.Document()
 			);
 		} catch (err) {
@@ -74,9 +75,11 @@ export function buildTestCase(
 		// contents because we can assume that
 		// the outer element is the same, but it may contain random attributes we should ignore.
 
-		const actualInnerHtml = new slimdom.XMLSerializer().serializeToString(
-			actual.documentElement.firstElementChild
-		);
+		const regex = / xqx:type="(.*?)"/gi;
+
+		const actualInnerHtml = new slimdom.XMLSerializer()
+			.serializeToString(actual.documentElement.firstElementChild)
+			.replace(regex, '');
 		const expectedInnerHtml = new slimdom.XMLSerializer().serializeToString(
 			expected.documentElement.firstElementChild
 		);
@@ -85,10 +88,16 @@ export function buildTestCase(
 		}
 
 		if (
-			!evaluateXPathToBoolean('deep-equal($expected, $actual)', null, null, {
-				expected,
-				actual,
-			})
+			!evaluateXPathToBoolean(
+				'deep-equal($expected, $actual)',
+				null,
+				null,
+				{
+					expected,
+					actual,
+				},
+				{ annotateAst: false }
+			)
 		) {
 			try {
 				chai.assert.equal(

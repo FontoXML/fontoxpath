@@ -30,6 +30,7 @@ type ExpressionArguments = [
 	any,
 	Object,
 	{
+		annotateAst?: boolean;
 		debug?: boolean;
 		returnType?: any;
 		language?: EvaluateXPath['XPATH_3_1_LANGUAGE'] | EvaluateXPath['XQUERY_3_1_LANGUAGE'];
@@ -289,7 +290,11 @@ async function runTestCase(testName: string, testCase: Node) {
 			new slimdom.Document(),
 			null,
 			variables,
-			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE, returnType: evaluateXPath.STRING_TYPE },
+			{
+				language: evaluateXPath.XQUERY_3_1_LANGUAGE,
+				returnType: evaluateXPath.STRING_TYPE,
+				annotateAst: false,
+			},
 		];
 
 		try {

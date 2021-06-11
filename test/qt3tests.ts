@@ -10,8 +10,9 @@ import {
 	evaluateXPathToString,
 	executeJavaScriptCompiledXPath,
 	JavaScriptCompiledXPathResult,
-    registerXQueryModule,
-    ReturnType,
+	Language,
+	registerXQueryModule,
+	ReturnType,
 } from 'fontoxpath';
 import { Element, Node, XMLSerializer } from 'slimdom';
 import { slimdom } from 'slimdom-sax-parser';
@@ -47,20 +48,24 @@ function createNodesFactory(assertNode: Node) {
 	return nodesFactory;
 }
 
-function createAsserterForExpression(baseUrl: string, assertNode, language) {
+function createAsserterForExpression(baseUrl: string, assertNode, language, annotateAst: boolean) {
 	const nodesFactory = createNodesFactory(assertNode);
 
 	switch (assertNode.localName) {
 		case 'all-of': {
-			const asserts = evaluateXPathToNodes('*', assertNode).map((innerAssertNode) =>
-				createAsserterForExpression(baseUrl, innerAssertNode, language)
+			const asserts = evaluateXPathToNodes('*', assertNode, undefined, {
+				annotateAst: false,
+			}).map((innerAssertNode) =>
+				createAsserterForExpression(baseUrl, innerAssertNode, language, annotateAst)
 			);
-			return (xpath, contextNode, variablesInScope, namespaceResolver) =>
+			return (xpath: string, contextNode, variablesInScope, namespaceResolver) =>
 				asserts.forEach((a) => a(xpath, contextNode, variablesInScope, namespaceResolver));
 		}
 		case 'any-of': {
-			const asserts = evaluateXPathToNodes('*', assertNode).map((innerAssertNode) =>
-				createAsserterForExpression(baseUrl, innerAssertNode, language)
+			const asserts = evaluateXPathToNodes('*', assertNode, undefined, {
+				annotateAst: false,
+			}).map((innerAssertNode) =>
+				createAsserterForExpression(baseUrl, innerAssertNode, language, annotateAst)
 			);
 			return (xpath, contextNode, variablesInScope, namespaceResolver) => {
 				const errors = [];
@@ -85,7 +90,9 @@ function createAsserterForExpression(baseUrl: string, assertNode, language) {
 			};
 		}
 		case 'error': {
-			const errorCode = evaluateXPathToString('@code', assertNode);
+			const errorCode = evaluateXPathToString('@code', assertNode, undefined, {
+				annotateAst: false,
+			});
 			return (
 				xpath: string,
 				contextNode: Element,
@@ -98,6 +105,7 @@ function createAsserterForExpression(baseUrl: string, assertNode, language) {
 							namespaceResolver,
 							nodesFactory,
 							language,
+							annotateAst,
 						});
 					},
 					errorCode === '*' ? /.*/ : new RegExp(errorCode),
@@ -110,12 +118,16 @@ function createAsserterForExpression(baseUrl: string, assertNode, language) {
 					evaluateXPathToBoolean(
 						`let $result := (${xpath}) return ${evaluateXPathToString(
 							'.',
-							assertNode
+							assertNode,
+							undefined,
+							{
+								annotateAst,
+							}
 						)}`,
 						contextNode,
 						null,
 						variablesInScope,
-						{ namespaceResolver, nodesFactory, language }
+						{ namespaceResolver, nodesFactory, language, annotateAst: false }
 					),
 					xpath
 				);
@@ -126,11 +138,14 @@ function createAsserterForExpression(baseUrl: string, assertNode, language) {
 						namespaceResolver,
 						nodesFactory,
 						language,
+						annotateAst,
 					}),
 					`Expected XPath ${xpath} to resolve to true`
 				);
 		case 'assert-eq': {
-			const equalWith = evaluateXPathToString('.', assertNode);
+			const equalWith = evaluateXPathToString('.', assertNode, undefined, {
+				annotateAst: false,
+			});
 			return (xpath, contextNode, variablesInScope, namespaceResolver) =>
 				chai.assert.isTrue(
 					evaluateXPathToBoolean(
@@ -138,13 +153,15 @@ function createAsserterForExpression(baseUrl: string, assertNode, language) {
 						contextNode,
 						null,
 						variablesInScope,
-						{ namespaceResolver, nodesFactory, language }
+						{ namespaceResolver, nodesFactory, language, annotateAst: annotateAst }
 					),
 					`Expected XPath ${xpath} to resolve to ${equalWith}`
 				);
 		}
 		case 'assert-deep-eq': {
-			const equalWith = evaluateXPathToString('.', assertNode);
+			const equalWith = evaluateXPathToString('.', assertNode, undefined, {
+				annotateAst: false,
+			});
 			return (xpath, contextNode, variablesInScope, namespaceResolver) =>
 				chai.assert.isTrue(
 					evaluateXPathToBoolean(
@@ -152,7 +169,7 @@ function createAsserterForExpression(baseUrl: string, assertNode, language) {
 						contextNode,
 						null,
 						variablesInScope,
-						{ namespaceResolver, nodesFactory, language }
+						{ namespaceResolver, nodesFactory, language, annotateAst: annotateAst }
 					),
 					`Expected XPath ${xpath} to (deep equally) resolve to ${equalWith}`
 				);
@@ -165,7 +182,7 @@ function createAsserterForExpression(baseUrl: string, assertNode, language) {
 						contextNode,
 						null,
 						variablesInScope,
-						{ namespaceResolver, nodesFactory, language }
+						{ namespaceResolver, nodesFactory, language, annotateAst: annotateAst }
 					),
 					`Expected XPath ${xpath} to resolve to the empty sequence`
 				);
@@ -176,11 +193,14 @@ function createAsserterForExpression(baseUrl: string, assertNode, language) {
 						namespaceResolver,
 						nodesFactory,
 						language,
+						annotateAst,
 					}),
 					`Expected XPath ${xpath} to resolve to false`
 				);
 		case 'assert-count': {
-			const expectedCount = evaluateXPathToNumber('number(.)', assertNode);
+			const expectedCount = evaluateXPathToNumber('number(.)', assertNode, undefined, {
+				annotateAst: false,
+			});
 			return (xpath, contextNode, variablesInScope, namespaceResolver) =>
 				chai.assert.equal(
 					evaluateXPathToNumber(
@@ -188,14 +208,16 @@ function createAsserterForExpression(baseUrl: string, assertNode, language) {
 						contextNode,
 						null,
 						variablesInScope,
-						{ namespaceResolver, nodesFactory, language }
+						{ namespaceResolver, nodesFactory, language, annotateAst: annotateAst }
 					),
 					expectedCount,
 					`Expected ${xpath} to resolve to ${expectedCount}`
 				);
 		}
 		case 'assert-type': {
-			const expectedType = evaluateXPathToString('.', assertNode);
+			const expectedType = evaluateXPathToString('.', assertNode, undefined, {
+				annotateAst: false,
+			});
 			return (xpath, contextNode, variablesInScope, namespaceResolver) =>
 				chai.assert.isTrue(
 					evaluateXPathToBoolean(
@@ -203,20 +225,29 @@ function createAsserterForExpression(baseUrl: string, assertNode, language) {
 						contextNode,
 						null,
 						variablesInScope,
-						{ namespaceResolver, nodesFactory, language }
+						{ namespaceResolver, nodesFactory, language, annotateAst: annotateAst }
 					),
 					`Expected XPath ${xpath} to resolve to something of type ${expectedType}`
 				);
 		}
 		case 'assert-xml': {
 			let parsedFragment;
-			if (evaluateXPathToBoolean('@file', assertNode)) {
+			if (
+				evaluateXPathToBoolean('@file', assertNode, undefined, {
+					annotateAst,
+				})
+			) {
 				parsedFragment = getFile(
-					evaluateXPathToString('$baseUrl || "/" || @file', assertNode, null, { baseUrl })
+					evaluateXPathToString('$baseUrl || "/" || @file', assertNode, null, {
+						baseUrl,
+						annotateAst,
+					})
 				);
 			} else {
 				parsedFragment = parser.parseFromString(
-					`<xml>${evaluateXPathToString('.', assertNode)}</xml>`
+					`<xml>${evaluateXPathToString('.', assertNode, undefined, {
+						annotateAst,
+					})}</xml>`
 				).documentElement;
 			}
 			return (xpath, contextNode, variablesInScope, namespaceResolver) => {
@@ -224,12 +255,21 @@ function createAsserterForExpression(baseUrl: string, assertNode, language) {
 					namespaceResolver,
 					nodesFactory,
 					language,
+					annotateAst,
 				}) as Node[];
 				chai.assert(
-					evaluateXPathToBoolean('deep-equal($a, $b)', null, null, {
-						a: results,
-						b: Array.from(parsedFragment.childNodes),
-					}),
+					evaluateXPathToBoolean(
+						'deep-equal($a, $b)',
+						null,
+						null,
+						{
+							a: results,
+							b: Array.from(parsedFragment.childNodes),
+						},
+						{
+							annotateAst,
+						}
+					),
 					`Expected XPath ${xpath} to resolve to the given XML. Expected ${results
 						.map((result) => new XMLSerializer().serializeToString(result))
 						.join(' ')} to equal ${
@@ -243,13 +283,16 @@ function createAsserterForExpression(baseUrl: string, assertNode, language) {
 			};
 		}
 		case 'assert-string-value': {
-			const expectedString = evaluateXPathToString('.', assertNode);
+			const expectedString = evaluateXPathToString('.', assertNode, undefined, {
+				annotateAst: false,
+			});
 			return (xpath, contextNode, variablesInScope, namespaceResolver) =>
 				chai.assert.equal(
 					evaluateXPathToString(`${xpath}`, contextNode, null, variablesInScope, {
 						namespaceResolver,
 						nodesFactory,
 						language,
+						annotateAst,
 					}),
 					expectedString,
 					xpath
@@ -273,7 +316,9 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 
 	switch (assertNode.localName) {
 		case 'all-of': {
-			const asserts = evaluateXPathToNodes('*', assertNode).map((innerAssertNode) =>
+			const asserts = evaluateXPathToNodes('*', assertNode, undefined, {
+				annotateAst: false,
+			}).map((innerAssertNode) =>
 				createAsserterForJsCodegen(baseUrl, innerAssertNode, language)
 			);
 			return (xpath, contextNode, variablesInScope, namespaceResolver, that) =>
@@ -282,7 +327,9 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 				);
 		}
 		case 'any-of': {
-			const asserts = evaluateXPathToNodes('*', assertNode).map((innerAssertNode) =>
+			const asserts = evaluateXPathToNodes('*', assertNode, undefined, {
+				annotateAst: false,
+			}).map((innerAssertNode) =>
 				createAsserterForJsCodegen(baseUrl, innerAssertNode, language)
 			);
 			return (xpath, contextNode, variablesInScope, namespaceResolver, that) => {
@@ -308,7 +355,9 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 			};
 		}
 		case 'error': {
-			const errorCode = evaluateXPathToString('@code', assertNode);
+			const errorCode = evaluateXPathToString('@code', assertNode, undefined, {
+				annotateAst: false,
+			});
 			return (
 				xpath: string,
 				contextNode: Element,
@@ -355,7 +404,9 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 				}
 			};
 		case 'assert-eq': {
-			const equalWith = evaluateXPathToString('.', assertNode);
+			const equalWith = evaluateXPathToString('.', assertNode, undefined, {
+				annotateAst: false,
+			});
 			return (xpath, contextNode, variablesInScope, namespaceResolver, that) => {
 				// Strip away fn:count to make tests possible that would
 				// otherwise be unsupported. Workaround for js-codegen not
@@ -390,7 +441,9 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 			};
 		}
 		case 'assert-deep-eq': {
-			const equalWith = evaluateXPathToString('.', assertNode);
+			const equalWith = evaluateXPathToString('.', assertNode, undefined, {
+				annotateAst: false,
+			});
 			return (xpath, contextNode, variablesInScope, namespaceResolver, that) => {
 				const compiled = compileXPathToJavaScript(xpath, ReturnType.NODES, {
 					namespaceResolver,
@@ -404,6 +457,7 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 							namespaceResolver,
 							nodesFactory,
 							language,
+							annotateAst: false,
 						}),
 						`Expected XPath ${xpath} to (deep equally) resolve to ${equalWith}`
 					);
@@ -446,7 +500,9 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 				}
 			};
 		case 'assert-count': {
-			const expectedCount = evaluateXPathToNumber('number(.)', assertNode);
+			const expectedCount = evaluateXPathToNumber('number(.)', assertNode, undefined, {
+				annotateAst: false,
+			});
 			return (xpath, contextNode, variablesInScope, namespaceResolver, that) => {
 				const compiled = compileXPathToJavaScript(xpath, ReturnType.NODES, {
 					namespaceResolver,
@@ -465,20 +521,31 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 			};
 		}
 		case 'assert-type': {
-			const expectedType = evaluateXPathToString('.', assertNode);
+			const expectedType = evaluateXPathToString('.', assertNode, undefined, {
+				annotateAst: false,
+			});
 			return (xpath, contextNode, variablesInScope, namespaceResolver, that) => {
 				that.skip('Skipped: not possible with js-codegen');
 			};
 		}
 		case 'assert-xml': {
 			let parsedFragment;
-			if (evaluateXPathToBoolean('@file', assertNode)) {
+			if (
+				evaluateXPathToBoolean('@file', assertNode, undefined, {
+					annotateAst: false,
+				})
+			) {
 				parsedFragment = getFile(
-					evaluateXPathToString('$baseUrl || "/" || @file', assertNode, null, { baseUrl })
+					evaluateXPathToString('$baseUrl || "/" || @file', assertNode, null, {
+						baseUrl,
+						annotateAst: false,
+					})
 				);
 			} else {
 				parsedFragment = parser.parseFromString(
-					`<xml>${evaluateXPathToString('.', assertNode)}</xml>`
+					`<xml>${evaluateXPathToString('.', assertNode, undefined, {
+						annotateAst: false,
+					})}</xml>`
 				).documentElement;
 			}
 			return (xpath, contextNode, variablesInScope, namespaceResolver, that) => {
@@ -490,10 +557,18 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 					const fn = new Function(compiled.code) as CompiledXPathFunction<Node, ReturnType.NODES>;
 					const results = executeJavaScriptCompiledXPath(fn, contextNode);
 					chai.assert(
-						evaluateXPathToBoolean('deep-equal($a, $b)', null, null, {
-							a: results,
-							b: Array.from(parsedFragment.childNodes),
-						}),
+						evaluateXPathToBoolean(
+							'deep-equal($a, $b)',
+							null,
+							null,
+							{
+								a: results,
+								b: Array.from(parsedFragment.childNodes),
+							},
+							{
+								annotateAst: false,
+							}
+						),
 						`Expected XPath ${xpath} to resolve to the given XML. Expected ${results
 							.map((result) => new XMLSerializer().serializeToString(result))
 							.join(' ')} to equal ${
@@ -512,7 +587,9 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 			};
 		}
 		case 'assert-string-value': {
-			const expectedString = evaluateXPathToString('.', assertNode);
+			const expectedString = evaluateXPathToString('.', assertNode, undefined, {
+				annotateAst: false,
+			});
 			return (xpath, contextNode, variablesInScope, namespaceResolver, that) => {
 				that.skip('Skipped: assert is not possible with js-codegen');
 			};
@@ -524,20 +601,31 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 	}
 }
 
-function getExpressionBackendAsserterForTest(baseUrl: string, testCase, language) {
-	const assertNode = evaluateXPathToFirstNode('./result/*', testCase);
-	return createAsserterForExpression(baseUrl, assertNode, language);
+function getExpressionBackendAsserterForTest(
+	baseUrl: string,
+	testCase,
+	language: Language,
+	annotateAst: boolean
+) {
+	const assertNode = evaluateXPathToFirstNode('./result/*', testCase, undefined, {
+		annotateAst,
+	});
+	return createAsserterForExpression(baseUrl, assertNode, language, annotateAst);
 }
 
 function getJsCodegenBackendAsserterForTest(baseUrl: string, testCase, language) {
-	const assertNode = evaluateXPathToFirstNode('./result/*', testCase);
+	const assertNode = evaluateXPathToFirstNode('./result/*', testCase, undefined, {
+		annotateAst: false,
+	});
 	return createAsserterForJsCodegen(baseUrl, assertNode, language);
 }
 
 const registeredModuleURIByFileName = Object.create(null);
 
 function getTestName(testCase) {
-	return evaluateXPathToString('./@name', testCase);
+	return evaluateXPathToString('./@name', testCase, undefined, {
+		annotateAst: false,
+	});
 }
 
 function getTestDescription(testSetName, testName, testCase) {
@@ -546,7 +634,14 @@ function getTestDescription(testSetName, testName, testCase) {
 		'~' +
 		testName +
 		'~' +
-		evaluateXPathToString('if (description/text()) then description else test', testCase)
+		evaluateXPathToString(
+			'if (description/text()) then description else test',
+			testCase,
+			undefined,
+			{
+				annotateAst: false,
+			}
+		)
 	);
 }
 
@@ -558,6 +653,7 @@ function loadModule(testCase, baseUrl) {
 		null,
 		{
 			baseUrl,
+			annotateAst: false,
 		}
 	);
 	moduleImports.forEach((moduleImport) => {
@@ -570,6 +666,12 @@ function loadModule(testCase, baseUrl) {
 }
 
 describe('qt3 test set', () => {
+	const annotateAst = process.argv.includes('--annotate');
+	if (annotateAst) {
+		// tslint:disable-next-line: no-console
+		console.log('Running tests using annotation');
+	}
+
 	const expressionBackendLog = unrunnableTestCases;
 	getAllTestSets().forEach((testSetFileName) => {
 		const testSet = getFile(testSetFileName);
@@ -615,7 +717,8 @@ describe('qt3 test set', () => {
 							const asserter = getExpressionBackendAsserterForTest(
 								baseUrl,
 								testCase,
-								language
+								language,
+								annotateAst
 							);
 							asserter(testQuery, contextNode, variablesInScope, namespaceResolver);
 						} catch (e) {

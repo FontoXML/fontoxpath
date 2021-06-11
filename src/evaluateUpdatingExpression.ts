@@ -15,13 +15,30 @@ import { ReturnType } from './parsing/convertXDMReturnValue';
 import { Language, Logger } from './types/Options';
 
 /**
+ * Type that contains a collection of options for the updating expression exaluation.
+ *
  * @public
+ *
+ * annotateAst				- If the AST should be annotated.
+ * debug					- Sets the debug option for the evaluation context.
+ * disableCache				- Sets if the cache should or should not be disabled.
+ * documentWriter			- Sets the documentwriter object
+ * logger					- Sets a logger object
+ * logUnannotatedQueries	- Sets if queries should be logged if they are not
+ * 							  fully annotated. Mostly for testing purposes and might
+ * 							  be removed if debug benefit is gone.
+ * moduleImports			- Sets all the module imports.
+ * namespaceResolver		- Callback to do namespace resolving.
+ * nodesFactory				- Reference to a nodes factory object.
+ * returnType				- The type that the evaluation function will return.
  */
 export type UpdatingOptions = {
+	annotateAst?: boolean;
 	debug?: boolean;
 	disableCache?: boolean;
 	documentWriter?: IDocumentWriter;
 	logger?: Logger;
+	logUnannotatedQueries?: boolean; // TODO: Remove once node annotation is finalized.
 	moduleImports?: { [s: string]: string };
 	namespaceResolver?: (s: string) => string | null;
 	nodesFactory?: INodesFactory;
@@ -65,6 +82,8 @@ export default async function evaluateUpdatingExpression(
 				allowXQuery: true,
 				debug: !!options['debug'],
 				disableCache: !!options['disableCache'],
+				annotateAst: !!options['annotateAst'],
+				logUnannotatedQueries: !!options['logUnannotatedQueries'],
 			}
 		);
 		dynamicContext = context.dynamicContext;

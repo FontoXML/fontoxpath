@@ -1,6 +1,6 @@
 import ISequence from './dataTypes/ISequence';
 import sequenceFactory from './dataTypes/sequenceFactory';
-import Value from './dataTypes/Value';
+import Value, { SequenceType } from './dataTypes/Value';
 import DynamicContext from './DynamicContext';
 import ExecutionParameters from './ExecutionParameters';
 import Expression, { OptimizationOptions } from './Expression';
@@ -44,9 +44,10 @@ export default abstract class PossiblyUpdatingExpression extends UpdatingExpress
 	constructor(
 		specificity: Specificity,
 		childExpressions: Expression[],
-		optimizationOptions: OptimizationOptions
+		optimizationOptions: OptimizationOptions,
+		type?: SequenceType
 	) {
-		super(specificity, childExpressions, optimizationOptions);
+		super(specificity, childExpressions, optimizationOptions, type);
 
 		this.isUpdating = this._childExpressions.some(
 			(childExpression) => childExpression.isUpdating

@@ -61,6 +61,13 @@ export type NamespaceResolver = (prefix: string) => string | null;
  */
 export type Options = {
 	/**
+	 * Whether or not the AST should get annotated after parsing an expression. The annotation adds
+	 * additional type information to the AST.
+	 * @beta
+	 */
+	annotateAst?: boolean;
+
+	/**
 	 * The current context for a query. Will be passed whenever an extension function is called. Can be
 	 * used to implement the current function in XSLT.
 	 *
@@ -134,6 +141,11 @@ export type Options = {
 	 * Called whenever the `fn:trace()` function is called. Defaults to `console#log`
 	 */
 	logger?: Logger;
+
+	/**
+	 * Log queries which didn't get completely annotated
+	 */
+	logUnannotatedQueries?: boolean;
 
 	/**
 	 * Additional modules to import. Imported modules are always statically known

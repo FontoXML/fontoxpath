@@ -1,5 +1,6 @@
 import FunctionValue from './dataTypes/FunctionValue';
 import sequenceFactory from './dataTypes/sequenceFactory';
+import { SequenceType } from './dataTypes/Value';
 import QName from './dataTypes/valueTypes/QName';
 import Expression from './Expression';
 import { FunctionProperties, getAlternativesAsStringFor } from './functions/functionRegistry';
@@ -23,7 +24,8 @@ class NamedFunctionRef extends Expression {
 
 	constructor(
 		functionReference: { localName: string; namespaceURI: string | null; prefix: string },
-		arity: number
+		arity: number,
+		type: SequenceType
 	) {
 		super(
 			new Specificity({
@@ -32,7 +34,9 @@ class NamedFunctionRef extends Expression {
 			[],
 			{
 				canBeStaticallyEvaluated: true,
-			}
+			},
+			false,
+			type
 		);
 
 		this._arity = arity;

@@ -155,6 +155,8 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 					options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE,
 				debug: !!options['debug'],
 				disableCache: !!options['disableCache'],
+				annotateAst: !!options['annotateAst'],
+				logUnannotatedQueries: !!options['logUnannotatedQueries'],
 			}
 		);
 		dynamicContext = context.dynamicContext;

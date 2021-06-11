@@ -8,7 +8,7 @@ import { SourceRange } from '../expressions/debug/StackTraceGenerator';
 
 type QName = { localName: string; namespaceURI: string | null; prefix: string };
 
-type ASTAttributes = { [attrName: string]: string };
+type ASTAttributes = { [attrName: string]: string | SequenceType };
 
 export interface IAST extends Array<string | ASTAttributes | SourceRange | IAST> {
 	0: string;
@@ -171,7 +171,9 @@ function followPath(ast: IAST, path: string[]): IAST | null {
 /**
  * Get the value of the given attribute
  */
-function getAttribute(ast: IAST, attributeName: string): string | null {
+function getAttribute(ast: IAST, attributeName: 'type'): SequenceType | null;
+function getAttribute(ast: IAST, attributeName: Omit<string, 'type'>): string | SequenceType | null;
+function getAttribute(ast: IAST, attributeName: string): string | SequenceType | null {
 	if (!Array.isArray(ast)) {
 		return null;
 	}
@@ -190,9 +192,26 @@ function getAttribute(ast: IAST, attributeName: string): string | null {
 function getQName(ast: IAST): QName {
 	return {
 		localName: getTextContent(ast),
-		namespaceURI: getAttribute(ast, 'URI'),
-		prefix: getAttribute(ast, 'prefix') || '',
+		namespaceURI: getAttribute(ast, 'URI') as string,
+		prefix: (getAttribute(ast, 'prefix') as string) || '',
 	};
+}
+
+/**
+ * Insert an attribute with a given name and value to the AST.
+ *
+ * @param ast The ast node to insert the attribute to
+ * @param name The name of the attribute
+ * @param data The data of the attribute
+ */
+function insertAttribute(ast: IAST, name: string, data: string | SequenceType) {
+	if (typeof ast[1] === 'object' && !Array.isArray(ast[1])) {
+		(ast[1] as ASTAttributes)[name] = data;
+	} else {
+		const obj: ASTAttributes = {};
+		obj[name] = data;
+		ast.splice(1, 0, obj);
+	}
 }
 
 export default {
@@ -203,4 +222,5 @@ export default {
 	getQName,
 	getTextContent,
 	getTypeDeclaration,
+	insertAttribute,
 };

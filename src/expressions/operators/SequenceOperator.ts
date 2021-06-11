@@ -1,5 +1,6 @@
 import ISequence from '../dataTypes/ISequence';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import { SequenceType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
@@ -11,7 +12,7 @@ import concatSequences from '../util/concatSequences';
  * The Sequence selector evaluates its operands and returns them as a single sequence
  */
 class SequenceOperator extends PossiblyUpdatingExpression {
-	constructor(expressions: Expression[]) {
+	constructor(expressions: Expression[], type: SequenceType) {
 		super(
 			expressions.reduce((specificity, selector) => {
 				return specificity.add(selector.specificity);
@@ -22,7 +23,8 @@ class SequenceOperator extends PossiblyUpdatingExpression {
 				canBeStaticallyEvaluated: expressions.every(
 					(selector) => selector.canBeStaticallyEvaluated
 				),
-			}
+			},
+			type
 		);
 	}
 

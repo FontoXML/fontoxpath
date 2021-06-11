@@ -1,7 +1,6 @@
 import * as chai from 'chai';
-import * as slimdom from 'slimdom';
-
 import { evaluateXPath, evaluateXPathToBoolean, evaluateXPathToNumber } from 'fontoxpath';
+import * as slimdom from 'slimdom';
 
 let documentNode;
 beforeEach(() => {

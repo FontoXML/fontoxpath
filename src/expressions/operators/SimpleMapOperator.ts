@@ -1,5 +1,6 @@
 import ISequence from '../dataTypes/ISequence';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import { SequenceType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression from '../Expression';
@@ -15,11 +16,17 @@ class SimpleMapOperator extends Expression {
 	 * evaluating all expressions in expression2. Returns a sequence with results from the evaluation of expression2.
 	 * Order is undefined.
 	 */
-	constructor(expression1: Expression, expression2: Expression) {
-		super(new Specificity({}).add(expression1.specificity), [expression1, expression2], {
-			canBeStaticallyEvaluated:
-				expression1.canBeStaticallyEvaluated && expression2.canBeStaticallyEvaluated,
-		});
+	constructor(expression1: Expression, expression2: Expression, type: SequenceType) {
+		super(
+			new Specificity({}).add(expression1.specificity),
+			[expression1, expression2],
+			{
+				canBeStaticallyEvaluated:
+					expression1.canBeStaticallyEvaluated && expression2.canBeStaticallyEvaluated,
+			},
+			false,
+			type
+		);
 
 		this._expression1 = expression1;
 		this._expression2 = expression2;

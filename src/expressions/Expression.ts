@@ -1,4 +1,5 @@
 import ISequence from './dataTypes/ISequence';
+import { SequenceType } from './dataTypes/Value';
 import DynamicContext from './DynamicContext';
 import ExecutionParameters from './ExecutionParameters';
 import Specificity from './Specificity';
@@ -27,6 +28,7 @@ abstract class Expression {
 	public peer: boolean;
 	public specificity: Specificity;
 	public subtree: boolean;
+	public type?: SequenceType;
 	protected _childExpressions: Expression[];
 	protected _eagerlyEvaluatedValue: () => ISequence;
 	private _canBeUpdating: boolean;
@@ -40,7 +42,8 @@ abstract class Expression {
 			resultOrder: RESULT_ORDERINGS.UNSORTED,
 			subtree: false,
 		},
-		canBeUpdating: boolean = false
+		canBeUpdating: boolean = false,
+		type?: SequenceType
 	) {
 		this.specificity = specificity;
 		this.expectedResultOrder = optimizationOptions.resultOrder || RESULT_ORDERINGS.UNSORTED;
@@ -55,6 +58,7 @@ abstract class Expression {
 		this._eagerlyEvaluatedValue = null;
 
 		this._canBeUpdating = canBeUpdating;
+		this.type = type;
 	}
 
 	public abstract evaluate(

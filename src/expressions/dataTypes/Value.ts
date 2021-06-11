@@ -1,5 +1,5 @@
 // The actual type is type ValueValue = NodePointer | Function | string | number | boolean | QName | Duration | DateTime; but doing that gives us thousands of errors.
-type ValueValue = any;
+export type ValueValue = any;
 
 export default class Value {
 	constructor(public type: ValueType, readonly value: ValueValue) {}
@@ -310,5 +310,18 @@ export function stringToSequenceType(input: string): SequenceType {
 				type: stringToValueType(input),
 				mult: SequenceMultiplicity.EXACTLY_ONE,
 			};
+	}
+}
+
+export function stringToSequenceMultiplicity(input: string): SequenceMultiplicity {
+	switch (input) {
+		case '*':
+			return SequenceMultiplicity.ZERO_OR_MORE;
+		case '?':
+			return SequenceMultiplicity.ZERO_OR_ONE;
+		case '+':
+			return SequenceMultiplicity.ONE_OR_MORE;
+		default:
+			return SequenceMultiplicity.EXACTLY_ONE;
 	}
 }
