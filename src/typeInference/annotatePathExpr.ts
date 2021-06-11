@@ -22,10 +22,10 @@ export function annotatePathExpr(ast: IAST): SequenceType {
 		retType = astHelper.getAttribute(step, 'type');
 	}
 
-	if (retType === undefined || retType === null) {
-		return retType;
+	if (retType && retType.type !== ValueType.ITEM) {
+		astHelper.insertAttribute(ast, 'type', retType);
 	}
-	astHelper.insertAttribute(ast, 'type', retType);
+
 	return retType;
 }
 
@@ -78,6 +78,10 @@ function annotateStep(step: IAST): SequenceType {
 		default:
 			return item;
 	}
-	astHelper.insertAttribute(step, 'type', seqType);
+
+	if (seqType && seqType.type !== ValueType.ITEM) {
+		astHelper.insertAttribute(step, 'type', seqType);
+	}
+
 	return seqType;
 }

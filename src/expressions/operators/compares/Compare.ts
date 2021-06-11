@@ -1,3 +1,4 @@
+import AtomicValue from '../../dataTypes/AtomicValue';
 import atomize from '../../dataTypes/atomize';
 import ISequence from '../../dataTypes/ISequence';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
@@ -7,7 +8,7 @@ import ExecutionParameters from '../../ExecutionParameters';
 import Expression from '../../Expression';
 import generalCompare, { generatePrefabFunction } from './generalCompare';
 import nodeCompare from './nodeCompare';
-import valueCompare from './valueCompare';
+import valueCompareFunction, { getValueCompareEvaluationFunction } from './valueCompare';
 
 class Compare extends Expression {
 	private _compare: 'generalCompare' | 'valueCompare' | 'nodeCompare';
@@ -73,7 +74,13 @@ class Compare extends Expression {
 			case 'geOp':
 				this._compare = 'valueCompare';
 
-				this._evaluationFunction = null;
+				if (firstType && secondType) {
+					this._evaluationFunction = getValueCompareEvaluationFunction(
+						kind,
+						firstType.type,
+						secondType.type
+					);
+				}
 
 				break;
 			default:
@@ -83,7 +90,10 @@ class Compare extends Expression {
 		this._operator = kind;
 	}
 
-	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
+	public evaluate(
+		dynamicContext: DynamicContext,
+		executionParameters: ExecutionParameters
+	): ISequence {
 		const firstSequence = this._firstExpression.evaluateMaybeStatically(
 			dynamicContext,
 			executionParameters
@@ -147,15 +157,21 @@ class Compare extends Expression {
 									secondAtomizedSequence.switchCases({
 										singleton: () =>
 											firstAtomizedSequence.mapAll(([onlyFirstValue]) =>
-												secondAtomizedSequence.mapAll(([onlySecondValue]) =>
-													valueCompare(
-														this._operator,
-														onlyFirstValue,
-														onlySecondValue,
-														dynamicContext
-													)
-														? sequenceFactory.singletonTrueSequence()
-														: sequenceFactory.singletonFalseSequence()
+												secondAtomizedSequence.mapAll(
+													([onlySecondValue]) => {
+														const compareFunction = valueCompareFunction(
+															this._operator,
+															onlyFirstValue.type,
+															onlySecondValue.type
+														);
+														return compareFunction(
+															onlyFirstValue,
+															onlySecondValue,
+															dynamicContext
+														)
+															? sequenceFactory.singletonTrueSequence()
+															: sequenceFactory.singletonFalseSequence();
+													}
 												)
 											),
 										default: () => {

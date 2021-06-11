@@ -46,7 +46,9 @@ export function annotateSequenceOperator(
 		}
 	}
 
-	astHelper.insertAttribute(ast, 'type', seqType);
+	if (seqType && seqType.type !== ValueType.ITEM) {
+		astHelper.insertAttribute(ast, 'type', seqType);
+	}
 
 	return seqType;
 }

@@ -7,6 +7,7 @@ import { ValueType } from '../../dataTypes/Value';
 import DynamicContext from '../../DynamicContext';
 import ExecutionParameters from '../../ExecutionParameters';
 import valueCompare from './valueCompare';
+import valueCompareFunction from './valueCompare';
 
 const OPERATOR_TRANSLATION: { [s: string]: string } = {
 	['equalOp']: 'eqOp',
@@ -91,7 +92,13 @@ export default function generalCompare(
 					else if (secondTargetType)
 						secondValue = castToType(secondValue, secondTargetType);
 
-					if (valueCompare(operator, firstValue, secondValue, dynamicContext)) {
+					const compareFunction = valueCompareFunction(
+						operator,
+						firstValue.type,
+						secondValue.type
+					);
+
+					if (compareFunction(firstValue, secondValue, dynamicContext)) {
 						return true;
 					}
 				}
