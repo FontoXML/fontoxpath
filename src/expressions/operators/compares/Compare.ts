@@ -96,6 +96,13 @@ class Compare extends Expression {
 		if (this._evaluationFunction) {
 			const firstAtomizedSequence = atomize(firstSequence, executionParameters);
 			const secondAtomizedSequence = atomize(secondSequence, executionParameters);
+			if (firstAtomizedSequence.isEmpty() || secondAtomizedSequence.isEmpty()) {
+				if (this._compare === 'valueCompare' || this._compare === 'nodeCompare') {
+					return sequenceFactory.empty();
+				} else {
+					return sequenceFactory.singletonFalseSequence();
+				}
+			}
 			return this._evaluationFunction(
 				firstAtomizedSequence,
 				secondAtomizedSequence,

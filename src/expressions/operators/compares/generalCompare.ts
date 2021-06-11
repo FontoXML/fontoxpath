@@ -123,48 +123,26 @@ export function generatePrefabFunction(
 	): boolean => {
 		let result;
 		// Change operator to equivalent valueCompare operator
-		result = firstSequence.switchCases({
-			empty: () => {
-				return sequenceFactory.singletonFalseSequence();
-			},
-			default: () => {
-				return secondSequence.switchCases({
-					empty: () => {
-						return sequenceFactory.singletonFalseSequence();
-					},
-					default: () => {
-						return secondSequence.mapAll((allSecondValues) =>
-							firstSequence
-								.filter((firstValue) => {
-									for (let i = 0, l = allSecondValues.length; i < l; ++i) {
-										const secondValue = allSecondValues[i];
-										if (firstTargetType)
-											castToType(firstValue, firstTargetType);
-										if (secondTargetType)
-											castToType(secondValue, secondTargetType);
+		result = secondSequence.mapAll((allSecondValues) =>
+			firstSequence
+				.filter((firstValue) => {
+					for (let i = 0, l = allSecondValues.length; i < l; ++i) {
+						const secondValue = allSecondValues[i];
+						if (firstTargetType) castToType(firstValue, firstTargetType);
+						if (secondTargetType) castToType(secondValue, secondTargetType);
 
-										if (
-											valueCompare(
-												operator,
-												firstValue,
-												secondValue,
-												dynamicContext
-											)
-										) {
-											return true;
-										}
-									}
-									return false;
-								})
-								.switchCases({
-									default: () => sequenceFactory.singletonTrueSequence(),
-									empty: () => sequenceFactory.singletonFalseSequence(),
-								})
-						);
-					},
-				});
-			},
-		});
+						if (valueCompare(operator, firstValue, secondValue, dynamicContext)) {
+							return true;
+						}
+					}
+					return false;
+				})
+				.switchCases({
+					default: () => sequenceFactory.singletonTrueSequence(),
+					empty: () => sequenceFactory.singletonFalseSequence(),
+				})
+		);
+
 		return result.getEffectiveBooleanValue();
 	};
 }
