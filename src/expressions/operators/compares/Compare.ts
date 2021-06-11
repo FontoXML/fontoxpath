@@ -8,13 +8,13 @@ import ExecutionParameters from '../../ExecutionParameters';
 import Expression from '../../Expression';
 import generalCompare from './generalCompare';
 import nodeCompare from './nodeCompare';
-import valueCompare from './valueCompare';
+import valueCompare, { getValueCompareEvaluationFunction } from './valueCompare';
 
 class Compare extends Expression {
 	private _compare: 'generalCompare' | 'valueCompare' | 'nodeCompare';
 	private _evaluationFunction: (
-		firstValue: AtomicValue,
-		secondValue: AtomicValue,
+		firstValue: ISequence,
+		secondValue: ISequence,
 		dynamicContext: DynamicContext
 	) => boolean;
 	private _firstExpression: Expression;
@@ -56,15 +56,11 @@ class Compare extends Expression {
 				this._compare = 'valueCompare';
 
 				if (firstType && secondType) {
-					try {
-						this._evaluationFunction = valueCompare(
-							kind,
-							firstType.type,
-							secondType.type
-						);
-					} catch {
-						this._evaluationFunction = null;
-					}
+					this._evaluationFunction = getValueCompareEvaluationFunction(
+						kind,
+						firstType.type,
+						secondType.type
+					);
 				}
 
 				break;
@@ -90,18 +86,18 @@ class Compare extends Expression {
 
 		// If we have an evaluation function stored we can execute that immediately
 		// and make sure both sequences are of length 1
-		if (
-			this._evaluationFunction &&
-			firstSequence.getLength() === 1 &&
-			secondSequence.getLength() === 1
-		) {
+		if (this._evaluationFunction) {
 			const firstAtomizedSequence = atomize(firstSequence, executionParameters);
 			const secondAtomizedSequence = atomize(secondSequence, executionParameters);
 
+			if (firstAtomizedSequence.getLength() == 0 || secondAtomizedSequence.getLength() == 0) {
+				return sequenceFactory.empty();
+			}
+
 			// Execute the evaluation function and return either a true- or false-sequence
 			return this._evaluationFunction(
-				firstAtomizedSequence.first(),
-				secondAtomizedSequence.first(),
+				firstAtomizedSequence,
+				secondAtomizedSequence,
 				dynamicContext
 			)
 				? sequenceFactory.singletonTrueSequence()

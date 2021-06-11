@@ -1,3 +1,4 @@
+import ISequence from '../../../expressions/dataTypes/ISequence';
 import { ValueType, valueTypeToString } from '../../../expressions/dataTypes/Value';
 import AtomicValue from '../../dataTypes/AtomicValue';
 import castToType from '../../dataTypes/castToType';
@@ -321,7 +322,7 @@ function generateCompareFunction(
 
 const comparatorsByTypingKey = Object.create(null);
 
-export default function (
+function getCachedCompareFunction(
 	operator: string,
 	typeA: ValueType,
 	typeB: ValueType
@@ -339,3 +340,29 @@ export default function (
 
 	return prefabComparator;
 }
+
+export function getValueCompareEvaluationFunction(
+	operator: string,
+	typeA: ValueType,
+	typeB: ValueType
+): (
+	firstSequence: ISequence,
+	secondSequence: ISequence,
+	dynamicContext: DynamicContext
+) => boolean {
+	try {
+		const evaluationFunction = getCachedCompareFunction(operator, typeA, typeB);
+
+		return (first, second, dynamicContext) => {
+			if (first.getLength() > 1 || second.getLength() > 1) {
+				throw new Error('XPTY0004: Sequences to compare are not singleton.');
+			}
+
+			return evaluationFunction(first.first(), second.first(), dynamicContext);
+		};
+	} catch {
+		return undefined;
+	}
+}
+
+export default getCachedCompareFunction;
