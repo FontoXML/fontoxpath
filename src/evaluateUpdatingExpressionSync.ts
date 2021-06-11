@@ -10,7 +10,7 @@ import Expression from './expressions/Expression';
 import PossiblyUpdatingExpression from './expressions/PossiblyUpdatingExpression';
 import UpdatingExpressionResult from './expressions/UpdatingExpressionResult';
 import { IterationHint, IterationResult } from './expressions/util/iterators';
-import { IReturnTypes } from './parsing/convertXDMReturnValue';
+import { IReturnTypes, ReturnType } from './parsing/convertXDMReturnValue';
 import { Node } from './types/Types';
 
 /**
@@ -29,7 +29,7 @@ import { Node } from './types/Types';
  */
 export default function evaluateUpdatingExpressionSync<
 	TNode extends Node,
-	TReturnType extends keyof IReturnTypes<TNode>
+	TReturnType extends ReturnType
 >(
 	updateScript: string,
 	contextItem?: any | null,
@@ -76,7 +76,7 @@ export default function evaluateUpdatingExpressionSync<
 				contextItem,
 				domFacade,
 				variables,
-				options.returnType as any,
+				options.returnType as TReturnType,
 				{ ...options, ['language']: evaluateXPath.XQUERY_UPDATE_3_1_LANGUAGE }
 			),
 		};

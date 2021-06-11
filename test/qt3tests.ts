@@ -1,5 +1,6 @@
 import * as chai from 'chai';
 import {
+	CompiledXPathFunction,
 	compileXPathToJavaScript,
 	evaluateXPathToArray,
 	evaluateXPathToBoolean,
@@ -371,7 +372,7 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 						});
 						if (compiled.isAstAccepted === true) {
 							// tslint:disable-next-line
-							const fn = new Function(compiled.code);
+							const fn = new Function(compiled.code) as CompiledXPathFunction;
 							executeJavaScriptCompiledXPath(fn, contextNode);
 						} else {
 							that.skip(`Skipped: ${compiled.reason}`);
@@ -393,7 +394,7 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 				});
 				if (compiled.isAstAccepted === true) {
 					// tslint:disable-next-line
-					const fn = new Function(compiled.code);
+					const fn = new Function(compiled.code) as CompiledXPathFunction<Node, ReturnType.BOOLEAN>;
 					chai.assert.isTrue(
 						executeJavaScriptCompiledXPath(fn, contextNode),
 						`Expected XPath ${xpath} to resolve to true`
@@ -428,7 +429,7 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 
 				if (compiled.isAstAccepted === true) {
 					// tslint:disable-next-line
-					const fn = new Function(compiled.code);
+					const fn = new Function(compiled.code) as CompiledXPathFunction<Node, ReturnType.NODES>;
 					chai.assert.equal(
 						executeJavaScriptCompiledXPath(fn, contextNode).length,
 						parseInt(equalWith, 10),
@@ -444,12 +445,12 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 				annotateAst: false,
 			});
 			return (xpath, contextNode, variablesInScope, namespaceResolver, that) => {
-				const compiled = compileXPathToJavaScript(xpath, ReturnType.BOOLEAN, {
+				const compiled = compileXPathToJavaScript(xpath, ReturnType.NODES, {
 					namespaceResolver,
 				});
 				if (compiled.isAstAccepted === true) {
 					// tslint:disable-next-line
-					const fn = new Function(compiled.code);
+					const fn = new Function(compiled.code) as CompiledXPathFunction<Node, ReturnType.NODES>;
 					chai.assert.deepEqual(
 						executeJavaScriptCompiledXPath(fn, contextNode),
 						evaluateXPathToNodes(equalWith, contextNode, null, variablesInScope, {
@@ -472,9 +473,9 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 				});
 				if (compiled.isAstAccepted === true) {
 					// tslint:disable-next-line
-					const fn = new Function(compiled.code);
+					const fn = new Function(compiled.code) as CompiledXPathFunction<Node, ReturnType.NODES>;
 					chai.assert.equal(
-						executeJavaScriptCompiledXPath(fn, contextNode),
+						executeJavaScriptCompiledXPath(fn, contextNode).length,
 						0,
 						`Expected XPath ${xpath} to resolve to the empty sequence`
 					);
@@ -489,7 +490,7 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 				});
 				if (compiled.isAstAccepted === true) {
 					// tslint:disable-next-line
-					const fn = new Function(compiled.code);
+					const fn = new Function(compiled.code) as CompiledXPathFunction<Node, ReturnType.BOOLEAN>;
 					chai.assert.isFalse(
 						executeJavaScriptCompiledXPath(fn, contextNode),
 						`Expected XPath ${xpath} to resolve to false`
@@ -508,7 +509,7 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 				});
 				if (compiled.isAstAccepted === true) {
 					// tslint:disable-next-line
-					const fn = new Function(compiled.code);
+					const fn = new Function(compiled.code) as CompiledXPathFunction<Node, ReturnType.NODES>;
 					chai.assert.equal(
 						executeJavaScriptCompiledXPath(fn, contextNode).length,
 						expectedCount,
@@ -553,8 +554,8 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 				});
 				if (compiled.isAstAccepted === true) {
 					// tslint:disable-next-line
-					const fn = new Function(compiled.code);
-					const results = executeJavaScriptCompiledXPath(fn, contextNode) as Node[];
+					const fn = new Function(compiled.code) as CompiledXPathFunction<Node, ReturnType.NODES>;
+					const results = executeJavaScriptCompiledXPath(fn, contextNode);
 					chai.assert(
 						evaluateXPathToBoolean(
 							'deep-equal($a, $b)',
