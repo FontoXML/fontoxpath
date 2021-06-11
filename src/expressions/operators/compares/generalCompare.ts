@@ -18,8 +18,8 @@ const OPERATOR_TRANSLATION: { [s: string]: string } = {
 };
 
 function typeCheck(firstType: ValueType, secondType: ValueType): [ValueType, ValueType] {
-	let firstTargetType: ValueType;
-	let secondTargetType: ValueType;
+	let firstTargetType: ValueType = undefined;
+	let secondTargetType: ValueType = undefined;
 
 	if (
 		isSubtypeOf(firstType, ValueType.XSUNTYPEDATOMIC) ||
@@ -38,7 +38,7 @@ function typeCheck(firstType: ValueType, secondType: ValueType): [ValueType, Val
 		} else if (isSubtypeOf(secondType, ValueType.XSYEARMONTHDURATION)) {
 			firstTargetType = ValueType.XSYEARMONTHDURATION;
 		} else if (isSubtypeOf(firstType, ValueType.XSUNTYPEDATOMIC)) {
-			firstTargetType = ValueType.XSUNTYPEDATOMIC;
+			firstTargetType = secondType;
 		} else if (isSubtypeOf(secondType, ValueType.XSUNTYPEDATOMIC)) {
 			secondTargetType = firstType;
 		}
@@ -76,57 +76,36 @@ export default function generalCompare(
 
 					// In all other cases, V is cast to the primitive base type of T.
 					let secondValue = allSecondValues[i];
-					if (
-						isSubtypeOf(firstValue.type, ValueType.XSUNTYPEDATOMIC) ||
-						isSubtypeOf(secondValue.type, ValueType.XSUNTYPEDATOMIC)
-					) {
-						if (isSubtypeOf(firstValue.type, ValueType.XSNUMERIC)) {
-							secondValue = castToType(secondValue, ValueType.XSDOUBLE);
-						} else if (isSubtypeOf(secondValue.type, ValueType.XSNUMERIC)) {
-							firstValue = castToType(firstValue, ValueType.XSDOUBLE);
-						} else if (isSubtypeOf(firstValue.type, ValueType.XSDAYTIMEDURATION)) {
-							secondValue = castToType(secondValue, ValueType.XSDAYTIMEDURATION);
-						} else if (isSubtypeOf(secondValue.type, ValueType.XSDAYTIMEDURATION)) {
-							firstValue = castToType(firstValue, ValueType.XSDAYTIMEDURATION);
-						} else if (isSubtypeOf(firstValue.type, ValueType.XSYEARMONTHDURATION)) {
-							secondValue = castToType(secondValue, ValueType.XSYEARMONTHDURATION);
-						} else if (isSubtypeOf(secondValue.type, ValueType.XSYEARMONTHDURATION)) {
-							firstValue = castToType(firstValue, ValueType.XSYEARMONTHDURATION);
-						} else if (isSubtypeOf(firstValue.type, ValueType.XSUNTYPEDATOMIC)) {
-							firstValue = castToType(firstValue, secondValue.type);
-						} else if (isSubtypeOf(secondValue.type, ValueType.XSUNTYPEDATOMIC)) {
-							secondValue = castToType(secondValue, firstValue.type);
-						}
-					}
+					// if (
+					// 	isSubtypeOf(firstValue.type, ValueType.XSUNTYPEDATOMIC) ||
+					// 	isSubtypeOf(secondValue.type, ValueType.XSUNTYPEDATOMIC)
+					// ) {
+					// 	if (isSubtypeOf(firstValue.type, ValueType.XSNUMERIC)) {
+					// 		secondValue = castToType(secondValue, ValueType.XSDOUBLE);
+					// 	} else if (isSubtypeOf(secondValue.type, ValueType.XSNUMERIC)) {
+					// 		firstValue = castToType(firstValue, ValueType.XSDOUBLE);
+					// 	} else if (isSubtypeOf(firstValue.type, ValueType.XSDAYTIMEDURATION)) {
+					// 		secondValue = castToType(secondValue, ValueType.XSDAYTIMEDURATION);
+					// 	} else if (isSubtypeOf(secondValue.type, ValueType.XSDAYTIMEDURATION)) {
+					// 		firstValue = castToType(firstValue, ValueType.XSDAYTIMEDURATION);
+					// 	} else if (isSubtypeOf(firstValue.type, ValueType.XSYEARMONTHDURATION)) {
+					// 		secondValue = castToType(secondValue, ValueType.XSYEARMONTHDURATION);
+					// 	} else if (isSubtypeOf(secondValue.type, ValueType.XSYEARMONTHDURATION)) {
+					// 		firstValue = castToType(firstValue, ValueType.XSYEARMONTHDURATION);
+					// 	} else if (isSubtypeOf(firstValue.type, ValueType.XSUNTYPEDATOMIC)) {
+					// 		firstValue = castToType(firstValue, secondValue.type);
+					// 	} else if (isSubtypeOf(secondValue.type, ValueType.XSUNTYPEDATOMIC)) {
+					// 		secondValue = castToType(secondValue, firstValue.type);
+					// 	}
+					// }
 
-					if (valueCompare(operator, firstValue, secondValue, dynamicContext)) {
-						return true;
-					}
-				}
-				return false;
-			})
-			.switchCases({
-				default: () => sequenceFactory.singletonTrueSequence(),
-				empty: () => sequenceFactory.singletonFalseSequence(),
-			})
-	);
-}
-
-function generateGeneralCompareFunction(
-	operator: string,
-	firstSequence: ISequence,
-	secondSequence: ISequence,
-	dynamicContext: DynamicContext,
-	firstTargetType: ValueType,
-	secondTargetType: ValueType
-): ISequence {
-	return secondSequence.mapAll((allSecondValues) =>
-		firstSequence
-			.filter((firstValue) => {
-				for (let i = 0, l = allSecondValues.length; i < l; ++i) {
-					let secondValue = allSecondValues[i];
-					if (firstTargetType) castToType(firstValue, firstTargetType);
-					if (secondTargetType) castToType(secondValue, secondTargetType);
+					const [firstTargetType, secondTargetType]: [ValueType, ValueType] = typeCheck(
+						firstValue.type,
+						secondValue.type
+					);
+					if (firstTargetType) firstValue = castToType(firstValue, firstTargetType);
+					else if (secondTargetType)
+						secondValue = castToType(secondValue, secondTargetType);
 
 					if (valueCompare(operator, firstValue, secondValue, dynamicContext)) {
 						return true;
@@ -178,13 +157,33 @@ export function generatePrefabFunction(
 					default: () => {
 						const firstAtomizedSequence = atomize(firstSequence, executionParameters);
 						const secondAtomizedSequence = atomize(secondSequence, executionParameters);
-						return generateGeneralCompareFunction(
-							operator,
-							firstAtomizedSequence,
-							secondAtomizedSequence,
-							dynamicContext,
-							firstTargetType,
-							secondTargetType
+						return secondAtomizedSequence.mapAll((allSecondValues) =>
+							firstAtomizedSequence
+								.filter((firstValue) => {
+									for (let i = 0, l = allSecondValues.length; i < l; ++i) {
+										let secondValue = allSecondValues[i];
+										if (firstTargetType)
+											castToType(firstValue, firstTargetType);
+										if (secondTargetType)
+											castToType(secondValue, secondTargetType);
+
+										if (
+											valueCompare(
+												operator,
+												firstValue,
+												secondValue,
+												dynamicContext
+											)
+										) {
+											return true;
+										}
+									}
+									return false;
+								})
+								.switchCases({
+									default: () => sequenceFactory.singletonTrueSequence(),
+									empty: () => sequenceFactory.singletonFalseSequence(),
+								})
 						);
 					},
 				});
