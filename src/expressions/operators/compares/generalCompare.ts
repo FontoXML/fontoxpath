@@ -17,6 +17,12 @@ const OPERATOR_TRANSLATION: { [s: string]: string } = {
 	['greaterThanOp']: 'gtOp',
 };
 
+/**
+ * A method to find the targetTypes of the operands of the generalCompare.
+ * @param firstType the type of the first operand
+ * @param secondType the type of the second operand
+ * @returns a tuple of the targetTypes, at least one of them is undefined
+ */
 function typeCheck(firstType: ValueType, secondType: ValueType): [ValueType, ValueType] {
 	let firstTargetType: ValueType = undefined;
 	let secondTargetType: ValueType = undefined;
@@ -76,28 +82,6 @@ export default function generalCompare(
 
 					// In all other cases, V is cast to the primitive base type of T.
 					let secondValue = allSecondValues[i];
-					// if (
-					// 	isSubtypeOf(firstValue.type, ValueType.XSUNTYPEDATOMIC) ||
-					// 	isSubtypeOf(secondValue.type, ValueType.XSUNTYPEDATOMIC)
-					// ) {
-					// 	if (isSubtypeOf(firstValue.type, ValueType.XSNUMERIC)) {
-					// 		secondValue = castToType(secondValue, ValueType.XSDOUBLE);
-					// 	} else if (isSubtypeOf(secondValue.type, ValueType.XSNUMERIC)) {
-					// 		firstValue = castToType(firstValue, ValueType.XSDOUBLE);
-					// 	} else if (isSubtypeOf(firstValue.type, ValueType.XSDAYTIMEDURATION)) {
-					// 		secondValue = castToType(secondValue, ValueType.XSDAYTIMEDURATION);
-					// 	} else if (isSubtypeOf(secondValue.type, ValueType.XSDAYTIMEDURATION)) {
-					// 		firstValue = castToType(firstValue, ValueType.XSDAYTIMEDURATION);
-					// 	} else if (isSubtypeOf(firstValue.type, ValueType.XSYEARMONTHDURATION)) {
-					// 		secondValue = castToType(secondValue, ValueType.XSYEARMONTHDURATION);
-					// 	} else if (isSubtypeOf(secondValue.type, ValueType.XSYEARMONTHDURATION)) {
-					// 		firstValue = castToType(firstValue, ValueType.XSYEARMONTHDURATION);
-					// 	} else if (isSubtypeOf(firstValue.type, ValueType.XSUNTYPEDATOMIC)) {
-					// 		firstValue = castToType(firstValue, secondValue.type);
-					// 	} else if (isSubtypeOf(secondValue.type, ValueType.XSUNTYPEDATOMIC)) {
-					// 		secondValue = castToType(secondValue, firstValue.type);
-					// 	}
-					// }
 
 					const [firstTargetType, secondTargetType]: [ValueType, ValueType] = typeCheck(
 						firstValue.type,
