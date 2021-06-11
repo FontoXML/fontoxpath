@@ -120,6 +120,13 @@ export function generatePrefabFunction(
 		secondType
 	);
 
+	let compareFunction: any;
+	// if (firstTargetType !== undefined)
+	// 	compareFunction = valueCompareFunction(operator, firstTargetType, secondType);
+	// else if (secondTargetType !== undefined)
+	// 	compareFunction = valueCompareFunction(operator, firstType, secondTargetType);
+	// else compareFunction = valueCompareFunction(operator, firstType, secondType);
+
 	return (
 		firstSequence: ISequence,
 		secondSequence: ISequence,
@@ -131,16 +138,15 @@ export function generatePrefabFunction(
 			firstSequence
 				.filter((firstValue) => {
 					for (let i = 0, l = allSecondValues.length; i < l; ++i) {
-						const secondValue = allSecondValues[i];
-						if (firstTargetType) castToType(firstValue, firstTargetType);
-						if (secondTargetType) castToType(secondValue, secondTargetType);
-
-						const compareFunction = valueCompareFunction(
+						let secondValue = allSecondValues[i];
+						if (firstTargetType) firstValue = castToType(firstValue, firstTargetType);
+						if (secondTargetType)
+							secondValue = castToType(secondValue, secondTargetType);
+						compareFunction = valueCompareFunction(
 							operator,
 							firstValue.type,
 							secondValue.type
 						);
-
 						if (compareFunction(firstValue, secondValue, dynamicContext)) {
 							return true;
 						}
