@@ -17,7 +17,9 @@ import evaluateXPathToStrings from './evaluateXPathToStrings';
 import executePendingUpdateList from './executePendingUpdateList';
 import { getBucketsForNode } from './getBuckets';
 import compileXPathToJavaScript from './jsCodegen/compileXPathToJavaScript';
-import executeJavaScriptCompiledXPath from './jsCodegen/executeJavaScriptCompiledXPath';
+import executeJavaScriptCompiledXPath, {
+	CompiledXPathFunction,
+} from './jsCodegen/executeJavaScriptCompiledXPath';
 import {
 	IAstAccepted,
 	IAstRejected,
@@ -180,6 +182,7 @@ export {
 	CDATASection,
 	CharacterData,
 	Comment,
+	CompiledXPathFunction,
 	Document,
 	Element,
 	EvaluateXPath,

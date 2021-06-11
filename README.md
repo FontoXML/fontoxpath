@@ -387,14 +387,14 @@ Functions, XQuery and other more advanced features are _not_ supported (yet).
 #### Example usage:
 
 ```ts
-import {compileXPathToJavaScript, evaluateXPath, executeJavaScriptCompiledXPath } from 'fontoxpath';
+import {compileXPathToJavaScript, CompiledXPathFunction, evaluateXPath, executeJavaScriptCompiledXPath } from 'fontoxpath';
 
 const documentNode = new DOMParser().parseFromString('<p>Beep beep.</p>', 'text/xml');
 
 const compiledXPathResult = compileXPathToJavaScript("/child::p/text()", evaluateXPath.BOOLEAN_TYPE);
 if (compiledXPathResult.isAstAccepted === true) {
 	// Query is compiled succesfully, it can be evaluated.
-	const evalFunction = new Function(compiledXPathResult.code);
+	const evalFunction = new Function(compiledXPathResult.code) as CompiledXPathFunction;
 
 	console.log(executeJavaScriptCompiledXPath(evalFunction, documentNode));
 	// Outputs: true

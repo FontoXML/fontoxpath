@@ -1,4 +1,5 @@
 import {
+	CompiledXPathFunction,
 	compileXPathToJavaScript,
 	executeJavaScriptCompiledXPath,
 	IDomFacade,
@@ -34,7 +35,7 @@ const evaluateXPathWithJsCodegen = <
 		const compiledXPathResult = compileXPathToJavaScript(query, returnType, options);
 		if (compiledXPathResult.isAstAccepted === true) {
 			// tslint:disable-next-line
-			const evalFunction = new Function(compiledXPathResult.code);
+			const evalFunction = new Function(compiledXPathResult.code) as CompiledXPathFunction;
 
 			compiledXPathCache.set(cacheKey, evalFunction);
 
