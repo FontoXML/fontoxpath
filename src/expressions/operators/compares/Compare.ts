@@ -8,11 +8,15 @@ import ExecutionParameters from '../../ExecutionParameters';
 import Expression from '../../Expression';
 import generalCompare from './generalCompare';
 import nodeCompare from './nodeCompare';
-import valueCompare from './valueCompare';
+import valueCompareFunction, { getValueCompareEvaluationFunction } from './valueCompare';
 
 class Compare extends Expression {
 	private _compare: 'generalCompare' | 'valueCompare' | 'nodeCompare';
-	private _evaluationFunction: (firstValue: AtomicValue, secondValue: AtomicValue) => boolean;
+	private _evaluationFunction: (
+		firstValue: ISequence,
+		secondValue: ISequence,
+		dynamicContext: DynamicContext
+	) => boolean;
 	private _firstExpression: Expression;
 	private _operator: string;
 	private _secondExpression: Expression;
@@ -52,11 +56,10 @@ class Compare extends Expression {
 				this._compare = 'valueCompare';
 
 				if (firstType && secondType) {
-					this._evaluationFunction = valueCompare(
+					this._evaluationFunction = getValueCompareEvaluationFunction(
 						kind,
 						firstType.type,
-						secondType.type,
-						null
+						secondType.type
 					);
 				}
 
@@ -83,18 +86,19 @@ class Compare extends Expression {
 
 		// If we have an evaluation function stored we can execute that immediately
 		// and make sure both sequences are of length 1
-		if (
-			this._evaluationFunction &&
-			firstSequence.getLength() === 1 &&
-			secondSequence.getLength() === 1
-		) {
+		if (this._evaluationFunction) {
 			const firstAtomizedSequence = atomize(firstSequence, executionParameters);
 			const secondAtomizedSequence = atomize(secondSequence, executionParameters);
 
+			if (firstAtomizedSequence.isEmpty() || secondAtomizedSequence.isEmpty()) {
+				return sequenceFactory.empty();
+			}
+
 			// Execute the evaluation function and return either a true- or false-sequence
 			return this._evaluationFunction(
-				firstAtomizedSequence.first(),
-				secondAtomizedSequence.first()
+				firstAtomizedSequence,
+				secondAtomizedSequence,
+				dynamicContext
 			)
 				? sequenceFactory.singletonTrueSequence()
 				: sequenceFactory.singletonFalseSequence();
@@ -137,15 +141,15 @@ class Compare extends Expression {
 											firstAtomizedSequence.mapAll(([onlyFirstValue]) =>
 												secondAtomizedSequence.mapAll(
 													([onlySecondValue]) => {
-														const compareFunction = valueCompare(
+														const compareFunction = valueCompareFunction(
 															this._operator,
 															onlyFirstValue.type,
-															onlySecondValue.type,
-															dynamicContext
+															onlySecondValue.type
 														);
 														return compareFunction(
 															onlyFirstValue,
-															onlySecondValue
+															onlySecondValue,
+															dynamicContext
 														)
 															? sequenceFactory.singletonTrueSequence()
 															: sequenceFactory.singletonFalseSequence();

@@ -4,7 +4,7 @@ import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
 import { ValueType } from '../../dataTypes/Value';
 import DynamicContext from '../../DynamicContext';
-import valueCompare from './valueCompare';
+import valueCompareFunction from './valueCompare';
 
 const OPERATOR_TRANSLATION: { [s: string]: string } = {
 	['equalOp']: 'eqOp',
@@ -67,14 +67,13 @@ export default function generalCompare(
 						}
 					}
 
-					const compareFunction = valueCompare(
+					const compareFunction = valueCompareFunction(
 						operator,
 						firstValue.type,
-						secondValue.type,
-						dynamicContext
+						secondValue.type
 					);
 
-					if (compareFunction(firstValue, secondValue)) {
+					if (compareFunction(firstValue, secondValue, dynamicContext)) {
 						return true;
 					}
 				}
