@@ -1,11 +1,11 @@
 import atomize from '../../dataTypes/atomize';
-import ExecutionParameters from '../../ExecutionParameters';
 import castToType from '../../dataTypes/castToType';
 import ISequence from '../../dataTypes/ISequence';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import { SequenceType, ValueType } from '../../dataTypes/Value';
+import { ValueType } from '../../dataTypes/Value';
 import DynamicContext from '../../DynamicContext';
+import ExecutionParameters from '../../ExecutionParameters';
 import valueCompare from './valueCompare';
 
 const OPERATOR_TRANSLATION: { [s: string]: string } = {
@@ -24,8 +24,8 @@ const OPERATOR_TRANSLATION: { [s: string]: string } = {
  * @returns a tuple of the targetTypes, at least one of them is undefined
  */
 function typeCheck(firstType: ValueType, secondType: ValueType): [ValueType, ValueType] {
-	let firstTargetType: ValueType = undefined;
-	let secondTargetType: ValueType = undefined;
+	let firstTargetType: ValueType;
+	let secondTargetType: ValueType;
 
 	if (
 		isSubtypeOf(firstType, ValueType.XSUNTYPEDATOMIC) ||
@@ -104,7 +104,6 @@ export default function generalCompare(
 	);
 }
 
-//asume at this point the sequences are of length 1
 export function generatePrefabFunction(
 	operator: string,
 	firstType: ValueType,
@@ -145,7 +144,7 @@ export function generatePrefabFunction(
 							firstAtomizedSequence
 								.filter((firstValue) => {
 									for (let i = 0, l = allSecondValues.length; i < l; ++i) {
-										let secondValue = allSecondValues[i];
+										const secondValue = allSecondValues[i];
 										if (firstTargetType)
 											castToType(firstValue, firstTargetType);
 										if (secondTargetType)

@@ -11,17 +11,17 @@ import valueCompare from './valueCompare';
 
 class Compare extends Expression {
 	private _compare: 'generalCompare' | 'valueCompare' | 'nodeCompare';
-	private _firstExpression: Expression;
-	private _operator: string;
-	private _secondExpression: Expression;
-	private _firstType: SequenceType;
-	private _secondType: SequenceType;
 	private _evaluationFunction: (
 		firstSequence: ISequence,
 		secondSequence: ISequence,
 		context: DynamicContext,
 		parameters: ExecutionParameters
 	) => ISequence;
+	private _firstExpression: Expression;
+	private _firstType: SequenceType;
+	private _operator: string;
+	private _secondExpression: Expression;
+	private _secondType: SequenceType;
 
 	constructor(
 		kind: string,
