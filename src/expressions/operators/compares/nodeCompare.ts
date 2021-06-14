@@ -15,10 +15,7 @@ export default function nodeCompare(
 ): (a: any, b: any) => boolean {
 	// https://www.w3.org/TR/xpath-31/#doc-xpath31-NodeComp
 
-	if (
-		!isSubtypeOf(first, ValueType.NODE) ||
-		!isSubtypeOf(second, ValueType.NODE)
-	) {
+	if (!isSubtypeOf(first, ValueType.NODE) || !isSubtypeOf(second, ValueType.NODE)) {
 		throw new Error('XPTY0004: Sequences to compare are not nodes');
 	}
 
