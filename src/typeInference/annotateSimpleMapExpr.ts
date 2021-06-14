@@ -1,7 +1,6 @@
 import {
 	SequenceMultiplicity,
 	SequenceType,
-	sequenceTypeToString,
 	ValueType,
 } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';

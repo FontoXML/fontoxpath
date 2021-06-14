@@ -35,6 +35,7 @@ export type UpdatingOptions = {
 	disableCache?: boolean;
 	documentWriter?: IDocumentWriter;
 	logger?: Logger;
+	logUnannotatedQueries?: boolean; // TODO: Remove once node annotation is finalized.
 	moduleImports?: { [s: string]: string };
 	namespaceResolver?: (s: string) => string | null;
 	nodesFactory?: INodesFactory;

@@ -354,6 +354,61 @@ const myNodes = evaluateXPathToNodes<slimdom.Node>(
 // Type of myNodes is: slimdom.Node[] .
 ```
 
+### Compiling queries to JavaScript for better execution performance
+
+:warning: Warning: this functionality considered experimental. :warning:
+
+FontoXPath supports compiling a small but useful subset of XPath 3.1 to pure JavaScript code. Query
+execution performance benefits from this: execution speed can be 2 to 7 times higher than when using
+`evaluateXPath`, according to [our benchmarks](./CONTRIBUTING.md#running-benchmarks).
+
+Two API's provide this functionality:
+
+- `compileXPathToJavaScript` Compiles a query and its return type to JavaScript code. This result
+  should be evaluated to a function, for example with `new Function`.
+- `executeJavaScriptCompiledXPath` Evaluates a to a function evaluated compiled query (see the
+  example below) and applies it to the given context node, returning its resulting value.
+
+#### Supported functionality
+
+Here is a list of supported functionality so you can determine if compiling to JavaScript is
+suitable for your project. These functionalities are supported:
+
+- Absolute and relative path expressions, including an arbitrary amount of steps.
+- `child`, `self`, `parent` and `attribute` axes.
+- NodeTests: NameTest, ElementTest, Wildcard and TextTest.
+- Predicates (the `[` and `]` in `/xml[child::title]`).
+- Logical operators (`and` and `or`).
+- Return types `evaluateXPath.NODES_TYPE`, `evaluateXPath.BOOLEAN_TYPE`,
+  `evaluateXPath.FIRST_NODE_TYPE`.
+
+Functions, XQuery and other more advanced features are _not_ supported (yet).
+
+#### Example usage:
+
+```ts
+import {compileXPathToJavaScript, CompiledXPathFunction, evaluateXPath, executeJavaScriptCompiledXPath } from 'fontoxpath';
+
+const documentNode = new DOMParser().parseFromString('<p>Beep beep.</p>', 'text/xml');
+
+const compiledXPathResult = compileXPathToJavaScript("/child::p/text()", evaluateXPath.BOOLEAN_TYPE);
+if (compiledXPathResult.isAstAccepted === true) {
+	// Query is compiled succesfully, it can be evaluated.
+	const evalFunction = new Function(compiledXPathResult.code) as CompiledXPathFunction;
+
+	console.log(executeJavaScriptCompiledXPath(evalFunction, documentNode));
+	// Outputs: true
+} else {
+	// Not supported by JS codegen (yet).
+}
+```
+
+##### Ideas to improve the example to better fit your project:
+
+- If a query could not be compiled to JavaScript, fall back on the stable `evaluateXPath` function.
+- Add caching so compiling and `new Function` does not have happen more than once per unique query.
+- Store compiled code to disk.
+
 ## Features
 
 Note that this engine assumes [XPath 1.0 compatibility

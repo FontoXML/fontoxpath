@@ -36,7 +36,7 @@ export type EvaluateXPath = {
 	 *
 	 * @returns The result of executing this XPath
 	 */
-	<TNode extends Node, TReturnType extends keyof IReturnTypes<TNode>>(
+	<TNode extends Node, TReturnType extends ReturnType>(
 		selector: string,
 		contextItem?: any | null,
 		domFacade?: IDomFacade | null,
