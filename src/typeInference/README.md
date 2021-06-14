@@ -53,9 +53,9 @@ Most nodes are annotated logically, for example, the `ArrayConstructor` is annot
 -   `CastExpr`:
     Is annotated with the target type of the cast.
 -   `FlworExpr`:
-    The type this gets annotated with is, for the most part, determined by the return clause of the expression. The letClause and forClause add variables to the current `AnnotationContext`. When there is a forClause in the expression we annotate with the type of the returnClause, but the multiplicity is set to `ZERO_OR_MORE`. When we don't have a forClause we annotate with the type of the returnClause. The OrderByClause and WhereClause don't influence the type of the expression.
+    The type this gets annotated with is, for the most part, determined by the return clause of the expression. The letClause and forClause add variables to the current `AnnotationContext`. When there is a forClause in the expression we annotate with the type of the returnClause, but the multiplicity is set to `ZERO_OR_MORE`. When we don't have a forClause we annotate with the type of the returnClause. The OrderByClause and WhereClause don't influence the type of the FlworExpression.
 -   `FunctionCallExpr/NamedFunctionRef/ArrowExpr`:
-    The functionCallExpr is annotated by the return type of the function itself. As explained above the function is looked up in the context by its `QName` to retrieve the returnType of the function.
+    The functionCallExpr is annotated by the return type of the function itself. As explained in the annotation section of this ReadMe the function is looked up in the context to retrieve the returnType of the function.
 -   `IfThenElseExpr`:
     This expression is only annotated when both the thenClause and elseClause have the exact same returnType, else we return item()\*.
 -   `PathExpr`:
