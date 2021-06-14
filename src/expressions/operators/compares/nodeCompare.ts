@@ -3,7 +3,7 @@ import { compareNodePositions } from '../../dataTypes/documentOrderUtils';
 import ISequence from '../../dataTypes/ISequence';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import { ValueType } from '../../dataTypes/Value';
+import Value, { ValueType } from '../../dataTypes/Value';
 import zipSingleton from '../../util/zipSingleton';
 import arePointersEqual from './arePointersEqual';
 
@@ -12,13 +12,10 @@ export default function nodeCompare(
 	domFacade: DomFacade,
 	first: ValueType,
 	second: ValueType
-): (a: any, b: any) => boolean {
+): (a: Value, b: Value) => boolean {
 	// https://www.w3.org/TR/xpath-31/#doc-xpath31-NodeComp
 
-	if (
-		!isSubtypeOf(first, ValueType.NODE) ||
-		!isSubtypeOf(second, ValueType.NODE)
-	) {
+	if (!isSubtypeOf(first, ValueType.NODE) || !isSubtypeOf(second, ValueType.NODE)) {
 		throw new Error('XPTY0004: Sequences to compare are not nodes');
 	}
 
@@ -34,9 +31,11 @@ export default function nodeCompare(
 					first === ValueType.PROCESSINGINSTRUCTION ||
 					first === ValueType.COMMENT)
 			) {
-				return arePointersEqual;
+				return (a: Value, b: Value) => {
+					return arePointersEqual(a.value, b.value);
+				};
 			} else {
-				return (a: any, b: any) => false;
+				return (a: Value, b: Value) => false;
 			}
 
 		case 'nodeBeforeOp':

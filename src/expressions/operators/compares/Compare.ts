@@ -1,3 +1,4 @@
+import zipSingleton from '../../../expressions/util/zipSingleton';
 import AtomicValue from '../../dataTypes/AtomicValue';
 import atomize from '../../dataTypes/atomize';
 import ISequence from '../../dataTypes/ISequence';
@@ -139,20 +140,21 @@ class Compare extends Expression {
 												'XPTY0004: Sequences to compare are not singleton'
 											);
 										},
-										singleton: () => {
-											const compareFunction = nodeCompare(
-												this._operator,
-												executionParameters.domFacade,
-												firstSequence.first().type,
-												secondSequence.first().type
-											);
-											return compareFunction(
-												firstSequence.first(),
-												secondSequence.first()
-											)
-												? sequenceFactory.singletonTrueSequence()
-												: sequenceFactory.singletonFalseSequence();
-										},
+										singleton: () =>
+											zipSingleton(
+												[firstSequence, secondSequence],
+												([first, second]) => {
+													const compareFunction = nodeCompare(
+														this._operator,
+														executionParameters.domFacade,
+														first.type,
+														second.type
+													);
+													return compareFunction(first, second)
+														? sequenceFactory.singletonTrueSequence()
+														: sequenceFactory.singletonFalseSequence();
+												}
+											),
 									});
 								},
 							});
