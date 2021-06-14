@@ -81,6 +81,12 @@ describe('functions over strings', () => {
 				evaluateXPathToStrings('tokenize("abracadabra", "(ab)|(a)")', documentNode),
 				['', 'r', 'c', 'd', 'r', '']
 			));
+
+		it('wraps the thrown error if the supplied $pattern is invalid', () => {
+			chai.assert.throws(() => {
+				evaluateXPathToStrings('fn:tokenize("1", "0>^|*")', documentNode);
+			}, 'FORX0002');
+		});
 	});
 
 	describe('normalize-space()', () => {
