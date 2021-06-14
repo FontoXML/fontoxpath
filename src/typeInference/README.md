@@ -46,14 +46,14 @@ Right now the following aspects are being optimized:
 
 ## Node annotations
 
-Most nodes are annotated logically, for example, the `ArrayConstructor` is annotated as an array, the `IntegerExpression` is annotated as an Integer. But there are some special cases where it isn't as straightforward. In these cases, we either need the types of children of the node we are annotated to determine the type or are limited to our own implementation and need to find a workaround. Below is a list containing each of these special cases and how they are being annotated.
+Most nodes are annotated logically, for example, the `ArrayConstructor` is annotated as an array, the `IntegerExpression` is annotated as an Integer. But there are some special cases where it isn't as straightforward. In these cases, we either need to do some steps prior to annotation, need the types of children of the node we are annotating to determine the type or are just limited to our own implementation and need to find a workaround. Below is a list containing each of these special cases and how they are being annotated.
 
 -   `Binary Operators`:
     The binary operator is annotated with the type of the result. That resultType is determined by looking up the combination of operands and operator in a map containing each combination of operands and operators.
 -   `CastExpr`:
     Is annotated with the target type of the cast.
 -   `FlworExpr`:
-    The type this gets annotated with is, for the most part, determined by the return clause of the expression. The letClause and forClause add items to the current `AnnotationContext`. When there is a forClause in the expression We annotate with the type of the returnClause, but the multiplicity is set to `ZERO_OR_MORE`. When we don't have a forClause we annotate with the type of the returnClause. The OrderByClause and WhereClause don't influence the type of the expression.
+    The type this gets annotated with is, for the most part, determined by the return clause of the expression. The letClause and forClause add variables to the current `AnnotationContext`. When there is a forClause in the expression we annotate with the type of the returnClause, but the multiplicity is set to `ZERO_OR_MORE`. When we don't have a forClause we annotate with the type of the returnClause. The OrderByClause and WhereClause don't influence the type of the expression.
 -   `FunctionCallExpr/NamedFunctionRef/ArrowExpr`:
     The functionCallExpr is annotated by the return type of the function itself. As explained above the function is looked up in the context by its `QName` to retrieve the returnType of the function.
 -   `IfThenElseExpr`:
@@ -88,6 +88,10 @@ The expressions listed in the table below are expressions that always get annota
 | Set Operators       | Zero_or_more nodes   |
 | CastableExpr        | Exactly_one boolean  |
 | stringConcatenateOp | Exactly_one string   |
+| integerConstantExpr | Exactly_one integer  |
+| doubleConstantExpr  | Exactly_one double   |
+| decimalConstantExpr | Exactly_one decimal  |
+| stringConstantExpr  | Exactly_one string   |
 
 ## Testing
 
