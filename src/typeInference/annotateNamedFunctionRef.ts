@@ -64,7 +64,8 @@ export function annotateNamedFunctionRef(
 	}
 
 	// Insert the type info into the AST and return
-
-	astHelper.insertAttribute(ast, 'type', functionProperties.returnType);
+	if (functionProperties.returnType.type !== ValueType.ITEM) {
+		astHelper.insertAttribute(ast, 'type', functionProperties.returnType);
+	}
 	return functionProperties.returnType;
 }

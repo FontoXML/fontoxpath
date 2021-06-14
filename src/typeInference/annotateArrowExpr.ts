@@ -71,6 +71,8 @@ export function annotateArrowExpr(ast: IAST, annotationContext: AnnotationContex
 	}
 
 	// If we found a returnType, we annotate the AST with it
-	astHelper.insertAttribute(ast, 'type', functionProps.returnType);
+	if (functionProps.returnType.type !== ValueType.ITEM) {
+		astHelper.insertAttribute(ast, 'type', functionProps.returnType);
+	}
 	return functionProps.returnType;
 }

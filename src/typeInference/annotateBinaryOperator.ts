@@ -40,7 +40,7 @@ export function annotateBinOp(
 	if (valueType) {
 		const type = { type: valueType, mult: left.mult };
 
-		if (valueType !== ValueType.XSNUMERIC) {
+		if (valueType !== ValueType.XSNUMERIC && valueType !== ValueType.ITEM) {
 			astHelper.insertAttribute(ast, 'type', type);
 		}
 		return type;
