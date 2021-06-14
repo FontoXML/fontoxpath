@@ -1,10 +1,9 @@
 import DomFacade from '../../../domFacade/DomFacade';
+import DynamicContext from '../../../expressions/DynamicContext';
 import { compareNodePositions } from '../../dataTypes/documentOrderUtils';
 import ISequence from '../../dataTypes/ISequence';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
-import sequenceFactory from '../../dataTypes/sequenceFactory';
-import Value, { ValueType } from '../../dataTypes/Value';
-import zipSingleton from '../../util/zipSingleton';
+import { ValueType } from '../../dataTypes/Value';
 import arePointersEqual from './arePointersEqual';
 
 export default function nodeCompare(
@@ -12,7 +11,7 @@ export default function nodeCompare(
 	domFacade: DomFacade,
 	first: ValueType,
 	second: ValueType
-): (a: Value, b: Value) => boolean {
+): (a: ISequence, b: ISequence, context: DynamicContext) => boolean {
 	// https://www.w3.org/TR/xpath-31/#doc-xpath31-NodeComp
 
 	if (!isSubtypeOf(first, ValueType.NODE) || !isSubtypeOf(second, ValueType.NODE)) {
@@ -31,11 +30,11 @@ export default function nodeCompare(
 					first === ValueType.PROCESSINGINSTRUCTION ||
 					first === ValueType.COMMENT)
 			) {
-				return (a: Value, b: Value) => {
-					return arePointersEqual(a.value, b.value);
+				return (a: ISequence, b: ISequence, _context: DynamicContext) => {
+					return arePointersEqual(a.first().value, b.first().value);
 				};
 			} else {
-				return (a: Value, b: Value) => false;
+				return (a: ISequence, b: ISequence) => false;
 			}
 
 		case 'nodeBeforeOp':
@@ -43,7 +42,7 @@ export default function nodeCompare(
 				return undefined;
 			}
 			return (a, b) => {
-				return compareNodePositions(domFacade, a, b) < 0;
+				return compareNodePositions(domFacade, a.first(), b.first()) < 0;
 			};
 
 		case 'nodeAfterOp':
@@ -51,7 +50,7 @@ export default function nodeCompare(
 				return undefined;
 			}
 			return (a, b) => {
-				return compareNodePositions(domFacade, a, b) > 0;
+				return compareNodePositions(domFacade, a.first(), b.first()) > 0;
 			};
 
 		default:
