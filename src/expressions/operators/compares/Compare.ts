@@ -98,16 +98,22 @@ class Compare extends Expression {
 			firstSequence.getLength() === 1 &&
 			secondSequence.getLength() === 1
 		) {
-			const firstAtomizedSequence = atomize(firstSequence, executionParameters);
-			const secondAtomizedSequence = atomize(secondSequence, executionParameters);
-
 			// Execute the evaluation function and return either a true- or false-sequence
-			return this._evaluationFunction(
-				firstAtomizedSequence.first(),
-				secondAtomizedSequence.first()
-			)
-				? sequenceFactory.singletonTrueSequence()
-				: sequenceFactory.singletonFalseSequence();
+			if (this._compare === 'nodeCompare') {
+				// Node compares should not be atomized
+				return this._evaluationFunction(firstSequence.first(), secondSequence.first())
+					? sequenceFactory.singletonTrueSequence()
+					: sequenceFactory.singletonFalseSequence();
+			} else {
+				const firstAtomizedSequence = atomize(firstSequence, executionParameters);
+				const secondAtomizedSequence = atomize(secondSequence, executionParameters);
+				return this._evaluationFunction(
+					firstAtomizedSequence.first(),
+					secondAtomizedSequence.first()
+				)
+					? sequenceFactory.singletonTrueSequence()
+					: sequenceFactory.singletonFalseSequence();
+			}
 		}
 
 		return firstSequence.switchCases({
