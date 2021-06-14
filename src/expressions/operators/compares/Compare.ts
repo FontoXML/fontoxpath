@@ -1,8 +1,8 @@
-import AtomicValue from '../../dataTypes/AtomicValue';
+import zipSingleton from '../../../expressions/util/zipSingleton';
 import atomize from '../../dataTypes/atomize';
 import ISequence from '../../dataTypes/ISequence';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import { SequenceMultiplicity, SequenceType, ValueType } from '../../dataTypes/Value';
+import { SequenceType, ValueType } from '../../dataTypes/Value';
 import DynamicContext from '../../DynamicContext';
 import ExecutionParameters from '../../ExecutionParameters';
 import Expression from '../../Expression';
@@ -18,10 +18,8 @@ class Compare extends Expression {
 		context: DynamicContext
 	) => boolean;
 	private _firstExpression: Expression;
-	private _firstType: SequenceType;
 	private _operator: string;
 	private _secondExpression: Expression;
-	private _secondType: SequenceType;
 
 	constructor(
 		kind: string,
@@ -39,8 +37,6 @@ class Compare extends Expression {
 		);
 		this._firstExpression = firstExpression;
 		this._secondExpression = secondExpression;
-		this._firstType = firstType;
-		this._secondType = secondType;
 
 		switch (kind) {
 			case 'equalOp':
@@ -85,6 +81,15 @@ class Compare extends Expression {
 				break;
 			default:
 				this._compare = 'nodeCompare';
+
+				if (firstType && secondType) {
+					this._evaluationFunction = nodeCompare(
+						kind,
+						undefined,
+						firstType.type,
+						secondType.type
+					);
+				}
 		}
 
 		this._operator = kind;
@@ -103,23 +108,36 @@ class Compare extends Expression {
 			executionParameters
 		);
 
+		// If we have an evaluation function stored we can execute that immediately
+		// and make sure both sequences are of length 1
 		if (this._evaluationFunction) {
-			const firstAtomizedSequence = atomize(firstSequence, executionParameters);
-			const secondAtomizedSequence = atomize(secondSequence, executionParameters);
-			if (firstAtomizedSequence.isEmpty() || secondAtomizedSequence.isEmpty()) {
-				if (this._compare === 'valueCompare' || this._compare === 'nodeCompare') {
+			// Execute the evaluation function and return either a true- or false-sequence
+			if (this._compare === 'nodeCompare') {
+				if (firstSequence.isEmpty() || secondSequence.isEmpty()) {
 					return sequenceFactory.empty();
-				} else {
-					return sequenceFactory.singletonFalseSequence();
 				}
+				// Node compares should not be atomized
+				return this._evaluationFunction(firstSequence, secondSequence, dynamicContext)
+					? sequenceFactory.singletonTrueSequence()
+					: sequenceFactory.singletonFalseSequence();
+			} else {
+				const firstAtomizedSequence = atomize(firstSequence, executionParameters);
+				const secondAtomizedSequence = atomize(secondSequence, executionParameters);
+				if (firstAtomizedSequence.isEmpty() || secondAtomizedSequence.isEmpty()) {
+					if (this._compare === 'valueCompare') {
+						return sequenceFactory.empty();
+					} else {
+						return sequenceFactory.singletonFalseSequence();
+					}
+				}
+				return this._evaluationFunction(
+					firstAtomizedSequence,
+					secondAtomizedSequence,
+					dynamicContext
+				)
+					? sequenceFactory.singletonTrueSequence()
+					: sequenceFactory.singletonFalseSequence();
 			}
-			return this._evaluationFunction(
-				firstAtomizedSequence,
-				secondAtomizedSequence,
-				dynamicContext
-			)
-				? sequenceFactory.singletonTrueSequence()
-				: sequenceFactory.singletonFalseSequence();
 		}
 
 		return firstSequence.switchCases({
@@ -139,12 +157,41 @@ class Compare extends Expression {
 					},
 					default: () => {
 						if (this._compare === 'nodeCompare') {
-							return nodeCompare(
-								this._operator,
-								executionParameters.domFacade,
-								firstSequence,
-								secondSequence
-							);
+							return firstSequence.switchCases({
+								default: () => {
+									throw new Error(
+										'XPTY0004: Sequences to compare are not singleton'
+									);
+								},
+								singleton: () => {
+									return secondSequence.switchCases({
+										default: () => {
+											throw new Error(
+												'XPTY0004: Sequences to compare are not singleton'
+											);
+										},
+										singleton: () =>
+											zipSingleton(
+												[firstSequence, secondSequence],
+												([first, second]) => {
+													const compareFunction = nodeCompare(
+														this._operator,
+														executionParameters.domFacade,
+														first.type,
+														second.type
+													);
+													return compareFunction(
+														firstSequence,
+														secondSequence,
+														dynamicContext
+													)
+														? sequenceFactory.singletonTrueSequence()
+														: sequenceFactory.singletonFalseSequence();
+												}
+											),
+									});
+								},
+							});
 						}
 
 						// Atomize both sequences

@@ -57,7 +57,9 @@ export function annotateFlworExpression(
 					retType = { type: retType.type, mult: SequenceMultiplicity.ZERO_OR_MORE };
 				}
 
-				astHelper.insertAttribute(ast, 'type', retType);
+				if (retType.type !== ValueType.ITEM) {
+					astHelper.insertAttribute(ast, 'type', retType);
+				}
 				return retType;
 			}
 			default: {
@@ -71,7 +73,9 @@ export function annotateFlworExpression(
 					retType = { type: retType.type, mult: SequenceMultiplicity.ZERO_OR_MORE };
 				}
 
-				astHelper.insertAttribute(ast, 'type', retType);
+				if (retType.type !== ValueType.ITEM) {
+					astHelper.insertAttribute(ast, 'type', retType);
+				}
 				return retType;
 			}
 		}

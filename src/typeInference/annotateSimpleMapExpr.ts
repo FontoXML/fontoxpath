@@ -23,7 +23,9 @@ export function annotateSimpleMapExpr(
 			type: lastType.type,
 			mult: SequenceMultiplicity.ZERO_OR_MORE,
 		};
-		astHelper.insertAttribute(ast, 'type', lastType);
+		if (sequenceType && sequenceType.type !== ValueType.ITEM) {
+			astHelper.insertAttribute(ast, 'type', sequenceType);
+		}
 		return sequenceType;
 	} else {
 		return { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE };
