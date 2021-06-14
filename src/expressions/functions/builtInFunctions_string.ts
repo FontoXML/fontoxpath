@@ -352,9 +352,17 @@ const fnTokenize: FunctionDefinitionType = (
 	}
 	const inputString: string = input.first().value;
 	const patternString: string = pattern.first().value;
+
+	let regex;
+	try {
+		regex = new RegExp(patternString);
+	} catch (e) {
+		throw new Error(`FORX0002: ${e}`);
+	}
+
 	return sequenceFactory.create(
 		inputString
-			.split(new RegExp(patternString))
+			.split(regex)
 			.map((token: string) => createAtomicValue(token, ValueType.XSSTRING))
 	);
 };
