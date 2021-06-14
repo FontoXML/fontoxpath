@@ -57,7 +57,9 @@ export function annotateFlworExpression(
 					retType = { type: retType.type, mult: SequenceMultiplicity.ZERO_OR_MORE };
 				}
 
-				astHelper.insertAttribute(ast, 'type', retType);
+				if (retType.type !== ValueType.ITEM) {
+					astHelper.insertAttribute(ast, 'type', retType);
+				}
 				return retType;
 			}
 			default: {
@@ -71,7 +73,9 @@ export function annotateFlworExpression(
 					retType = { type: retType.type, mult: SequenceMultiplicity.ZERO_OR_MORE };
 				}
 
-				astHelper.insertAttribute(ast, 'type', retType);
+				if (retType.type !== ValueType.ITEM) {
+					astHelper.insertAttribute(ast, 'type', retType);
+				}
 				return retType;
 			}
 		}
@@ -178,11 +182,15 @@ function annotateOrderByClause(ast: IAST, annotationContext: AnnotationContext):
  * @param array the array to be filtered
  * @returns the filtered array
  */
-function filterOnUniqueObjects(array: SequenceType[]): SequenceType[] {
+export function filterOnUniqueObjects(array: SequenceType[]): SequenceType[] {
 	return array.filter(
 		(current, index, arrayCopy) =>
 			arrayCopy.findIndex(
-				(element) => element.type === current.type && element.mult === current.mult
+				(element) =>
+					element &&
+					current &&
+					element.type === current.type &&
+					element.mult === current.mult
 			) === index
 	);
 }

@@ -4,6 +4,7 @@ const allowXQuery = document.getElementById('allowXQuery') as HTMLInputElement;
 const allowXQueryUpdateFacility = document.getElementById(
 	'allowXQueryUpdateFacility'
 ) as HTMLInputElement;
+const useAstAnnotation = document.getElementById('useAstAnnotation') as HTMLInputElement;
 const useJsCodegenBackend = document.getElementById('useJsCodegenBackend') as HTMLInputElement;
 const astJsonMl = document.getElementById('astJsonMl');
 const astXml = document.getElementById('astXml');
@@ -52,7 +53,7 @@ function serializeAsJsonMl(node: Node): any[] | string {
 			const jsonml = [node.nodeName] as any[];
 
 			if ((node as Element).attributes && (node as Element).attributes.length) {
-				const attributes = {};
+				const attributes: any = {};
 
 				for (let i = 0, l = (node as Element).attributes.length; i < l; ++i) {
 					const attr = (node as Element).attributes[i];
@@ -75,7 +76,7 @@ function serializeAsJsonMl(node: Node): any[] | string {
 	}
 }
 
-function stringifyJsonMl(what: any, indent: number, n: number) {
+function stringifyJsonMl(what: any, indent: number, n: number): string {
 	const filler = Array(indent).fill(' ').join('');
 	switch (typeof what) {
 		case 'object': {
@@ -104,7 +105,7 @@ function stringifyJsonMl(what: any, indent: number, n: number) {
 function indentXml(document: Document): string {
 	let depth = 0;
 	const elements = document.documentElement.outerHTML.split(/></g);
-	const prettiedXml = [];
+	const prettiedXml: string[] = [];
 	elements.forEach((element) => {
 		let indent: string;
 		let row = '<' + element + '>';
@@ -159,7 +160,7 @@ function jsonXmlReplacer(_key: string, value: any): any {
 	return value;
 }
 
-async function runUpdatingXQuery(script: string) {
+async function runUpdatingXQuery(script: string, annotateAst: boolean) {
 	const result = await fontoxpath.evaluateUpdatingExpression(script, xmlDoc, null, null, {
 		debug: true,
 		disableCache: true,
@@ -169,6 +170,7 @@ async function runUpdatingXQuery(script: string) {
 				console.log(m);
 			},
 		},
+		annotateAst,
 	});
 
 	resultText.innerText = JSON.stringify(result, jsonXmlReplacer, '  ');
@@ -176,7 +178,7 @@ async function runUpdatingXQuery(script: string) {
 	updateResult.innerText = new XMLSerializer().serializeToString(xmlDoc);
 }
 
-async function runNormalXPath(script: string, asXQuery: boolean) {
+async function runNormalXPath(script: string, asXQuery: boolean, annotateAst: boolean) {
 	const raw = [];
 	const it = fontoxpath.evaluateXPathToAsyncIterator(script, xmlDoc, null, null, {
 		debug: true,
@@ -190,6 +192,7 @@ async function runNormalXPath(script: string, asXQuery: boolean) {
 				console.log(m);
 			},
 		},
+		annotateAst,
 	});
 
 	for (let item = await it.next(); !item.done; item = await it.next()) {
@@ -198,10 +201,13 @@ async function runNormalXPath(script: string, asXQuery: boolean) {
 	resultText.innerText = JSON.stringify(raw, jsonXmlReplacer, '  ');
 }
 
-async function runXPathWithJsCodegen(xpath: string) {
+async function runXPathWithJsCodegen(xpath: string, annotateAst: boolean) {
 	const compiledXPathResult = fontoxpath.compileXPathToJavaScript(
 		xpath,
-		fontoxpath.ReturnType.NODES
+		fontoxpath.ReturnType.NODES,
+		{
+			annotateAst,
+		}
 	);
 
 	if (compiledXPathResult.isAstAccepted === true) {
@@ -225,6 +231,10 @@ async function rerunXPath() {
 
 	const xpath = xpathField.innerText;
 
+	// Since the rest of the code uses caching, there is a small bug where the demo
+	// keep returning cached annotated queries even though the annotation flag gets turned of.
+	const annotateAst = useAstAnnotation.checked;
+
 	try {
 		// First try to get the AST as it has a higher change of succeeding
 		const document = new Document();
@@ -233,6 +243,7 @@ async function rerunXPath() {
 			{
 				language: fontoxpath.evaluateXPath.XQUERY_3_1_LANGUAGE,
 				debug: false,
+				annotateAst,
 			},
 			document
 		);
@@ -251,12 +262,12 @@ async function rerunXPath() {
 		(window as any).hljs.highlightBlock(astXml);
 
 		if (useJsCodegenBackend.checked) {
-			await runXPathWithJsCodegen(xpath);
+			await runXPathWithJsCodegen(xpath, annotateAst);
 		} else {
 			if (allowXQueryUpdateFacility.checked) {
-				await runUpdatingXQuery(xpath);
+				await runUpdatingXQuery(xpath, annotateAst);
 			} else {
-				await runNormalXPath(xpath, allowXQuery.checked);
+				await runNormalXPath(xpath, allowXQuery.checked, annotateAst);
 			}
 		}
 

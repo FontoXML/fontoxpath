@@ -55,7 +55,6 @@ export default function evaluateUpdatingExpressionSync<
 				debug: !!options['debug'],
 				disableCache: !!options['disableCache'],
 				annotateAst: !!options['annotateAst'],
-				logUnannotatedQueries: !!options['logUnannotatedQueries'],
 			}
 		);
 		dynamicContext = context.dynamicContext;

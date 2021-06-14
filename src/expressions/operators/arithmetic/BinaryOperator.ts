@@ -300,17 +300,6 @@ class BinaryOperator extends Expression {
 			executionParameters
 		);
 
-		// We could infer all the necessary type information to do an early return
-		if (this._evaluateFunction && this.type) {
-			const firstValue = firstValueSequence.first();
-			const secondValueSequence = atomize(
-				this._secondValueExpr.evaluateMaybeStatically(dynamicContext, executionParameters),
-				executionParameters
-			);
-			const secondValue = secondValueSequence.first();
-			return sequenceFactory.singleton(this._evaluateFunction(firstValue, secondValue));
-		}
-
 		return firstValueSequence.mapAll((firstValues) => {
 			if (firstValues.length === 0) {
 				// Shortcut, if the first part is empty, we can return empty.
@@ -336,6 +325,13 @@ class BinaryOperator extends Expression {
 
 				const firstValue = firstValues[0];
 				const secondValue = secondValues[0];
+
+				// We could infer all the necessary type information to do an early return
+				if (this._evaluateFunction && this.type) {
+					return sequenceFactory.singleton(
+						this._evaluateFunction(firstValue, secondValue)
+					);
+				}
 
 				const prefabOperator = getBinaryPrefabOperator(
 					firstValue.type,

@@ -150,6 +150,17 @@ function createCastingFunction(from: ValueType, to: ValueType): (value: Value) =
 		});
 	}
 
+	// If the two types are equal, no casting is required and we can just return the value as it is.
+	if (from === to) {
+		return (val) => ({
+			successful: true,
+			value: {
+				type: to,
+				value: val,
+			},
+		});
+	}
+
 	const primitiveFrom = TREAT_AS_PRIMITIVE.includes(from) ? from : getPrimitiveTypeName(from);
 	const primitiveTo = TREAT_AS_PRIMITIVE.includes(to) ? to : getPrimitiveTypeName(to);
 

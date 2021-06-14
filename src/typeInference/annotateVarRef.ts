@@ -1,4 +1,4 @@
-import { SequenceType } from '../expressions/dataTypes/Value';
+import { SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { AnnotationContext } from './AnnotationContext';
 
@@ -11,7 +11,7 @@ import { AnnotationContext } from './AnnotationContext';
 export function annotateVarRef(ast: IAST, annotationContext: AnnotationContext): SequenceType {
 	const varName: string = (ast[1] as IAST)[1] as string;
 	const varType: SequenceType = annotationContext.getVariable(varName);
-	if (varType) {
+	if (varType && varType.type !== ValueType.ITEM) {
 		astHelper.insertAttribute(ast, 'type', varType);
 	}
 

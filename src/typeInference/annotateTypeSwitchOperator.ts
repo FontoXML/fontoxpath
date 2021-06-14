@@ -43,7 +43,9 @@ export function annotateTypeSwitchOperator(
 				// If the types did not match, check the next case, if they matched, return the type
 				if (!result) continue;
 				else {
-					astHelper.insertAttribute(ast, 'type', result);
+					if (result.type !== ValueType.ITEM) {
+						astHelper.insertAttribute(ast, 'type', result);
+					}
 					return result;
 				}
 			case 'sequenceTypeUnion':
@@ -55,7 +57,9 @@ export function annotateTypeSwitchOperator(
 					// If the types did not match, check the next case, if they matched, return the type
 					if (!res) continue;
 					else {
-						astHelper.insertAttribute(ast, 'type', res);
+						if (res.type !== ValueType.ITEM) {
+							astHelper.insertAttribute(ast, 'type', res);
+						}
 						return res;
 					}
 				}
@@ -68,7 +72,9 @@ export function annotateTypeSwitchOperator(
 		}
 	}
 	// Return the type from the default case
-	astHelper.insertAttribute(ast, 'type', defaultCaseReturn);
+	if (defaultCaseReturn.type !== ValueType.ITEM) {
+		astHelper.insertAttribute(ast, 'type', defaultCaseReturn);
+	}
 	return defaultCaseReturn;
 }
 

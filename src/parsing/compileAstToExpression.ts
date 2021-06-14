@@ -434,16 +434,17 @@ function castableAs(ast: IAST, compilationOptions: CompilationOptions) {
 
 // Binary compare (=, !=, le, is, <<, >>, etc)
 function compare(ast: IAST, compilationOptions: CompilationOptions) {
+	const firstOperand = astHelper.followPath(ast, ['firstOperand', '*']);
+	const secondOperand = astHelper.followPath(ast, ['secondOperand', '*']);
+	const firstType = astHelper.getAttribute(firstOperand, 'type');
+	const secondType = astHelper.getAttribute(secondOperand, 'type');
+
 	return new Compare(
 		ast[0],
-		compile(
-			astHelper.followPath(ast, ['firstOperand', '*']),
-			disallowUpdating(compilationOptions)
-		),
-		compile(
-			astHelper.followPath(ast, ['secondOperand', '*']),
-			disallowUpdating(compilationOptions)
-		)
+		compile(firstOperand, disallowUpdating(compilationOptions)),
+		compile(secondOperand, disallowUpdating(compilationOptions)),
+		firstType,
+		secondType
 	);
 }
 
