@@ -150,7 +150,7 @@ function serialize(node: Node): JsonML | string {
 			const jsonml = [node.nodeName] as JsonML;
 
 			if ((node as Element).attributes && (node as Element).attributes.length) {
-				const attributes: { [key: string]: string} = {};
+				const attributes: { [key: string]: string } = {};
 
 				for (let i = 0, l = (node as Element).attributes.length; i < l; ++i) {
 					const attr = (node as Element).attributes[i];

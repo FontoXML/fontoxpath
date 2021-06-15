@@ -4,7 +4,7 @@ import {
 	executeJavaScriptCompiledXPath,
 	IDomFacade,
 	IReturnTypes,
-    Options,
+	Options,
 	ReturnType,
 	// Relative import is used so this module can be resolved by backend
 	// benchmarks.
@@ -24,7 +24,7 @@ const evaluateXPathWithJsCodegen = <
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
 	returnType?: ReturnType,
-	options?: Options,
+	options?: Options
 ): IReturnTypes<TNode>[TReturnType] => {
 	returnType = returnType || (ReturnType.ANY as any);
 

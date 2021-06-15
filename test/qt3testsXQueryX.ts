@@ -89,8 +89,7 @@ function run() {
 						return;
 					}
 
-					const loadXQuery = async () =>
-						tryGetXQuery(directory, testName, testCase);
+					const loadXQuery = async () => tryGetXQuery(directory, testName, testCase);
 					const loadXQueryX = async () => testFs.readFile(testCasePath);
 
 					buildTestCase(testCase, loadXQuery, loadXQueryX, skippableTests, (actual) => {

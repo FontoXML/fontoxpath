@@ -236,13 +236,8 @@ const runBenchmarking = () => {
 					continue;
 				}
 
-				const {
-					contextNode,
-					testQuery,
-					language,
-					namespaceResolver,
-					variablesInScope,
-				} = getArguments(testSetFileName, testCase);
+				const { contextNode, testQuery, language, namespaceResolver, variablesInScope } =
+					getArguments(testSetFileName, testCase);
 				const assertNode: Element = evaluateXPathToFirstNode('./result/*', testCase);
 
 				addTestCaseToBenchmark(

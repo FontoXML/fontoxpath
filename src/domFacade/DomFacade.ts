@@ -65,11 +65,9 @@ class DomFacade {
 		pointer: ElementNodePointer,
 		bucket: string | null = null
 	): AttributeNodePointer[] {
-		return this.getAllAttributes(
-			pointer.node,
-			bucket
-		).map((attributeNode: ConcreteAttributeNode | TinyAttributeNode) =>
-			createPointer(attributeNode, pointer, attributeNode.nodeName)
+		return this.getAllAttributes(pointer.node, bucket).map(
+			(attributeNode: ConcreteAttributeNode | TinyAttributeNode) =>
+				createPointer(attributeNode, pointer, attributeNode.nodeName)
 		);
 	}
 
@@ -99,11 +97,9 @@ class DomFacade {
 		parentPointer: ParentNodePointer,
 		bucket: string | null = null
 	): ChildNodePointer[] {
-		return this.getChildNodes(
-			parentPointer.node,
-			bucket
-		).map((childNode: ConcreteChildNode | TinyChildNode, index) =>
-			createPointer(childNode, parentPointer, index)
+		return this.getChildNodes(parentPointer.node, bucket).map(
+			(childNode: ConcreteChildNode | TinyChildNode, index) =>
+				createPointer(childNode, parentPointer, index)
 		);
 	}
 

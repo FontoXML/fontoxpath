@@ -67,14 +67,14 @@ describe('parent', () => {
 		jsonMlMapper.parse(['parentElement', ['childElement'], ['secondChild']], documentNode);
 
 		chai.assert.deepEqual(
-			evaluateXPathToNodes('/parentElement/childElement/parent::z', documentNode, ({
+			evaluateXPathToNodes('/parentElement/childElement/parent::z', documentNode, {
 				getParentNode(node: Node, _bucket?: string | null): Node | null {
 					return node.parentNode;
 				},
 				getChildNodes(node: Node, _bucket?: string | null): Node[] {
 					return node.childNodes;
 				},
-			} as unknown) as IDomFacade),
+			} as unknown as IDomFacade),
 			[]
 		);
 	});

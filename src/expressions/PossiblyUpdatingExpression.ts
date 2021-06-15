@@ -58,8 +58,9 @@ export default abstract class PossiblyUpdatingExpression extends UpdatingExpress
 		return this.performFunctionalEvaluation(
 			dynamicContext,
 			executionParameters,
-			this._childExpressions.map((expr) => (innerDynamicContext: DynamicContext) =>
-				expr.evaluate(innerDynamicContext, executionParameters)
+			this._childExpressions.map(
+				(expr) => (innerDynamicContext: DynamicContext) =>
+					expr.evaluate(innerDynamicContext, executionParameters)
 			)
 		);
 	}

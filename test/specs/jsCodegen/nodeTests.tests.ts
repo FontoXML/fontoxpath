@@ -67,20 +67,14 @@ describe('node tests', () => {
 		const namespace = 'http://fontoxml.com/ns/';
 		const element = documentNode.createElementNS(namespace, 'someElement');
 		chai.assert.equal(
-			evaluateXPathWithJsCodegen(
-				'self::fonto:*',
-				element,
-				null,
-				ReturnType.FIRST_NODE,
-				{
-					namespaceResolver: (prefix) => {
-						if (prefix === 'fonto') {
-							return namespace;
-						}
-						return '';
-					},
-				}
-			),
+			evaluateXPathWithJsCodegen('self::fonto:*', element, null, ReturnType.FIRST_NODE, {
+				namespaceResolver: (prefix) => {
+					if (prefix === 'fonto') {
+						return namespace;
+					}
+					return '';
+				},
+			}),
 			element
 		);
 	});
@@ -94,12 +88,16 @@ describe('node tests', () => {
 
 	it('handles detached nodes without a parent', () => {
 		documentNode = new slimdom.Document();
-		jsonMlMapper.parse(
-			['row'],
-			documentNode
-		);
+		jsonMlMapper.parse(['row'], documentNode);
 		const row = documentNode.firstChild;
 		row.parentNode = null;
-		chai.assert.isFalse(evaluateXPathWithJsCodegen('self::Q{}row[parent::Q{}thead]', row, null, ReturnType.BOOLEAN));
+		chai.assert.isFalse(
+			evaluateXPathWithJsCodegen(
+				'self::Q{}row[parent::Q{}thead]',
+				row,
+				null,
+				ReturnType.BOOLEAN
+			)
+		);
 	});
 });

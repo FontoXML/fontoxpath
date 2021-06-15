@@ -8,7 +8,7 @@ export default class ExternalDomFacade implements IDomFacade {
 		if (node.nodeType !== NODE_TYPES.ELEMENT_NODE) {
 			return [];
 		}
-		const attrs = (Array.from((node as any)['attributes']) as unknown) as Attr[];
+		const attrs = Array.from((node as any)['attributes']) as unknown as Attr[];
 		if (bucket === null) {
 			return attrs;
 		}

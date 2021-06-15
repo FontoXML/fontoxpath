@@ -3,12 +3,10 @@ import { evaluateXPathToNumbers } from 'fontoxpath';
 
 describe('Predicates and arrays', () => {
 	it('can filter an array', () =>
-		chai.assert.deepEqual(evaluateXPathToNumbers('(array {1,2,3,4,5,6,7})?*[. mod 2 = 1]'), [
-			1,
-			3,
-			5,
-			7,
-		]));
+		chai.assert.deepEqual(
+			evaluateXPathToNumbers('(array {1,2,3,4,5,6,7})?*[. mod 2 = 1]'),
+			[1, 3, 5, 7]
+		));
 
 	it('can filter an array with a map in it', () =>
 		chai.assert.deepEqual(

@@ -45,58 +45,28 @@ export function hash(left: ValueType, right: ValueType, op: string): number {
  */
 export const returnTypeMap: { [key: number]: ValueType } = {
 	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'idivOp')]: ValueType.XSINTEGER,
-	[hash(
+	[hash(ValueType.XSYEARMONTHDURATION, ValueType.XSYEARMONTHDURATION, 'addOp')]:
 		ValueType.XSYEARMONTHDURATION,
+	[hash(ValueType.XSYEARMONTHDURATION, ValueType.XSYEARMONTHDURATION, 'subtractOp')]:
 		ValueType.XSYEARMONTHDURATION,
-		'addOp'
-	)]: ValueType.XSYEARMONTHDURATION,
-	[hash(
+	[hash(ValueType.XSYEARMONTHDURATION, ValueType.XSYEARMONTHDURATION, 'divOp')]:
+		ValueType.XSDECIMAL,
+	[hash(ValueType.XSYEARMONTHDURATION, ValueType.XSNUMERIC, 'multiplyOp')]:
 		ValueType.XSYEARMONTHDURATION,
+	[hash(ValueType.XSYEARMONTHDURATION, ValueType.XSNUMERIC, 'divOp')]:
 		ValueType.XSYEARMONTHDURATION,
-		'subtractOp'
-	)]: ValueType.XSYEARMONTHDURATION,
-	[hash(
+	[hash(ValueType.XSNUMERIC, ValueType.XSYEARMONTHDURATION, 'multiplyOp')]:
 		ValueType.XSYEARMONTHDURATION,
-		ValueType.XSYEARMONTHDURATION,
-		'divOp'
-	)]: ValueType.XSDECIMAL,
-	[hash(
-		ValueType.XSYEARMONTHDURATION,
-		ValueType.XSNUMERIC,
-		'multiplyOp'
-	)]: ValueType.XSYEARMONTHDURATION,
-	[hash(
-		ValueType.XSYEARMONTHDURATION,
-		ValueType.XSNUMERIC,
-		'divOp'
-	)]: ValueType.XSYEARMONTHDURATION,
-	[hash(
-		ValueType.XSNUMERIC,
-		ValueType.XSYEARMONTHDURATION,
-		'multiplyOp'
-	)]: ValueType.XSYEARMONTHDURATION,
-	[hash(
+	[hash(ValueType.XSDAYTIMEDURATION, ValueType.XSDAYTIMEDURATION, 'addOp')]:
 		ValueType.XSDAYTIMEDURATION,
+	[hash(ValueType.XSDAYTIMEDURATION, ValueType.XSDAYTIMEDURATION, 'subtractOp')]:
 		ValueType.XSDAYTIMEDURATION,
-		'addOp'
-	)]: ValueType.XSDAYTIMEDURATION,
-	[hash(
-		ValueType.XSDAYTIMEDURATION,
-		ValueType.XSDAYTIMEDURATION,
-		'subtractOp'
-	)]: ValueType.XSDAYTIMEDURATION,
 	[hash(ValueType.XSDAYTIMEDURATION, ValueType.XSDAYTIMEDURATION, 'divOp')]: ValueType.XSDECIMAL,
-	[hash(
+	[hash(ValueType.XSDAYTIMEDURATION, ValueType.XSNUMERIC, 'multiplyOp')]:
 		ValueType.XSDAYTIMEDURATION,
-		ValueType.XSNUMERIC,
-		'multiplyOp'
-	)]: ValueType.XSDAYTIMEDURATION,
 	[hash(ValueType.XSDAYTIMEDURATION, ValueType.XSNUMERIC, 'divOp')]: ValueType.XSDAYTIMEDURATION,
-	[hash(
-		ValueType.XSNUMERIC,
+	[hash(ValueType.XSNUMERIC, ValueType.XSDAYTIMEDURATION, 'multiplyOp')]:
 		ValueType.XSDAYTIMEDURATION,
-		'multiplyOp'
-	)]: ValueType.XSDAYTIMEDURATION,
 	[hash(ValueType.XSDATETIME, ValueType.XSDATETIME, 'subtractOp')]: ValueType.XSDAYTIMEDURATION,
 	[hash(ValueType.XSDATE, ValueType.XSDATE, 'subtractOp')]: ValueType.XSDAYTIMEDURATION,
 	[hash(ValueType.XSTIME, ValueType.XSTIME, 'subtractOp')]: ValueType.XSDAYTIMEDURATION,
@@ -133,40 +103,22 @@ export const operationMap: { [key: number]: (a: any, b: any) => any } = {
 	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'divOp')]: (a, b) => a / b,
 	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'modOp')]: (a, b) => a % b,
 	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'idivOp')]: (a, b) => Math.trunc(a / b),
-	[hash(
-		ValueType.XSYEARMONTHDURATION,
-		ValueType.XSYEARMONTHDURATION,
-		'addOp'
-	)]: yearMonthDurationAdd,
-	[hash(
-		ValueType.XSYEARMONTHDURATION,
-		ValueType.XSYEARMONTHDURATION,
-		'subtractOp'
-	)]: yearMonthDurationSubtract,
-	[hash(
-		ValueType.XSYEARMONTHDURATION,
-		ValueType.XSYEARMONTHDURATION,
-		'divOp'
-	)]: yearMonthDurationDivideByYearMonthDuration,
-	[hash(
-		ValueType.XSYEARMONTHDURATION,
-		ValueType.XSNUMERIC,
-		'multiplyOp'
-	)]: yearMonthDurationMultiply,
+	[hash(ValueType.XSYEARMONTHDURATION, ValueType.XSYEARMONTHDURATION, 'addOp')]:
+		yearMonthDurationAdd,
+	[hash(ValueType.XSYEARMONTHDURATION, ValueType.XSYEARMONTHDURATION, 'subtractOp')]:
+		yearMonthDurationSubtract,
+	[hash(ValueType.XSYEARMONTHDURATION, ValueType.XSYEARMONTHDURATION, 'divOp')]:
+		yearMonthDurationDivideByYearMonthDuration,
+	[hash(ValueType.XSYEARMONTHDURATION, ValueType.XSNUMERIC, 'multiplyOp')]:
+		yearMonthDurationMultiply,
 	[hash(ValueType.XSYEARMONTHDURATION, ValueType.XSNUMERIC, 'divOp')]: yearMonthDurationDivide,
 	[hash(ValueType.XSNUMERIC, ValueType.XSYEARMONTHDURATION, 'multiplyOp')]: (a, b) =>
 		yearMonthDurationMultiply(b, a),
 	[hash(ValueType.XSDAYTIMEDURATION, ValueType.XSDAYTIMEDURATION, 'addOp')]: dayTimeDurationAdd,
-	[hash(
-		ValueType.XSDAYTIMEDURATION,
-		ValueType.XSDAYTIMEDURATION,
-		'subtractOp'
-	)]: dayTimeDurationSubtract,
-	[hash(
-		ValueType.XSDAYTIMEDURATION,
-		ValueType.XSDAYTIMEDURATION,
-		'divOp'
-	)]: dayTimeDurationDivideByDayTimeDuration,
+	[hash(ValueType.XSDAYTIMEDURATION, ValueType.XSDAYTIMEDURATION, 'subtractOp')]:
+		dayTimeDurationSubtract,
+	[hash(ValueType.XSDAYTIMEDURATION, ValueType.XSDAYTIMEDURATION, 'divOp')]:
+		dayTimeDurationDivideByDayTimeDuration,
 	[hash(ValueType.XSDAYTIMEDURATION, ValueType.XSNUMERIC, 'multiplyOp')]: dayTimeDurationMultiply,
 	[hash(ValueType.XSDAYTIMEDURATION, ValueType.XSNUMERIC, 'divOp')]: dayTimeDurationDivide,
 	[hash(ValueType.XSNUMERIC, ValueType.XSDAYTIMEDURATION, 'multiplyOp')]: (a, b) =>
@@ -175,63 +127,33 @@ export const operationMap: { [key: number]: (a: any, b: any) => any } = {
 	[hash(ValueType.XSDATE, ValueType.XSDATE, 'subtractOp')]: dateTimeSubtract,
 	[hash(ValueType.XSTIME, ValueType.XSTIME, 'subtractOp')]: dateTimeSubtract,
 	[hash(ValueType.XSDATETIME, ValueType.XSYEARMONTHDURATION, 'addOp')]: addDurationToDateTime,
-	[hash(
-		ValueType.XSDATETIME,
-		ValueType.XSYEARMONTHDURATION,
-		'subtractOp'
-	)]: subtractDurationFromDateTime,
+	[hash(ValueType.XSDATETIME, ValueType.XSYEARMONTHDURATION, 'subtractOp')]:
+		subtractDurationFromDateTime,
 	[hash(ValueType.XSDATETIME, ValueType.XSDAYTIMEDURATION, 'addOp')]: addDurationToDateTime,
-	[hash(
-		ValueType.XSDATETIME,
-		ValueType.XSDAYTIMEDURATION,
-		'subtractOp'
-	)]: subtractDurationFromDateTime,
+	[hash(ValueType.XSDATETIME, ValueType.XSDAYTIMEDURATION, 'subtractOp')]:
+		subtractDurationFromDateTime,
 	[hash(ValueType.XSDATE, ValueType.XSYEARMONTHDURATION, 'addOp')]: addDurationToDateTime,
-	[hash(
-		ValueType.XSDATE,
-		ValueType.XSYEARMONTHDURATION,
-		'subtractOp'
-	)]: subtractDurationFromDateTime,
+	[hash(ValueType.XSDATE, ValueType.XSYEARMONTHDURATION, 'subtractOp')]:
+		subtractDurationFromDateTime,
 	[hash(ValueType.XSDATE, ValueType.XSDAYTIMEDURATION, 'addOp')]: addDurationToDateTime,
-	[hash(
-		ValueType.XSDATE,
-		ValueType.XSDAYTIMEDURATION,
-		'subtractOp'
-	)]: subtractDurationFromDateTime,
+	[hash(ValueType.XSDATE, ValueType.XSDAYTIMEDURATION, 'subtractOp')]:
+		subtractDurationFromDateTime,
 	[hash(ValueType.XSTIME, ValueType.XSDAYTIMEDURATION, 'addOp')]: addDurationToDateTime,
-	[hash(
-		ValueType.XSTIME,
-		ValueType.XSDAYTIMEDURATION,
-		'subtractOp'
-	)]: subtractDurationFromDateTime,
+	[hash(ValueType.XSTIME, ValueType.XSDAYTIMEDURATION, 'subtractOp')]:
+		subtractDurationFromDateTime,
 	[hash(ValueType.XSDATETIME, ValueType.XSYEARMONTHDURATION, 'addOp')]: addDurationToDateTime,
-	[hash(
-		ValueType.XSDATETIME,
-		ValueType.XSYEARMONTHDURATION,
-		'subtractOp'
-	)]: subtractDurationFromDateTime,
+	[hash(ValueType.XSDATETIME, ValueType.XSYEARMONTHDURATION, 'subtractOp')]:
+		subtractDurationFromDateTime,
 	[hash(ValueType.XSDATETIME, ValueType.XSDAYTIMEDURATION, 'addOp')]: addDurationToDateTime,
-	[hash(
-		ValueType.XSDATETIME,
-		ValueType.XSDAYTIMEDURATION,
-		'subtractOp'
-	)]: subtractDurationFromDateTime,
+	[hash(ValueType.XSDATETIME, ValueType.XSDAYTIMEDURATION, 'subtractOp')]:
+		subtractDurationFromDateTime,
 	[hash(ValueType.XSDATE, ValueType.XSDAYTIMEDURATION, 'addOp')]: addDurationToDateTime,
-	[hash(
-		ValueType.XSDATE,
-		ValueType.XSDAYTIMEDURATION,
-		'subtractOp'
-	)]: subtractDurationFromDateTime,
+	[hash(ValueType.XSDATE, ValueType.XSDAYTIMEDURATION, 'subtractOp')]:
+		subtractDurationFromDateTime,
 	[hash(ValueType.XSDATE, ValueType.XSYEARMONTHDURATION, 'addOp')]: addDurationToDateTime,
-	[hash(
-		ValueType.XSDATE,
-		ValueType.XSYEARMONTHDURATION,
-		'subtractOp'
-	)]: subtractDurationFromDateTime,
+	[hash(ValueType.XSDATE, ValueType.XSYEARMONTHDURATION, 'subtractOp')]:
+		subtractDurationFromDateTime,
 	[hash(ValueType.XSTIME, ValueType.XSDAYTIMEDURATION, 'addOp')]: addDurationToDateTime,
-	[hash(
-		ValueType.XSTIME,
-		ValueType.XSDAYTIMEDURATION,
-		'subtractOp'
-	)]: subtractDurationFromDateTime,
+	[hash(ValueType.XSTIME, ValueType.XSDAYTIMEDURATION, 'subtractOp')]:
+		subtractDurationFromDateTime,
 };
