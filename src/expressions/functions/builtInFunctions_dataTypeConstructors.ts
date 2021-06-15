@@ -8,7 +8,7 @@ import { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
-import { XMLSCHEMA_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
 import StaticContext from '../StaticContext';
 import { BuiltinDeclarationType } from './builtInFunctions';
 import FunctionDefinitionType from './FunctionDefinitionType';
@@ -70,7 +70,7 @@ const xsQName: FunctionDefinitionType = (
 
 const declarations: BuiltinDeclarationType[] = [
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'untypedAtomic',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -82,7 +82,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'error',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -99,7 +99,7 @@ const declarations: BuiltinDeclarationType[] = [
 	// AnySimpleType cannot be instantiated
 	// AnyAtomicType cannot be instantiated
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'string',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -111,7 +111,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'boolean',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -123,7 +123,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'decimal',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -135,7 +135,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'float',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -147,7 +147,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'double',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -159,7 +159,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'duration',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -171,7 +171,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'dateTime',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -183,7 +183,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'dateTimeStamp',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -195,7 +195,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'time',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -207,7 +207,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'date',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -219,7 +219,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'gYearMonth',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -231,7 +231,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'gYear',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -243,7 +243,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'gMonthDay',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -255,7 +255,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'gDay',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -267,7 +267,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'gMonth',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -279,7 +279,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'hexBinary',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -291,7 +291,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'base64Binary',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -303,7 +303,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'QName',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -312,7 +312,7 @@ const declarations: BuiltinDeclarationType[] = [
 		callFunction: xsQName,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'anyURI',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -325,7 +325,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 	// NOTATION cannot be instantiated
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'normalizedString',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -340,7 +340,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'token',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -352,7 +352,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'language',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -364,7 +364,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'NMTOKEN',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -376,7 +376,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'NMTOKENS',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -388,7 +388,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'Name',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -400,7 +400,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'NCName',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -412,7 +412,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'ID',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -424,7 +424,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'IDREF',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -436,7 +436,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'IDREFS',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -448,7 +448,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'ENTITY',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -460,7 +460,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'ENTITIES',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -472,7 +472,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'integer',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -484,7 +484,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'nonPositiveInteger',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -499,7 +499,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'negativeInteger',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -514,7 +514,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'long',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -526,7 +526,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'int',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -538,7 +538,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'short',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -550,7 +550,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'byte',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -562,7 +562,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'nonNegativeInteger',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -577,7 +577,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'unsignedLong',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -589,7 +589,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'unsignedInt',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -601,7 +601,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'unsignedShort',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -613,7 +613,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'unsignedByte',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -625,7 +625,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'positiveInteger',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -640,7 +640,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'yearMonthDuration',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -655,7 +655,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'dayTimeDuration',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -670,7 +670,7 @@ const declarations: BuiltinDeclarationType[] = [
 		) as FunctionDefinitionType,
 	},
 	{
-		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.XMLSCHEMA_NAMESPACE_URI,
 		localName: 'dateTimeStamp',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },

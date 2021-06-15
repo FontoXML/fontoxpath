@@ -1,7 +1,7 @@
 import { createDefaultFunctionNameResolver } from './evaluationUtils/buildEvaluationContext';
 import { printAndRethrowError } from './evaluationUtils/printAndRethrowError';
 import ExecutionSpecificStaticContext from './expressions/ExecutionSpecificStaticContext';
-import { FUNCTIONS_NAMESPACE_URI } from './expressions/staticallyKnownNamespaces';
+import { BUILT_IN_NAMESPACE_URIS } from './expressions/staticallyKnownNamespaces';
 import StaticContext from './expressions/StaticContext';
 import astHelper from './parsing/astHelper';
 import { loadModuleFile } from './parsing/globalModuleCache';
@@ -44,8 +44,8 @@ export default function registerXQueryModule(
 		new ExecutionSpecificStaticContext(
 			namespaceResolver,
 			Object.create(null),
-			FUNCTIONS_NAMESPACE_URI,
-			createDefaultFunctionNameResolver(FUNCTIONS_NAMESPACE_URI)
+			BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
+			createDefaultFunctionNameResolver(BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI)
 		)
 	);
 

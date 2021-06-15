@@ -1,7 +1,7 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
-import { MATH_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
 import { BuiltinDeclarationType } from './builtInFunctions';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
@@ -166,7 +166,7 @@ const mathAtan2: FunctionDefinitionType = (
 
 const declarations: BuiltinDeclarationType[] = [
 	{
-		namespaceURI: MATH_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.MATH_NAMESPACE_URI,
 		localName: 'pi',
 		argumentTypes: [],
 		returnType: { type: ValueType.XSDOUBLE, mult: SequenceMultiplicity.EXACTLY_ONE },
@@ -174,7 +174,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: MATH_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.MATH_NAMESPACE_URI,
 		localName: 'exp',
 		argumentTypes: [{ type: ValueType.XSDOUBLE, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: { type: ValueType.XSDOUBLE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -182,7 +182,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: MATH_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.MATH_NAMESPACE_URI,
 		localName: 'exp10',
 		argumentTypes: [{ type: ValueType.XSDOUBLE, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: { type: ValueType.XSDOUBLE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -190,7 +190,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: MATH_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.MATH_NAMESPACE_URI,
 		localName: 'log',
 		argumentTypes: [{ type: ValueType.XSDOUBLE, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: { type: ValueType.XSDOUBLE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -198,7 +198,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: MATH_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.MATH_NAMESPACE_URI,
 		localName: 'log10',
 		argumentTypes: [{ type: ValueType.XSDOUBLE, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: { type: ValueType.XSDOUBLE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -206,7 +206,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: MATH_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.MATH_NAMESPACE_URI,
 		localName: 'pow',
 		argumentTypes: [
 			{ type: ValueType.XSDOUBLE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -217,7 +217,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: MATH_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.MATH_NAMESPACE_URI,
 		localName: 'sqrt',
 		argumentTypes: [{ type: ValueType.XSDOUBLE, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: { type: ValueType.XSDOUBLE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -225,7 +225,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: MATH_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.MATH_NAMESPACE_URI,
 		localName: 'sin',
 		argumentTypes: [{ type: ValueType.XSDOUBLE, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: { type: ValueType.XSDOUBLE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -233,7 +233,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: MATH_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.MATH_NAMESPACE_URI,
 		localName: 'cos',
 		argumentTypes: [{ type: ValueType.XSDOUBLE, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: { type: ValueType.XSDOUBLE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -241,7 +241,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: MATH_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.MATH_NAMESPACE_URI,
 		localName: 'tan',
 		argumentTypes: [{ type: ValueType.XSDOUBLE, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: { type: ValueType.XSDOUBLE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -249,7 +249,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: MATH_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.MATH_NAMESPACE_URI,
 		localName: 'asin',
 		argumentTypes: [{ type: ValueType.XSDOUBLE, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: { type: ValueType.XSDOUBLE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -257,7 +257,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: MATH_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.MATH_NAMESPACE_URI,
 		localName: 'acos',
 		argumentTypes: [{ type: ValueType.XSDOUBLE, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: { type: ValueType.XSDOUBLE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -265,7 +265,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: MATH_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.MATH_NAMESPACE_URI,
 		localName: 'atan',
 		argumentTypes: [{ type: ValueType.XSDOUBLE, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: { type: ValueType.XSDOUBLE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -273,7 +273,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: MATH_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.MATH_NAMESPACE_URI,
 		localName: 'atan2',
 		argumentTypes: [
 			{ type: ValueType.XSDOUBLE, mult: SequenceMultiplicity.ZERO_OR_ONE },

@@ -10,7 +10,7 @@ import sequenceFactory from '../dataTypes/sequenceFactory';
 import { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
-import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
 import StaticContext from '../StaticContext';
 import { DONE_TOKEN, ready } from '../util/iterators';
 import { performFunctionConversion } from './argumentHelper';
@@ -263,7 +263,7 @@ const fnRandomNumberGenerator: FunctionDefinitionType = (
 
 const declarations: BuiltinDeclarationType[] = [
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'abs',
 		argumentTypes: [{ type: ValueType.XSNUMERIC, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: { type: ValueType.XSNUMERIC, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -271,7 +271,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'ceiling',
 		argumentTypes: [{ type: ValueType.XSNUMERIC, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: { type: ValueType.XSNUMERIC, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -279,7 +279,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'floor',
 		argumentTypes: [{ type: ValueType.XSNUMERIC, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: { type: ValueType.XSNUMERIC, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -287,7 +287,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'round',
 		argumentTypes: [{ type: ValueType.XSNUMERIC, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: { type: ValueType.XSNUMERIC, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -295,7 +295,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'round',
 		argumentTypes: [
 			{ type: ValueType.XSNUMERIC, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -306,7 +306,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'round-half-to-even',
 		argumentTypes: [{ type: ValueType.XSNUMERIC, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: { type: ValueType.XSNUMERIC, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -314,7 +314,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'round-half-to-even',
 		argumentTypes: [
 			{ type: ValueType.XSNUMERIC, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -325,7 +325,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'number',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -335,7 +335,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'number',
 		argumentTypes: [],
 		returnType: { type: ValueType.XSDOUBLE, mult: SequenceMultiplicity.EXACTLY_ONE },
@@ -362,7 +362,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'random-number-generator',
 		argumentTypes: [],
 		returnType: { type: ValueType.MAP, mult: SequenceMultiplicity.EXACTLY_ONE },
@@ -370,7 +370,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'random-number-generator',
 		argumentTypes: [
 			{

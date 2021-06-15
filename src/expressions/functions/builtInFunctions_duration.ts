@@ -1,7 +1,7 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
-import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
 import { BuiltinDeclarationType } from './builtInFunctions';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
@@ -91,42 +91,42 @@ const fnSecondsFromDuration: FunctionDefinitionType = (
 
 const declarations: BuiltinDeclarationType[] = [
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'years-from-duration',
 		argumentTypes: [{ type: ValueType.XSDURATION, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: fnYearsFromDuration,
 	},
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'months-from-duration',
 		argumentTypes: [{ type: ValueType.XSDURATION, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: fnMonthsFromDuration,
 	},
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'days-from-duration',
 		argumentTypes: [{ type: ValueType.XSDURATION, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: fnDaysFromDuration,
 	},
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'hours-from-duration',
 		argumentTypes: [{ type: ValueType.XSDURATION, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: fnHoursFromDuration,
 	},
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'minutes-from-duration',
 		argumentTypes: [{ type: ValueType.XSDURATION, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: fnMinutesFromDuration,
 	},
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'seconds-from-duration',
 		argumentTypes: [{ type: ValueType.XSDURATION, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: { type: ValueType.XSDECIMAL, mult: SequenceMultiplicity.ZERO_OR_ONE },
