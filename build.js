@@ -1,4 +1,4 @@
-const peg = require('pegjs');
+const peg = require('peggy');
 const fs = require('fs-extra');
 
 const ts = require('typescript');
