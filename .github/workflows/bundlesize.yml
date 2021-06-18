@@ -27,4 +27,3 @@ jobs:
               env:
                   BUNDLEMON_PROJECT_ID: '609024effb87a20009a6b096'
                   BUNDLEMON_PROJECT_APIKEY: ${{ secrets.BUNDLEMON_PROJECT_APIKEY }}
-                  BUNDLEMON_GITHUB_TOKEN: ${{ secrets.BUNDLEMON_GITHUB_TOKEN }}
