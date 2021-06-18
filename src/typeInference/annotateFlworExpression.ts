@@ -134,7 +134,7 @@ function annotateForClause(
 		.getChildren(varTypeNode, '*')
 		.map((element) => annotate(element, annotationContext));
 
-	if (allTypes.includes(undefined)) {
+	if (allTypes.includes(undefined) || allTypes.includes(null)) {
 		// Includes undefined so we can't annotate this
 		return;
 	}
@@ -186,11 +186,7 @@ export function filterOnUniqueObjects(array: SequenceType[]): SequenceType[] {
 	return array.filter(
 		(current, index, arrayCopy) =>
 			arrayCopy.findIndex(
-				(element) =>
-					element &&
-					current &&
-					element.type === current.type &&
-					element.mult === current.mult
+				(element) => element.type === current.type && element.mult === current.mult
 			) === index
 	);
 }
