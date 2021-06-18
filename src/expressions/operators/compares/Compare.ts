@@ -2,13 +2,13 @@ import zipSingleton from '../../../expressions/util/zipSingleton';
 import atomize from '../../dataTypes/atomize';
 import ISequence from '../../dataTypes/ISequence';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import { SequenceType, ValueType } from '../../dataTypes/Value';
+import Value, { SequenceType, ValueType } from '../../dataTypes/Value';
 import DynamicContext from '../../DynamicContext';
 import ExecutionParameters from '../../ExecutionParameters';
 import Expression from '../../Expression';
 import generalCompare, { generatePrefabFunction } from './generalCompare';
 import nodeCompare from './nodeCompare';
-import valueCompareFunction, { getValueCompareEvaluationFunction } from './valueCompare';
+import valueCompare, { getValueCompareEvaluationFunction } from './valueCompare';
 
 class Compare extends Expression {
 	private _compare: 'generalCompare' | 'valueCompare' | 'nodeCompare';
@@ -164,32 +164,12 @@ class Compare extends Expression {
 									);
 								},
 								singleton: () => {
-									return secondSequence.switchCases({
-										default: () => {
-											throw new Error(
-												'XPTY0004: Sequences to compare are not singleton'
-											);
-										},
-										singleton: () =>
-											zipSingleton(
-												[firstSequence, secondSequence],
-												([first, second]) => {
-													const compareFunction = nodeCompare(
-														this._operator,
-														executionParameters.domFacade,
-														first.type,
-														second.type
-													);
-													return compareFunction(
-														firstSequence,
-														secondSequence,
-														dynamicContext
-													)
-														? sequenceFactory.singletonTrueSequence()
-														: sequenceFactory.singletonFalseSequence();
-												}
-											),
-									});
+									return this.nodeCompareSingletonHandler(
+										firstSequence,
+										secondSequence,
+										executionParameters,
+										dynamicContext
+									);
 								},
 							});
 						}
@@ -204,21 +184,12 @@ class Compare extends Expression {
 									secondAtomizedSequence.switchCases({
 										singleton: () =>
 											firstAtomizedSequence.mapAll(([onlyFirstValue]) =>
-												secondAtomizedSequence.mapAll(
-													([onlySecondValue]) => {
-														const compareFunction = valueCompareFunction(
-															this._operator,
-															onlyFirstValue.type,
-															onlySecondValue.type
-														);
-														return compareFunction(
-															onlyFirstValue,
-															onlySecondValue,
-															dynamicContext
-														)
-															? sequenceFactory.singletonTrueSequence()
-															: sequenceFactory.singletonFalseSequence();
-													}
+												secondAtomizedSequence.mapAll(([onlySecondValue]) =>
+													this.valueCompareSingletonHandler(
+														onlyFirstValue,
+														onlySecondValue,
+														dynamicContext
+													)
 												)
 											),
 										default: () => {
@@ -244,6 +215,46 @@ class Compare extends Expression {
 					},
 				}),
 		});
+	}
+
+	private nodeCompareSingletonHandler(
+		firstSequence: ISequence,
+		secondSequence: ISequence,
+		executionParameters: ExecutionParameters,
+		dynamicContext: DynamicContext
+	): ISequence {
+		return secondSequence.switchCases({
+			default: () => {
+				throw new Error('XPTY0004: Sequences to compare are not singleton');
+			},
+			singleton: () =>
+				zipSingleton([firstSequence, secondSequence], ([first, second]) => {
+					const compareFunction = nodeCompare(
+						this._operator,
+						executionParameters.domFacade,
+						first.type,
+						second.type
+					);
+					return compareFunction(firstSequence, secondSequence, dynamicContext)
+						? sequenceFactory.singletonTrueSequence()
+						: sequenceFactory.singletonFalseSequence();
+				}),
+		});
+	}
+
+	private valueCompareSingletonHandler(
+		onlyFirstValue: Value,
+		onlySecondValue: Value,
+		dynamicContext: DynamicContext
+	): ISequence {
+		const compareFunction = valueCompare(
+			this._operator,
+			onlyFirstValue.type,
+			onlySecondValue.type
+		);
+		return compareFunction(onlyFirstValue, onlySecondValue, dynamicContext)
+			? sequenceFactory.singletonTrueSequence()
+			: sequenceFactory.singletonFalseSequence();
 	}
 }
 
