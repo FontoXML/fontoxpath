@@ -2,7 +2,7 @@ import zipSingleton from '../../../expressions/util/zipSingleton';
 import atomize from '../../dataTypes/atomize';
 import ISequence from '../../dataTypes/ISequence';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import { SequenceType, ValueType } from '../../dataTypes/Value';
+import Value, { SequenceType, ValueType } from '../../dataTypes/Value';
 import DynamicContext from '../../DynamicContext';
 import ExecutionParameters from '../../ExecutionParameters';
 import Expression from '../../Expression';
@@ -184,21 +184,12 @@ class Compare extends Expression {
 									secondAtomizedSequence.switchCases({
 										singleton: () =>
 											firstAtomizedSequence.mapAll(([onlyFirstValue]) =>
-												secondAtomizedSequence.mapAll(
-													([onlySecondValue]) => {
-														const compareFunction = valueCompare(
-															this._operator,
-															onlyFirstValue.type,
-															onlySecondValue.type
-														);
-														return compareFunction(
-															onlyFirstValue,
-															onlySecondValue,
-															dynamicContext
-														)
-															? sequenceFactory.singletonTrueSequence()
-															: sequenceFactory.singletonFalseSequence();
-													}
+												secondAtomizedSequence.mapAll(([onlySecondValue]) =>
+													this.valueCompareSingletonHandler(
+														onlyFirstValue,
+														onlySecondValue,
+														dynamicContext
+													)
 												)
 											),
 										default: () => {
@@ -249,6 +240,21 @@ class Compare extends Expression {
 						: sequenceFactory.singletonFalseSequence();
 				}),
 		});
+	}
+
+	private valueCompareSingletonHandler(
+		onlyFirstValue: Value,
+		onlySecondValue: Value,
+		dynamicContext: DynamicContext
+	): ISequence {
+		const compareFunction = valueCompare(
+			this._operator,
+			onlyFirstValue.type,
+			onlySecondValue.type
+		);
+		return compareFunction(onlyFirstValue, onlySecondValue, dynamicContext)
+			? sequenceFactory.singletonTrueSequence()
+			: sequenceFactory.singletonFalseSequence();
 	}
 }
 
