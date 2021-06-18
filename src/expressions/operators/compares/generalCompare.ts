@@ -4,7 +4,7 @@ import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
 import { ValueType } from '../../dataTypes/Value';
 import DynamicContext from '../../DynamicContext';
-import valueCompareFunction from './valueCompare';
+import valueCompare from './valueCompare';
 
 const OPERATOR_TRANSLATION: { [s: string]: string } = {
 	['equalOp']: 'eqOp',
@@ -89,7 +89,7 @@ export default function generalCompare(
 					else if (secondTargetType)
 						secondValue = castToType(secondValue, secondTargetType);
 
-					const compareFunction = valueCompareFunction(
+					const compareFunction = valueCompare(
 						operator,
 						firstValue.type,
 						secondValue.type
@@ -137,11 +137,7 @@ export function generatePrefabFunction(
 						if (firstTargetType) firstValue = castToType(firstValue, firstTargetType);
 						if (secondTargetType)
 							secondValue = castToType(secondValue, secondTargetType);
-						compareFunction = valueCompareFunction(
-							operator,
-							firstValue.type,
-							secondValue.type
-						);
+						compareFunction = valueCompare(operator, firstValue.type, secondValue.type);
 						if (compareFunction(firstValue, secondValue, dynamicContext)) {
 							return true;
 						}
