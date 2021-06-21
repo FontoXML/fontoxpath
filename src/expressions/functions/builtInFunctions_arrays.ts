@@ -7,7 +7,7 @@ import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value, { SequenceMultiplicity, SequenceType, ValueType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
-import { ARRAY_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
 import StaticContext from '../StaticContext';
 import concatSequences from '../util/concatSequences';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
@@ -483,7 +483,7 @@ const arrayFlatten: FunctionDefinitionType = (
 
 const declarations: BuiltinDeclarationType[] = [
 	{
-		namespaceURI: ARRAY_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.ARRAY_NAMESPACE_URI,
 		localName: 'size',
 		argumentTypes: [{ type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE }],
 		returnType: { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.EXACTLY_ONE },
@@ -491,7 +491,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: ARRAY_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.ARRAY_NAMESPACE_URI,
 		localName: 'get',
 		argumentTypes: [
 			{ type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE },
@@ -502,7 +502,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: ARRAY_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.ARRAY_NAMESPACE_URI,
 		localName: 'put',
 		argumentTypes: [
 			{ type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE },
@@ -514,7 +514,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: ARRAY_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.ARRAY_NAMESPACE_URI,
 		localName: 'append',
 		argumentTypes: [
 			{ type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE },
@@ -525,7 +525,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: ARRAY_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.ARRAY_NAMESPACE_URI,
 		localName: 'subarray',
 		argumentTypes: [
 			{ type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE },
@@ -537,7 +537,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: ARRAY_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.ARRAY_NAMESPACE_URI,
 		localName: 'subarray',
 		argumentTypes: [
 			{ type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE },
@@ -569,7 +569,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: ARRAY_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.ARRAY_NAMESPACE_URI,
 		localName: 'remove',
 		argumentTypes: [
 			{ type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE },
@@ -580,7 +580,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: ARRAY_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.ARRAY_NAMESPACE_URI,
 		localName: 'insert-before',
 		argumentTypes: [
 			{ type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE },
@@ -592,7 +592,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: ARRAY_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.ARRAY_NAMESPACE_URI,
 		localName: 'head',
 		argumentTypes: [{ type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE }],
 		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
@@ -608,7 +608,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: ARRAY_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.ARRAY_NAMESPACE_URI,
 		localName: 'tail',
 		argumentTypes: [{ type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE }],
 		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
@@ -624,7 +624,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: ARRAY_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.ARRAY_NAMESPACE_URI,
 		localName: 'reverse',
 		argumentTypes: [{ type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE }],
 		returnType: { type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE },
@@ -632,7 +632,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: ARRAY_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.ARRAY_NAMESPACE_URI,
 		localName: 'join',
 		argumentTypes: [{ type: ValueType.ARRAY, mult: SequenceMultiplicity.ZERO_OR_MORE }],
 		returnType: { type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE },
@@ -640,7 +640,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: ARRAY_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.ARRAY_NAMESPACE_URI,
 		localName: 'for-each',
 		// TODO: reimplement type checking by parsing the types
 		// argumentTypes: ['array(*)', '(item()*) as item()*)]
@@ -656,7 +656,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: ARRAY_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.ARRAY_NAMESPACE_URI,
 		localName: 'filter',
 		// TODO: reimplement type checking by parsing the types
 		// argumentTypes: ['array(*)', '(item()*) as xs:boolean)]
@@ -672,7 +672,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: ARRAY_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.ARRAY_NAMESPACE_URI,
 		localName: 'fold-left',
 		// TODO: reimplement type checking by parsing the types
 		// argumentTypes: ['array(*)', 'item()*', '(item()*, item()*) as item())]
@@ -689,7 +689,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: ARRAY_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.ARRAY_NAMESPACE_URI,
 		localName: 'fold-right',
 		// TODO: reimplement type checking by parsing the types
 		// argumentTypes: ['array(*)', 'item()*', '(item()*, item()*) as item())]
@@ -706,7 +706,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: ARRAY_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.ARRAY_NAMESPACE_URI,
 		localName: 'for-each-pair',
 		// TODO: reimplement type checking by parsing the types
 		// argumentTypes: ['array(*)', 'item()*', '(item()*, item()*) as item())]
@@ -723,7 +723,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: ARRAY_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.ARRAY_NAMESPACE_URI,
 		localName: 'sort',
 		argumentTypes: [{ type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE }],
 		returnType: { type: ValueType.ARRAY, mult: SequenceMultiplicity.EXACTLY_ONE },
@@ -731,7 +731,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: ARRAY_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.ARRAY_NAMESPACE_URI,
 		localName: 'flatten',
 		argumentTypes: [{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE }],
 		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },

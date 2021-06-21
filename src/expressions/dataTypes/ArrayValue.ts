@@ -1,5 +1,5 @@
 import arrayGet from '../functions/builtInFunctions_arrays_get';
-import { ARRAY_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
 import FunctionValue from './FunctionValue';
 import ISequence from './ISequence';
 import sequenceFactory from './sequenceFactory';
@@ -18,7 +18,7 @@ class ArrayValue extends FunctionValue {
 					key
 				),
 			localName: 'get',
-			namespaceURI: ARRAY_NAMESPACE_URI,
+			namespaceURI: BUILT_IN_NAMESPACE_URIS.ARRAY_NAMESPACE_URI,
 			// argumentTypes: [{ type: { kind: BaseType.XSINTEGER, seqType: SequenceType.EXACTLY_ONE }, isResArgument: false }],
 			argumentTypes: [{ type: ValueType.XSINTEGER, mult: SequenceMultiplicity.EXACTLY_ONE }],
 			arity: 1,

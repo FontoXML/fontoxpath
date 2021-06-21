@@ -4,7 +4,7 @@ import ISequence from '../dataTypes/ISequence';
 import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
-import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import { BuiltinDeclarationType } from './builtInFunctions';
 import FunctionDefinitionType from './FunctionDefinitionType';
@@ -65,7 +65,7 @@ const fnParseJson: FunctionDefinitionType = (
 
 const declarations: BuiltinDeclarationType[] = [
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'parse-json',
 		argumentTypes: [{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE }],
 		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_ONE },

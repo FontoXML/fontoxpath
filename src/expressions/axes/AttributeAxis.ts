@@ -2,11 +2,11 @@ import { ElementNodePointer } from '../../domClone/Pointer';
 import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import createPointerValue from '../dataTypes/createPointerValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { ValueType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
+import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 import validateContextNode from './validateContextNode';
 
@@ -44,7 +44,10 @@ class AttributeAxis extends Expression {
 		// but does not include namespace declarations (because they are not attributes).
 		const matchingAttributes = domFacade
 			.getAllAttributePointers(contextItem, this._attributeTestExpression.getBucket())
-			.filter((attr) => domFacade.getNamespaceURI(attr) !== 'http://www.w3.org/2000/xmlns/')
+			.filter(
+				(attr) =>
+					domFacade.getNamespaceURI(attr) !== BUILT_IN_NAMESPACE_URIS.XMLNS_NAMESPACE_URI
+			)
 			.map((attribute) => createPointerValue(attribute, executionParameters.domFacade))
 			.filter((item) =>
 				this._attributeTestExpression.evaluateToBoolean(

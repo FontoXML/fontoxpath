@@ -10,6 +10,7 @@ import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
+import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
 import StaticContext from '../StaticContext';
 import concatSequences from '../util/concatSequences';
 import { DONE_TOKEN, IIterator, IterationHint, ready } from '../util/iterators';
@@ -140,12 +141,12 @@ class ElementConstructor extends Expression {
 
 				if (
 					this._name.prefix === 'xmlns' ||
-					this._name.namespaceURI === 'http://www.w3.org/2000/xmlns/' ||
+					this._name.namespaceURI === BUILT_IN_NAMESPACE_URIS.XMLNS_NAMESPACE_URI ||
 					(this._name.prefix === 'xml' &&
-						this._name.namespaceURI !== 'http://www.w3.org/XML/1998/namespace') ||
+						this._name.namespaceURI !== BUILT_IN_NAMESPACE_URIS.XML_NAMESPACE_URI) ||
 					(this._name.prefix &&
 						this._name.prefix !== 'xml' &&
-						this._name.namespaceURI === 'http://www.w3.org/XML/1998/namespace')
+						this._name.namespaceURI === BUILT_IN_NAMESPACE_URIS.XML_NAMESPACE_URI)
 				) {
 					throw errXQDY0096(this._name);
 				}
