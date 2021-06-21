@@ -22,7 +22,9 @@ export function annotateIfThenElseExpr(
 		};
 	}
 	if (elseClause.type === thenClause.type && elseClause.mult === thenClause.mult) {
-		astHelper.insertAttribute(ast, 'type', elseClause);
+		if (elseClause.type !== ValueType.ITEM) {
+			astHelper.insertAttribute(ast, 'type', elseClause);
+		}
 		return elseClause;
 	}
 	return {

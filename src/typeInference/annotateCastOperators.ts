@@ -18,7 +18,9 @@ export function annotateCastOperator(ast: IAST): SequenceType {
 	const targetValueType = stringToValueType(targetTypeString);
 	const sequenceType = { type: targetValueType, mult: SequenceMultiplicity.EXACTLY_ONE };
 
-	astHelper.insertAttribute(ast, 'type', sequenceType);
+	if (sequenceType.type !== ValueType.ITEM) {
+		astHelper.insertAttribute(ast, 'type', sequenceType);
+	}
 	return sequenceType;
 }
 

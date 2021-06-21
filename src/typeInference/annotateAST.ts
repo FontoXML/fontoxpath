@@ -174,8 +174,8 @@ const annotationFunctions: {
 	// Sequences
 	sequenceExpr: (ast: IAST, context: AnnotationContext): SequenceType => {
 		const children = astHelper.getChildren(ast, '*');
-		children.map((a) => annotate(a, context));
-		return annotateSequenceOperator(ast, children.length);
+		const types = children.map((a) => annotate(a, context));
+		return annotateSequenceOperator(ast, children.length, children, types);
 	},
 
 	// Set operations (union, intersect, except)
@@ -323,7 +323,12 @@ const annotationFunctions: {
 	},
 	// Maps
 	simpleMapExpr: (ast: IAST, context: AnnotationContext): SequenceType => {
-		return annotateSimpleMapExpr(ast, context);
+		const pathExpressions: IAST[] = astHelper.getChildren(ast, 'pathExpr');
+		let lastType;
+		for (let i = 0; i < pathExpressions.length; i++) {
+			lastType = annotate(pathExpressions[i], context);
+		}
+		return annotateSimpleMapExpr(ast, context, lastType);
 	},
 	mapConstructor: (ast: IAST, context: AnnotationContext): SequenceType => {
 		astHelper.getChildren(ast, 'mapConstructorEntry').map((keyValuePair) => ({

@@ -57,7 +57,9 @@ export function annotateFlworExpression(
 					retType = { type: retType.type, mult: SequenceMultiplicity.ZERO_OR_MORE };
 				}
 
-				astHelper.insertAttribute(ast, 'type', retType);
+				if (retType.type !== ValueType.ITEM) {
+					astHelper.insertAttribute(ast, 'type', retType);
+				}
 				return retType;
 			}
 			default: {
@@ -71,7 +73,9 @@ export function annotateFlworExpression(
 					retType = { type: retType.type, mult: SequenceMultiplicity.ZERO_OR_MORE };
 				}
 
-				astHelper.insertAttribute(ast, 'type', retType);
+				if (retType.type !== ValueType.ITEM) {
+					astHelper.insertAttribute(ast, 'type', retType);
+				}
 				return retType;
 			}
 		}
@@ -130,7 +134,7 @@ function annotateForClause(
 		.getChildren(varTypeNode, '*')
 		.map((element) => annotate(element, annotationContext));
 
-	if (allTypes.includes(undefined)) {
+	if (allTypes.includes(undefined) || allTypes.includes(null)) {
 		// Includes undefined so we can't annotate this
 		return;
 	}
@@ -178,7 +182,7 @@ function annotateOrderByClause(ast: IAST, annotationContext: AnnotationContext):
  * @param array the array to be filtered
  * @returns the filtered array
  */
-function filterOnUniqueObjects(array: SequenceType[]): SequenceType[] {
+export function filterOnUniqueObjects(array: SequenceType[]): SequenceType[] {
 	return array.filter(
 		(current, index, arrayCopy) =>
 			arrayCopy.findIndex(

@@ -62,6 +62,8 @@ export function annotateFunctionCall(
 	}
 
 	// If we found a return type, we annotate the AST with it
-	astHelper.insertAttribute(ast, 'type', functionProps.returnType);
+	if (functionProps.returnType.type !== ValueType.ITEM) {
+		astHelper.insertAttribute(ast, 'type', functionProps.returnType);
+	}
 	return functionProps.returnType;
 }

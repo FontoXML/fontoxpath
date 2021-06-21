@@ -1,5 +1,6 @@
 import domBackedDocumentWriter from './documentWriter/domBackedDocumentWriter';
 import IDocumentWriter from './documentWriter/IDocumentWriter';
+import { sequenceTypeToString } from './expressions/dataTypes/Value';
 import ISimpleNodesFactory from './nodesFactory/ISimpleNodesFactory';
 import parseExpression from './parsing/parseExpression';
 import annotateAst from './typeInference/annotateAST';
@@ -88,12 +89,21 @@ function parseNode(
 	if (typeof firstChild === 'object' && !Array.isArray(firstChild)) {
 		for (const attributeName in firstChild) {
 			if (firstChild[attributeName] !== null) {
-				documentWriter.setAttributeNS(
-					element,
-					namespaceUri,
-					PREFERRED_PREFIX_BY_NAMESPACEURI[namespaceUri] + ':' + attributeName,
-					firstChild[attributeName]
-				);
+				if (attributeName === 'type') {
+					documentWriter.setAttributeNS(
+						element,
+						namespaceUri,
+						'fontoxpath:' + attributeName,
+						sequenceTypeToString(firstChild[attributeName])
+					);
+				} else {
+					documentWriter.setAttributeNS(
+						element,
+						namespaceUri,
+						PREFERRED_PREFIX_BY_NAMESPACEURI[namespaceUri] + ':' + attributeName,
+						firstChild[attributeName]
+					);
+				}
 			}
 		}
 		firstChildIndex = 2;

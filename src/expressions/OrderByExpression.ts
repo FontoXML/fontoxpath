@@ -4,7 +4,7 @@ import ISequence from './dataTypes/ISequence';
 import isSubtypeOf from './dataTypes/isSubtypeOf';
 import sequenceFactory from './dataTypes/sequenceFactory';
 import { getPrimitiveTypeName } from './dataTypes/typeHelpers';
-import Value, { SequenceMultiplicity, ValueType } from './dataTypes/Value';
+import Value, { ValueType } from './dataTypes/Value';
 import DynamicContext from './DynamicContext';
 import ExecutionParameters from './ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from './Expression';
@@ -212,7 +212,8 @@ class OrderByExpression extends FlworExpression {
 								}
 							}
 
-							if (valueCompare('gtOp', W, V, dynamicContext)) {
+							const compareFunction = valueCompare('gtOp', W.type, V.type);
+							if (compareFunction(W, V, dynamicContext)) {
 								[indices[firstItemIndex], indices[secondItemIndex]] = [
 									indices[secondItemIndex],
 									indices[firstItemIndex],
