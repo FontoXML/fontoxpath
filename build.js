@@ -1,4 +1,4 @@
-const peg = require('pegjs');
+const peg = require('peggy');
 const fs = require('fs-extra');
 
 const ts = require('typescript');
@@ -34,7 +34,7 @@ function doPegJsBuild() {
 // Annotate this object with the following interface to prevent renaming.
 declare interface pegjs_internal {
 	literal: unknown,
-	'class': unknown,
+	class: unknown,
 	any: unknown,
 	end: unknown,
 	other: unknown,
