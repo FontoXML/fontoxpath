@@ -31,7 +31,7 @@ export type ResolvedFunction = {
 export default class ExecutionSpecificStaticContext implements IContext {
 	public executionContextWasRequired: boolean;
 	public registeredDefaultFunctionNamespaceURI: string | null;
-	public registeredVariableBindingByHashKey: any[] = [Object.create(null)];
+	public registeredVariableBindingByHashKey: { [s: string]: string }[] = [Object.create(null)];
 	public registeredVariableDeclarationByHashKey: {
 		[hash: string]: (
 			dynamicContext: DynamicContext,

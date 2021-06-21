@@ -44,11 +44,16 @@ export type FunctionDeclaration = {
 	localName: string;
 	namespaceURI: string;
 };
+export type VariableDeclaration = {
+	expression: Expression;
+	localName: string;
+	namespaceURI: string;
+};
 
 export default function processProlog(
 	prolog: IAST,
 	staticContext: StaticContext
-): { functionDeclarations: FunctionDeclaration[] } {
+): { functionDeclarations: FunctionDeclaration[]; variableDeclarations: VariableDeclaration[] } {
 	const staticallyCompilableExpressions: {
 		expression: Expression;
 		staticContextLeaf: StaticContext;
@@ -385,7 +390,7 @@ export default function processProlog(
 		);
 	});
 
-	const registeredVariables: { localName: string; namespaceURI: null | string }[] = [];
+	const registeredVariables: VariableDeclaration[] = [];
 	astHelper.getChildren(prolog, 'varDecl').forEach((varDecl) => {
 		const varName = astHelper.getQName(astHelper.getFirstChild(varDecl, 'varName'));
 		let declarationNamespaceURI = varName.namespaceURI;
@@ -404,7 +409,7 @@ export default function processProlog(
 		const getVarValue = astHelper.getFirstChild(varDecl, 'varValue');
 
 		let varValue: IAST;
-		let compiledFunctionAsExpression: Expression;
+		let compiledVariableAsExpression: Expression;
 
 		if (external !== null) {
 			const varDefaultValue = astHelper.getFirstChild(external, 'varValue');
@@ -416,7 +421,7 @@ export default function processProlog(
 		}
 
 		if (varValue) {
-			compiledFunctionAsExpression = compileAstToExpression(varValue as IAST, {
+			compiledVariableAsExpression = compileAstToExpression(varValue as IAST, {
 				allowUpdating: false,
 				allowXQuery: true,
 			});
@@ -451,7 +456,7 @@ export default function processProlog(
 						return cachedVariableValue();
 					}
 					cachedVariableValue = createDoublyIterableSequence(
-						compiledFunctionAsExpression.evaluateMaybeStatically(
+						compiledVariableAsExpression.evaluateMaybeStatically(
 							dynamicContext,
 							executionParameters
 						)
@@ -460,11 +465,15 @@ export default function processProlog(
 				}
 			);
 			staticallyCompilableExpressions.push({
-				expression: compiledFunctionAsExpression,
+				expression: compiledVariableAsExpression,
 				staticContextLeaf: staticContext,
 			});
 
-			registeredVariables.push(varName);
+			registeredVariables.push({
+				expression: compiledVariableAsExpression,
+				localName: varName.localName,
+				namespaceURI: declarationNamespaceURI,
+			});
 		}
 	});
 
@@ -485,5 +494,6 @@ export default function processProlog(
 
 	return {
 		functionDeclarations: compiledFunctionDeclarations,
+		variableDeclarations: registeredVariables,
 	};
 }
