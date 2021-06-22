@@ -6,7 +6,7 @@ import Value, { SequenceMultiplicity, SequenceType, ValueType } from '../../data
 import DynamicContext from '../../DynamicContext';
 import ExecutionParameters from '../../ExecutionParameters';
 import Expression from '../../Expression';
-import generalCompare, { getGeneralCompareEvalutationFunction } from './generalCompare';
+import generalCompare, { getGeneralCompareEvaluationFunction } from './generalCompare';
 import nodeCompare from './nodeCompare';
 import valueCompare, { getValueCompareEvaluationFunction } from './valueCompare';
 
@@ -64,7 +64,7 @@ class Compare extends Expression {
 							secondType.type
 						);
 					} else {
-						this._evaluationFunction = getGeneralCompareEvalutationFunction(
+						this._evaluationFunction = getGeneralCompareEvaluationFunction(
 							kind,
 							firstType.type,
 							secondType.type

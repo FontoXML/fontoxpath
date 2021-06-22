@@ -108,7 +108,7 @@ export default function generalCompare(
 	);
 }
 
-export function getGeneralCompareEvalutationFunction(
+export function getGeneralCompareEvaluationFunction(
 	operator: string,
 	firstType: ValueType,
 	secondType: ValueType
