@@ -2,11 +2,11 @@ import zipSingleton from '../../../expressions/util/zipSingleton';
 import atomize from '../../dataTypes/atomize';
 import ISequence from '../../dataTypes/ISequence';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import Value, { SequenceType, ValueType } from '../../dataTypes/Value';
+import Value, { SequenceMultiplicity, SequenceType, ValueType } from '../../dataTypes/Value';
 import DynamicContext from '../../DynamicContext';
 import ExecutionParameters from '../../ExecutionParameters';
 import Expression from '../../Expression';
-import generalCompare, { generatePrefabFunction } from './generalCompare';
+import generalCompare, { getGeneralCompareEvaluationFunction } from './generalCompare';
 import nodeCompare from './nodeCompare';
 import valueCompare, { getValueCompareEvaluationFunction } from './valueCompare';
 
@@ -54,11 +54,22 @@ class Compare extends Expression {
 					firstType.type !== ValueType.ARRAY &&
 					secondType.type !== ValueType.ARRAY
 				) {
-					this._evaluationFunction = generatePrefabFunction(
-						kind,
-						firstType.type,
-						secondType.type
-					);
+					if (
+						firstType.mult === SequenceMultiplicity.EXACTLY_ONE &&
+						secondType.mult === SequenceMultiplicity.EXACTLY_ONE
+					) {
+						this._evaluationFunction = getValueCompareEvaluationFunction(
+							kind,
+							firstType.type,
+							secondType.type
+						);
+					} else {
+						this._evaluationFunction = getGeneralCompareEvaluationFunction(
+							kind,
+							firstType.type,
+							secondType.type
+						);
+					}
 				}
 
 				break;
