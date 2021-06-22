@@ -1,4 +1,4 @@
-import { ValueType } from '../Value';
+import { ValueType, valueTypeToString } from '../Value';
 import AbstractDuration from './AbstractDuration';
 import DayTimeDuration from './DayTimeDuration';
 
@@ -325,7 +325,8 @@ class DateTime {
 // gDay        |         ---dd            (Z|[+-]hh:mm)
 // gMonth      |       --mm               (Z|[+-]hh:mm)
 DateTime.fromString = (dateString: string): DateTime => {
-	const regex = /^(?:(-?\d{4,}))?(?:--?(\d\d))?(?:-{1,3}(\d\d))?(T)?(?:(\d\d):(\d\d):(\d\d))?(\.\d+)?(Z|(?:[+-]\d\d:\d\d))?$/;
+	const regex =
+		/^(?:(-?\d{4,}))?(?:--?(\d\d))?(?:-{1,3}(\d\d))?(T)?(?:(\d\d):(\d\d):(\d\d))?(\.\d+)?(Z|(?:[+-]\d\d:\d\d))?$/;
 	const match = regex.exec(dateString);
 
 	const years = match[1] ? parseInt(match[1], 10) : null;
@@ -466,11 +467,13 @@ export function subtract(
 }
 
 export function addDuration(dateTime: DateTime, _duration: AbstractDuration): DateTime {
-	throw new Error(`Not implemented: adding durations to ${dateTime.type}`);
+	throw new Error(`Not implemented: adding durations to ${valueTypeToString(dateTime.type)}`);
 }
 
 export function subtractDuration(dateTime: DateTime, _duration: AbstractDuration): DateTime {
-	throw new Error(`Not implemented: subtracting durations from ${dateTime.type}`);
+	throw new Error(
+		`Not implemented: subtracting durations from ${valueTypeToString(dateTime.type)}`
+	);
 }
 
 export default DateTime;

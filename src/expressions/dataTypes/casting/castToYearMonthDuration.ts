@@ -1,3 +1,4 @@
+import { errFORG0001 } from '../../../expressions/XPathErrors';
 import createAtomicValue from '../createAtomicValue';
 import { ValueType } from '../Value';
 import YearMonthDuration from '../valueTypes/YearMonthDuration';
@@ -32,7 +33,7 @@ export default function castToYearMonthDuration(
 			}
 			return {
 				successful: false,
-				error: new Error(`FORG0001: Cannot cast "${value}" to xs:yearMonthDuration.`),
+				error: errFORG0001(value, ValueType.XSYEARMONTHDURATION),
 			};
 		};
 	}

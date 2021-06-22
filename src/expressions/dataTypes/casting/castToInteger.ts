@@ -1,5 +1,6 @@
+import { errFORG0001 } from '../../../expressions/XPathErrors';
 import createAtomicValue from '../createAtomicValue';
-import Value, { ValueType } from '../Value';
+import { ValueType } from '../Value';
 import CastResult from './CastResult';
 
 const createIntegerValue = (value: number) => createAtomicValue(value, ValueType.XSINTEGER);
@@ -44,7 +45,7 @@ export default function castToInteger(
 			if (isNaN(integerValue)) {
 				return {
 					successful: false,
-					error: new Error(`FORG0001: Cannot cast "${value}" to xs:integer.`),
+					error: errFORG0001(value, ValueType.XSINTEGER),
 				};
 			}
 			if (!Number.isSafeInteger(integerValue)) {
