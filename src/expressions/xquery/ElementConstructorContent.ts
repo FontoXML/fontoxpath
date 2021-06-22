@@ -7,6 +7,7 @@ import createPointerValue from '../dataTypes/createPointerValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import Value, { ValueType } from '../dataTypes/Value';
 import ExecutionParameters from '../ExecutionParameters';
+import { errFOTY0013 } from '../XPathErrors';
 
 function createTinyTextNode(content: string): TinyTextNode {
 	const tinyTextNode: TinyTextNode = {
@@ -103,7 +104,7 @@ function parseChildNodes(
 			// We now only have unatomizable types left
 			// (function || map)
 			if (isSubtypeOf(childNode.type, ValueType.FUNCTION)) {
-				throw new Error(`FOTY0013: Atomization is not supported for ${childNode.type}.`);
+				throw errFOTY0013(childNode.type);
 			}
 			throw new Error(`Atomizing ${childNode.type} is not implemented.`);
 		});

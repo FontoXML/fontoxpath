@@ -8,6 +8,7 @@ import {
 import ExecutionParameters from '../ExecutionParameters';
 import concatSequences from '../util/concatSequences';
 import { DONE_TOKEN, IIterator, IterationHint } from '../util/iterators';
+import { errFOTY0013 } from '../XPathErrors';
 import ArrayValue from './ArrayValue';
 import createAtomicValue from './createAtomicValue';
 import ISequence from './ISequence';
@@ -93,7 +94,7 @@ export function atomizeSingleValue(
 	}
 	// (function || map) && !array
 	if (isSubtypeOf(value.type, ValueType.FUNCTION) && !isSubtypeOf(value.type, ValueType.ARRAY)) {
-		throw new Error(`FOTY0013: Atomization is not supported for ${value.type}.`);
+		throw errFOTY0013(value.type);
 	}
 	if (isSubtypeOf(value.type, ValueType.ARRAY)) {
 		const arrayValue = value as ArrayValue;
