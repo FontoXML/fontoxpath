@@ -2,7 +2,7 @@ import createAtomicValue from '../dataTypes/createAtomicValue';
 import FunctionValue from '../dataTypes/FunctionValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
-import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
 import zipSingleton from '../util/zipSingleton';
 import { BuiltinDeclarationType } from './builtInFunctions';
 import FunctionDefinitionType from './FunctionDefinitionType';
@@ -75,7 +75,7 @@ const declarations: BuiltinDeclarationType[] = [
 		],
 		callFunction: fnFunctionLookup,
 		localName: 'function-lookup',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: {
 			mult: SequenceMultiplicity.ZERO_OR_ONE,
 			type: ValueType.FUNCTION,
@@ -91,7 +91,7 @@ const declarations: BuiltinDeclarationType[] = [
 		],
 		callFunction: fnFunctionName,
 		localName: 'function-name',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSQNAME, mult: SequenceMultiplicity.ZERO_OR_ONE },
 	},
 
@@ -104,7 +104,7 @@ const declarations: BuiltinDeclarationType[] = [
 		],
 		callFunction: fnFunctionArity,
 		localName: 'function-arity',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.EXACTLY_ONE },
 	},
 ];

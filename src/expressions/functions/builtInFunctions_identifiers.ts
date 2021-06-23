@@ -5,7 +5,7 @@ import createPointerValue from '../dataTypes/createPointerValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
-import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
 import { errXPTY0004, XPDY0002 } from '../XPathErrors';
 import { BuiltinDeclarationType } from './builtInFunctions';
 import FunctionDefinitionType from './FunctionDefinitionType';
@@ -147,7 +147,7 @@ const fnIdref: FunctionDefinitionType = (
 
 const declarations: BuiltinDeclarationType[] = [
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'id',
 		argumentTypes: [
 			{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.ZERO_OR_MORE },
@@ -158,7 +158,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'id',
 		argumentTypes: [{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.ZERO_OR_MORE }],
 		returnType: { type: ValueType.ELEMENT, mult: SequenceMultiplicity.ZERO_OR_MORE },
@@ -174,7 +174,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'idref',
 		argumentTypes: [
 			{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.ZERO_OR_MORE },
@@ -185,7 +185,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'idref',
 		argumentTypes: [{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.ZERO_OR_MORE }],
 		returnType: { type: ValueType.NODE, mult: SequenceMultiplicity.ZERO_OR_MORE },

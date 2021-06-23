@@ -13,6 +13,7 @@ import Value, { ValueType } from '../dataTypes/Value';
 import { equal } from '../dataTypes/valueTypes/DateTime';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
+import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
 import StaticContext from '../StaticContext';
 import createSingleValueIterator from '../util/createSingleValueIterator';
 import { DONE_TOKEN, IIterator, IterationHint, IterationResult, ready } from '../util/iterators';
@@ -368,7 +369,10 @@ function elementNodeDeepEqual(
 	const domFacade = executionParameters.domFacade;
 	const attributes1 = domFacade
 		.getAllAttributePointers(item1.value)
-		.filter((attr) => domFacade.getNamespaceURI(attr) !== 'http://www.w3.org/2000/xmlns/')
+		.filter(
+			(attr) =>
+				domFacade.getNamespaceURI(attr) !== BUILT_IN_NAMESPACE_URIS.XMLNS_NAMESPACE_URI
+		)
 		.sort((attrA, attrB) =>
 			domFacade.getNodeName(attrA) > domFacade.getNodeName(attrB) ? 1 : -1
 		)
@@ -376,7 +380,10 @@ function elementNodeDeepEqual(
 
 	const attributes2 = executionParameters.domFacade
 		.getAllAttributePointers(item2.value)
-		.filter((attr) => domFacade.getNamespaceURI(attr) !== 'http://www.w3.org/2000/xmlns/')
+		.filter(
+			(attr) =>
+				domFacade.getNamespaceURI(attr) !== BUILT_IN_NAMESPACE_URIS.XMLNS_NAMESPACE_URI
+		)
 		.sort((attrA, attrB) =>
 			domFacade.getNodeName(attrA) > domFacade.getNodeName(attrB) ? 1 : -1
 		)

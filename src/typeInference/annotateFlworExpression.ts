@@ -134,7 +134,7 @@ function annotateForClause(
 		.getChildren(varTypeNode, '*')
 		.map((element) => annotate(element, annotationContext));
 
-	if (allTypes.includes(undefined)) {
+	if (allTypes.includes(undefined) || allTypes.includes(null)) {
 		// Includes undefined so we can't annotate this
 		return;
 	}

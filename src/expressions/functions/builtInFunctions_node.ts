@@ -22,7 +22,7 @@ import QName from '../dataTypes/valueTypes/QName';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import arePointersEqual from '../operators/compares/arePointersEqual';
-import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
 import StaticContext from '../StaticContext';
 import { IterationHint } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
@@ -402,7 +402,7 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [{ type: ValueType.NODE, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		callFunction: fnName,
 		localName: 'name',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSSTRING, mult: SequenceMultiplicity.ZERO_OR_ONE },
 	},
 
@@ -410,7 +410,7 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [],
 		callFunction: contextItemAsFirstArgument.bind(null, fnName),
 		localName: 'name',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
 	},
 
@@ -418,7 +418,7 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [{ type: ValueType.NODE, mult: SequenceMultiplicity.EXACTLY_ONE }],
 		callFunction: fnNamespaceURI,
 		localName: 'namespace-uri',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSANYURI, mult: SequenceMultiplicity.EXACTLY_ONE },
 	},
 
@@ -426,7 +426,7 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [],
 		callFunction: contextItemAsFirstArgument.bind(null, fnNamespaceURI),
 		localName: 'namespace-uri',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSANYURI, mult: SequenceMultiplicity.EXACTLY_ONE },
 	},
 
@@ -434,7 +434,7 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [{ type: ValueType.NODE, mult: SequenceMultiplicity.ZERO_OR_MORE }],
 		callFunction: fnInnermost,
 		localName: 'innermost',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.NODE, mult: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 
@@ -442,7 +442,7 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [{ type: ValueType.NODE, mult: SequenceMultiplicity.ZERO_OR_MORE }],
 		callFunction: fnOutermost,
 		localName: 'outermost',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.NODE, mult: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 
@@ -450,7 +450,7 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [{ type: ValueType.NODE, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		callFunction: fnHasChildren,
 		localName: 'has-children',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: {
 			type: ValueType.XSBOOLEAN,
 			mult: SequenceMultiplicity.EXACTLY_ONE,
@@ -461,7 +461,7 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [],
 		callFunction: contextItemAsFirstArgument.bind(null, fnHasChildren),
 		localName: 'has-children',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE },
 	},
 
@@ -469,7 +469,7 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [{ type: ValueType.NODE, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		callFunction: fnPath,
 		localName: 'path',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSSTRING, mult: SequenceMultiplicity.ZERO_OR_ONE },
 	},
 
@@ -477,7 +477,7 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [],
 		callFunction: contextItemAsFirstArgument.bind(null, fnPath),
 		localName: 'path',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSSTRING, mult: SequenceMultiplicity.ZERO_OR_ONE },
 	},
 
@@ -485,7 +485,7 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [{ type: ValueType.NODE, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		callFunction: fnNodeName,
 		localName: 'node-name',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSQNAME, mult: SequenceMultiplicity.ZERO_OR_ONE },
 	},
 
@@ -493,7 +493,7 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [],
 		callFunction: contextItemAsFirstArgument.bind(null, fnNodeName),
 		localName: 'node-name',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSQNAME, mult: SequenceMultiplicity.ZERO_OR_ONE },
 	},
 
@@ -501,7 +501,7 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [{ type: ValueType.NODE, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		callFunction: fnLocalName,
 		localName: 'local-name',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
 	},
 
@@ -509,7 +509,7 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [],
 		callFunction: contextItemAsFirstArgument.bind(null, fnLocalName),
 		localName: 'local-name',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
 	},
 
@@ -517,7 +517,7 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [{ type: ValueType.NODE, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		callFunction: fnRoot,
 		localName: 'root',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.NODE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 	},
 
@@ -525,7 +525,7 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [],
 		callFunction: contextItemAsFirstArgument.bind(null, fnRoot),
 		localName: 'root',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.NODE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 	},
 
@@ -533,14 +533,14 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [],
 		callFunction: contextItemAsFirstArgument.bind(null, fnData),
 		localName: 'data',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 	{
 		argumentTypes: [{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE }],
 		callFunction: fnData,
 		localName: 'data',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 ];

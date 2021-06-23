@@ -1,12 +1,12 @@
 name: Check bundle size
 on:
     push:
-      branches: ["master"]
+        branches: ['master']
     pull_request:
-      types: [synchronize, opened, reopened]
+        types: [synchronize, opened, reopened]
 
 jobs:
-  build:
+    build:
         name: Compute bundle size
         runs-on: ubuntu-latest
         if: github.repository_owner == 'FontoXML'
@@ -15,7 +15,7 @@ jobs:
             - uses: actions/checkout@v2
             - uses: actions/setup-node@v1
               with:
-                  node-version: "12"
+                  node-version: '12'
             - name: Install dependencies
               run: npm ci
             - name: override CI_COMMIT_SHA
@@ -26,6 +26,5 @@ jobs:
               if: secrets.BUNDLEMON_PROJECT_APIKEY
               run: npx bundlemon
               env:
-                BUNDLEMON_PROJECT_ID: "609024effb87a20009a6b096"
-                BUNDLEMON_PROJECT_APIKEY: ${{ secrets.BUNDLEMON_PROJECT_APIKEY }}
-                BUNDLEMON_GITHUB_TOKEN: ${{ secrets.BUNDLEMON_GITHUB_TOKEN }}
+                  BUNDLEMON_PROJECT_ID: '609024effb87a20009a6b096'
+                  BUNDLEMON_PROJECT_APIKEY: ${{ secrets.BUNDLEMON_PROJECT_APIKEY }}

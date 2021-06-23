@@ -2,7 +2,7 @@ import zipSingleton from '../../../expressions/util/zipSingleton';
 import atomize from '../../dataTypes/atomize';
 import ISequence from '../../dataTypes/ISequence';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import { SequenceType, ValueType } from '../../dataTypes/Value';
+import Value, { SequenceType, ValueType } from '../../dataTypes/Value';
 import DynamicContext from '../../DynamicContext';
 import ExecutionParameters from '../../ExecutionParameters';
 import Expression from '../../Expression';
@@ -244,6 +244,46 @@ class Compare extends Expression {
 					},
 				}),
 		});
+	}
+
+	private nodeCompareSingletonHandler(
+		firstSequence: ISequence,
+		secondSequence: ISequence,
+		executionParameters: ExecutionParameters,
+		dynamicContext: DynamicContext
+	): ISequence {
+		return secondSequence.switchCases({
+			default: () => {
+				throw new Error('XPTY0004: Sequences to compare are not singleton');
+			},
+			singleton: () =>
+				zipSingleton([firstSequence, secondSequence], ([first, second]) => {
+					const compareFunction = nodeCompare(
+						this._operator,
+						executionParameters.domFacade,
+						first.type,
+						second.type
+					);
+					return compareFunction(firstSequence, secondSequence, dynamicContext)
+						? sequenceFactory.singletonTrueSequence()
+						: sequenceFactory.singletonFalseSequence();
+				}),
+		});
+	}
+
+	private valueCompareSingletonHandler(
+		onlyFirstValue: Value,
+		onlySecondValue: Value,
+		dynamicContext: DynamicContext
+	): ISequence {
+		const compareFunction = valueCompareFunction(
+			this._operator,
+			onlyFirstValue.type,
+			onlySecondValue.type
+		);
+		return compareFunction(onlyFirstValue, onlySecondValue, dynamicContext)
+			? sequenceFactory.singletonTrueSequence()
+			: sequenceFactory.singletonFalseSequence();
 	}
 }
 

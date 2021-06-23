@@ -36,7 +36,7 @@ evaluateXPathToStrings(xpathExpression, contextNode, domFacade, variables, optio
   be used for querying the DOM. Defaults to an implementation which uses properties and methods on
   the `contextNode` as described in the [DOM spec](https://dom.spec.whatwg.org/).
 * `variables` `<Object>` The properties of `variables` are available variables within the
-  `xpathExpression`. Defaults to an empty `Object`.
+  `xpathExpression`. Defaults to an empty `Object`. Can only be used to set variables in the global namespace.
 * `returnType` `<number>` Determines the type of the result. Defaults to
   `evaluateXPath.ANY_TYPE`. Possible values:
   * `evaluateXPath.ANY_TYPE` Returns the result of the query, can be anything depending on the

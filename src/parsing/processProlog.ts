@@ -6,7 +6,7 @@ import ExecutionParameters from '../expressions/ExecutionParameters';
 import Expression from '../expressions/Expression';
 import FunctionDefinitionType from '../expressions/functions/FunctionDefinitionType';
 import { getAlternativesAsStringFor } from '../expressions/functions/functionRegistry';
-import { FUNCTIONS_NAMESPACE_URI } from '../expressions/staticallyKnownNamespaces';
+import { BUILT_IN_NAMESPACE_URIS } from '../expressions/staticallyKnownNamespaces';
 import StaticContext, { GenericFunctionDefinition } from '../expressions/StaticContext';
 import createDoublyIterableSequence from '../expressions/util/createDoublyIterableSequence';
 import UpdatingExpression from '../expressions/xquery-update/UpdatingExpression';
@@ -100,8 +100,8 @@ export default function processProlog(
 		}
 
 		if (
-			namespaceURI === 'http://www.w3.org/XML/1998/namespace' ||
-			namespaceURI === 'http://www.w3.org/2000/xmlns/'
+			namespaceURI === BUILT_IN_NAMESPACE_URIS.XML_NAMESPACE_URI ||
+			namespaceURI === BUILT_IN_NAMESPACE_URIS.XMLNS_NAMESPACE_URI
 		) {
 			throw errXQST0070();
 		}
@@ -134,8 +134,8 @@ export default function processProlog(
 		}
 
 		if (
-			namespaceURI === 'http://www.w3.org/XML/1998/namespace' ||
-			namespaceURI === 'http://www.w3.org/2000/xmlns/'
+			namespaceURI === BUILT_IN_NAMESPACE_URIS.XML_NAMESPACE_URI ||
+			namespaceURI === BUILT_IN_NAMESPACE_URIS.XMLNS_NAMESPACE_URI
 		) {
 			throw errXQST0070();
 		}
@@ -156,7 +156,8 @@ export default function processProlog(
 			// declaration.
 			declarationNamespaceURI =
 				declarationPrefix === null
-					? staticContext.registeredDefaultFunctionNamespaceURI || FUNCTIONS_NAMESPACE_URI
+					? staticContext.registeredDefaultFunctionNamespaceURI ||
+					  BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI
 					: staticContext.resolveNamespace(declarationPrefix);
 
 			if (!declarationNamespaceURI && declarationPrefix) {
