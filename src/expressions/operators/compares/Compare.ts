@@ -46,13 +46,22 @@ class Compare extends Expression {
 			case 'greaterThanOrEqualOp':
 			case 'greaterThanOp':
 				this._compare = 'generalCompare';
+				const genericTypes = [
+					ValueType.ITEM,
+					ValueType.ARRAY,
+					ValueType.XSANYATOMICTYPE,
+					ValueType.NODE,
+					ValueType.DOCUMENTNODE,
+					ValueType.ELEMENT,
+					ValueType.PROCESSINGINSTRUCTION,
+					ValueType.COMMENT,
+					ValueType.ATTRIBUTE,
+				];
 				if (
 					firstType &&
 					secondType &&
-					firstType.type !== ValueType.ITEM &&
-					secondType.type !== ValueType.ITEM &&
-					firstType.type !== ValueType.ARRAY &&
-					secondType.type !== ValueType.ARRAY
+					!genericTypes.includes(firstType.type) &&
+					!genericTypes.includes(secondType.type)
 				) {
 					if (
 						firstType.mult === SequenceMultiplicity.EXACTLY_ONE &&
@@ -66,8 +75,8 @@ class Compare extends Expression {
 					} else {
 						this._evaluationFunction = getGeneralCompareEvaluationFunction(
 							kind,
-							firstType.type,
-							secondType.type
+							firstType,
+							secondType
 						);
 					}
 				}

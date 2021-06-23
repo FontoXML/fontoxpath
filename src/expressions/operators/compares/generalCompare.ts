@@ -1,8 +1,9 @@
+import AtomicValue from '../../dataTypes/AtomicValue';
 import castToType from '../../dataTypes/castToType';
 import ISequence from '../../dataTypes/ISequence';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import { ValueType } from '../../dataTypes/Value';
+import { SequenceMultiplicity, SequenceType, ValueType } from '../../dataTypes/Value';
 import DynamicContext from '../../DynamicContext';
 import valueCompare from './valueCompare';
 
@@ -110,34 +111,61 @@ export default function generalCompare(
 
 export function getGeneralCompareEvaluationFunction(
 	operator: string,
-	firstType: ValueType,
-	secondType: ValueType
+	firstType: SequenceType,
+	secondType: SequenceType
 ): (first: ISequence, second: ISequence, dynamicContex: DynamicContext) => boolean {
 	operator = OPERATOR_TRANSLATION[operator];
 
 	const [firstTargetType, secondTargetType]: [ValueType, ValueType] = typeCheck(
-		firstType,
-		secondType
+		firstType.type,
+		secondType.type
 	);
+	const compareFunction = valueCompare(operator, firstType.type, secondType.type);
 
-	let compareFunction: any;
+	if (
+		firstType.mult === SequenceMultiplicity.ZERO_OR_ONE &&
+		secondType.mult === SequenceMultiplicity.ZERO_OR_ONE
+	) {
+		return generateSingleGeneralCompareFunction(
+			firstTargetType,
+			secondTargetType,
+			compareFunction
+		);
+	} else {
+		return generateMultipleGeneralCompareFunction(
+			firstTargetType,
+			secondTargetType,
+			compareFunction
+		);
+	}
+}
 
+function generateMultipleGeneralCompareFunction(
+	firstTargetType: ValueType,
+	secondTargetType: ValueType,
+	compareFunction: (
+		first: AtomicValue,
+		second: AtomicValue,
+		dynamicContex: DynamicContext
+	) => boolean
+) {
 	return (
 		firstSequence: ISequence,
 		secondSequence: ISequence,
 		dynamicContext: DynamicContext
 	): boolean => {
 		let result;
-		// Change operator to equivalent valueCompare operator
 		result = secondSequence.mapAll((allSecondValues) =>
 			firstSequence
 				.filter((firstValue) => {
 					for (let i = 0, l = allSecondValues.length; i < l; ++i) {
 						let secondValue = allSecondValues[i];
-						if (firstTargetType) firstValue = castToType(firstValue, firstTargetType);
-						if (secondTargetType)
+						if (firstTargetType) {
+							firstValue = castToType(firstValue, firstTargetType);
+						}
+						if (secondTargetType) {
 							secondValue = castToType(secondValue, secondTargetType);
-						compareFunction = valueCompare(operator, firstValue.type, secondValue.type);
+						}
 						if (compareFunction(firstValue, secondValue, dynamicContext)) {
 							return true;
 						}
@@ -151,5 +179,31 @@ export function getGeneralCompareEvaluationFunction(
 		);
 
 		return result.getEffectiveBooleanValue();
+	};
+}
+
+function generateSingleGeneralCompareFunction(
+	firstTargetType: ValueType,
+	secondTargetType: ValueType,
+	compareFunction: (
+		first: AtomicValue,
+		second: AtomicValue,
+		dynamicContex: DynamicContext
+	) => boolean
+) {
+	return (
+		firstSequence: ISequence,
+		secondSequence: ISequence,
+		dynamicContext: DynamicContext
+	): boolean => {
+		if (firstSequence.isEmpty() || secondSequence.isEmpty()) {
+			return false;
+		} else {
+			let firstValue = firstSequence.first();
+			let secondValue = secondSequence.first();
+			if (firstTargetType) firstValue = castToType(firstValue, firstTargetType);
+			if (secondTargetType) secondValue = castToType(secondValue, secondTargetType);
+			return compareFunction(firstValue, secondValue, dynamicContext);
+		}
 	};
 }
