@@ -51,11 +51,6 @@ class Compare extends Expression {
 					ValueType.ARRAY,
 					ValueType.XSANYATOMICTYPE,
 					ValueType.NODE,
-					ValueType.DOCUMENTNODE,
-					ValueType.ELEMENT,
-					ValueType.PROCESSINGINSTRUCTION,
-					ValueType.COMMENT,
-					ValueType.ATTRIBUTE,
 				];
 				if (
 					firstType &&
