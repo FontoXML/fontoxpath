@@ -82,10 +82,6 @@ export default function staticallyCompileXPath(
 			processProlog(prolog, rootStaticContext);
 		}
 
-		if (compilationOptions.annotateAst) {
-			annotateAst(ast, context);
-		}
-
 		expression = compileAstToExpression(queryBodyContents, compilationOptions);
 	}
 

@@ -322,7 +322,7 @@ function generateCompareFunction(
 
 const comparatorsByTypingKey = Object.create(null);
 
-function valueCompareFunction(
+function valueCompare(
 	operator: string,
 	typeA: ValueType,
 	typeB: ValueType
@@ -351,7 +351,7 @@ export function getValueCompareEvaluationFunction(
 	dynamicContext: DynamicContext
 ) => boolean {
 	try {
-		const evaluationFunction = valueCompareFunction(operator, typeA, typeB);
+		const evaluationFunction = valueCompare(operator, typeA, typeB);
 
 		return (first, second, dynamicContext) => {
 			if (first.getLength() > 1 || second.getLength() > 1) {
@@ -365,4 +365,4 @@ export function getValueCompareEvaluationFunction(
 	}
 }
 
-export default valueCompareFunction;
+export default valueCompare;

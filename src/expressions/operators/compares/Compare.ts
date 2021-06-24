@@ -2,13 +2,13 @@ import zipSingleton from '../../../expressions/util/zipSingleton';
 import atomize from '../../dataTypes/atomize';
 import ISequence from '../../dataTypes/ISequence';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import Value, { SequenceType, ValueType } from '../../dataTypes/Value';
+import Value, { SequenceMultiplicity, SequenceType, ValueType } from '../../dataTypes/Value';
 import DynamicContext from '../../DynamicContext';
 import ExecutionParameters from '../../ExecutionParameters';
 import Expression from '../../Expression';
-import generalCompare, { generatePrefabFunction } from './generalCompare';
+import generalCompare, { getGeneralCompareEvaluationFunction } from './generalCompare';
 import nodeCompare from './nodeCompare';
-import valueCompareFunction, { getValueCompareEvaluationFunction } from './valueCompare';
+import valueCompare, { getValueCompareEvaluationFunction } from './valueCompare';
 
 class Compare extends Expression {
 	private _compare: 'generalCompare' | 'valueCompare' | 'nodeCompare';
@@ -46,19 +46,34 @@ class Compare extends Expression {
 			case 'greaterThanOrEqualOp':
 			case 'greaterThanOp':
 				this._compare = 'generalCompare';
+				const genericTypes = [
+					ValueType.ITEM,
+					ValueType.ARRAY,
+					ValueType.XSANYATOMICTYPE,
+					ValueType.NODE,
+				];
 				if (
 					firstType &&
 					secondType &&
-					firstType.type !== ValueType.ITEM &&
-					secondType.type !== ValueType.ITEM &&
-					firstType.type !== ValueType.ARRAY &&
-					secondType.type !== ValueType.ARRAY
+					!genericTypes.includes(firstType.type) &&
+					!genericTypes.includes(secondType.type)
 				) {
-					this._evaluationFunction = generatePrefabFunction(
-						kind,
-						firstType.type,
-						secondType.type
-					);
+					if (
+						firstType.mult === SequenceMultiplicity.EXACTLY_ONE &&
+						secondType.mult === SequenceMultiplicity.EXACTLY_ONE
+					) {
+						this._evaluationFunction = getValueCompareEvaluationFunction(
+							kind,
+							firstType.type,
+							secondType.type
+						);
+					} else {
+						this._evaluationFunction = getGeneralCompareEvaluationFunction(
+							kind,
+							firstType,
+							secondType
+						);
+					}
 				}
 
 				break;
@@ -164,32 +179,12 @@ class Compare extends Expression {
 									);
 								},
 								singleton: () => {
-									return secondSequence.switchCases({
-										default: () => {
-											throw new Error(
-												'XPTY0004: Sequences to compare are not singleton'
-											);
-										},
-										singleton: () =>
-											zipSingleton(
-												[firstSequence, secondSequence],
-												([first, second]) => {
-													const compareFunction = nodeCompare(
-														this._operator,
-														executionParameters.domFacade,
-														first.type,
-														second.type
-													);
-													return compareFunction(
-														firstSequence,
-														secondSequence,
-														dynamicContext
-													)
-														? sequenceFactory.singletonTrueSequence()
-														: sequenceFactory.singletonFalseSequence();
-												}
-											),
-									});
+									return this.nodeCompareSingletonHandler(
+										firstSequence,
+										secondSequence,
+										executionParameters,
+										dynamicContext
+									);
 								},
 							});
 						}
@@ -204,21 +199,12 @@ class Compare extends Expression {
 									secondAtomizedSequence.switchCases({
 										singleton: () =>
 											firstAtomizedSequence.mapAll(([onlyFirstValue]) =>
-												secondAtomizedSequence.mapAll(
-													([onlySecondValue]) => {
-														const compareFunction = valueCompareFunction(
-															this._operator,
-															onlyFirstValue.type,
-															onlySecondValue.type
-														);
-														return compareFunction(
-															onlyFirstValue,
-															onlySecondValue,
-															dynamicContext
-														)
-															? sequenceFactory.singletonTrueSequence()
-															: sequenceFactory.singletonFalseSequence();
-													}
+												secondAtomizedSequence.mapAll(([onlySecondValue]) =>
+													this.valueCompareSingletonHandler(
+														onlyFirstValue,
+														onlySecondValue,
+														dynamicContext
+													)
 												)
 											),
 										default: () => {
@@ -276,7 +262,7 @@ class Compare extends Expression {
 		onlySecondValue: Value,
 		dynamicContext: DynamicContext
 	): ISequence {
-		const compareFunction = valueCompareFunction(
+		const compareFunction = valueCompare(
 			this._operator,
 			onlyFirstValue.type,
 			onlySecondValue.type

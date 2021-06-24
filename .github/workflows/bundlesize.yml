@@ -23,7 +23,6 @@ jobs:
               run: echo "CI_COMMIT_SHA=${{ github.event.pull_request.head.sha}}" >> $GITHUB_ENV
 
             - name: Run BundleMon
-              if: secrets.BUNDLEMON_PROJECT_APIKEY
               run: npx bundlemon
               env:
                   BUNDLEMON_PROJECT_ID: '609024effb87a20009a6b096'

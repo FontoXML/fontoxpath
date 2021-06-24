@@ -186,11 +186,7 @@ export function filterOnUniqueObjects(array: SequenceType[]): SequenceType[] {
 	return array.filter(
 		(current, index, arrayCopy) =>
 			arrayCopy.findIndex(
-				(element) =>
-					element &&
-					current &&
-					element.type === current.type &&
-					element.mult === current.mult
+				(element) => element.type === current.type && element.mult === current.mult
 			) === index
 	);
 }
