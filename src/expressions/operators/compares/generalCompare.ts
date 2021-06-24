@@ -1,8 +1,9 @@
+import AtomicValue from '../../dataTypes/AtomicValue';
 import castToType from '../../dataTypes/castToType';
 import ISequence from '../../dataTypes/ISequence';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import { ValueType } from '../../dataTypes/Value';
+import { SequenceMultiplicity, SequenceType, ValueType } from '../../dataTypes/Value';
 import DynamicContext from '../../DynamicContext';
 import valueCompare from './valueCompare';
 
@@ -21,7 +22,7 @@ const OPERATOR_TRANSLATION: { [s: string]: string } = {
  * @param secondType the type of the second operand
  * @returns a tuple of the targetTypes, at least one of them is undefined
  */
-function typeCheck(firstType: ValueType, secondType: ValueType): [ValueType, ValueType] {
+function determineTargetType(firstType: ValueType, secondType: ValueType): [ValueType, ValueType] {
 	let firstTargetType: ValueType;
 	let secondTargetType: ValueType;
 
@@ -81,10 +82,10 @@ export default function generalCompare(
 					// In all other cases, V is cast to the primitive base type of T.
 					let secondValue = allSecondValues[i];
 
-					const [firstTargetType, secondTargetType]: [ValueType, ValueType] = typeCheck(
-						firstValue.type,
-						secondValue.type
-					);
+					const [firstTargetType, secondTargetType]: [
+						ValueType,
+						ValueType
+					] = determineTargetType(firstValue.type, secondValue.type);
 					if (firstTargetType) firstValue = castToType(firstValue, firstTargetType);
 					else if (secondTargetType)
 						secondValue = castToType(secondValue, secondTargetType);
@@ -108,36 +109,77 @@ export default function generalCompare(
 	);
 }
 
+/**
+ * A function that uses the typeInformation from the annotation to determine an evaluationFunction.
+ * @param operator The compare operator
+ * @param firstType The type of the left operand
+ * @param secondType The type of the right operand
+ * @returns The evaluation function
+ */
 export function getGeneralCompareEvaluationFunction(
 	operator: string,
-	firstType: ValueType,
-	secondType: ValueType
+	firstType: SequenceType,
+	secondType: SequenceType
 ): (first: ISequence, second: ISequence, dynamicContex: DynamicContext) => boolean {
 	operator = OPERATOR_TRANSLATION[operator];
 
-	const [firstTargetType, secondTargetType]: [ValueType, ValueType] = typeCheck(
-		firstType,
-		secondType
+	const [firstTargetType, secondTargetType]: [ValueType, ValueType] = determineTargetType(
+		firstType.type,
+		secondType.type
 	);
+	const compareFunction = valueCompare(operator, firstType.type, secondType.type);
 
-	let compareFunction: any;
+	if (
+		firstType.mult === SequenceMultiplicity.ZERO_OR_ONE &&
+		secondType.mult === SequenceMultiplicity.ZERO_OR_ONE
+	) {
+		return generateSingleGeneralCompareFunction(
+			firstTargetType,
+			secondTargetType,
+			compareFunction
+		);
+	} else {
+		return generateMultipleGeneralCompareFunction(
+			firstTargetType,
+			secondTargetType,
+			compareFunction
+		);
+	}
+}
 
+/**
+ * A function to generate the GeneralCompareFunction when the multiplicity is ZERO_OR_MORE or ONE_OR_MORE.
+ * @param firstTargetType If the type is defined cast the left operand to this type
+ * @param secondTargetType If the type is defined cast the right operand to this type
+ * @param compareFunction The generated valueCompareFunction
+ * @returns The GeneralCompare evaluation function
+ */
+function generateMultipleGeneralCompareFunction(
+	firstTargetType: ValueType,
+	secondTargetType: ValueType,
+	compareFunction: (
+		first: AtomicValue,
+		second: AtomicValue,
+		dynamicContex: DynamicContext
+	) => boolean
+) {
 	return (
 		firstSequence: ISequence,
 		secondSequence: ISequence,
 		dynamicContext: DynamicContext
 	): boolean => {
 		let result;
-		// Change operator to equivalent valueCompare operator
 		result = secondSequence.mapAll((allSecondValues) =>
 			firstSequence
 				.filter((firstValue) => {
 					for (let i = 0, l = allSecondValues.length; i < l; ++i) {
 						let secondValue = allSecondValues[i];
-						if (firstTargetType) firstValue = castToType(firstValue, firstTargetType);
-						if (secondTargetType)
+						if (firstTargetType) {
+							firstValue = castToType(firstValue, firstTargetType);
+						}
+						if (secondTargetType) {
 							secondValue = castToType(secondValue, secondTargetType);
-						compareFunction = valueCompare(operator, firstValue.type, secondValue.type);
+						}
 						if (compareFunction(firstValue, secondValue, dynamicContext)) {
 							return true;
 						}
@@ -151,5 +193,38 @@ export function getGeneralCompareEvaluationFunction(
 		);
 
 		return result.getEffectiveBooleanValue();
+	};
+}
+
+/**
+ * A function to generate the GeneralCompareFunction when the multiplicity is ZERO_OR_ONE.
+ * @param firstTargetType If the type is defined cast the left operand to this type
+ * @param secondTargetType If the type is defined cast the right operand to this type
+ * @param compareFunction The generated valueCompareFunction
+ * @returns The GeneralCompare evaluation function
+ */
+function generateSingleGeneralCompareFunction(
+	firstTargetType: ValueType,
+	secondTargetType: ValueType,
+	compareFunction: (
+		first: AtomicValue,
+		second: AtomicValue,
+		dynamicContex: DynamicContext
+	) => boolean
+) {
+	return (
+		firstSequence: ISequence,
+		secondSequence: ISequence,
+		dynamicContext: DynamicContext
+	): boolean => {
+		if (firstSequence.isEmpty() || secondSequence.isEmpty()) {
+			return false;
+		} else {
+			let firstValue = firstSequence.first();
+			let secondValue = secondSequence.first();
+			if (firstTargetType) firstValue = castToType(firstValue, firstTargetType);
+			if (secondTargetType) secondValue = castToType(secondValue, secondTargetType);
+			return compareFunction(firstValue, secondValue, dynamicContext);
+		}
 	};
 }

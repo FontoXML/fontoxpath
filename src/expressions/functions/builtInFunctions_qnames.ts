@@ -3,7 +3,7 @@ import sequenceFactory from '../dataTypes/sequenceFactory';
 import { validatePattern } from '../dataTypes/typeHelpers';
 import { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
-import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
 import zipSingleton from '../util/zipSingleton';
 import { BuiltinDeclarationType } from './builtInFunctions';
 import FunctionDefinitionType from './FunctionDefinitionType';
@@ -90,7 +90,7 @@ const fnLocalNameFromQName: FunctionDefinitionType = (
 
 const declarations: BuiltinDeclarationType[] = [
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'QName',
 		argumentTypes: [
 			{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -100,21 +100,21 @@ const declarations: BuiltinDeclarationType[] = [
 		callFunction: fnQName,
 	},
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'prefix-from-QName',
 		argumentTypes: [{ type: ValueType.XSQNAME, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: { type: ValueType.XSNCNAME, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: fnPrefixFromQName,
 	},
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'local-name-from-QName',
 		argumentTypes: [{ type: ValueType.XSQNAME, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: { type: ValueType.XSNCNAME, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: fnLocalNameFromQName,
 	},
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'namespace-uri-from-QName',
 		argumentTypes: [{ type: ValueType.XSQNAME, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: { type: ValueType.XSANYURI, mult: SequenceMultiplicity.ZERO_OR_ONE },

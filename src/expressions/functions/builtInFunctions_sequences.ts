@@ -7,7 +7,7 @@ import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value, { SequenceMultiplicity, SequenceType, ValueType } from '../dataTypes/Value';
 import valueCompare from '../operators/compares/valueCompare';
-import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
 import { DONE_TOKEN, IIterator, IterationHint, ready } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
 import { performFunctionConversion } from './argumentHelper';
@@ -681,7 +681,7 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE }],
 		callFunction: fnEmpty,
 		localName: 'empty',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE },
 	},
 
@@ -689,7 +689,7 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE }],
 		callFunction: fnExists,
 		localName: 'exists',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE },
 	},
 
@@ -697,7 +697,7 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE }],
 		callFunction: fnHead,
 		localName: 'head',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_ONE },
 	},
 
@@ -705,7 +705,7 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE }],
 		callFunction: fnTail,
 		localName: 'tail',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 
@@ -717,7 +717,7 @@ const declarations: BuiltinDeclarationType[] = [
 		],
 		callFunction: fnInsertBefore,
 		localName: 'insert-before',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 
@@ -728,7 +728,7 @@ const declarations: BuiltinDeclarationType[] = [
 		],
 		callFunction: fnRemove,
 		localName: 'remove',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 
@@ -736,7 +736,7 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE }],
 		callFunction: fnReverse,
 		localName: 'reverse',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 
@@ -755,7 +755,7 @@ const declarations: BuiltinDeclarationType[] = [
 				sequenceFactory.empty()
 			)) as FunctionDefinitionType,
 		localName: 'subsequence',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 
@@ -767,7 +767,7 @@ const declarations: BuiltinDeclarationType[] = [
 		],
 		callFunction: fnSubsequence,
 		localName: 'subsequence',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 
@@ -775,7 +775,7 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE }],
 		callFunction: fnUnordered,
 		localName: 'unordered',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 
@@ -786,7 +786,7 @@ const declarations: BuiltinDeclarationType[] = [
 		],
 		callFunction: fnIndexOf,
 		localName: 'index-of',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 
@@ -800,7 +800,7 @@ const declarations: BuiltinDeclarationType[] = [
 			throw new Error('FOCH0002: No collations are supported');
 		},
 		localName: 'index-of',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 
@@ -811,7 +811,7 @@ const declarations: BuiltinDeclarationType[] = [
 		],
 		callFunction: fnDeepEqual,
 		localName: 'deep-equal',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE },
 	},
 
@@ -825,7 +825,7 @@ const declarations: BuiltinDeclarationType[] = [
 			throw new Error('FOCH0002: No collations are supported');
 		},
 		localName: 'deep-equal',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE },
 	},
 
@@ -833,7 +833,7 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE }],
 		callFunction: fnCount,
 		localName: 'count',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.EXACTLY_ONE },
 	},
 
@@ -843,7 +843,7 @@ const declarations: BuiltinDeclarationType[] = [
 		],
 		callFunction: fnAvg,
 		localName: 'avg',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 	},
 
@@ -853,7 +853,7 @@ const declarations: BuiltinDeclarationType[] = [
 		],
 		callFunction: fnMax,
 		localName: 'max',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 	},
 
@@ -866,7 +866,7 @@ const declarations: BuiltinDeclarationType[] = [
 			throw new Error('FOCH0002: No collations are supported');
 		},
 		localName: 'max',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 	},
 
@@ -876,7 +876,7 @@ const declarations: BuiltinDeclarationType[] = [
 		],
 		callFunction: fnMin,
 		localName: 'min',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 	},
 
@@ -889,7 +889,7 @@ const declarations: BuiltinDeclarationType[] = [
 			throw new Error('FOCH0002: No collations are supported');
 		},
 		localName: 'min',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 	},
 
@@ -907,7 +907,7 @@ const declarations: BuiltinDeclarationType[] = [
 			);
 		}) as FunctionDefinitionType,
 		localName: 'sum',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.EXACTLY_ONE },
 	},
 
@@ -918,7 +918,7 @@ const declarations: BuiltinDeclarationType[] = [
 		],
 		callFunction: fnSum,
 		localName: 'sum',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 	},
 
@@ -926,7 +926,7 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE }],
 		callFunction: fnZeroOrOne,
 		localName: 'zero-or-one',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_ONE },
 	},
 
@@ -934,7 +934,7 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE }],
 		callFunction: fnOneOrMore,
 		localName: 'one-or-more',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ONE_OR_MORE },
 	},
 
@@ -942,7 +942,7 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE }],
 		callFunction: fnExactlyOne,
 		localName: 'exactly-one',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.EXACTLY_ONE },
 	},
 
@@ -956,7 +956,7 @@ const declarations: BuiltinDeclarationType[] = [
 		],
 		callFunction: fnFilter,
 		localName: 'filter',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 
@@ -970,7 +970,7 @@ const declarations: BuiltinDeclarationType[] = [
 		],
 		callFunction: fnForEach,
 		localName: 'for-each',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 
@@ -985,7 +985,7 @@ const declarations: BuiltinDeclarationType[] = [
 		],
 		callFunction: fnFoldLeft,
 		localName: 'fold-left',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 
@@ -1000,7 +1000,7 @@ const declarations: BuiltinDeclarationType[] = [
 		],
 		callFunction: fnFoldRight,
 		localName: 'fold-right',
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 ];

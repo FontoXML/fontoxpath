@@ -3,7 +3,7 @@ import sequenceFactory from '../dataTypes/sequenceFactory';
 import { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
 import DateTime from '../dataTypes/valueTypes/DateTime';
 import DayTimeDuration from '../dataTypes/valueTypes/DayTimeDuration';
-import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
 import { BuiltinDeclarationType } from './builtInFunctions';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
@@ -158,7 +158,7 @@ const fnTimezoneFromDateTime: FunctionDefinitionType = (
 
 const declarations: BuiltinDeclarationType[] = [
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'dateTime',
 		argumentTypes: [
 			{ type: ValueType.XSDATE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -168,49 +168,49 @@ const declarations: BuiltinDeclarationType[] = [
 		callFunction: fnDateTime,
 	},
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'year-from-dateTime',
 		argumentTypes: [{ type: ValueType.XSDATETIME, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: fnYearFromDateTime,
 	},
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'month-from-dateTime',
 		argumentTypes: [{ type: ValueType.XSDATETIME, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: fnMonthFromDateTime,
 	},
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'day-from-dateTime',
 		argumentTypes: [{ type: ValueType.XSDATETIME, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: fnDayFromDateTime,
 	},
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'hours-from-dateTime',
 		argumentTypes: [{ type: ValueType.XSDATETIME, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: fnHoursFromDateTime,
 	},
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'minutes-from-dateTime',
 		argumentTypes: [{ type: ValueType.XSDATETIME, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: fnMinutesFromDateTime,
 	},
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'seconds-from-dateTime',
 		argumentTypes: [{ type: ValueType.XSDATETIME, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: { type: ValueType.XSDECIMAL, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: fnSecondsFromDateTime,
 	},
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'timezone-from-dateTime',
 		argumentTypes: [{ type: ValueType.XSDATETIME, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: {
@@ -220,28 +220,28 @@ const declarations: BuiltinDeclarationType[] = [
 		callFunction: fnTimezoneFromDateTime,
 	},
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'year-from-date',
 		argumentTypes: [{ type: ValueType.XSDATE, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: fnYearFromDateTime,
 	},
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'month-from-date',
 		argumentTypes: [{ type: ValueType.XSDATE, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: fnMonthFromDateTime,
 	},
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'day-from-date',
 		argumentTypes: [{ type: ValueType.XSDATE, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: fnDayFromDateTime,
 	},
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'timezone-from-date',
 		argumentTypes: [{ type: ValueType.XSDATE, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: {
@@ -251,28 +251,28 @@ const declarations: BuiltinDeclarationType[] = [
 		callFunction: fnTimezoneFromDateTime,
 	},
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'hours-from-time',
 		argumentTypes: [{ type: ValueType.XSTIME, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: fnHoursFromDateTime,
 	},
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'minutes-from-time',
 		argumentTypes: [{ type: ValueType.XSTIME, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: fnMinutesFromDateTime,
 	},
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'seconds-from-time',
 		argumentTypes: [{ type: ValueType.XSTIME, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: { type: ValueType.XSDECIMAL, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: fnSecondsFromDateTime,
 	},
 	{
-		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		localName: 'timezone-from-time',
 		argumentTypes: [{ type: ValueType.XSTIME, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: {

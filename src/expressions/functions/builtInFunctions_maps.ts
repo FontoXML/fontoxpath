@@ -2,7 +2,7 @@ import createAtomicValue from '../dataTypes/createAtomicValue';
 import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
-import { MAP_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
 import concatSequences from '../util/concatSequences';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import zipSingleton from '../util/zipSingleton';
@@ -212,7 +212,7 @@ const mapForEach: FunctionDefinitionType = (
 
 const declarations: BuiltinDeclarationType[] = [
 	{
-		namespaceURI: MAP_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.MAP_NAMESPACE_URI,
 		localName: 'contains',
 		argumentTypes: [
 			{ type: ValueType.MAP, mult: SequenceMultiplicity.EXACTLY_ONE },
@@ -223,7 +223,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: MAP_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.MAP_NAMESPACE_URI,
 		localName: 'entry',
 		argumentTypes: [
 			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.EXACTLY_ONE },
@@ -234,7 +234,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: MAP_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.MAP_NAMESPACE_URI,
 		localName: 'for-each',
 		// TODO: reimplement type checking by parsing the types
 		argumentTypes: [
@@ -246,7 +246,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: MAP_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.MAP_NAMESPACE_URI,
 		localName: 'get',
 		argumentTypes: [
 			{ type: ValueType.MAP, mult: SequenceMultiplicity.EXACTLY_ONE },
@@ -257,7 +257,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: MAP_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.MAP_NAMESPACE_URI,
 		localName: 'keys',
 		argumentTypes: [{ type: ValueType.MAP, mult: SequenceMultiplicity.EXACTLY_ONE }],
 		returnType: { type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_MORE },
@@ -265,7 +265,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: MAP_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.MAP_NAMESPACE_URI,
 		localName: 'merge',
 		argumentTypes: [
 			{ type: ValueType.MAP, mult: SequenceMultiplicity.ZERO_OR_MORE },
@@ -276,7 +276,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: MAP_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.MAP_NAMESPACE_URI,
 		localName: 'merge',
 		argumentTypes: [{ type: ValueType.MAP, mult: SequenceMultiplicity.ZERO_OR_MORE }],
 		returnType: { type: ValueType.MAP, mult: SequenceMultiplicity.EXACTLY_ONE },
@@ -302,7 +302,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: MAP_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.MAP_NAMESPACE_URI,
 		localName: 'put',
 		argumentTypes: [
 			{ type: ValueType.MAP, mult: SequenceMultiplicity.EXACTLY_ONE },
@@ -314,7 +314,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: MAP_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.MAP_NAMESPACE_URI,
 		localName: 'remove',
 		argumentTypes: [
 			{ type: ValueType.MAP, mult: SequenceMultiplicity.EXACTLY_ONE },
@@ -325,7 +325,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		namespaceURI: MAP_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.MAP_NAMESPACE_URI,
 		localName: 'size',
 		argumentTypes: [{ type: ValueType.MAP, mult: SequenceMultiplicity.EXACTLY_ONE }],
 		returnType: { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.EXACTLY_ONE },
