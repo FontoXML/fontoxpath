@@ -22,7 +22,7 @@ const OPERATOR_TRANSLATION: { [s: string]: string } = {
  * @param secondType the type of the second operand
  * @returns a tuple of the targetTypes, at least one of them is undefined
  */
-function typeCheck(firstType: ValueType, secondType: ValueType): [ValueType, ValueType] {
+function determineTargetType(firstType: ValueType, secondType: ValueType): [ValueType, ValueType] {
 	let firstTargetType: ValueType;
 	let secondTargetType: ValueType;
 
@@ -82,10 +82,10 @@ export default function generalCompare(
 					// In all other cases, V is cast to the primitive base type of T.
 					let secondValue = allSecondValues[i];
 
-					const [firstTargetType, secondTargetType]: [ValueType, ValueType] = typeCheck(
-						firstValue.type,
-						secondValue.type
-					);
+					const [firstTargetType, secondTargetType]: [
+						ValueType,
+						ValueType
+					] = determineTargetType(firstValue.type, secondValue.type);
 					if (firstTargetType) firstValue = castToType(firstValue, firstTargetType);
 					else if (secondTargetType)
 						secondValue = castToType(secondValue, secondTargetType);
@@ -109,6 +109,13 @@ export default function generalCompare(
 	);
 }
 
+/**
+ * A function that uses the typeInformation from the annotation to determine an evaluationFunction.
+ * @param operator The compare operator
+ * @param firstType The type of the left operand
+ * @param secondType The type of the right operand
+ * @returns The evaluation function
+ */
 export function getGeneralCompareEvaluationFunction(
 	operator: string,
 	firstType: SequenceType,
@@ -116,7 +123,7 @@ export function getGeneralCompareEvaluationFunction(
 ): (first: ISequence, second: ISequence, dynamicContex: DynamicContext) => boolean {
 	operator = OPERATOR_TRANSLATION[operator];
 
-	const [firstTargetType, secondTargetType]: [ValueType, ValueType] = typeCheck(
+	const [firstTargetType, secondTargetType]: [ValueType, ValueType] = determineTargetType(
 		firstType.type,
 		secondType.type
 	);
@@ -140,6 +147,13 @@ export function getGeneralCompareEvaluationFunction(
 	}
 }
 
+/**
+ * A function to generate the GeneralCompareFunction when the multiplicity is ZERO_OR_MORE or ONE_OR_MORE.
+ * @param firstTargetType If the type is defined cast the left operand to this type
+ * @param secondTargetType If the type is defined cast the right operand to this type
+ * @param compareFunction The generated valueCompareFunction
+ * @returns The GeneralCompare evaluation function
+ */
 function generateMultipleGeneralCompareFunction(
 	firstTargetType: ValueType,
 	secondTargetType: ValueType,
@@ -182,6 +196,13 @@ function generateMultipleGeneralCompareFunction(
 	};
 }
 
+/**
+ * A function to generate the GeneralCompareFunction when the multiplicity is ZERO_OR_ONE.
+ * @param firstTargetType If the type is defined cast the left operand to this type
+ * @param secondTargetType If the type is defined cast the right operand to this type
+ * @param compareFunction The generated valueCompareFunction
+ * @returns The GeneralCompare evaluation function
+ */
 function generateSingleGeneralCompareFunction(
 	firstTargetType: ValueType,
 	secondTargetType: ValueType,
