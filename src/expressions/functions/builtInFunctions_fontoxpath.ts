@@ -11,7 +11,7 @@ import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value, { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionSpecificStaticContext from '../ExecutionSpecificStaticContext';
-import { FONTOXPATH_NAMESPACE_URI, FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
 import StaticContext from '../StaticContext';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import { IIterator, IterationHint } from '../util/iterators';
@@ -52,7 +52,7 @@ const fontoxpathEvaluate: FunctionDefinitionType = (
 						vars[varName] = varName;
 						return vars;
 					}, {}),
-					FUNCTIONS_NAMESPACE_URI,
+					BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 					(lexicalName, arity) => staticContext.resolveFunctionName(lexicalName, arity)
 				);
 				const innerStaticContext = new StaticContext(executionSpecificStaticContext);
@@ -147,14 +147,14 @@ const declarations: BuiltinDeclarationType[] = [
 		],
 		callFunction: fontoxpathEvaluate,
 		localName: 'evaluate',
-		namespaceURI: FONTOXPATH_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FONTOXPATH_NAMESPACE_URI,
 		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 	{
 		argumentTypes: [],
 		callFunction: fontoxpathVersion,
 		localName: 'version',
-		namespaceURI: FONTOXPATH_NAMESPACE_URI,
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FONTOXPATH_NAMESPACE_URI,
 		returnType: { type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
 	},
 ];
