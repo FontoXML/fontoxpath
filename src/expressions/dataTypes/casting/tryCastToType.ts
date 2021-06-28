@@ -66,7 +66,7 @@ export function castToPrimitiveType(from: ValueType, to: ValueType): (value: Val
 			// This case exists because numeric is a union type.
 			// It needs to be turned into a concrete type
 			// (almost always a double).
-			return castToNumeric(castToPrimitiveType);
+			return castToNumeric(from, castToPrimitiveType);
 		case ValueType.XSDURATION:
 			return castToDuration(instanceOf);
 		case ValueType.XSYEARMONTHDURATION:
