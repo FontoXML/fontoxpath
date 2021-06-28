@@ -266,4 +266,57 @@ declare function x:fn () external;`);
 			)
 		).to.equal('meep');
 	});
+
+	it('can export variables with namespaces to a query', () => {
+		const foo = 'https://example.com/foo';
+
+		registerXQueryModule(`module namespace foo = "${foo}";
+declare variable $foo:var := "hello world";`);
+
+		const URI_BY_PREFIX: { [key: string]: string } = { foo };
+		const xQueryOptions = {
+			namespaceResolver: (prefix: string) => URI_BY_PREFIX[prefix],
+			language: evaluateXPath.XQUERY_3_1_LANGUAGE,
+			moduleImports: URI_BY_PREFIX,
+		};
+
+		chai.assert.equal(
+			evaluateXPath(
+				`import module namespace foo = "${foo}";
+$foo:var`,
+				null,
+				null,
+				null,
+				undefined,
+				xQueryOptions
+			),
+			'hello world'
+		);
+	});
+
+	it('can propagate variables with namespaces in modules', () => {
+		const foo = 'https://example.com/foo.dtd';
+		const bar = 'https://example.com/bar.dtd';
+
+		registerXQueryModule(`module namespace foo = "${foo}";
+declare variable $foo:var := "hello world";`);
+
+		registerXQueryModule(`module namespace bar = "${bar}";
+import module namespace foo = "${foo}";
+declare function bar:baz() {
+  $foo:var
+};`);
+
+		const URI_BY_PREFIX: { [key: string]: string } = { foo, bar };
+		const xQueryOptions = {
+			namespaceResolver: (prefix: string) => URI_BY_PREFIX[prefix],
+			language: evaluateXPath.XQUERY_3_1_LANGUAGE,
+			moduleImports: URI_BY_PREFIX,
+		};
+
+		chai.assert.equal(
+			evaluateXPathToString(`bar:baz()`, null, null, null, xQueryOptions),
+			'hello world'
+		);
+	});
 });

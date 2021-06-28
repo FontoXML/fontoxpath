@@ -6,7 +6,7 @@ import { FunctionProperties } from './functions/functionRegistry';
 
 export default interface IContext {
 	registeredDefaultFunctionNamespaceURI: string | null;
-	registeredVariableBindingByHashKey: any[];
+	registeredVariableBindingByHashKey: { [s: string]: string }[];
 	registeredVariableDeclarationByHashKey: {
 		[hash: string]: (
 			dynamicContext: DynamicContext,

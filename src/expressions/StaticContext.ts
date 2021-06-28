@@ -51,7 +51,7 @@ export type UpdatingFunctionDefinition = GenericFunctionDefinition<
 export default class StaticContext implements IContext {
 	public parentContext: IContext;
 	public registeredDefaultFunctionNamespaceURI: string;
-	public registeredVariableBindingByHashKey: any[];
+	registeredVariableBindingByHashKey: { [s: string]: string }[];
 	public registeredVariableDeclarationByHashKey: {
 		[hash: string]: (
 			dynamicContext: DynamicContext,

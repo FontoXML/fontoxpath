@@ -6,7 +6,7 @@ import StaticContext from './expressions/StaticContext';
 import astHelper from './parsing/astHelper';
 import { loadModuleFile } from './parsing/globalModuleCache';
 import parseExpression from './parsing/parseExpression';
-import processProlog, { FunctionDeclaration } from './parsing/processProlog';
+import processProlog, { FunctionDeclaration, VariableDeclaration } from './parsing/processProlog';
 import annotateAst from './typeInference/annotateAST';
 import { AnnotationContext } from './typeInference/AnnotationContext';
 import { NamespaceResolver } from './types/Options';
@@ -55,6 +55,7 @@ export default function registerXQueryModule(
 	if (prolog !== null) {
 		let moduleDeclaration: {
 			functionDeclarations: FunctionDeclaration[];
+			variableDeclarations: VariableDeclaration[];
 		};
 		try {
 			moduleDeclaration = processProlog(prolog, staticContext);
@@ -71,7 +72,10 @@ export default function registerXQueryModule(
 
 		loadModuleFile(moduleTargetNamespaceURI, moduleDeclaration);
 	} else {
-		loadModuleFile(moduleTargetNamespaceURI, { functionDeclarations: [] });
+		loadModuleFile(moduleTargetNamespaceURI, {
+			functionDeclarations: [],
+			variableDeclarations: [],
+		});
 	}
 
 	return moduleTargetNamespaceURI;
