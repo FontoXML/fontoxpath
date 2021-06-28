@@ -282,7 +282,7 @@ export function stringToValueType(input: string): ValueType {
 	const type = stringToValueTypeMap[input];
 
 	if (type === undefined) {
-		throw new Error(`XPST0051: Cannot convert String of type "${input}" to ValueType`);
+		throw new Error(`XPST0051: The type "${input}" could not be found`);
 	}
 
 	return type;

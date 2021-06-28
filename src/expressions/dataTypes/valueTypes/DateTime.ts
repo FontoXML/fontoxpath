@@ -1,4 +1,4 @@
-import { ValueType } from '../Value';
+import { ValueType, valueTypeToString } from '../Value';
 import AbstractDuration from './AbstractDuration';
 import DayTimeDuration from './DayTimeDuration';
 
@@ -466,11 +466,13 @@ export function subtract(
 }
 
 export function addDuration(dateTime: DateTime, _duration: AbstractDuration): DateTime {
-	throw new Error(`Not implemented: adding durations to ${dateTime.type}`);
+	throw new Error(`Not implemented: adding durations to ${valueTypeToString(dateTime.type)}`);
 }
 
 export function subtractDuration(dateTime: DateTime, _duration: AbstractDuration): DateTime {
-	throw new Error(`Not implemented: subtracting durations from ${dateTime.type}`);
+	throw new Error(
+		`Not implemented: subtracting durations from ${valueTypeToString(dateTime.type)}`
+	);
 }
 
 export default DateTime;

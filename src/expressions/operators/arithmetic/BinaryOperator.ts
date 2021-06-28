@@ -343,7 +343,7 @@ class BinaryOperator extends Expression {
 					throw new Error(
 						`XPTY0004: ${this._operator} not available for types ${valueTypeToString(
 							firstValue.type
-						)} and ${valueTypeToString(firstValue.type)}`
+						)} and ${valueTypeToString(secondValue.type)}`
 					);
 				}
 

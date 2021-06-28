@@ -1,3 +1,4 @@
+import { errFORG0001 } from '../../../expressions/XPathErrors';
 import AtomicValue from '../AtomicValue';
 import createAtomicValue from '../createAtomicValue';
 import isSubtypeOf from '../isSubtypeOf';
@@ -65,7 +66,7 @@ export function castToPrimitiveType(from: ValueType, to: ValueType): (value: Val
 			// This case exists because numeric is a union type.
 			// It needs to be turned into a concrete type
 			// (almost always a double).
-			return castToNumeric(castToPrimitiveType);
+			return castToNumeric(from, castToPrimitiveType);
 		case ValueType.XSDURATION:
 			return castToDuration(instanceOf);
 		case ValueType.XSYEARMONTHDURATION:
@@ -185,9 +186,7 @@ function createCastingFunction(from: ValueType, to: ValueType): (value: Value) =
 			if (!validatePattern(strValue, to)) {
 				return {
 					successful: false,
-					error: new Error(
-						`FORG0001: Cannot cast ${value} to ${to}, pattern validation failed.`
-					),
+					error: errFORG0001(value, to, 'pattern validation failed.'),
 				};
 			}
 			return {
@@ -211,9 +210,7 @@ function createCastingFunction(from: ValueType, to: ValueType): (value: Value) =
 			if (!validatePattern(typedValue, to)) {
 				return {
 					successful: false,
-					error: new Error(
-						`FORG0001: Cannot cast ${typedValue} to ${to}, pattern validation failed.`
-					),
+					error: errFORG0001(typedValue, to, 'pattern validation failed.'),
 				};
 			}
 			return {
@@ -227,9 +224,7 @@ function createCastingFunction(from: ValueType, to: ValueType): (value: Value) =
 		if (!validateRestrictions(typedValue, to)) {
 			return {
 				successful: false,
-				error: new Error(
-					`FORG0001: Cannot cast "${typedValue}" to ${to}, restriction validation failed.`
-				),
+				error: errFORG0001(typedValue, to, 'pattern validation failed.'),
 			};
 		}
 		return {

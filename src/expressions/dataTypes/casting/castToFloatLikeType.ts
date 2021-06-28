@@ -1,3 +1,4 @@
+import { errFORG0001 } from '../../../expressions/XPathErrors';
 import { ValueType } from '../Value';
 
 export default function castToFloatLikeType(
@@ -56,7 +57,7 @@ export default function castToFloatLikeType(
 			}
 			return {
 				successful: false,
-				error: new Error(`FORG0001: Cannot cast "${value}" to ${to}.`),
+				error: errFORG0001(value, to),
 			};
 		};
 	}
