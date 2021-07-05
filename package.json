@@ -84,7 +84,7 @@
 		"karma-firefox-launcher": "^2.1.1",
 		"karma-mocha": "^2.0.1",
 		"karma-typescript": "^5.5.1",
-		"mocha": "^8.4.0",
+		"mocha": "^7.2.0",
 		"node-static": "^0.7.11",
 		"nyc": "^15.1.0",
 		"peggy": "^1.2.0",
