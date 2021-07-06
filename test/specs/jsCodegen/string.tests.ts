@@ -5,6 +5,7 @@ import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 import { ReturnType } from 'fontoxpath';
 import evaluateXPathWithJsCodegen from './evaluateXPathWithJsCodegen';
+import { sanitizeString } from 'fontoxpath/jsCodegen/escapeJavaScriptString';
 
 describe('string tests', () => {
 	let documentNode: slimdom.Document;
@@ -29,8 +30,25 @@ describe('string tests', () => {
 
 	it('test simple string expression true', () => {
 		chai.assert.equal(
-			evaluateXPathWithJsCodegen("'he\"llo'", documentNode, null, ReturnType.STRING, {}),
-			'he"llo'
+			evaluateXPathWithJsCodegen("'he''llo'", documentNode, null, ReturnType.STRING, {}),
+			"he'llo"
+		);
+	});
+
+	it('test sanitize string', () => {
+		chai.assert.equal(sanitizeString('hello\\'), 'hello\\\\');
+	});
+
+	it('test string expression malicous code', () => {
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen(
+				"''' || console.log(3); //'",
+				documentNode,
+				null,
+				ReturnType.STRING,
+				{}
+			),
+			''
 		);
 	});
 });

@@ -23,4 +23,8 @@ function escapeJavaScriptString(untrustedString: string): string {
 		.replace(/\u2029/g, '\\u2029'); // PARAGRAPH SEPARATOR
 }
 
+export function sanitizeString(untrustedString: string): string {
+	return untrustedString.replace('\\', '\\\\').replace("'", "\\'");
+}
+
 export default escapeJavaScriptString;
