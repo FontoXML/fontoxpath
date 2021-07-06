@@ -2,6 +2,7 @@ import { NODE_TYPES } from '../domFacade/ConcreteNode';
 import astHelper, { IAST } from '../parsing/astHelper';
 import emitStep from './emitStep';
 import emitTest, { tests } from './emitTest';
+import escapeJavaScriptString from './escapeJavaScriptString';
 import {
 	acceptAst,
 	FunctionIdentifier,
@@ -254,7 +255,8 @@ function emitStringLiteralExpression(
 	identifier: FunctionIdentifier,
 	staticContext: StaticContext
 ): PartialCompilationResult {
-	const text = astHelper.getFirstChild(ast, 'value')[1] as string;
+	let text = astHelper.getFirstChild(ast, 'value')[1] as string;
+	text = escapeJavaScriptString(text);
 	return acceptAst(`
 	function ${identifier}(contextItem) {
 		return '${text}';

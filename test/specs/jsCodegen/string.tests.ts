@@ -15,7 +15,7 @@ describe('string tests', () => {
 
 	it('test simple string expression true', () => {
 		chai.assert.equal(
-			evaluateXPathWithJsCodegen("'hello'", documentNode, null, ReturnType.STRING, {}),
+			evaluateXPathWithJsCodegen('"hello"', documentNode, null, ReturnType.STRING, {}),
 			'hello'
 		);
 	});
@@ -24,6 +24,13 @@ describe('string tests', () => {
 		chai.assert.notEqual(
 			evaluateXPathWithJsCodegen("'hello!'", documentNode, null, ReturnType.STRING, {}),
 			'hello'
+		);
+	});
+
+	it('test simple string expression true', () => {
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen("'he\"llo'", documentNode, null, ReturnType.STRING, {}),
+			'he"llo'
 		);
 	});
 });
