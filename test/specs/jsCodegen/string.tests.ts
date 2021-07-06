@@ -48,7 +48,7 @@ describe('string tests', () => {
 				ReturnType.STRING,
 				{}
 			),
-			''
+			"' || console.log(3); //"
 		);
 	});
 });
