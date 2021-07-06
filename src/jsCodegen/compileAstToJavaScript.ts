@@ -30,6 +30,12 @@ function emitEvaluationToBoolean(identifier: string): PartiallyCompiledAstAccept
 	`);
 }
 
+function emitEvaluationToStrings(identifier: string): PartiallyCompiledAstAccepted {
+	return acceptAst(`
+	return ${identifier}(contextItem);
+	`);
+}
+
 function emitEvaluationToFirstNode(identifier: string): PartiallyCompiledAstAccepted {
 	return acceptAst(`
 	const firstResult = ${identifier}(contextItem).next();
@@ -51,6 +57,8 @@ function emitReturnTypeConversion(
 			return emitEvaluationToNodes(identifier);
 		case ReturnType.BOOLEAN:
 			return emitEvaluationToBoolean(identifier);
+		case ReturnType.STRING:
+			return emitEvaluationToStrings(identifier);
 		default:
 			return rejectAst(`Unsupported: the return type '${returnType}'.`);
 	}
