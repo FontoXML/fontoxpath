@@ -9,7 +9,7 @@ import { Language, Options } from '../types/Options';
 import compileAstToJavaScript from './compileAstToJavaScript';
 import { JavaScriptCompiledXPathResult } from './JavaScriptCompiledXPath';
 import { StaticContext } from './StaticContext';
-import { AnnotationContext } from 'src/typeInference/AnnotationContext';
+import { AnnotationContext } from '../typeInference/AnnotationContext';
 
 /**
  * Compile a given query to JavaScript code. For executing compiled code, see
