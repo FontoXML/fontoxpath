@@ -254,8 +254,12 @@ function emitStringLiteralExpression(
 	identifier: FunctionIdentifier,
 	staticContext: StaticContext
 ): PartialCompilationResult {
-	// console.log('Its string literal expression time');
-	return null;
+	const text = astHelper.getFirstChild(ast, 'value')[1] as string;
+	return acceptAst(`
+	function ${identifier}(contextItem) {
+		return '${text}';
+	}
+	`);
 }
 
 // Compile AST to base expression contained in a function named as the given
