@@ -8,6 +8,8 @@ import { XPDY0002 } from '../expressions/XPathErrors';
 export function determinePredicateTruthValue(iterator: { next: () => IterationResult<Value> }) {
 	if (typeof iterator === 'boolean') {
 		return iterator;
+	} else if (typeof iterator === 'string') {
+		return iterator;
 	}
 
 	const firstResult = iterator.next();

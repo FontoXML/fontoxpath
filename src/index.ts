@@ -108,7 +108,7 @@ const evaluateXPathWithJsCodegen = <
 	}
 };
 
-// evaluateXPathWithJsCodegen("'Hello World'", null, null, ReturnType.STRING);
+console.log(evaluateXPathWithJsCodegen('"" or \'\'', null, null, ReturnType.STRING));
 
 function parseXPath(xpathString: string) {
 	const cachedExpression = getAnyStaticCompilationResultFromCache(xpathString, 'XPath', false);

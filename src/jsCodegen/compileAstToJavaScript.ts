@@ -92,6 +92,24 @@ function wrapCompiledCode(code: string): string {
 	`;
 }
 
+function wrapCompiledCodeWithoutXPath(code: string): string {
+	return `
+	return (contextItem, domFacade, runtimeLib) => {
+		const {
+			DONE_TOKEN,
+			ValueType,
+			XPDY0002,
+			adaptSingleJavaScriptValue,
+			determinePredicateTruthValue,
+			isSubtypeOf,
+			ready,
+		} = runtimeLib;
+
+		${code}
+	}
+	`;
+}
+
 const compiledXPathIdentifier = 'compiledXPathExpression';
 
 function compileAstToJavaScript(
@@ -131,9 +149,25 @@ function compileAstToJavaScript(
 
 	const code = emittedVariables + compiledBaseExpr.code + returnTypeConversionCode.code;
 
-	const wrappedCode = wrapCompiledCode(code);
+	let wrappedCode;
+	if (checkForPathExpression(xPathAst)) {
+		wrappedCode = wrapCompiledCode(code);
+	} else {
+		wrappedCode = wrapCompiledCodeWithoutXPath(code);
+	}
 
 	return acceptFullyCompiledAst(wrappedCode);
+}
+
+function checkForPathExpression(ast: IAST): boolean {
+	const children = astHelper.getChildren(ast, '*');
+	if (ast[0] === 'pathExpr') return true;
+	for (let i = 0; i < children.length; i++) {
+		if (checkForPathExpression(children[i])) {
+			return true;
+		}
+	}
+	return false;
 }
 
 export default compileAstToJavaScript;
