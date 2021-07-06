@@ -14,6 +14,7 @@ const baseExprAstNodes = {
 	PATH_EXPR: 'pathExpr',
 	AND_OP: 'andOp',
 	OR_OP: 'orOp',
+	STRING_LIT_OP: 'stringConstantExpr',
 };
 
 const baseExpressions = Object.values(baseExprAstNodes);
@@ -227,7 +228,7 @@ function emitLogicalExpr(
 	identifier: FunctionIdentifier,
 	staticContext: StaticContext,
 	logicalExprOperator: '&&' | '||'
-) {
+): PartialCompilationResult {
 	const firstExpr = emitOperand(ast, identifier, firstOperandIdentifier, staticContext);
 	if (!firstExpr.isAstAccepted) {
 		return firstExpr;
@@ -248,6 +249,15 @@ function emitLogicalExpr(
 	return acceptAst(andOpCode);
 }
 
+function emitStringLiteralExpression(
+	ast: IAST,
+	identifier: FunctionIdentifier,
+	staticContext: StaticContext
+): PartialCompilationResult {
+	// console.log('Its string literal expression time');
+	return null;
+}
+
 // Compile AST to base expression contained in a function named as the given
 // identifier.
 export function emitBaseExpr(
@@ -264,6 +274,8 @@ export function emitBaseExpr(
 			return emitAndExpr(ast, identifier, staticContext);
 		case baseExprAstNodes.OR_OP:
 			return emitOrExpr(ast, identifier, staticContext);
+		case baseExprAstNodes.STRING_LIT_OP:
+			return emitStringLiteralExpression(ast, identifier, staticContext);
 		default:
 			return rejectAst(`Unsupported: the base expression '${name}'.`);
 	}
