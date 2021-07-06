@@ -14,7 +14,7 @@ const baseExprAstNodes = {
 	PATH_EXPR: 'pathExpr',
 	AND_OP: 'andOp',
 	OR_OP: 'orOp',
-	STRING_LIT_OP: 'stringConstantExpr',
+	STRING_LIT_EXPR: 'stringConstantExpr',
 };
 
 const baseExpressions = Object.values(baseExprAstNodes);
@@ -274,7 +274,7 @@ export function emitBaseExpr(
 			return emitAndExpr(ast, identifier, staticContext);
 		case baseExprAstNodes.OR_OP:
 			return emitOrExpr(ast, identifier, staticContext);
-		case baseExprAstNodes.STRING_LIT_OP:
+		case baseExprAstNodes.STRING_LIT_EXPR:
 			return emitStringLiteralExpression(ast, identifier, staticContext);
 		default:
 			return rejectAst(`Unsupported: the base expression '${name}'.`);
