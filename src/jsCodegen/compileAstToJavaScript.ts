@@ -30,6 +30,7 @@ function emitEvaluationToBoolean(identifier: string): PartiallyCompiledAstAccept
 	`);
 }
 
+// Strings can just be returned as is so lets do that
 function emitEvaluationToString(identifier: string): PartiallyCompiledAstAccepted {
 	return acceptAst(`
 	return ${identifier}(contextItem);
@@ -64,8 +65,8 @@ function emitReturnTypeConversion(
 	}
 }
 
-function wrapCompiledCode(code: string): string {
-	return `
+function wrapCompiledCode(code: string, shouldUseContextItem: boolean): string {
+	let finalCode = `
 	return (contextItem, domFacade, runtimeLib) => {
 		const {
 			DONE_TOKEN,
@@ -75,8 +76,10 @@ function wrapCompiledCode(code: string): string {
 			determinePredicateTruthValue,
 			isSubtypeOf,
 			ready,
-		} = runtimeLib;
+		} = runtimeLib;`;
 
+	if (shouldUseContextItem) {
+		finalCode += `
 		if (!contextItem) {
 			throw XPDY0002("Context is needed to evaluate the given path expression.");
 		}
@@ -85,29 +88,12 @@ function wrapCompiledCode(code: string): string {
 			throw new Error("Context item must be subtype of node().");
 		}
 
-		contextItem = contextItem.value.node;
-
-		${code}
+		contextItem = contextItem.value.node;`;
 	}
-	`;
-}
 
-function wrapCompiledCodeWithoutContextItem(code: string): string {
-	return `
-	return (contextItem, domFacade, runtimeLib) => {
-		const {
-			DONE_TOKEN,
-			ValueType,
-			XPDY0002,
-			adaptSingleJavaScriptValue,
-			determinePredicateTruthValue,
-			isSubtypeOf,
-			ready,
-		} = runtimeLib;
+	finalCode += code + `}`;
 
-		${code}
-	}
-	`;
+	return finalCode;
 }
 
 const compiledXPathIdentifier = 'compiledXPathExpression';
@@ -149,9 +135,9 @@ function compileAstToJavaScript(
 
 	const code = emittedVariables + compiledBaseExpr.code + returnTypeConversionCode.code;
 
-	let wrappedCode = checkForContextItemInExpression(xPathAst)
-		? wrapCompiledCode(code)
-		: wrapCompiledCodeWithoutContextItem(code);
+	const requiresContext = checkForContextItemInExpression(xPathAst);
+
+	const wrappedCode = wrapCompiledCode(code, requiresContext);
 
 	return acceptFullyCompiledAst(wrappedCode);
 }

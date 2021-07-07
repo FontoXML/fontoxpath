@@ -250,6 +250,7 @@ function emitLogicalExpr(
 	return acceptAst(andOpCode);
 }
 
+// Create a javascript function that returns the string literal
 function emitStringLiteralExpression(
 	ast: IAST,
 	identifier: FunctionIdentifier,
