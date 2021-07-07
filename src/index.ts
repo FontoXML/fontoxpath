@@ -108,7 +108,9 @@ const evaluateXPathWithJsCodegen = <
 	}
 };
 
-console.log(evaluateXPathWithJsCodegen('"" or \'\'', null, null, ReturnType.STRING));
+// console.log(evaluateXPathWithJsCodegen("<![CDATA['&#;']]>", null, null, ReturnType.STRING), {
+// 	language: Language.XQUERY_3_1_LANGUAGE,
+// });
 
 function parseXPath(xpathString: string) {
 	const cachedExpression = getAnyStaticCompilationResultFromCache(xpathString, 'XPath', false);
