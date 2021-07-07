@@ -142,6 +142,10 @@ function compileAstToJavaScript(
 	return acceptFullyCompiledAst(wrappedCode);
 }
 
+// This function is used to check if a query requires a context.
+// This implementation is temporary and will be removed when codegen gets combined with the annotation.
+//
+// TODO: replace this with context info from the annotation step
 function checkForContextItemInExpression(ast: IAST): boolean {
 	const children = astHelper.getChildren(ast, '*');
 	if (ast[0] === 'pathExpr') {
