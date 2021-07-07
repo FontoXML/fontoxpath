@@ -26,7 +26,7 @@ describe('string tests', () => {
 		);
 	});
 
-	it('test simple string expression true', () => {
+	it('test simple string expression with escaping', () => {
 		chai.assert.equal(
 			evaluateXPathWithJsCodegen("'he''llo'", documentNode, null, ReturnType.STRING, {}),
 			"he'llo"
