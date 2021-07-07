@@ -92,7 +92,7 @@ function wrapCompiledCode(code: string): string {
 	`;
 }
 
-function wrapCompiledCodeWithoutXPath(code: string): string {
+function wrapCompiledCodeWithoutContextItem(code: string): string {
 	return `
 	return (contextItem, domFacade, runtimeLib) => {
 		const {
@@ -149,21 +149,20 @@ function compileAstToJavaScript(
 
 	const code = emittedVariables + compiledBaseExpr.code + returnTypeConversionCode.code;
 
-	let wrappedCode;
-	if (checkForPathExpression(xPathAst)) {
-		wrappedCode = wrapCompiledCode(code);
-	} else {
-		wrappedCode = wrapCompiledCodeWithoutXPath(code);
-	}
+	let wrappedCode = checkForContextItemInExpression(xPathAst)
+		? wrapCompiledCode(code)
+		: wrapCompiledCodeWithoutContextItem(code);
 
 	return acceptFullyCompiledAst(wrappedCode);
 }
 
-function checkForPathExpression(ast: IAST): boolean {
+function checkForContextItemInExpression(ast: IAST): boolean {
 	const children = astHelper.getChildren(ast, '*');
-	if (ast[0] === 'pathExpr') return true;
-	for (let i = 0; i < children.length; i++) {
-		if (checkForPathExpression(children[i])) {
+	if (ast[0] === 'pathExpr') {
+		return true;
+	}
+	for (const child of children) {
+		if (checkForContextItemInExpression(child)) {
 			return true;
 		}
 	}
