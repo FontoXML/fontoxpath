@@ -369,7 +369,7 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 					() => {
 						const compiled = compileXPathToJavaScript(xpath, ReturnType.NODES, {
 							namespaceResolver,
-							language: language,
+							language,
 						});
 						if (compiled.isAstAccepted === true) {
 							// tslint:disable-next-line
