@@ -11,6 +11,9 @@ import {
 } from './JavaScriptCompiledXPath';
 import { StaticContext } from './StaticContext';
 
+/**
+ * The currently supported expressions for code generation.
+ */
 const baseExprAstNodes = {
 	PATH_EXPR: 'pathExpr',
 	AND_OP: 'andOp',
@@ -20,6 +23,14 @@ const baseExprAstNodes = {
 
 const baseExpressions = Object.values(baseExprAstNodes);
 
+/**
+ * Determines for every path step if it should emit a node or not.
+ *
+ * @param predicatesAst AST node for the predicate.
+ * @param nestLevel The nest level within the path expression.
+ * @param staticContext Static context parameter to retrieve context-dependent information.
+ * @returns JavaScript code of the steps predicates.
+ */
 function emitPredicates(
 	predicatesAst: IAST,
 	nestLevel: number,
@@ -60,6 +71,13 @@ function emitPredicates(
 	return acceptAst(evaluatePredicateConditionCode, functionDeclarations);
 }
 
+/**
+ * Takes the step AST's of a path expression and turns it into runnable JavaScript code.
+ *
+ * @param stepsAst AST nodes of the path expression steps
+ * @param staticContext Static context parameter to retrieve context-dependent information.
+ * @returns JavaScript code of the path expression steps.
+ */
 function emitSteps(stepsAst: IAST[], staticContext: StaticContext): PartialCompilationResult {
 	if (stepsAst.length === 0) {
 		return acceptAst(
@@ -132,9 +150,18 @@ function emitSteps(stepsAst: IAST[], staticContext: StaticContext): PartialCompi
 	return acceptAst(emittedCode, emittedVariables);
 }
 
-// A path expression can be used to locate nodes within trees. A path expression
-// consists of a series of one or more steps.
-// https://www.w3.org/TR/xpath-31/#doc-xpath31-PathExpr
+/**
+ * Takes a path expression AST node and turns it into a javascript function.
+ * Path expression can be used to locate nodes within trees and they
+ * consist of a series of one or more steps.
+ *
+ * https://www.w3.org/TR/xpath-31/#doc-xpath31-PathExpr
+ *
+ * @param ast AST node of the path expression
+ * @param identifier Function identifier for the emitted code.
+ * @param staticContext Static context parameter to retrieve context-dependent information.
+ * @returns JavaScript code of the path expression AST node.
+ */
 function emitPathExpr(
 	ast: IAST,
 	identifier: FunctionIdentifier,
@@ -182,6 +209,16 @@ function emitPathExpr(
 const firstOperandIdentifier = 'firstOperand';
 const secondOperandIdentifier = 'secondOperand';
 
+/**
+ * Retrieves the first or second operand for an operator AST node and wraps
+ * it in a function.
+ *
+ * @param ast Base AST node for which get either the first or second operand.
+ * @param identifier Function identifier for the emitted code.
+ * @param operandKind Indicates if it's the first or second operand for an operator.
+ * @param staticContext Static context parameter to retrieve context-dependent information.
+ * @returns JavaScript code of the operand.
+ */
 function emitOperand(
 	ast: IAST,
 	identifier: FunctionIdentifier,
@@ -206,7 +243,16 @@ function emitOperand(
 	]);
 }
 
-// https://www.w3.org/TR/xpath-31/#doc-xpath31-AndExpr
+/**
+ * Helper function to compile an and expressions to a JavaScript function.
+ *
+ * https://www.w3.org/TR/xpath-31/#doc-xpath31-AndExpr
+ *
+ * @param ast Logical expression AST node.
+ * @param identifier Function identifier for the emitted function
+ * @param staticContext Static context parameter to retrieve context-dependent information.
+ * @returns Wrapped and expression.
+ */
 function emitAndExpr(
 	ast: IAST,
 	identifier: FunctionIdentifier,
@@ -215,7 +261,16 @@ function emitAndExpr(
 	return emitLogicalExpr(ast, identifier, staticContext, '&&');
 }
 
-// https://www.w3.org/TR/xpath-31/#doc-xpath31-OrExpr
+/**
+ * Helper function to compile an or expressions to a JavaScript function.
+ *
+ * https://www.w3.org/TR/xpath-31/#doc-xpath31-OrExpr
+ *
+ * @param ast Logical expression AST node.
+ * @param identifier Function identifier for the emitted function
+ * @param staticContext Static context parameter to retrieve context-dependent information.
+ * @returns Wrapped or expression.
+ */
 function emitOrExpr(
 	ast: IAST,
 	identifier: FunctionIdentifier,
@@ -224,6 +279,17 @@ function emitOrExpr(
 	return emitLogicalExpr(ast, identifier, staticContext, '||');
 }
 
+/**
+ * Compiles the and and or logical expressions to a JavaScript function.
+ *
+ * https://www.w3.org/TR/xpath-31/#id-logical-expressions
+ *
+ * @param ast Logical expression AST node.
+ * @param identifier Function identifier for the emitted function
+ * @param staticContext Static context parameter to retrieve context-dependent information.
+ * @param logicalExprOperator The exact operator that will be compiled. Can be either && or ||.
+ * @returns Wrapped logical expression.
+ */
 function emitLogicalExpr(
 	ast: IAST,
 	identifier: FunctionIdentifier,
@@ -240,21 +306,28 @@ function emitLogicalExpr(
 		return secondExpr;
 	}
 
-	const andOpCode = `
+	const logicalOpCode = `
 	function ${identifier}(contextItem) {
 		${firstExpr.variables.join('\n')}
 		${secondExpr.variables.join('\n')}
 		return ${firstExpr.code} ${logicalExprOperator} ${secondExpr.code}
 	}
 	`;
-	return acceptAst(andOpCode);
+	return acceptAst(logicalOpCode);
 }
 
-// Create a javascript function that returns the string literal
+/**
+ * Create a JavaScript function that returns the string literal.
+ *
+ * https://www.w3.org/TR/xpath-31/#doc-xpath31-StringLiteral
+ *
+ * @param ast The string literal AST node
+ * @param identifier The function wrapper identifier
+ * @returns Wrapped string literal function
+ */
 function emitStringLiteralExpression(
 	ast: IAST,
-	identifier: FunctionIdentifier,
-	staticContext: StaticContext
+	identifier: FunctionIdentifier
 ): PartialCompilationResult {
 	let text = astHelper.getFirstChild(ast, 'value')[1] as string;
 	text = sanitizeString(text);
@@ -265,8 +338,15 @@ function emitStringLiteralExpression(
 	`);
 }
 
-// Compile AST to base expression contained in a function named as the given
-// identifier.
+/**
+ * Compile AST to base expression wrapped in a function named as the given identifier.
+ *
+ * @param ast The AST node to compile into a function.
+ * @param identifier The function identifier.
+ * @param staticContext Static context parameter to retrieve context-dependent information.
+ * @returns If the AST node's expression is supported for compilation, a wrapped JavaScript function.
+ * If unsupported, a wrapped error message.
+ */
 export function emitBaseExpr(
 	ast: IAST,
 	identifier: FunctionIdentifier,
@@ -282,7 +362,7 @@ export function emitBaseExpr(
 		case baseExprAstNodes.OR_OP:
 			return emitOrExpr(ast, identifier, staticContext);
 		case baseExprAstNodes.STRING_LIT_EXPR:
-			return emitStringLiteralExpression(ast, identifier, staticContext);
+			return emitStringLiteralExpression(ast, identifier);
 		default:
 			return rejectAst(`Unsupported: the base expression '${name}'.`);
 	}

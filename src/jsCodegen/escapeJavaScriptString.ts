@@ -23,6 +23,12 @@ function escapeJavaScriptString(untrustedString: string): string {
 		.replace(/\u2029/g, '\\u2029'); // PARAGRAPH SEPARATOR
 }
 
+/**
+ * Sanitizes strings to stop them from being executable during interpretation
+ * by escaping quotes and parentheses.
+ * @param untrustedString User provided string to be sanitized.
+ * @returns A sanitized version of the user string.
+ */
 export function sanitizeString(untrustedString: string): string {
 	return untrustedString.replace('\\', '\\\\').replace("'", "\\'");
 }
