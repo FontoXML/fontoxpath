@@ -49,4 +49,17 @@ describe('string tests', () => {
 			"' || console.log(3); //"
 		);
 	});
+
+	it('test xpath string escaping', () => {
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen(
+				"'child::element()'",
+				documentNode,
+				null,
+				ReturnType.STRING,
+				{}
+			),
+			'child::element()'
+		);
+	});
 });
