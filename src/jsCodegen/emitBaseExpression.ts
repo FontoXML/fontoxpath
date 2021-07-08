@@ -9,7 +9,7 @@ import {
 	PartialCompilationResult,
 	rejectAst,
 } from './JavaScriptCompiledXPath';
-import { StaticContext } from './StaticContext';
+import { CodeGenContext } from './CodeGenContext';
 
 /**
  * The currently supported expressions for code generation.
@@ -34,7 +34,7 @@ const baseExpressions = Object.values(baseExprAstNodes);
 function emitPredicates(
 	predicatesAst: IAST,
 	nestLevel: number,
-	staticContext: StaticContext
+	staticContext: CodeGenContext
 ): PartialCompilationResult {
 	let evaluatePredicateConditionCode = '';
 	const functionDeclarations: string[] = [];
@@ -78,7 +78,7 @@ function emitPredicates(
  * @param staticContext Static context parameter to retrieve context-dependent information.
  * @returns JavaScript code of the path expression steps.
  */
-function emitSteps(stepsAst: IAST[], staticContext: StaticContext): PartialCompilationResult {
+function emitSteps(stepsAst: IAST[], staticContext: CodeGenContext): PartialCompilationResult {
 	if (stepsAst.length === 0) {
 		return acceptAst(
 			`
@@ -165,7 +165,7 @@ function emitSteps(stepsAst: IAST[], staticContext: StaticContext): PartialCompi
 function emitPathExpr(
 	ast: IAST,
 	identifier: FunctionIdentifier,
-	staticContext: StaticContext
+	staticContext: CodeGenContext
 ): PartialCompilationResult {
 	// Find the root node from the context.
 	const isAbsolute = astHelper.getFirstChild(ast, 'rootExpr');
@@ -223,7 +223,7 @@ function emitOperand(
 	ast: IAST,
 	identifier: FunctionIdentifier,
 	operandKind: 'firstOperand' | 'secondOperand',
-	staticContext: StaticContext
+	staticContext: CodeGenContext
 ): PartialCompilationResult {
 	const operand = astHelper.getFirstChild(ast, operandKind);
 	const exprAst = astHelper.getFirstChild(operand, baseExpressions);
@@ -256,7 +256,7 @@ function emitOperand(
 function emitAndExpr(
 	ast: IAST,
 	identifier: FunctionIdentifier,
-	staticContext: StaticContext
+	staticContext: CodeGenContext
 ): PartialCompilationResult {
 	return emitLogicalExpr(ast, identifier, staticContext, '&&');
 }
@@ -274,7 +274,7 @@ function emitAndExpr(
 function emitOrExpr(
 	ast: IAST,
 	identifier: FunctionIdentifier,
-	staticContext: StaticContext
+	staticContext: CodeGenContext
 ): PartialCompilationResult {
 	return emitLogicalExpr(ast, identifier, staticContext, '||');
 }
@@ -293,7 +293,7 @@ function emitOrExpr(
 function emitLogicalExpr(
 	ast: IAST,
 	identifier: FunctionIdentifier,
-	staticContext: StaticContext,
+	staticContext: CodeGenContext,
 	logicalExprOperator: '&&' | '||'
 ): PartialCompilationResult {
 	const firstExpr = emitOperand(ast, identifier, firstOperandIdentifier, staticContext);
@@ -350,7 +350,7 @@ function emitStringLiteralExpression(
 export function emitBaseExpr(
 	ast: IAST,
 	identifier: FunctionIdentifier,
-	staticContext: StaticContext
+	staticContext: CodeGenContext
 ): PartialCompilationResult {
 	const name = ast[0];
 
@@ -363,6 +363,24 @@ export function emitBaseExpr(
 			return emitOrExpr(ast, identifier, staticContext);
 		case baseExprAstNodes.STRING_LIT_EXPR:
 			return emitStringLiteralExpression(ast, identifier);
+		// generalCompare
+		case 'equalOp':
+		case 'notEqualOp':
+		case 'lessThanOrEqualOp':
+		case 'lessThanOp':
+		case 'greaterThanOrEqualOp':
+		case 'greaterThanOp':
+		// valueCompare
+		case 'eqOp':
+		case 'neOp':
+		case 'ltOp':
+		case 'leOp':
+		case 'gtOp':
+		case 'geOp':
+		case 'isOp':
+		// nodeCompare
+		case 'nodeBeforeOp':
+		case 'nodeAfterOp':
 		default:
 			return rejectAst(`Unsupported: the base expression '${name}'.`);
 	}

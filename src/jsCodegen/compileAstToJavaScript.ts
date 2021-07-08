@@ -10,7 +10,7 @@ import {
 	PartiallyCompiledAstAccepted,
 	rejectAst,
 } from './JavaScriptCompiledXPath';
-import { StaticContext } from './StaticContext';
+import { CodeGenContext } from './CodeGenContext';
 
 // Return all matching nodes.
 function emitEvaluationToNodes(identifier: string): PartiallyCompiledAstAccepted {
@@ -101,7 +101,7 @@ const compiledXPathIdentifier = 'compiledXPathExpression';
 function compileAstToJavaScript(
 	xPathAst: IAST,
 	returnType: ReturnType,
-	staticContext: StaticContext
+	staticContext: CodeGenContext
 ): JavaScriptCompiledXPathResult {
 	const returnTypeConversionCode = emitReturnTypeConversion(compiledXPathIdentifier, returnType);
 	if (returnTypeConversionCode.isAstAccepted === false) {

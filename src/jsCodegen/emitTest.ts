@@ -8,7 +8,7 @@ import {
 	PartialCompilationResult,
 	rejectAst,
 } from './JavaScriptCompiledXPath';
-import { StaticContext } from './StaticContext';
+import { CodeGenContext } from './CodeGenContext';
 
 const testAstNodes = {
 	TEXT_TEST: 'textTest',
@@ -25,7 +25,7 @@ function emitTextTest(_ast: IAST, identifier: ContextItemIdentifier): PartialCom
 	return acceptAst(`${identifier}.nodeType === ${NODE_TYPES.TEXT_NODE}`);
 }
 
-function resolveNamespaceURI(qName: QName, staticContext: StaticContext) {
+function resolveNamespaceURI(qName: QName, staticContext: CodeGenContext) {
 	// Resolve prefix.
 	if (qName.namespaceURI === null && qName.prefix !== '*') {
 		qName.namespaceURI = staticContext.resolveNamespace(qName.prefix || '') || null;
@@ -38,7 +38,7 @@ function resolveNamespaceURI(qName: QName, staticContext: StaticContext) {
 function emitNameTestFromQName(
 	identifier: ContextItemIdentifier,
 	qName: QName,
-	staticContext: StaticContext
+	staticContext: CodeGenContext
 ): PartialCompilationResult {
 	resolveNamespaceURI(qName, staticContext);
 	const { prefix, namespaceURI, localName } = qName;
@@ -81,7 +81,7 @@ function emitNameTestFromQName(
 function emitElementTest(
 	ast: IAST,
 	identifier: ContextItemIdentifier,
-	staticContext: StaticContext
+	staticContext: CodeGenContext
 ): PartialCompilationResult {
 	const elementName = astHelper.getFirstChild(ast, 'elementName');
 	const star = elementName && astHelper.getFirstChild(elementName, 'star');
@@ -98,7 +98,7 @@ function emitElementTest(
 
 // A node test that consists only of an EQName or a Wildcard is called a name test.
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-NameTest
-function emitNameTest(ast: IAST, identifier: ContextItemIdentifier, staticContext: StaticContext) {
+function emitNameTest(ast: IAST, identifier: ContextItemIdentifier, staticContext: CodeGenContext) {
 	return emitNameTestFromQName(identifier, astHelper.getQName(ast), staticContext);
 }
 
@@ -108,7 +108,7 @@ function emitNameTest(ast: IAST, identifier: ContextItemIdentifier, staticContex
 function emitWildcard(
 	ast: IAST,
 	identifier: ContextItemIdentifier,
-	staticContext: StaticContext
+	staticContext: CodeGenContext
 ): PartialCompilationResult {
 	if (!astHelper.getFirstChild(ast, 'star')) {
 		return emitNameTestFromQName(
@@ -165,7 +165,7 @@ function emitWildcard(
 export default function emitTest(
 	ast: IAST,
 	identifier: ContextItemIdentifier,
-	staticContext: StaticContext
+	staticContext: CodeGenContext
 ): PartialCompilationResult {
 	const test = ast[0];
 

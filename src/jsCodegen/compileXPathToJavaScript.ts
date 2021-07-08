@@ -4,10 +4,12 @@ import {
 } from '../evaluationUtils/buildEvaluationContext';
 import { ReturnType } from '../parsing/convertXDMReturnValue';
 import parseExpression from '../parsing/parseExpression';
+import annotateAst from '../typeInference/annotateAST';
+import { AnnotationContext } from '../typeInference/AnnotationContext';
 import { Language, Options } from '../types/Options';
 import compileAstToJavaScript from './compileAstToJavaScript';
 import { JavaScriptCompiledXPathResult } from './JavaScriptCompiledXPath';
-import { StaticContext } from './StaticContext';
+import { CodeGenContext } from './CodeGenContext';
 /**
  * Compile a given query to JavaScript code. For executing compiled code, see
  * {@link executeJavaScriptCompiledXPath}.
@@ -41,11 +43,12 @@ function compileXPathToJavaScript(
 
 	const ast = parseExpression(expressionString, parserOptions);
 
-	const staticContext: StaticContext = {
+	const staticContext: CodeGenContext = {
 		resolveNamespace: options['namespaceResolver'] || createDefaultNamespaceResolver(null),
 	};
 
-	// const annotatedAst = annotateAst(ast, new AnnotationContext(staticContext));
+	//TODO fix this so it takes in the staticContext from above
+	const annotatedAst = annotateAst(ast, new AnnotationContext(null));
 
 	return compileAstToJavaScript(ast, returnType, staticContext);
 }
