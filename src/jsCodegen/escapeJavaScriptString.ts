@@ -30,7 +30,7 @@ function escapeJavaScriptString(untrustedString: string): string {
  * @returns A sanitized version of the user string.
  */
 export function sanitizeString(untrustedString: string): string {
-	return untrustedString.replace('\\', '\\\\').replace("'", "\\'");
+	return untrustedString.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
 }
 
 export default escapeJavaScriptString;
