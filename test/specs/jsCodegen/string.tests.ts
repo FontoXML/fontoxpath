@@ -37,6 +37,22 @@ describe('string tests', () => {
 		chai.assert.equal(sanitizeString('hello\\'), 'hello\\\\');
 	});
 
+	it('test sanitize string double quote', () => {
+		chai.assert.equal(sanitizeString('\'\''), '\\\'\\\'');
+	});
+
+	it('test sanitize string triple quote', () => {
+		chai.assert.equal(sanitizeString('\'\'\''), '\\\'\\\'\\\'');
+	});
+
+	it('test sanitize string double backslash', () => {
+		chai.assert.equal(sanitizeString('\\\\'), '\\\\\\\\');
+	});
+
+	it('test sanitize string triple backslash', () => {
+		chai.assert.equal(sanitizeString('\\\\\\'), '\\\\\\\\\\\\');
+	});
+
 	it('test string expression malicous code', () => {
 		chai.assert.equal(
 			evaluateXPathWithJsCodegen(
