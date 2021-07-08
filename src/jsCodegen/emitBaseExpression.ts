@@ -1,5 +1,7 @@
 import { NODE_TYPES } from '../domFacade/ConcreteNode';
 import astHelper, { IAST } from '../parsing/astHelper';
+import { CodeGenContext } from './CodeGenContext';
+import { emitValueCompare } from './emitCompare';
 import emitStep from './emitStep';
 import emitTest, { tests } from './emitTest';
 import { sanitizeString } from './escapeJavaScriptString';
@@ -9,7 +11,6 @@ import {
 	PartialCompilationResult,
 	rejectAst,
 } from './JavaScriptCompiledXPath';
-import { CodeGenContext } from './CodeGenContext';
 
 /**
  * The currently supported expressions for code generation.
@@ -206,8 +207,8 @@ function emitPathExpr(
 	return acceptAst(pathExprCode);
 }
 
-const firstOperandIdentifier = 'firstOperand';
-const secondOperandIdentifier = 'secondOperand';
+const FIRST_OPERAND = 'firstOperand';
+const SECOND_OPERAND = 'secondOperand';
 
 /**
  * Retrieves the first or second operand for an operator AST node and wraps
@@ -296,12 +297,12 @@ function emitLogicalExpr(
 	staticContext: CodeGenContext,
 	logicalExprOperator: '&&' | '||'
 ): PartialCompilationResult {
-	const firstExpr = emitOperand(ast, identifier, firstOperandIdentifier, staticContext);
+	const firstExpr = emitOperand(ast, identifier, FIRST_OPERAND, staticContext);
 	if (!firstExpr.isAstAccepted) {
 		return firstExpr;
 	}
 
-	const secondExpr = emitOperand(ast, identifier, secondOperandIdentifier, staticContext);
+	const secondExpr = emitOperand(ast, identifier, SECOND_OPERAND, staticContext);
 	if (!secondExpr.isAstAccepted) {
 		return secondExpr;
 	}
@@ -314,6 +315,57 @@ function emitLogicalExpr(
 	}
 	`;
 	return acceptAst(logicalOpCode);
+}
+
+/**
+ * Compiles compare expressions to a JavaScript function.
+ *
+ *
+ * @param ast Logical expression AST node.
+ * @param identifier Function identifier for the emitted function
+ * @param staticContext Static context parameter to retrieve context-dependent information.
+ * @param compareType The exact operator that will be compiled
+ * @returns Wrapped compare expression.
+ */
+function emitCompareExpr(
+	ast: IAST,
+	identifier: FunctionIdentifier,
+	staticContext: CodeGenContext,
+	compareType: string
+): PartialCompilationResult {
+	const firstExpr = emitOperand(ast, identifier, FIRST_OPERAND, staticContext);
+	if (!firstExpr.isAstAccepted) {
+		return firstExpr;
+	}
+
+	const secondExpr = emitOperand(ast, identifier, SECOND_OPERAND, staticContext);
+	if (!secondExpr.isAstAccepted) {
+		return secondExpr;
+	}
+
+	switch (compareType) {
+		// valueCompare
+		case 'eqOp':
+		case 'neOp':
+		case 'ltOp':
+		case 'leOp':
+		case 'gtOp':
+		case 'geOp':
+		case 'isOp':
+			return emitValueCompare(ast, firstExpr, secondExpr, identifier, staticContext);
+		// generalCompare
+		case 'equalOp':
+		case 'notEqualOp':
+		case 'lessThanOrEqualOp':
+		case 'lessThanOp':
+		case 'greaterThanOrEqualOp':
+		case 'greaterThanOp':
+		// nodeCompare
+		case 'nodeBeforeOp':
+		case 'nodeAfterOp':
+		default:
+			return rejectAst('Unsupported compare type');
+	}
 }
 
 /**
@@ -381,6 +433,7 @@ export function emitBaseExpr(
 		// nodeCompare
 		case 'nodeBeforeOp':
 		case 'nodeAfterOp':
+			return emitCompareExpr(ast, identifier, staticContext, name);
 		default:
 			return rejectAst(`Unsupported: the base expression '${name}'.`);
 	}

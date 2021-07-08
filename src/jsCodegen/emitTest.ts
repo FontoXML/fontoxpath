@@ -1,6 +1,7 @@
 import { NODE_TYPES } from '../domFacade/ConcreteNode';
 import QName from '../expressions/dataTypes/valueTypes/QName';
 import astHelper, { IAST } from '../parsing/astHelper';
+import { CodeGenContext } from './CodeGenContext';
 import escapeJavaScriptString from './escapeJavaScriptString';
 import {
 	acceptAst,
@@ -8,7 +9,6 @@ import {
 	PartialCompilationResult,
 	rejectAst,
 } from './JavaScriptCompiledXPath';
-import { CodeGenContext } from './CodeGenContext';
 
 const testAstNodes = {
 	TEXT_TEST: 'textTest',

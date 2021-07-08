@@ -7,9 +7,9 @@ import parseExpression from '../parsing/parseExpression';
 import annotateAst from '../typeInference/annotateAST';
 import { AnnotationContext } from '../typeInference/AnnotationContext';
 import { Language, Options } from '../types/Options';
+import { CodeGenContext } from './CodeGenContext';
 import compileAstToJavaScript from './compileAstToJavaScript';
 import { JavaScriptCompiledXPathResult } from './JavaScriptCompiledXPath';
-import { CodeGenContext } from './CodeGenContext';
 /**
  * Compile a given query to JavaScript code. For executing compiled code, see
  * {@link executeJavaScriptCompiledXPath}.
@@ -47,8 +47,8 @@ function compileXPathToJavaScript(
 		resolveNamespace: options['namespaceResolver'] || createDefaultNamespaceResolver(null),
 	};
 
-	//TODO fix this so it takes in the staticContext from above
-	const annotatedAst = annotateAst(ast, new AnnotationContext(null));
+	// TODO: fix this so it takes in the staticContext from above
+	annotateAst(ast, new AnnotationContext(null));
 
 	return compileAstToJavaScript(ast, returnType, staticContext);
 }

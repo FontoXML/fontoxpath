@@ -1,6 +1,7 @@
 import { ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { ReturnType } from '../parsing/convertXDMReturnValue';
+import { CodeGenContext } from './CodeGenContext';
 import { emitBaseExpr } from './emitBaseExpression';
 import {
 	acceptAst,
@@ -10,7 +11,6 @@ import {
 	PartiallyCompiledAstAccepted,
 	rejectAst,
 } from './JavaScriptCompiledXPath';
-import { CodeGenContext } from './CodeGenContext';
 
 // Return all matching nodes.
 function emitEvaluationToNodes(identifier: string): PartiallyCompiledAstAccepted {
