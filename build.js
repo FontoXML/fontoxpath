@@ -10,22 +10,24 @@ const skipClosureBuild = process.env.npm_config_skip_closure;
 
 const tscc = require('@tscc/tscc').default;
 function doPegJsBuild() {
-	return new Promise((resolve, reject) =>
-		fs.readFile('./src/parsing/xpath.pegjs', 'utf8', (err, file) =>
-			err ? reject(err) : resolve(file)
+	return (
+		new Promise((resolve, reject) =>
+			fs.readFile('./src/parsing/xpath.pegjs', 'utf8', (err, file) =>
+				err ? reject(err) : resolve(file)
+			)
 		)
-	)
-		.then((pegJsString) =>
-			peg.generate(pegJsString, {
-				cache: true,
-				output: 'source',
-				format: 'globals',
-				exportVar: 'xPathParser',
-			})
-			 )
-	// Note the ts-nocheck, the output of pegJs is not valid TypeScript. The tslint-disable disables
-	// linter errors. Also, don't measure code coverage on this file. It is generated.
-		.then((parserString) => `// @ts-nocheck
+			.then((pegJsString) =>
+				peg.generate(pegJsString, {
+					cache: true,
+					output: 'source',
+					format: 'globals',
+					exportVar: 'xPathParser',
+				})
+			)
+			// Note the ts-nocheck, the output of pegJs is not valid TypeScript. The tslint-disable disables
+			// linter errors. Also, don't measure code coverage on this file. It is generated.
+			.then(
+				(parserString) => `// @ts-nocheck
 /* tslint:disable */
 /* istanbul ignore file */
 
@@ -42,19 +44,24 @@ declare interface pegjs_internal {
 
 export default function(globalThis) {
 (function() {
-${parserString.replace('var DESCRIBE_EXPECTATION_FNS = ', 'var DESCRIBE_EXPECTATION_FNS: pegjs_internal = ')}
+${parserString.replace(
+	'var DESCRIBE_EXPECTATION_FNS = ',
+	'var DESCRIBE_EXPECTATION_FNS: pegjs_internal = '
+)}
 }).call(globalThis);
-};`)
-		.then((parserString) =>
-			Promise.all([
-				new Promise((resolve, reject) =>
-					fs.writeFile('./src/parsing/xPathParser_raw.ts', parserString, (err) =>
-						err ? reject(err) : resolve()
-					)
-				),
-			])
-		)
-		.then(() => console.info('Parser generator done'));
+};`
+			)
+			.then((parserString) =>
+				Promise.all([
+					new Promise((resolve, reject) =>
+						fs.writeFile('./src/parsing/xPathParser_raw.ts', parserString, (err) =>
+							err ? reject(err) : resolve()
+						)
+					),
+				])
+			)
+			.then(() => console.info('Parser generator done'))
+	);
 }
 
 function outputDeclarations() {
@@ -114,18 +121,22 @@ function doModuleBuild() {
 	const api = JSON.parse(fs.readFileSync('dist/fontoxpath.api.json', 'utf-8'));
 	const fontoxpathAPI = api.members.find((member) => member.kind === 'EntryPoint');
 	const members = fontoxpathAPI.members.filter(
-		(member) => member.kind === 'Function' || member.kind === 'Variable'
+		(member) =>
+			member.kind === 'Function' || member.kind === 'Variable' || member.kind === 'Enum'
 	);
 
-	const exports = members.map(
-		(member) => `export const ${member.name} = fontoxpath.${member.name};`
+	// Some part of the compiler is aliasing types with a `_2` postfix. Fix them.
+	const memberNames = members.map(({ name }) =>
+		name.endsWith('_2') ? name.substring(0, name.length - 2) : name
 	);
+
+	const exports = memberNames.map((name) => `export const ${name} = fontoxpath.${name};`);
 
 	const fontoxpathFunction = fs.readFileSync('./dist/fontoxpath-raw.js', 'utf8');
 	const fullModule = `import * as xspattern from 'xspattern';
 const fontoxpath = (${fontoxpathFunction})
 	.call(typeof window === 'undefined' ? undefined : window, xspattern);
-${exports.join('\n')};
+${exports.join('\n')}
 export default fontoxpath;
 `;
 
