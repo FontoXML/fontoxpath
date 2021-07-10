@@ -38,7 +38,7 @@ export function emitValueCompare(
 		neOp: '!==',
 	};
 	if (!compareOperators[compareType]) {
-		rejectAst(compareType + 'not yet implemented');
+		return rejectAst(compareType + ' not yet implemented');
 	}
 	const code = `
 	function ${identifier}(contextItem) {
