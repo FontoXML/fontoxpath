@@ -1,4 +1,4 @@
-import { SequenceMultiplicity, SequenceType } from '../expressions/dataTypes/Value';
+import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { CodeGenContext } from './CodeGenContext';
 import { emitBaseExpr } from './emitBaseExpression';
@@ -6,16 +6,54 @@ import { acceptAst, PartialCompilationResult, rejectAst } from './JavaScriptComp
 
 export function emitValueCompare(
 	ast: IAST,
+	compareType: string,
 	firstExpr: PartialCompilationResult,
 	secondExpr: PartialCompilationResult,
 	identifier: string,
-	staticContext: CodeGenContext
+	_staticContext: CodeGenContext
 ): PartialCompilationResult {
-	return rejectAst('');
+	const leftType = astHelper.getAttribute(
+		astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST,
+		'type'
+	);
+	const rightType = astHelper.getAttribute(
+		astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST,
+		'type'
+	);
+
+	if (!firstExpr.isAstAccepted || !secondExpr.isAstAccepted) {
+		return rejectAst("One of the two operands in compare wasn't accepted");
+	}
+
+	if (!leftType || !rightType) {
+		return rejectAst("Operands in compare weren't annotated");
+	}
+
+	if (leftType.type !== ValueType.XSSTRING || rightType.type !== ValueType.XSSTRING) {
+		return rejectAst('Value compare only supports strings for now');
+	}
+
+	const compareOperators: Record<string, string> = {
+		eqOp: '===',
+		neOp: '!==',
+	};
+
+	const code = `
+	function ${identifier}(contextItem) {
+		${firstExpr.variables.join('\n')}
+		${secondExpr.variables.join('\n')}
+		return ${firstExpr.code}(contextItem) ${compareOperators[compareType]} ${
+		secondExpr.code
+	}(contextItem);
+	}
+	`;
+
+	return acceptAst(code);
 }
 
 export function emitGeneralCompare(
 	ast: IAST,
+	compareType: string,
 	firstExpr: PartialCompilationResult,
 	secondExpr: PartialCompilationResult,
 	identifier: string,
@@ -32,7 +70,7 @@ export function emitGeneralCompare(
 		firstType.mult === SequenceMultiplicity.EXACTLY_ONE &&
 		secondType.mult === SequenceMultiplicity.EXACTLY_ONE
 	) {
-		return emitValueCompare(ast, firstExpr, secondExpr, identifier, staticContext);
+		return emitValueCompare(ast, compareType, firstExpr, secondExpr, identifier, staticContext);
 	} else {
 		// take all the children except for the type.
 		const leftChildren: IAST[] = astHelper.getChildren(firstAstOp, '*');
@@ -49,17 +87,24 @@ export function emitGeneralCompare(
 			for (let y = 0; y < rightChildren.length; y++) {
 				const left = emitBaseExpr(leftChildren[x], identifier, staticContext);
 				const right = emitBaseExpr(rightChildren[y], identifier, staticContext);
-				const valueCompare = emitValueCompare(ast, left, right, identifier, staticContext);
+				const valueCompare = emitValueCompare(
+					ast,
+					compareType,
+					left,
+					right,
+					identifier,
+					staticContext
+				);
 				if (!valueCompare.isAstAccepted) {
 					return rejectAst('generalCompare could not be created');
 				}
-				generalCompare += `if(${valueCompare.code}()) {
+				generalCompare += `if(${valueCompare.code}(contextItem)) {
                         return true;
                     }
                     `;
 			}
 		}
-		generalCompare += `return false
+		generalCompare += `return false;
                         }`;
 		return acceptAst(generalCompare);
 	}

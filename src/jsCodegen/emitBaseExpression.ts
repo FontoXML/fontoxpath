@@ -1,4 +1,5 @@
 import { NODE_TYPES } from '../domFacade/ConcreteNode';
+import { ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { CodeGenContext } from './CodeGenContext';
 import { emitValueCompare } from './emitCompare';
@@ -239,9 +240,17 @@ function emitOperand(
 		return baseExpr;
 	}
 
-	return acceptAst(`determinePredicateTruthValue(${baseExprIdentifier}(contextItem))`, [
-		baseExpr.code,
-	]);
+	const operandType = astHelper.getAttribute(operand[1] as IAST, 'type');
+
+	if (operandType?.type === ValueType.XSBOOLEAN) {
+		return acceptAst(`determinePredicateTruthValue(${baseExprIdentifier}(contextItem))`, [
+			baseExpr.code,
+		]);
+	} else {
+		return acceptAst(`function x(contextItem) { return ${baseExprIdentifier}(contextItem); }`, [
+			baseExpr.code,
+		]);
+	}
 }
 
 /**
@@ -352,7 +361,14 @@ function emitCompareExpr(
 		case 'gtOp':
 		case 'geOp':
 		case 'isOp':
-			return emitValueCompare(ast, firstExpr, secondExpr, identifier, staticContext);
+			return emitValueCompare(
+				ast,
+				compareType,
+				firstExpr,
+				secondExpr,
+				identifier,
+				staticContext
+			);
 		// generalCompare
 		case 'equalOp':
 		case 'notEqualOp':
