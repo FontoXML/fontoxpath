@@ -37,7 +37,9 @@ export function emitValueCompare(
 		eqOp: '===',
 		neOp: '!==',
 	};
-
+	if (!compareOperators[compareType]) {
+		rejectAst(compareType + 'not yet implemented');
+	}
 	const code = `
 	function ${identifier}(contextItem) {
 		${firstExpr.variables.join('\n')}
@@ -70,8 +72,16 @@ export function emitGeneralCompare(
 		firstType.mult === SequenceMultiplicity.EXACTLY_ONE &&
 		secondType.mult === SequenceMultiplicity.EXACTLY_ONE
 	) {
-		return emitValueCompare(ast, compareType, firstExpr, secondExpr, identifier, staticContext);
+		return emitValueCompare(
+			ast,
+			OPERATOR_TRANSLATION[compareType],
+			firstExpr,
+			secondExpr,
+			identifier,
+			staticContext
+		);
 	} else {
+		return rejectAst('generalCompare with sequences is still in development');
 		// take all the children except for the type.
 		const leftChildren: IAST[] = astHelper.getChildren(firstAstOp, '*');
 		const rightChildren: IAST[] = astHelper.getChildren(secondAstOp, '*');
@@ -80,8 +90,8 @@ export function emitGeneralCompare(
 		// TODO: make the generalCompare compatible with the valueCompare, the code that is here at the moment is a guess
 
 		let generalCompare: string = `
-        function ${identifier}(contextItem) {
-        `;
+	    function ${identifier}(contextItem) {
+	    `;
 
 		for (let x = 0; x < leftChildren.length; x++) {
 			for (let y = 0; y < rightChildren.length; y++) {
@@ -98,14 +108,23 @@ export function emitGeneralCompare(
 				if (!valueCompare.isAstAccepted) {
 					return rejectAst('generalCompare could not be created');
 				}
-				generalCompare += `if(${valueCompare.code}(contextItem)) {
-                        return true;
-                    }
-                    `;
+				// generalCompare += `if(${valueCompare.code}(contextItem)) {
+				//         return true;
+				//     }
+				//     `;
 			}
 		}
 		generalCompare += `return false;
-                        }`;
+	                    }`;
 		return acceptAst(generalCompare);
 	}
 }
+
+const OPERATOR_TRANSLATION: { [s: string]: string } = {
+	['equalOp']: 'eqOp',
+	['notEqualOp']: 'neOp',
+	['lessThanOrEqualOp']: 'leOp',
+	['lessThanOp']: 'ltOp',
+	['greaterThanOrEqualOp']: 'geOp',
+	['greaterThanOp']: 'gtOp',
+};

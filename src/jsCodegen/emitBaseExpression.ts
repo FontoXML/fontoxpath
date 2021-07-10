@@ -2,7 +2,7 @@ import { NODE_TYPES } from '../domFacade/ConcreteNode';
 import { ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { CodeGenContext } from './CodeGenContext';
-import { emitValueCompare } from './emitCompare';
+import { emitGeneralCompare, emitValueCompare } from './emitCompare';
 import emitStep from './emitStep';
 import emitTest, { tests } from './emitTest';
 import { sanitizeString } from './escapeJavaScriptString';
@@ -225,7 +225,8 @@ function emitOperand(
 	ast: IAST,
 	identifier: FunctionIdentifier,
 	operandKind: 'firstOperand' | 'secondOperand',
-	staticContext: CodeGenContext
+	staticContext: CodeGenContext,
+	targetType?: ValueType
 ): PartialCompilationResult {
 	const operand = astHelper.getFirstChild(ast, operandKind);
 	const exprAst = astHelper.getFirstChild(operand, baseExpressions);
@@ -239,18 +240,14 @@ function emitOperand(
 	if (!baseExpr.isAstAccepted) {
 		return baseExpr;
 	}
-
-	const operandType = astHelper.getAttribute(operand[1] as IAST, 'type');
-
-	if (operandType?.type === ValueType.XSBOOLEAN) {
+	if (targetType === ValueType.XSBOOLEAN) {
 		return acceptAst(`determinePredicateTruthValue(${baseExprIdentifier}(contextItem))`, [
 			baseExpr.code,
 		]);
-	} else {
-		return acceptAst(`function x(contextItem) { return ${baseExprIdentifier}(contextItem); }`, [
-			baseExpr.code,
-		]);
 	}
+	return acceptAst(`function x(contextItem) { return ${baseExprIdentifier}(contextItem); }`, [
+		baseExpr.code,
+	]);
 }
 
 /**
@@ -306,12 +303,24 @@ function emitLogicalExpr(
 	staticContext: CodeGenContext,
 	logicalExprOperator: '&&' | '||'
 ): PartialCompilationResult {
-	const firstExpr = emitOperand(ast, identifier, FIRST_OPERAND, staticContext);
+	const firstExpr = emitOperand(
+		ast,
+		identifier,
+		FIRST_OPERAND,
+		staticContext,
+		ValueType.XSBOOLEAN
+	);
 	if (!firstExpr.isAstAccepted) {
 		return firstExpr;
 	}
 
-	const secondExpr = emitOperand(ast, identifier, SECOND_OPERAND, staticContext);
+	const secondExpr = emitOperand(
+		ast,
+		identifier,
+		SECOND_OPERAND,
+		staticContext,
+		ValueType.XSBOOLEAN
+	);
 	if (!secondExpr.isAstAccepted) {
 		return secondExpr;
 	}
@@ -376,6 +385,14 @@ function emitCompareExpr(
 		case 'lessThanOp':
 		case 'greaterThanOrEqualOp':
 		case 'greaterThanOp':
+			return emitGeneralCompare(
+				ast,
+				compareType,
+				firstExpr,
+				secondExpr,
+				identifier,
+				staticContext
+			);
 		// nodeCompare
 		case 'nodeBeforeOp':
 		case 'nodeAfterOp':
