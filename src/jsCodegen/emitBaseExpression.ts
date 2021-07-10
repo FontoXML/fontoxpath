@@ -21,6 +21,7 @@ const baseExprAstNodes = {
 	AND_OP: 'andOp',
 	OR_OP: 'orOp',
 	STRING_LIT_EXPR: 'stringConstantExpr',
+	INTEGER_EXPR: 'integerConstantExpr',
 };
 
 const baseExpressions = Object.values(baseExprAstNodes);
@@ -401,6 +402,19 @@ function emitCompareExpr(
 	}
 }
 
+function emitIntegerBaseExpr(
+	ast: IAST,
+	identifier: string,
+	staticContext: CodeGenContext
+): PartialCompilationResult {
+	const integer = Number(astHelper.getFirstChild(ast, 'value')[1]);
+	return acceptAst(`
+	function ${identifier}(contextItem) {
+		return ${integer};
+	}
+	`);
+}
+
 /**
  * Create a JavaScript function that returns the string literal.
  *
@@ -448,6 +462,8 @@ export function emitBaseExpr(
 			return emitOrExpr(ast, identifier, staticContext);
 		case baseExprAstNodes.STRING_LIT_EXPR:
 			return emitStringLiteralExpression(ast, identifier);
+		case baseExprAstNodes.INTEGER_EXPR:
+			return emitIntegerBaseExpr(ast, identifier, staticContext);
 		// generalCompare
 		case 'equalOp':
 		case 'notEqualOp':
