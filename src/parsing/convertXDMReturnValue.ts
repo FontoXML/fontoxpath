@@ -8,9 +8,9 @@ import ISequence from '../expressions/dataTypes/ISequence';
 import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
 import MapValue from '../expressions/dataTypes/MapValue';
 import sequenceFactory from '../expressions/dataTypes/sequenceFactory';
-import Value, { ValueType } from '../expressions/dataTypes/Value';
+import { ValueType } from '../expressions/dataTypes/Value';
 import ExecutionParameters from '../expressions/ExecutionParameters';
-import { IIterator, IterationHint } from '../expressions/util/iterators';
+import { IterationHint } from '../expressions/util/iterators';
 import transformXPathItemToJavascriptObject, {
 	transformArrayToArray,
 	transformMapToObject,
@@ -149,11 +149,8 @@ export default function convertXDMReturnValue<
 			if (!isSubtypeOf(first.type, ValueType.MAP)) {
 				throw new Error('Expected XPath ' + expression + ' to resolve to a map');
 			}
-			const transformedMap = transformMapToObject(
-				first as MapValue,
-				executionParameters
-			).next(IterationHint.NONE);
-			return transformedMap.value as IReturnTypes<TNode>[TReturnType];
+			const transformedMap = transformMapToObject(first as MapValue, executionParameters);
+			return transformedMap as IReturnTypes<TNode>[TReturnType];
 		}
 
 		case ReturnType.ARRAY: {
@@ -169,8 +166,8 @@ export default function convertXDMReturnValue<
 			const transformedArray = transformArrayToArray(
 				first as ArrayValue,
 				executionParameters
-			).next(IterationHint.NONE);
-			return transformedArray.value as IReturnTypes<TNode>[TReturnType];
+			);
+			return transformedArray as IReturnTypes<TNode>[TReturnType];
 		}
 
 		case ReturnType.NUMBERS: {
@@ -185,24 +182,19 @@ export default function convertXDMReturnValue<
 
 		case ReturnType.ASYNC_ITERATOR: {
 			const it = rawResults.value;
-			let transformedValueGenerator: IIterator<Value> = null;
 			let done = false;
 			const getNextResult = () => {
 				while (!done) {
-					if (!transformedValueGenerator) {
-						const value = it.next(IterationHint.NONE);
-						if (value.done) {
-							done = true;
-							break;
-						}
-						transformedValueGenerator = transformXPathItemToJavascriptObject(
-							value.value,
-							executionParameters
-						);
+					const value = it.next(IterationHint.NONE);
+					if (value.done) {
+						done = true;
+						break;
 					}
-					const transformedValue = transformedValueGenerator.next(IterationHint.NONE);
-					transformedValueGenerator = null;
-					return transformedValue;
+					const transformedValue = transformXPathItemToJavascriptObject(
+						value.value,
+						executionParameters
+					);
+					return { done: false, value: transformedValue };
 				}
 				return Promise.resolve({
 					done: true,
@@ -223,9 +215,9 @@ export default function convertXDMReturnValue<
 						}),
 				};
 			} else {
-				toReturn = ({
+				toReturn = {
 					next: () => new Promise((resolve) => resolve(getNextResult())),
-				} as unknown) as AsyncIterableIterator<any>;
+				} as unknown as AsyncIterableIterator<any>;
 			}
 			return toReturn as IReturnTypes<TNode>[TReturnType];
 		}
@@ -254,15 +246,15 @@ export default function convertXDMReturnValue<
 					const transformedArray = transformArrayToArray(
 						first as ArrayValue,
 						executionParameters
-					).next(IterationHint.NONE);
-					return transformedArray.value as IReturnTypes<TNode>[TReturnType];
+					);
+					return transformedArray as IReturnTypes<TNode>[TReturnType];
 				}
 				if (isSubtypeOf(first.type, ValueType.MAP)) {
 					const transformedMap = transformMapToObject(
 						first as MapValue,
 						executionParameters
-					).next(IterationHint.NONE);
-					return transformedMap.value as IReturnTypes<TNode>[TReturnType];
+					);
+					return transformedMap as IReturnTypes<TNode>[TReturnType];
 				}
 				return atomizeSingleValue(first, executionParameters).first()
 					.value as IReturnTypes<TNode>[TReturnType];

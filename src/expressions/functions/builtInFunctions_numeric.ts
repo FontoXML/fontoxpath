@@ -5,7 +5,7 @@ import createAtomicValue from '../dataTypes/createAtomicValue';
 import FunctionValue from '../dataTypes/FunctionValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import MapValue from '../dataTypes/MapValue';
+import MapValue, { AbsentJsonObject } from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
@@ -210,54 +210,59 @@ const fnRandomNumberGenerator: FunctionDefinitionType = (
 ) => {
 	// Ignore the optional seed, as Math.random does not support a seed
 	return sequenceFactory.singleton(
-		new MapValue([
-			{
-				key: createAtomicValue('number', ValueType.XSSTRING),
-				value: () =>
-					sequenceFactory.singleton(createAtomicValue(Math.random(), ValueType.XSDOUBLE)),
-			},
-			{
-				key: createAtomicValue('next', ValueType.XSSTRING),
-				value: () =>
-					sequenceFactory.singleton(
-						new FunctionValue({
-							value: fnRandomNumberGenerator,
-							isAnonymous: true,
-							localName: '',
-							namespaceURI: '',
-							argumentTypes: [],
-							arity: 0,
-							returnType: {
-								type: ValueType.MAP,
-								mult: SequenceMultiplicity.EXACTLY_ONE,
-							},
-						})
-					),
-			},
-			{
-				key: createAtomicValue('permute', ValueType.XSSTRING),
-				value: () =>
-					sequenceFactory.singleton(
-						new FunctionValue({
-							value: returnRandomItemFromSequence,
-							isAnonymous: true,
-							localName: '',
-							namespaceURI: '',
-							argumentTypes: [
-								{
+		new MapValue(
+			[
+				{
+					key: createAtomicValue('number', ValueType.XSSTRING),
+					value: () =>
+						sequenceFactory.singleton(
+							createAtomicValue(Math.random(), ValueType.XSDOUBLE)
+						),
+				},
+				{
+					key: createAtomicValue('next', ValueType.XSSTRING),
+					value: () =>
+						sequenceFactory.singleton(
+							new FunctionValue({
+								value: fnRandomNumberGenerator,
+								isAnonymous: true,
+								localName: '',
+								namespaceURI: '',
+								argumentTypes: [],
+								arity: 0,
+								returnType: {
+									type: ValueType.MAP,
+									mult: SequenceMultiplicity.EXACTLY_ONE,
+								},
+							})
+						),
+				},
+				{
+					key: createAtomicValue('permute', ValueType.XSSTRING),
+					value: () =>
+						sequenceFactory.singleton(
+							new FunctionValue({
+								value: returnRandomItemFromSequence,
+								isAnonymous: true,
+								localName: '',
+								namespaceURI: '',
+								argumentTypes: [
+									{
+										type: ValueType.ITEM,
+										mult: SequenceMultiplicity.ZERO_OR_MORE,
+									},
+								],
+								arity: 1,
+								returnType: {
 									type: ValueType.ITEM,
 									mult: SequenceMultiplicity.ZERO_OR_MORE,
 								},
-							],
-							arity: 1,
-							returnType: {
-								type: ValueType.ITEM,
-								mult: SequenceMultiplicity.ZERO_OR_MORE,
-							},
-						})
-					),
-			},
-		])
+							})
+						),
+				},
+			],
+			AbsentJsonObject
+		)
 	);
 };
 

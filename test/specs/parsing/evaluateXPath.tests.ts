@@ -247,6 +247,20 @@ describe('evaluateXPath', () => {
 		it('returns a nested array', () => {
 			chai.assert.deepEqual(evaluateXPathToArray('[1, [2, 2.5], 3]'), [1, [2, 2.5], 3]);
 		});
+		it('keeps references intact when it can', () => {
+			const arr = [1, 2, 3];
+			// Note the strictEqual here: We want reference equality
+			chai.assert.strictEqual(evaluateXPathToArray('$arr', null, null, { arr }), arr);
+		});
+		it('keeps references intact when it can: through functions', () => {
+			const arr = [1, 2, [3, 4]];
+			// Note the strictEqual here: We want reference equality
+			chai.assert.strictEqual(
+				evaluateXPathToArray('$arr?3', null, null, { arr }),
+				arr[2] as number[]
+			);
+		});
+
 		it('Transfroms singleton sequences to null', () => {
 			chai.assert.deepEqual(evaluateXPathToArray('[1, (), 3]'), [1, null, 3]);
 		});
@@ -264,6 +278,16 @@ describe('evaluateXPath', () => {
 		});
 		it('returns a nested map', () => {
 			chai.assert.deepEqual(evaluateXPathToMap('map{1:map{2:3}}'), { 1: { 2: 3 } });
+		});
+		it('keeps references intact when it can: simple case', () => {
+			const map = { a: 1, b: 2 };
+			// Note the strictEqual here: We want reference equality
+			chai.assert.strictEqual(evaluateXPathToMap('$map', null, null, { map }), map);
+		});
+		it('keeps references intact when it can: through functions', () => {
+			const map = { a: 1, b: { c: 2 } };
+			// Note the strictEqual here: We want reference equality
+			chai.assert.strictEqual(evaluateXPathToMap('$map?b', null, null, { map }), map.b);
 		});
 		it('Transfroms singleton sequences to null', () => {
 			chai.assert.deepEqual(evaluateXPathToMap('map{1:()}'), { 1: null });

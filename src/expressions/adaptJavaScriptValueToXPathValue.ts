@@ -1,7 +1,7 @@
 import { NodePointer } from '../domClone/Pointer';
 import DomFacade from '../domFacade/DomFacade';
 import { UntypedExternalValue, ValidValue } from '../types/createTypedValueFactory';
-import ArrayValue from './dataTypes/ArrayValue';
+import ArrayValue, { ABSENT_JSON_ARRAY } from './dataTypes/ArrayValue';
 import { getValidatorForType } from './dataTypes/builtins/dataTypeValidatorByType';
 import createAtomicValue, { falseBoolean, trueBoolean } from './dataTypes/createAtomicValue';
 import createPointerValue from './dataTypes/createPointerValue';
@@ -56,7 +56,8 @@ export function adaptSingleJavaScriptValue(value: ValidValue, domFacade: DomFaca
 								: sequenceFactory.singleton(adaptedValue);
 
 						return createDoublyIterableSequence(adaptedSequence);
-					})
+					}),
+					value
 				);
 			}
 			// Make it a map
@@ -75,7 +76,8 @@ export function adaptSingleJavaScriptValue(value: ValidValue, domFacade: DomFaca
 							key: createAtomicValue(key, ValueType.XSSTRING),
 							value: createDoublyIterableSequence(adaptedSequence),
 						};
-					})
+					}),
+				mapValue as any
 			);
 	}
 	// This code will be reached if the passed value is not actually a ValidValue. This can happen

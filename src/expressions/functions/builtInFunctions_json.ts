@@ -1,7 +1,7 @@
-import ArrayValue from '../dataTypes/ArrayValue';
+import ArrayValue, { ABSENT_JSON_ARRAY } from '../dataTypes/ArrayValue';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import ISequence from '../dataTypes/ISequence';
-import MapValue from '../dataTypes/MapValue';
+import MapValue, { AbsentJsonObject } from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
 import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
@@ -15,7 +15,8 @@ function convert(obj: any): ISequence {
 			if (Array.isArray(obj)) {
 				return sequenceFactory.singleton(
 					new ArrayValue(
-						obj.map((subObject) => createDoublyIterableSequence(convert(subObject)))
+						obj.map((subObject) => createDoublyIterableSequence(convert(subObject))),
+						ABSENT_JSON_ARRAY
 					)
 				);
 			}
@@ -31,7 +32,8 @@ function convert(obj: any): ISequence {
 							key: createAtomicValue(key, ValueType.XSSTRING),
 							value: createDoublyIterableSequence(convert(objThingy[key])),
 						};
-					})
+					}),
+					AbsentJsonObject
 				)
 			);
 		case 'number':

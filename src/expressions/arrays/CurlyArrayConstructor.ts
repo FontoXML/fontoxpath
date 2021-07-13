@@ -1,4 +1,4 @@
-import ArrayValue from '../dataTypes/ArrayValue';
+import ArrayValue, { ABSENT_JSON_ARRAY } from '../dataTypes/ArrayValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { SequenceType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
@@ -29,7 +29,7 @@ class CurlyArrayConstructor extends Expression {
 
 	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
 		if (this._members.length === 0) {
-			return sequenceFactory.singleton(new ArrayValue([]));
+			return sequenceFactory.singleton(new ArrayValue([], ABSENT_JSON_ARRAY));
 		}
 		return this._members[0]
 			.evaluateMaybeStatically(dynamicContext, executionParameters)
@@ -38,7 +38,8 @@ class CurlyArrayConstructor extends Expression {
 					new ArrayValue(
 						allValues.map((item) =>
 							createDoublyIterableSequence(sequenceFactory.singleton(item))
-						)
+						),
+						ABSENT_JSON_ARRAY
 					)
 				)
 			);

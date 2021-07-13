@@ -1,4 +1,4 @@
-import ArrayValue from '../dataTypes/ArrayValue';
+import ArrayValue, { ABSENT_JSON_ARRAY } from '../dataTypes/ArrayValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { SequenceType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
@@ -34,7 +34,8 @@ class SquareArrayConstructor extends Expression {
 					createDoublyIterableSequence(
 						entry.evaluateMaybeStatically(dynamicContext, executionParameters)
 					)
-				)
+				),
+				ABSENT_JSON_ARRAY
 			)
 		);
 	}

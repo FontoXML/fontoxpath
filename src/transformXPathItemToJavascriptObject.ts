@@ -1,114 +1,85 @@
 import { NodePointer } from './domClone/Pointer';
 import realizeDom from './domClone/realizeDom';
-import ArrayValue from './expressions/dataTypes/ArrayValue';
+import ArrayValue, { ABSENT_JSON_ARRAY } from './expressions/dataTypes/ArrayValue';
 import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
-import MapValue from './expressions/dataTypes/MapValue';
+import MapValue, { AbsentJsonObject } from './expressions/dataTypes/MapValue';
 import Value, { ValueType } from './expressions/dataTypes/Value';
 import DateTime from './expressions/dataTypes/valueTypes/DateTime';
 import QName from './expressions/dataTypes/valueTypes/QName';
 import ExecutionParameters from './expressions/ExecutionParameters';
-import { DONE_TOKEN, IIterator, IterationHint, ready } from './expressions/util/iterators';
+import { ValidValue } from './types/createTypedValueFactory';
 
 export function transformMapToObject(
 	map: MapValue,
 	executionParameters: ExecutionParameters
-): IIterator<object> {
-	const mapObj: { [s: string]: Value } = {};
-	let i = 0;
-	let done = false;
-	let transformedValueIterator: IIterator<Value> = null;
-	return {
-		next: () => {
-			if (done) {
-				return DONE_TOKEN;
-			}
-			while (i < map.keyValuePairs.length) {
-				// Assume the keys for a map are strings.
-				const key = map.keyValuePairs[i].key.value as string;
+): { [s: string]: ValidValue } {
+	if (map.jsonObject !== AbsentJsonObject) {
+		return map.jsonObject;
+	}
 
-				if (!transformedValueIterator) {
-					const keyValuePair = map.keyValuePairs[i];
-					const val = keyValuePair
-						.value()
-						.switchCases({
-							default: (seq) => seq,
-							multiple: () => {
-								throw new Error(
-									`Serialization error: The value of an entry in a map is expected to be a single item or an empty sequence. Use arrays when putting multiple values in a map. The value of the key ${keyValuePair.key.value} holds multiple items`
-								);
-							},
-						})
-						.first();
-					if (val === null) {
-						mapObj[key] = null;
-						i++;
-						continue;
-					}
+	const mapObj: { [s: string]: ValidValue } = {};
+	for (let i = 0; i < map.keyValuePairs.length; ++i) {
+		// Assume the keys for a map are strings.
+		const key = map.keyValuePairs[i].key.value as string;
 
-					transformedValueIterator = transformXPathItemToJavascriptObject(
-						val,
-						executionParameters
+		const keyValuePair = map.keyValuePairs[i];
+		const val = keyValuePair
+			.value()
+			.switchCases({
+				default: (seq) => seq,
+				multiple: () => {
+					throw new Error(
+						`Serialization error: The value of an entry in a map is expected to be a single item or an empty sequence. Use arrays when putting multiple values in a map. The value of the key ${keyValuePair.key.value} holds multiple items`
 					);
-				}
-				const transformedValue = transformedValueIterator.next(IterationHint.NONE);
-				transformedValueIterator = null;
-				mapObj[key] = transformedValue.value;
-				i++;
-			}
-			done = true;
-			return ready(mapObj);
-		},
-	};
+				},
+			})
+			.first();
+		if (val === null) {
+			mapObj[key] = null;
+			i++;
+			continue;
+		}
+
+		const transformedValue = transformXPathItemToJavascriptObject(val, executionParameters);
+		mapObj[key] = transformedValue;
+	}
+	return mapObj;
 }
 
 export function transformArrayToArray(
 	array: ArrayValue,
 	executionParameters: ExecutionParameters
-): IIterator<any[]> {
-	const arr: Value[] = [];
-	let i = 0;
-	let done = false;
-	let transformedMemberGenerator: IIterator<Value> = null;
-	return {
-		next: () => {
-			if (done) {
-				return DONE_TOKEN;
-			}
-			while (i < array.members.length) {
-				if (!transformedMemberGenerator) {
-					const val = array.members[i]()
-						.switchCases({
-							default: (seq) => seq,
-							multiple: () => {
-								throw new Error(
-									`Serialization error: The value of an entry in an array is expected to be a single item or an empty sequence. Use nested arrays when putting multiple values in an array.`
-								);
-							},
-						})
-						.first();
-					if (val === null) {
-						arr[i++] = null;
-						continue;
-					}
-					transformedMemberGenerator = transformXPathItemToJavascriptObject(
-						val,
-						executionParameters
+): ValidValue[] {
+	if (array.jsonArray !== ABSENT_JSON_ARRAY) {
+		return array.jsonArray;
+	}
+
+	const arr: ValidValue[] = [];
+	for (let i = 0; i < array.members.length; ++i) {
+		const val = array.members[i]()
+			.switchCases({
+				default: (seq) => seq,
+				multiple: () => {
+					throw new Error(
+						`Serialization error: The value of an entry in an array is expected to be a single item or an empty sequence. Use nested arrays when putting multiple values in an array.`
 					);
-				}
-				const transformedValue = transformedMemberGenerator.next(IterationHint.NONE);
-				transformedMemberGenerator = null;
-				arr[i++] = transformedValue.value;
-			}
-			done = true;
-			return ready(arr);
-		},
-	};
+				},
+			})
+			.first();
+		if (val === null) {
+			arr[i] = null;
+			continue;
+		}
+		const transformedValue = transformXPathItemToJavascriptObject(val, executionParameters);
+		arr[i] = transformedValue;
+	}
+	return arr;
 }
 
 export default function transformXPathItemToJavascriptObject(
 	value: Value,
 	executionParameters: ExecutionParameters
-): IIterator<any> {
+): ValidValue {
 	if (isSubtypeOf(value.type, ValueType.MAP)) {
 		return transformMapToObject(value as MapValue, executionParameters);
 	}
@@ -117,9 +88,7 @@ export default function transformXPathItemToJavascriptObject(
 	}
 	if (isSubtypeOf(value.type, ValueType.XSQNAME)) {
 		const qualifiedName = value.value as QName;
-		return {
-			next: () => ready(`Q{${qualifiedName.namespaceURI || ''}}${qualifiedName.localName}`),
-		};
+		return `Q{${qualifiedName.namespaceURI || ''}}${qualifiedName.localName}`;
 	}
 
 	// Make it actual here
@@ -133,9 +102,7 @@ export default function transformXPathItemToJavascriptObject(
 		case ValueType.XSGMONTH:
 		case ValueType.XSGDAY: {
 			const temporalValue = value.value as DateTime;
-			return {
-				next: () => ready(temporalValue.toJavaScriptDate()),
-			};
+			return temporalValue.toJavaScriptDate();
 		}
 		case ValueType.ATTRIBUTE:
 		case ValueType.NODE:
@@ -145,14 +112,10 @@ export default function transformXPathItemToJavascriptObject(
 		case ValueType.PROCESSINGINSTRUCTION:
 		case ValueType.COMMENT: {
 			const nodeValue = value.value as NodePointer;
-			return {
-				next: () => ready(realizeDom(nodeValue, executionParameters, false)),
-			};
+			return realizeDom(nodeValue, executionParameters, false);
 		}
 
 		default:
-			return {
-				next: () => ready(value.value),
-			};
+			return value.value;
 	}
 }

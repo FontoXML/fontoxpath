@@ -1,4 +1,4 @@
-import ArrayValue from '../dataTypes/ArrayValue';
+import ArrayValue, { ABSENT_JSON_ARRAY } from '../dataTypes/ArrayValue';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import FunctionValue, { FunctionSignature } from '../dataTypes/FunctionValue';
 import ISequence from '../dataTypes/ISequence';
@@ -48,7 +48,7 @@ const arrayPut: FunctionDefinitionType = (
 		}
 		const newMembers = (array as ArrayValue).members.concat();
 		newMembers.splice(positionValue - 1, 1, createDoublyIterableSequence(itemSequence));
-		return sequenceFactory.singleton(new ArrayValue(newMembers));
+		return sequenceFactory.singleton(new ArrayValue(newMembers, ABSENT_JSON_ARRAY));
 	});
 };
 
@@ -63,7 +63,7 @@ const arrayAppend: FunctionDefinitionType = (
 		const newMembers = (array as ArrayValue).members.concat([
 			createDoublyIterableSequence(itemSequence),
 		]);
-		return sequenceFactory.singleton(new ArrayValue(newMembers));
+		return sequenceFactory.singleton(new ArrayValue(newMembers, ABSENT_JSON_ARRAY));
 	});
 };
 
@@ -97,7 +97,7 @@ const arraySubarray: FunctionDefinitionType = (
 				startValue - 1,
 				lengthValue + startValue - 1
 			);
-			return sequenceFactory.singleton(new ArrayValue(newMembers));
+			return sequenceFactory.singleton(new ArrayValue(newMembers, ABSENT_JSON_ARRAY));
 		}
 	);
 };
@@ -126,7 +126,7 @@ const arrayRemove: FunctionDefinitionType = (
 				newMembers.splice(position - 1, 1);
 			}
 
-			return sequenceFactory.singleton(new ArrayValue(newMembers));
+			return sequenceFactory.singleton(new ArrayValue(newMembers, ABSENT_JSON_ARRAY));
 		})
 	);
 };
@@ -148,7 +148,7 @@ const arrayInsertBefore: FunctionDefinitionType = (
 
 		const newMembers = (array as ArrayValue).members.concat();
 		newMembers.splice(positionValue - 1, 0, createDoublyIterableSequence(itemSequence));
-		return sequenceFactory.singleton(new ArrayValue(newMembers));
+		return sequenceFactory.singleton(new ArrayValue(newMembers, ABSENT_JSON_ARRAY));
 	});
 };
 
@@ -159,7 +159,9 @@ const arrayReverse: FunctionDefinitionType = (
 	arraySequence
 ) => {
 	return zipSingleton([arraySequence], ([array]) =>
-		sequenceFactory.singleton(new ArrayValue((array as ArrayValue).members.concat().reverse()))
+		sequenceFactory.singleton(
+			new ArrayValue((array as ArrayValue).members.concat().reverse(), ABSENT_JSON_ARRAY)
+		)
 	);
 };
 
@@ -174,7 +176,7 @@ const arrayJoin: FunctionDefinitionType = (
 			(joinedMembers, array) => joinedMembers.concat((array as ArrayValue).members),
 			[]
 		);
-		return sequenceFactory.singleton(new ArrayValue(newMembers));
+		return sequenceFactory.singleton(new ArrayValue(newMembers, ABSENT_JSON_ARRAY));
 	});
 };
 
@@ -206,7 +208,7 @@ const arrayForEach: FunctionDefinitionType = (
 				)
 			);
 		});
-		return sequenceFactory.singleton(new ArrayValue(newMembers));
+		return sequenceFactory.singleton(new ArrayValue(newMembers, ABSENT_JSON_ARRAY));
 	});
 };
 
@@ -250,7 +252,7 @@ const arrayFilter: FunctionDefinitionType = (
 					(_, i) => effectiveBooleanValues[i]
 				);
 				done = true;
-				return ready(new ArrayValue(newMembers));
+				return ready(new ArrayValue(newMembers, ABSENT_JSON_ARRAY));
 			},
 		});
 	});
@@ -371,7 +373,7 @@ const arrayForEachPair: FunctionDefinitionType = (
 				);
 			}
 
-			return sequenceFactory.singleton(new ArrayValue(newMembers));
+			return sequenceFactory.singleton(new ArrayValue(newMembers, ABSENT_JSON_ARRAY));
 		}
 	);
 };
@@ -444,7 +446,10 @@ const arraySortCallback = (
 	});
 
 	return sequenceFactory.singleton(
-		new ArrayValue(allValues.map((item) => () => sequenceFactory.create(item)))
+		new ArrayValue(
+			allValues.map((item) => () => sequenceFactory.create(item)),
+			ABSENT_JSON_ARRAY
+		)
 	);
 };
 const arraySort: FunctionDefinitionType = (
