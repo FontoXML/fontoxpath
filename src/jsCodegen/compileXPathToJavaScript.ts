@@ -8,7 +8,6 @@ import { Language, Options } from '../types/Options';
 import compileAstToJavaScript from './compileAstToJavaScript';
 import { JavaScriptCompiledXPathResult } from './JavaScriptCompiledXPath';
 import { StaticContext } from './StaticContext';
-
 /**
  * Compile a given query to JavaScript code. For executing compiled code, see
  * {@link executeJavaScriptCompiledXPath}.
@@ -45,6 +44,8 @@ function compileXPathToJavaScript(
 	const staticContext: StaticContext = {
 		resolveNamespace: options['namespaceResolver'] || createDefaultNamespaceResolver(null),
 	};
+
+	// const annotatedAst = annotateAst(ast, new AnnotationContext(staticContext));
 
 	return compileAstToJavaScript(ast, returnType, staticContext);
 }

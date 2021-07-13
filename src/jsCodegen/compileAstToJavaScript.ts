@@ -30,6 +30,13 @@ function emitEvaluationToBoolean(identifier: string): PartiallyCompiledAstAccept
 	`);
 }
 
+// Strings can just be returned as is so lets do that
+function emitEvaluationToString(identifier: string): PartiallyCompiledAstAccepted {
+	return acceptAst(`
+	return ${identifier}(contextItem);
+	`);
+}
+
 function emitEvaluationToFirstNode(identifier: string): PartiallyCompiledAstAccepted {
 	return acceptAst(`
 	const firstResult = ${identifier}(contextItem).next();
@@ -51,13 +58,15 @@ function emitReturnTypeConversion(
 			return emitEvaluationToNodes(identifier);
 		case ReturnType.BOOLEAN:
 			return emitEvaluationToBoolean(identifier);
+		case ReturnType.STRING:
+			return emitEvaluationToString(identifier);
 		default:
 			return rejectAst(`Unsupported: the return type '${returnType}'.`);
 	}
 }
 
-function wrapCompiledCode(code: string): string {
-	return `
+function wrapCompiledCode(code: string, shouldUseContextItem: boolean): string {
+	let finalCode = `
 	return (contextItem, domFacade, runtimeLib) => {
 		const {
 			DONE_TOKEN,
@@ -67,8 +76,10 @@ function wrapCompiledCode(code: string): string {
 			determinePredicateTruthValue,
 			isSubtypeOf,
 			ready,
-		} = runtimeLib;
+		} = runtimeLib;`;
 
+	if (shouldUseContextItem) {
+		finalCode += `
 		if (!contextItem) {
 			throw XPDY0002("Context is needed to evaluate the given path expression.");
 		}
@@ -77,11 +88,12 @@ function wrapCompiledCode(code: string): string {
 			throw new Error("Context item must be subtype of node().");
 		}
 
-		contextItem = contextItem.value.node;
-
-		${code}
+		contextItem = contextItem.value.node;`;
 	}
-	`;
+
+	finalCode += code + `}`;
+
+	return finalCode;
 }
 
 const compiledXPathIdentifier = 'compiledXPathExpression';
@@ -123,9 +135,28 @@ function compileAstToJavaScript(
 
 	const code = emittedVariables + compiledBaseExpr.code + returnTypeConversionCode.code;
 
-	const wrappedCode = wrapCompiledCode(code);
+	const requiresContext = checkForContextItemInExpression(xPathAst);
+
+	const wrappedCode = wrapCompiledCode(code, requiresContext);
 
 	return acceptFullyCompiledAst(wrappedCode);
+}
+
+// This function is used to check if a query requires a context.
+// This implementation is temporary and will be removed when codegen gets combined with the annotation.
+//
+// TODO: replace this with context info from the annotation step
+function checkForContextItemInExpression(ast: IAST): boolean {
+	const children = astHelper.getChildren(ast, '*');
+	if (ast[0] === 'pathExpr') {
+		return true;
+	}
+	for (const child of children) {
+		if (checkForContextItemInExpression(child)) {
+			return true;
+		}
+	}
+	return false;
 }
 
 export default compileAstToJavaScript;
