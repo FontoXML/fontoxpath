@@ -44,9 +44,9 @@ export function emitValueCompare(
 	function ${identifier}(contextItem) {
 		${firstExpr.variables.join('\n')}
 		${secondExpr.variables.join('\n')}
-		return ${firstExpr.code}(contextItem) ${compareOperators[compareType]} ${
-		secondExpr.code
-	}(contextItem);
+		return parseCharacterReferences(${firstExpr.code}(contextItem)) ${
+		compareOperators[compareType]
+	} parseCharacterReferences(${secondExpr.code}(contextItem));
 	}
 	`;
 

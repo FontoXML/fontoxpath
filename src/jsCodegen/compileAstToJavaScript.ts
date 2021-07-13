@@ -12,6 +12,45 @@ import {
 	rejectAst,
 } from './JavaScriptCompiledXPath';
 
+const parseFunction = `
+function assertValidCodePoint (codePoint) {
+	if ((codePoint >= 0x1 && codePoint <= 0xD7FF) ||
+		(codePoint >= 0xE000 && codePoint <= 0xFFFD) ||
+		(codePoint >= 0x10000 && codePoint <= 0x10FFFF)) {
+			return;
+	}
+	throwError(\"XQST0090\", \"The character reference \" + codePoint + \" (\"  + codePoint.toString(16) + \") does not reference a valid codePoint.\");
+}
+
+function parseCharacterReferences (input) {
+    return input
+        .replace(\/(&[^;]+);\/g, function (match) {
+            if (\/^&#x\/.test(match)) {
+                var codePoint = parseInt(match.slice(3, -1), 16);
+                assertValidCodePoint(codePoint);
+                return String.fromCodePoint(codePoint);\
+            }
+            if (\/^&#\/.test(match)) {
+                var codePoint = parseInt(match.slice(2, -1), 10);
+                assertValidCodePoint(codePoint);
+                return String.fromCodePoint(codePoint);
+            }
+            switch (match) {
+                case \'&lt;\':
+                    return \'<\';
+                case \'&gt;\':
+                    return \'>\';
+                case \'&amp;\':
+                    return \'&\';
+                case \'&quot;\':
+                    return String.fromCharCode(34);
+                case \'&apos;\':
+                    return String.fromCharCode(39);
+                }
+                throwError(\"XPST0003\", \"Unknown character reference: \\\"\" + match + \"\\\"\");
+    });
+}`;
+
 // Return all matching nodes.
 function emitEvaluationToNodes(identifier: string): PartiallyCompiledAstAccepted {
 	return acceptAst(`
@@ -66,7 +105,10 @@ function emitReturnTypeConversion(
 }
 
 function wrapCompiledCode(code: string, shouldUseContextItem: boolean): string {
-	let finalCode = `
+	let finalCode =
+		parseFunction +
+		'\n' +
+		`
 	return (contextItem, domFacade, runtimeLib) => {
 		const {
 			DONE_TOKEN,
