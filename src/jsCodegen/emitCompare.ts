@@ -1,7 +1,7 @@
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { CodeGenContext } from './CodeGenContext';
-import { emitBaseExpr } from './emitBaseExpression';
+// import { emitBaseExpr } from './emitBaseExpression';
 import { acceptAst, PartialCompilationResult, rejectAst } from './JavaScriptCompiledXPath';
 
 export function emitValueCompare(
@@ -44,9 +44,9 @@ export function emitValueCompare(
 	function ${identifier}(contextItem) {
 		${firstExpr.variables.join('\n')}
 		${secondExpr.variables.join('\n')}
-		return parseCharacterReferences(${firstExpr.code}(contextItem)) ${
-		compareOperators[compareType]
-	} parseCharacterReferences(${secondExpr.code}(contextItem));
+		return ${firstExpr.code}(contextItem) ${compareOperators[compareType]} ${
+		secondExpr.code
+	}(contextItem);
 	}
 	`;
 
@@ -83,40 +83,40 @@ export function emitGeneralCompare(
 	} else {
 		return rejectAst('generalCompare with sequences is still in development');
 		// take all the children except for the type.
-		const leftChildren: IAST[] = astHelper.getChildren(firstAstOp, '*');
-		const rightChildren: IAST[] = astHelper.getChildren(secondAstOp, '*');
-		leftChildren.shift();
-		rightChildren.shift();
-		// TODO: make the generalCompare compatible with the valueCompare, the code that is here at the moment is a guess
+		// const leftChildren: IAST[] = astHelper.getChildren(firstAstOp, '*');
+		// const rightChildren: IAST[] = astHelper.getChildren(secondAstOp, '*');
+		// leftChildren.shift();
+		// rightChildren.shift();
+		// // TODO: make the generalCompare compatible with the valueCompare, the code that is here at the moment is a guess
 
-		let generalCompare: string = `
-	    function ${identifier}(contextItem) {
-	    `;
+		// let generalCompare: string = `
+		// function ${identifier}(contextItem) {
+		// `;
 
-		for (let x = 0; x < leftChildren.length; x++) {
-			for (let y = 0; y < rightChildren.length; y++) {
-				const left = emitBaseExpr(leftChildren[x], identifier, staticContext);
-				const right = emitBaseExpr(rightChildren[y], identifier, staticContext);
-				const valueCompare = emitValueCompare(
-					ast,
-					compareType,
-					left,
-					right,
-					identifier,
-					staticContext
-				);
-				if (!valueCompare.isAstAccepted) {
-					return rejectAst('generalCompare could not be created');
-				}
-				// generalCompare += `if(${valueCompare.code}(contextItem)) {
-				//         return true;
-				//     }
-				//     `;
-			}
-		}
-		generalCompare += `return false;
-	                    }`;
-		return acceptAst(generalCompare);
+		// for (let x = 0; x < leftChildren.length; x++) {
+		// 	for (let y = 0; y < rightChildren.length; y++) {
+		// 		const left = emitBaseExpr(leftChildren[x], identifier, staticContext);
+		// 		const right = emitBaseExpr(rightChildren[y], identifier, staticContext);
+		// 		const valueCompare = emitValueCompare(
+		// 			ast,
+		// 			compareType,
+		// 			left,
+		// 			right,
+		// 			identifier,
+		// 			staticContext
+		// 		);
+		// 		if (!valueCompare.isAstAccepted) {
+		// 			return rejectAst('generalCompare could not be created');
+		// 		}
+		// 		// generalCompare += `if(${valueCompare.code}(contextItem)) {
+		// 		//         return true;
+		// 		//     }
+		// 		//     `;
+		// 	}
+		// }
+		// generalCompare += `return false;
+		//                 }`;
+		// return acceptAst(generalCompare);
 	}
 }
 
