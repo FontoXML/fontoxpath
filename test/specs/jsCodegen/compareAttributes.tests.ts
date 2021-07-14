@@ -14,15 +14,15 @@ describe('compare attributes tests', () => {
     </tips>
     </xml>`);
 
-	it('test simple attribute compare', () => {
+	it.skip('test simple attribute compare', () => {
 		const normalEvaluation = new slimdom.XMLSerializer().serializeToString(
 			evaluateXPath("//tip[@id='edit']", xml, null)
 		);
 
-		// const jsCodegenEvaluation = new slimdom.XMLSerializer().serializeToString(
-		// 	evaluateXPathWithJsCodegen("//tip[@id='edit']", xml, null, ReturnType.NODES)
-		// );
+		const jsCodegenEvaluation = new slimdom.XMLSerializer().serializeToString(
+			evaluateXPathWithJsCodegen("//tip[@id='edit']", xml, null, ReturnType.NODES)
+		);
 
-		// chai.assert.equal(normalEvaluation, jsCodegenEvaluation);
+		chai.assert.equal(normalEvaluation, jsCodegenEvaluation);
 	});
 });
