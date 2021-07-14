@@ -15,9 +15,9 @@ const updateResult = document.getElementById('updateResult');
 const xmlSource = document.getElementById('xmlSource');
 const xpathField = document.getElementById('xpathField');
 const traceOutput = document.getElementById('traceOutput');
+const jsCodegenOutput = document.getElementById('jsCodegenOutput');
 
 const domParser = new DOMParser();
-const jsCodegenOutput = document.getElementById('jsCodegenOutput');
 
 let xmlDoc: Document;
 function setCookie() {
@@ -207,7 +207,7 @@ async function runNormalXPath(script: string, asXQuery: boolean, annotateAst: bo
 async function runXPathWithJsCodegen(xpath: string, asXQuery: boolean, annotateAst: boolean) {
 	const compiledXPathResult = fontoxpath.compileXPathToJavaScript(
 		xpath,
-		fontoxpath.ReturnType.BOOLEAN,
+		fontoxpath.ReturnType.STRING,
 		{
 			language: asXQuery
 				? fontoxpath.evaluateXPath.XQUERY_3_1_LANGUAGE
@@ -308,7 +308,17 @@ xmlSource.oninput = (_evt) => {
 	rerunXPath();
 };
 
-xpathField.oninput = (_evt) => {
+xpathField.oninput = (_evt) => xpathReload();
+
+useJsCodegenBackend.onclick = (_evt) => xpathReload();
+
+useAstAnnotation.onclick = (_evt) => xpathReload();
+
+allowXQuery.onclick = (_evt) => xpathReload();
+
+allowXQueryUpdateFacility.onclick = (_evt) => xpathReload();
+
+function xpathReload() {
 	setCookie();
 	try {
 		xmlDoc = domParser.parseFromString(xmlSource.innerText, 'text/xml');
@@ -317,7 +327,7 @@ xpathField.oninput = (_evt) => {
 	} catch (_) {
 		// Catch all exceptions
 	}
-};
+}
 
 function loadFromCookie() {
 	const cookie = document.cookie.split(/;\s/g).find((c) => c.startsWith('xpath-editor-state='));
