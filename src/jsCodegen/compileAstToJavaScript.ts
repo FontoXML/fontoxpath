@@ -6,6 +6,7 @@ import { emitBaseExpr } from './emitBaseExpression';
 import {
 	acceptAst,
 	acceptFullyCompiledAst,
+	getCompiledValueCode,
 	JavaScriptCompiledXPathResult,
 	PartialCompilationResult,
 	PartiallyCompiledAstAccepted,
@@ -13,53 +14,78 @@ import {
 } from './JavaScriptCompiledXPath';
 
 // Return all matching nodes.
-function emitEvaluationToNodes(identifier: string): PartiallyCompiledAstAccepted {
-	return acceptAst(`
+function emitEvaluationToNodes(
+	identifier: string,
+	isFunction: boolean
+): PartiallyCompiledAstAccepted {
+	return acceptAst(
+		`
 	const nodes = [];
-	for (const node of ${identifier}(contextItem)) {
+	for (const node of ${getCompiledValueCode(identifier, isFunction)}) {
 		nodes.push(node.value.node);
 	}
 	return nodes;
-	`);
+	`,
+		false
+	);
 }
 
 // Get effective boolean value.
-function emitEvaluationToBoolean(identifier: string): PartiallyCompiledAstAccepted {
-	return acceptAst(`
-	return determinePredicateTruthValue(${identifier}(contextItem));
-	`);
+function emitEvaluationToBoolean(
+	identifier: string,
+	isFunction: boolean
+): PartiallyCompiledAstAccepted {
+	return acceptAst(
+		`
+	return determinePredicateTruthValue(${getCompiledValueCode(identifier, isFunction)});
+	`,
+		false
+	);
 }
 
 // Strings can just be returned as is so lets do that
-function emitEvaluationToString(identifier: string): PartiallyCompiledAstAccepted {
-	return acceptAst(`
-	return ${identifier}(contextItem);
-	`);
+function emitEvaluationToString(
+	identifier: string,
+	isFunction: boolean
+): PartiallyCompiledAstAccepted {
+	return acceptAst(
+		`
+	return ${getCompiledValueCode(identifier, isFunction)};
+	`,
+		false
+	);
 }
 
-function emitEvaluationToFirstNode(identifier: string): PartiallyCompiledAstAccepted {
-	return acceptAst(`
-	const firstResult = ${identifier}(contextItem).next();
+function emitEvaluationToFirstNode(
+	identifier: string,
+	isFunction: boolean
+): PartiallyCompiledAstAccepted {
+	return acceptAst(
+		`
+	const firstResult = ${getCompiledValueCode(identifier, isFunction)}.next();
 	if (!firstResult.done) {
 		return firstResult.value.value.node
 	}
 	return null;
-	`);
+	`,
+		false
+	);
 }
 
 function emitReturnTypeConversion(
 	identifier: string,
-	returnType: ReturnType
+	returnType: ReturnType,
+	isFunction: boolean
 ): PartialCompilationResult {
 	switch (returnType) {
 		case ReturnType.FIRST_NODE:
-			return emitEvaluationToFirstNode(identifier);
+			return emitEvaluationToFirstNode(identifier, isFunction);
 		case ReturnType.NODES:
-			return emitEvaluationToNodes(identifier);
+			return emitEvaluationToNodes(identifier, isFunction);
 		case ReturnType.BOOLEAN:
-			return emitEvaluationToBoolean(identifier);
+			return emitEvaluationToBoolean(identifier, isFunction);
 		case ReturnType.STRING:
-			return emitEvaluationToString(identifier);
+			return emitEvaluationToString(identifier, isFunction);
 		default:
 			return rejectAst(`Unsupported: the return type '${returnType}'.`);
 	}
@@ -103,11 +129,6 @@ function compileAstToJavaScript(
 	returnType: ReturnType,
 	staticContext: CodeGenContext
 ): JavaScriptCompiledXPathResult {
-	const returnTypeConversionCode = emitReturnTypeConversion(compiledXPathIdentifier, returnType);
-	if (returnTypeConversionCode.isAstAccepted === false) {
-		return returnTypeConversionCode;
-	}
-
 	const mainModule = astHelper.getFirstChild(xPathAst, 'mainModule');
 	if (!mainModule) {
 		return rejectAst(`Unsupported: Can not execute a library module.`);
@@ -132,6 +153,16 @@ function compileAstToJavaScript(
 	const emittedVariables = compiledBaseExpr.variables
 		? compiledBaseExpr.variables.join('\n')
 		: '';
+
+	const returnTypeConversionCode = emitReturnTypeConversion(
+		compiledXPathIdentifier,
+		returnType,
+		compiledBaseExpr.isFunction
+	);
+
+	if (returnTypeConversionCode.isAstAccepted === false) {
+		return returnTypeConversionCode;
+	}
 
 	const code = emittedVariables + compiledBaseExpr.code + returnTypeConversionCode.code;
 

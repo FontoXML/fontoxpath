@@ -2,7 +2,12 @@ import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/da
 import astHelper, { IAST } from '../parsing/astHelper';
 import { CodeGenContext } from './CodeGenContext';
 // import { emitBaseExpr } from './emitBaseExpression';
-import { acceptAst, PartialCompilationResult, rejectAst } from './JavaScriptCompiledXPath';
+import {
+	acceptAst,
+	getCompiledValueCode,
+	PartialCompilationResult,
+	rejectAst,
+} from './JavaScriptCompiledXPath';
 
 export function emitValueCompare(
 	ast: IAST,
@@ -40,17 +45,20 @@ export function emitValueCompare(
 	if (!compareOperators[compareType]) {
 		return rejectAst(compareType + ' not yet implemented');
 	}
-	const code = `
+
+	const operator = compareOperators[compareType];
+
+	let code = `
 	function ${identifier}(contextItem) {
 		${firstExpr.variables.join('\n')}
 		${secondExpr.variables.join('\n')}
-		return ${firstExpr.code}(contextItem) ${compareOperators[compareType]} ${
-		secondExpr.code
-	}(contextItem);
+		return ${getCompiledValueCode(firstExpr.code, firstExpr.isFunction)} 
+				${operator}
+				${getCompiledValueCode(secondExpr.code, secondExpr.isFunction)};
 	}
 	`;
 
-	return acceptAst(code);
+	return acceptAst(code, true);
 }
 
 export function emitGeneralCompare(

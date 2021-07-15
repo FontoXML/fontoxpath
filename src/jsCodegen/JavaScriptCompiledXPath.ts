@@ -7,14 +7,28 @@ export type PartiallyCompiledAstAccepted = {
 	isAstAccepted: true;
 	// Contains variable (and function) declarations for the upper compiled
 	// scope.
+	isFunction: boolean;
 	variables?: string[];
 };
 
-export function acceptAst(code: string, variables?: string[]): PartiallyCompiledAstAccepted {
+export function getCompiledValueCode(
+	identifier: string,
+	isFunction: boolean,
+	contextItemName?: string
+): string {
+	return isFunction ? `${identifier}(${contextItemName ?? `contextItem`})` : identifier;
+}
+
+export function acceptAst(
+	code: string,
+	isFunction: boolean,
+	variables?: string[]
+): PartiallyCompiledAstAccepted {
 	return {
 		code,
-		variables,
+		isFunction,
 		isAstAccepted: true,
+		variables,
 	};
 }
 
