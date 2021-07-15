@@ -132,7 +132,7 @@ function emitMultipleNodeAxis(
 	${indexReset}
 	`;
 
-	return acceptAst(axisCode, [`let i${nestLevel} = 0;`]);
+	return acceptAst(axisCode, false, [`let i${nestLevel} = 0;`]);
 }
 
 // Emit code for an axis made up of exactly one node, that should only be
@@ -157,6 +157,7 @@ function emitSingleNodeAxis(
 			${nestedCode}
 		}
 		`,
+		false,
 		[`let i${nestLevel} = 0;`]
 	);
 }

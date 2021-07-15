@@ -22,7 +22,7 @@ export const tests = Object.values(testAstNodes);
 // text() matches any text node.
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-TextTest
 function emitTextTest(_ast: IAST, identifier: ContextItemIdentifier): PartialCompilationResult {
-	return acceptAst(`${identifier}.nodeType === ${NODE_TYPES.TEXT_NODE}`);
+	return acceptAst(`${identifier}.nodeType === ${NODE_TYPES.TEXT_NODE}`, false);
 }
 
 function resolveNamespaceURI(qName: QName, staticContext: CodeGenContext) {
@@ -48,12 +48,13 @@ function emitNameTestFromQName(
 	// Simple cases.
 	if (prefix === '*') {
 		if (localName === '*') {
-			return acceptAst(isElementOrAttributeCode);
+			return acceptAst(isElementOrAttributeCode, false);
 		}
 		return acceptAst(
 			`${isElementOrAttributeCode} && ${identifier}.localName === ${escapeJavaScriptString(
 				localName
-			)}`
+			)}`,
+			false
 		);
 	}
 
@@ -73,7 +74,7 @@ function emitNameTestFromQName(
 			: escapeJavaScriptString(namespaceURI);
 	const matchesNamespaceCode = `(${identifier}.namespaceURI || null) === (${resolveNamespaceURICode} || null)`;
 
-	return acceptAst(`${matchesLocalNameCode}${matchesNamespaceCode}`);
+	return acceptAst(`${matchesLocalNameCode}${matchesNamespaceCode}`, false);
 }
 
 // element() and element(*) match any single element node, regardless of its name or type annotation.
@@ -88,7 +89,7 @@ function emitElementTest(
 	const isElementCode = `${identifier}.nodeType === ${NODE_TYPES.ELEMENT_NODE}`;
 
 	if (elementName === null || star) {
-		return acceptAst(isElementCode);
+		return acceptAst(isElementCode, false);
 	}
 
 	const qName = astHelper.getQName(astHelper.getFirstChild(elementName, 'QName'));

@@ -5,10 +5,11 @@ import { CodeGenContext } from './CodeGenContext';
 import { emitGeneralCompare, emitValueCompare } from './emitCompare';
 import emitStep from './emitStep';
 import emitTest, { tests } from './emitTest';
-import { sanitizeString } from './escapeJavaScriptString';
+import escapeJavaScriptString from './escapeJavaScriptString';
 import {
 	acceptAst,
 	FunctionIdentifier,
+	getCompiledValueCode,
 	PartialCompilationResult,
 	rejectAst,
 } from './JavaScriptCompiledXPath';
@@ -42,7 +43,7 @@ function emitPredicates(
 	const functionDeclarations: string[] = [];
 
 	if (!predicatesAst) {
-		return acceptAst(evaluatePredicateConditionCode, functionDeclarations);
+		return acceptAst(``, false, functionDeclarations);
 	}
 
 	const children = astHelper.getChildren(predicatesAst, '*');
@@ -52,7 +53,11 @@ function emitPredicates(
 
 		// Prepare condition used to determine if an axis should
 		// return a node.
-		const predicateFunctionCall = `determinePredicateTruthValue(${predicateFunctionIdentifier}(contextItem${nestLevel}))`;
+		const predicateFunctionCall = `determinePredicateTruthValue(${getCompiledValueCode(
+			predicateFunctionIdentifier,
+			true,
+			`contextItem${nestLevel}`
+		)})`;
 		if (i === 0) {
 			evaluatePredicateConditionCode += predicateFunctionCall;
 		} else {
@@ -70,7 +75,7 @@ function emitPredicates(
 			return compiledPredicate;
 		}
 	}
-	return acceptAst(evaluatePredicateConditionCode, functionDeclarations);
+	return acceptAst(evaluatePredicateConditionCode, true, functionDeclarations);
 }
 
 /**
@@ -89,6 +94,7 @@ function emitSteps(stepsAst: IAST[], staticContext: CodeGenContext): PartialComp
 				return ready(adaptSingleJavaScriptValue(contextItem, domFacade));
 			}
 			`,
+			false,
 			['let hasReturned = false;']
 		);
 	}
@@ -149,7 +155,7 @@ function emitSteps(stepsAst: IAST[], staticContext: CodeGenContext): PartialComp
 	const contextDeclaration = 'const contextItem0 = contextItem;';
 	emittedCode = contextDeclaration + emittedCode;
 
-	return acceptAst(emittedCode, emittedVariables);
+	return acceptAst(emittedCode, true, emittedVariables);
 }
 
 /**
@@ -205,7 +211,7 @@ function emitPathExpr(
 	}
 	`;
 
-	return acceptAst(pathExprCode);
+	return acceptAst(pathExprCode, true);
 }
 
 const FIRST_OPERAND = 'firstOperand';
@@ -241,13 +247,16 @@ function emitOperand(
 		return baseExpr;
 	}
 	if (targetType === ValueType.XSBOOLEAN) {
-		return acceptAst(`determinePredicateTruthValue(${baseExprIdentifier}(contextItem))`, [
-			baseExpr.code,
-		]);
+		return acceptAst(
+			`determinePredicateTruthValue(${getCompiledValueCode(
+				baseExprIdentifier,
+				baseExpr.isFunction
+			)})`,
+			false,
+			[baseExpr.code]
+		);
 	}
-	return acceptAst(`function x(contextItem) { return ${baseExprIdentifier}(contextItem); }`, [
-		baseExpr.code,
-	]);
+	return acceptAst(`${baseExprIdentifier}`, baseExpr.isFunction, [baseExpr.code]);
 }
 
 /**
@@ -332,7 +341,7 @@ function emitLogicalExpr(
 		return ${firstExpr.code} ${logicalExprOperator} ${secondExpr.code}
 	}
 	`;
-	return acceptAst(logicalOpCode);
+	return acceptAst(logicalOpCode, true);
 }
 
 /**
@@ -415,12 +424,8 @@ function emitStringLiteralExpression(
 	identifier: FunctionIdentifier
 ): PartialCompilationResult {
 	let text = astHelper.getFirstChild(ast, 'value')[1] as string;
-	text = sanitizeString(text);
-	return acceptAst(`
-	function ${identifier}(contextItem) {
-		return '${text}';
-	}
-	`);
+	text = escapeJavaScriptString(text);
+	return acceptAst(`const ${identifier} = ${text};`, false);
 }
 
 /**
