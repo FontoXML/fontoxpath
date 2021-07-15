@@ -5,7 +5,7 @@ import { CodeGenContext } from './CodeGenContext';
 import { emitGeneralCompare, emitValueCompare } from './emitCompare';
 import emitStep from './emitStep';
 import emitTest, { tests } from './emitTest';
-import escapeJavaScriptString, { sanitizeString } from './escapeJavaScriptString';
+import escapeJavaScriptString from './escapeJavaScriptString';
 import {
 	acceptAst,
 	FunctionIdentifier,
@@ -424,8 +424,8 @@ function emitStringLiteralExpression(
 	identifier: FunctionIdentifier
 ): PartialCompilationResult {
 	let text = astHelper.getFirstChild(ast, 'value')[1] as string;
-	text = sanitizeString(text);
-	return acceptAst(`const ${identifier} = ${text}';`, false);
+	text = escapeJavaScriptString(text);
+	return acceptAst(`const ${identifier} = ${text};`, false);
 }
 
 /**
