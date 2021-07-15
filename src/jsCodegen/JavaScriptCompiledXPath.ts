@@ -5,9 +5,11 @@ export type FunctionIdentifier = string;
 export type PartiallyCompiledAstAccepted = {
 	code: string;
 	isAstAccepted: true;
+	// Whether the generated code should be called as a function to get the
+	// resulting value. If isFunction is false, the result can be used as is.
+	isFunction: boolean;
 	// Contains variable (and function) declarations for the upper compiled
 	// scope.
-	isFunction: boolean;
 	variables?: string[];
 };
 
