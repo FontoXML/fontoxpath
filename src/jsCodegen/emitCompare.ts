@@ -1,13 +1,84 @@
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { CodeGenContext } from './CodeGenContext';
-// import { emitBaseExpr } from './emitBaseExpression';
+import { emitOperand } from './emitOperand';
 import {
 	acceptAst,
+	FunctionIdentifier,
 	getCompiledValueCode,
 	PartialCompilationResult,
 	rejectAst,
 } from './JavaScriptCompiledXPath';
+
+const FIRST_OPERAND = 'firstOperand';
+const SECOND_OPERAND = 'secondOperand';
+
+/**
+ * Compiles compare expressions to a JavaScript function.
+ *
+ *
+ * @param ast Logical expression AST node.
+ * @param identifier Function identifier for the emitted function
+ * @param staticContext Static context parameter to retrieve context-dependent information.
+ * @param compareType The exact operator that will be compiled
+ * @returns Wrapped compare expression.
+ */
+export function emitCompareExpr(
+	ast: IAST,
+	identifier: FunctionIdentifier,
+	staticContext: CodeGenContext,
+	compareType: string,
+	emitBaseExpr: any
+): PartialCompilationResult {
+	const firstExpr = emitOperand(ast, identifier, FIRST_OPERAND, staticContext, emitBaseExpr);
+	if (!firstExpr.isAstAccepted) {
+		return firstExpr;
+	}
+
+	const secondExpr = emitOperand(ast, identifier, SECOND_OPERAND, staticContext, emitBaseExpr);
+	if (!secondExpr.isAstAccepted) {
+		return secondExpr;
+	}
+
+	switch (compareType) {
+		// valueCompare
+		case 'eqOp':
+		case 'neOp':
+		case 'ltOp':
+		case 'leOp':
+		case 'gtOp':
+		case 'geOp':
+		case 'isOp':
+			return emitValueCompare(
+				ast,
+				compareType,
+				firstExpr,
+				secondExpr,
+				identifier,
+				staticContext
+			);
+		// generalCompare
+		case 'equalOp':
+		case 'notEqualOp':
+		case 'lessThanOrEqualOp':
+		case 'lessThanOp':
+		case 'greaterThanOrEqualOp':
+		case 'greaterThanOp':
+			return emitGeneralCompare(
+				ast,
+				compareType,
+				firstExpr,
+				secondExpr,
+				identifier,
+				staticContext
+			);
+		// nodeCompare
+		case 'nodeBeforeOp':
+		case 'nodeAfterOp':
+		default:
+			return rejectAst('Unsupported compare type');
+	}
+}
 
 export function emitValueCompare(
 	ast: IAST,
