@@ -27,15 +27,14 @@ export function emitCompareExpr(
 	ast: IAST,
 	identifier: FunctionIdentifier,
 	staticContext: CodeGenContext,
-	compareType: string,
-	emitBaseExpr: any
+	compareType: string
 ): PartialCompilationResult {
-	const firstExpr = emitOperand(ast, identifier, FIRST_OPERAND, staticContext, emitBaseExpr);
+	const firstExpr = emitOperand(ast, identifier, FIRST_OPERAND, staticContext);
 	if (!firstExpr.isAstAccepted) {
 		return firstExpr;
 	}
 
-	const secondExpr = emitOperand(ast, identifier, SECOND_OPERAND, staticContext, emitBaseExpr);
+	const secondExpr = emitOperand(ast, identifier, SECOND_OPERAND, staticContext);
 	if (!secondExpr.isAstAccepted) {
 		return secondExpr;
 	}

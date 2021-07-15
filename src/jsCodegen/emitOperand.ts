@@ -33,7 +33,6 @@ export function emitOperand(
 	identifier: FunctionIdentifier,
 	operandKind: 'firstOperand' | 'secondOperand',
 	staticContext: CodeGenContext,
-	emitBaseExpr: any,
 	targetType?: ValueType
 ): PartialCompilationResult {
 	const operand = astHelper.getFirstChild(ast, operandKind);
@@ -44,7 +43,7 @@ export function emitOperand(
 
 	const baseExprIdentifier = identifier + operandKind;
 
-	const baseExpr = emitBaseExpr(exprAst, baseExprIdentifier, staticContext);
+	const baseExpr = staticContext.emitBaseExpr(exprAst, baseExprIdentifier, staticContext);
 	if (!baseExpr.isAstAccepted) {
 		return baseExpr;
 	}

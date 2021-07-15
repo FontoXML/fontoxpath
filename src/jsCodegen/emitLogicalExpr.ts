@@ -20,10 +20,9 @@ const SECOND_OPERAND = 'secondOperand';
 export function emitAndExpr(
 	ast: IAST,
 	identifier: FunctionIdentifier,
-	staticContext: CodeGenContext,
-	emitBaseExpr: any
+	staticContext: CodeGenContext
 ): PartialCompilationResult {
-	return emitLogicalExpr(ast, identifier, staticContext, '&&', emitBaseExpr);
+	return emitLogicalExpr(ast, identifier, staticContext, '&&');
 }
 
 /**
@@ -39,10 +38,9 @@ export function emitAndExpr(
 export function emitOrExpr(
 	ast: IAST,
 	identifier: FunctionIdentifier,
-	staticContext: CodeGenContext,
-	emitBaseExpr: any
+	staticContext: CodeGenContext
 ): PartialCompilationResult {
-	return emitLogicalExpr(ast, identifier, staticContext, '||', emitBaseExpr);
+	return emitLogicalExpr(ast, identifier, staticContext, '||');
 }
 
 /**
@@ -60,15 +58,13 @@ function emitLogicalExpr(
 	ast: IAST,
 	identifier: FunctionIdentifier,
 	staticContext: CodeGenContext,
-	logicalExprOperator: '&&' | '||',
-	emitBaseExpr: any
+	logicalExprOperator: '&&' | '||'
 ): PartialCompilationResult {
 	const firstExpr = emitOperand(
 		ast,
 		identifier,
 		FIRST_OPERAND,
 		staticContext,
-		emitBaseExpr,
 		ValueType.XSBOOLEAN
 	);
 	if (!firstExpr.isAstAccepted) {
@@ -80,7 +76,6 @@ function emitLogicalExpr(
 		identifier,
 		SECOND_OPERAND,
 		staticContext,
-		emitBaseExpr,
 		ValueType.XSBOOLEAN
 	);
 	if (!secondExpr.isAstAccepted) {

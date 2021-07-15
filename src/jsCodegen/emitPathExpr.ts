@@ -22,8 +22,7 @@ import {
 function emitPredicates(
 	predicatesAst: IAST,
 	nestLevel: number,
-	staticContext: CodeGenContext,
-	emitBaseExpr: any
+	staticContext: CodeGenContext
 ): PartialCompilationResult {
 	let evaluatePredicateConditionCode = '';
 	const functionDeclarations: string[] = [];
@@ -50,7 +49,7 @@ function emitPredicates(
 			evaluatePredicateConditionCode = `${evaluatePredicateConditionCode} && ${predicateFunctionCall}`;
 		}
 
-		const compiledPredicate = emitBaseExpr(
+		const compiledPredicate = staticContext.emitBaseExpr(
 			predicate,
 			predicateFunctionIdentifier,
 			staticContext
@@ -71,11 +70,7 @@ function emitPredicates(
  * @param staticContext Static context parameter to retrieve context-dependent information.
  * @returns JavaScript code of the path expression steps.
  */
-function emitSteps(
-	stepsAst: IAST[],
-	staticContext: CodeGenContext,
-	emitBaseExpr: any
-): PartialCompilationResult {
+function emitSteps(stepsAst: IAST[], staticContext: CodeGenContext): PartialCompilationResult {
 	if (stepsAst.length === 0) {
 		return acceptAst(
 			`
@@ -96,12 +91,7 @@ function emitSteps(
 		const nestLevel = i + 1;
 
 		const predicatesAst = astHelper.getFirstChild(step, 'predicates');
-		const emittedPredicates = emitPredicates(
-			predicatesAst,
-			nestLevel,
-			staticContext,
-			emitBaseExpr
-		);
+		const emittedPredicates = emitPredicates(predicatesAst, nestLevel, staticContext);
 		if (!emittedPredicates.isAstAccepted) {
 			return emittedPredicates;
 		}
@@ -168,8 +158,7 @@ function emitSteps(
 export function emitPathExpr(
 	ast: IAST,
 	identifier: FunctionIdentifier,
-	staticContext: CodeGenContext,
-	emitBaseExpr: any
+	staticContext: CodeGenContext
 ): PartialCompilationResult {
 	// Find the root node from the context.
 	const isAbsolute = astHelper.getFirstChild(ast, 'rootExpr');
@@ -187,11 +176,7 @@ export function emitPathExpr(
 		`;
 	}
 
-	const emittedSteps = emitSteps(
-		astHelper.getChildren(ast, 'stepExpr'),
-		staticContext,
-		emitBaseExpr
-	);
+	const emittedSteps = emitSteps(astHelper.getChildren(ast, 'stepExpr'), staticContext);
 	if (!emittedSteps.isAstAccepted) {
 		return emittedSteps;
 	}

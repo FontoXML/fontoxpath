@@ -22,14 +22,15 @@ export function emitBaseExpr(
 	staticContext: CodeGenContext
 ): PartialCompilationResult {
 	const name = ast[0];
+	staticContext.emitBaseExpr = emitBaseExpr;
 
 	switch (name) {
 		case baseExprAstNodes.PATH_EXPR:
-			return emitPathExpr(ast, identifier, staticContext, emitBaseExpr);
+			return emitPathExpr(ast, identifier, staticContext);
 		case baseExprAstNodes.AND_OP:
-			return emitAndExpr(ast, identifier, staticContext, emitBaseExpr);
+			return emitAndExpr(ast, identifier, staticContext);
 		case baseExprAstNodes.OR_OP:
-			return emitOrExpr(ast, identifier, staticContext, emitBaseExpr);
+			return emitOrExpr(ast, identifier, staticContext);
 		case baseExprAstNodes.STRING_LIT_EXPR:
 			return emitStringLiteralExpression(ast, identifier);
 		// generalCompare
@@ -50,7 +51,7 @@ export function emitBaseExpr(
 		// nodeCompare
 		case 'nodeBeforeOp':
 		case 'nodeAfterOp':
-			return emitCompareExpr(ast, identifier, staticContext, name, emitBaseExpr);
+			return emitCompareExpr(ast, identifier, staticContext, name);
 		default:
 			return rejectAst(`Unsupported: the base expression '${name}'.`);
 	}
