@@ -79,7 +79,7 @@ describe('string tests', () => {
 		);
 	});
 
-	it('test xpath string escaping', () => {
+	it('test xpath string with character refrence', () => {
 		chai.assert.equal(
 			evaluateXPathWithJsCodegen('"&#45;"', documentNode, null, ReturnType.STRING, {
 				language: Language.XQUERY_3_1_LANGUAGE,
