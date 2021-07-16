@@ -76,7 +76,7 @@ describe('createTypedValueFactory', () => {
 
 		chai.assert.throws(
 			() => typedValueFactory(null, documentNode),
-			`The JavaScript value null should be an single entry if it is to be converted to xs:integer.`
+			`The JavaScript value null should be a single entry if it is to be converted to xs:integer.`
 		);
 	});
 
