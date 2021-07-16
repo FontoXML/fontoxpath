@@ -88,7 +88,7 @@ export function emitValueCompare(
 			
 			if (value.done) return [];
 
-			return value.value?.value?.node?.nodeValue
+			return value.value.value.node.nodeValue
 					${operator}
 					${getCompiledValueCode(secondExpr.code, secondExpr.isFunction)};
 		}
