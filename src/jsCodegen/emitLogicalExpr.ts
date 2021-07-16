@@ -4,9 +4,6 @@ import { CodeGenContext } from './CodeGenContext';
 import { emitOperand } from './emitOperand';
 import { acceptAst, FunctionIdentifier, PartialCompilationResult } from './JavaScriptCompiledXPath';
 
-const FIRST_OPERAND = 'firstOperand';
-const SECOND_OPERAND = 'secondOperand';
-
 /**
  * Helper function to compile an and expressions to a JavaScript function.
  *
@@ -63,7 +60,7 @@ function emitLogicalExpr(
 	const firstExpr = emitOperand(
 		ast,
 		identifier,
-		FIRST_OPERAND,
+		'firstOperand',
 		staticContext,
 		ValueType.XSBOOLEAN
 	);
@@ -74,7 +71,7 @@ function emitLogicalExpr(
 	const secondExpr = emitOperand(
 		ast,
 		identifier,
-		SECOND_OPERAND,
+		'secondOperand',
 		staticContext,
 		ValueType.XSBOOLEAN
 	);
