@@ -162,6 +162,10 @@ if (typeof fontoxpathGlobal !== 'undefined') {
 	fontoxpathGlobal['parseScript'] = parseScript;
 	fontoxpathGlobal['profiler'] = profiler;
 	fontoxpathGlobal['createTypedValueFactory'] = internalCreateTypedValueFactory;
+
+	// The two enums
+	fontoxpathGlobal['Language'] = Language;
+	fontoxpathGlobal['ReturnType'] = ReturnType;
 }
 
 /**
