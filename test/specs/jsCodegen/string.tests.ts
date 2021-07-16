@@ -1,5 +1,5 @@
 import * as chai from 'chai';
-import { ReturnType } from 'fontoxpath';
+import { Language, ReturnType } from 'fontoxpath';
 import * as slimdom from 'slimdom';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 import escapeJavaScriptString from '../../../src/jsCodegen/escapeJavaScriptString';
@@ -76,6 +76,15 @@ describe('string tests', () => {
 				{}
 			),
 			'child::element()'
+		);
+	});
+
+	it('test xpath string escaping', () => {
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen('"&#45;"', documentNode, null, ReturnType.STRING, {
+				language: Language.XQUERY_3_1_LANGUAGE,
+			}),
+			'-'
 		);
 	});
 });
