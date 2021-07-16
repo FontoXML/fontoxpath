@@ -34,31 +34,48 @@ export function emitValueCompare(
 		return rejectAst("Operands in compare weren't annotated");
 	}
 
-	if (leftType.type !== ValueType.XSSTRING || rightType.type !== ValueType.XSSTRING) {
-		return rejectAst('Value compare only supports strings for now');
-	}
-
 	const compareOperators: Record<string, string> = {
 		eqOp: '===',
 		neOp: '!==',
 	};
+
 	if (!compareOperators[compareType]) {
 		return rejectAst(compareType + ' not yet implemented');
 	}
 
 	const operator = compareOperators[compareType];
 
-	let code = `
-	function ${identifier}(contextItem) {
-		${firstExpr.variables.join('\n')}
-		${secondExpr.variables.join('\n')}
-		return ${getCompiledValueCode(firstExpr.code, firstExpr.isFunction)} 
-				${operator}
-				${getCompiledValueCode(secondExpr.code, secondExpr.isFunction)};
-	}
-	`;
+	if (leftType.type === ValueType.XSSTRING && rightType.type === ValueType.XSSTRING) {
+		const code = `
+		function ${identifier}(contextItem) {
+			${firstExpr.variables.join('\n')}
+			${secondExpr.variables.join('\n')}
+			return ${getCompiledValueCode(firstExpr.code, firstExpr.isFunction)} 
+					${operator}
+					${getCompiledValueCode(secondExpr.code, secondExpr.isFunction)};
+		}
+		`;
 
-	return acceptAst(code, true);
+		return acceptAst(code, true);
+	} else if (leftType.type === ValueType.NODE && rightType.type === ValueType.XSSTRING) {
+		const code = `
+		function ${identifier}(contextItem) {
+			${firstExpr.variables.join('\n')}
+			${secondExpr.variables.join('\n')}
+			const value = ${getCompiledValueCode(firstExpr.code, firstExpr.isFunction)}.next();
+			
+			if (value.done) return [];
+
+			return value.value?.value?.node?.nodeValue
+					${operator}
+					${getCompiledValueCode(secondExpr.code, secondExpr.isFunction)};
+		}
+		`;
+
+		return acceptAst(code, true);
+	} else {
+		return rejectAst('Value compare only supports strings for now');
+	}
 }
 
 export function emitGeneralCompare(

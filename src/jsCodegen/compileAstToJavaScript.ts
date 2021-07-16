@@ -18,6 +18,7 @@ function emitEvaluationToNodes(
 	identifier: string,
 	isFunction: boolean
 ): PartiallyCompiledAstAccepted {
+	// TODO: find a way to get rid of this if statement
 	return acceptAst(
 		`
 	const nodes = [];
