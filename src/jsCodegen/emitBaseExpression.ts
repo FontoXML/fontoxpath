@@ -22,7 +22,6 @@ export function emitBaseExpr(
 	staticContext: CodeGenContext
 ): PartialCompilationResult {
 	const name = ast[0];
-	staticContext.emitBaseExpr = emitBaseExpr;
 
 	switch (name) {
 		case baseExprAstNodes.PATH_EXPR:
