@@ -6,6 +6,9 @@ const allowXQueryUpdateFacility = document.getElementById(
 ) as HTMLInputElement;
 const useAstAnnotation = document.getElementById('useAstAnnotation') as HTMLInputElement;
 const useJsCodegenBackend = document.getElementById('useJsCodegenBackend') as HTMLInputElement;
+const codegenReturnTypeChoice = document.getElementById(
+	'codegenReturnTypeChoice'
+) as HTMLInputElement;
 const astJsonMl = document.getElementById('astJsonMl');
 const astXml = document.getElementById('astXml');
 const bucketField = document.getElementById('bucketField');
@@ -204,10 +207,24 @@ async function runNormalXPath(script: string, asXQuery: boolean, annotateAst: bo
 	resultText.innerText = JSON.stringify(raw, jsonXmlReplacer, '  ');
 }
 
+function getReturnTypeFromChoice(returnTypeString: string): fontoxpath.ReturnType | undefined {
+	switch (returnTypeString) {
+		case 'FIRST_NODE':
+			return fontoxpath.ReturnType.FIRST_NODE;
+		case 'NODES':
+			return fontoxpath.ReturnType.NODES;
+		case 'STRING':
+			return fontoxpath.ReturnType.STRING;
+		case 'BOOLEAN':
+			return fontoxpath.ReturnType.BOOLEAN;
+	}
+	return undefined;
+}
+
 async function runXPathWithJsCodegen(xpath: string, asXQuery: boolean, annotateAst: boolean) {
 	const compiledXPathResult = fontoxpath.compileXPathToJavaScript(
 		xpath,
-		fontoxpath.ReturnType.STRING,
+		getReturnTypeFromChoice(codegenReturnTypeChoice.value),
 		{
 			language: asXQuery
 				? fontoxpath.evaluateXPath.XQUERY_3_1_LANGUAGE
@@ -310,9 +327,14 @@ xmlSource.oninput = (_evt) => {
 
 xpathField.oninput = (_evt) => xpathReload();
 
-useJsCodegenBackend.onclick = (_evt) => xpathReload();
+useJsCodegenBackend.onclick = (evt) => {
+	codegenReturnTypeChoice.disabled = !useJsCodegenBackend.checked;
+	xpathReload();
+};
 
 useAstAnnotation.onclick = (_evt) => xpathReload();
+
+codegenReturnTypeChoice.onchange = (_evt) => xpathReload();
 
 allowXQuery.onclick = (_evt) => xpathReload();
 
@@ -351,6 +373,7 @@ function loadFromCookie() {
 
 	useAstAnnotation.checked = firstPart[2] === '1';
 	useJsCodegenBackend.checked = firstPart[3] === '1';
+	codegenReturnTypeChoice.disabled = !useJsCodegenBackend.checked;
 
 	const sourceLengthString = firstPart.substring(4);
 

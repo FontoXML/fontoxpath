@@ -34,6 +34,17 @@
 			>
 			<label><input id="useAstAnnotation" type="checkbox" />Use AST annotation</label>
 			<label><input id="useJsCodegenBackend" type="checkbox" />Use JS codegen backend</label>
+			<br />
+			<label>
+				Codegen return type
+				<select id="codegenReturnTypeChoice">
+					<option value="FIRST_NODE">First Node</option>
+					<option value="NODES">Nodes</option>
+					<option value="STRING">String</option>
+					<option value="BOOLEAN">Boolean</option>
+				</select>
+			</label>
+			<br />
 			<pre
 				type="text"
 				contenteditable="true"
