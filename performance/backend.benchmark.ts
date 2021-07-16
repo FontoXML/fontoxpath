@@ -1,6 +1,7 @@
 import benchmarkRunner from '@fontoxml/fonto-benchmark-runner';
 import { Document, Node } from 'slimdom';
 import * as slimdomSaxParser from 'slimdom-sax-parser';
+import { sync } from 'slimdom-sax-parser';
 import { evaluateXPathToBoolean, evaluateXPathToNodes, ReturnType } from '../src/index';
 import jsonMlMapper from '../test/helpers/jsonMlMapper';
 import evaluateXPathWithJsCodegen from '../test/specs/jsCodegen/evaluateXPathWithJsCodegen';
@@ -158,6 +159,36 @@ benchmarkRunner.compareBenchmarks(
 				null,
 				ReturnType.BOOLEAN
 			);
+		},
+	}
+);
+
+const compareExpressionQuery = "/xml/tips/tip[@id = 'edit']";
+benchmarkRunner.compareBenchmarks(
+	`evaluateXPathToNodes => ${compareExpressionQuery}`,
+	async () => {
+		document = sync(`
+			<xml>
+    			<title>xpath.playground.fontoxml.com</title>
+    			<summary>This is a learning tool for XML, XPath and XQuery.</summary>
+    			<tips>
+      				<tip id='edit'>You can edit everything on the left</tip>
+      				<tip id='examples'>You can access more examples from a menu in the top right</tip>
+      				<tip id='examples'>Another button there lets you share your test using an URL</tip>
+    			</tips>
+    		</xml>`);
+	},
+	undefined,
+	{
+		name: 'Expression Backend',
+		test: () => {
+			evaluateXPathToNodes(compareExpressionQuery, document, null);
+		},
+	},
+	{
+		name: 'JS Codegen Backend',
+		test: () => {
+			evaluateXPathWithJsCodegen(compareExpressionQuery, document, null, ReturnType.NODES);
 		},
 	}
 );
