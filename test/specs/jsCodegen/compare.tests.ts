@@ -71,7 +71,7 @@ describe('string tests', () => {
 		);
 	});
 
-	it('use generalcompare with character refrence', () => {
+	it.skip('use generalcompare with character refrence', () => {
 		chai.assert.equal(
 			evaluateXPathWithJsCodegen('"&#45;" = "-"', documentNode, null, ReturnType.BOOLEAN, {}),
 			true
