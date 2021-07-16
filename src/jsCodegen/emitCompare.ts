@@ -1,84 +1,25 @@
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { CodeGenContext } from './CodeGenContext';
-import { emitOperand } from './emitOperand';
+// import { emitBaseExpr } from './emitBaseExpression';
 import {
 	acceptAst,
-	FunctionIdentifier,
 	getCompiledValueCode,
 	PartialCompilationResult,
 	rejectAst,
 } from './JavaScriptCompiledXPath';
 
-const FIRST_OPERAND = 'firstOperand';
-const SECOND_OPERAND = 'secondOperand';
-
 /**
- * Compiles compare expressions to a JavaScript function.
+ * Generates javascript code for a value compare expression.
  *
- *
- * @param ast Logical expression AST node.
- * @param identifier Function identifier for the emitted function
- * @param staticContext Static context parameter to retrieve context-dependent information.
- * @param compareType The exact operator that will be compiled
- * @returns Wrapped compare expression.
+ * @param ast The ast of the value compare expression
+ * @param compareType The type of comparison we're executing
+ * @param firstExpr The generated code of the first expression
+ * @param secondExpr The generated code of the second expression
+ * @param identifier The identifier of the result
+ * @param staticContext The code generation context
+ * @returns Generated code of the value compare
  */
-export function emitCompareExpr(
-	ast: IAST,
-	identifier: FunctionIdentifier,
-	staticContext: CodeGenContext,
-	compareType: string
-): PartialCompilationResult {
-	const firstExpr = emitOperand(ast, identifier, FIRST_OPERAND, staticContext);
-	if (!firstExpr.isAstAccepted) {
-		return firstExpr;
-	}
-
-	const secondExpr = emitOperand(ast, identifier, SECOND_OPERAND, staticContext);
-	if (!secondExpr.isAstAccepted) {
-		return secondExpr;
-	}
-
-	switch (compareType) {
-		// valueCompare
-		case 'eqOp':
-		case 'neOp':
-		case 'ltOp':
-		case 'leOp':
-		case 'gtOp':
-		case 'geOp':
-		case 'isOp':
-			return emitValueCompare(
-				ast,
-				compareType,
-				firstExpr,
-				secondExpr,
-				identifier,
-				staticContext
-			);
-		// generalCompare
-		case 'equalOp':
-		case 'notEqualOp':
-		case 'lessThanOrEqualOp':
-		case 'lessThanOp':
-		case 'greaterThanOrEqualOp':
-		case 'greaterThanOp':
-			return emitGeneralCompare(
-				ast,
-				compareType,
-				firstExpr,
-				secondExpr,
-				identifier,
-				staticContext
-			);
-		// nodeCompare
-		case 'nodeBeforeOp':
-		case 'nodeAfterOp':
-		default:
-			return rejectAst('Unsupported compare type');
-	}
-}
-
 export function emitValueCompare(
 	ast: IAST,
 	compareType: string,
@@ -100,6 +41,7 @@ export function emitValueCompare(
 		return rejectAst("One of the two operands in compare wasn't accepted");
 	}
 
+	// Make sure both child expression got annotated
 	if (!leftType || !rightType) {
 		return rejectAst("Operands in compare weren't annotated");
 	}
@@ -109,13 +51,17 @@ export function emitValueCompare(
 		neOp: '!==',
 	};
 
+	// Make sure we support the comparison type
 	if (!compareOperators[compareType]) {
 		return rejectAst(compareType + ' not yet implemented');
 	}
 
+	// Get the correct operator
 	const operator = compareOperators[compareType];
 
+	// String - string compare
 	if (leftType.type === ValueType.XSSTRING && rightType.type === ValueType.XSSTRING) {
+		// We just execute the compare operator with the two operands.
 		const code = `
 		function ${identifier}(contextItem) {
 			${firstExpr.variables.join('\n')}
@@ -127,7 +73,11 @@ export function emitValueCompare(
 		`;
 
 		return acceptAst(code, true);
-	} else if (leftType.type === ValueType.NODE && rightType.type === ValueType.XSSTRING) {
+	}
+	// Node - string compare
+	else if (leftType.type === ValueType.NODE && rightType.type === ValueType.XSSTRING) {
+		// If the left-hand operand is an empty node sequence, we just return an empty sequence.
+		// Otherwise we execute the correct comparison operator
 		const code = `
 		function ${identifier}(contextItem) {
 			${firstExpr.variables.join('\n')}
@@ -148,6 +98,17 @@ export function emitValueCompare(
 	}
 }
 
+/**
+ * Generates javascript code for a general compare expression.
+ *
+ * @param ast The ast of the general compare expression
+ * @param compareType The type of comparison we're executing
+ * @param firstExpr The generated code of the first expression
+ * @param secondExpr The generated code of the second expression
+ * @param identifier The identifier of the result
+ * @param staticContext The code generation context
+ * @returns Generated code of the general compare
+ */
 export function emitGeneralCompare(
 	ast: IAST,
 	compareType: string,
@@ -215,6 +176,9 @@ export function emitGeneralCompare(
 	}
 }
 
+/**
+ *  A map to translate from general compare to value compare
+ */
 const OPERATOR_TRANSLATION: { [s: string]: string } = {
 	['equalOp']: 'eqOp',
 	['notEqualOp']: 'neOp',
