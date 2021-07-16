@@ -18,7 +18,9 @@ export function getCompiledValueCode(
 	isFunction: boolean,
 	contextItemName?: string
 ): string {
-	return isFunction ? `${identifier}(${contextItemName ?? `contextItem`})` : identifier;
+	return isFunction
+		? `${identifier}(${contextItemName ? contextItemName : `contextItem`})`
+		: identifier;
 }
 
 export function acceptAst(
