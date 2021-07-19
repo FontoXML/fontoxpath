@@ -73,6 +73,15 @@ function emitEvaluationToFirstNode(
 	);
 }
 
+function emitEvaluation(identifier: string, isFunction: boolean): PartiallyCompiledAstAccepted {
+	return acceptAst(
+		`
+	return ${getCompiledValueCode(identifier, isFunction)};
+	`,
+		false
+	);
+}
+
 function emitReturnTypeConversion(
 	identifier: string,
 	returnType: ReturnType,
@@ -87,6 +96,8 @@ function emitReturnTypeConversion(
 			return emitEvaluationToBoolean(identifier, isFunction);
 		case ReturnType.STRING:
 			return emitEvaluationToString(identifier, isFunction);
+		case ReturnType.ANY:
+			return emitEvaluation(identifier, isFunction);
 		default:
 			return rejectAst(`Unsupported: the return type '${returnType}'.`);
 	}
