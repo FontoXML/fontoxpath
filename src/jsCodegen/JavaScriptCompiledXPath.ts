@@ -2,12 +2,17 @@ export type ContextItemIdentifier = string;
 
 export type FunctionIdentifier = string;
 
+export enum CompiledResultType {
+	Value,
+	Function,
+	Iterator,
+	None,
+}
+
 export type PartiallyCompiledAstAccepted = {
 	code: string;
 	isAstAccepted: true;
-	// Whether the generated code should be called as a function to get the
-	// resulting value. If isFunction is false, the result can be used as is.
-	isFunction: boolean;
+	resultType: CompiledResultType;
 	// Contains variable (and function) declarations for the upper compiled
 	// scope.
 	variables?: string[];
@@ -15,22 +20,29 @@ export type PartiallyCompiledAstAccepted = {
 
 export function getCompiledValueCode(
 	identifier: string,
-	isFunction: boolean,
+	type: CompiledResultType,
 	contextItemName?: string
 ): string {
-	return isFunction
-		? `${identifier}(${contextItemName ? contextItemName : `contextItem`})`
-		: identifier;
+	switch (type) {
+		case CompiledResultType.Value:
+			return identifier;
+		case CompiledResultType.Function:
+			return `${identifier}(${contextItemName ? contextItemName : `contextItem`})`;
+		case CompiledResultType.Iterator:
+			return `${identifier}.next()`;
+		case CompiledResultType.None:
+			throw new Error('Unreachable');
+	}
 }
 
 export function acceptAst(
 	code: string,
-	isFunction: boolean,
+	resultType: CompiledResultType,
 	variables?: string[]
 ): PartiallyCompiledAstAccepted {
 	return {
 		code,
-		isFunction,
+		resultType,
 		isAstAccepted: true,
 		variables,
 	};

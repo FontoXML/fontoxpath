@@ -5,6 +5,7 @@ import { CodeGenContext } from './CodeGenContext';
 import escapeJavaScriptString from './escapeJavaScriptString';
 import {
 	acceptAst,
+	CompiledResultType,
 	ContextItemIdentifier,
 	PartialCompilationResult,
 	rejectAst,
@@ -22,7 +23,10 @@ export const tests = Object.values(testAstNodes);
 // text() matches any text node.
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-TextTest
 function emitTextTest(_ast: IAST, identifier: ContextItemIdentifier): PartialCompilationResult {
-	return acceptAst(`${identifier}.nodeType === ${NODE_TYPES.TEXT_NODE}`, false);
+	return acceptAst(
+		`${identifier}.nodeType === ${NODE_TYPES.TEXT_NODE}`,
+		CompiledResultType.Value
+	);
 }
 
 function resolveNamespaceURI(qName: QName, staticContext: CodeGenContext) {
@@ -48,13 +52,13 @@ function emitNameTestFromQName(
 	// Simple cases.
 	if (prefix === '*') {
 		if (localName === '*') {
-			return acceptAst(isElementOrAttributeCode, false);
+			return acceptAst(isElementOrAttributeCode, CompiledResultType.Value);
 		}
 		return acceptAst(
 			`${isElementOrAttributeCode} && ${identifier}.localName === ${escapeJavaScriptString(
 				localName
 			)}`,
-			false
+			CompiledResultType.Value
 		);
 	}
 
@@ -74,7 +78,7 @@ function emitNameTestFromQName(
 			: escapeJavaScriptString(namespaceURI);
 	const matchesNamespaceCode = `(${identifier}.namespaceURI || null) === (${resolveNamespaceURICode} || null)`;
 
-	return acceptAst(`${matchesLocalNameCode}${matchesNamespaceCode}`, false);
+	return acceptAst(`${matchesLocalNameCode}${matchesNamespaceCode}`, CompiledResultType.Value);
 }
 
 // element() and element(*) match any single element node, regardless of its name or type annotation.
@@ -89,7 +93,7 @@ function emitElementTest(
 	const isElementCode = `${identifier}.nodeType === ${NODE_TYPES.ELEMENT_NODE}`;
 
 	if (elementName === null || star) {
-		return acceptAst(isElementCode, false);
+		return acceptAst(isElementCode, CompiledResultType.Value);
 	}
 
 	const qName = astHelper.getQName(astHelper.getFirstChild(elementName, 'QName'));

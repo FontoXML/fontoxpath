@@ -5,6 +5,7 @@ import { emitOperand } from './emitOperand';
 // import { emitBaseExpr } from './emitBaseExpression';
 import {
 	acceptAst,
+	CompiledResultType,
 	FunctionIdentifier,
 	getCompiledValueCode,
 	PartialCompilationResult,
@@ -68,13 +69,13 @@ export function emitValueCompare(
 		function ${identifier}(contextItem) {
 			${firstExpr.variables.join('\n')}
 			${secondExpr.variables.join('\n')}
-			return ${getCompiledValueCode(firstExpr.code, firstExpr.isFunction)} 
+			return ${getCompiledValueCode(firstExpr.code, firstExpr.resultType)} 
 					${operator}
-					${getCompiledValueCode(secondExpr.code, secondExpr.isFunction)};
+					${getCompiledValueCode(secondExpr.code, secondExpr.resultType)};
 		}
 		`;
 
-		return acceptAst(code, true);
+		return acceptAst(code, CompiledResultType.Function);
 	}
 	// Node - string compare
 	else if (leftType.type === ValueType.NODE && rightType.type === ValueType.XSSTRING) {
@@ -84,17 +85,17 @@ export function emitValueCompare(
 		function ${identifier}(contextItem) {
 			${firstExpr.variables.join('\n')}
 			${secondExpr.variables.join('\n')}
-			const value = ${getCompiledValueCode(firstExpr.code, firstExpr.isFunction)}.next();
+			const value = ${getCompiledValueCode(firstExpr.code, firstExpr.resultType)}.next();
 			
 			if (value.done) return [];
 
 			return value.value.value.node.nodeValue
 					${operator}
-					${getCompiledValueCode(secondExpr.code, secondExpr.isFunction)};
+					${getCompiledValueCode(secondExpr.code, secondExpr.resultType)};
 		}
 		`;
 
-		return acceptAst(code, true);
+		return acceptAst(code, CompiledResultType.Function);
 	} else {
 		return rejectAst('Value compare only supports strings for now');
 	}

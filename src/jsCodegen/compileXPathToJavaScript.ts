@@ -1,7 +1,11 @@
 import {
+	createDefaultFunctionNameResolver,
 	createDefaultNamespaceResolver,
 	normalizeEndOfLines,
 } from '../evaluationUtils/buildEvaluationContext';
+import ExecutionSpecificStaticContext from '../expressions/ExecutionSpecificStaticContext';
+import { BUILT_IN_NAMESPACE_URIS } from '../expressions/staticallyKnownNamespaces';
+import StaticContext from '../expressions/StaticContext';
 import { ReturnType } from '../parsing/convertXDMReturnValue';
 import parseExpression from '../parsing/parseExpression';
 import annotateAst from '../typeInference/annotateAST';
@@ -10,6 +14,7 @@ import { Language, Options } from '../types/Options';
 import { CodeGenContext } from './CodeGenContext';
 import compileAstToJavaScript from './compileAstToJavaScript';
 import { JavaScriptCompiledXPathResult } from './JavaScriptCompiledXPath';
+
 /**
  * Compile a given query to JavaScript code. For executing compiled code, see
  * {@link executeJavaScriptCompiledXPath}.
@@ -43,14 +48,28 @@ function compileXPathToJavaScript(
 
 	const ast = parseExpression(expressionString, parserOptions);
 
-	const staticContext: CodeGenContext = {
+	const codegenContext: CodeGenContext = {
 		resolveNamespace: options['namespaceResolver'] || createDefaultNamespaceResolver(null),
 	};
 
-	// TODO: fix this so it takes in the staticContext from above
-	annotateAst(ast, new AnnotationContext(null));
+	annotateAst(
+		ast,
+		new AnnotationContext(
+			new StaticContext(
+				new ExecutionSpecificStaticContext(
+					codegenContext.resolveNamespace,
+					{},
+					options['defaultFunctionNamespaceURI'] ||
+						BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
+					createDefaultFunctionNameResolver(
+						BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI
+					)
+				)
+			)
+		)
+	);
 
-	return compileAstToJavaScript(ast, returnType, staticContext);
+	return compileAstToJavaScript(ast, returnType, codegenContext);
 }
 
 export default compileXPathToJavaScript;
