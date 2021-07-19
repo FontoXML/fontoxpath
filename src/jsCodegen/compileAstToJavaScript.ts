@@ -6,6 +6,7 @@ import { emitBaseExpr } from './emitBaseExpression';
 import {
 	acceptAst,
 	acceptFullyCompiledAst,
+	CompiledResultType,
 	getCompiledValueCode,
 	JavaScriptCompiledXPathResult,
 	PartialCompilationResult,
@@ -16,88 +17,91 @@ import {
 // Return all matching nodes.
 function emitEvaluationToNodes(
 	identifier: string,
-	isFunction: boolean
+	resultType: CompiledResultType
 ): PartiallyCompiledAstAccepted {
 	// TODO: find a way to get rid of this if statement
 	return acceptAst(
 		`
 	const nodes = [];
-	for (const node of ${getCompiledValueCode(identifier, isFunction)}) {
+	for (const node of ${getCompiledValueCode(identifier, resultType)}) {
 		nodes.push(node.value.node);
 	}
 	return nodes;
 	`,
-		false
+		CompiledResultType.Value
 	);
 }
 
 // Get effective boolean value.
 function emitEvaluationToBoolean(
 	identifier: string,
-	isFunction: boolean
+	resultType: CompiledResultType
 ): PartiallyCompiledAstAccepted {
 	return acceptAst(
 		`
-	return determinePredicateTruthValue(${getCompiledValueCode(identifier, isFunction)});
+	return determinePredicateTruthValue(${getCompiledValueCode(identifier, resultType)});
 	`,
-		false
+		CompiledResultType.Value
 	);
 }
 
 // Strings can just be returned as is so lets do that
 function emitEvaluationToString(
 	identifier: string,
-	isFunction: boolean
+	resultType: CompiledResultType
 ): PartiallyCompiledAstAccepted {
 	return acceptAst(
 		`
-	return ${getCompiledValueCode(identifier, isFunction)};
+	return ${getCompiledValueCode(identifier, resultType)};
 	`,
-		false
+		CompiledResultType.Value
 	);
 }
 
 function emitEvaluationToFirstNode(
 	identifier: string,
-	isFunction: boolean
+	resultType: CompiledResultType
 ): PartiallyCompiledAstAccepted {
 	return acceptAst(
 		`
-	const firstResult = ${getCompiledValueCode(identifier, isFunction)}.next();
+	const firstResult = ${getCompiledValueCode(identifier, resultType)}.next();
 	if (!firstResult.done) {
 		return firstResult.value.value.node
 	}
 	return null;
 	`,
-		false
+		CompiledResultType.Value
 	);
 }
 
-function emitEvaluation(identifier: string, isFunction: boolean): PartiallyCompiledAstAccepted {
+function emitEvaluationToAny(
+	identifier: string,
+	resultType: CompiledResultType
+): PartiallyCompiledAstAccepted {
 	return acceptAst(
 		`
-	return ${getCompiledValueCode(identifier, isFunction)};
+	return ${getCompiledValueCode(identifier, resultType)};
 	`,
-		false
+		CompiledResultType.Value
 	);
 }
 
 function emitReturnTypeConversion(
 	identifier: string,
 	returnType: ReturnType,
-	isFunction: boolean
+	resultType: CompiledResultType
 ): PartialCompilationResult {
 	switch (returnType) {
 		case ReturnType.FIRST_NODE:
-			return emitEvaluationToFirstNode(identifier, isFunction);
+			return emitEvaluationToFirstNode(identifier, resultType);
 		case ReturnType.NODES:
-			return emitEvaluationToNodes(identifier, isFunction);
+			return emitEvaluationToNodes(identifier, resultType);
 		case ReturnType.BOOLEAN:
-			return emitEvaluationToBoolean(identifier, isFunction);
+			return emitEvaluationToBoolean(identifier, resultType);
 		case ReturnType.STRING:
-			return emitEvaluationToString(identifier, isFunction);
+			return emitEvaluationToString(identifier, resultType);
 		case ReturnType.ANY:
-			return emitEvaluation(identifier, isFunction);
+			return emitEvaluationToAny(identifier, resultType);
 		default:
 			return rejectAst(`Unsupported: the return type '${returnType}'.`);
 	}
@@ -171,7 +175,7 @@ function compileAstToJavaScript(
 	const returnTypeConversionCode = emitReturnTypeConversion(
 		compiledXPathIdentifier,
 		returnType,
-		compiledBaseExpr.isFunction
+		compiledBaseExpr.resultType
 	);
 
 	if (returnTypeConversionCode.isAstAccepted === false) {

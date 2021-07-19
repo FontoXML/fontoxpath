@@ -5,6 +5,7 @@ import emitStep from './emitStep';
 import emitTest, { tests } from './emitTest';
 import {
 	acceptAst,
+	CompiledResultType,
 	FunctionIdentifier,
 	getCompiledValueCode,
 	PartialCompilationResult,
@@ -28,7 +29,7 @@ function emitPredicates(
 	const functionDeclarations: string[] = [];
 
 	if (!predicatesAst) {
-		return acceptAst(``, false, functionDeclarations);
+		return acceptAst(``, CompiledResultType.None, functionDeclarations);
 	}
 
 	const children = astHelper.getChildren(predicatesAst, '*');
@@ -40,7 +41,7 @@ function emitPredicates(
 		// return a node.
 		const predicateFunctionCall = `determinePredicateTruthValue(${getCompiledValueCode(
 			predicateFunctionIdentifier,
-			true,
+			CompiledResultType.Function,
 			`contextItem${nestLevel}`
 		)})`;
 		if (i === 0) {
@@ -60,7 +61,11 @@ function emitPredicates(
 			return compiledPredicate;
 		}
 	}
-	return acceptAst(evaluatePredicateConditionCode, true, functionDeclarations);
+	return acceptAst(
+		evaluatePredicateConditionCode,
+		CompiledResultType.Function,
+		functionDeclarations
+	);
 }
 
 /**
@@ -79,7 +84,7 @@ function emitSteps(stepsAst: IAST[], staticContext: CodeGenContext): PartialComp
 				return ready(adaptSingleJavaScriptValue(contextItem, domFacade));
 			}
 			`,
-			false,
+			CompiledResultType.Value,
 			['let hasReturned = false;']
 		);
 	}
@@ -140,7 +145,7 @@ function emitSteps(stepsAst: IAST[], staticContext: CodeGenContext): PartialComp
 	const contextDeclaration = 'const contextItem0 = contextItem;';
 	emittedCode = contextDeclaration + emittedCode;
 
-	return acceptAst(emittedCode, true, emittedVariables);
+	return acceptAst(emittedCode, CompiledResultType.Function, emittedVariables);
 }
 
 /**
@@ -196,5 +201,5 @@ export function emitPathExpr(
 	}
 	`;
 
-	return acceptAst(pathExprCode, true);
+	return acceptAst(pathExprCode, CompiledResultType.Function);
 }

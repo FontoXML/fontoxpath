@@ -3,6 +3,7 @@ import astHelper, { IAST } from '../parsing/astHelper';
 import { CodeGenContext } from './CodeGenContext';
 import {
 	acceptAst,
+	CompiledResultType,
 	FunctionIdentifier,
 	getCompiledValueCode,
 	PartialCompilationResult,
@@ -51,11 +52,11 @@ export function emitOperand(
 		return acceptAst(
 			`determinePredicateTruthValue(${getCompiledValueCode(
 				baseExprIdentifier,
-				baseExpr.isFunction
+				baseExpr.resultType
 			)})`,
-			false,
+			CompiledResultType.Value,
 			[baseExpr.code]
 		);
 	}
-	return acceptAst(`${baseExprIdentifier}`, baseExpr.isFunction, [baseExpr.code]);
+	return acceptAst(`${baseExprIdentifier}`, baseExpr.resultType, [baseExpr.code]);
 }

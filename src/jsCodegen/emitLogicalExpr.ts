@@ -2,7 +2,12 @@ import { ValueType } from '../expressions/dataTypes/Value';
 import { IAST } from '../parsing/astHelper';
 import { CodeGenContext } from './CodeGenContext';
 import { emitOperand } from './emitOperand';
-import { acceptAst, FunctionIdentifier, PartialCompilationResult } from './JavaScriptCompiledXPath';
+import {
+	acceptAst,
+	CompiledResultType,
+	FunctionIdentifier,
+	PartialCompilationResult,
+} from './JavaScriptCompiledXPath';
 
 /**
  * Helper function to compile an and expressions to a JavaScript function.
@@ -86,5 +91,5 @@ function emitLogicalExpr(
 		return ${firstExpr.code} ${logicalExprOperator} ${secondExpr.code}
 	}
 	`;
-	return acceptAst(logicalOpCode, true);
+	return acceptAst(logicalOpCode, CompiledResultType.Function);
 }

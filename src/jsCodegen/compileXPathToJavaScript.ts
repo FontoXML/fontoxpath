@@ -4,6 +4,7 @@ import {
 	normalizeEndOfLines,
 } from '../evaluationUtils/buildEvaluationContext';
 import ExecutionSpecificStaticContext from '../expressions/ExecutionSpecificStaticContext';
+import { BUILT_IN_NAMESPACE_URIS } from '../expressions/staticallyKnownNamespaces';
 import StaticContext from '../expressions/StaticContext';
 import { ReturnType } from '../parsing/convertXDMReturnValue';
 import parseExpression from '../parsing/parseExpression';
@@ -13,7 +14,6 @@ import { Language, Options } from '../types/Options';
 import { CodeGenContext } from './CodeGenContext';
 import compileAstToJavaScript from './compileAstToJavaScript';
 import { JavaScriptCompiledXPathResult } from './JavaScriptCompiledXPath';
-import { BUILT_IN_NAMESPACE_URIS } from '../expressions/staticallyKnownNamespaces';
 
 /**
  * Compile a given query to JavaScript code. For executing compiled code, see

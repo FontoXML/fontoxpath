@@ -2,6 +2,7 @@ import { NODE_TYPES } from '../domFacade/ConcreteNode';
 import astHelper, { IAST } from '../parsing/astHelper';
 import {
 	acceptAst,
+	CompiledResultType,
 	ContextItemIdentifier,
 	PartialCompilationResult,
 	rejectAst,
@@ -132,7 +133,7 @@ function emitMultipleNodeAxis(
 	${indexReset}
 	`;
 
-	return acceptAst(axisCode, false, [`let i${nestLevel} = 0;`]);
+	return acceptAst(axisCode, CompiledResultType.Value, [`let i${nestLevel} = 0;`]);
 }
 
 // Emit code for an axis made up of exactly one node, that should only be
@@ -157,7 +158,7 @@ function emitSingleNodeAxis(
 			${nestedCode}
 		}
 		`,
-		false,
+		CompiledResultType.Value,
 		[`let i${nestLevel} = 0;`]
 	);
 }

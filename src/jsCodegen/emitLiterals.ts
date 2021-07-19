@@ -1,6 +1,11 @@
 import astHelper, { IAST } from '../parsing/astHelper';
 import escapeJavaScriptString from './escapeJavaScriptString';
-import { acceptAst, FunctionIdentifier, PartialCompilationResult } from './JavaScriptCompiledXPath';
+import {
+	acceptAst,
+	CompiledResultType,
+	FunctionIdentifier,
+	PartialCompilationResult,
+} from './JavaScriptCompiledXPath';
 
 /**
  * Create a JavaScript function that returns the string literal.
@@ -17,5 +22,5 @@ export function emitStringLiteralExpression(
 ): PartialCompilationResult {
 	let text = astHelper.getFirstChild(ast, 'value')[1] as string;
 	text = escapeJavaScriptString(text);
-	return acceptAst(`const ${identifier} = ${text};`, false);
+	return acceptAst(`const ${identifier} = ${text};`, CompiledResultType.Value);
 }
