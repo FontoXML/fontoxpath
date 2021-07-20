@@ -24,22 +24,22 @@ export function determinePredicateTruthValue(iterator: { next: () => IterationRe
 // Make sure Closure Compiler does not change property names.
 declare interface IRuntimeLib {
 	adaptSingleJavaScriptValue: typeof adaptSingleJavaScriptValue;
+	atomize: typeof atomize;
 	determinePredicateTruthValue: typeof determinePredicateTruthValue;
 	DONE_TOKEN: typeof DONE_TOKEN;
 	getEffectiveBooleanValue: typeof getEffectiveBooleanValue;
 	isSubtypeOf: typeof isSubtypeOf;
 	ready: typeof ready;
-	atomize: typeof atomize;
 }
 
 const runtimeLib: IRuntimeLib = {
 	adaptSingleJavaScriptValue,
+	atomize,
 	determinePredicateTruthValue,
 	DONE_TOKEN,
 	getEffectiveBooleanValue,
 	isSubtypeOf,
 	ready,
-	atomize,
 };
 
 export default runtimeLib;
