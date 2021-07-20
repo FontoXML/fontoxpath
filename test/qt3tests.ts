@@ -906,64 +906,71 @@ describe('qt3 test set', () => {
 			testSet
 		);
 
-		describe(`${testName} (expression backend)`, function () {
-			this.timeout(60000);
-			for (const testCase of testCases) {
-				const name = getTestName(testCase);
-				const description = getTestDescription(testSetName, name, testCase);
+		if (!forceJSCodeGen) {
+			describe(`${testName} (expression backend)`, function () {
+				this.timeout(60000);
+				for (const testCase of testCases) {
+					const name = getTestName(testCase);
+					const description = getTestDescription(testSetName, name, testCase);
 
-				if (unrunnableTestCasesByName[name]) {
-					it.skip(`${unrunnableTestCasesByName[name]}. (${description})`);
-					continue;
-				}
+					if (unrunnableTestCasesByName[name]) {
+						it.skip(`${unrunnableTestCasesByName[name]}. (${description})`);
+						continue;
+					}
 
-				try {
-					// tslint:disable-next-line
-					const assertFn = function () {
-						const {
-							baseUrl,
-							contextNode,
-							testQuery,
-							language,
-							namespaceResolver,
-							variablesInScope,
-						} = getArguments(testSetFileName, testCase);
-
-						try {
-							loadModule(testCase, baseUrl);
-
-							const asserter = getExpressionBackendAsserterForTest(
+					try {
+						// tslint:disable-next-line
+						const assertFn = function () {
+							const {
 								baseUrl,
-								testCase,
+								contextNode,
+								testQuery,
 								language,
-								annotateAst
-							);
-							asserter(testQuery, contextNode, variablesInScope, namespaceResolver);
-						} catch (e) {
-							if (e instanceof TypeError) {
+								namespaceResolver,
+								variablesInScope,
+							} = getArguments(testSetFileName, testCase);
+
+							try {
+								loadModule(testCase, baseUrl);
+
+								const asserter = getExpressionBackendAsserterForTest(
+									baseUrl,
+									testCase,
+									language,
+									annotateAst
+								);
+								asserter(
+									testQuery,
+									contextNode,
+									variablesInScope,
+									namespaceResolver
+								);
+							} catch (e) {
+								if (e instanceof TypeError) {
+									throw e;
+								}
+
+								expressionBackendLog.push(
+									`${name},${e.toString().replace(/\n/g, ' ').trim()}`
+								);
+
+								// And rethrow the error
 								throw e;
 							}
+						};
 
-							expressionBackendLog.push(
-								`${name},${e.toString().replace(/\n/g, ' ').trim()}`
-							);
+						assertFn.toString = () =>
+							new slimdom.XMLSerializer().serializeToString(testCase);
 
-							// And rethrow the error
-							throw e;
-						}
-					};
-
-					assertFn.toString = () =>
-						new slimdom.XMLSerializer().serializeToString(testCase);
-
-					it(`${description}`, assertFn).timeout(60000);
-				} catch (e) {
-					// tslint:disable-next-line: no-console
-					console.error(e);
-					continue;
+						it(`${description}`, assertFn).timeout(60000);
+					} catch (e) {
+						// tslint:disable-next-line: no-console
+						console.error(e);
+						continue;
+					}
 				}
-			}
-		});
+			});
+		}
 
 		describe(`${testName} (js-codegen backend)`, function () {
 			this.timeout(60000);
