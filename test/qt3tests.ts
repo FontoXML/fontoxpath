@@ -1058,7 +1058,7 @@ describe('qt3 test set', () => {
 			// tslint:disable-next-line: no-console
 			console.log(
 				unsuccesfullJSCodegenCases.length + succesfullJSCodegenCases.length,
-				' tests have been run and ',
+				' tests have been run involving jscodegen and ',
 				succesfullJSCodegenCases.length,
 				' tests have been succesfully compiled and executed with the JavaScript code generation'
 			);
