@@ -207,7 +207,7 @@ export function adaptJavaScriptValueToArrayOfXPathValues(
 	const adaptedValue = adaptJavaScriptValueToXPath(expectedType.type, value, domFacade);
 	if (adaptedValue === null) {
 		throw new Error(
-			`The JavaScript value ${value} should be an single entry if it is to be converted to ${sequenceTypeToString(
+			`The JavaScript value ${value} should be a single entry if it is to be converted to ${sequenceTypeToString(
 				expectedType
 			)}.`
 		);
