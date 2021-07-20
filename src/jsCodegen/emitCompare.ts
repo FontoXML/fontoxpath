@@ -69,7 +69,7 @@ export function emitValueCompare(
 		function ${identifier}(contextItem) {
 			${firstExpr.variables.join('\n')}
 			${secondExpr.variables.join('\n')}
-			return ${getCompiledValueCode(firstExpr.code, firstExpr.resultType)} 
+			return ${getCompiledValueCode(firstExpr.code, firstExpr.resultType)}
 					${operator}
 					${getCompiledValueCode(secondExpr.code, secondExpr.resultType)};
 		}
@@ -85,11 +85,14 @@ export function emitValueCompare(
 		function ${identifier}(contextItem) {
 			${firstExpr.variables.join('\n')}
 			${secondExpr.variables.join('\n')}
-			const value = ${getCompiledValueCode(firstExpr.code, firstExpr.resultType)}.next();
-			
-			if (value.done) return [];
+			const values = atomize({ value: ${getCompiledValueCode(
+				firstExpr.code,
+				firstExpr.resultType
+			)} }, { domFacade }).getAllValues();
 
-			return value.value.value.node.nodeValue
+			if (values.length == 0) return [];
+	
+			return values[0].value
 					${operator}
 					${getCompiledValueCode(secondExpr.code, secondExpr.resultType)};
 		}

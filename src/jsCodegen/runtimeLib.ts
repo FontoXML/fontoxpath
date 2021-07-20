@@ -1,4 +1,5 @@
 import { adaptSingleJavaScriptValue } from '../expressions/adaptJavaScriptValueToXPathValue';
+import atomize, { atomizeSingleValue } from '../expressions/dataTypes/atomize';
 import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
 import getEffectiveBooleanValue from '../expressions/dataTypes/Sequences/getEffectiveBooleanValue';
 import Value from '../expressions/dataTypes/Value';
@@ -28,7 +29,7 @@ declare interface IRuntimeLib {
 	getEffectiveBooleanValue: typeof getEffectiveBooleanValue;
 	isSubtypeOf: typeof isSubtypeOf;
 	ready: typeof ready;
-	XPDY0002: typeof XPDY0002;
+	atomize: typeof atomize;
 }
 
 const runtimeLib: IRuntimeLib = {
@@ -38,7 +39,7 @@ const runtimeLib: IRuntimeLib = {
 	getEffectiveBooleanValue,
 	isSubtypeOf,
 	ready,
-	XPDY0002,
+	atomize,
 };
 
 export default runtimeLib;

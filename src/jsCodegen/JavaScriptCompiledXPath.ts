@@ -29,7 +29,7 @@ export function getCompiledValueCode(
 		case CompiledResultType.Function:
 			return `${identifier}(${contextItemName ? contextItemName : `contextItem`})`;
 		case CompiledResultType.Iterator:
-			return `${identifier}.next()`;
+			return `${identifier}(${contextItemName ? contextItemName : `contextItem`})`;
 		case CompiledResultType.None:
 			throw new Error('Unreachable');
 	}

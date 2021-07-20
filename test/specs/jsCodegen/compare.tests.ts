@@ -80,3 +80,63 @@ describe('string tests', () => {
 		);
 	});
 });
+
+describe('node tests', () => {
+	let documentNode: slimdom.Document;
+	beforeEach(() => {
+		documentNode = new slimdom.Document();
+		jsonMlMapper.parse(['xml', ['test', { id: 'peanut' }, 'contents']], documentNode);
+	});
+
+	it('Compare attribute to string', () => {
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen(
+				'/xml/test/@id eq "peanut"',
+				documentNode,
+				null,
+				ReturnType.BOOLEAN,
+				{}
+			),
+			true
+		);
+	});
+
+	it('Compare attribute to string false', () => {
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen(
+				'/xml/test/@id eq "macadamia"',
+				documentNode,
+				null,
+				ReturnType.BOOLEAN,
+				{}
+			),
+			false
+		);
+	});
+
+	it('Compare attribute to string 2', () => {
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen(
+				'/xml/test[@id eq "peanut"]',
+				documentNode,
+				null,
+				ReturnType.BOOLEAN,
+				{}
+			),
+			true
+		);
+	});
+
+	it('Compare node contents', () => {
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen(
+				'/xml/test eq "contents"',
+				documentNode,
+				null,
+				ReturnType.BOOLEAN,
+				{}
+			),
+			true
+		);
+	});
+});

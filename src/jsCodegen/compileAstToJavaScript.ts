@@ -118,6 +118,7 @@ function wrapCompiledCode(code: string, shouldUseContextItem: boolean): string {
 			determinePredicateTruthValue,
 			isSubtypeOf,
 			ready,
+			atomize,
 		} = runtimeLib;`;
 
 	if (shouldUseContextItem) {
