@@ -13,13 +13,13 @@ all of it. We would love some help from you!
 
 Here are some important resources:
 
-- [The XPath 3.1 spec](https://www.w3.org/TR/xpath-31/).
-- [The XPath functions
-  spec](https://www.w3.org/TR/xpath-functions-31/).
-- [The XQuery 3.1 spec](https://www.w3.org/TR/xquery-31/).
-- [The XQuery Update Facility 3.0
-  spec](https://www.w3.org/TR/xquery-update-30/).
-- [The FontoXPath playground](https://xpath.playground.fontoxml.com/).
+-   [The XPath 3.1 spec](https://www.w3.org/TR/xpath-31/).
+-   [The XPath functions
+    spec](https://www.w3.org/TR/xpath-functions-31/).
+-   [The XQuery 3.1 spec](https://www.w3.org/TR/xquery-31/).
+-   [The XQuery Update Facility 3.0
+    spec](https://www.w3.org/TR/xquery-update-30/).
+-   [The FontoXPath playground](https://xpath.playground.fontoxml.com/).
 
 ## Creating an issue
 
@@ -127,8 +127,8 @@ example for new functions.
 An iteration item (obtained by iterating over `Sequence#value`) can
 have three forms:
 
-- `{ done: false, value: <any> }`: We have a value.
-- `{ done: true }`: We are done iterating.
+-   `{ done: false, value: <any> }`: We have a value.
+-   `{ done: true }`: We are done iterating.
 
 ### Debugging
 
@@ -144,20 +144,17 @@ This script runs the typescript compiler in watch mode and serves a simple test 
 
 FontoXPath contains different test sets:
 
-|Tests|Run command|
-|-|-|
-|The unit tests|`npm run test`|
-|The QT3 tests|`npm run qt3tests`|
-|The QT3 XQueryX tests|`npm run qt3testsxqueryx`|
-|The XQUTS tests|`npm run xqutstests`|
-|The XQUTS XQueryX tests|`npm run xqutstestsxqueryx`|
+| Tests                   | Run command                 |
+| ----------------------- | --------------------------- |
+| The unit tests          | `npm run test`              |
+| The QT3 tests           | `npm run qt3tests`          |
+| The QT3 XQueryX tests   | `npm run qt3testsxqueryx`   |
+| The XQUTS tests         | `npm run xqutstests`        |
+| The XQUTS XQueryX tests | `npm run xqutstestsxqueryx` |
 
 They all run in Node. By running the tests with the `--inspect` flag,
-they can be debugged by the browser: `npm run test -- --inspect
---inspect-brk`. The tests can also be executed with the built version
-of fontoxpath. Use the `--dist` flag to do so: `npm run qt3test --
---dist`. The unit tests can be executed using `npm run
-integrationtests`
+they can be debugged by the browser: `npm run test -- --inspect --inspect-brk`. The tests can also be executed with the built version
+of fontoxpath. Use the `--dist` flag to do so: `npm run qt3test -- --dist`. The unit tests can be executed using `npm run integrationtests`
 
 The JavaScript unit tests can be used while developing, since they run
 quite fast. The other tests can be used to verify your implementation
@@ -174,13 +171,14 @@ against the unminified code. If they do not require minified code
 (ie. use only public, external API, they can be placed in the
 `test/specs/parsing` folder.
 
-If you expect new tests to succeed run `npm run alltests --
---regenerate`, this will update the csv files which contain failing
+If you expect new tests to succeed run `npm run alltests -- --regenerate`, this will update the csv files which contain failing
 tests. Use `git` to find differences.
 
 If you are adding a new feature, don't forget to edit the file
 `test/runnableTestSets.csv`. This file disables tests for features we
 have not yet implemented.
+
+If you want to have a overview of the tests supported by the JavaScript codegen, run the qt3tests with the tag: --reportcodegencases. If you want a test to fail when it isn't supported by the codegen run the qt3tests with the tag: --forcecodegen.
 
 ### Running benchmarks
 
