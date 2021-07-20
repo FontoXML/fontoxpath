@@ -339,6 +339,7 @@ function createAsserterForJsCodegen(
 				createAsserterForJsCodegen(baseUrl, innerAssertNode, language)
 			);
 			let isAstAccepted = true;
+			let isTestAstAccepted: JavaScriptCompiledXPathResult;
 			return (
 				xpath,
 				contextNode,
@@ -347,7 +348,7 @@ function createAsserterForJsCodegen(
 				that
 			): JavaScriptCompiledXPathResult => {
 				asserts.forEach((a) => {
-					const isTestAstAccepted = a(
+					isTestAstAccepted = a(
 						xpath,
 						contextNode,
 						variablesInScope,
@@ -361,7 +362,7 @@ function createAsserterForJsCodegen(
 				if (isAstAccepted) {
 					return acceptAst(undefined, undefined);
 				} else {
-					return rejectAst('one of the testcases causes it to fail');
+					return rejectAst((isTestAstAccepted as IAstRejected).reason);
 				}
 			};
 		}
