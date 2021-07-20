@@ -875,6 +875,7 @@ function loadModule(testCase, baseUrl) {
 describe('qt3 test set', () => {
 	const annotateAst = process.argv.includes('--annotate');
 	const reportJSCodeGen = process.argv.includes('--reportcodegencases');
+	const forceJSCodeGen = process.argv.includes('--forcecodegen');
 	const succesfullJSCodegenCases: Array<string> = [];
 	const unsuccesfullJSCodegenCases: Array<string> = [];
 	if (annotateAst) {
@@ -882,7 +883,12 @@ describe('qt3 test set', () => {
 		console.log('Running tests using annotation');
 	}
 	if (reportJSCodeGen) {
+		// tslint:disable-next-line: no-console
 		console.log('Reporting the amount of code executed with the code generation');
+	}
+	if (forceJSCodeGen) {
+		// tslint:disable-next-line: no-console
+		console.log('Forcing the tests to run with the codeGen');
 	}
 	const expressionBackendLog = unrunnableTestCases;
 	getAllTestSets().forEach((testSetFileName) => {
@@ -1004,9 +1010,17 @@ describe('qt3 test set', () => {
 								unsuccesfullJSCodegenCases.push(
 									getTestName(testCase) + ' ' + (compiled as IAstRejected).reason
 								);
+								if (forceJSCodeGen) {
+									throw new Error(
+										`Failed to convert to jsCodeGen: ${
+											(compiled as IAstRejected).reason
+										}`
+									);
+								}
 								this.skip(`Skipped: ${(compiled as IAstRejected).reason}`);
+							} else {
+								this.skip();
 							}
-							this.skip();
 						} catch (e) {
 							if (e instanceof TypeError) {
 								throw e;
