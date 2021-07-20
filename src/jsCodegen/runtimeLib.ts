@@ -34,12 +34,12 @@ declare interface IRuntimeLib {
 
 const runtimeLib: IRuntimeLib = {
 	adaptSingleJavaScriptValue,
+	atomize,
 	determinePredicateTruthValue,
 	DONE_TOKEN,
 	getEffectiveBooleanValue,
 	isSubtypeOf,
 	ready,
-	atomize,
 };
 
 export default runtimeLib;

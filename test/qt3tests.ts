@@ -876,8 +876,8 @@ describe('qt3 test set', () => {
 	const annotateAst = process.argv.includes('--annotate');
 	const reportJSCodeGen = process.argv.includes('--reportcodegencases');
 	const forceJSCodeGen = process.argv.includes('--forcecodegen');
-	const succesfullJSCodegenCases: Array<string> = [];
-	const unsuccesfullJSCodegenCases: Array<string> = [];
+	const succesfullJSCodegenCases: string[] = [];
+	const unsuccesfullJSCodegenCases: string[] = [];
 	if (annotateAst) {
 		// tslint:disable-next-line: no-console
 		console.log('Running tests using annotation');
