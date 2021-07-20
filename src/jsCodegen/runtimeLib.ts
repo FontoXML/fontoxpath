@@ -7,12 +7,9 @@ import { DONE_TOKEN, IterationResult, ready } from '../expressions/util/iterator
 import { XPDY0002 } from '../expressions/XPathErrors';
 
 export function determinePredicateTruthValue(iterator: { next: () => IterationResult<Value> }) {
-	if (typeof iterator === 'boolean') {
-		return iterator;
-	} else if (typeof iterator === 'string') {
+	if (!iterator.next) {
 		return Boolean(iterator);
 	}
-
 	const firstResult = iterator.next();
 	if (firstResult.done) {
 		return false;
