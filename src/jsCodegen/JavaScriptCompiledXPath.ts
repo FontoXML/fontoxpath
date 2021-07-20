@@ -5,7 +5,6 @@ export type FunctionIdentifier = string;
 export enum CompiledResultType {
 	Value,
 	Function,
-	Iterator,
 	None,
 }
 
@@ -27,8 +26,6 @@ export function getCompiledValueCode(
 		case CompiledResultType.Value:
 			return identifier;
 		case CompiledResultType.Function:
-			return `${identifier}(${contextItemName ? contextItemName : `contextItem`})`;
-		case CompiledResultType.Iterator:
 			return `${identifier}(${contextItemName ? contextItemName : `contextItem`})`;
 		case CompiledResultType.None:
 			throw new Error('Unreachable');

@@ -201,5 +201,5 @@ export function emitPathExpr(
 	}
 	`;
 
-	return acceptAst(pathExprCode, CompiledResultType.Iterator);
+	return acceptAst(pathExprCode, CompiledResultType.Function);
 }
