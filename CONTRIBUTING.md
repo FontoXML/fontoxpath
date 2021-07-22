@@ -38,6 +38,28 @@ are here to help in any possible way.
 
 ### Setting up a development environment
 
+To set up the tests on UNIX:
+
+```sh
+./test/install-assets.sh
+```
+
+Or on Windows:
+
+```posh
+./test/install-assets.ps1
+```
+
+To run the tests:
+
+```sh
+npm run test
+# Or
+npm run qt3tests
+# Or
+npm run xqutstests
+```
+
 FontoXPath is written in
 [TypeScript](https://www.typescriptlang.org/), which is transformed to
 JavaScript using [tsickle](https://github.com/angular/tsickle) and
@@ -56,45 +78,7 @@ to be installed at `./test/assets/XQUTS`. There exists a mirror
 FontoXPath uses XQueryX as a parser format, this can be tested using
 the XQueryX test set which is included in the QT3 test set. To be able
 to run these tests, extract the `xqueryx.zip` file to the
-`test/assets/QT3-master/xqueryx` folder.
-
-In short, execute the following commands on Linux:
-
-```sh
- mkdir -p ./test/assets/XQUTS ./test/assets/QT3TS
- curl -L https://github.com/LeoWoerteler/QT3TS/archive/master.tar.gz | tar -xz -C ./test/assets/QT3TS --strip-components=1
- curl -L https://github.com/LeoWoerteler/XQUTS/archive/master.tar.gz | tar -xz -C ./test/assets/XQUTS --strip-components=1
- unzip -q test/assets/QT3TS/xqueryx.zip -d ./test/assets/QT3TS/
-```
-
-Or on Windows:
-
-```posh
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-Invoke-WebRequest "https://github.com/LeoWoerteler/QT3TS/archive/master.zip" -Out ./test/assets/QT3TS.zip
-Invoke-WebRequest "https://github.com/LeoWoerteler/XQUTS/archive/master.zip" -Out ./test/assets/XQUTS.zip
-Expand-Archive ./test/assets/QT3TS.zip -DestinationPath ./test/assets/QT3TS-extracted -Force
-Move-Item ./test/assets/QT3TS-extracted/QT3TS-master ./test/assets/QT3TS
-Expand-Archive ./test/assets/QT3TS/xqueryx.zip -DestinationPath ./test/assets/QT3TS/xqueryx-extracted -Force
-Move-Item ./test/assets/QT3TS/xqueryx-extracted/xqueryx ./test/assets/QT3TS/xqueryx
-Expand-Archive ./test/assets/XQUTS.zip -DestinationPath ./test/assets/XQUTS-extracted -Force
-Move-Item ./test/assets/XQUTS-extracted/XQUTS-master ./test/assets/XQUTS
-Remove-Item ./test/assets/QT3TS.zip
-Remove-Item ./test/assets/XQUTS.zip
-Remove-Item ./test/assets/QT3TS-extracted
-Remove-Item ./test/assets/QT3TS/xqueryx-extracted
-Remove-Item ./test/assets/XQUTS-extracted
-```
-
-And to run the tests:
-
-```sh
-npm run test
-# Or
-npm run qt3tests
-# Or
-npm run xqutstests
-```
+`test/assets/QT3/xqueryx` folder.
 
 ### Implementing a missing XPath function
 
