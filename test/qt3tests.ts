@@ -540,7 +540,7 @@ function createAsserterForJsCodegen(
 					// tslint:disable-next-line
 					const fn = new Function(compiled.code) as CompiledXPathFunction<
 						Node,
-						ReturnType.ANY
+						ReturnType.NODES
 					>;
 					chai.assert.equal(
 						executeJavaScriptCompiledXPath(fn, contextNode).length,
@@ -571,7 +571,7 @@ function createAsserterForJsCodegen(
 					// tslint:disable-next-line
 					const fn = new Function(compiled.code) as CompiledXPathFunction<
 						Node,
-						ReturnType.ANY
+						ReturnType.NODES
 					>;
 					chai.assert.deepEqual(
 						executeJavaScriptCompiledXPath(fn, contextNode),
