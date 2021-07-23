@@ -111,7 +111,7 @@ have at that moment and we are happy to assist you in any
 difficulties!
 
 The XPath functions are usually located in the
-`src/selectors/functions` folder. Just add them to the file that has
+`src/expressions/functions` folder. Just add them to the file that has
 the most to do with the function you'd like to implement.
 
 ### Data structures
@@ -121,7 +121,7 @@ basically a generator. It has a number of functions which can easily
 get the first item, all items, the effective boolean value, etc. We
 tend to use the methods like `first()`, `length()`,
 `mapCases()` and `map()` for new code. The array functions located
-at `src/selectors/functions/builtInFunctions.arrays.ts` are a good
+at `src/expressions/functions/builtInFunctions.arrays.ts` are a good
 example for new functions.
 
 An iteration item (obtained by iterating over `Sequence#value`) can
