@@ -133,7 +133,7 @@ have three forms:
 ### Debugging
 
 You can run a [demo page (http://localhost:8080)](http://localhost:8080)
-which can be used for debugging. This page is in it's own subpackage
+which can be used for debugging. This page is in its own subpackage
 in the demo folder. This page aims to do as little code transpilation as
 possible in order to make debugging easy. Run it by cd-ing into it,
 running `npm install`, followed by an `npm start`.
