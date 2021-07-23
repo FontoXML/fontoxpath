@@ -56,15 +56,11 @@ export function getCompiledValueCode(
 		case GeneratedCodeBaseType.Variable:
 			return [identifier, GeneratedCodeBaseType.Variable];
 		case GeneratedCodeBaseType.Function:
-			const code = `function getReturnValue() {
-				const returnValue = ${identifier}(${contextItemName ?? `contextItem`});
-				return ${getCompiledValueCode(
-					'returnValue',
+			const code = `${getCompiledValueCode(
+					`${identifier}(${contextItemName ?? `contextItem`})`,
 					generatedCodeType.returnType,
 					contextItemName
-				)[0]}
-			}()
-			`
+				)[0]}`;
 			return [
 				code,
 				generatedCodeType.returnType.type,
