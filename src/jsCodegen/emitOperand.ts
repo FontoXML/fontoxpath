@@ -15,6 +15,7 @@ export const baseExprAstNodes = {
 	AND_OP: 'andOp',
 	OR_OP: 'orOp',
 	STRING_LIT_EXPR: 'stringConstantExpr',
+	FUNCTIONCALLEXPR: 'functionCallExpr',
 };
 
 export const baseExpressions = Object.values(baseExprAstNodes);

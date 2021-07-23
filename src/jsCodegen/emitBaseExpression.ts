@@ -1,6 +1,7 @@
 import { IAST } from '../parsing/astHelper';
 import { CodeGenContext } from './CodeGenContext';
 import { emitCompareExpr } from './emitCompare';
+import { emitFunctionCallExpr } from './emitFunctionCallExpr';
 import { emitStringLiteralExpression } from './emitLiterals';
 import { emitAndExpr, emitOrExpr } from './emitLogicalExpr';
 import { baseExprAstNodes } from './emitOperand';
@@ -32,6 +33,8 @@ export function emitBaseExpr(
 			return emitOrExpr(ast, identifier, staticContext);
 		case baseExprAstNodes.STRING_LIT_EXPR:
 			return emitStringLiteralExpression(ast, identifier);
+		case baseExprAstNodes.FUNCTIONCALLEXPR:
+			return emitFunctionCallExpr(ast, identifier, staticContext);
 		// generalCompare
 		case 'equalOp':
 		case 'notEqualOp':
