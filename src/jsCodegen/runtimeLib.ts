@@ -2,9 +2,12 @@ import { adaptSingleJavaScriptValue } from '../expressions/adaptJavaScriptValueT
 import atomize, { atomizeSingleValue } from '../expressions/dataTypes/atomize';
 import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
 import getEffectiveBooleanValue from '../expressions/dataTypes/Sequences/getEffectiveBooleanValue';
-import Value from '../expressions/dataTypes/Value';
+import Value, { ValueType } from '../expressions/dataTypes/Value';
 import { DONE_TOKEN, IterationResult, ready } from '../expressions/util/iterators';
 import { XPDY0002 } from '../expressions/XPathErrors';
+import zipSingleton from '../expressions/util/zipSingleton';
+import sequenceFactory from '../expressions/dataTypes/sequenceFactory';
+import createAtomicValue from '../expressions/dataTypes/createAtomicValue';
 
 export function determinePredicateTruthValue(iterator: { next: () => IterationResult<Value> }) {
 	if (!iterator.next) {
@@ -27,6 +30,11 @@ declare interface IRuntimeLib {
 	getEffectiveBooleanValue: typeof getEffectiveBooleanValue;
 	isSubtypeOf: typeof isSubtypeOf;
 	ready: typeof ready;
+	sequenceFactory: typeof sequenceFactory;
+	zipSingleton: typeof zipSingleton;
+	createAtomicValue: typeof createAtomicValue;
+	Value: typeof Value;
+	ValueType: typeof ValueType;
 }
 
 const runtimeLib: IRuntimeLib = {
@@ -37,6 +45,11 @@ const runtimeLib: IRuntimeLib = {
 	getEffectiveBooleanValue,
 	isSubtypeOf,
 	ready,
+	sequenceFactory,
+	zipSingleton,
+	createAtomicValue,
+	Value,
+	ValueType,
 };
 
 export default runtimeLib;

@@ -52,22 +52,19 @@ function compileXPathToJavaScript(
 		resolveNamespace: options['namespaceResolver'] || createDefaultNamespaceResolver(null),
 	};
 
-	annotateAst(
-		ast,
-		new AnnotationContext(
-			new StaticContext(
-				new ExecutionSpecificStaticContext(
-					codegenContext.resolveNamespace,
-					{},
-					options['defaultFunctionNamespaceURI'] ||
-						BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
-					createDefaultFunctionNameResolver(
-						BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI
-					)
-				)
-			)
+	const staticContext = new StaticContext(
+		new ExecutionSpecificStaticContext(
+			codegenContext.resolveNamespace,
+			{},
+			options['defaultFunctionNamespaceURI'] ||
+				BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
+			createDefaultFunctionNameResolver(BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI)
 		)
 	);
+
+	codegenContext.staticContext = staticContext;
+
+	annotateAst(ast, new AnnotationContext(staticContext));
 
 	return compileAstToJavaScript(ast, returnType, codegenContext);
 }

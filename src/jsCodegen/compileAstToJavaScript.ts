@@ -106,18 +106,28 @@ function emitReturnTypeConversion(
 	}
 }
 
-function wrapCompiledCode(code: string, shouldUseContextItem: boolean): string {
+function wrapCompiledCode(
+	code: string,
+	shouldUseContextItem: boolean,
+	staticContext: CodeGenContext
+): string {
 	let finalCode = `
 	return (contextItem, domFacade, runtimeLib) => {
 		const {
 			DONE_TOKEN,
-			ValueType,
 			XPDY0002,
 			adaptSingleJavaScriptValue,
 			determinePredicateTruthValue,
 			isSubtypeOf,
 			ready,
 			atomize,
+			sequenceFactory,
+			getEffectiveBooleanValue,
+			ISequence,
+			zipSingleton,
+			createAtomicValue,
+			Value,
+			ValueType,
 		} = runtimeLib;`;
 
 	if (shouldUseContextItem) {
@@ -186,7 +196,7 @@ function compileAstToJavaScript(
 
 	const requiresContext = checkForContextItemInExpression(xPathAst);
 
-	const wrappedCode = wrapCompiledCode(code, requiresContext);
+	const wrappedCode = wrapCompiledCode(code, requiresContext, staticContext);
 
 	return acceptFullyCompiledAst(wrappedCode);
 }

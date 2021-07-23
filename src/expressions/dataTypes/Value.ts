@@ -9,7 +9,7 @@ export default class Value {
  * The value types. Every value in XPath is of one of these types
  * @private
  */
-export const enum ValueType {
+export enum ValueType {
 	XSBOOLEAN,
 	XSSTRING,
 	XSNUMERIC,
