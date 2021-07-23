@@ -4,10 +4,13 @@ import { CodeGenContext } from './CodeGenContext';
 import { emitOperand } from './emitOperand';
 import {
 	acceptAst,
-	CompiledResultType,
 	FunctionIdentifier,
+	GeneratedCodeBaseType,
 	PartialCompilationResult,
 } from './JavaScriptCompiledXPath';
+
+const FIRST_OPERAND = 'firstOperand';
+const SECOND_OPERAND = 'secondOperand';
 
 /**
  * Helper function to compile an and expressions to a JavaScript function.
@@ -88,8 +91,11 @@ function emitLogicalExpr(
 	function ${identifier}(contextItem) {
 		${firstExpr.variables.join('\n')}
 		${secondExpr.variables.join('\n')}
-		return ${firstExpr.code} ${logicalExprOperator} ${secondExpr.code}
+		return ${firstExpr.code} ${logicalExprOperator} ${secondExpr.code};
 	}
 	`;
-	return acceptAst(logicalOpCode, CompiledResultType.Function);
+	return acceptAst(logicalOpCode, {
+		type: GeneratedCodeBaseType.Function,
+		returnType: { type: GeneratedCodeBaseType.Value },
+	});
 }

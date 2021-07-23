@@ -7,6 +7,7 @@ import {
 	acceptAst,
 	CompiledResultType,
 	FunctionIdentifier,
+	GeneratedCodeBaseType,
 	getCompiledValueCode,
 	PartialCompilationResult,
 	rejectAst,
@@ -40,6 +41,11 @@ export function emitValueCompare(
 		'type'
 	);
 
+	const supportedTypes = [ValueType.XSSTRING, ValueType.NODE];
+	if (!supportedTypes.includes(leftType.type) || !supportedTypes.includes(rightType.type)) {
+		return rejectAst('Unsupported types in compare');
+	}
+
 	if (!firstExpr.isAstAccepted || !secondExpr.isAstAccepted) {
 		return rejectAst("One of the two operands in compare wasn't accepted");
 	}
@@ -62,46 +68,20 @@ export function emitValueCompare(
 	// Get the correct operator
 	const operator = compareOperators[compareType];
 
-	// String - string compare
-	if (leftType.type === ValueType.XSSTRING && rightType.type === ValueType.XSSTRING) {
-		// We just execute the compare operator with the two operands.
-		const code = `
-		function ${identifier}(contextItem) {
-			${firstExpr.variables.join('\n')}
-			${secondExpr.variables.join('\n')}
-			return ${getCompiledValueCode(firstExpr.code, firstExpr.resultType)}
-					${operator}
-					${getCompiledValueCode(secondExpr.code, secondExpr.resultType)};
-		}
-		`;
-
-		return acceptAst(code, CompiledResultType.Function);
+	let code = `
+	function ${identifier}(contextItem) {
+		${firstExpr.variables.join('\n')}
+		${secondExpr.variables.join('\n')}
+		return ${getCompiledValueCode(firstExpr.code, firstExpr.generatedCodeType)[0]} 
+				${operator}
+				${getCompiledValueCode(secondExpr.code, secondExpr.generatedCodeType)[0]};
 	}
-	// Node - string compare
-	else if (leftType.type === ValueType.NODE && rightType.type === ValueType.XSSTRING) {
-		// If the left-hand operand is an empty node sequence, we just return an empty sequence.
-		// Otherwise we execute the correct comparison operator
-		const code = `
-		function ${identifier}(contextItem) {
-			${firstExpr.variables.join('\n')}
-			${secondExpr.variables.join('\n')}
-			const values = atomize({ value: ${getCompiledValueCode(
-				firstExpr.code,
-				firstExpr.resultType
-			)} }, { domFacade }).getAllValues();
+	`;
 
-			if (values.length == 0) return [];
-	
-			return values[0].value
-					${operator}
-					${getCompiledValueCode(secondExpr.code, secondExpr.resultType)};
-		}
-		`;
-
-		return acceptAst(code, CompiledResultType.Function);
-	} else {
-		return rejectAst('Value compare only supports strings for now');
-	}
+	return acceptAst(code, {
+		type: GeneratedCodeBaseType.Function,
+		returnType: { type: GeneratedCodeBaseType.Value },
+	});
 }
 
 /**

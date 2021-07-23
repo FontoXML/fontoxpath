@@ -5,6 +5,7 @@ import {
 	acceptAst,
 	CompiledResultType,
 	FunctionIdentifier,
+	GeneratedCodeBaseType,
 	getCompiledValueCode,
 	PartialCompilationResult,
 	rejectAst,
@@ -52,11 +53,11 @@ export function emitOperand(
 		return acceptAst(
 			`determinePredicateTruthValue(${getCompiledValueCode(
 				baseExprIdentifier,
-				baseExpr.resultType
-			)})`,
-			CompiledResultType.Value,
+				baseExpr.generatedCodeType
+			)}[0])`,
+			{ type: GeneratedCodeBaseType.Value },
 			[baseExpr.code]
 		);
 	}
-	return acceptAst(`${baseExprIdentifier}`, baseExpr.resultType, [baseExpr.code]);
+	return acceptAst(`${baseExprIdentifier}`, baseExpr.generatedCodeType, [baseExpr.code]);
 }

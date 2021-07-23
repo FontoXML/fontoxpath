@@ -4,6 +4,7 @@ import {
 	acceptAst,
 	CompiledResultType,
 	ContextItemIdentifier,
+	GeneratedCodeBaseType,
 	PartialCompilationResult,
 	rejectAst,
 } from './JavaScriptCompiledXPath';
@@ -133,7 +134,7 @@ function emitMultipleNodeAxis(
 	${indexReset}
 	`;
 
-	return acceptAst(axisCode, CompiledResultType.Value, [`let i${nestLevel} = 0;`]);
+	return acceptAst(axisCode, { type: GeneratedCodeBaseType.Statement }, [`let i${nestLevel} = 0;`]);
 }
 
 // Emit code for an axis made up of exactly one node, that should only be
@@ -158,7 +159,7 @@ function emitSingleNodeAxis(
 			${nestedCode}
 		}
 		`,
-		CompiledResultType.Value,
+		{ type: GeneratedCodeBaseType.Statement },
 		[`let i${nestLevel} = 0;`]
 	);
 }

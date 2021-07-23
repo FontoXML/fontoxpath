@@ -7,6 +7,7 @@ import {
 	acceptAst,
 	CompiledResultType,
 	ContextItemIdentifier,
+	GeneratedCodeBaseType,
 	PartialCompilationResult,
 	rejectAst,
 } from './JavaScriptCompiledXPath';
@@ -23,10 +24,7 @@ export const tests = Object.values(testAstNodes);
 // text() matches any text node.
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-TextTest
 function emitTextTest(_ast: IAST, identifier: ContextItemIdentifier): PartialCompilationResult {
-	return acceptAst(
-		`${identifier}.nodeType === ${NODE_TYPES.TEXT_NODE}`,
-		CompiledResultType.Value
-	);
+	return acceptAst(`${identifier}.nodeType === ${NODE_TYPES.TEXT_NODE}`, { type: GeneratedCodeBaseType.Value });
 }
 
 function resolveNamespaceURI(qName: QName, staticContext: CodeGenContext) {
@@ -52,13 +50,13 @@ function emitNameTestFromQName(
 	// Simple cases.
 	if (prefix === '*') {
 		if (localName === '*') {
-			return acceptAst(isElementOrAttributeCode, CompiledResultType.Value);
+			return acceptAst(isElementOrAttributeCode, { type: GeneratedCodeBaseType.Value });
 		}
 		return acceptAst(
 			`${isElementOrAttributeCode} && ${identifier}.localName === ${escapeJavaScriptString(
 				localName
 			)}`,
-			CompiledResultType.Value
+			{ type: GeneratedCodeBaseType.Value }
 		);
 	}
 
@@ -78,7 +76,7 @@ function emitNameTestFromQName(
 			: escapeJavaScriptString(namespaceURI);
 	const matchesNamespaceCode = `(${identifier}.namespaceURI || null) === (${resolveNamespaceURICode} || null)`;
 
-	return acceptAst(`${matchesLocalNameCode}${matchesNamespaceCode}`, CompiledResultType.Value);
+	return acceptAst(`${matchesLocalNameCode}${matchesNamespaceCode}`, { type: GeneratedCodeBaseType.Value });
 }
 
 // element() and element(*) match any single element node, regardless of its name or type annotation.
@@ -93,7 +91,7 @@ function emitElementTest(
 	const isElementCode = `${identifier}.nodeType === ${NODE_TYPES.ELEMENT_NODE}`;
 
 	if (elementName === null || star) {
-		return acceptAst(isElementCode, CompiledResultType.Value);
+		return acceptAst(isElementCode, { type: GeneratedCodeBaseType.Value });
 	}
 
 	const qName = astHelper.getQName(astHelper.getFirstChild(elementName, 'QName'));

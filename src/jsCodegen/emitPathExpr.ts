@@ -7,6 +7,7 @@ import {
 	acceptAst,
 	CompiledResultType,
 	FunctionIdentifier,
+	GeneratedCodeBaseType,
 	getCompiledValueCode,
 	PartialCompilationResult,
 	rejectAst,
@@ -29,7 +30,7 @@ function emitPredicates(
 	const functionDeclarations: string[] = [];
 
 	if (!predicatesAst) {
-		return acceptAst(``, CompiledResultType.None, functionDeclarations);
+		return acceptAst(``, { type: GeneratedCodeBaseType.None }, functionDeclarations);
 	}
 
 	const children = astHelper.getChildren(predicatesAst, '*');
@@ -41,9 +42,9 @@ function emitPredicates(
 		// return a node.
 		const predicateFunctionCall = `determinePredicateTruthValue(${getCompiledValueCode(
 			predicateFunctionIdentifier,
-			CompiledResultType.Function,
+			{ type: GeneratedCodeBaseType.Value },
 			`contextItem${nestLevel}`
-		)})`;
+		)[0]})`;
 		if (i === 0) {
 			evaluatePredicateConditionCode += predicateFunctionCall;
 		} else {
@@ -63,7 +64,7 @@ function emitPredicates(
 	}
 	return acceptAst(
 		evaluatePredicateConditionCode,
-		CompiledResultType.Function,
+		{ type: GeneratedCodeBaseType.Value },
 		functionDeclarations
 	);
 }
@@ -84,7 +85,7 @@ function emitSteps(stepsAst: IAST[], staticContext: CodeGenContext): PartialComp
 				return ready(adaptSingleJavaScriptValue(contextItem, domFacade));
 			}
 			`,
-			CompiledResultType.Value,
+			{ type: GeneratedCodeBaseType.Statement },
 			['let hasReturned = false;']
 		);
 	}
@@ -145,7 +146,7 @@ function emitSteps(stepsAst: IAST[], staticContext: CodeGenContext): PartialComp
 	const contextDeclaration = 'const contextItem0 = contextItem;';
 	emittedCode = contextDeclaration + emittedCode;
 
-	return acceptAst(emittedCode, CompiledResultType.Function, emittedVariables);
+	return acceptAst(emittedCode, { type: GeneratedCodeBaseType.Statement }, emittedVariables);
 }
 
 /**
@@ -201,5 +202,8 @@ export function emitPathExpr(
 	}
 	`;
 
-	return acceptAst(pathExprCode, CompiledResultType.Function);
+	return acceptAst(pathExprCode, {
+		type: GeneratedCodeBaseType.Function,
+		returnType: { type: GeneratedCodeBaseType.Iterator },
+	});
 }

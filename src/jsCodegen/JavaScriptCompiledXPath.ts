@@ -11,35 +11,83 @@ export enum CompiledResultType {
 export type PartiallyCompiledAstAccepted = {
 	code: string;
 	isAstAccepted: true;
-	resultType: CompiledResultType;
+	// What kind of code was generated.
+	generatedCodeType: GeneratedCodeType;
 	// Contains variable (and function) declarations for the upper compiled
 	// scope.
 	variables?: string[];
 };
 
+export enum GeneratedCodeBaseType {
+	// A normal value: 5, "test", true, ...
+	Value,
+	// Defining a variable: const test = "test";
+	Variable,
+	// A statement: if (this) { do that; }
+	Statement,
+	// A function has been generated: function foo() { return true; }
+	Function,
+	// An iterator is returned.
+	Iterator,
+	// A sequence of values has been returned. This isn't used at the
+	// moment but will come in handy when we get to add sequence support.
+	Sequence,
+	// Used in a single case where no code is generated.
+	None,
+}
+
+export type GeneratedCodeType =
+	| { type: GeneratedCodeBaseType.Value }
+	| { type: GeneratedCodeBaseType.Variable }
+	| { type: GeneratedCodeBaseType.Statement }
+	| { type: GeneratedCodeBaseType.Function; returnType: GeneratedCodeType }
+	| { type: GeneratedCodeBaseType.Iterator }
+	| { type: GeneratedCodeBaseType.Sequence }
+	| { type: GeneratedCodeBaseType.None };
+
 export function getCompiledValueCode(
 	identifier: string,
-	type: CompiledResultType,
+	generatedCodeType: GeneratedCodeType,
 	contextItemName?: string
-): string {
-	switch (type) {
-		case CompiledResultType.Value:
-			return identifier;
-		case CompiledResultType.Function:
-			return `${identifier}(${contextItemName ? contextItemName : `contextItem`})`;
-		case CompiledResultType.None:
-			throw new Error('Unreachable');
+): [string, GeneratedCodeBaseType] {
+	switch (generatedCodeType.type) {
+		case GeneratedCodeBaseType.Value:
+			return [identifier, GeneratedCodeBaseType.Value];
+		case GeneratedCodeBaseType.Variable:
+			return [identifier, GeneratedCodeBaseType.Variable];
+		case GeneratedCodeBaseType.Function:
+			const code = `function getReturnValue() {
+				const returnValue = ${identifier}(${contextItemName ?? `contextItem`});
+				return ${getCompiledValueCode(
+					'returnValue',
+					generatedCodeType.returnType,
+					contextItemName
+				)[0]}
+			}()
+			`
+			return [
+				code,
+				generatedCodeType.returnType.type,
+			];
+		case GeneratedCodeBaseType.Iterator:
+			return [identifier, GeneratedCodeBaseType.Iterator];
+		case GeneratedCodeBaseType.Sequence:
+			return [identifier, GeneratedCodeBaseType.Sequence];
+		case GeneratedCodeBaseType.None:
+			throw new Error('Trying to get value of generated code with type None');
+		default:
+			throw new Error('Unreachable! Trying to get compiled value of unsupported GeneratedCodeType.');
 	}
 }
 
 export function acceptAst(
 	code: string,
-	resultType: CompiledResultType,
+	generatedCodeType: GeneratedCodeType,
 	variables?: string[]
 ): PartiallyCompiledAstAccepted {
 	return {
 		code,
-		resultType,
+		generatedCodeType,
 		isAstAccepted: true,
 		variables,
 	};
