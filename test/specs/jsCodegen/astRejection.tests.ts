@@ -136,19 +136,6 @@ describe("rejecting unsupported AST's (js-codegen)", () => {
 		);
 	});
 
-	it('rejects unsupported base expression (functionCallExpr)', () => {
-		chai.assert.throws(
-			() =>
-				evaluateXPathWithJsCodegen(
-					'boolean(/xml) and self::element(xml)',
-					documentNode,
-					null,
-					ReturnType.BOOLEAN
-				),
-			'Unsupported'
-		);
-	});
-
 	it('rejects library modules', () => {
 		chai.assert.throws(() => {
 			evaluateXPathWithJsCodegen(
