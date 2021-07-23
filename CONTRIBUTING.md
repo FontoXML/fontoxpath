@@ -114,9 +114,9 @@ The XPath functions are usually located in the
 `src/selectors/functions` folder. Just add them to the file that has
 the most to do with the function you'd like to implement.
 
-### Datastructures
+### Data structures
 
-FontoXPath uses lazy evaluation. This means the main datastructure (`Sequence`) is
+FontoXPath uses lazy evaluation. This means the main data structure (`Sequence`) is
 basically a generator. It has a number of functions which can easily
 get the first item, all items, the effective boolean value, etc. We
 tend to use the methods like `first()`, `length()`,
