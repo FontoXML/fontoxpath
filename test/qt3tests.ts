@@ -527,13 +527,6 @@ function createAsserterForJsCodegen(
 				namespaceResolver,
 				that
 			): JavaScriptCompiledXPathResult => {
-				// Strip away fn:count to make tests possible that would
-				// otherwise be unsupported. Workaround for js-codegen not
-				// supporting functions.
-				// if (xpath.startsWith('fn:count(')) {
-				// 	xpath = xpath.substring(9, xpath.length - 1);
-				// }
-
 				let compiled: JavaScriptCompiledXPathResult;
 				try {
 					compiled = compileXPathToJavaScript(xpath, ReturnType.STRING, {
