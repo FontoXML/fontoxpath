@@ -1,4 +1,7 @@
-import StaticContext from 'src/expressions/StaticContext';
+import ExecutionParameters from 'src/expressions/ExecutionParameters';
+import { FunctionSignature } from '../expressions/dataTypes/FunctionValue';
+import ISequence from '../expressions/dataTypes/ISequence';
+import StaticContext from '../expressions/StaticContext';
 import { IAST } from '../parsing/astHelper';
 import { NamespaceResolver } from '../types/Options';
 import { FunctionIdentifier, PartialCompilationResult } from './JavaScriptCompiledXPath';
@@ -11,4 +14,6 @@ export type CodeGenContext = {
 	) => PartialCompilationResult;
 	staticContext?: StaticContext;
 	resolveNamespace: NamespaceResolver;
+	functions: [FunctionSignature<ISequence>];
+	executionParameters: ExecutionParameters;
 };

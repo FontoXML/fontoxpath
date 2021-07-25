@@ -1,3 +1,5 @@
+import { CodeGenContext } from './CodeGenContext';
+
 export type ContextItemIdentifier = string;
 
 export type FunctionIdentifier = string;
@@ -15,6 +17,7 @@ export type PartiallyCompiledAstAccepted = {
 	// Contains variable (and function) declarations for the upper compiled
 	// scope.
 	variables?: string[];
+	staticContext?: CodeGenContext;
 };
 
 export function getCompiledValueCode(
@@ -35,13 +38,15 @@ export function getCompiledValueCode(
 export function acceptAst(
 	code: string,
 	resultType: CompiledResultType,
-	variables?: string[]
+	variables?: string[],
+	staticContext?: CodeGenContext
 ): PartiallyCompiledAstAccepted {
 	return {
 		code,
 		resultType,
 		isAstAccepted: true,
 		variables,
+		staticContext,
 	};
 }
 
@@ -67,10 +72,11 @@ export type PartialCompilationResult = PartiallyCompiledAstAccepted | IAstReject
 export declare interface IAstAccepted {
 	code: string;
 	isAstAccepted: true;
+	staticContext?: CodeGenContext;
 }
 
-export function acceptFullyCompiledAst(code: string): IAstAccepted {
-	return { code, isAstAccepted: true };
+export function acceptFullyCompiledAst(code: string, staticContext: CodeGenContext): IAstAccepted {
+	return { code, isAstAccepted: true, staticContext };
 }
 
 /**

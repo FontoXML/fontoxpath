@@ -51,7 +51,8 @@ function emitEvaluationToString(
 ): PartiallyCompiledAstAccepted {
 	return acceptAst(
 		`
-	return ${getCompiledValueCode(identifier, resultType)};
+	const code = ${getCompiledValueCode(identifier, resultType)};
+	return code.join? code.join(" "): String(code);
 	`,
 		CompiledResultType.Value
 	);
@@ -112,7 +113,7 @@ function wrapCompiledCode(
 	staticContext: CodeGenContext
 ): string {
 	let finalCode = `
-	return (contextItem, domFacade, runtimeLib) => {
+	return (contextItem, domFacade, runtimeLib, builtInFunctions) => {
 		const {
 			DONE_TOKEN,
 			XPDY0002,
@@ -122,12 +123,10 @@ function wrapCompiledCode(
 			ready,
 			atomize,
 			sequenceFactory,
-			getEffectiveBooleanValue,
 			ISequence,
-			zipSingleton,
-			createAtomicValue,
 			Value,
 			ValueType,
+			convertXDMReturnValue,
 		} = runtimeLib;`;
 
 	if (shouldUseContextItem) {
@@ -198,7 +197,7 @@ function compileAstToJavaScript(
 
 	const wrappedCode = wrapCompiledCode(code, requiresContext, staticContext);
 
-	return acceptFullyCompiledAst(wrappedCode);
+	return acceptFullyCompiledAst(wrappedCode, staticContext);
 }
 
 // This function is used to check if a query requires a context.

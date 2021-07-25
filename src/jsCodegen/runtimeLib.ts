@@ -1,13 +1,11 @@
 import { adaptSingleJavaScriptValue } from '../expressions/adaptJavaScriptValueToXPathValue';
-import atomize, { atomizeSingleValue } from '../expressions/dataTypes/atomize';
+import atomize from '../expressions/dataTypes/atomize';
 import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
-import getEffectiveBooleanValue from '../expressions/dataTypes/Sequences/getEffectiveBooleanValue';
-import Value, { ValueType } from '../expressions/dataTypes/Value';
-import { DONE_TOKEN, IterationResult, ready } from '../expressions/util/iterators';
-import { XPDY0002 } from '../expressions/XPathErrors';
-import zipSingleton from '../expressions/util/zipSingleton';
 import sequenceFactory from '../expressions/dataTypes/sequenceFactory';
-import createAtomicValue from '../expressions/dataTypes/createAtomicValue';
+import getEffectiveBooleanValue from '../expressions/dataTypes/Sequences/getEffectiveBooleanValue';
+import Value from '../expressions/dataTypes/Value';
+import { DONE_TOKEN, IterationResult, ready } from '../expressions/util/iterators';
+import convertXDMReturnValue from '../parsing/convertXDMReturnValue';
 
 export function determinePredicateTruthValue(iterator: { next: () => IterationResult<Value> }) {
 	if (!iterator.next) {
@@ -31,10 +29,8 @@ declare interface IRuntimeLib {
 	isSubtypeOf: typeof isSubtypeOf;
 	ready: typeof ready;
 	sequenceFactory: typeof sequenceFactory;
-	zipSingleton: typeof zipSingleton;
-	createAtomicValue: typeof createAtomicValue;
 	Value: typeof Value;
-	ValueType: typeof ValueType;
+	convertXDMReturnValue: typeof convertXDMReturnValue;
 }
 
 const runtimeLib: IRuntimeLib = {
@@ -46,10 +42,8 @@ const runtimeLib: IRuntimeLib = {
 	isSubtypeOf,
 	ready,
 	sequenceFactory,
-	zipSingleton,
-	createAtomicValue,
 	Value,
-	ValueType,
+	convertXDMReturnValue,
 };
 
 export default runtimeLib;

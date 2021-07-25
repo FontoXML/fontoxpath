@@ -3,6 +3,7 @@ import {
 	createDefaultNamespaceResolver,
 	normalizeEndOfLines,
 } from '../evaluationUtils/buildEvaluationContext';
+import ExecutionParameters from '../expressions/ExecutionParameters';
 import ExecutionSpecificStaticContext from '../expressions/ExecutionSpecificStaticContext';
 import { BUILT_IN_NAMESPACE_URIS } from '../expressions/staticallyKnownNamespaces';
 import StaticContext from '../expressions/StaticContext';
@@ -35,6 +36,17 @@ function compileXPathToJavaScript(
 	options = options || {};
 	returnType = returnType || (ReturnType.ANY as any);
 
+	let executionParameters: ExecutionParameters = new ExecutionParameters(
+		options.debug,
+		null,
+		options.nodesFactory,
+		options.documentWriter,
+		options.currentContext,
+		new Map(),
+		options.logger,
+		true
+	);
+
 	const expressionString = normalizeEndOfLines(selector);
 
 	const parserOptions = {
@@ -50,6 +62,8 @@ function compileXPathToJavaScript(
 
 	const codegenContext: CodeGenContext = {
 		resolveNamespace: options['namespaceResolver'] || createDefaultNamespaceResolver(null),
+		functions: [undefined],
+		executionParameters,
 	};
 
 	const staticContext = new StaticContext(

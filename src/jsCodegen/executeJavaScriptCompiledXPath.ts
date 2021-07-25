@@ -5,6 +5,7 @@ import { adaptJavaScriptValueToArrayOfXPathValues } from '../expressions/adaptJa
 import { SequenceMultiplicity, ValueType } from '../expressions/dataTypes/Value';
 import { IReturnTypes, ReturnType } from '../parsing/convertXDMReturnValue';
 import { Node } from '../types/Types';
+import { CodeGenContext } from './CodeGenContext';
 import runtimeLib from './runtimeLib';
 
 // Here we tell Closure Compiler what attributes NOT to mangle/obfuscate, since these are
@@ -26,7 +27,8 @@ export type CompiledXPathFunction<
 > = () => (
 	contextItem: unknown,
 	domFacade: unknown,
-	runtimeLib: unknown
+	runtimeLib: unknown,
+	functions: unknown
 ) => IReturnTypes<TNode>[TReturnType];
 
 /**
@@ -45,7 +47,8 @@ export type CompiledXPathFunction<
 const executeJavaScriptCompiledXPath = <TNode extends Node, TReturnType extends ReturnType>(
 	compiledXPathFunction: CompiledXPathFunction<TNode, TReturnType>,
 	contextItem?: any | null,
-	domFacade?: IDomFacade | null
+	domFacade?: IDomFacade | null,
+	staticContext?: CodeGenContext
 ): IReturnTypes<TNode>[TReturnType] => {
 	const wrappedDomFacade: DomFacade = new DomFacade(
 		!domFacade ? new ExternalDomFacade() : domFacade
@@ -61,7 +64,8 @@ const executeJavaScriptCompiledXPath = <TNode extends Node, TReturnType extends 
 	return compiledXPathFunction()(
 		contextItem,
 		wrappedDomFacade as IInternalDomFacadeUnmangled,
-		runtimeLib
+		runtimeLib,
+		staticContext.functions
 	);
 };
 

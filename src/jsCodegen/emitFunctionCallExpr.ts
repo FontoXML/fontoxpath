@@ -1,5 +1,7 @@
-import { FunctionProperties } from '../expressions/functions/functionRegistry';
+import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
+import { SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import QName from '../expressions/dataTypes/valueTypes/QName';
+import { FunctionProperties } from '../expressions/functions/functionRegistry';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { CodeGenContext } from './CodeGenContext';
 import {
@@ -9,8 +11,6 @@ import {
 	PartialCompilationResult,
 	rejectAst,
 } from './JavaScriptCompiledXPath';
-import { DONE_TOKEN, ready } from 'src/expressions/util/iterators';
-import ISequence from 'src/expressions/dataTypes/ISequence';
 
 export function emitFunctionCallExpr(
 	ast: IAST,
@@ -50,63 +50,56 @@ export function emitFunctionCallExpr(
 		return rejectAst('the function is not found: ' + resolvedName.localName);
 	}
 
+	if (
+		!String(props.callFunction).includes('_executionParameters') ||
+		!String(props.callFunction).includes('_dynamicContext') ||
+		!String(props.callFunction).includes('_staticContext')
+	) {
+		return rejectAst('We still need to find a way to integrate these parameters');
+	}
 	const compiledArgs: PartialCompilationResult = staticContext.emitBaseExpr(
 		args[0],
 		`${identifier}_args1`,
 		staticContext
 	);
 
+	if (!astHelper.getAttribute(args[0], 'type')) {
+		return rejectAst('type not known');
+	}
+
 	if (!compiledArgs.isAstAccepted) {
 		return compiledArgs;
 	}
 
-	const functionDefenition: string = `const ${identifier}_function = ${props.callFunction.toString()}`
-		.split('sequenceFactory_1.default')
-		.join('sequenceFactory')
-		.split('zipSingleton_1.default')
-		.join('zipSingleton')
-		.split('createAtomicValue_1.default')
-		.join('createAtomicValue')
-		.split('Value_1')
-		.join('Value')
-		.split('Value.ValueType')
-		.join('ValueType')
-		.split('callFunction')
-		.join('function callFunction');
+	const functionArrayIndex = staticContext.functions.push(props.callFunction);
 
-	if (functionDefenition.includes('native code')) {
-		return rejectAst(`Unsupported: function: ${props.localName}`);
+	const CompiledValueCode = getCompiledValueCode(identifier + '_args1', compiledArgs.resultType);
+	const type = astHelper.getAttribute(args[0], 'type').type;
+
+	if (
+		!(
+			isSubtypeOf((props.argumentTypes[0] as SequenceType).type, type) ||
+			isSubtypeOf(type, (props.argumentTypes[0] as SequenceType).type)
+		)
+	) {
+		throw new Error('XPTY0004 wrong parameterType');
 	}
-	let functioncallCode;
 
-	functioncallCode = `
-		const ${identifier} = ${identifier}_function(null, null, null, ${convertToSequence}(
-			${getCompiledValueCode(identifier + '_args1', compiledArgs.resultType)}
-		)).value.next().value.value;
+	const functionDefenition = `
+	const ${identifier}_function = builtInFunctions[${functionArrayIndex - 1}]
 	`;
 
-	let vars = [functionDefenition];
-	vars.push(compiledArgs.code);
+	const functioncallCode = `
+		let ${identifier} = ${identifier}_function(
+			null, 
+			null, 
+			null, 
+			sequenceFactory.create(new Value(${type}, ${CompiledValueCode}))
+			)
+		${identifier} = convertXDMReturnValue("null", ${identifier}, 0, null);
+	`;
+
+	let vars = [functionDefenition, compiledArgs.code];
 
 	return acceptAst(vars.join('\n') + '\n' + functioncallCode, CompiledResultType.Value);
 }
-
-const convertToSequence = `((toAtomize) => {
-	let hasReturned = false;
-	return atomize(
-			{ 
-				value: {
-					next: () => {
-						if (hasReturned) {
-							return DONE_TOKEN;
-						}
-						hasReturned = true;
-						return ready({value: toAtomize, type: 19});
-					},
-					[Symbol.iterator]() { return this; }
-				}
-			}, 
-		{}
-	);
-	;
-})`;
