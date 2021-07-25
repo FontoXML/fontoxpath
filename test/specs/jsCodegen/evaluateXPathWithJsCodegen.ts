@@ -4,7 +4,7 @@ import {
 	executeJavaScriptCompiledXPath,
 	IDomFacade,
 	IReturnTypes,
-    Options,
+	Options,
 	ReturnType,
 	// Relative import is used so this module can be resolved by backend
 	// benchmarks.
@@ -24,7 +24,7 @@ const evaluateXPathWithJsCodegen = <
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
 	returnType?: ReturnType,
-	options?: Options,
+	options?: Options
 ): IReturnTypes<TNode>[TReturnType] => {
 	returnType = returnType || (ReturnType.ANY as any);
 
@@ -34,12 +34,18 @@ const evaluateXPathWithJsCodegen = <
 	if (!cachedCompiledXPath) {
 		const compiledXPathResult = compileXPathToJavaScript(query, returnType, options);
 		if (compiledXPathResult.isAstAccepted === true) {
+			// console.log(compiledXPathResult.code);
 			// tslint:disable-next-line
 			const evalFunction = new Function(compiledXPathResult.code) as CompiledXPathFunction;
 
 			compiledXPathCache.set(cacheKey, evalFunction);
 
-			return executeJavaScriptCompiledXPath(evalFunction, contextItem, domFacade);
+			return executeJavaScriptCompiledXPath(
+				evalFunction,
+				contextItem,
+				domFacade,
+				compiledXPathResult.staticContext
+			);
 		} else {
 			throw new Error(compiledXPathResult.reason);
 		}

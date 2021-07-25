@@ -25,20 +25,10 @@ describe('string tests', () => {
 			documentNode
 		);
 	});
-	it('simple functionCall: not', () => {
-		chai.assert.isFalse(
-			evaluateXPathWithJsCodegen('not("yes" or "no")', null, null, ReturnType.BOOLEAN)
-		);
-	});
 
 	it('simple functionCall: boolean', () => {
-		chai.assert.isFalse(
-			evaluateXPathWithJsCodegen(
-				'boolean(/xml) and self::element(xml)',
-				documentNode,
-				null,
-				ReturnType.BOOLEAN
-			)
+		chai.assert.isTrue(
+			evaluateXPathWithJsCodegen('boolean(/xml)', documentNode, null, ReturnType.BOOLEAN)
 		);
 	});
 
@@ -52,7 +42,7 @@ describe('string tests', () => {
 		chai.assert.equal(
 			evaluateXPathWithJsCodegen(
 				'fn:iri-to-uri ("http://www.example.com/~bébé")',
-				documentNode,
+				null,
 				null,
 				ReturnType.STRING
 			),
@@ -60,19 +50,40 @@ describe('string tests', () => {
 		);
 	});
 
-	it.only('simple functionCall: boolean', () => {
+	it('simple functionCall: value-comp-eq-string-10', () => {
 		chai.assert.equal(
-			evaluateXPathWithJsCodegen(
-				'not(string(/works/@id) eq "abc")',
-				documentNode,
-				null,
-				ReturnType.BOOLEAN
-			),
-			''
+			evaluateXPathWithJsCodegen('not("abc" eq "three")', documentNode, null, ReturnType.ANY),
+			true
 		);
 	});
 
-	//functions below are not supported yet
+	it('functx-fn-string-to-codepoints-1', () => {
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen(
+				"(string-to-codepoints('abc'))",
+				documentNode,
+				null,
+				ReturnType.STRING
+			),
+			'97 98 99'
+		);
+	});
+
+	it('K-ABSFunc-6', () => {
+		chai.assert.throws(
+			() => {
+				evaluateXPathWithJsCodegen(
+					"abs('a string')",
+					documentNode,
+					null,
+					ReturnType.NUMBER
+				);
+			},
+			'*' ? /.*/ : new RegExp('XPTY0004')
+		);
+	});
+
+	//functions below are not supported yetString
 
 	//because the sanitizing of the string messes with this.
 	it.skip('simple functionCall: parseJSON', () => {
@@ -86,7 +97,50 @@ describe('string tests', () => {
 		);
 	});
 
-	//because some functions like this one cannot be converted from typescript to javascript with a simple tostring call
+	// folowing functions still fail
+	it.skip('K-StringToCodepointFunc-7', () => {
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen(
+				'empty(string-to-codepoints(""))',
+				documentNode,
+				null,
+				ReturnType.BOOLEAN
+			),
+			true
+		);
+	});
+
+	it.skip('value-comp-eq-string-12', () => {
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen(
+				'not(works/@id eq "abc")',
+				documentNode,
+				null,
+				ReturnType.BOOLEAN
+			),
+			true
+		);
+	});
+
+	it.skip('value-comp-ne-string-12', () => {
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen(
+				'not(works/@id ne "abc")',
+				documentNode,
+				null,
+				ReturnType.BOOLEAN
+			),
+			false
+		);
+	});
+
+	it.skip('functx-fn-string-to-codepoints-1', () => {
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen('head(/works/bccemruu)', documentNode, null, ReturnType.ANY),
+			[]
+		);
+	});
+
 	it.skip('simple functionCall: time from string', () => {
 		chai.assert(
 			evaluateXPathWithJsCodegen(
@@ -95,6 +149,13 @@ describe('string tests', () => {
 				null,
 				ReturnType.ANY
 			)
+		);
+	});
+
+	it('Axes048-2', () => {
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen('fn:count(/xml)', documentNode, null, ReturnType.ANY),
+			1
 		);
 	});
 });
