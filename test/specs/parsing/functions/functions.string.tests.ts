@@ -478,6 +478,32 @@ describe('functions over strings', () => {
 			chai.assert.isTrue(evaluateXPathToBoolean('matches("xax", "a")')));
 	});
 
+	describe('replace()', () => {
+		it('replace("abracadabra", "bra", "*") returns "a*cada*"', () =>
+			chai.assert.equal(evaluateXPathToString('replace("abracadabra", "bra", "*")'), 'a*cada*'));
+		it('replace("abracadabra", "a.*a", "*") returns "*"', () =>
+			chai.assert.equal(evaluateXPathToString('replace("abracadabra", "a.*a", "*")'), '*'));
+		it('replace("abracadabra", "a.*?a", "*") returns "*c*bra"', () =>
+			chai.assert.equal(evaluateXPathToString('replace("abracadabra", "a.*?a", "*")'), '*c*bra'));
+		it('replace("abracadabra", "a", "") returns "brcdbr"', () =>
+			chai.assert.equal(evaluateXPathToString('replace("abracadabra", "a", "")'), 'brcdbr'));
+		// it('replace("abracadabra", "a(.)", "a$1$1") returns "abbraccaddabbra"', () =>
+		//	chai.assert.equal(evaluateXPathToString(''), ''));
+		// it('replace("abracadabra", ".*?", "$1") raises an error, because the pattern matches the zero-length string', () =>
+		//	chai.assert.equal(evaluateXPathToString(''), ''));
+		it('replace("AAAA", "A+", "b") returns "b"', () =>
+			chai.assert.equal(evaluateXPathToString('replace("AAAA", "A+", "b")'), 'b'));
+		it('replace("AAAA", "A+?", "b") returns "bbbb"', () =>
+			chai.assert.equal(evaluateXPathToString('replace("AAAA", "A+?", "b")'), 'bbbb'));
+		// it('replace("darted", "^(.*?)d(.*)$", "$1c$2") returns "carted". (The first d is replaced.)', () =>
+		//	chai.assert.equal(evaluateXPathToString(''), ''));
+		it('Throws when a fourth argument is passed', () => {
+			chai.assert.throw(() =>
+				evaluateXPathToString('replace("a", "a", "a", "q")')
+			);
+		});
+	});
+
 	describe('codepoint-equal()', () => {
 		it('Returns empty sequence for an empty sequence as an first argument', () =>
 			chai.assert.isTrue(

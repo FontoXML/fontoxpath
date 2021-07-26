@@ -596,6 +596,29 @@ const fnMatches: FunctionDefinitionType = (
 	});
 };
 
+const fnReplace: FunctionDefinitionType = (
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	inputSequence: ISequence,
+	patternSequence: ISequence,
+	replacementSequence: ISequence
+) => {
+	return zipSingleton([inputSequence, patternSequence, replacementSequence], ([inputValue, patternValue, replacementValue]) => {
+		const input = inputValue ? inputValue.value : '';
+		const pattern = patternValue.value;
+		const replacement = replacementValue.value;
+		let regex;
+		try {
+			regex = new RegExp(pattern, 'g');
+		} catch (e) {
+			throw new Error(`FORX0002: ${e}`);
+		}
+		const result = input.replace(regex, replacement);
+		return sequenceFactory.singleton(createAtomicValue(result, ValueType.XSSTRING))
+	});
+};
+
 const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
@@ -999,6 +1022,40 @@ const declarations: BuiltinDeclarationType[] = [
 		localName: 'matches',
 		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE },
+	},
+
+	{
+		argumentTypes: [
+			{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.ZERO_OR_ONE },
+			{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
+			{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
+		],
+		callFunction: fnReplace,
+		localName: 'replace',
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
+	},
+
+	{
+		argumentTypes: [
+			{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.ZERO_OR_ONE },
+			{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
+			{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
+			{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
+		],
+		localName: 'replace',
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
+		callFunction(
+			_dynamicContext,
+			_executionParameters,
+			_staticContext,
+			_input,
+			_pattern,
+			_flags
+		) {
+			throw new Error('Not implemented: Using flags in replace is not supported');
+		},
 	},
 ];
 
