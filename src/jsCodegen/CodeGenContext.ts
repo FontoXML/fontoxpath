@@ -14,6 +14,6 @@ export type CodeGenContext = {
 	) => PartialCompilationResult;
 	staticContext?: StaticContext;
 	resolveNamespace: NamespaceResolver;
-	functions: [FunctionSignature<ISequence>];
+	functions: [any];
 	executionParameters: ExecutionParameters;
 };

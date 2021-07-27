@@ -90,11 +90,13 @@ export function emitFunctionCallExpr(
 	`;
 
 	const functioncallCode = `
+		const ${identifier}_helper = ${createSequence(type, CompiledValueCode)}
+		// console.log(${identifier}_helper())
 		let ${identifier} = ${identifier}_function(
 			null, 
 			null, 
 			null, 
-			sequenceFactory.create(new Value(${type}, ${CompiledValueCode}))
+			${identifier}_helper()
 			)
 		${identifier} = convertXDMReturnValue("null", ${identifier}, 0, null);
 	`;
@@ -102,4 +104,14 @@ export function emitFunctionCallExpr(
 	let vars = [functionDefenition, compiledArgs.code];
 
 	return acceptAst(vars.join('\n') + '\n' + functioncallCode, CompiledResultType.Value);
+}
+
+function createSequence(type: ValueType, CompiledValueCode: string) {
+	return `() => {
+		// console.log(${CompiledValueCode})
+		if(typeof ${CompiledValueCode} !== 'string' && ${CompiledValueCode}.length === 0) {
+			return sequenceFactory.empty()
+		}
+		return sequenceFactory.create(new Value(${type}, ${CompiledValueCode}))
+	}`;
 }

@@ -7,7 +7,7 @@ import evaluateXPathWithJsCodegen from './evaluateXPathWithJsCodegen';
 
 describe('string tests', () => {
 	let documentNode: slimdom.Document;
-
+	let worksDocument: slimdom.Document;
 	beforeEach(() => {
 		documentNode = new slimdom.Document();
 		jsonMlMapper.parse(
@@ -24,11 +24,28 @@ describe('string tests', () => {
 			],
 			documentNode
 		);
+
+		worksDocument = new slimdom.Document();
+		jsonMlMapper.parse(
+			[
+				'xml',
+				['title', 'employee'],
+				['props', ['empnum', 'E1'], ['pnum', 'P1'], ['hours', '40']],
+			],
+			worksDocument
+		);
 	});
 
 	it('simple functionCall: boolean', () => {
 		chai.assert.isTrue(
 			evaluateXPathWithJsCodegen('boolean(/xml)', documentNode, null, ReturnType.BOOLEAN)
+		);
+	});
+
+	it('Axes048-2', () => {
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen('fn:count(/xml)', documentNode, null, ReturnType.ANY),
+			1
 		);
 	});
 
@@ -83,7 +100,19 @@ describe('string tests', () => {
 		);
 	});
 
-	//functions below are not supported yetString
+	it('value-comp-eq-string-12', () => {
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen(
+				'not(works/@id eq "abc")',
+				documentNode,
+				null,
+				ReturnType.BOOLEAN
+			),
+			true
+		);
+	});
+
+	//functions below are not supported yet
 
 	//because the sanitizing of the string messes with this.
 	it.skip('simple functionCall: parseJSON', () => {
@@ -110,27 +139,10 @@ describe('string tests', () => {
 		);
 	});
 
-	it.skip('value-comp-eq-string-12', () => {
+	it('value-comp-ne-string-12', () => {
 		chai.assert.equal(
-			evaluateXPathWithJsCodegen(
-				'not(works/@id eq "abc")',
-				documentNode,
-				null,
-				ReturnType.BOOLEAN
-			),
+			evaluateXPathWithJsCodegen('fn:exists("")', documentNode, null, ReturnType.BOOLEAN),
 			true
-		);
-	});
-
-	it.skip('value-comp-ne-string-12', () => {
-		chai.assert.equal(
-			evaluateXPathWithJsCodegen(
-				'not(works/@id ne "abc")',
-				documentNode,
-				null,
-				ReturnType.BOOLEAN
-			),
-			false
 		);
 	});
 
@@ -152,10 +164,11 @@ describe('string tests', () => {
 		);
 	});
 
-	it('Axes048-2', () => {
-		chai.assert.equal(
-			evaluateXPathWithJsCodegen('fn:count(/xml)', documentNode, null, ReturnType.ANY),
-			1
-		);
+	it.only('Axes048-2', () => {
+		console.log(evaluateXPathWithJsCodegen('/far-north', documentNode, null, ReturnType.ANY));
+		// chai.assert.equal(
+		// 	evaluateXPathWithJsCodegen('fn:count(/far-north)', documentNode, null, ReturnType.ANY),
+		// 	0
+		// );
 	});
 });
