@@ -237,7 +237,12 @@ async function runXPathWithJsCodegen(xpath: string, asXQuery: boolean, annotateA
 		jsCodegenOutput.innerText = compiledXPathResult.code;
 		// tslint:disable-next-line
 		const evalFunction = new Function(compiledXPathResult.code) as () => any;
-		const result = fontoxpath.executeJavaScriptCompiledXPath(evalFunction, xmlDoc);
+		const result = fontoxpath.executeJavaScriptCompiledXPath(
+			evalFunction,
+			xmlDoc,
+			null,
+			compiledXPathResult.functions
+		);
 		resultText.innerText = JSON.stringify(result, jsonXmlReplacer, '  ');
 	} else {
 		resultText.innerText = JSON.stringify(compiledXPathResult.reason, jsonXmlReplacer, '  ');

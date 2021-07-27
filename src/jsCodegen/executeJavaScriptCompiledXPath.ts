@@ -47,7 +47,7 @@ const executeJavaScriptCompiledXPath = <TNode extends Node, TReturnType extends 
 	compiledXPathFunction: CompiledXPathFunction<TNode, TReturnType>,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
-	staticContext?: any
+	functions?: [any]
 ): IReturnTypes<TNode>[TReturnType] => {
 	const wrappedDomFacade: DomFacade = new DomFacade(
 		!domFacade ? new ExternalDomFacade() : domFacade
@@ -64,7 +64,7 @@ const executeJavaScriptCompiledXPath = <TNode extends Node, TReturnType extends 
 		contextItem,
 		wrappedDomFacade as IInternalDomFacadeUnmangled,
 		runtimeLib,
-		staticContext.functions
+		functions
 	);
 };
 

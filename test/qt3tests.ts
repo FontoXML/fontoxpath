@@ -441,7 +441,7 @@ function createAsserterForJsCodegen(
 								fn,
 								contextNode,
 								null,
-								compiled.staticContext
+								compiled.functions
 							);
 						} else {
 							that.skip(`Skipped: ${compiled.reason}`);
@@ -477,12 +477,7 @@ function createAsserterForJsCodegen(
 					// tslint:disable-next-line
 					const fn = new Function(compiled.code) as CompiledXPathFunction;
 					chai.assert.isTrue(
-						executeJavaScriptCompiledXPath(
-							fn,
-							contextNode,
-							null,
-							compiled.staticContext
-						),
+						executeJavaScriptCompiledXPath(fn, contextNode, null, compiled.functions),
 						`Expected XPath ${xpath} to resolve to true`
 					);
 				}
@@ -504,12 +499,7 @@ function createAsserterForJsCodegen(
 					// tslint:disable-next-line
 					const fn = new Function(compiled.code) as CompiledXPathFunction;
 					chai.assert.isTrue(
-						executeJavaScriptCompiledXPath(
-							fn,
-							contextNode,
-							null,
-							compiled.staticContext
-						),
+						executeJavaScriptCompiledXPath(fn, contextNode, null, compiled.functions),
 						`Expected XPath ${xpath} to resolve to true`
 					);
 				}
@@ -543,12 +533,7 @@ function createAsserterForJsCodegen(
 					// tslint:disable-next-line
 					const fn = new Function(compiled.code) as CompiledXPathFunction;
 					chai.assert.equal(
-						executeJavaScriptCompiledXPath(
-							fn,
-							contextNode,
-							null,
-							compiled.staticContext
-						),
+						executeJavaScriptCompiledXPath(fn, contextNode, null, compiled.functions),
 						equalWith,
 						`Expected XPath ${xpath} to resolve to ${equalWith}`
 					);
@@ -576,12 +561,7 @@ function createAsserterForJsCodegen(
 					// tslint:disable-next-line
 					const fn = new Function(compiled.code) as CompiledXPathFunction;
 					chai.assert.deepEqual(
-						executeJavaScriptCompiledXPath(
-							fn,
-							contextNode,
-							null,
-							compiled.staticContext
-						),
+						executeJavaScriptCompiledXPath(fn, contextNode, null, compiled.functions),
 						evaluateXPath(equalWith, contextNode, null, variablesInScope, null, {
 							namespaceResolver,
 							nodesFactory,
@@ -610,12 +590,8 @@ function createAsserterForJsCodegen(
 					// tslint:disable-next-line
 					const fn = new Function(compiled.code) as CompiledXPathFunction;
 					chai.assert.equal(
-						executeJavaScriptCompiledXPath(
-							fn,
-							contextNode,
-							null,
-							compiled.staticContext
-						).length,
+						executeJavaScriptCompiledXPath(fn, contextNode, null, compiled.functions)
+							.length,
 						0,
 						`Expected XPath ${xpath} to resolve to the empty sequence`
 					);
@@ -638,12 +614,7 @@ function createAsserterForJsCodegen(
 					// tslint:disable-next-line
 					const fn = new Function(compiled.code) as CompiledXPathFunction;
 					chai.assert.isFalse(
-						executeJavaScriptCompiledXPath(
-							fn,
-							contextNode,
-							null,
-							compiled.staticContext
-						),
+						executeJavaScriptCompiledXPath(fn, contextNode, null, compiled.functions),
 						`Expected XPath ${xpath} to resolve to false`
 					);
 				}
@@ -669,12 +640,8 @@ function createAsserterForJsCodegen(
 					// tslint:disable-next-line
 					const fn = new Function(compiled.code) as CompiledXPathFunction;
 					chai.assert.equal(
-						executeJavaScriptCompiledXPath(
-							fn,
-							contextNode,
-							null,
-							compiled.staticContext
-						).length,
+						executeJavaScriptCompiledXPath(fn, contextNode, null, compiled.functions)
+							.length,
 						expectedCount,
 						`Expected ${xpath} to resolve to ${expectedCount}`
 					);
@@ -706,7 +673,7 @@ function createAsserterForJsCodegen(
 							fn,
 							contextNode,
 							null,
-							compiled.staticContext
+							compiled.functions
 						),
 						expectedType,
 						`Expected ${xpath} to resolve to type: ${expectedType}`
@@ -756,7 +723,7 @@ function createAsserterForJsCodegen(
 						fn,
 						contextNode,
 						null,
-						compiled.staticContext
+						compiled.functions
 					);
 					chai.assert(
 						evaluateXPathToBoolean(
@@ -808,12 +775,7 @@ function createAsserterForJsCodegen(
 					// tslint:disable-next-line
 					const fn = new Function(compiled.code) as CompiledXPathFunction;
 					chai.assert.equal(
-						executeJavaScriptCompiledXPath(
-							fn,
-							contextNode,
-							null,
-							compiled.staticContext
-						),
+						executeJavaScriptCompiledXPath(fn, contextNode, null, compiled.functions),
 						expectedString,
 						`Expected ${xpath} to resolve to ${expectedString}`
 					);

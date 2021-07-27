@@ -15,7 +15,7 @@ export type PartiallyCompiledAstAccepted = {
 	// Contains variable (and function) declarations for the upper compiled
 	// scope.
 	variables?: string[];
-	staticContext?: any;
+	functions?: [any];
 };
 
 export function getCompiledValueCode(
@@ -37,14 +37,14 @@ export function acceptAst(
 	code: string,
 	resultType: CompiledResultType,
 	variables?: string[],
-	staticContext?: any
+	functions?: [any]
 ): PartiallyCompiledAstAccepted {
 	return {
 		code,
 		resultType,
 		isAstAccepted: true,
 		variables,
-		staticContext,
+		functions,
 	};
 }
 
@@ -70,11 +70,11 @@ export type PartialCompilationResult = PartiallyCompiledAstAccepted | IAstReject
 export declare interface IAstAccepted {
 	code: string;
 	isAstAccepted: true;
-	staticContext?: any;
+	functions?: [any];
 }
 
-export function acceptFullyCompiledAst(code: string, staticContext: any): IAstAccepted {
-	return { code, isAstAccepted: true, staticContext };
+export function acceptFullyCompiledAst(code: string, functions: [any]): IAstAccepted {
+	return { code, isAstAccepted: true, functions };
 }
 
 /**

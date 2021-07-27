@@ -197,7 +197,7 @@ function compileAstToJavaScript(
 
 	const wrappedCode = wrapCompiledCode(code, requiresContext, staticContext);
 
-	return acceptFullyCompiledAst(wrappedCode, staticContext);
+	return acceptFullyCompiledAst(wrappedCode, staticContext.functions);
 }
 
 // This function is used to check if a query requires a context.

@@ -44,13 +44,18 @@ const evaluateXPathWithJsCodegen = <
 				evalFunction,
 				contextItem,
 				domFacade,
-				compiledXPathResult.staticContext
+				compiledXPathResult.functions
 			);
 		} else {
 			throw new Error(compiledXPathResult.reason);
 		}
 	} else {
-		return executeJavaScriptCompiledXPath(cachedCompiledXPath, contextItem, domFacade);
+		return executeJavaScriptCompiledXPath(
+			cachedCompiledXPath,
+			contextItem,
+			domFacade,
+			cachedCompiledXPath.functions
+		);
 	}
 };
 
