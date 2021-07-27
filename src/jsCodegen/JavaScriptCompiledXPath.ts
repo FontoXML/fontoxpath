@@ -1,5 +1,3 @@
-import { CodeGenContext } from './CodeGenContext';
-
 export type ContextItemIdentifier = string;
 
 export type FunctionIdentifier = string;
@@ -17,7 +15,7 @@ export type PartiallyCompiledAstAccepted = {
 	// Contains variable (and function) declarations for the upper compiled
 	// scope.
 	variables?: string[];
-	staticContext?: CodeGenContext;
+	staticContext?: any;
 };
 
 export function getCompiledValueCode(
@@ -39,7 +37,7 @@ export function acceptAst(
 	code: string,
 	resultType: CompiledResultType,
 	variables?: string[],
-	staticContext?: CodeGenContext
+	staticContext?: any
 ): PartiallyCompiledAstAccepted {
 	return {
 		code,
@@ -72,10 +70,10 @@ export type PartialCompilationResult = PartiallyCompiledAstAccepted | IAstReject
 export declare interface IAstAccepted {
 	code: string;
 	isAstAccepted: true;
-	staticContext?: CodeGenContext;
+	staticContext?: any;
 }
 
-export function acceptFullyCompiledAst(code: string, staticContext: CodeGenContext): IAstAccepted {
+export function acceptFullyCompiledAst(code: string, staticContext: any): IAstAccepted {
 	return { code, isAstAccepted: true, staticContext };
 }
 
