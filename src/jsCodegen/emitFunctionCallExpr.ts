@@ -1,4 +1,3 @@
-import { fnAvg } from '../expressions/functions/builtInFunctions_sequences';
 import ISequence from '../expressions/dataTypes/ISequence';
 import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
 import sequenceFactory from '../expressions/dataTypes/sequenceFactory';
@@ -12,13 +11,11 @@ import {
 	acceptAst,
 	CompiledResultType,
 	getCompiledValueCode,
-	IAstAccepted,
 	IAstRejected,
 	PartialCompilationResult,
 	PartiallyCompiledAstAccepted,
 	rejectAst,
 } from './JavaScriptCompiledXPath';
-import MapValue from '../expressions/dataTypes/MapValue';
 
 /**
  * A function to emit the functionCallExpression.
@@ -161,26 +158,20 @@ function emitFunctionWithMultipleArguments(
 	);
 	const types: ValueType[] = args.map((arg) => astHelper.getAttribute(arg, 'type').type);
 
-	let i = 0;
-	for (const type of types) {
+	for (let index = 0; index < types.length; index++) {
 		if (
 			!(
-				isSubtypeOf((props.argumentTypes[i] as SequenceType).type, type) ||
-				isSubtypeOf(type, (props.argumentTypes[i] as SequenceType).type)
+				isSubtypeOf((props.argumentTypes[index] as SequenceType).type, types[index]) ||
+				isSubtypeOf(types[index], (props.argumentTypes[index] as SequenceType).type)
 			)
 		) {
 			throw new Error('XPTY0004 wrong parameterType');
 		}
-		i++;
 	}
 
-	let argumentsString: string = '';
-	for (let index = 0; index < compiledValueCodes.length - 1; index++) {
-		argumentsString += `createSequence(${types[index]}, ${compiledValueCodes[index]}),\n`;
-	}
-	argumentsString += `createSequence(${types[compiledValueCodes.length - 1]}, ${
-		compiledValueCodes[compiledValueCodes.length - 1]
-	})`;
+	let argumentsString: string = compiledValueCodes
+		.map((value, index) => `createSequence(${types[index]}, ${value})`)
+		.join(',\n');
 
 	const functioncallCode = `
 	const ${identifier} = convertXDMReturnValue(
@@ -236,7 +227,7 @@ export function createSequence(type: ValueType, compiledValueCode: any): ISequen
 			return sequenceFactory.create(new Value(type, nodes));
 		}
 	}
-	// default to this.
+	// default to this sequenceCreation.
 	return sequenceFactory.create(new Value(type, compiledValueCode));
 }
 
