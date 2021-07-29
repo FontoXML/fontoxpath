@@ -151,6 +151,53 @@ describe('string tests', () => {
 		);
 	});
 
+	it('simple functionCall: time from string', () => {
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen(
+				'fn:avg(fn:string-to-codepoints("A String"))',
+				documentNode,
+				null,
+				ReturnType.ANY
+			),
+			91
+		);
+	});
+
+	it('simple functionCall: time from string', () => {
+		chai.assert.isTrue(
+			evaluateXPathWithJsCodegen(
+				'fn:ends-with("hello", "o")',
+				documentNode,
+				null,
+				ReturnType.BOOLEAN
+			)
+		);
+	});
+
+	it('surrogates04a', () => {
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen(
+				'translate("abc&#x1D156;def", "&#x1D156;", "#")',
+				documentNode,
+				null,
+				ReturnType.ANY
+			),
+			'abc#def'
+		);
+	});
+
+	it('functx-fn-QName-3', () => {
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen(
+				"(QName('', 'product'))",
+				documentNode,
+				null,
+				ReturnType.STRING
+			),
+			'product'
+		);
+	});
+
 	// functions below are not supported yet
 
 	// because the sanitizing of the string messes with this.
@@ -177,16 +224,27 @@ describe('string tests', () => {
 		);
 	});
 
-	// I have no idea why this one fails
-	it('simple functionCall: time from string', () => {
+	it.skip('functx-fn-QName-3', () => {
 		chai.assert.equal(
 			evaluateXPathWithJsCodegen(
-				'fn:avg(fn:string-to-codepoints("A String"))',
+				'map:remove(map:entry("a", "1"), "b")',
 				documentNode,
 				null,
 				ReturnType.ANY
 			),
-			91
+			'product'
+		);
+	});
+
+	it('fn-substring-after-3', () => {
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen(
+				"substring-after('query', 'y')",
+				documentNode,
+				null,
+				ReturnType.ANY
+			),
+			'product'
 		);
 	});
 });

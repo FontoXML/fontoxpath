@@ -52,6 +52,9 @@ function emitEvaluationToString(
 	return acceptAst(
 		`
 	const code = ${getCompiledValueCode(identifier, resultType)};
+	if(code.buildPrefixedName) {
+		return code.buildPrefixedName()
+	}
 	return code.join? code.join(" "): String(code);
 	`,
 		CompiledResultType.Value

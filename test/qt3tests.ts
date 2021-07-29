@@ -653,7 +653,7 @@ function createAsserterForJsCodegen(
 				namespaceResolver,
 				that
 			): JavaScriptCompiledXPathResult => {
-				const compiled = compileXPathToJavaScript(xpath, ReturnType.NODES, {
+				const compiled = compileXPathToJavaScript(xpath, ReturnType.ANY, {
 					namespaceResolver,
 					language,
 				});

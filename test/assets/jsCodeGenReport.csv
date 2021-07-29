@@ -13,6 +13,30 @@ K-SeqBooleanFunc-13
 K-SeqBooleanFunc-29
 K-SeqBooleanFunc-30
 K-SeqBooleanFunc-31
+fn-codepoint-equal-3
+fn-codepoint-equal-4
+fn-codepoint-equal-5
+fn-codepoint-equal-6
+fn-codepoint-equal-7
+fn-codepoint-equal-12
+fn-codepoint-equal-13
+fn-codepoint-equal-14
+fn-codepoint-equal-20
+fn-codepoint-equal-21
+fn-contains-1
+fn-contains-2
+fn-contains-3
+fn-contains-8
+fn-contains-9
+fn-contains-10
+fn-contains-11
+fn-contains-12
+fn-contains-15
+fn-contains-16
+K-ContainsFunc-6
+K-ContainsFunc-7
+K-ContainsFunc-10
+K-ContainsFunc-11
 K-SeqEmptyFunc-3
 fn-encode-for-uri1args-1
 fn-encode-for-uri1args-2
@@ -34,6 +58,19 @@ fn-encode-for-uri-13
 fn-encode-for-uri-14
 fn-encode-for-uri-15
 fn-encode-for-uri-16
+fn-ends-with-1
+fn-ends-with-2
+fn-ends-with-3
+fn-ends-with-8
+fn-ends-with-9
+fn-ends-with-10
+fn-ends-with-11
+fn-ends-with-12
+fn-ends-with-15
+fn-ends-with-16
+K-EndsWithFunc-6
+K-EndsWithFunc-7
+K-EndsWithFunc-8
 head-005
 fn-iri-to-uri1args-1
 fn-iri-to-uri1args-2
@@ -83,6 +120,411 @@ fn-lower-case-15
 fn-lower-case-16
 fn-lower-case-17
 K-LowerCaseFunc-4
+fn-matches2args-1
+fn-matches2args-2
+fn-matches2args-3
+fn-matches2args-4
+fn-matches2args-5
+fn-matchesErr-2
+fn-matchesErr-3
+fn-matchesErr-4
+fn-matchesErr-5
+fn-matches-1
+fn-matches-2
+fn-matches-3
+fn-matches-5
+fn-matches-6
+fn-matches-7
+fn-matches-8
+fn-matches-9
+fn-matches-10
+fn-matches-11
+fn-matches-12
+fn-matches-13
+fn-matches-14
+fn-matches-15
+fn-matches-16
+fn-matches-17
+fn-matches-18
+fn-matches-19
+fn-matches-20
+fn-matches-21
+fn-matches-22
+fn-matches-23
+fn-matches-24
+fn-matches-25
+fn-matches-31
+fn-matches-35
+fn-matches-37
+fn-matches-38
+fn-matches-39
+fn-matches-40
+fn-matches-48
+fn-matches-49
+fn-matches-52
+K2-MatchesFunc-7
+K2-MatchesFunc-8
+K2-MatchesFunc-9
+K2-MatchesFunc-10
+K2-MatchesFunc-11
+K2-MatchesFunc-12
+K2-MatchesFunc-13
+K2-MatchesFunc-14
+K2-MatchesFunc-16
+cbcl-matches-001
+cbcl-matches-002
+cbcl-matches-005
+cbcl-matches-006
+cbcl-matches-006b
+cbcl-matches-007
+cbcl-matches-008
+cbcl-matches-009
+cbcl-matches-010
+cbcl-matches-011
+cbcl-matches-012
+cbcl-matches-013
+cbcl-matches-014
+cbcl-matches-015
+cbcl-matches-016
+cbcl-matches-017
+cbcl-matches-018
+cbcl-matches-019
+cbcl-matches-020
+cbcl-matches-021
+cbcl-matches-022
+cbcl-matches-023
+cbcl-matches-024
+cbcl-matches-025
+cbcl-matches-026
+cbcl-matches-027
+cbcl-matches-028
+cbcl-matches-029
+cbcl-matches-030
+cbcl-matches-031
+cbcl-matches-032
+cbcl-matches-033
+cbcl-matches-034
+cbcl-matches-035
+cbcl-matches-036
+cbcl-matches-037
+cbcl-matches-040
+cbcl-matches-041
+cbcl-matches-041b
+cbcl-matches-042
+cbcl-matches-043
+cbcl-matches-044
+cbcl-matches-045
+cbcl-matches-046
+cbcl-matches-047
+cbcl-matches-047b
+cbcl-matches-048
+cbcl-matches-049
+re00016
+re00017
+re00018
+re00019
+re00021
+re00022
+re00032
+re00033
+re00037
+re00038
+re00039
+re00040
+re00041
+re00042
+re00043
+re00044
+re00045
+re00046
+re00048
+re00071
+re00072
+re00087
+re00088
+re00090
+re00093
+re00097
+re00212
+re00214
+re00215
+re00216
+re00521
+re00541
+re00556
+re00558
+re00561
+re00562
+re00563
+re00564
+re00566
+re00567
+re00568
+re00569
+re00570
+re00571
+re00572
+re00573
+re00574
+re00583
+re00584
+re00585
+re00586
+re00587
+re00588
+re00589
+re00590
+re00591
+re00592
+re00593
+re00594
+re00595
+re00596
+re00597
+re00598
+re00600
+re00609
+re00610
+re00613
+re00614
+re00615
+re00616
+re00618
+re00619
+re00620
+re00621
+re00622
+re00623
+re00624
+re00625
+re00626
+re00627
+re00628
+re00629
+re00630
+re00631
+re00632
+re00633
+re00634
+re00635
+re00636
+re00637
+re00638
+re00642
+re00646
+re00647
+re00648
+re00649
+re00650
+re00651
+re00652
+re00653
+re00654
+re00674
+re00675
+re00676
+re00677
+re00678
+re00679
+re00680
+re00681
+re00682
+re00683
+re00684
+re00685
+re00686
+re00687
+re00688
+re00741
+re00742
+re00743
+re00744
+re00745
+re00746
+re00750
+re00751
+re00754
+re00755
+re00756
+re00757
+re00761
+re00762
+re00763
+re00764
+re00765
+re00766
+re00767
+re00768
+re00769
+re00784
+re00785
+re00786
+re00787
+re00791
+re00792
+re00801
+re00802
+re00803
+re00804
+re00805
+re00806
+re00807
+re00808
+re00809
+re00810
+re00811
+re00812
+re00813
+re00814
+re00815
+re00816
+re00817
+re00819
+re00820
+re00821
+re00822
+re00823
+re00824
+re00826
+re00827
+re00828
+re00829
+re00830
+re00845
+re00846
+re00847
+re00848
+re00849
+re00850
+re00851
+re00852
+re00853
+re00854
+re00855
+re00856
+re00857
+re00858
+re00859
+re00860
+re00861
+re00862
+re00863
+re00864
+re00865
+re00866
+re00867
+re00868
+re00869
+re00870
+re00871
+re00872
+re00873
+re00874
+re00875
+re00876
+re00877
+re00878
+re00879
+re00880
+re00881
+re00882
+re00883
+re00884
+re00885
+re00886
+re00887
+re00888
+re00889
+re00890
+re00891
+re00892
+re00893
+re00894
+re00895
+re00896
+re00897
+re00898
+re00899
+re00900
+re00901
+re00902
+re00903
+re00904
+re00905
+re00906
+re00907
+re00908
+re00909
+re00910
+re00911
+re00912
+re00913
+re00914
+re00915
+re00916
+re00917
+re00918
+re00919
+re00920
+re00921
+re00922
+re00923
+re00924
+re00925
+re00926
+re00927
+re00928
+re00929
+re00930
+re00931
+re00937
+re00938
+re00939
+re00940
+re00941
+re00942
+re00943
+re00944
+re00945
+re00946
+re00947
+re00948
+re00949
+re00950
+re00951
+re00952
+re00953
+re00954
+re00955
+re00956
+re00958
+re00959
+re00960
+re00961
+re00962
+re00963
+re00964
+re00965
+re00966
+re00967
+re00968
+re00969
+re00970
+re00971
+re00977
+re00978
+re00988
+re00989
+re00990
+re00991
+re00995
+re00996
+re00997
+re00998
+re00999
+re01001
+re01002
+re01003
 fn-normalize-space1args-1
 fn-normalize-space1args-2
 fn-normalize-space1args-3
@@ -116,6 +558,31 @@ fn-not-3
 fn-not-4
 fn-not-26
 K-SeqOneOrMoreFunc-3
+ExpandedQNameConstructFunc005
+ExpandedQNameConstructFunc007
+ExpandedQNameConstructFunc008
+ExpandedQNameConstructFunc009
+ExpandedQNameConstructFunc010
+ExpandedQNameConstructFunc011
+ExpandedQNameConstructFunc012
+K-ExpandedQNameConstructFunc-5
+K-ExpandedQNameConstructFunc-6
+K-ExpandedQNameConstructFunc-8
+cbcl-qname-001
+fn-starts-with-1
+fn-starts-with-2
+fn-starts-with-3
+fn-starts-with-8
+fn-starts-with-9
+fn-starts-with-10
+fn-starts-with-11
+fn-starts-with-12
+fn-starts-with-15
+fn-starts-with-16
+K-StartsWithFunc-6
+K-StartsWithFunc-7
+K-StartsWithFunc-8
+K-StartsWithFunc-11
 fn-string-length-1
 fn-string-length-3
 fn-string-length-4
@@ -146,6 +613,69 @@ fn-string-to-codepoints-14
 K-StringToCodepointFunc-4
 K-StringToCodepointFunc-7
 K-StringToCodepointFunc-8
+fn-substring-after-1
+fn-substring-after-2
+fn-substring-after-3
+fn-substring-after-8
+fn-substring-after-9
+fn-substring-after-10
+fn-substring-after-11
+fn-substring-after-12
+fn-substring-after-15
+fn-substring-after-16
+fn-substring-after-17
+fn-substring-after-18
+fn-substring-after-19
+fn-substring-after-20
+fn-substring-after-21
+fn-substring-after-25
+K-SubstringAfterFunc-6
+K-SubstringAfterFunc-7
+K-SubstringAfterFunc-8
+K-SubstringAfterFunc-11
+fn-substring-before-1
+fn-substring-before-2
+fn-substring-before-3
+fn-substring-before-8
+fn-substring-before-9
+fn-substring-before-10
+fn-substring-before-11
+fn-substring-before-12
+fn-substring-before-15
+fn-substring-before-16
+fn-substring-before-17
+fn-substring-before-18
+fn-substring-before-19
+fn-substring-before-20
+fn-substring-before-21
+fn-substring-before-25
+K-SubstringBeforeFunc-6
+K-SubstringBeforeFunc-7
+K-SubstringBeforeFunc-9
+K-SubstringBeforeFunc-10
+fn-translate3args-1
+fn-translate3args-2
+fn-translate3args-3
+fn-translate-1
+fn-translate-2
+fn-translate-3
+fn-translate-4
+fn-translate-5
+fn-translate-6
+fn-translate-7
+fn-translate-8
+fn-translate-9
+fn-translate-12
+fn-translate-17
+fn-translate-18
+fn-translate-19
+fn-translate-20
+K-TranslateFunc-4
+K-TranslateFunc-5
+K-TranslateFunc-6
+K-TranslateFunc-8
+K-TranslateFunc-9
+K-TranslateFunc-10
 fn-upper-case-1
 fn-upper-case-3
 fn-upper-case-4
@@ -239,6 +769,7 @@ op-logical-or-017
 op-logical-or-018
 op-logical-or-019
 op-logical-or-020
+K-LogicExpr-46
 predicates-17
 value-comp-eq-string-5
 value-comp-eq-string-12
@@ -246,16 +777,59 @@ value-comp-ne-string-5
 value-comp-ne-string-12
 K2-VersionProlog-1
 K2-VersionProlog-2
+FOCA0002_2
+FOCA0002_3
+FOCA0002_4
+FOCA0002_5
+FOCA0002_6
 surrogates01
+surrogates04
+surrogates05
+surrogates06
+surrogates09
+surrogates10
+surrogates11
+surrogates12
+surrogates13
 surrogates01a
+surrogates04a
+surrogates05a
+surrogates06a
+surrogates09a
+surrogates10a
+surrogates11a
+surrogates12a
+surrogates13a
+functx-fn-codepoint-equal-1
+functx-fn-codepoint-equal-2
+functx-fn-compare-1
+functx-fn-compare-2
+functx-fn-compare-3
+functx-fn-compare-4
+functx-fn-compare-5
+functx-fn-compare-6
+functx-fn-contains-1
+functx-fn-contains-2
+functx-fn-contains-3
+functx-fn-contains-4
+functx-fn-contains-5
 functx-fn-encode-for-uri-1
 functx-fn-encode-for-uri-2
+functx-fn-ends-with-1
+functx-fn-ends-with-2
+functx-fn-ends-with-3
+functx-fn-ends-with-4
+functx-fn-ends-with-5
 functx-fn-exactly-one-1
 functx-fn-exists-2
 functx-fn-iri-to-uri-1
+functx-fn-local-name-from-QName-1
+functx-fn-local-name-from-QName-2
 functx-fn-lower-case-1
 functx-fn-lower-case-2
 functx-fn-lower-case-3
+functx-fn-namespace-uri-from-QName-1
+functx-fn-namespace-uri-from-QName-2
 functx-fn-normalize-space-1
 functx-fn-normalize-space-2
 functx-fn-normalize-space-3
@@ -265,6 +839,16 @@ functx-fn-normalize-space-6
 functx-fn-normalize-space-7
 functx-fn-not-5
 functx-fn-one-or-more-1
+functx-fn-QName-1
+functx-fn-QName-2
+functx-fn-QName-3
+functx-fn-starts-with-1
+functx-fn-starts-with-2
+functx-fn-starts-with-3
+functx-fn-starts-with-4
+functx-fn-starts-with-5
+functx-fn-starts-with-6
+functx-fn-starts-with-8
 functx-fn-string-length-1
 functx-fn-string-length-2
 functx-fn-string-length-3
@@ -273,6 +857,34 @@ functx-fn-string-length-5
 functx-fn-string-to-codepoints-1
 functx-fn-string-to-codepoints-2
 functx-fn-string-to-codepoints-3
+functx-fn-substring-after-1
+functx-fn-substring-after-2
+functx-fn-substring-after-3
+functx-fn-substring-after-4
+functx-fn-substring-after-5
+functx-fn-substring-after-6
+functx-fn-substring-before-1
+functx-fn-substring-before-2
+functx-fn-substring-before-3
+functx-fn-substring-before-4
+functx-fn-substring-before-5
+functx-fn-substring-before-6
+functx-fn-tokenize-1
+functx-fn-tokenize-3
+functx-fn-tokenize-4
+functx-fn-tokenize-5
+functx-fn-tokenize-6
+functx-fn-tokenize-7
+functx-fn-tokenize-8
+functx-fn-tokenize-9
+functx-fn-tokenize-11
+functx-fn-tokenize-12
+functx-fn-translate-1
+functx-fn-translate-2
+functx-fn-translate-3
+functx-fn-translate-4
+functx-fn-translate-5
+functx-fn-translate-6
 functx-fn-upper-case-1
 functx-fn-upper-case-2
 functx-fn-upper-case-3
@@ -282,18 +894,45 @@ fo-test-math-sin-006
 fo-test-math-cos-006
 fo-test-math-tan-008
 fo-test-fn-string-to-codepoints-001
+fo-test-fn-compare-001
+fo-test-fn-codepoint-equal-001
+fo-test-fn-codepoint-equal-002
+fo-test-fn-codepoint-equal-003
 fo-test-fn-string-length-001
 fo-test-fn-normalize-space-001
 fo-test-fn-upper-case-001
 fo-test-fn-lower-case-001
+fo-test-fn-translate-001
+fo-test-fn-translate-002
+fo-test-fn-translate-003
 fo-test-fn-encode-for-uri-001
 fo-test-fn-iri-to-uri-001
 fo-test-fn-iri-to-uri-002
+fo-test-fn-contains-001
+fo-test-fn-contains-002
+fo-test-fn-starts-with-001
+fo-test-fn-starts-with-002
+fo-test-fn-ends-with-001
+fo-test-fn-ends-with-002
+fo-test-fn-substring-before-001
+fo-test-fn-substring-before-002
+fo-test-fn-substring-after-001
+fo-test-fn-substring-after-002
+fo-test-fn-matches-001
+fo-test-fn-matches-002
+fo-test-fn-matches-003
+fo-test-fn-tokenize-002
+fo-test-fn-tokenize-003
+fo-test-fn-tokenize-004
+fo-test-fn-tokenize-005
 fo-test-fn-not-003
+fo-test-fn-local-name-from-QName-001
+fo-test-fn-namespace-uri-from-QName-001
 fo-test-fn-empty-005
 fo-test-fn-exists-005
 fo-test-fn-tail-003
 fo-test-fn-reverse-002
+fo-test-map-entry-001
 
 unsuccesFullCases: 
 
@@ -676,23 +1315,13 @@ fn-ceiling-float-11 We still need to find a way to integrate these parameters
 fn-codepoint-equal-2 Unsupported: the base expression 'sequenceExpr'.
 fn-codepoint-equal-2a Unsupported: the base expression 'sequenceExpr'.
 fn-codepoint-equal-2b Unsupported: the base expression 'sequenceExpr'.
-fn-codepoint-equal-3 Unsupported: functionExpression with more then 1 parameter
-fn-codepoint-equal-4 Unsupported: functionExpression with more then 1 parameter
-fn-codepoint-equal-5 Unsupported: functionExpression with more then 1 parameter
-fn-codepoint-equal-6 Unsupported: functionExpression with more then 1 parameter
-fn-codepoint-equal-7 Unsupported: functionExpression with more then 1 parameter
 fn-codepoint-equal-8 We still need to find a way to integrate these parameters
 fn-codepoint-equal-9 We still need to find a way to integrate these parameters
-fn-codepoint-equal-12 Unsupported: functionExpression with more then 1 parameter
-fn-codepoint-equal-13 Unsupported: functionExpression with more then 1 parameter
-fn-codepoint-equal-14 Unsupported: functionExpression with more then 1 parameter
 fn-codepoint-equal-15 We still need to find a way to integrate these parameters
-fn-codepoint-equal-16 Unsupported: functionExpression with more then 1 parameter
-fn-codepoint-equal-17 Unsupported: functionExpression with more then 1 parameter
-fn-codepoint-equal-18 Unsupported: functionExpression with more then 1 parameter
-fn-codepoint-equal-19 Unsupported: functionExpression with more then 1 parameter
-fn-codepoint-equal-20 Unsupported: functionExpression with more then 1 parameter
-fn-codepoint-equal-21 Unsupported: functionExpression with more then 1 parameter
+fn-codepoint-equal-16 We still need to find a way to integrate these parameters
+fn-codepoint-equal-17 We still need to find a way to integrate these parameters
+fn-codepoint-equal-18 We still need to find a way to integrate these parameters
+fn-codepoint-equal-19 We still need to find a way to integrate these parameters
 K2-CodepointEqual-1 We still need to find a way to integrate these parameters
 K2-CodepointEqual-2 We still need to find a way to integrate these parameters
 K2-CodepointEqual-3 We still need to find a way to integrate these parameters
@@ -803,28 +1432,14 @@ fn-contains2args-2 We still need to find a way to integrate these parameters
 fn-contains2args-3 We still need to find a way to integrate these parameters
 fn-contains2args-4 We still need to find a way to integrate these parameters
 fn-contains2args-5 We still need to find a way to integrate these parameters
-fn-contains-1 Unsupported: functionExpression with more then 1 parameter
-fn-contains-2 Unsupported: functionExpression with more then 1 parameter
-fn-contains-3 Unsupported: functionExpression with more then 1 parameter
 fn-contains-4 Unsupported: the base expression 'sequenceExpr'.
 fn-contains-5 Unsupported: the base expression 'sequenceExpr'.
 fn-contains-6 Unsupported: the base expression 'sequenceExpr'.
 fn-contains-7 Unsupported: the base expression 'sequenceExpr'.
-fn-contains-8 Unsupported: functionExpression with more then 1 parameter
-fn-contains-9 Unsupported: functionExpression with more then 1 parameter
-fn-contains-10 Unsupported: functionExpression with more then 1 parameter
-fn-contains-11 Unsupported: functionExpression with more then 1 parameter
-fn-contains-12 Unsupported: functionExpression with more then 1 parameter
 fn-contains-13 We still need to find a way to integrate these parameters
 fn-contains-14 We still need to find a way to integrate these parameters
-fn-contains-15 Unsupported: functionExpression with more then 1 parameter
-fn-contains-16 Unsupported: functionExpression with more then 1 parameter
-K-ContainsFunc-6 Unsupported: functionExpression with more then 1 parameter
-K-ContainsFunc-7 Unsupported: functionExpression with more then 1 parameter
 K-ContainsFunc-8 Unsupported: the base expression 'sequenceExpr'.
 K-ContainsFunc-9 Unsupported: the base expression 'sequenceExpr'.
-K-ContainsFunc-10 Unsupported: functionExpression with more then 1 parameter
-K-ContainsFunc-11 Unsupported: functionExpression with more then 1 parameter
 fn-countint1args-1 We still need to find a way to integrate these parameters
 fn-countint1args-2 We still need to find a way to integrate these parameters
 fn-countint1args-3 We still need to find a way to integrate these parameters
@@ -1558,25 +2173,12 @@ fn-ends-with2args-2 We still need to find a way to integrate these parameters
 fn-ends-with2args-3 We still need to find a way to integrate these parameters
 fn-ends-with2args-4 We still need to find a way to integrate these parameters
 fn-ends-with2args-5 We still need to find a way to integrate these parameters
-fn-ends-with-1 Unsupported: functionExpression with more then 1 parameter
-fn-ends-with-2 Unsupported: functionExpression with more then 1 parameter
-fn-ends-with-3 Unsupported: functionExpression with more then 1 parameter
 fn-ends-with-4 Unsupported: the base expression 'sequenceExpr'.
 fn-ends-with-5 Unsupported: the base expression 'sequenceExpr'.
 fn-ends-with-6 Unsupported: the base expression 'sequenceExpr'.
 fn-ends-with-7 Unsupported: the base expression 'sequenceExpr'.
-fn-ends-with-8 Unsupported: functionExpression with more then 1 parameter
-fn-ends-with-9 Unsupported: functionExpression with more then 1 parameter
-fn-ends-with-10 Unsupported: functionExpression with more then 1 parameter
-fn-ends-with-11 Unsupported: functionExpression with more then 1 parameter
-fn-ends-with-12 Unsupported: functionExpression with more then 1 parameter
 fn-ends-with-13 We still need to find a way to integrate these parameters
 fn-ends-with-14 We still need to find a way to integrate these parameters
-fn-ends-with-15 Unsupported: functionExpression with more then 1 parameter
-fn-ends-with-16 Unsupported: functionExpression with more then 1 parameter
-K-EndsWithFunc-6 Unsupported: functionExpression with more then 1 parameter
-K-EndsWithFunc-7 Unsupported: functionExpression with more then 1 parameter
-K-EndsWithFunc-8 Unsupported: functionExpression with more then 1 parameter
 K-EndsWithFunc-9 Unsupported: the base expression 'sequenceExpr'.
 K-EndsWithFunc-10 Unsupported: the base expression 'sequenceExpr'.
 fn-exactly-oneint1args-1 We still need to find a way to integrate these parameters
@@ -2577,7 +3179,7 @@ fn-local-name-from-qname-022 We still need to find a way to integrate these para
 fn-local-name-from-qname-023 We still need to find a way to integrate these parameters
 fn-local-name-from-qname-024 We still need to find a way to integrate these parameters
 K-LocalNameFromQNameFunc-3 Unsupported: the base expression 'sequenceExpr'.
-K-LocalNameFromQNameFunc-4 Unsupported: functionExpression with more then 1 parameter
+K-LocalNameFromQNameFunc-4 Value compare only supports strings for now
 fn-lower-case1args-1 We still need to find a way to integrate these parameters
 fn-lower-case1args-2 We still need to find a way to integrate these parameters
 fn-lower-case1args-3 We still need to find a way to integrate these parameters
@@ -2714,75 +3316,11 @@ cbcl-max-013 Unsupported: XQuery.
 cbcl-max-015 Unsupported: XQuery.
 cbcl-max-018 Unsupported: XQuery.
 cbcl-max-019 Unsupported: the base expression 'ifThenElseExpr'.
-fn-matches2args-1 Unsupported: functionExpression with more then 1 parameter
-fn-matches2args-2 Unsupported: functionExpression with more then 1 parameter
-fn-matches2args-3 Unsupported: functionExpression with more then 1 parameter
-fn-matches2args-4 Unsupported: functionExpression with more then 1 parameter
-fn-matches2args-5 Unsupported: functionExpression with more then 1 parameter
-fn-matches-1 Unsupported: functionExpression with more then 1 parameter
-fn-matches-2 Unsupported: functionExpression with more then 1 parameter
-fn-matches-3 Unsupported: functionExpression with more then 1 parameter
-fn-matches-5 Unsupported: functionExpression with more then 1 parameter
-fn-matches-6 Unsupported: functionExpression with more then 1 parameter
-fn-matches-7 Unsupported: functionExpression with more then 1 parameter
-fn-matches-8 Unsupported: functionExpression with more then 1 parameter
-fn-matches-9 Unsupported: functionExpression with more then 1 parameter
-fn-matches-10 Unsupported: functionExpression with more then 1 parameter
-fn-matches-11 Unsupported: functionExpression with more then 1 parameter
-fn-matches-12 Unsupported: functionExpression with more then 1 parameter
-fn-matches-13 Unsupported: functionExpression with more then 1 parameter
-fn-matches-14 Unsupported: functionExpression with more then 1 parameter
-fn-matches-15 Unsupported: functionExpression with more then 1 parameter
-fn-matches-16 Unsupported: functionExpression with more then 1 parameter
-fn-matches-17 Unsupported: functionExpression with more then 1 parameter
-fn-matches-18 Unsupported: functionExpression with more then 1 parameter
-fn-matches-19 Unsupported: functionExpression with more then 1 parameter
-fn-matches-20 Unsupported: functionExpression with more then 1 parameter
-fn-matches-21 Unsupported: functionExpression with more then 1 parameter
-fn-matches-22 Unsupported: functionExpression with more then 1 parameter
-fn-matches-23 Unsupported: functionExpression with more then 1 parameter
-fn-matches-24 Unsupported: functionExpression with more then 1 parameter
-fn-matches-31 Unsupported: functionExpression with more then 1 parameter
 fn-matches-41 We still need to find a way to integrate these parameters
 fn-matches-43 We still need to find a way to integrate these parameters
 fn-matches-45 We still need to find a way to integrate these parameters
 fn-matches-47 We still need to find a way to integrate these parameters
-fn-matches-48 Unsupported: functionExpression with more then 1 parameter
-fn-matches-49 Unsupported: functionExpression with more then 1 parameter
-fn-matches-52 Unsupported: functionExpression with more then 1 parameter
 K2-MatchesFunc-15 Unsupported: the base expression 'sequenceExpr'.
-K2-MatchesFunc-16 Unsupported: functionExpression with more then 1 parameter
-cbcl-matches-006 Unsupported: functionExpression with more then 1 parameter
-cbcl-matches-006b Unsupported: functionExpression with more then 1 parameter
-cbcl-matches-007 Unsupported: functionExpression with more then 1 parameter
-cbcl-matches-015 Unsupported: functionExpression with more then 1 parameter
-cbcl-matches-016 Unsupported: functionExpression with more then 1 parameter
-cbcl-matches-017 Unsupported: functionExpression with more then 1 parameter
-cbcl-matches-018 Unsupported: functionExpression with more then 1 parameter
-cbcl-matches-019 Unsupported: functionExpression with more then 1 parameter
-cbcl-matches-020 Unsupported: functionExpression with more then 1 parameter
-cbcl-matches-021 Unsupported: functionExpression with more then 1 parameter
-cbcl-matches-022 Unsupported: functionExpression with more then 1 parameter
-cbcl-matches-023 Unsupported: functionExpression with more then 1 parameter
-cbcl-matches-024 Unsupported: functionExpression with more then 1 parameter
-cbcl-matches-025 Unsupported: functionExpression with more then 1 parameter
-cbcl-matches-026 Unsupported: functionExpression with more then 1 parameter
-cbcl-matches-027 Unsupported: functionExpression with more then 1 parameter
-cbcl-matches-028 Unsupported: functionExpression with more then 1 parameter
-cbcl-matches-036 Unsupported: functionExpression with more then 1 parameter
-cbcl-matches-037 Unsupported: functionExpression with more then 1 parameter
-cbcl-matches-040 Unsupported: functionExpression with more then 1 parameter
-cbcl-matches-041 Unsupported: functionExpression with more then 1 parameter
-cbcl-matches-041b Unsupported: functionExpression with more then 1 parameter
-cbcl-matches-042 Unsupported: functionExpression with more then 1 parameter
-cbcl-matches-043 Unsupported: functionExpression with more then 1 parameter
-cbcl-matches-044 Unsupported: functionExpression with more then 1 parameter
-cbcl-matches-045 Unsupported: functionExpression with more then 1 parameter
-cbcl-matches-046 Unsupported: functionExpression with more then 1 parameter
-cbcl-matches-047 Unsupported: functionExpression with more then 1 parameter
-cbcl-matches-047b Unsupported: functionExpression with more then 1 parameter
-cbcl-matches-048 Unsupported: functionExpression with more then 1 parameter
-cbcl-matches-049 Unsupported: functionExpression with more then 1 parameter
 re00001 Unsupported: a base expression used with an operand.
 re00002 Unsupported: a base expression used with an operand.
 re00003 Unsupported: a base expression used with an operand.
@@ -2882,7 +3420,7 @@ re00122 Unsupported: a base expression used with an operand.
 re00123 Unsupported: a base expression used with an operand.
 re00124 Unsupported: a base expression used with an operand.
 re00125 Unsupported: a base expression used with an operand.
-re00126 Unsupported: functionExpression with more then 1 parameter
+re00126 Unsupported: a base expression used with an operand.
 re00127 Unsupported: the base expression 'flworExpr'.
 re00127a Unsupported: the base expression 'sequenceExpr'.
 re00128 Unsupported: a base expression used with an operand.
@@ -3418,7 +3956,6 @@ re00753 Unsupported: a base expression used with an operand.
 re00758 Unsupported: a base expression used with an operand.
 re00759 Unsupported: a base expression used with an operand.
 re00760 Unsupported: a base expression used with an operand.
-re00766 Unsupported: functionExpression with more then 1 parameter
 re00770 Unsupported: a base expression used with an operand.
 re00771 Unsupported: a base expression used with an operand.
 re00772 Unsupported: a base expression used with an operand.
@@ -3460,60 +3997,17 @@ re00841 Unsupported: a base expression used with an operand.
 re00842 Unsupported: a base expression used with an operand.
 re00843 Unsupported: a base expression used with an operand.
 re00844 Unsupported: a base expression used with an operand.
-re00845 Unsupported: functionExpression with more then 1 parameter
-re00846 Unsupported: functionExpression with more then 1 parameter
-re00847 Unsupported: functionExpression with more then 1 parameter
-re00848 Unsupported: functionExpression with more then 1 parameter
-re00849 Unsupported: functionExpression with more then 1 parameter
-re00850 Unsupported: functionExpression with more then 1 parameter
-re00851 Unsupported: functionExpression with more then 1 parameter
-re00852 Unsupported: functionExpression with more then 1 parameter
-re00853 Unsupported: functionExpression with more then 1 parameter
-re00855 Unsupported: functionExpression with more then 1 parameter
-re00856 Unsupported: functionExpression with more then 1 parameter
-re00857 Unsupported: functionExpression with more then 1 parameter
-re00858 Unsupported: functionExpression with more then 1 parameter
-re00859 Unsupported: functionExpression with more then 1 parameter
-re00860 Unsupported: functionExpression with more then 1 parameter
-re00861 Unsupported: functionExpression with more then 1 parameter
-re00864 Unsupported: functionExpression with more then 1 parameter
-re00865 Unsupported: functionExpression with more then 1 parameter
-re00866 Unsupported: functionExpression with more then 1 parameter
-re00877 Unsupported: functionExpression with more then 1 parameter
-re00878 Unsupported: functionExpression with more then 1 parameter
-re00880 Unsupported: functionExpression with more then 1 parameter
 re00932 Unsupported: a base expression used with an operand.
 re00933 Unsupported: a base expression used with an operand.
 re00934 Unsupported: a base expression used with an operand.
 re00935 Unsupported: a base expression used with an operand.
 re00936 Unsupported: a base expression used with an operand.
-re00942 Unsupported: functionExpression with more then 1 parameter
-re00943 Unsupported: functionExpression with more then 1 parameter
-re00944 Unsupported: functionExpression with more then 1 parameter
-re00945 Unsupported: functionExpression with more then 1 parameter
-re00946 Unsupported: functionExpression with more then 1 parameter
-re00947 Unsupported: functionExpression with more then 1 parameter
-re00948 Unsupported: functionExpression with more then 1 parameter
-re00949 Unsupported: functionExpression with more then 1 parameter
-re00950 Unsupported: functionExpression with more then 1 parameter
-re00951 Unsupported: functionExpression with more then 1 parameter
-re00952 Unsupported: functionExpression with more then 1 parameter
-re00953 Unsupported: functionExpression with more then 1 parameter
-re00954 Unsupported: functionExpression with more then 1 parameter
-re00955 Unsupported: functionExpression with more then 1 parameter
 re00979 Unsupported: a base expression used with an operand.
 re00980 Unsupported: a base expression used with an operand.
 re00981 Unsupported: a base expression used with an operand.
 re00983 Unsupported: a base expression used with an operand.
 re00985 Unsupported: a base expression used with an operand.
 re00987 Unsupported: the base expression 'sequenceExpr'.
-re00990 Unsupported: functionExpression with more then 1 parameter
-re00991 Unsupported: functionExpression with more then 1 parameter
-re00998 Unsupported: functionExpression with more then 1 parameter
-re00999 Unsupported: functionExpression with more then 1 parameter
-re01001 Unsupported: functionExpression with more then 1 parameter
-re01002 Unsupported: functionExpression with more then 1 parameter
-re01003 Unsupported: functionExpression with more then 1 parameter
 fn-minint1args-1 We still need to find a way to integrate these parameters
 fn-minint1args-2 We still need to find a way to integrate these parameters
 fn-minint1args-3 We still need to find a way to integrate these parameters
@@ -3838,7 +4332,7 @@ NamespaceURIFromQNameFunc018 We still need to find a way to integrate these para
 NamespaceURIFromQNameFunc019 Unsupported: the base expression 'ifThenElseExpr'.
 NamespaceURIFromQNameFunc020 Unsupported: the base expression 'ifThenElseExpr'.
 K-NamespaceURIFromQNameFunc-3 Unsupported: the base expression 'sequenceExpr'.
-K-NamespaceURIFromQNameFunc-4 Unsupported: functionExpression with more then 1 parameter
+K-NamespaceURIFromQNameFunc-4 We still need to find a way to integrate these parameters
 K-NamespaceURIFromQNameFunc-5 Unsupported: the base expression 'instanceOfExpr'.
 K2-NamespaceURIFromQNameFunc-2 Unsupported: filter expressions.
 fn-node-name-1 We still need to find a way to integrate these parameters
@@ -4172,7 +4666,7 @@ fn-prefix-from-qname-21 We still need to find a way to integrate these parameter
 fn-prefix-from-qname-22 We still need to find a way to integrate these parameters
 fn-prefix-from-qname-23 We still need to find a way to integrate these parameters
 K-PrefixFromQName-3 Unsupported: the base expression 'sequenceExpr'.
-K-PrefixFromQName-4 Unsupported: functionExpression with more then 1 parameter
+K-PrefixFromQName-4 Value compare only supports strings for now
 ExpandedQNameConstructFunc001 Unsupported: the base expression 'computedElementConstructor'.
 ExpandedQNameConstructFunc002 Unsupported: the base expression 'computedElementConstructor'.
 ExpandedQNameConstructFunc003 Unsupported: the base expression 'computedElementConstructor'.
@@ -4181,8 +4675,8 @@ ExpandedQNameConstructFunc017 Unsupported: the base expression 'computedElementC
 ExpandedQNameConstructFunc018 Unsupported: the base expression 'computedElementConstructor'.
 ExpandedQNameConstructFunc020 Unsupported: XQuery.
 ExpandedQNameConstructFunc021 Unsupported: XQuery.
-K-ExpandedQNameConstructFunc-4 Unsupported: functionExpression with more then 1 parameter
-K-ExpandedQNameConstructFunc-9 Unsupported: functionExpression with more then 1 parameter
+K-ExpandedQNameConstructFunc-4 We still need to find a way to integrate these parameters
+K-ExpandedQNameConstructFunc-9 We still need to find a way to integrate these parameters
 K-ExpandedQNameConstructFunc-10 Unsupported: the base expression 'sequenceExpr'.
 fn-remove-mix-args-001 Unsupported: the base expression 'integerConstantExpr'.
 fn-remove-mix-args-002 Unsupported: the base expression 'integerConstantExpr'.
@@ -4725,28 +5219,14 @@ fn-starts-with2args-2 We still need to find a way to integrate these parameters
 fn-starts-with2args-3 We still need to find a way to integrate these parameters
 fn-starts-with2args-4 We still need to find a way to integrate these parameters
 fn-starts-with2args-5 We still need to find a way to integrate these parameters
-fn-starts-with-1 Unsupported: functionExpression with more then 1 parameter
-fn-starts-with-2 Unsupported: functionExpression with more then 1 parameter
-fn-starts-with-3 Unsupported: functionExpression with more then 1 parameter
 fn-starts-with-4 Unsupported: the base expression 'sequenceExpr'.
 fn-starts-with-5 Unsupported: the base expression 'sequenceExpr'.
 fn-starts-with-6 Unsupported: the base expression 'sequenceExpr'.
 fn-starts-with-7 Unsupported: the base expression 'sequenceExpr'.
-fn-starts-with-8 Unsupported: functionExpression with more then 1 parameter
-fn-starts-with-9 Unsupported: functionExpression with more then 1 parameter
-fn-starts-with-10 Unsupported: functionExpression with more then 1 parameter
-fn-starts-with-11 Unsupported: functionExpression with more then 1 parameter
-fn-starts-with-12 Unsupported: functionExpression with more then 1 parameter
 fn-starts-with-13 We still need to find a way to integrate these parameters
 fn-starts-with-14 We still need to find a way to integrate these parameters
-fn-starts-with-15 Unsupported: functionExpression with more then 1 parameter
-fn-starts-with-16 Unsupported: functionExpression with more then 1 parameter
-K-StartsWithFunc-6 Unsupported: functionExpression with more then 1 parameter
-K-StartsWithFunc-7 Unsupported: functionExpression with more then 1 parameter
-K-StartsWithFunc-8 Unsupported: functionExpression with more then 1 parameter
 K-StartsWithFunc-9 Unsupported: the base expression 'sequenceExpr'.
 K-StartsWithFunc-10 Unsupported: the base expression 'sequenceExpr'.
-K-StartsWithFunc-11 Unsupported: functionExpression with more then 1 parameter
 fn-stringint1args-1 We still need to find a way to integrate these parameters
 fn-stringint1args-2 We still need to find a way to integrate these parameters
 fn-stringint1args-3 We still need to find a way to integrate these parameters
@@ -5003,61 +5483,21 @@ K-SubstringFunc-14 We still need to find a way to integrate these parameters
 K-SubstringFunc-15 We still need to find a way to integrate these parameters
 cbcl-substring-001 We still need to find a way to integrate these parameters
 cbcl-substring-002 We still need to find a way to integrate these parameters
-fn-substring-after-1 Unsupported: functionExpression with more then 1 parameter
-fn-substring-after-2 Unsupported: functionExpression with more then 1 parameter
-fn-substring-after-3 Unsupported: functionExpression with more then 1 parameter
 fn-substring-after-4 Unsupported: the base expression 'sequenceExpr'.
 fn-substring-after-5 Unsupported: the base expression 'sequenceExpr'.
 fn-substring-after-6 Unsupported: the base expression 'sequenceExpr'.
 fn-substring-after-7 Unsupported: the base expression 'sequenceExpr'.
-fn-substring-after-8 Unsupported: functionExpression with more then 1 parameter
-fn-substring-after-9 Unsupported: functionExpression with more then 1 parameter
-fn-substring-after-10 Unsupported: functionExpression with more then 1 parameter
-fn-substring-after-11 Unsupported: functionExpression with more then 1 parameter
-fn-substring-after-12 Unsupported: functionExpression with more then 1 parameter
 fn-substring-after-13 We still need to find a way to integrate these parameters
 fn-substring-after-14 We still need to find a way to integrate these parameters
-fn-substring-after-15 Unsupported: functionExpression with more then 1 parameter
-fn-substring-after-16 Unsupported: functionExpression with more then 1 parameter
-fn-substring-after-17 Unsupported: functionExpression with more then 1 parameter
-fn-substring-after-18 Unsupported: functionExpression with more then 1 parameter
-fn-substring-after-19 Unsupported: functionExpression with more then 1 parameter
-fn-substring-after-20 Unsupported: functionExpression with more then 1 parameter
-fn-substring-after-21 Unsupported: functionExpression with more then 1 parameter
-fn-substring-after-25 Unsupported: functionExpression with more then 1 parameter
-K-SubstringAfterFunc-6 Unsupported: functionExpression with more then 1 parameter
-K-SubstringAfterFunc-7 Unsupported: functionExpression with more then 1 parameter
-K-SubstringAfterFunc-8 Unsupported: functionExpression with more then 1 parameter
 K-SubstringAfterFunc-9 Unsupported: the base expression 'sequenceExpr'.
 K-SubstringAfterFunc-10 Unsupported: the base expression 'sequenceExpr'.
-K-SubstringAfterFunc-11 Unsupported: functionExpression with more then 1 parameter
-fn-substring-before-1 Unsupported: functionExpression with more then 1 parameter
-fn-substring-before-2 Unsupported: functionExpression with more then 1 parameter
-fn-substring-before-3 Unsupported: functionExpression with more then 1 parameter
 fn-substring-before-4 Unsupported: the base expression 'sequenceExpr'.
 fn-substring-before-5 Unsupported: the base expression 'sequenceExpr'.
 fn-substring-before-6 Unsupported: the base expression 'sequenceExpr'.
 fn-substring-before-7 Unsupported: the base expression 'sequenceExpr'.
-fn-substring-before-8 Unsupported: functionExpression with more then 1 parameter
-fn-substring-before-9 Unsupported: functionExpression with more then 1 parameter
-fn-substring-before-10 Unsupported: functionExpression with more then 1 parameter
-fn-substring-before-11 Unsupported: functionExpression with more then 1 parameter
-fn-substring-before-12 Unsupported: functionExpression with more then 1 parameter
 fn-substring-before-13 We still need to find a way to integrate these parameters
 fn-substring-before-14 We still need to find a way to integrate these parameters
-fn-substring-before-15 Unsupported: functionExpression with more then 1 parameter
-fn-substring-before-16 Unsupported: functionExpression with more then 1 parameter
-fn-substring-before-17 Unsupported: functionExpression with more then 1 parameter
-fn-substring-before-18 Unsupported: functionExpression with more then 1 parameter
-fn-substring-before-19 Unsupported: functionExpression with more then 1 parameter
-fn-substring-before-20 Unsupported: functionExpression with more then 1 parameter
-fn-substring-before-21 Unsupported: functionExpression with more then 1 parameter
-fn-substring-before-25 Unsupported: functionExpression with more then 1 parameter
-K-SubstringBeforeFunc-6 Unsupported: functionExpression with more then 1 parameter
-K-SubstringBeforeFunc-7 Unsupported: functionExpression with more then 1 parameter
 K-SubstringBeforeFunc-8 Unsupported: the base expression 'sequenceExpr'.
-K-SubstringBeforeFunc-9 Unsupported: functionExpression with more then 1 parameter
-K-SubstringBeforeFunc-10 Unsupported: functionExpression with more then 1 parameter
 fn-sumint1args-1 We still need to find a way to integrate these parameters
 fn-sumint1args-2 We still need to find a way to integrate these parameters
 fn-sumint1args-3 We still need to find a way to integrate these parameters
@@ -5263,39 +5703,16 @@ K-TimezoneFromTimeFunc-4 Unsupported: the base expression 'instanceOfExpr'.
 K-TimezoneFromTimeFunc-5 We still need to find a way to integrate these parameters
 K-TimezoneFromTimeFunc-6 We still need to find a way to integrate these parameters
 K-TimezoneFromTimeFunc-7 We still need to find a way to integrate these parameters
-fn-translate3args-1 Unsupported: functionExpression with more then 1 parameter
-fn-translate3args-2 Unsupported: functionExpression with more then 1 parameter
-fn-translate3args-3 Unsupported: functionExpression with more then 1 parameter
 fn-translate3args-4 Unsupported: the base expression 'sequenceExpr'.
-fn-translate-1 Unsupported: functionExpression with more then 1 parameter
-fn-translate-2 Unsupported: functionExpression with more then 1 parameter
-fn-translate-3 Unsupported: functionExpression with more then 1 parameter
-fn-translate-4 Unsupported: functionExpression with more then 1 parameter
-fn-translate-5 Unsupported: functionExpression with more then 1 parameter
-fn-translate-6 Unsupported: functionExpression with more then 1 parameter
-fn-translate-7 Unsupported: functionExpression with more then 1 parameter
-fn-translate-8 Unsupported: functionExpression with more then 1 parameter
-fn-translate-9 Unsupported: functionExpression with more then 1 parameter
 fn-translate-10 We still need to find a way to integrate these parameters
 fn-translate-11 We still need to find a way to integrate these parameters
-fn-translate-12 Unsupported: functionExpression with more then 1 parameter
 fn-translate-13 We still need to find a way to integrate these parameters
 fn-translate-14 We still need to find a way to integrate these parameters
 fn-translate-15 We still need to find a way to integrate these parameters
 fn-translate-16 We still need to find a way to integrate these parameters
-fn-translate-17 Unsupported: functionExpression with more then 1 parameter
-fn-translate-18 Unsupported: functionExpression with more then 1 parameter
-fn-translate-19 Unsupported: functionExpression with more then 1 parameter
-fn-translate-20 Unsupported: functionExpression with more then 1 parameter
 fn-translate-21 Unsupported: the base expression 'arrowExpr'.
 fn-translate-22 Unsupported: the base expression 'arrowExpr'.
-K-TranslateFunc-4 Unsupported: functionExpression with more then 1 parameter
-K-TranslateFunc-5 Unsupported: functionExpression with more then 1 parameter
-K-TranslateFunc-6 Unsupported: functionExpression with more then 1 parameter
 K-TranslateFunc-7 Unsupported: the base expression 'sequenceExpr'.
-K-TranslateFunc-8 Unsupported: functionExpression with more then 1 parameter
-K-TranslateFunc-9 Unsupported: functionExpression with more then 1 parameter
-K-TranslateFunc-10 Unsupported: functionExpression with more then 1 parameter
 cbcl-fn-translate-001 Unsupported: a base expression used with an operand.
 cbcl-fn-translate-002 Unsupported: the base expression 'rangeSequenceExpr'.
 fn-true-1 We still need to find a way to integrate these parameters
@@ -5610,8 +6027,6 @@ map-merge-023 We still need to find a way to integrate these parameters
 map-contains-001 Unsupported: the base expression 'integerConstantExpr'.
 map-contains-002 Unsupported: the base expression 'integerConstantExpr'.
 map-contains-003 Unsupported: the base expression 'integerConstantExpr'.
-map-contains-004 Unsupported: functionExpression with more then 1 parameter
-map-contains-005 Unsupported: functionExpression with more then 1 parameter
 map-contains-006 We still need to find a way to integrate these parameters
 map-contains-007 We still need to find a way to integrate these parameters
 map-contains-008 Unsupported: the base expression 'integerConstantExpr'.
@@ -5627,8 +6042,6 @@ map-contains-020 Unsupported: the base expression 'mapConstructor'.
 map-get-001 Unsupported: the base expression 'integerConstantExpr'.
 map-get-002 Unsupported: the base expression 'integerConstantExpr'.
 map-get-003 Unsupported: the base expression 'integerConstantExpr'.
-map-get-004 Unsupported: functionExpression with more then 1 parameter
-map-get-005 Unsupported: functionExpression with more then 1 parameter
 map-get-006 We still need to find a way to integrate these parameters
 map-get-007 We still need to find a way to integrate these parameters
 map-get-008 Unsupported: the base expression 'integerConstantExpr'.
@@ -5650,7 +6063,6 @@ map-entry-006 We still need to find a way to integrate these parameters
 map-size-001 Unsupported: the base expression 'mapConstructor'.
 map-size-002 We still need to find a way to integrate these parameters
 map-size-003 Unsupported: the base expression 'mapConstructor'.
-map-size-004 Unsupported: functionExpression with more then 1 parameter
 map-size-005 We still need to find a way to integrate these parameters
 map-size-006 Unsupported: the base expression 'mapConstructor'.
 map-size-008 We still need to find a way to integrate these parameters
@@ -5662,7 +6074,6 @@ map-size-013 Unsupported: the base expression 'mapConstructor'.
 map-keys-001 Unsupported: the base expression 'mapConstructor'.
 map-keys-002 We still need to find a way to integrate these parameters
 map-keys-003 Unsupported: the base expression 'mapConstructor'.
-map-keys-004 Unsupported: functionExpression with more then 1 parameter
 map-keys-005 We still need to find a way to integrate these parameters
 map-keys-006 Unsupported: the base expression 'mapConstructor'.
 map-keys-008 We still need to find a way to integrate these parameters
@@ -5680,7 +6091,6 @@ map-put-022 We still need to find a way to integrate these parameters
 map-remove-001 Unsupported: the base expression 'integerConstantExpr'.
 map-remove-002 We still need to find a way to integrate these parameters
 map-remove-003 Unsupported: the base expression 'mapConstructor'.
-map-remove-005 Unsupported: functionExpression with more then 1 parameter
 map-remove-006 We still need to find a way to integrate these parameters
 map-remove-007 We still need to find a way to integrate these parameters
 map-remove-013 We still need to find a way to integrate these parameters
@@ -6058,8 +6468,8 @@ op-boolean-equal-11 Unsupported: a base expression used with an operand.
 op-boolean-equal-12 Unsupported: a base expression used with an operand.
 op-boolean-equal-13 Unsupported: a base expression used with an operand.
 op-boolean-equal-14 Unsupported: a base expression used with an operand.
-op-boolean-equal-15 Unsupported: functionExpression with more then 1 parameter
-op-boolean-equal-16 Unsupported: functionExpression with more then 1 parameter
+op-boolean-equal-15 We still need to find a way to integrate these parameters
+op-boolean-equal-16 We still need to find a way to integrate these parameters
 op-boolean-equal-19 Unsupported: a base expression used with an operand.
 op-boolean-equal-more-args-001 We still need to find a way to integrate these parameters
 op-boolean-equal-more-args-002 We still need to find a way to integrate these parameters
@@ -8350,36 +8760,36 @@ K-NumericUnaryPlus-12 Unsupported: a base expression used with an operand.
 K2-NumericUnaryPlus-2 Unsupported: the base expression 'unaryPlusOp'.
 op-numeric-unary-plus-1 Unsupported: the base expression 'flworExpr'.
 cbcl-numeric-unary-plus-001 one of the testcases causes it to fail
-op-qname-equal-1 Unsupported: functionExpression with more then 1 parameter
-op-qname-equal-2 Unsupported: functionExpression with more then 1 parameter
-op-qname-equal-3 Unsupported: functionExpression with more then 1 parameter
-op-qname-equal-4 Unsupported: functionExpression with more then 1 parameter
-op-qname-equal-5 Unsupported: functionExpression with more then 1 parameter
-op-qname-equal-6 Unsupported: functionExpression with more then 1 parameter
-op-qname-equal-7 Unsupported: functionExpression with more then 1 parameter
-op-qname-equal-8 Unsupported: functionExpression with more then 1 parameter
-op-qname-equal-9 Unsupported: functionExpression with more then 1 parameter
-op-qname-equal-10 Unsupported: functionExpression with more then 1 parameter
-op-qname-equal-11 Unsupported: functionExpression with more then 1 parameter
-op-qname-equal-12 Unsupported: functionExpression with more then 1 parameter
-op-qname-equal-13 Unsupported: functionExpression with more then 1 parameter
-op-qname-equal-14 Unsupported: functionExpression with more then 1 parameter
-op-qname-equal-15 Unsupported: functionExpression with more then 1 parameter
-op-qname-equal-16 Unsupported: functionExpression with more then 1 parameter
-op-qname-equal-17 Unsupported: functionExpression with more then 1 parameter
-op-qname-equal-18 Unsupported: functionExpression with more then 1 parameter
-op-qname-equal-19 Unsupported: functionExpression with more then 1 parameter
-op-qname-equal-20 Unsupported: functionExpression with more then 1 parameter
-op-qname-equal-21 Unsupported: functionExpression with more then 1 parameter
-op-qname-equal-22 Unsupported: functionExpression with more then 1 parameter
+op-qname-equal-1 Value compare only supports strings for now
+op-qname-equal-2 Value compare only supports strings for now
+op-qname-equal-3 Value compare only supports strings for now
+op-qname-equal-4 Value compare only supports strings for now
+op-qname-equal-5 Value compare only supports strings for now
+op-qname-equal-6 Value compare only supports strings for now
+op-qname-equal-7 Value compare only supports strings for now
+op-qname-equal-8 Value compare only supports strings for now
+op-qname-equal-9 Value compare only supports strings for now
+op-qname-equal-10 Value compare only supports strings for now
+op-qname-equal-11 Value compare only supports strings for now
+op-qname-equal-12 Value compare only supports strings for now
+op-qname-equal-13 Value compare only supports strings for now
+op-qname-equal-14 Value compare only supports strings for now
+op-qname-equal-15 Value compare only supports strings for now
+op-qname-equal-16 Value compare only supports strings for now
+op-qname-equal-17 Value compare only supports strings for now
+op-qname-equal-18 Value compare only supports strings for now
+op-qname-equal-19 Value compare only supports strings for now
+op-qname-equal-20 Value compare only supports strings for now
+op-qname-equal-21 Value compare only supports strings for now
+op-qname-equal-22 Value compare only supports strings for now
 op-qname-equal-23 Unsupported: a base expression used with an operand.
 op-qname-equal-24 Unsupported: a base expression used with an operand.
 value-comparison-1 We still need to find a way to integrate these parameters
 value-comparison-2 We still need to find a way to integrate these parameters
-K-QNameEQ-1 Unsupported: functionExpression with more then 1 parameter
-K-QNameEQ-2 Unsupported: functionExpression with more then 1 parameter
-K-QNameEQ-3 Unsupported: functionExpression with more then 1 parameter
-K-QNameEQ-4 Unsupported: functionExpression with more then 1 parameter
+K-QNameEQ-1 Value compare only supports strings for now
+K-QNameEQ-2 Value compare only supports strings for now
+K-QNameEQ-3 Value compare only supports strings for now
+K-QNameEQ-4 Value compare only supports strings for now
 cbcl-QName-equal-001 Unsupported: XQuery.
 cbcl-QName-equal-002 Unsupported: XQuery.
 cbcl-string-equal-001 We still need to find a way to integrate these parameters
@@ -14265,7 +14675,6 @@ K-LogicExpr-38 We still need to find a way to integrate these parameters
 K-LogicExpr-39 Unsupported: the base expression 'sequenceExpr'.
 K-LogicExpr-40 We still need to find a way to integrate these parameters
 K-LogicExpr-41 Unsupported: the base expression 'sequenceExpr'.
-K-LogicExpr-46 one of the testcases causes it to fail
 cbcl-logical-and-002 Unsupported: XQuery.
 cbcl-logical-and-003 Unsupported: XQuery.
 cbcl-logical-or-001 Unsupported: XQuery.
@@ -15236,27 +15645,11 @@ xqhof20 Unsupported: the base expression 'flworExpr'.
 xqhof22 Unsupported: the base expression 'flworExpr'.
 surrogates02 We still need to find a way to integrate these parameters
 surrogates03 We still need to find a way to integrate these parameters
-surrogates04 Unsupported: functionExpression with more then 1 parameter
-surrogates05 Unsupported: functionExpression with more then 1 parameter
-surrogates06 Unsupported: functionExpression with more then 1 parameter
 surrogates08 Unsupported: the base expression 'sequenceExpr'.
-surrogates09 Unsupported: functionExpression with more then 1 parameter
-surrogates10 Unsupported: functionExpression with more then 1 parameter
-surrogates11 Unsupported: functionExpression with more then 1 parameter
-surrogates12 Unsupported: functionExpression with more then 1 parameter
-surrogates13 Unsupported: functionExpression with more then 1 parameter
 surrogates16 We still need to find a way to integrate these parameters
 surrogates02a We still need to find a way to integrate these parameters
 surrogates03a We still need to find a way to integrate these parameters
-surrogates04a Unsupported: functionExpression with more then 1 parameter
-surrogates05a Unsupported: functionExpression with more then 1 parameter
-surrogates06a Unsupported: functionExpression with more then 1 parameter
 surrogates08a Unsupported: the base expression 'sequenceExpr'.
-surrogates09a Unsupported: functionExpression with more then 1 parameter
-surrogates10a Unsupported: functionExpression with more then 1 parameter
-surrogates11a Unsupported: functionExpression with more then 1 parameter
-surrogates12a Unsupported: functionExpression with more then 1 parameter
-surrogates13a Unsupported: functionExpression with more then 1 parameter
 surrogates16a We still need to find a way to integrate these parameters
 XML10-3ed-Mixed-content Unsupported: the base expression 'elementConstructor'.
 XML10-5ed-Included-char-1 Unsupported: the base expression 'elementConstructor'.
@@ -15291,20 +15684,12 @@ functx-fn-ceiling-4 Unsupported: the base expression 'unaryMinusOp'.
 functx-fn-ceiling-5 Unsupported: the base expression 'unaryMinusOp'.
 functx-fn-ceiling-6 Unsupported: the base expression 'sequenceExpr'.
 functx-fn-ceiling-all Unsupported: the base expression 'sequenceExpr'.
-functx-fn-codepoint-equal-1 Unsupported: functionExpression with more then 1 parameter
-functx-fn-codepoint-equal-2 Unsupported: functionExpression with more then 1 parameter
 functx-fn-codepoint-equal-3 Unsupported: the base expression 'sequenceExpr'.
 functx-fn-codepoint-equal-all Unsupported: the base expression 'sequenceExpr'.
 functx-fn-codepoints-to-string-1 Unsupported: the base expression 'sequenceExpr'.
 functx-fn-codepoints-to-string-2 Unsupported: the base expression 'integerConstantExpr'.
 functx-fn-codepoints-to-string-3 Unsupported: the base expression 'sequenceExpr'.
 functx-fn-codepoints-to-string-all Unsupported: the base expression 'sequenceExpr'.
-functx-fn-compare-1 Unsupported: functionExpression with more then 1 parameter
-functx-fn-compare-2 Unsupported: functionExpression with more then 1 parameter
-functx-fn-compare-3 Unsupported: functionExpression with more then 1 parameter
-functx-fn-compare-4 Unsupported: functionExpression with more then 1 parameter
-functx-fn-compare-5 Unsupported: functionExpression with more then 1 parameter
-functx-fn-compare-6 Unsupported: functionExpression with more then 1 parameter
 functx-fn-compare-7 Unsupported: the base expression 'sequenceExpr'.
 functx-fn-compare-all Unsupported: the base expression 'sequenceExpr'.
 functx-fn-concat-1 We still need to find a way to integrate these parameters
@@ -15312,11 +15697,6 @@ functx-fn-concat-2 We still need to find a way to integrate these parameters
 functx-fn-concat-3 We still need to find a way to integrate these parameters
 functx-fn-concat-4 We still need to find a way to integrate these parameters
 functx-fn-concat-all Unsupported: the base expression 'sequenceExpr'.
-functx-fn-contains-1 Unsupported: functionExpression with more then 1 parameter
-functx-fn-contains-2 Unsupported: functionExpression with more then 1 parameter
-functx-fn-contains-3 Unsupported: functionExpression with more then 1 parameter
-functx-fn-contains-4 Unsupported: functionExpression with more then 1 parameter
-functx-fn-contains-5 Unsupported: functionExpression with more then 1 parameter
 functx-fn-contains-6 Unsupported: the base expression 'sequenceExpr'.
 functx-fn-contains-7 Unsupported: the base expression 'sequenceExpr'.
 functx-fn-contains-all Unsupported: the base expression 'sequenceExpr'.
@@ -15354,11 +15734,6 @@ functx-fn-empty-6 Unsupported: the base expression 'flworExpr'.
 functx-fn-empty-7 Unsupported: the base expression 'flworExpr'.
 functx-fn-empty-all Unsupported: the base expression 'flworExpr'.
 functx-fn-encode-for-uri-all Unsupported: the base expression 'sequenceExpr'.
-functx-fn-ends-with-1 Unsupported: functionExpression with more then 1 parameter
-functx-fn-ends-with-2 Unsupported: functionExpression with more then 1 parameter
-functx-fn-ends-with-3 Unsupported: functionExpression with more then 1 parameter
-functx-fn-ends-with-4 Unsupported: functionExpression with more then 1 parameter
-functx-fn-ends-with-5 Unsupported: functionExpression with more then 1 parameter
 functx-fn-ends-with-all Unsupported: the base expression 'sequenceExpr'.
 functx-fn-exists-1 Unsupported: the base expression 'sequenceExpr'.
 functx-fn-exists-3 Unsupported: the base expression 'sequenceExpr'.
@@ -15398,8 +15773,6 @@ functx-fn-insert-before-5 Unsupported: the base expression 'sequenceExpr'.
 functx-fn-insert-before-6 Unsupported: the base expression 'sequenceExpr'.
 functx-fn-insert-before-all Unsupported: the base expression 'sequenceExpr'.
 functx-fn-last-1 We still need to find a way to integrate these parameters
-functx-fn-local-name-from-QName-1 Unsupported: functionExpression with more then 1 parameter
-functx-fn-local-name-from-QName-2 Unsupported: functionExpression with more then 1 parameter
 functx-fn-local-name-from-QName-3 Unsupported: the base expression 'sequenceExpr'.
 functx-fn-local-name-from-QName-all Unsupported: the base expression 'sequenceExpr'.
 functx-fn-local-name-1 Unsupported: XQuery.
@@ -15452,8 +15825,6 @@ functx-fn-name-3 Unsupported: XQuery.
 functx-fn-name-4 Unsupported: XQuery.
 functx-fn-name-5 Unsupported: XQuery.
 functx-fn-name-all Unsupported: XQuery.
-functx-fn-namespace-uri-from-QName-1 Unsupported: functionExpression with more then 1 parameter
-functx-fn-namespace-uri-from-QName-2 Unsupported: functionExpression with more then 1 parameter
 functx-fn-namespace-uri-from-QName-3 Unsupported: the base expression 'sequenceExpr'.
 functx-fn-namespace-uri-from-QName-all Unsupported: the base expression 'sequenceExpr'.
 functx-fn-namespace-uri-1 Unsupported: XQuery.
@@ -15498,9 +15869,6 @@ functx-fn-prefix-from-QName-4 Unsupported: XQuery.
 functx-fn-prefix-from-QName-5 Unsupported: XQuery.
 functx-fn-prefix-from-QName-6 Unsupported: XQuery.
 functx-fn-prefix-from-QName-all Unsupported: XQuery.
-functx-fn-QName-1 Unsupported: functionExpression with more then 1 parameter
-functx-fn-QName-2 Unsupported: functionExpression with more then 1 parameter
-functx-fn-QName-3 Unsupported: functionExpression with more then 1 parameter
 functx-fn-QName-all Unsupported: the base expression 'sequenceExpr'.
 functx-fn-remove-1 Unsupported: the base expression 'integerConstantExpr'.
 functx-fn-remove-2 Unsupported: the base expression 'integerConstantExpr'.
@@ -15530,14 +15898,7 @@ functx-fn-seconds-from-duration-3 We still need to find a way to integrate these
 functx-fn-seconds-from-duration-4 We still need to find a way to integrate these parameters
 functx-fn-seconds-from-duration-all Unsupported: the base expression 'sequenceExpr'.
 functx-fn-seconds-from-time-1 We still need to find a way to integrate these parameters
-functx-fn-starts-with-1 Unsupported: functionExpression with more then 1 parameter
-functx-fn-starts-with-2 Unsupported: functionExpression with more then 1 parameter
-functx-fn-starts-with-3 Unsupported: functionExpression with more then 1 parameter
-functx-fn-starts-with-4 Unsupported: functionExpression with more then 1 parameter
-functx-fn-starts-with-5 Unsupported: functionExpression with more then 1 parameter
-functx-fn-starts-with-6 Unsupported: functionExpression with more then 1 parameter
 functx-fn-starts-with-7 Unsupported: the base expression 'sequenceExpr'.
-functx-fn-starts-with-8 Unsupported: functionExpression with more then 1 parameter
 functx-fn-starts-with-all Unsupported: the base expression 'sequenceExpr'.
 functx-fn-string-join-1 We still need to find a way to integrate these parameters
 functx-fn-string-join-2 We still need to find a way to integrate these parameters
@@ -15559,19 +15920,7 @@ functx-fn-subsequence-4 We still need to find a way to integrate these parameter
 functx-fn-subsequence-5 Unsupported: the base expression 'integerConstantExpr'.
 functx-fn-subsequence-6 We still need to find a way to integrate these parameters
 functx-fn-subsequence-all Unsupported: the base expression 'sequenceExpr'.
-functx-fn-substring-after-1 Unsupported: functionExpression with more then 1 parameter
-functx-fn-substring-after-2 Unsupported: functionExpression with more then 1 parameter
-functx-fn-substring-after-3 Unsupported: functionExpression with more then 1 parameter
-functx-fn-substring-after-4 Unsupported: functionExpression with more then 1 parameter
-functx-fn-substring-after-5 Unsupported: functionExpression with more then 1 parameter
-functx-fn-substring-after-6 Unsupported: functionExpression with more then 1 parameter
 functx-fn-substring-after-all Unsupported: the base expression 'sequenceExpr'.
-functx-fn-substring-before-1 Unsupported: functionExpression with more then 1 parameter
-functx-fn-substring-before-2 Unsupported: functionExpression with more then 1 parameter
-functx-fn-substring-before-3 Unsupported: functionExpression with more then 1 parameter
-functx-fn-substring-before-4 Unsupported: functionExpression with more then 1 parameter
-functx-fn-substring-before-5 Unsupported: functionExpression with more then 1 parameter
-functx-fn-substring-before-6 Unsupported: functionExpression with more then 1 parameter
 functx-fn-substring-before-7 Unsupported: the base expression 'sequenceExpr'.
 functx-fn-substring-before-all Unsupported: the base expression 'sequenceExpr'.
 functx-fn-substring-1 We still need to find a way to integrate these parameters
@@ -15602,27 +15951,11 @@ functx-fn-timezone-from-time-2 We still need to find a way to integrate these pa
 functx-fn-timezone-from-time-3 We still need to find a way to integrate these parameters
 functx-fn-timezone-from-time-4 We still need to find a way to integrate these parameters
 functx-fn-timezone-from-time-all Unsupported: the base expression 'sequenceExpr'.
-functx-fn-tokenize-1 Unsupported: functionExpression with more then 1 parameter
 functx-fn-tokenize-1a We still need to find a way to integrate these parameters
 functx-fn-tokenize-1b We still need to find a way to integrate these parameters
 functx-fn-tokenize-2 We still need to find a way to integrate these parameters
-functx-fn-tokenize-3 Unsupported: functionExpression with more then 1 parameter
-functx-fn-tokenize-4 Unsupported: functionExpression with more then 1 parameter
-functx-fn-tokenize-5 Unsupported: functionExpression with more then 1 parameter
-functx-fn-tokenize-6 Unsupported: functionExpression with more then 1 parameter
-functx-fn-tokenize-7 Unsupported: functionExpression with more then 1 parameter
-functx-fn-tokenize-8 Unsupported: functionExpression with more then 1 parameter
-functx-fn-tokenize-9 Unsupported: functionExpression with more then 1 parameter
 functx-fn-tokenize-10 Unsupported: the base expression 'sequenceExpr'.
-functx-fn-tokenize-11 Unsupported: functionExpression with more then 1 parameter
-functx-fn-tokenize-12 Unsupported: functionExpression with more then 1 parameter
 functx-fn-tokenize-all Unsupported: the base expression 'sequenceExpr'.
-functx-fn-translate-1 Unsupported: functionExpression with more then 1 parameter
-functx-fn-translate-2 Unsupported: functionExpression with more then 1 parameter
-functx-fn-translate-3 Unsupported: functionExpression with more then 1 parameter
-functx-fn-translate-4 Unsupported: functionExpression with more then 1 parameter
-functx-fn-translate-5 Unsupported: functionExpression with more then 1 parameter
-functx-fn-translate-6 Unsupported: functionExpression with more then 1 parameter
 functx-fn-translate-7 Unsupported: the base expression 'sequenceExpr'.
 functx-fn-translate-all Unsupported: the base expression 'sequenceExpr'.
 functx-fn-true-1 We still need to find a way to integrate these parameters
@@ -16411,10 +16744,6 @@ fo-test-math-atan2-010 Unsupported: the base expression 'unaryPlusOp'.
 fo-test-fn-codepoints-to-string-001 Unsupported: the base expression 'sequenceExpr'.
 fo-test-fn-codepoints-to-string-002 Unsupported: the base expression 'sequenceExpr'.
 fo-test-fn-codepoints-to-string-003 Unsupported: the base expression 'sequenceExpr'.
-fo-test-fn-compare-001 Unsupported: functionExpression with more then 1 parameter
-fo-test-fn-codepoint-equal-001 Unsupported: functionExpression with more then 1 parameter
-fo-test-fn-codepoint-equal-002 Unsupported: functionExpression with more then 1 parameter
-fo-test-fn-codepoint-equal-003 Unsupported: functionExpression with more then 1 parameter
 fo-test-fn-codepoint-equal-004 Unsupported: the base expression 'sequenceExpr'.
 fo-test-fn-codepoint-equal-005 Unsupported: the base expression 'sequenceExpr'.
 fo-test-fn-concat-001 We still need to find a way to integrate these parameters
@@ -16443,36 +16772,16 @@ fo-test-fn-substring-010 We still need to find a way to integrate these paramete
 fo-test-fn-substring-011 We still need to find a way to integrate these parameters
 fo-test-fn-string-length-002 Unsupported: the base expression 'sequenceExpr'.
 fo-test-fn-normalize-space-002 Unsupported: the base expression 'sequenceExpr'.
-fo-test-fn-translate-001 Unsupported: functionExpression with more then 1 parameter
-fo-test-fn-translate-002 Unsupported: functionExpression with more then 1 parameter
-fo-test-fn-translate-003 Unsupported: functionExpression with more then 1 parameter
 fo-test-fn-encode-for-uri-002 We still need to find a way to integrate these parameters
 fo-test-fn-encode-for-uri-003 We still need to find a way to integrate these parameters
-fo-test-fn-contains-001 Unsupported: functionExpression with more then 1 parameter
-fo-test-fn-contains-002 Unsupported: functionExpression with more then 1 parameter
 fo-test-fn-contains-003 Unsupported: the base expression 'sequenceExpr'.
-fo-test-fn-starts-with-001 Unsupported: functionExpression with more then 1 parameter
-fo-test-fn-starts-with-002 Unsupported: functionExpression with more then 1 parameter
 fo-test-fn-starts-with-003 Unsupported: the base expression 'sequenceExpr'.
-fo-test-fn-ends-with-001 Unsupported: functionExpression with more then 1 parameter
-fo-test-fn-ends-with-002 Unsupported: functionExpression with more then 1 parameter
 fo-test-fn-ends-with-003 Unsupported: the base expression 'sequenceExpr'.
-fo-test-fn-substring-before-001 Unsupported: functionExpression with more then 1 parameter
-fo-test-fn-substring-before-002 Unsupported: functionExpression with more then 1 parameter
 fo-test-fn-substring-before-003 Unsupported: the base expression 'sequenceExpr'.
-fo-test-fn-substring-after-001 Unsupported: functionExpression with more then 1 parameter
-fo-test-fn-substring-after-002 Unsupported: functionExpression with more then 1 parameter
 fo-test-fn-substring-after-003 Unsupported: the base expression 'sequenceExpr'.
-fo-test-fn-matches-001 Unsupported: functionExpression with more then 1 parameter
-fo-test-fn-matches-002 Unsupported: functionExpression with more then 1 parameter
-fo-test-fn-matches-003 Unsupported: functionExpression with more then 1 parameter
 fo-test-fn-matches-004 Unsupported: the base expression 'flworExpr'.
 fo-test-fn-matches-007 Unsupported: the base expression 'flworExpr'.
 fo-test-fn-tokenize-001 We still need to find a way to integrate these parameters
-fo-test-fn-tokenize-002 Unsupported: functionExpression with more then 1 parameter
-fo-test-fn-tokenize-003 Unsupported: functionExpression with more then 1 parameter
-fo-test-fn-tokenize-004 Unsupported: functionExpression with more then 1 parameter
-fo-test-fn-tokenize-005 Unsupported: functionExpression with more then 1 parameter
 fo-test-fn-true-001 We still need to find a way to integrate these parameters
 fo-test-fn-false-001 We still need to find a way to integrate these parameters
 fo-test-fn-boolean-001 Unsupported: the base expression 'flworExpr'.
@@ -16529,8 +16838,6 @@ fo-test-fn-hours-from-time-005 We still need to find a way to integrate these pa
 fo-test-fn-minutes-from-time-001 We still need to find a way to integrate these parameters
 fo-test-fn-seconds-from-time-001 We still need to find a way to integrate these parameters
 fo-test-fn-timezone-from-time-002 We still need to find a way to integrate these parameters
-fo-test-fn-local-name-from-QName-001 Unsupported: functionExpression with more then 1 parameter
-fo-test-fn-namespace-uri-from-QName-001 Unsupported: functionExpression with more then 1 parameter
 fo-test-fn-number-001 Unsupported: the base expression 'flworExpr'.
 fo-test-fn-number-002 Unsupported: the base expression 'flworExpr'.
 fo-test-fn-path-007 Unsupported: the base expression 'flworExpr'.
@@ -16638,7 +16945,6 @@ fo-test-map-get-002 Unsupported: the base expression 'flworExpr'.
 fo-test-map-get-003 Unsupported: the base expression 'integerConstantExpr'.
 fo-test-map-put-001 Unsupported: the base expression 'flworExpr'.
 fo-test-map-put-002 Unsupported: the base expression 'flworExpr'.
-fo-test-map-entry-001 Unsupported: functionExpression with more then 1 parameter
 fo-test-map-remove-001 Unsupported: the base expression 'flworExpr'.
 fo-test-map-remove-002 Unsupported: the base expression 'flworExpr'.
 fo-test-map-remove-003 Unsupported: the base expression 'flworExpr'.

@@ -12,6 +12,7 @@ import {
 	acceptAst,
 	CompiledResultType,
 	getCompiledValueCode,
+	IAstAccepted,
 	IAstRejected,
 	PartialCompilationResult,
 	PartiallyCompiledAstAccepted,
@@ -77,7 +78,8 @@ export function emitFunctionCallExpr(
 
 	// Push the function into the functionArray.
 	const functionArrayIndex = staticContext.functions.push(props.callFunction) - 1;
-	const functionDefinition = `const ${identifier}_function = builtInFunctions[${functionArrayIndex}]`;
+	const functionDefinition = `
+	const ${identifier}_function = builtInFunctions[${functionArrayIndex}]`;
 
 	if (args.length === 0) {
 		// If the function has 0 arguments.
@@ -106,7 +108,7 @@ export function emitFunctionCallExpr(
 		return emitFunctionWithMultipleArguments(
 			identifier,
 			functionArrayIndex,
-			compiledArgs,
+			compiledArgs as PartiallyCompiledAstAccepted[],
 			props,
 			args,
 			functionDefinition
@@ -197,12 +199,61 @@ function emitFunctionWithOneArgument(
 function emitFunctionWithMultipleArguments(
 	identifier: string,
 	functionArrayIndex: number,
-	compiledArgs: PartialCompilationResult[],
+	compiledArgs: PartiallyCompiledAstAccepted[],
 	props: FunctionProperties,
 	args: IAST[],
 	functionDefinition: string
 ): PartialCompilationResult {
-	return rejectAst('Unsupported: functionExpression with more then 1 parameter');
+	const compiledValueCodes: string[] = compiledArgs.map(
+		(compiledArg: PartiallyCompiledAstAccepted, index: number) =>
+			getCompiledValueCode(
+				identifier + '_arg' + (index + 1),
+				(compiledArg as PartiallyCompiledAstAccepted).resultType
+			)
+	);
+	const types: ValueType[] = args.map((arg) => astHelper.getAttribute(arg, 'type').type);
+
+	let i = 0;
+	for (const type of types) {
+		if (
+			!(
+				isSubtypeOf((props.argumentTypes[i] as SequenceType).type, type) ||
+				isSubtypeOf(type, (props.argumentTypes[i] as SequenceType).type)
+			)
+		) {
+			throw new Error('XPTY0004 wrong parameterType');
+		}
+		i++;
+	}
+
+	let argumentsString: string = '';
+	for (let index = 0; index < compiledValueCodes.length - 1; index++) {
+		argumentsString += `createSequence(${types[index]}, ${compiledValueCodes[index]}),\n`;
+	}
+	argumentsString += `createSequence(${types[compiledValueCodes.length - 1]}, ${
+		compiledValueCodes[compiledValueCodes.length - 1]
+	})`;
+
+	const functioncallCode = `
+	const ${identifier} = convertXDMReturnValue(
+		"null", 
+		${identifier}_function(
+			null, 
+			null, 
+			null, 
+			${argumentsString}
+		),
+		0,
+		null);
+	`;
+
+	const vars: string = [
+		functionDefinition,
+		compiledArgs.map((arg) => arg.code).join('\n'),
+		functioncallCode,
+	].join('\n');
+
+	return acceptAst(vars, CompiledResultType.Value);
 }
 
 /**
