@@ -144,6 +144,13 @@ describe('string tests', () => {
 		);
 	});
 
+	it('pi test', () => {
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen('math:pi()', documentNode, null, ReturnType.ANY),
+			Math.PI
+		);
+	});
+
 	// functions below are not supported yet
 
 	// because the sanitizing of the string messes with this.
@@ -170,11 +177,7 @@ describe('string tests', () => {
 		);
 	});
 
-	it.only('fn-normalize-space-18', () => {
-		console.log(
-			evaluateXPathToString(`fn:normalize-space("	
-		")`)
-		);
+	it.skip('fn-normalize-space-18', () => {
 		chai.assert.equal(
 			evaluateXPathWithJsCodegen(
 				`fn:normalize-space("	
@@ -183,8 +186,19 @@ describe('string tests', () => {
 				null,
 				ReturnType.ANY
 			),
-			evaluateXPathToString(`fn:normalize-space("	
-		")`)
+			'""'
+		);
+	});
+
+	it.skip('fn-normalize-space-18', () => {
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen(
+				`fn:deep-equal((xs:int("-2147483648")),(xs:int("-2147483648")))`,
+				documentNode,
+				null,
+				ReturnType.ANY
+			),
+			'""'
 		);
 	});
 });

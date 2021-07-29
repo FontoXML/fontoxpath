@@ -469,16 +469,30 @@ function createAsserterForJsCodegen(
 				namespaceResolver,
 				that
 			): JavaScriptCompiledXPathResult => {
-				const compiled = compileXPathToJavaScript(xpath, ReturnType.BOOLEAN, {
+				const compiled = compileXPathToJavaScript(xpath, ReturnType.ANY, {
 					namespaceResolver,
 					language,
 				});
 				if (compiled.isAstAccepted === true) {
 					// tslint:disable-next-line
 					const fn = new Function(compiled.code) as CompiledXPathFunction;
-					chai.assert.isTrue(
+					chai.assert.equal(
 						executeJavaScriptCompiledXPath(fn, contextNode, null, compiled.functions),
-						`Expected XPath ${xpath} to resolve to true`
+						evaluateXPath(xpath, contextNode, null, null, null, {
+							namespaceResolver,
+							language,
+						}),
+						`Expected XPath ${xpath} to resolve to ${evaluateXPath(
+							xpath,
+							contextNode,
+							null,
+							null,
+							null,
+							{
+								namespaceResolver,
+								language,
+							}
+						)}`
 					);
 				}
 				return compiled;

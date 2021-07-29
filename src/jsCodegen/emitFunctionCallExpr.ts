@@ -8,7 +8,10 @@ import {
 	acceptAst,
 	CompiledResultType,
 	getCompiledValueCode,
+	IAstAccepted,
+	IAstRejected,
 	PartialCompilationResult,
+	PartiallyCompiledAstAccepted,
 	rejectAst,
 } from './JavaScriptCompiledXPath';
 
@@ -42,8 +45,8 @@ export function emitFunctionCallExpr(
 		return rejectAst(`function ${resolvedName.localName} is not supported`);
 	}
 
-	if (args.length !== 1) {
-		return rejectAst('Unsupported: functionExpression not defined');
+	if (args.length !== 1 && args.length !== 0) {
+		return rejectAst('Unsupported: functionExpression with more then 1 parameter');
 	}
 
 	if (!props) {
@@ -57,23 +60,24 @@ export function emitFunctionCallExpr(
 	) {
 		return rejectAst('We still need to find a way to integrate these parameters');
 	}
-	const compiledArgs: PartialCompilationResult = staticContext.emitBaseExpr(
-		args[0],
-		`${identifier}_args1`,
-		staticContext
+
+	const functionArrayIndex = staticContext.functions.push(props.callFunction) - 1;
+
+	if (args.length === 0) {
+		return emitFunctionWithZeroArguments(ast, identifier, staticContext, functionArrayIndex);
+	}
+
+	const compiledArgs: PartialCompilationResult[] = compileArguments(
+		args,
+		staticContext,
+		identifier
 	);
+	if (!compiledArgs[0].isAstAccepted) return compiledArgs[0];
 
-	if (!astHelper.getAttribute(args[0], 'type')) {
-		return rejectAst('type not known');
-	}
-
-	if (!compiledArgs.isAstAccepted) {
-		return compiledArgs;
-	}
-
-	const functionArrayIndex = staticContext.functions.push(props.callFunction);
-
-	const CompiledValueCode = getCompiledValueCode(identifier + '_args1', compiledArgs.resultType);
+	const CompiledValueCode = getCompiledValueCode(
+		identifier + '_args1',
+		(compiledArgs[0] as PartiallyCompiledAstAccepted).resultType
+	);
 	const type = astHelper.getAttribute(args[0], 'type').type;
 
 	if (
@@ -86,7 +90,7 @@ export function emitFunctionCallExpr(
 	}
 
 	const functionDefenition = `
-	const ${identifier}_function = builtInFunctions[${functionArrayIndex - 1}]
+	const ${identifier}_function = builtInFunctions[${functionArrayIndex}]
 	`;
 
 	const functioncallCode = `
@@ -100,9 +104,37 @@ export function emitFunctionCallExpr(
 		${identifier} = convertXDMReturnValue("null", ${identifier}, 0, null);
 	`;
 
-	let vars = [functionDefenition, compiledArgs.code];
+	let vars = [
+		functionDefenition,
+		(compiledArgs[0] as PartiallyCompiledAstAccepted).code,
+		functioncallCode,
+	];
 
-	return acceptAst(vars.join('\n') + '\n' + functioncallCode, CompiledResultType.Value);
+	return acceptAst(vars.join('\n'), CompiledResultType.Value);
+}
+
+function emitFunctionWithZeroArguments(
+	ast: IAST,
+	identifier: string,
+	staticContext: CodeGenContext,
+	functionArrayIndex: number
+): PartialCompilationResult {
+	const functionDefenition = `
+	const ${identifier}_function = builtInFunctions[${functionArrayIndex}]
+	`;
+
+	const functioncallCode = `
+		let ${identifier} = ${identifier}_function(
+			null, 
+			null, 
+			null, 
+			)
+		${identifier} = convertXDMReturnValue("null", ${identifier}, 0, null);
+	`;
+
+	let vars = [functionDefenition, functioncallCode];
+
+	return acceptAst(vars.join('\n'), CompiledResultType.Value);
 }
 
 function createSequence(type: ValueType, CompiledValueCode: string) {
@@ -122,4 +154,23 @@ function createSequence(type: ValueType, CompiledValueCode: string) {
 		}
 		return sequenceFactory.create(new Value(${type}, ${CompiledValueCode}))
 	}`;
+}
+
+function compileArguments(
+	args: IAST[],
+	staticContext: CodeGenContext,
+	identifier: string
+): PartialCompilationResult[] {
+	let failedArg: IAstRejected = undefined;
+	const compiledArgs: PartialCompilationResult[] = args.map((arg) => {
+		const compiledArg = staticContext.emitBaseExpr(arg, `${identifier}_args1`, staticContext);
+		if (!compiledArg.isAstAccepted) {
+			failedArg = compiledArg as IAstRejected;
+		} else if (!astHelper.getAttribute(arg, 'type')) {
+			failedArg = rejectAst('type of parameter unknown');
+		}
+		return compiledArg;
+	});
+	if (failedArg) return [failedArg];
+	return compiledArgs;
 }
