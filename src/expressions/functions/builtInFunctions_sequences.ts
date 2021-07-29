@@ -303,7 +303,7 @@ const fnCount: FunctionDefinitionType = (
 	});
 };
 
-const fnAvg: FunctionDefinitionType = (
+export const fnAvg: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
@@ -328,6 +328,7 @@ const fnAvg: FunctionDefinitionType = (
 		items.reduce((sum, item) => {
 			return sum + item.value;
 		}, 0) / items.length;
+	// console.log(items, " ", );
 
 	if (
 		items.every((item) => {

@@ -1,3 +1,4 @@
+import { fnAvg } from '../expressions/functions/builtInFunctions_sequences';
 import ISequence from '../expressions/dataTypes/ISequence';
 import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
 import sequenceFactory from '../expressions/dataTypes/sequenceFactory';
@@ -214,6 +215,12 @@ export function createSequence(type: ValueType, compiledValueCode: any): ISequen
 	// If the argument is a sequence and not an empty string return an emty sequence.
 	if (typeof compiledValueCode !== 'string' && compiledValueCode.length === 0) {
 		return sequenceFactory.empty();
+	} else if (typeof compiledValueCode !== 'string' && compiledValueCode.length > 1) {
+		const values = [];
+		for (const value of compiledValueCode) {
+			values.push(new Value(type, value));
+		}
+		return sequenceFactory.create(values);
 		// If the argument is an iterator we create the sequence by taking the nodevalue for each node.
 	} else if (compiledValueCode.next) {
 		const nodes = [];
@@ -226,7 +233,6 @@ export function createSequence(type: ValueType, compiledValueCode: any): ISequen
 			return sequenceFactory.create(new Value(type, nodes));
 		}
 	}
-	// default to just creating the sequence.
 	return sequenceFactory.create(new Value(type, compiledValueCode));
 }
 

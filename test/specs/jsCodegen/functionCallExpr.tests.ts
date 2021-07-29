@@ -178,7 +178,7 @@ describe('string tests', () => {
 	});
 
 	// I have no idea why this one fails
-	it.skip('simple functionCall: time from string', () => {
+	it('simple functionCall: time from string', () => {
 		chai.assert.equal(
 			evaluateXPathWithJsCodegen(
 				'fn:avg(fn:string-to-codepoints("A String"))',
