@@ -206,6 +206,9 @@ function emitFunctionWithMultipleArguments(
 
 /**
  * A function to create a sequence out of the javascript values.
+ * The problem with this is that every time a function is called its being converted to a sequence and back.
+ * The function below is to convert a jsvalue to a sequence and conversion back is done with the convert XDMReturnValue.
+ * A solution to this could be that other expressions als work with these sequences as some queries already return sequences.
  * @param type The type of the value.
  * @param compiledValueCode The value.
  * @returns An ISequence representation of the value.
@@ -214,6 +217,7 @@ export function createSequence(type: ValueType, compiledValueCode: any): ISequen
 	// If the argument is a sequence and not an empty string return an emty sequence.
 	if (typeof compiledValueCode !== 'string' && compiledValueCode.length === 0) {
 		return sequenceFactory.empty();
+		// If compiledvalueCode is an array
 	} else if (typeof compiledValueCode !== 'string' && compiledValueCode.length > 1) {
 		const values = [];
 		for (const value of compiledValueCode) {
@@ -232,6 +236,7 @@ export function createSequence(type: ValueType, compiledValueCode: any): ISequen
 			return sequenceFactory.create(new Value(type, nodes));
 		}
 	}
+	// default to this.
 	return sequenceFactory.create(new Value(type, compiledValueCode));
 }
 
