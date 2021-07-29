@@ -10,8 +10,8 @@ export type CodeGenContext = {
 		identifier: FunctionIdentifier,
 		staticContext: CodeGenContext
 	) => PartialCompilationResult;
-	staticContext?: StaticContext;
-	resolveNamespace: NamespaceResolver;
-	functions: [any];
 	executionParameters: ExecutionParameters;
+	functions: [any];
+	resolveNamespace: NamespaceResolver;
+	staticContext?: StaticContext;
 };

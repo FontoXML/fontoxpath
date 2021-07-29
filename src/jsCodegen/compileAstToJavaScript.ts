@@ -127,6 +127,7 @@ function wrapCompiledCode(
 			Value,
 			ValueType,
 			convertXDMReturnValue,
+			createSequence,
 		} = runtimeLib;`;
 
 	if (shouldUseContextItem) {

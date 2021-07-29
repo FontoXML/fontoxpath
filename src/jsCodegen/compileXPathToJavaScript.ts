@@ -36,7 +36,7 @@ function compileXPathToJavaScript(
 	options = options || {};
 	returnType = returnType || (ReturnType.ANY as any);
 
-	let executionParameters: ExecutionParameters = new ExecutionParameters(
+	const executionParameters: ExecutionParameters = new ExecutionParameters(
 		options.debug,
 		null,
 		options.nodesFactory,

@@ -10,12 +10,12 @@ export enum CompiledResultType {
 
 export type PartiallyCompiledAstAccepted = {
 	code: string;
+	functions?: [any];
 	isAstAccepted: true;
 	resultType: CompiledResultType;
 	// Contains variable (and function) declarations for the upper compiled
 	// scope.
 	variables?: string[];
-	functions?: [any];
 };
 
 export function getCompiledValueCode(
@@ -69,8 +69,8 @@ export type PartialCompilationResult = PartiallyCompiledAstAccepted | IAstReject
  */
 export declare interface IAstAccepted {
 	code: string;
-	isAstAccepted: true;
 	functions?: [any];
+	isAstAccepted: true;
 }
 
 export function acceptFullyCompiledAst(code: string, functions: [any]): IAstAccepted {

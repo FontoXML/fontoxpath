@@ -6,6 +6,7 @@ import getEffectiveBooleanValue from '../expressions/dataTypes/Sequences/getEffe
 import Value from '../expressions/dataTypes/Value';
 import { DONE_TOKEN, IterationResult, ready } from '../expressions/util/iterators';
 import convertXDMReturnValue from '../parsing/convertXDMReturnValue';
+import { createSequence } from './emitFunctionCallExpr';
 
 export function determinePredicateTruthValue(iterator: { next: () => IterationResult<Value> }) {
 	if (!iterator.next) {
@@ -23,6 +24,8 @@ export function determinePredicateTruthValue(iterator: { next: () => IterationRe
 declare interface IRuntimeLib {
 	adaptSingleJavaScriptValue: typeof adaptSingleJavaScriptValue;
 	atomize: typeof atomize;
+	convertXDMReturnValue: typeof convertXDMReturnValue;
+	createSequence: typeof createSequence;
 	determinePredicateTruthValue: typeof determinePredicateTruthValue;
 	DONE_TOKEN: typeof DONE_TOKEN;
 	getEffectiveBooleanValue: typeof getEffectiveBooleanValue;
@@ -30,12 +33,13 @@ declare interface IRuntimeLib {
 	ready: typeof ready;
 	sequenceFactory: typeof sequenceFactory;
 	Value: typeof Value;
-	convertXDMReturnValue: typeof convertXDMReturnValue;
 }
 
 const runtimeLib: IRuntimeLib = {
 	adaptSingleJavaScriptValue,
 	atomize,
+	convertXDMReturnValue,
+	createSequence,
 	determinePredicateTruthValue,
 	DONE_TOKEN,
 	getEffectiveBooleanValue,
@@ -43,7 +47,6 @@ const runtimeLib: IRuntimeLib = {
 	ready,
 	sequenceFactory,
 	Value,
-	convertXDMReturnValue,
 };
 
 export default runtimeLib;

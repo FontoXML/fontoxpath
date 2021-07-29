@@ -663,7 +663,10 @@ function createAsserterForJsCodegen(
 					chai.assert.equal(
 						executeJavaScriptCompiledXPath(fn, contextNode, null, compiled.functions)
 							.length,
-						expectedCount,
+						evaluateXPath(xpath, contextNode, null, null, null, {
+							namespaceResolver,
+							language,
+						}).length,
 						`Expected ${xpath} to resolve to ${expectedCount}`
 					);
 				}
