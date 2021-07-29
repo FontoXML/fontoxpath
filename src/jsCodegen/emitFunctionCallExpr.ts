@@ -64,6 +64,8 @@ export function emitFunctionCallExpr(
 		return rejectAst('the function is not found: ' + resolvedName.localName);
 	}
 
+	// Check if the function uses any of these three parameters.
+	// If so reject the query.
 	if (
 		!String(props.callFunction).includes('_executionParameters') ||
 		!String(props.callFunction).includes('_dynamicContext') ||
@@ -72,12 +74,16 @@ export function emitFunctionCallExpr(
 		return rejectAst('We still need to find a way to integrate these parameters');
 	}
 
+	// Push the function into the functionArray.
 	const functionArrayIndex = staticContext.functions.push(props.callFunction) - 1;
+	const functionDefinition = `const ${identifier}_function = builtInFunctions[${functionArrayIndex}]`;
 
 	if (args.length === 0) {
-		return emitFunctionWithZeroArguments(identifier, functionArrayIndex);
+		// If the function has 0 arguments.
+		return emitFunctionWithZeroArguments(identifier, functionDefinition);
 	}
 
+	// Compile all the arguments.
 	const compiledArgs: PartialCompilationResult[] = compileArguments(
 		args,
 		staticContext,
@@ -86,32 +92,37 @@ export function emitFunctionCallExpr(
 	if (!compiledArgs[0].isAstAccepted) return compiledArgs[0];
 
 	if (args.length === 1) {
+		// If the function has 1 argument.
 		return emitFunctionWithOneArgument(
 			identifier,
-			functionArrayIndex,
 			compiledArgs[0],
 			props,
-			args[0]
+			args[0],
+			functionDefinition
 		);
 	} else {
+		// If the function has multiple arguments.
 		return emitFunctionWithMultipleArguments(
 			identifier,
 			functionArrayIndex,
 			compiledArgs,
 			props,
-			args
+			args,
+			functionDefinition
 		);
 	}
 }
 
+/**
+ * A function to emit a function with zero arguments.
+ * @param identifier The identifier of the functionCallExpression.
+ * @param functionDefinition The code for the definition of the function
+ * @returns A PartialCompilation result representation of the generated code.
+ */
 function emitFunctionWithZeroArguments(
 	identifier: string,
-	functionArrayIndex: number
+	functionDefinition: string
 ): PartialCompilationResult {
-	const functionDefenition = `
-	const ${identifier}_function = builtInFunctions[${functionArrayIndex}]
-	`;
-
 	const functioncallCode = `
 		let ${identifier} = ${identifier}_function(
 			null, 
@@ -121,19 +132,28 @@ function emitFunctionWithZeroArguments(
 		${identifier} = convertXDMReturnValue("null", ${identifier}, 0, null);
 	`;
 
-	const vars: string = [functionDefenition, functioncallCode].join('\n');
+	const vars: string = [functionDefinition, functioncallCode].join('\n');
 
 	return acceptAst(vars, CompiledResultType.Value);
 }
 
+/**
+ * A function to emit a function with one argument.
+ * @param identifier The identifier of the functionCallExpression.
+ * @param compiledArgs An array of PartialCompilationResult representations of the arguments.
+ * @param props The properties of the function.
+ * @param args An array of IAST representations of the arguments.
+ * @param functionDefinition The code for the definition of the function.
+ * @returns A PartialCompilation result representation of the generated code.
+ */
 function emitFunctionWithOneArgument(
 	identifier: string,
-	functionArrayIndex: number,
 	compiledArg: PartiallyCompiledAstAccepted,
 	props: FunctionProperties,
-	arg: IAST
+	arg: IAST,
+	functionDefinition: string
 ): PartialCompilationResult {
-	const compiledValueCode = getCompiledValueCode(identifier + '_args1', compiledArg.resultType);
+	const compiledValueCode = getCompiledValueCode(identifier + '_arg1', compiledArg.resultType);
 	const type = astHelper.getAttribute(arg, 'type').type;
 
 	if (
@@ -145,39 +165,56 @@ function emitFunctionWithOneArgument(
 		throw new Error('XPTY0004 wrong parameterType');
 	}
 
-	const functionDefenition = `
-	const ${identifier}_function = builtInFunctions[${functionArrayIndex}]
-	`;
-
 	const functioncallCode = `
-		const ${identifier}_helper = createSequence(${type}, ${compiledValueCode})
-		let ${identifier} = ${identifier}_function(
-			null, 
-			null, 
-			null, 
-			${identifier}_helper
-			)
-		${identifier} = convertXDMReturnValue("null", ${identifier}, 0, null);
+		const ${identifier} = convertXDMReturnValue(
+			"null", 
+			${identifier}_function(
+				null, 
+				null, 
+				null, 
+				createSequence(${type}, ${compiledValueCode})
+			),
+			0,
+			null);
 	`;
 
-	const vars: string = [functionDefenition, compiledArg.code, functioncallCode].join('\n');
+	const vars: string = [functionDefinition, compiledArg.code, functioncallCode].join('\n');
 
 	return acceptAst(vars, CompiledResultType.Value);
 }
 
+/**
+ * A function to emit a function with multiple arguments.
+ * @param identifier The identifier of the functionCallExpression.
+ * @param functionArrayIndex The index of the callfunction in the array of functions.
+ * @param compiledArgs An array of PartialCompilationResult representations of the arguments.
+ * @param props The properties of the function.
+ * @param args An array of IAST representations of the arguments.
+ * @param functionDefinition The code for the definition of the function.
+ * @returns A PartialCompilation result representation of the generated code.
+ */
 function emitFunctionWithMultipleArguments(
 	identifier: string,
 	functionArrayIndex: number,
 	compiledArgs: PartialCompilationResult[],
 	props: FunctionProperties,
-	args: IAST[]
+	args: IAST[],
+	functionDefinition: string
 ): PartialCompilationResult {
 	return rejectAst('Unsupported: functionExpression with more then 1 parameter');
 }
 
+/**
+ * A function to create a sequence out of the javascript values.
+ * @param type The type of the value.
+ * @param compiledValueCode The value.
+ * @returns An ISequence representation of the value.
+ */
 export function createSequence(type: ValueType, compiledValueCode: any): ISequence {
+	// If the argument is a sequence and not an empty string return an emty sequence.
 	if (typeof compiledValueCode !== 'string' && compiledValueCode.length === 0) {
 		return sequenceFactory.empty();
+		// If the argument is an iterator we create the sequence by taking the nodevalue for each node.
 	} else if (compiledValueCode.next) {
 		const nodes = [];
 		for (const node of compiledValueCode) {
@@ -189,17 +226,32 @@ export function createSequence(type: ValueType, compiledValueCode: any): ISequen
 			return sequenceFactory.create(new Value(type, nodes));
 		}
 	}
+	// default to just creating the sequence.
 	return sequenceFactory.create(new Value(type, compiledValueCode));
 }
 
+/**
+ * A function to compile all the arguments,
+ * if one of the arguments could not be compiled it will be the only argument returned.
+ * @param args An ast representation of each of the arguments.
+ * @param staticContext The staticContext in which it is evaluated
+ * @param identifier The identifier for the functionCall.
+ * @returns The compiled arguments.
+ */
 function compileArguments(
 	args: IAST[],
 	staticContext: CodeGenContext,
 	identifier: string
 ): PartialCompilationResult[] {
 	let failedArg: IAstRejected;
+	let argIdentifier: number = 0;
 	const compiledArgs: PartialCompilationResult[] = args.map((arg) => {
-		const compiledArg = staticContext.emitBaseExpr(arg, `${identifier}_args1`, staticContext);
+		argIdentifier++;
+		const compiledArg = staticContext.emitBaseExpr(
+			arg,
+			`${identifier}_arg${argIdentifier}`,
+			staticContext
+		);
 		if (!compiledArg.isAstAccepted) {
 			failedArg = compiledArg as IAstRejected;
 		} else if (!astHelper.getAttribute(arg, 'type')) {
