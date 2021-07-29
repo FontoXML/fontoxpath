@@ -112,6 +112,39 @@ describe('string tests', () => {
 		);
 	});
 
+	it('Axes048-2', () => {
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen('fn:count(/far-north)', documentNode, null, ReturnType.ANY),
+			0
+		);
+	});
+
+	it('value-comp-ne-string-12', () => {
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen('fn:exists("")', documentNode, null, ReturnType.BOOLEAN),
+			true
+		);
+	});
+
+	it('functx-fn-string-to-codepoints-1', () => {
+		chai.assert.deepEqual(
+			evaluateXPathWithJsCodegen('head(/works/bccemruu)', documentNode, null, ReturnType.ANY),
+			[]
+		);
+	});
+
+	it('K-StringToCodepointFunc-7', () => {
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen(
+				'empty(string-to-codepoints(""))',
+				documentNode,
+				null,
+				ReturnType.BOOLEAN
+			),
+			true
+		);
+	});
+
 	//functions below are not supported yet
 
 	//because the sanitizing of the string messes with this.
@@ -127,31 +160,6 @@ describe('string tests', () => {
 	});
 
 	// folowing functions still fail
-	it.skip('K-StringToCodepointFunc-7', () => {
-		chai.assert.equal(
-			evaluateXPathWithJsCodegen(
-				'empty(string-to-codepoints(""))',
-				documentNode,
-				null,
-				ReturnType.BOOLEAN
-			),
-			true
-		);
-	});
-
-	it('value-comp-ne-string-12', () => {
-		chai.assert.equal(
-			evaluateXPathWithJsCodegen('fn:exists("")', documentNode, null, ReturnType.BOOLEAN),
-			true
-		);
-	});
-
-	it.skip('functx-fn-string-to-codepoints-1', () => {
-		chai.assert.equal(
-			evaluateXPathWithJsCodegen('head(/works/bccemruu)', documentNode, null, ReturnType.ANY),
-			[]
-		);
-	});
 
 	it.skip('simple functionCall: time from string', () => {
 		chai.assert(
@@ -162,13 +170,5 @@ describe('string tests', () => {
 				ReturnType.ANY
 			)
 		);
-	});
-
-	it.only('Axes048-2', () => {
-		console.log(evaluateXPathWithJsCodegen('/far-north', documentNode, null, ReturnType.ANY));
-		// chai.assert.equal(
-		// 	evaluateXPathWithJsCodegen('fn:count(/far-north)', documentNode, null, ReturnType.ANY),
-		// 	0
-		// );
 	});
 });

@@ -34,6 +34,7 @@ fn-encode-for-uri-13
 fn-encode-for-uri-14
 fn-encode-for-uri-15
 fn-encode-for-uri-16
+head-005
 fn-iri-to-uri1args-1
 fn-iri-to-uri1args-2
 fn-iri-to-uri1args-3
@@ -154,11 +155,14 @@ K-StringEqual-2
 K-StringEqual-3
 K-StringEqual-4
 K-StringEqual-5
+Axes014-1
 Axes044-1
 Axes044-2
+Axes045-1
 Axes045-2
 Axes047-1
 Axes047-2
+Axes048-1
 Axes048-2
 K2-Axes-94
 XQueryComment012

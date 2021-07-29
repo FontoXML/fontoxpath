@@ -91,7 +91,6 @@ export function emitFunctionCallExpr(
 
 	const functioncallCode = `
 		const ${identifier}_helper = ${createSequence(type, CompiledValueCode)}
-		// console.log(${identifier}_helper())
 		let ${identifier} = ${identifier}_function(
 			null, 
 			null, 
@@ -108,9 +107,18 @@ export function emitFunctionCallExpr(
 
 function createSequence(type: ValueType, CompiledValueCode: string) {
 	return `() => {
-		// console.log(${CompiledValueCode})
 		if(typeof ${CompiledValueCode} !== 'string' && ${CompiledValueCode}.length === 0) {
 			return sequenceFactory.empty()
+		} else if(${CompiledValueCode}.next) {
+			const nodes = [];
+			for (const node of ${CompiledValueCode}) {
+				nodes.push(node.value.node);
+			}
+			if(nodes.length === 0) {
+				return sequenceFactory.empty();
+			} else {
+				return sequenceFactory.create(new Value(${type}, nodes));
+			}			
 		}
 		return sequenceFactory.create(new Value(${type}, ${CompiledValueCode}))
 	}`;
