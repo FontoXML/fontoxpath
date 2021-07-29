@@ -506,10 +506,6 @@ function createAsserterForJsCodegen(
 				return compiled;
 			};
 		case 'assert-eq': {
-			const equalWith = evaluateXPathToString('.', assertNode, undefined, {
-				annotateAst: false,
-				language,
-			});
 			return (
 				xpath,
 				contextNode,
@@ -517,6 +513,17 @@ function createAsserterForJsCodegen(
 				namespaceResolver,
 				that
 			): JavaScriptCompiledXPathResult => {
+				const equalWith = evaluateXPath(
+					xpath,
+					contextNode,
+					null,
+					variablesInScope,
+					ReturnType.STRING,
+					{
+						namespaceResolver,
+						language,
+					}
+				);
 				let compiled: JavaScriptCompiledXPathResult;
 				try {
 					compiled = compileXPathToJavaScript(xpath, ReturnType.STRING, {

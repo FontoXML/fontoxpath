@@ -708,8 +708,6 @@ K-CodepointToStringFunc-4 Unsupported: the base expression 'sequenceExpr'.
 K-CodepointToStringFunc-9 Unsupported: the base expression 'integerConstantExpr'.
 K-CodepointToStringFunc-10 Unsupported: the base expression 'integerConstantExpr'.
 K-CodepointToStringFunc-13 Unsupported: the base expression 'integerConstantExpr'.
-K-CodepointToStringFunc-14 one of the testcases causes it to fail
-K-CodepointToStringFunc-15 one of the testcases causes it to fail
 K-CodepointToStringFunc-16 Unsupported: the base expression 'integerConstantExpr'.
 K-CodepointToStringFunc-17 Unsupported: the base expression 'integerConstantExpr'.
 K-CodepointToStringFunc-18 Unsupported: the base expression 'integerConstantExpr'.
@@ -2675,7 +2673,6 @@ K-SeqMAXFunc-59 Unsupported: the base expression 'sequenceExpr'.
 K2-SeqMAXFunc-1 Unsupported: the base expression 'sequenceExpr'.
 K2-SeqMAXFunc-2 Unsupported: the base expression 'sequenceExpr'.
 K2-SeqMAXFunc-3 Unsupported: the base expression 'sequenceExpr'.
-K2-SeqMAXFunc-6 one of the testcases causes it to fail
 K2-SeqMAXFunc-7 Unsupported: the base expression 'instanceOfExpr'.
 fn-max-2 type not known
 fn-max-3 Unsupported: the base expression 'flworExpr'.
@@ -3596,7 +3593,6 @@ K-SeqMINFunc-51 Unsupported: the base expression 'sequenceExpr'.
 K2-SeqMINFunc-1 Unsupported: the base expression 'sequenceExpr'.
 K2-SeqMINFunc-2 Unsupported: the base expression 'sequenceExpr'.
 K2-SeqMINFunc-3 Unsupported: the base expression 'sequenceExpr'.
-K2-SeqMINFunc-5 one of the testcases causes it to fail
 K2-SeqMINFunc-7 Unsupported: the base expression 'instanceOfExpr'.
 K2-SeqMINFunc-8 Unsupported: the base expression 'instanceOfExpr'.
 K2-SeqMINFunc-9 Unsupported: the base expression 'instanceOfExpr'.
@@ -6689,7 +6685,6 @@ op-divide-dayTimeDuration-by-dTD-14 Unsupported: a base expression used with an 
 op-divide-dayTimeDuration-by-dTD-15 Unsupported: a base expression used with an operand.
 op-divide-dayTimeDuration-by-dTD-16 Unsupported: a base expression used with an operand.
 K-DayTimeDurationDivideDTD-1 Unsupported: a base expression used with an operand.
-cbcl-divide-dayTimeDuration-by-dayTimeDuration-003 one of the testcases causes it to fail
 op-divide-yearMonthDuration2args-1 Unsupported: the base expression 'divOp'.
 op-divide-yearMonthDuration2args-2 Unsupported: the base expression 'divOp'.
 op-divide-yearMonthDuration2args-3 Unsupported: the base expression 'divOp'.
@@ -8990,9 +8985,6 @@ K2-Axes-30 one of the testcases causes it to fail
 K2-Axes-31 one of the testcases causes it to fail
 K2-Axes-32 one of the testcases causes it to fail
 K2-Axes-42 type not known
-K2-Axes-43 one of the testcases causes it to fail
-K2-Axes-44 one of the testcases causes it to fail
-K2-Axes-45 one of the testcases causes it to fail
 K2-Axes-47 Unsupported: XQuery.
 K2-Axes-52 one of the testcases causes it to fail
 K2-Axes-55 one of the testcases causes it to fail
@@ -11618,8 +11610,6 @@ K2-ConText-9 Unsupported: the base expression 'elementConstructor'.
 K2-ConText-10 Unsupported: the base expression 'elementConstructor'.
 K2-ConText-14 Unsupported: the base expression 'elementConstructor'.
 K2-ConText-15 We still need to find a way to integrate these parameters
-contextDecl-018 one of the testcases causes it to fail
-contextDecl-019 one of the testcases causes it to fail
 contextDecl-040 Unsupported: XQuery.
 externalcontextitem-2 Unsupported: the base expression 'flworExpr'.
 externalcontextitem-3 Unsupported: the base expression 'flworExpr'.
@@ -12070,7 +12060,6 @@ K2-ForExprWithout-39 Unsupported: XQuery.
 K2-ForExprWithout-42 Unsupported: the base expression 'flworExpr'.
 K2-ForExprWithout-43 Unsupported: the base expression 'flworExpr'.
 K2-ForExprWithout-44 Unsupported: the base expression 'flworExpr'.
-K2-ForExprWithout-45 one of the testcases causes it to fail
 ForExprType001 Unsupported: the base expression 'flworExpr'.
 ForExprType002 Unsupported: the base expression 'flworExpr'.
 ForExprType003 Unsupported: the base expression 'flworExpr'.
@@ -12161,7 +12150,6 @@ K2-FunctionProlog-8 Unsupported: XQuery.
 K2-FunctionProlog-9 Unsupported: XQuery.
 K2-FunctionProlog-10 Unsupported: XQuery.
 K2-FunctionProlog-11 Unsupported: XQuery.
-K2-FunctionProlog-13 one of the testcases causes it to fail
 K2-FunctionProlog-15 Unsupported: XQuery.
 K2-FunctionProlog-16 one of the testcases causes it to fail
 K2-FunctionProlog-17 Unsupported: XQuery.
@@ -13274,11 +13262,9 @@ K2-LetExprWithout-6 one of the testcases causes it to fail
 K2-LetExprWithout-16 Unsupported: XQuery.
 K2-LetExprWithout-17 one of the testcases causes it to fail
 K2-LetExprWithout-18 Unsupported: XQuery.
-K2-LetExprWithout-19 one of the testcases causes it to fail
 K2-LetExprWithout-21 Unsupported: filter expressions.
 K2-LetExprWithout-22 Unsupported: filter expressions.
 K2-LetExprWithout-23 type not known
-K2-LetExprWithout-24 one of the testcases causes it to fail
 K2-LetExprWithout-25 Unsupported: the base expression 'flworExpr'.
 xquery10keywords Unsupported: the base expression 'flworExpr'.
 xquery10keywords2 Unsupported: the base expression 'flworExpr'.
@@ -14979,7 +14965,6 @@ VarDecl064 Unsupported: XQuery.
 internalvar-2 Unsupported: XQuery.
 K2-InternalVariablesWithout-1b Unsupported: XQuery.
 K2-InternalVariablesWithout-10 Unsupported: XQuery.
-K2-InternalVariablesWithout-11 one of the testcases causes it to fail
 K2-InternalVariablesWithout-13 Unsupported: XQuery.
 vardeclwithtype-1 Unsupported: XQuery.
 vardeclwithtype-2 Unsupported: XQuery.

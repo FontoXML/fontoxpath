@@ -1,8 +1,7 @@
 import * as chai from 'chai';
-import { Language, ReturnType } from 'fontoxpath';
+import { evaluateXPathToString, ReturnType } from 'fontoxpath';
 import * as slimdom from 'slimdom';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
-import escapeJavaScriptString from '../../../src/jsCodegen/escapeJavaScriptString';
 import evaluateXPathWithJsCodegen from './evaluateXPathWithJsCodegen';
 
 describe('string tests', () => {
@@ -145,9 +144,9 @@ describe('string tests', () => {
 		);
 	});
 
-	//functions below are not supported yet
+	// functions below are not supported yet
 
-	//because the sanitizing of the string messes with this.
+	// because the sanitizing of the string messes with this.
 	it.skip('simple functionCall: parseJSON', () => {
 		chai.assert.isTrue(
 			evaluateXPathWithJsCodegen(
@@ -159,8 +158,7 @@ describe('string tests', () => {
 		);
 	});
 
-	// folowing functions still fail
-
+	// because some builtinFunctions take other parameters like executionparameters, we haven't supported those yet
 	it.skip('simple functionCall: time from string', () => {
 		chai.assert(
 			evaluateXPathWithJsCodegen(
@@ -169,6 +167,24 @@ describe('string tests', () => {
 				null,
 				ReturnType.ANY
 			)
+		);
+	});
+
+	it.only('fn-normalize-space-18', () => {
+		console.log(
+			evaluateXPathToString(`fn:normalize-space("	
+		")`)
+		);
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen(
+				`fn:normalize-space("	
+				")`,
+				documentNode,
+				null,
+				ReturnType.ANY
+			),
+			evaluateXPathToString(`fn:normalize-space("	
+		")`)
 		);
 	});
 });
