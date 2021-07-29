@@ -430,7 +430,7 @@ function createAsserterForJsCodegen(
 			): JavaScriptCompiledXPathResult => {
 				chai.assert.throws(
 					() => {
-						const compiled = compileXPathToJavaScript(xpath, ReturnType.NODES, {
+						const compiled = compileXPathToJavaScript(xpath, ReturnType.ANY, {
 							namespaceResolver,
 							language,
 						});

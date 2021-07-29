@@ -198,6 +198,18 @@ describe('string tests', () => {
 		);
 	});
 
+	it('fn-substring-after-3', () => {
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen(
+				"substring-after('query', 'r')",
+				documentNode,
+				null,
+				ReturnType.ANY
+			),
+			'y'
+		);
+	});
+
 	// functions below are not supported yet
 
 	// because the sanitizing of the string messes with this.
@@ -232,19 +244,18 @@ describe('string tests', () => {
 				null,
 				ReturnType.ANY
 			),
-			'product'
+			''
 		);
 	});
 
-	it('fn-substring-after-3', () => {
-		chai.assert.equal(
+	it.only('functx-fn-QName-3', () => {
+		chai.assert.throws(() =>
 			evaluateXPathWithJsCodegen(
-				"substring-after('query', 'y')",
+				'"a string is ok" and QName("", "local")',
 				documentNode,
 				null,
 				ReturnType.ANY
-			),
-			'product'
+			)
 		);
 	});
 });

@@ -769,6 +769,7 @@ op-logical-or-017
 op-logical-or-018
 op-logical-or-019
 op-logical-or-020
+K-LogicExpr-45
 K-LogicExpr-46
 predicates-17
 value-comp-eq-string-5
@@ -932,7 +933,6 @@ fo-test-fn-empty-005
 fo-test-fn-exists-005
 fo-test-fn-tail-003
 fo-test-fn-reverse-002
-fo-test-map-entry-001
 
 unsuccesFullCases: 
 
@@ -6027,8 +6027,10 @@ map-merge-023 We still need to find a way to integrate these parameters
 map-contains-001 Unsupported: the base expression 'integerConstantExpr'.
 map-contains-002 Unsupported: the base expression 'integerConstantExpr'.
 map-contains-003 Unsupported: the base expression 'integerConstantExpr'.
+map-contains-004 Maps are not supported yet
+map-contains-005 Maps are not supported yet
 map-contains-006 We still need to find a way to integrate these parameters
-map-contains-007 We still need to find a way to integrate these parameters
+map-contains-007 Maps are not supported yet
 map-contains-008 Unsupported: the base expression 'integerConstantExpr'.
 map-contains-009 We still need to find a way to integrate these parameters
 map-contains-010 Unsupported: the base expression 'doubleConstantExpr'.
@@ -6042,8 +6044,10 @@ map-contains-020 Unsupported: the base expression 'mapConstructor'.
 map-get-001 Unsupported: the base expression 'integerConstantExpr'.
 map-get-002 Unsupported: the base expression 'integerConstantExpr'.
 map-get-003 Unsupported: the base expression 'integerConstantExpr'.
+map-get-004 Maps are not supported yet
+map-get-005 Maps are not supported yet
 map-get-006 We still need to find a way to integrate these parameters
-map-get-007 We still need to find a way to integrate these parameters
+map-get-007 Maps are not supported yet
 map-get-008 Unsupported: the base expression 'integerConstantExpr'.
 map-get-009 We still need to find a way to integrate these parameters
 map-get-010 Unsupported: the base expression 'doubleConstantExpr'.
@@ -6058,45 +6062,48 @@ map-get-021 We still need to find a way to integrate these parameters
 map-get-022 Unsupported: the base expression 'mapConstructor'.
 map-get-025 We still need to find a way to integrate these parameters
 map-get-100 We still need to find a way to integrate these parameters
-map-entry-005 We still need to find a way to integrate these parameters
-map-entry-006 We still need to find a way to integrate these parameters
+map-entry-005 Maps are not supported yet
+map-entry-006 Maps are not supported yet
 map-size-001 Unsupported: the base expression 'mapConstructor'.
-map-size-002 We still need to find a way to integrate these parameters
+map-size-002 Maps are not supported yet
 map-size-003 Unsupported: the base expression 'mapConstructor'.
-map-size-005 We still need to find a way to integrate these parameters
+map-size-004 Maps are not supported yet
+map-size-005 Maps are not supported yet
 map-size-006 Unsupported: the base expression 'mapConstructor'.
-map-size-008 We still need to find a way to integrate these parameters
-map-size-009 Unsupported: the base expression 'mapConstructor'.
-map-size-010 Unsupported: the base expression 'integerConstantExpr'.
-map-size-011 Unsupported: the base expression 'mapConstructor'.
+map-size-008 Maps are not supported yet
+map-size-009 Maps are not supported yet
+map-size-010 Maps are not supported yet
+map-size-011 Maps are not supported yet
 map-size-012 Unsupported: the base expression 'mapConstructor'.
-map-size-013 Unsupported: the base expression 'mapConstructor'.
+map-size-013 Maps are not supported yet
 map-keys-001 Unsupported: the base expression 'mapConstructor'.
-map-keys-002 We still need to find a way to integrate these parameters
+map-keys-002 Maps are not supported yet
 map-keys-003 Unsupported: the base expression 'mapConstructor'.
-map-keys-005 We still need to find a way to integrate these parameters
+map-keys-004 Maps are not supported yet
+map-keys-005 Maps are not supported yet
 map-keys-006 Unsupported: the base expression 'mapConstructor'.
-map-keys-008 We still need to find a way to integrate these parameters
-map-keys-009 Unsupported: the base expression 'mapConstructor'.
-map-keys-010 Unsupported: the base expression 'integerConstantExpr'.
-map-keys-011 Unsupported: the base expression 'mapConstructor'.
+map-keys-008 Maps are not supported yet
+map-keys-009 Maps are not supported yet
+map-keys-010 Maps are not supported yet
+map-keys-011 Maps are not supported yet
 map-keys-012 Unsupported: the base expression 'mapConstructor'.
-map-keys-013 Unsupported: the base expression 'mapConstructor'.
+map-keys-013 Maps are not supported yet
 map-put-017 We still need to find a way to integrate these parameters
 map-put-018 We still need to find a way to integrate these parameters
 map-put-019 We still need to find a way to integrate these parameters
 map-put-020 We still need to find a way to integrate these parameters
 map-put-021 Unsupported: the base expression 'arrowExpr'.
 map-put-022 We still need to find a way to integrate these parameters
-map-remove-001 Unsupported: the base expression 'integerConstantExpr'.
-map-remove-002 We still need to find a way to integrate these parameters
-map-remove-003 Unsupported: the base expression 'mapConstructor'.
-map-remove-006 We still need to find a way to integrate these parameters
-map-remove-007 We still need to find a way to integrate these parameters
+map-remove-001 Maps are not supported yet
+map-remove-002 Maps are not supported yet
+map-remove-003 Maps are not supported yet
+map-remove-005 Maps are not supported yet
+map-remove-006 Maps are not supported yet
+map-remove-007 Maps are not supported yet
 map-remove-013 We still need to find a way to integrate these parameters
 map-remove-015 Unsupported: the base expression 'arrowExpr'.
 map-remove-017 We still need to find a way to integrate these parameters
-map-remove-018 Unsupported: the base expression 'sequenceExpr'.
+map-remove-018 Maps are not supported yet
 map-remove-019 We still need to find a way to integrate these parameters
 map-for-each-001 We still need to find a way to integrate these parameters
 map-for-each-002 We still need to find a way to integrate these parameters
@@ -6111,7 +6118,7 @@ map-for-each-011 We still need to find a way to integrate these parameters
 map-for-each-012 We still need to find a way to integrate these parameters
 map-for-each-013 We still need to find a way to integrate these parameters
 map-for-each-015 We still need to find a way to integrate these parameters
-map-for-each-016 We still need to find a way to integrate these parameters
+map-for-each-016 Maps are not supported yet
 map-for-each-017 Unsupported: the base expression 'elementConstructor'.
 array-append-101 Unsupported: the base expression 'arrayConstructor'.
 array-append-102 Unsupported: the base expression 'arrayConstructor'.
@@ -16929,8 +16936,8 @@ fo-test-fn-fold-left-008 We still need to find a way to integrate these paramete
 fo-test-fn-fold-right-001 We still need to find a way to integrate these parameters
 fo-test-fn-fold-right-002 We still need to find a way to integrate these parameters
 fo-test-fn-fold-right-003 We still need to find a way to integrate these parameters
-fo-test-map-merge-001 We still need to find a way to integrate these parameters
-fo-test-map-merge-002 We still need to find a way to integrate these parameters
+fo-test-map-merge-001 Maps are not supported yet
+fo-test-map-merge-002 Maps are not supported yet
 fo-test-map-merge-003 Unsupported: the base expression 'flworExpr'.
 fo-test-map-merge-004 Unsupported: the base expression 'flworExpr'.
 fo-test-map-merge-005 Unsupported: the base expression 'flworExpr'.
@@ -16945,11 +16952,12 @@ fo-test-map-get-002 Unsupported: the base expression 'flworExpr'.
 fo-test-map-get-003 Unsupported: the base expression 'integerConstantExpr'.
 fo-test-map-put-001 Unsupported: the base expression 'flworExpr'.
 fo-test-map-put-002 Unsupported: the base expression 'flworExpr'.
+fo-test-map-entry-001 Maps are not supported yet
 fo-test-map-remove-001 Unsupported: the base expression 'flworExpr'.
 fo-test-map-remove-002 Unsupported: the base expression 'flworExpr'.
 fo-test-map-remove-003 Unsupported: the base expression 'flworExpr'.
 fo-test-map-remove-004 Unsupported: the base expression 'flworExpr'.
-fo-test-map-for-each-003 We still need to find a way to integrate these parameters
+fo-test-map-for-each-003 Maps are not supported yet
 fo-test-map-size-001 Unsupported: the base expression 'mapConstructor'.
 fo-test-map-size-002 Unsupported: the base expression 'mapConstructor'.
 fo-test-fn-parse-json-001 function parse-json is not supported

@@ -18,6 +18,7 @@ import {
 	PartiallyCompiledAstAccepted,
 	rejectAst,
 } from './JavaScriptCompiledXPath';
+import MapValue from '../expressions/dataTypes/MapValue';
 
 /**
  * A function to emit the functionCallExpression.
@@ -66,6 +67,10 @@ export function emitFunctionCallExpr(
 		return rejectAst('the function is not found: ' + resolvedName.localName);
 	}
 
+	if (props.returnType.type === ValueType.MAP) {
+		return rejectAst('Maps are not supported yet');
+	}
+
 	// Check if the function uses any of these three parameters.
 	// If so reject the query.
 	if (
@@ -94,26 +99,15 @@ export function emitFunctionCallExpr(
 	);
 	if (!compiledArgs[0].isAstAccepted) return compiledArgs[0];
 
-	if (args.length === 1) {
-		// If the function has 1 argument.
-		return emitFunctionWithOneArgument(
-			identifier,
-			compiledArgs[0],
-			props,
-			args[0],
-			functionDefinition
-		);
-	} else {
-		// If the function has multiple arguments.
-		return emitFunctionWithMultipleArguments(
-			identifier,
-			functionArrayIndex,
-			compiledArgs as PartiallyCompiledAstAccepted[],
-			props,
-			args,
-			functionDefinition
-		);
-	}
+	// If the function has multiple arguments.
+	return emitFunctionWithMultipleArguments(
+		identifier,
+		functionArrayIndex,
+		compiledArgs as PartiallyCompiledAstAccepted[],
+		props,
+		args,
+		functionDefinition
+	);
 }
 
 /**
@@ -136,52 +130,6 @@ function emitFunctionWithZeroArguments(
 	`;
 
 	const vars: string = [functionDefinition, functioncallCode].join('\n');
-
-	return acceptAst(vars, CompiledResultType.Value);
-}
-
-/**
- * A function to emit a function with one argument.
- * @param identifier The identifier of the functionCallExpression.
- * @param compiledArgs An array of PartialCompilationResult representations of the arguments.
- * @param props The properties of the function.
- * @param args An array of IAST representations of the arguments.
- * @param functionDefinition The code for the definition of the function.
- * @returns A PartialCompilation result representation of the generated code.
- */
-function emitFunctionWithOneArgument(
-	identifier: string,
-	compiledArg: PartiallyCompiledAstAccepted,
-	props: FunctionProperties,
-	arg: IAST,
-	functionDefinition: string
-): PartialCompilationResult {
-	const compiledValueCode = getCompiledValueCode(identifier + '_arg1', compiledArg.resultType);
-	const type = astHelper.getAttribute(arg, 'type').type;
-
-	if (
-		!(
-			isSubtypeOf((props.argumentTypes[0] as SequenceType).type, type) ||
-			isSubtypeOf(type, (props.argumentTypes[0] as SequenceType).type)
-		)
-	) {
-		throw new Error('XPTY0004 wrong parameterType');
-	}
-
-	const functioncallCode = `
-		const ${identifier} = convertXDMReturnValue(
-			"null", 
-			${identifier}_function(
-				null, 
-				null, 
-				null, 
-				createSequence(${type}, ${compiledValueCode})
-			),
-			0,
-			null);
-	`;
-
-	const vars: string = [functionDefinition, compiledArg.code, functioncallCode].join('\n');
 
 	return acceptAst(vars, CompiledResultType.Value);
 }

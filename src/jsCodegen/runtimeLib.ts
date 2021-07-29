@@ -1,3 +1,4 @@
+import QName from '../expressions/dataTypes/valueTypes/QName';
 import { adaptSingleJavaScriptValue } from '../expressions/adaptJavaScriptValueToXPathValue';
 import atomize from '../expressions/dataTypes/atomize';
 import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
@@ -7,8 +8,12 @@ import Value from '../expressions/dataTypes/Value';
 import { DONE_TOKEN, IterationResult, ready } from '../expressions/util/iterators';
 import convertXDMReturnValue from '../parsing/convertXDMReturnValue';
 import { createSequence } from './emitFunctionCallExpr';
+import { errFORG0006 } from '../expressions/functions/FunctionOperationErrors';
 
-export function determinePredicateTruthValue(iterator: { next: () => IterationResult<Value> }) {
+export function determinePredicateTruthValue(iterator: any) {
+	if (iterator instanceof QName) {
+		throw errFORG0006();
+	}
 	if (!iterator.next) {
 		return Boolean(iterator);
 	}
