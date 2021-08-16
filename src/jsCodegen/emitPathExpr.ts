@@ -42,7 +42,7 @@ function emitPredicates(
 		// return a node.
 		const predicateFunctionCall = `determinePredicateTruthValue(${getCompiledValueCode(
 			predicateFunctionIdentifier,
-			{ type: GeneratedCodeBaseType.Value },
+			{ type: GeneratedCodeBaseType.Function, returnType: {type: GeneratedCodeBaseType.Value} },
 			`contextItem${nestLevel}`
 		)[0]})`;
 		if (i === 0) {

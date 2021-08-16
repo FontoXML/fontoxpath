@@ -55,7 +55,7 @@ export function getCompiledValueCode(
 			return [identifier, GeneratedCodeBaseType.Value];
 		case GeneratedCodeBaseType.Variable:
 			return [identifier, GeneratedCodeBaseType.Variable];
-		case GeneratedCodeBaseType.Function:
+		case GeneratedCodeBaseType.Function: {
 			const code = `${getCompiledValueCode(
 					`${identifier}(${contextItemName ?? `contextItem`})`,
 					generatedCodeType.returnType,
@@ -65,8 +65,10 @@ export function getCompiledValueCode(
 				code,
 				generatedCodeType.returnType.type,
 			];
-		case GeneratedCodeBaseType.Iterator:
+		}
+		case GeneratedCodeBaseType.Iterator: {
 			return [identifier, GeneratedCodeBaseType.Iterator];
+		}
 		case GeneratedCodeBaseType.Sequence:
 			return [identifier, GeneratedCodeBaseType.Sequence];
 		case GeneratedCodeBaseType.None:

@@ -41,6 +41,10 @@ export function emitValueCompare(
 		'type'
 	);
 
+	if (!leftType || !rightType) {
+		return rejectAst('Left or right type of compare are not found, annotation failed.');
+	}
+
 	const supportedTypes = [ValueType.XSSTRING, ValueType.NODE];
 	if (!supportedTypes.includes(leftType.type) || !supportedTypes.includes(rightType.type)) {
 		return rejectAst('Unsupported types in compare');
@@ -68,13 +72,54 @@ export function emitValueCompare(
 	// Get the correct operator
 	const operator = compareOperators[compareType];
 
+	const leftGenerated = getCompiledValueCode(firstExpr.code, firstExpr.generatedCodeType);
+	const rightGenerated = getCompiledValueCode(secondExpr.code, secondExpr.generatedCodeType);
+
+	if (
+		(leftGenerated[1] == GeneratedCodeBaseType.Value ||
+			leftGenerated[1] == GeneratedCodeBaseType.Variable) &&
+		(rightGenerated[1] == GeneratedCodeBaseType.Value ||
+			rightGenerated[1] == GeneratedCodeBaseType.Variable)
+	) {
+		return acceptAst(
+			`function ${identifier}(contextItem) {
+				${firstExpr.variables.join('\n')}
+			 	${secondExpr.variables.join('\n')}
+	 	     	return ${leftGenerated[0]} ${operator} ${rightGenerated[0]};
+			}`,
+			{
+				type: GeneratedCodeBaseType.Function,
+				returnType: { type: GeneratedCodeBaseType.Value },
+			}
+		);
+	}
+
 	let code = `
 	function ${identifier}(contextItem) {
 		${firstExpr.variables.join('\n')}
 		${secondExpr.variables.join('\n')}
-		return ${getCompiledValueCode(firstExpr.code, firstExpr.generatedCodeType)[0]} 
-				${operator}
-				${getCompiledValueCode(secondExpr.code, secondExpr.generatedCodeType)[0]};
+
+		console.log("COMPARE");
+
+		let atomizedLeft;
+		if (${leftGenerated[0]}.next) {
+			atomizedLeft = atomize({value: ${leftGenerated[0]}}, {domFacade}).getAllValues().map(x => x.value);
+		} else {
+			atomizedLeft = [${leftGenerated[0]}];
+		}
+		let atomizedRight;
+		if (${rightGenerated[0]}.next) {
+			atomizedRight = atomize({value: ${rightGenerated[0]}}, {domFacade}).getAllValues().map(x => x.value);
+		} else {
+			atomizedRight = [${rightGenerated[0]}];
+		}
+
+		console.log(atomizedLeft);
+		console.log(atomizedRight);
+
+		if (atomizedLeft.length == 0 || atomizedRight.length == 0) return [];
+		
+		return atomizedLeft[0] ${operator} atomizedRight[0];
 	}
 	`;
 

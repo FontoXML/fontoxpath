@@ -54,7 +54,7 @@ export function emitOperand(
 			`determinePredicateTruthValue(${getCompiledValueCode(
 				baseExprIdentifier,
 				baseExpr.generatedCodeType
-			)}[0])`,
+			)[0]})`,
 			{ type: GeneratedCodeBaseType.Value },
 			[baseExpr.code]
 		);
