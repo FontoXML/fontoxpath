@@ -148,7 +148,7 @@ fn-position,true
 fn-prefix-from-QName,true
 fn-random-number-generator,false,
 fn-remove,true
-fn-replace,false
+fn-replace,true
 fn-resolve-QName,false
 fn-resolve-uri,false
 fn-reverse,true
@@ -176,7 +176,7 @@ fn-tail,true
 fn-timezone-from-date,true
 fn-timezone-from-dateTime,true
 fn-timezone-from-time,true
-fn-tokenize,false
+fn-tokenize,true
 fn-trace,false
 fn-transform,false
 fn-translate,true
