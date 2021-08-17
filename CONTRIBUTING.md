@@ -95,17 +95,17 @@ have at that moment and we are happy to assist you in any
 difficulties!
 
 The XPath functions are usually located in the
-`src/selectors/functions` folder. Just add them to the file that has
+`src/expressions/functions` folder. Just add them to the file that has
 the most to do with the function you'd like to implement.
 
-### Datastructures
+### Data structures
 
-FontoXPath uses lazy evaluation. This means the main datastructure (`Sequence`) is
+FontoXPath uses lazy evaluation. This means the main data structure (`Sequence`) is
 basically a generator. It has a number of functions which can easily
 get the first item, all items, the effective boolean value, etc. We
 tend to use the methods like `first()`, `length()`,
 `mapCases()` and `map()` for new code. The array functions located
-at `src/selectors/functions/builtInFunctions.arrays.ts` are a good
+at `src/expressions/functions/builtInFunctions.arrays.ts` are a good
 example for new functions.
 
 An iteration item (obtained by iterating over `Sequence#value`) can
@@ -117,7 +117,7 @@ have three forms:
 ### Debugging
 
 You can run a [demo page (http://localhost:8080)](http://localhost:8080)
-which can be used for debugging. This page is in it's own subpackage
+which can be used for debugging. This page is in its own subpackage
 in the demo folder. This page aims to do as little code transpilation as
 possible in order to make debugging easy. Run it by cd-ing into it,
 running `npm install`, followed by an `npm start`.
