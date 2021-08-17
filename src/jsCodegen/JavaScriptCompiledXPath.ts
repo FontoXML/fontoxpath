@@ -40,7 +40,7 @@ export type GeneratedCodeType =
 	| { type: GeneratedCodeBaseType.Value }
 	| { type: GeneratedCodeBaseType.Variable }
 	| { type: GeneratedCodeBaseType.Statement }
-	| { type: GeneratedCodeBaseType.Function; returnType: GeneratedCodeType }
+	| { returnType: GeneratedCodeType; type: GeneratedCodeBaseType.Function }
 	| { type: GeneratedCodeBaseType.Iterator }
 	| { type: GeneratedCodeBaseType.Sequence }
 	| { type: GeneratedCodeBaseType.None };

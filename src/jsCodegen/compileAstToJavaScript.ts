@@ -1,4 +1,3 @@
-import { assert } from 'sinon';
 import { ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { ReturnType } from '../parsing/convertXDMReturnValue';
@@ -23,7 +22,7 @@ function emitEvaluationToNodes(
 ): PartiallyCompiledAstAccepted {
 	const [valueCode, valueCodeType] = getCompiledValueCode(identifier, generatedCodeType);
 	if (valueCodeType !== GeneratedCodeBaseType.Iterator) {
-//		throw new Error('Trying access generated code as an iterator while this is not the case.');
+		// throw new Error('Trying access generated code as an iterator while this is not the case.');
 		return acceptAst(`return [];`, {type: GeneratedCodeBaseType.Statement});
 	}
 
@@ -168,8 +167,6 @@ function compileAstToJavaScript(
 	const emittedVariables = compiledBaseExpr.variables
 		? compiledBaseExpr.variables.join('\n')
 		: '';
-
-	console.log(compiledBaseExpr.code);
 
 	const returnTypeConversionCode = emitReturnTypeConversion(
 		compiledXPathIdentifier,

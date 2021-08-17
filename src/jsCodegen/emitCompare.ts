@@ -76,10 +76,10 @@ export function emitValueCompare(
 	const rightGenerated = getCompiledValueCode(secondExpr.code, secondExpr.generatedCodeType);
 
 	if (
-		(leftGenerated[1] == GeneratedCodeBaseType.Value ||
-			leftGenerated[1] == GeneratedCodeBaseType.Variable) &&
-		(rightGenerated[1] == GeneratedCodeBaseType.Value ||
-			rightGenerated[1] == GeneratedCodeBaseType.Variable)
+		(leftGenerated[1] === GeneratedCodeBaseType.Value ||
+			leftGenerated[1] === GeneratedCodeBaseType.Variable) &&
+		(rightGenerated[1] === GeneratedCodeBaseType.Value ||
+			rightGenerated[1] === GeneratedCodeBaseType.Variable)
 	) {
 		return acceptAst(
 			`function ${identifier}(contextItem) {
@@ -94,12 +94,10 @@ export function emitValueCompare(
 		);
 	}
 
-	let code = `
+	const code = `
 	function ${identifier}(contextItem) {
 		${firstExpr.variables.join('\n')}
 		${secondExpr.variables.join('\n')}
-
-		console.log("COMPARE");
 
 		let atomizedLeft;
 		if (${leftGenerated[0]}.next) {
@@ -114,10 +112,7 @@ export function emitValueCompare(
 			atomizedRight = [${rightGenerated[0]}];
 		}
 
-		console.log(atomizedLeft);
-		console.log(atomizedRight);
-
-		if (atomizedLeft.length == 0 || atomizedRight.length == 0) return [];
+		if (atomizedLeft.length === 0 || atomizedRight.length === 0) return [];
 		
 		return atomizedLeft[0] ${operator} atomizedRight[0];
 	}
