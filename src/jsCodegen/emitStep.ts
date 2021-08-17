@@ -2,7 +2,6 @@ import { NODE_TYPES } from '../domFacade/ConcreteNode';
 import astHelper, { IAST } from '../parsing/astHelper';
 import {
 	acceptAst,
-	CompiledResultType,
 	ContextItemIdentifier,
 	GeneratedCodeBaseType,
 	PartialCompilationResult,
@@ -134,7 +133,9 @@ function emitMultipleNodeAxis(
 	${indexReset}
 	`;
 
-	return acceptAst(axisCode, { type: GeneratedCodeBaseType.Statement }, [`let i${nestLevel} = 0;`]);
+	return acceptAst(axisCode, { type: GeneratedCodeBaseType.Statement }, [
+		`let i${nestLevel} = 0;`,
+	]);
 }
 
 // Emit code for an axis made up of exactly one node, that should only be

@@ -56,15 +56,14 @@ export function getCompiledValueCode(
 		case GeneratedCodeBaseType.Variable:
 			return [identifier, GeneratedCodeBaseType.Variable];
 		case GeneratedCodeBaseType.Function: {
-			const code = `${getCompiledValueCode(
-					`${identifier}(${contextItemName ?? `contextItem`})`,
+			const code = `${
+				getCompiledValueCode(
+					`${identifier}(${contextItemName ? contextItemName : 'contextItem'})`,
 					generatedCodeType.returnType,
 					contextItemName
-				)[0]}`;
-			return [
-				code,
-				generatedCodeType.returnType.type,
-			];
+				)[0]
+			}`;
+			return [code, generatedCodeType.returnType.type];
 		}
 		case GeneratedCodeBaseType.Iterator: {
 			return [identifier, GeneratedCodeBaseType.Iterator];
@@ -74,7 +73,9 @@ export function getCompiledValueCode(
 		case GeneratedCodeBaseType.None:
 			throw new Error('Trying to get value of generated code with type None');
 		default:
-			throw new Error('Unreachable! Trying to get compiled value of unsupported GeneratedCodeType.');
+			throw new Error(
+				'Unreachable! Trying to get compiled value of unsupported GeneratedCodeType.'
+			);
 	}
 }
 

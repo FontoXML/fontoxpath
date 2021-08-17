@@ -40,11 +40,16 @@ function emitPredicates(
 
 		// Prepare condition used to determine if an axis should
 		// return a node.
-		const predicateFunctionCall = `determinePredicateTruthValue(${getCompiledValueCode(
-			predicateFunctionIdentifier,
-			{ type: GeneratedCodeBaseType.Function, returnType: {type: GeneratedCodeBaseType.Value} },
-			`contextItem${nestLevel}`
-		)[0]})`;
+		const predicateFunctionCall = `determinePredicateTruthValue(${
+			getCompiledValueCode(
+				predicateFunctionIdentifier,
+				{
+					type: GeneratedCodeBaseType.Function,
+					returnType: { type: GeneratedCodeBaseType.Value },
+				},
+				`contextItem${nestLevel}`
+			)[0]
+		})`;
 		if (i === 0) {
 			evaluatePredicateConditionCode += predicateFunctionCall;
 		} else {

@@ -1,6 +1,11 @@
 import astHelper, { IAST } from '../parsing/astHelper';
 import escapeJavaScriptString from './escapeJavaScriptString';
-import { acceptAst, FunctionIdentifier, GeneratedCodeBaseType, PartialCompilationResult } from './JavaScriptCompiledXPath';
+import {
+	acceptAst,
+	FunctionIdentifier,
+	GeneratedCodeBaseType,
+	PartialCompilationResult,
+} from './JavaScriptCompiledXPath';
 
 /**
  * Create a JavaScript function that returns the string literal.

@@ -23,7 +23,7 @@ function emitEvaluationToNodes(
 	const [valueCode, valueCodeType] = getCompiledValueCode(identifier, generatedCodeType);
 	if (valueCodeType !== GeneratedCodeBaseType.Iterator) {
 		// throw new Error('Trying access generated code as an iterator while this is not the case.');
-		return acceptAst(`return [];`, {type: GeneratedCodeBaseType.Statement});
+		return acceptAst(`return [];`, { type: GeneratedCodeBaseType.Statement });
 	}
 
 	return acceptAst(
@@ -34,7 +34,7 @@ function emitEvaluationToNodes(
 	}
 	return nodes;
 	`,
-	{ type: GeneratedCodeBaseType.Statement }
+		{ type: GeneratedCodeBaseType.Statement }
 	);
 }
 
@@ -44,8 +44,10 @@ function emitEvaluationToBoolean(
 	generatedCodeType: GeneratedCodeType
 ): PartiallyCompiledAstAccepted {
 	return acceptAst(
-		`return determinePredicateTruthValue(${getCompiledValueCode(identifier, generatedCodeType)[0]});`,
-	{ type: GeneratedCodeBaseType.Statement }
+		`return determinePredicateTruthValue(${
+			getCompiledValueCode(identifier, generatedCodeType)[0]
+		});`,
+		{ type: GeneratedCodeBaseType.Statement }
 	);
 }
 
@@ -58,7 +60,7 @@ function emitEvaluationToString(
 		`
 	return ${getCompiledValueCode(identifier, generatedCodeType)[0]};
 	`,
-	{ type: GeneratedCodeBaseType.Statement }
+		{ type: GeneratedCodeBaseType.Statement }
 	);
 }
 
@@ -177,7 +179,7 @@ function compileAstToJavaScript(
 	if (returnTypeConversionCode.isAstAccepted === false) {
 		return returnTypeConversionCode;
 	}
-	
+
 	const code = emittedVariables + compiledBaseExpr.code + returnTypeConversionCode.code;
 
 	const requiresContext = checkForContextItemInExpression(xPathAst);

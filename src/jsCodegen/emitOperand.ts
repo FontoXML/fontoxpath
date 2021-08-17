@@ -51,10 +51,9 @@ export function emitOperand(
 	}
 	if (targetType === ValueType.XSBOOLEAN) {
 		return acceptAst(
-			`determinePredicateTruthValue(${getCompiledValueCode(
-				baseExprIdentifier,
-				baseExpr.generatedCodeType
-			)[0]})`,
+			`determinePredicateTruthValue(${
+				getCompiledValueCode(baseExprIdentifier, baseExpr.generatedCodeType)[0]
+			})`,
 			{ type: GeneratedCodeBaseType.Value },
 			[baseExpr.code]
 		);

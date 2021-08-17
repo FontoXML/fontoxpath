@@ -107,7 +107,9 @@ export function emitValueCompare(
 		}
 		let atomizedRight;
 		if (${rightGenerated[0]}.next) {
-			atomizedRight = atomize({value: ${rightGenerated[0]}}, {domFacade}).getAllValues().map(x => x.value);
+			atomizedRight = atomize({value: ${
+				rightGenerated[0]
+			}}, {domFacade}).getAllValues().map(x => x.value);
 		} else {
 			atomizedRight = [${rightGenerated[0]}];
 		}
