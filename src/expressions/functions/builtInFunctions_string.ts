@@ -353,12 +353,7 @@ const fnTokenize: FunctionDefinitionType = (
 	const inputString: string = input.first().value;
 	const patternString: string = pattern.first().value;
 
-	let regex;
-	try {
-		regex = new RegExp(patternString);
-	} catch (e) {
-		throw new Error(`FORX0002: ${e}`);
-	}
+	const regex = compileJSRegex(patternString);
 
 	return sequenceFactory.create(
 		inputString
@@ -579,22 +574,44 @@ const fnMatches: FunctionDefinitionType = (
 	patternSequence: ISequence
 ) => {
 	return zipSingleton([inputSequence, patternSequence], ([inputValue, patternValue]) => {
-		const input = inputValue ? inputValue.value : '';
-		const pattern = patternValue.value;
+		const input: string = inputValue ? inputValue.value : '';
+		const pattern: string = patternValue.value;
 		let compiledPattern = cachedPatterns.get(pattern);
 		if (!compiledPattern) {
 			try {
-				compiledPattern = compile(patternValue.value, { language: 'xpath' });
-				cachedPatterns.set(pattern, compiledPattern);
+				compiledPattern = compile(pattern, { language: 'xpath' });
 			} catch (error) {
-				throw new Error('FORX0002: ' + error);
+				throw new Error(`FORX0002: ${error}`);
 			}
+			cachedPatterns.set(pattern, compiledPattern);
 		}
 		return compiledPattern(input)
 			? sequenceFactory.singletonTrueSequence()
 			: sequenceFactory.singletonFalseSequence();
 	});
 };
+
+const compiledRegexes = new Map<string, RegExp>();
+function compileJSRegex(pattern: string): RegExp {
+	if (compiledRegexes.has(pattern)) {
+		return compiledRegexes.get(pattern);
+	}
+	let regex;
+	try {
+		regex = new RegExp(pattern, 'g');
+	} catch (error) {
+		throw new Error(`FORX0002: ${error}`);
+	}
+
+	// Only do this check once per regex
+	if (regex.test('')) {
+		throw new Error(`FORX0003: the pattern ${pattern} matches the zero length string`);
+	}
+
+	compiledRegexes.set(pattern, regex);
+
+	return regex;
+}
 
 const fnReplace: FunctionDefinitionType = (
 	_dynamicContext,
@@ -604,19 +621,17 @@ const fnReplace: FunctionDefinitionType = (
 	patternSequence: ISequence,
 	replacementSequence: ISequence
 ) => {
-	return zipSingleton([inputSequence, patternSequence, replacementSequence], ([inputValue, patternValue, replacementValue]) => {
-		const input = inputValue ? inputValue.value : '';
-		const pattern = patternValue.value;
-		const replacement = replacementValue.value;
-		let regex;
-		try {
-			regex = new RegExp(pattern, 'g');
-		} catch (e) {
-			throw new Error(`FORX0002: ${e}`);
+	return zipSingleton(
+		[inputSequence, patternSequence, replacementSequence],
+		([inputValue, patternValue, replacementValue]) => {
+			const input = inputValue ? inputValue.value : '';
+			const pattern = patternValue.value;
+			const replacement = replacementValue.value;
+			const regex = compileJSRegex(pattern);
+			const result = input.replace(regex, replacement);
+			return sequenceFactory.singleton(createAtomicValue(result, ValueType.XSSTRING));
 		}
-		const result = input.replace(regex, replacement);
-		return sequenceFactory.singleton(createAtomicValue(result, ValueType.XSSTRING))
-	});
+	);
 };
 
 const declarations: BuiltinDeclarationType[] = [
