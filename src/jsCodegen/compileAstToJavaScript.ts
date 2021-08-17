@@ -178,8 +178,6 @@ function compileAstToJavaScript(
 		return returnTypeConversionCode;
 	}
 	
-	console.log(returnTypeConversionCode.code);
-
 	const code = emittedVariables + compiledBaseExpr.code + returnTypeConversionCode.code;
 
 	const requiresContext = checkForContextItemInExpression(xPathAst);

@@ -10,9 +10,9 @@ export enum CompiledResultType {
 
 export type PartiallyCompiledAstAccepted = {
 	code: string;
-	isAstAccepted: true;
 	// What kind of code was generated.
 	generatedCodeType: GeneratedCodeType;
+	isAstAccepted: true;
 	// Contains variable (and function) declarations for the upper compiled
 	// scope.
 	variables?: string[];
