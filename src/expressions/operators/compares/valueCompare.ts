@@ -1,5 +1,5 @@
 import ISequence from '../../../expressions/dataTypes/ISequence';
-import { ValueType, valueTypeToString } from '../../../expressions/dataTypes/Value';
+import Value, { ValueType, valueTypeToString } from '../../../expressions/dataTypes/Value';
 import AtomicValue from '../../dataTypes/AtomicValue';
 import castToType from '../../dataTypes/castToType';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
@@ -80,9 +80,14 @@ function generateCompareFunction(
 		return isSubtypeOf(typeA, type) && isSubtypeOf(typeB, type);
 	}
 
+	function areBothSubtypeOfOne(types: ValueType[]) {
+		return types.filter(x => isSubtypeOf(typeA, x)).length > 0 &&
+		types.filter(x => isSubtypeOf(typeB, x)).length > 0;
+	}
+
 	if (
 		areBothSubtypeOf(ValueType.XSBOOLEAN) ||
-		areBothSubtypeOf(ValueType.XSSTRING) ||
+		areBothSubtypeOfOne([ValueType.XSSTRING, ValueType.ATTRIBUTE]) ||
 		areBothSubtypeOf(ValueType.XSNUMERIC) ||
 		areBothSubtypeOf(ValueType.XSANYURI) ||
 		areBothSubtypeOf(ValueType.XSHEXBINARY) ||

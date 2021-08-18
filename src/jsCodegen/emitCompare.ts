@@ -1,4 +1,4 @@
-import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
+import { SequenceMultiplicity, SequenceType, ValueType, valueTypeToString } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { CodeGenContext } from './CodeGenContext';
 import { emitOperand } from './emitOperand';
@@ -44,9 +44,9 @@ export function emitValueCompare(
 		return rejectAst('Left or right type of compare are not found, annotation failed.');
 	}
 
-	const supportedTypes = [ValueType.XSSTRING, ValueType.NODE];
+	const supportedTypes = [ValueType.ATTRIBUTE, ValueType.XSSTRING, ValueType.NODE];
 	if (!supportedTypes.includes(leftType.type) || !supportedTypes.includes(rightType.type)) {
-		return rejectAst('Unsupported types in compare');
+		return rejectAst(`Unsupported types in compare: [${valueTypeToString(leftType.type)}, ${valueTypeToString(rightType.type)}]`);
 	}
 
 	if (!firstExpr.isAstAccepted) {
