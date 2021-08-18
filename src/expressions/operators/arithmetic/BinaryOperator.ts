@@ -127,7 +127,7 @@ export function generateBinaryOperatorType(
 		ValueType.NODE,
 		ValueType.ITEM,
 		ValueType.XSANYATOMICTYPE,
-		ValueType.ATTRIBUTE
+		ValueType.ATTRIBUTE,
 	];
 
 	if (

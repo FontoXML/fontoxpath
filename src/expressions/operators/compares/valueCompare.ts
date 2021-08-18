@@ -81,8 +81,10 @@ function generateCompareFunction(
 	}
 
 	function areBothSubtypeOfOne(types: ValueType[]) {
-		return types.filter(x => isSubtypeOf(typeA, x)).length > 0 &&
-		types.filter(x => isSubtypeOf(typeB, x)).length > 0;
+		return (
+			types.filter((x) => isSubtypeOf(typeA, x)).length > 0 &&
+			types.filter((x) => isSubtypeOf(typeB, x)).length > 0
+		);
 	}
 
 	if (

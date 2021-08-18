@@ -29,6 +29,36 @@ export function annotatePathExpr(ast: IAST): SequenceType {
 	return retType;
 }
 
+function annotateXPathAxis(axis: string): SequenceType {
+	switch (axis) {
+		// Forward axis
+		case 'attribute': {
+			return {
+				type: ValueType.ATTRIBUTE,
+				mult: SequenceMultiplicity.ZERO_OR_MORE,
+			};
+		}
+		case 'child':
+		case 'decendant':
+		case 'self':
+		case 'descendant-or-self':
+		case 'following-sibling':
+		case 'following':
+		case 'namespace':
+		// Reverse axis
+		case 'parent':
+		case 'ancestor':
+		case 'preceding-sibling':
+		case 'preceding':
+		case 'ancestor-or-self': {
+			return {
+				type: ValueType.NODE,
+				mult: SequenceMultiplicity.ZERO_OR_MORE,
+			};
+		}
+	}
+}
+
 function annotateStep(step: IAST): SequenceType {
 	let seqType;
 	const item = { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE };
@@ -42,37 +72,8 @@ function annotateStep(step: IAST): SequenceType {
 				seqType = astHelper.getAttribute(astHelper.followPath(substep, ['*']), 'type');
 				break;
 			case 'xpathAxis':
-				switch (substep[1]) {
-					// Forward axis
-					case 'attribute': {
-						seqType = {
-							type: ValueType.ATTRIBUTE,
-							mult: SequenceMultiplicity.ZERO_OR_MORE,
-						};
-						break;
-					}
-					case 'child':
-					case 'decendant':
-					case 'self':
-					case 'descendant-or-self':
-					case 'following-sibling':
-					case 'following':
-					case 'namespace':
-					// Reverse axis
-					case 'parent':
-					case 'ancestor':
-					case 'preceding-sibling':
-					case 'preceding':
-					case 'ancestor-or-self': {
-						seqType = {
-							type: ValueType.NODE,
-							mult: SequenceMultiplicity.ZERO_OR_MORE,
-						};
-						break;
-					}
-				}
+				seqType = annotateXPathAxis(substep[1] as string);
 				break;
-			case 'nameTest':
 			case 'attributeTest':
 			case 'anyElementTest':
 			case 'piTest':
