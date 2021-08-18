@@ -49,10 +49,10 @@ export function emitValueCompare(
 		return rejectAst('Unsupported types in compare');
 	}
 
-	if (!firstExpr.isAstAccepted ) {
+	if (!firstExpr.isAstAccepted) {
 		return firstExpr;
 	}
-	if (!secondExpr.isAstAccepted ) {
+	if (!secondExpr.isAstAccepted) {
 		return secondExpr;
 	}
 

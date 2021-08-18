@@ -48,9 +48,9 @@ export function getCompiledValueCode(
 ): [string, GeneratedCodeType] {
 	switch (generatedCodeType.type) {
 		case GeneratedCodeBaseType.Value:
-			return [identifier, {type: GeneratedCodeBaseType.Value}];
+			return [identifier, { type: GeneratedCodeBaseType.Value }];
 		case GeneratedCodeBaseType.Variable:
-			return [identifier, {type: GeneratedCodeBaseType.Variable}];
+			return [identifier, { type: GeneratedCodeBaseType.Variable }];
 		case GeneratedCodeBaseType.Function: {
 			const code = `${
 				getCompiledValueCode(
@@ -62,7 +62,7 @@ export function getCompiledValueCode(
 			return [code, generatedCodeType.returnType];
 		}
 		case GeneratedCodeBaseType.Iterator: {
-			return [identifier, {type: GeneratedCodeBaseType.Iterator}];
+			return [identifier, { type: GeneratedCodeBaseType.Iterator }];
 		}
 		case GeneratedCodeBaseType.None:
 			throw new Error('Trying to get value of generated code with type None');
