@@ -21,8 +21,7 @@ function emitEvaluationToNodes(
 	generatedCodeType: GeneratedCodeType
 ): PartiallyCompiledAstAccepted {
 	const [valueCode, valueCodeType] = getCompiledValueCode(identifier, generatedCodeType);
-	if (valueCodeType !== GeneratedCodeBaseType.Iterator) {
-		// throw new Error('Trying access generated code as an iterator while this is not the case.');
+	if (valueCodeType.type !== GeneratedCodeBaseType.Iterator) {
 		return acceptAst(`return [];`, { type: GeneratedCodeBaseType.Statement });
 	}
 
@@ -69,7 +68,7 @@ function emitEvaluationToFirstNode(
 	generatedCodeType: GeneratedCodeType
 ): PartiallyCompiledAstAccepted {
 	const [valueCode, valueCodeType] = getCompiledValueCode(identifier, generatedCodeType);
-	if (valueCodeType !== GeneratedCodeBaseType.Iterator) {
+	if (valueCodeType.type !== GeneratedCodeBaseType.Iterator) {
 		throw new Error('Trying access generated code as an iterator while this is not the case.');
 	}
 

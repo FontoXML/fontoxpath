@@ -5,7 +5,6 @@ import { emitOperand } from './emitOperand';
 // import { emitBaseExpr } from './emitBaseExpression';
 import {
 	acceptAst,
-	CompiledResultType,
 	FunctionIdentifier,
 	GeneratedCodeBaseType,
 	getCompiledValueCode,
@@ -50,8 +49,11 @@ export function emitValueCompare(
 		return rejectAst('Unsupported types in compare');
 	}
 
-	if (!firstExpr.isAstAccepted || !secondExpr.isAstAccepted) {
-		return rejectAst("One of the two operands in compare wasn't accepted");
+	if (!firstExpr.isAstAccepted ) {
+		return firstExpr;
+	}
+	if (!secondExpr.isAstAccepted ) {
+		return secondExpr;
 	}
 
 	// Make sure both child expression got annotated
@@ -76,10 +78,10 @@ export function emitValueCompare(
 	const rightGenerated = getCompiledValueCode(secondExpr.code, secondExpr.generatedCodeType);
 
 	if (
-		(leftGenerated[1] === GeneratedCodeBaseType.Value ||
-			leftGenerated[1] === GeneratedCodeBaseType.Variable) &&
-		(rightGenerated[1] === GeneratedCodeBaseType.Value ||
-			rightGenerated[1] === GeneratedCodeBaseType.Variable)
+		(leftGenerated[1].type === GeneratedCodeBaseType.Value ||
+			leftGenerated[1].type === GeneratedCodeBaseType.Variable) &&
+		(rightGenerated[1].type === GeneratedCodeBaseType.Value ||
+			rightGenerated[1].type === GeneratedCodeBaseType.Variable)
 	) {
 		return acceptAst(
 			`function ${identifier}(contextItem) {

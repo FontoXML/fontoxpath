@@ -29,9 +29,6 @@ export enum GeneratedCodeBaseType {
 	Function,
 	// An iterator is returned.
 	Iterator,
-	// A sequence of values has been returned. This isn't used at the
-	// moment but will come in handy when we get to add sequence support.
-	Sequence,
 	// Used in a single case where no code is generated.
 	None,
 }
@@ -42,19 +39,18 @@ export type GeneratedCodeType =
 	| { type: GeneratedCodeBaseType.Statement }
 	| { returnType: GeneratedCodeType; type: GeneratedCodeBaseType.Function }
 	| { type: GeneratedCodeBaseType.Iterator }
-	| { type: GeneratedCodeBaseType.Sequence }
 	| { type: GeneratedCodeBaseType.None };
 
 export function getCompiledValueCode(
 	identifier: string,
 	generatedCodeType: GeneratedCodeType,
 	contextItemName?: string
-): [string, GeneratedCodeBaseType] {
+): [string, GeneratedCodeType] {
 	switch (generatedCodeType.type) {
 		case GeneratedCodeBaseType.Value:
-			return [identifier, GeneratedCodeBaseType.Value];
+			return [identifier, {type: GeneratedCodeBaseType.Value}];
 		case GeneratedCodeBaseType.Variable:
-			return [identifier, GeneratedCodeBaseType.Variable];
+			return [identifier, {type: GeneratedCodeBaseType.Variable}];
 		case GeneratedCodeBaseType.Function: {
 			const code = `${
 				getCompiledValueCode(
@@ -63,13 +59,11 @@ export function getCompiledValueCode(
 					contextItemName
 				)[0]
 			}`;
-			return [code, generatedCodeType.returnType.type];
+			return [code, generatedCodeType.returnType];
 		}
 		case GeneratedCodeBaseType.Iterator: {
-			return [identifier, GeneratedCodeBaseType.Iterator];
+			return [identifier, {type: GeneratedCodeBaseType.Iterator}];
 		}
-		case GeneratedCodeBaseType.Sequence:
-			return [identifier, GeneratedCodeBaseType.Sequence];
 		case GeneratedCodeBaseType.None:
 			throw new Error('Trying to get value of generated code with type None');
 		default:
