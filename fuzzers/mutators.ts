@@ -29,6 +29,28 @@ export function randomLanguage(): string {
 	}
 }
 
+export enum BACKEND {
+	EXPRESSION = 'expression',
+	JS_CODEGEN = 'js-codegen',
+}
+
+/**
+ * Pick a random backend.
+ *
+ * @returns The randomly selected backend.
+ */
+export function randomBackend(): BACKEND {
+	const index = rand(2);
+	switch (index) {
+		case 0:
+			return BACKEND.EXPRESSION;
+		case 1:
+			return BACKEND.JS_CODEGEN;
+		default:
+			throw new Error('Out of bounds');
+	}
+}
+
 const STRING_POOL =
 	'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-[]{}()<>,./?:;"\'|\\!@#$%^&*+=';
 function randomString(len: number): string {

@@ -1,5 +1,11 @@
 import { FuzzCase, IFuzzer } from 'fuzzer';
-import { mutateCharactersInPlace, mutateString, rand, randomLanguage } from 'mutators';
+import {
+	mutateCharactersInPlace,
+	mutateString,
+	rand,
+	randomBackend,
+	randomLanguage,
+} from 'mutators';
 import { sync } from 'slimdom-sax-parser';
 
 /**
@@ -58,6 +64,8 @@ export default class CorpusBasedFuzzer implements IFuzzer {
 		// Select a random language
 		const language = randomLanguage();
 
-		return new FuzzCase(expression, language, this.documentNode);
+		const backend = randomBackend();
+
+		return new FuzzCase(expression, language, backend, this.documentNode);
 	}
 }
