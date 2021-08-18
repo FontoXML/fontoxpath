@@ -322,8 +322,9 @@ function generateCompareFunction(
 
 	if (
 		areBothSubtypeOf(ValueType.XSBOOLEAN) ||
-		areBothSubtypeOfOne([ValueType.XSSTRING, ValueType.ATTRIBUTE]) ||
-		areBothSubtypeOf(ValueType.XSNUMERIC) ||
+		// If something is marked as an attribute its either a string or a number
+		areBothSubtypeOfOne([ValueType.XSSTRING, ValueType.ATTRIBUTE, ValueType.MAP]) ||
+		areBothSubtypeOfOne([ValueType.XSNUMERIC, ValueType.ATTRIBUTE, ValueType.MAP]) ||
 		areBothSubtypeOf(ValueType.XSANYURI) ||
 		areBothSubtypeOf(ValueType.XSHEXBINARY) ||
 		areBothSubtypeOf(ValueType.XSBASE64BINARY) ||
