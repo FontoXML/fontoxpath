@@ -17,6 +17,25 @@ import {
 	rejectAst,
 } from './JavaScriptCompiledXPath';
 
+function getDataFromOperandCode(
+	identifier: string,
+	generatedType: GeneratedCodeBaseType,
+	valueType: ValueType
+): string {
+	let code = identifier;
+	// If the generated code returns an iterator, get the first value
+	if (generatedType === GeneratedCodeBaseType.Iterator) {
+		code = `${code}.next().value`;
+	}
+
+	// If the type is an attribute, get the value
+	if (valueType === ValueType.ATTRIBUTE) {
+		code = `domFacade.getDataFromPointer(${code}.value)`;
+	}
+
+	return code;
+}
+
 /**
  * Generates javascript code for a value compare expression.
  *
@@ -90,24 +109,12 @@ export function emitValueCompare(
 	const leftGenerated = getCompiledValueCode(firstExpr.code, firstExpr.generatedCodeType);
 	const rightGenerated = getCompiledValueCode(secondExpr.code, secondExpr.generatedCodeType);
 
-	let leftCode = leftGenerated[0];
-	let rightCode = rightGenerated[0];
-
-	// If the generated code returns an iterator, get the first value
-	if (leftGenerated[1].type === GeneratedCodeBaseType.Iterator) {
-		leftCode = `${leftCode}.next().value`;
-	}
-	if (rightGenerated[1].type === GeneratedCodeBaseType.Iterator) {
-		rightCode = `${rightCode}.next().value`;
-	}
-
-	// If the type is an attribute, get the value
-	if (leftType.type === ValueType.ATTRIBUTE) {
-		leftCode = `domFacade.getDataFromPointer(${leftCode}.value)`;
-	}
-	if (rightType.type === ValueType.ATTRIBUTE) {
-		rightCode = `domFacade.getDataFromPointer(${rightCode}.value)`;
-	}
+	const leftCode = getDataFromOperandCode(leftGenerated[0], leftGenerated[1].type, leftType.type);
+	const rightCode = getDataFromOperandCode(
+		rightGenerated[0],
+		rightGenerated[1].type,
+		rightType.type
+	);
 
 	return acceptAst(
 		`function ${identifier}(contextItem) {
