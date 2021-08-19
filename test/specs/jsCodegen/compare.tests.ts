@@ -127,7 +127,20 @@ describe('node tests', () => {
 		);
 	});
 
-	it('Compare node contents', () => {
+	it('Compare attribute to string 2 with equal sign', () => {
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen(
+				'/xml/test[@id = "peanut"]',
+				documentNode,
+				null,
+				ReturnType.BOOLEAN,
+				{}
+			),
+			true
+		);
+	});
+
+	it.skip('Compare node contents', () => {
 		chai.assert.equal(
 			evaluateXPathWithJsCodegen(
 				'/xml/test eq "contents"',

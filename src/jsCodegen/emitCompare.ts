@@ -49,7 +49,7 @@ export function emitValueCompare(
 		return rejectAst('Left or right type of compare are not found, annotation failed.');
 	}
 
-	const supportedTypes = [ValueType.ATTRIBUTE, ValueType.XSSTRING, ValueType.NODE];
+	const supportedTypes = [ValueType.ATTRIBUTE, ValueType.XSSTRING];
 	if (!supportedTypes.includes(leftType.type) || !supportedTypes.includes(rightType.type)) {
 		return rejectAst(
 			`Unsupported types in compare: [${valueTypeToString(
@@ -86,55 +86,33 @@ export function emitValueCompare(
 	const leftGenerated = getCompiledValueCode(firstExpr.code, firstExpr.generatedCodeType);
 	const rightGenerated = getCompiledValueCode(secondExpr.code, secondExpr.generatedCodeType);
 
-	if (
-		(leftGenerated[1].type === GeneratedCodeBaseType.Value ||
-			leftGenerated[1].type === GeneratedCodeBaseType.Variable) &&
-		(rightGenerated[1].type === GeneratedCodeBaseType.Value ||
-			rightGenerated[1].type === GeneratedCodeBaseType.Variable)
-	) {
-		return acceptAst(
-			`function ${identifier}(contextItem) {
+	let leftCode = leftGenerated[0];
+	if (leftGenerated[1].type == GeneratedCodeBaseType.Iterator) {
+		leftCode = `${leftCode}.next().value`;
+	}
+	if (leftType.type == ValueType.ATTRIBUTE) {
+		leftCode = `domFacade.getDataFromPointer(${leftCode}.value)`;
+	}
+	let rightCode = rightGenerated[0];
+	if (rightGenerated[1].type == GeneratedCodeBaseType.Iterator) {
+		rightCode = `${rightCode}.next().value`;
+	}
+	if (rightType.type == ValueType.ATTRIBUTE) {
+		rightCode = `domFacade.getDataFromPointer(${rightCode}.value)`;
+	}
+
+	return acceptAst(
+		`function ${identifier}(contextItem) {
 				${firstExpr.variables.join('\n')}
 			 	${secondExpr.variables.join('\n')}
-	 	     	return ${leftGenerated[0]} ${operator} ${rightGenerated[0]};
-			}`,
-			{
-				type: GeneratedCodeBaseType.Function,
-				returnType: { type: GeneratedCodeBaseType.Value },
-			}
-		);
-	}
-
-	const code = `
-	function ${identifier}(contextItem) {
-		${firstExpr.variables.join('\n')}
-		${secondExpr.variables.join('\n')}
-
-		let atomizedLeft;
-		if (${leftGenerated[0]}.next) {
-			atomizedLeft = atomize({value: ${leftGenerated[0]}}, {domFacade}).getAllValues().map(x => x.value);
-		} else {
-			atomizedLeft = [${leftGenerated[0]}];
+			console.log(${leftCode});
+	 	     	return ${leftCode} ${operator} ${rightCode};
+		}`,
+		{
+			type: GeneratedCodeBaseType.Function,
+			returnType: { type: GeneratedCodeBaseType.Value },
 		}
-		let atomizedRight;
-		if (${rightGenerated[0]}.next) {
-			atomizedRight = atomize({value: ${
-				rightGenerated[0]
-			}}, {domFacade}).getAllValues().map(x => x.value);
-		} else {
-			atomizedRight = [${rightGenerated[0]}];
-		}
-
-		if (atomizedLeft.length === 0 || atomizedRight.length === 0) return [];
-		
-		return atomizedLeft[0] ${operator} atomizedRight[0];
-	}
-	`;
-
-	return acceptAst(code, {
-		type: GeneratedCodeBaseType.Function,
-		returnType: { type: GeneratedCodeBaseType.Value },
-	});
+	);
 }
 
 /**
