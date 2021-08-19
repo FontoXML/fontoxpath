@@ -45,10 +45,12 @@ export function emitValueCompare(
 		'type'
 	);
 
+	// If we don't have the types of both operands, we cannot generate the correct code
 	if (!leftType || !rightType) {
 		return rejectAst('Left or right type of compare are not found, annotation failed.');
 	}
 
+	// Check if both operands are supported
 	const supportedTypes = [ValueType.ATTRIBUTE, ValueType.XSSTRING];
 	if (!supportedTypes.includes(leftType.type) || !supportedTypes.includes(rightType.type)) {
 		return rejectAst(
@@ -58,6 +60,7 @@ export function emitValueCompare(
 		);
 	}
 
+	// If one of the expressions didn't get accepted, return
 	if (!firstExpr.isAstAccepted) {
 		return firstExpr;
 	}
@@ -83,21 +86,26 @@ export function emitValueCompare(
 	// Get the correct operator
 	const operator = compareOperators[compareType];
 
+	// Generate the code to get the value from both operands
 	const leftGenerated = getCompiledValueCode(firstExpr.code, firstExpr.generatedCodeType);
 	const rightGenerated = getCompiledValueCode(secondExpr.code, secondExpr.generatedCodeType);
 
 	let leftCode = leftGenerated[0];
-	if (leftGenerated[1].type == GeneratedCodeBaseType.Iterator) {
+	let rightCode = rightGenerated[0];
+
+	// If the generated code returns an iterator, get the first value
+	if (leftGenerated[1].type === GeneratedCodeBaseType.Iterator) {
 		leftCode = `${leftCode}.next().value`;
 	}
-	if (leftType.type == ValueType.ATTRIBUTE) {
-		leftCode = `domFacade.getDataFromPointer(${leftCode}.value)`;
-	}
-	let rightCode = rightGenerated[0];
-	if (rightGenerated[1].type == GeneratedCodeBaseType.Iterator) {
+	if (rightGenerated[1].type === GeneratedCodeBaseType.Iterator) {
 		rightCode = `${rightCode}.next().value`;
 	}
-	if (rightType.type == ValueType.ATTRIBUTE) {
+
+	// If the type is an attribute, get the value
+	if (leftType.type === ValueType.ATTRIBUTE) {
+		leftCode = `domFacade.getDataFromPointer(${leftCode}.value)`;
+	}
+	if (rightType.type === ValueType.ATTRIBUTE) {
 		rightCode = `domFacade.getDataFromPointer(${rightCode}.value)`;
 	}
 
@@ -105,7 +113,6 @@ export function emitValueCompare(
 		`function ${identifier}(contextItem) {
 				${firstExpr.variables.join('\n')}
 			 	${secondExpr.variables.join('\n')}
-			console.log(${leftCode});
 	 	     	return ${leftCode} ${operator} ${rightCode};
 		}`,
 		{
