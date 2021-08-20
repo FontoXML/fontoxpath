@@ -1,4 +1,5 @@
 import * as fontoxpath from '../src/index';
+import * as prettier from 'prettier';
 
 const allowXQuery = document.getElementById('allowXQuery') as HTMLInputElement;
 const allowXQueryUpdateFacility = document.getElementById(
@@ -234,7 +235,10 @@ async function runXPathWithJsCodegen(xpath: string, asXQuery: boolean, annotateA
 	);
 
 	if (compiledXPathResult.isAstAccepted === true) {
-		jsCodegenOutput.innerText = compiledXPathResult.code;
+		jsCodegenOutput.innerText = (window as any).js_beautify(compiledXPathResult.code, {
+			wrap_line_length: 80,
+		});
+		(window as any).hljs.highlightBlock(jsCodegenOutput);
 		// tslint:disable-next-line
 		const evalFunction = new Function(compiledXPathResult.code) as () => any;
 		const result = fontoxpath.executeJavaScriptCompiledXPath(evalFunction, xmlDoc);
@@ -299,6 +303,8 @@ async function rerunXPath() {
 		(window as any).hljs.highlightBlock(resultText);
 		(window as any).hljs.highlightBlock(updateResult);
 	} catch (err) {
+		// tslint:disable-next-line
+		console.log(err);
 		let errorMessage = err.message;
 		if (err.location) {
 			const start = err.location.start.offset;
