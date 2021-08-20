@@ -1,7 +1,12 @@
 import benchmarkRunner from '@fontoxml/fonto-benchmark-runner';
 import { Document, Node } from 'slimdom';
 import * as slimdomSaxParser from 'slimdom-sax-parser';
-import { evaluateXPathToBoolean, evaluateXPathToNodes, ReturnType } from '../src/index';
+import {
+	evaluateXPathToBoolean,
+	evaluateXPathToNodes,
+	ReturnType,
+	evaluateXPathToFirstNode,
+} from '../src/index';
 import jsonMlMapper from '../test/helpers/jsonMlMapper';
 import evaluateXPathWithJsCodegen from '../test/specs/jsCodegen/evaluateXPathWithJsCodegen';
 import loadFile from './utils/loadFile';
@@ -158,6 +163,50 @@ benchmarkRunner.compareBenchmarks(
 				null,
 				ReturnType.BOOLEAN
 			);
+		},
+	}
+);
+
+const compareWithSelf = 'self::p[@class="peanut"]';
+benchmarkRunner.compareBenchmarks(
+	`evaluateXPathToFirstNode => ${compareWithSelf}`,
+	async () => {
+		document = new Document();
+		jsonMlMapper.parse(['xml', ['test', { class: 'peanut' }, 'contents']], document);
+	},
+	undefined,
+	{
+		name: 'Expression Backend',
+		test: () => {
+			evaluateXPathToBoolean(compareWithSelf, document);
+		},
+	},
+	{
+		name: 'JS Codegen Backend',
+		test: () => {
+			evaluateXPathWithJsCodegen(compareWithSelf, document, null, ReturnType.BOOLEAN);
+		},
+	}
+);
+
+const compareWithAttribute = '/xml/test[@id="peanut"]';
+benchmarkRunner.compareBenchmarks(
+	`evaluateXPathToFirstNode => ${compareWithAttribute}`,
+	async () => {
+		document = new Document();
+		jsonMlMapper.parse(['xml', ['test', { id: 'peanut' }, 'contents']], document);
+	},
+	undefined,
+	{
+		name: 'Expression Backend',
+		test: () => {
+			evaluateXPathToFirstNode(compareWithAttribute, document);
+		},
+	},
+	{
+		name: 'JS Codegen Backend',
+		test: () => {
+			evaluateXPathWithJsCodegen(compareWithAttribute, document, null, ReturnType.FIRST_NODE);
 		},
 	}
 );
