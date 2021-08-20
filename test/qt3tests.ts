@@ -877,8 +877,8 @@ describe('qt3 test set', () => {
 	const annotateAst = process.argv.includes('--annotate');
 	const reportJSCodeGen = process.argv.includes('--reportcodegencases');
 	const forceJSCodeGen = process.argv.includes('--forcecodegen');
-	const succesfullJSCodegenCases: string[] = [];
-	const unsuccesfullJSCodegenCases: string[] = [];
+	const successfulJSCodegenCases: string[] = [];
+	const unsuccessfulJSCodegenCases: string[] = [];
 	if (annotateAst) {
 		// tslint:disable-next-line: no-console
 		console.log('Running tests using annotation');
@@ -1013,9 +1013,9 @@ describe('qt3 test set', () => {
 								this
 							);
 							if (compiled && compiled.isAstAccepted) {
-								succesfullJSCodegenCases.push(getTestName(testCase));
+								successfulJSCodegenCases.push(getTestName(testCase));
 							} else if (compiled) {
-								unsuccesfullJSCodegenCases.push(
+								unsuccessfulJSCodegenCases.push(
 									getTestName(testCase) + ' ' + (compiled as IAstRejected).reason
 								);
 								if (forceJSCodeGen) {
@@ -1057,17 +1057,17 @@ describe('qt3 test set', () => {
 		console.log(`Writing a log of ${expressionBackendLog.length}`);
 		testFs.writeFileSync('unrunnableTestCases.csv', expressionBackendLog.join('\n'));
 		if (reportJSCodeGen) {
-			let report = 'succesFullCases: \n\n';
-			report += succesfullJSCodegenCases.join('\n');
-			report += '\n\nunsuccesFullCases: \n\n';
-			report += unsuccesfullJSCodegenCases.join('\n');
+			let report = 'successFulCases: \n\n';
+			report += successfulJSCodegenCases.join('\n');
+			report += '\n\nunsuccessFulCases: \n\n';
+			report += unsuccessfulJSCodegenCases.join('\n');
 
 			testFs.writeFileSync('jsCodeGenReport.csv', report);
 			// tslint:disable-next-line: no-console
 			console.log(
-				unsuccesfullJSCodegenCases.length + succesfullJSCodegenCases.length,
+				unsuccessfulJSCodegenCases.length + successfulJSCodegenCases.length,
 				' tests have been run involving jscodegen and ',
-				succesfullJSCodegenCases.length,
+				successfulJSCodegenCases.length,
 				' tests have been succesfully compiled and executed with the JavaScript code generation'
 			);
 		}
