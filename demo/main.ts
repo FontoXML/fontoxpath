@@ -236,7 +236,11 @@ async function runXPathWithJsCodegen(xpath: string, asXQuery: boolean, annotateA
 
 	if (compiledXPathResult.isAstAccepted === true) {
 		jsCodegenOutput.innerText = (window as any).js_beautify(compiledXPathResult.code, {
-			wrap_line_length: 80,
+			// indent_char: '﷽',
+			wrap_line_length: 160,
+			indent_size: 2,
+			unindent_chained_methods: true,
+			keep_array_indentation: false,
 		});
 		(window as any).hljs.highlightBlock(jsCodegenOutput);
 		// tslint:disable-next-line
