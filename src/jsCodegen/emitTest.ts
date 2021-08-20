@@ -24,7 +24,7 @@ export const tests = Object.values(testAstNodes);
 // text() matches any text node.
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-TextTest
 function emitTextTest(_ast: IAST, identifier: ContextItemIdentifier): PartialCompilationResult {
-	return acceptAst(`${identifier}.nodeType === ${NODE_TYPES.TEXT_NODE}`, {
+	return acceptAst(`${identifier}.nodeType === /*TEXT_NODE*/ ${NODE_TYPES.TEXT_NODE}`, {
 		type: GeneratedCodeBaseType.Value,
 	});
 }
@@ -47,7 +47,9 @@ function emitNameTestFromQName(
 	resolveNamespaceURI(qName, staticContext);
 	const { prefix, namespaceURI, localName } = qName;
 
-	const isElementOrAttributeCode = `${identifier}.nodeType && (${identifier}.nodeType === ${NODE_TYPES.ELEMENT_NODE} || ${identifier}.nodeType === ${NODE_TYPES.ATTRIBUTE_NODE})`;
+	const isElementOrAttributeCode = `${identifier}.nodeType 
+		&& (${identifier}.nodeType === /*ELEMENT_NODE*/ ${NODE_TYPES.ELEMENT_NODE} 
+		|| ${identifier}.nodeType === /*ATTRIBUTE_NODE*/ ${NODE_TYPES.ATTRIBUTE_NODE})`;
 
 	// Simple cases.
 	if (prefix === '*') {
@@ -71,7 +73,7 @@ function emitNameTestFromQName(
 			  )} && `
 			: '';
 
-	const isElementConditionCode = `${identifier}.nodeType && ${identifier}.nodeType === ${NODE_TYPES.ELEMENT_NODE}`;
+	const isElementConditionCode = `${identifier}.nodeType && ${identifier}.nodeType === /*ELEMENT_NODE*/ ${NODE_TYPES.ELEMENT_NODE}`;
 	const resolveNamespaceURICode =
 		prefix === ''
 			? `(${isElementConditionCode} ? ${escapeJavaScriptString(namespaceURI)} : null)`
@@ -92,7 +94,7 @@ function emitElementTest(
 ): PartialCompilationResult {
 	const elementName = astHelper.getFirstChild(ast, 'elementName');
 	const star = elementName && astHelper.getFirstChild(elementName, 'star');
-	const isElementCode = `${identifier}.nodeType === ${NODE_TYPES.ELEMENT_NODE}`;
+	const isElementCode = `${identifier}.nodeType === /*ELEMENT_NODE*/ ${NODE_TYPES.ELEMENT_NODE}`;
 
 	if (elementName === null || star) {
 		return acceptAst(isElementCode, { type: GeneratedCodeBaseType.Value });

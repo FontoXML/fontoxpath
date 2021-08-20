@@ -5,13 +5,13 @@ import emitStep from './emitStep';
 import emitTest, { tests } from './emitTest';
 import {
 	acceptAst,
-	CompiledResultType,
 	FunctionIdentifier,
 	GeneratedCodeBaseType,
 	getCompiledValueCode,
 	PartialCompilationResult,
 	rejectAst,
 } from './JavaScriptCompiledXPath';
+import { determinePredicateTruthValue } from './runtimeLib';
 
 /**
  * Determines for every path step if it should emit a node or not.
@@ -38,34 +38,36 @@ function emitPredicates(
 		const predicate = children[i];
 		const predicateFunctionIdentifier = `step${nestLevel}_predicate${i}`;
 
-		// Prepare condition used to determine if an axis should
-		// return a node.
-		const predicateFunctionCall = `determinePredicateTruthValue(${
-			getCompiledValueCode(
-				predicateFunctionIdentifier,
-				{
-					type: GeneratedCodeBaseType.Function,
-					returnType: { type: GeneratedCodeBaseType.Value },
-				},
-				`contextItem${nestLevel}`
-			)[0]
-		})`;
-		if (i === 0) {
-			evaluatePredicateConditionCode += predicateFunctionCall;
-		} else {
-			evaluatePredicateConditionCode = `${evaluatePredicateConditionCode} && ${predicateFunctionCall}`;
-		}
-
 		const compiledPredicate = staticContext.emitBaseExpr(
 			predicate,
 			predicateFunctionIdentifier,
 			staticContext
 		);
-		if (compiledPredicate.isAstAccepted) {
-			functionDeclarations.push(compiledPredicate.code);
-		} else {
+
+		if (!compiledPredicate.isAstAccepted) {
 			return compiledPredicate;
 		}
+
+		// Prepare condition used to determine if an axis should
+		// return a node.
+		const predicateFunctionCall = determinePredicateTruthValue(
+			predicateFunctionIdentifier,
+			'',
+			compiledPredicate.generatedCodeType,
+			`contextItem${nestLevel}`
+		);
+
+		if (!predicateFunctionCall.isAstAccepted) {
+			return predicateFunctionCall;
+		}
+		
+		if (i === 0) {
+			evaluatePredicateConditionCode += predicateFunctionCall.code;
+		} else {
+			evaluatePredicateConditionCode = `${evaluatePredicateConditionCode} && ${predicateFunctionCall.code}`;
+		}
+
+		functionDeclarations.push(compiledPredicate.code);
 	}
 	return acceptAst(
 		evaluatePredicateConditionCode,
@@ -87,7 +89,7 @@ function emitSteps(stepsAst: IAST[], staticContext: CodeGenContext): PartialComp
 			`
 			if (!hasReturned) {
 				hasReturned = true;
-				return ready(adaptSingleJavaScriptValue(contextItem, domFacade));
+				return ready(contextItem);
 			}
 			`,
 			{ type: GeneratedCodeBaseType.Statement },
@@ -118,8 +120,10 @@ function emitSteps(stepsAst: IAST[], staticContext: CodeGenContext): PartialComp
 			// Only the innermost nested step returns a value.
 			const nestedCode =
 				i === stepsAst.length - 1
-					? `i${nestLevel}++;\nreturn ready(adaptSingleJavaScriptValue(contextItem${nestLevel}, domFacade));`
-					: `${emittedStepsCode}\ni${nestLevel}++;`;
+					? `i${nestLevel}++;
+					   return ready(contextItem${nestLevel});`
+					: `${emittedStepsCode}
+					   i${nestLevel}++;`;
 
 			const emittedTest = emitTest(testAst, `contextItem${nestLevel}`, staticContext);
 			if (!emittedTest.isAstAccepted) {
@@ -177,7 +181,7 @@ export function emitPathExpr(
 	if (isAbsolute) {
 		absoluteCode = `
 		let documentNode = contextItem;
-		while (documentNode.nodeType !== ${NODE_TYPES.DOCUMENT_NODE}) {
+		while (documentNode.nodeType !== /*DOCUMENT_NODE*/${NODE_TYPES.DOCUMENT_NODE}) {
 			documentNode = domFacade.getParentNode(documentNode);
 			if (documentNode === null) {
 				throw new Error('XPDY0050: the root node of the context node is not a document node.');

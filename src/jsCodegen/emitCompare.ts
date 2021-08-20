@@ -30,7 +30,7 @@ function getDataFromOperandCode(
 
 	// If the type is an attribute, get the value
 	if (valueType === ValueType.ATTRIBUTE) {
-		code = `domFacade.getDataFromPointer(${code}.value)`;
+		code = `domFacade.getData(${code})`;
 	}
 
 	return code;

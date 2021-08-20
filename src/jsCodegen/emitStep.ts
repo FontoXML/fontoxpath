@@ -52,7 +52,7 @@ function emitAttributeAxis(
 	// Only element nodes can have attributes.
 	const contextNodesCode = `
 	let ${attributeAxisContextNodesIdentifier}${nestLevel};
-	if (contextItem && contextItem${nestLevel - 1}.nodeType === ${NODE_TYPES.ELEMENT_NODE}) {
+	if (contextItem && contextItem${nestLevel - 1}.nodeType === /*ELEMENT_NODE*/ ${NODE_TYPES.ELEMENT_NODE}) {
 		${attributeAxisContextNodesIdentifier}${nestLevel} =  domFacade.getAllAttributes(contextItem${
 		nestLevel - 1
 	});

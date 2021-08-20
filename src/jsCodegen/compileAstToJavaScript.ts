@@ -11,15 +11,15 @@ import {
 	getCompiledValueCode,
 	JavaScriptCompiledXPathResult,
 	PartialCompilationResult,
-	PartiallyCompiledAstAccepted,
 	rejectAst,
 } from './JavaScriptCompiledXPath';
+import { determinePredicateTruthValue } from './runtimeLib';
 
 // Return all matching nodes.
 function emitEvaluationToNodes(
 	identifier: string,
 	generatedCodeType: GeneratedCodeType
-): PartiallyCompiledAstAccepted {
+): PartialCompilationResult {
 	const [valueCode, valueCodeType] = getCompiledValueCode(identifier, generatedCodeType);
 	if (valueCodeType.type !== GeneratedCodeBaseType.Iterator) {
 		return acceptAst(`return [];`, { type: GeneratedCodeBaseType.Statement });
@@ -29,7 +29,7 @@ function emitEvaluationToNodes(
 		`
 	const nodes = [];
 	for (const node of ${valueCode}) {
-		nodes.push(node.value.node);
+		nodes.push(node);
 	}
 	return nodes;
 	`,
@@ -41,20 +41,22 @@ function emitEvaluationToNodes(
 function emitEvaluationToBoolean(
 	identifier: string,
 	generatedCodeType: GeneratedCodeType
-): PartiallyCompiledAstAccepted {
+): PartialCompilationResult {
+	const generated = determinePredicateTruthValue(identifier, '', generatedCodeType);
+	if (!generated.isAstAccepted) {
+		return generated;
+	}
 	return acceptAst(
-		`return determinePredicateTruthValue(${
-			getCompiledValueCode(identifier, generatedCodeType)[0]
-		});`,
+		`return ${generated.code};`,
 		{ type: GeneratedCodeBaseType.Statement }
 	);
-}
+}	
 
 // Strings can just be returned as is so lets do that
 function emitEvaluationToString(
 	identifier: string,
 	generatedCodeType: GeneratedCodeType
-): PartiallyCompiledAstAccepted {
+): PartialCompilationResult {
 	return acceptAst(
 		`
 	return ${getCompiledValueCode(identifier, generatedCodeType)[0]};
@@ -66,7 +68,7 @@ function emitEvaluationToString(
 function emitEvaluationToFirstNode(
 	identifier: string,
 	generatedCodeType: GeneratedCodeType
-): PartiallyCompiledAstAccepted {
+): PartialCompilationResult {
 	const [valueCode, valueCodeType] = getCompiledValueCode(identifier, generatedCodeType);
 	if (valueCodeType.type !== GeneratedCodeBaseType.Iterator) {
 		throw new Error('Trying access generated code as an iterator while this is not the case.');
@@ -76,7 +78,7 @@ function emitEvaluationToFirstNode(
 		`
 	const firstResult = ${valueCode}.next();
 	if (!firstResult.done) {
-		return firstResult.value.value.node
+		return firstResult.value
 	}
 	return null;
 	`,
@@ -110,7 +112,6 @@ function wrapCompiledCode(code: string, shouldUseContextItem: boolean): string {
 			DONE_TOKEN,
 			ValueType,
 			XPDY0002,
-			adaptSingleJavaScriptValue,
 			determinePredicateTruthValue,
 			isSubtypeOf,
 			ready,
@@ -123,14 +124,14 @@ function wrapCompiledCode(code: string, shouldUseContextItem: boolean): string {
 			throw XPDY0002("Context is needed to evaluate the given path expression.");
 		}
 
-		if (!isSubtypeOf(contextItem.type, ${ValueType.NODE})) {
+		if (!contextItem.nodeType) {
 			throw new Error("Context item must be subtype of node().");
 		}
-
-		contextItem = contextItem.value.node;`;
+		`;
 	}
 
 	finalCode += code + `}`;
+	finalCode += '\n//# sourceURL=generated.js';
 
 	return finalCode;
 }

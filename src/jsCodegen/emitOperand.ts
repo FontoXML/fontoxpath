@@ -10,6 +10,7 @@ import {
 	PartialCompilationResult,
 	rejectAst,
 } from './JavaScriptCompiledXPath';
+import { determinePredicateTruthValue } from './runtimeLib';
 
 export const baseExprAstNodes = {
 	PATH_EXPR: 'pathExpr',
@@ -49,14 +50,9 @@ export function emitOperand(
 	if (!baseExpr.isAstAccepted) {
 		return baseExpr;
 	}
+	
 	if (targetType === ValueType.XSBOOLEAN) {
-		return acceptAst(
-			`determinePredicateTruthValue(${
-				getCompiledValueCode(baseExprIdentifier, baseExpr.generatedCodeType)[0]
-			})`,
-			{ type: GeneratedCodeBaseType.Value },
-			[baseExpr.code]
-		);
+		return determinePredicateTruthValue(baseExprIdentifier, baseExpr.code, baseExpr.generatedCodeType);	
 	}
 	return acceptAst(`${baseExprIdentifier}`, baseExpr.generatedCodeType, [baseExpr.code]);
 }
