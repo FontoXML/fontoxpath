@@ -46,11 +46,8 @@ function emitEvaluationToBoolean(
 	if (!generated.isAstAccepted) {
 		return generated;
 	}
-	return acceptAst(
-		`return ${generated.code};`,
-		{ type: GeneratedCodeBaseType.Statement }
-	);
-}	
+	return acceptAst(`return ${generated.code};`, { type: GeneratedCodeBaseType.Statement });
+}
 
 // Strings can just be returned as is so lets do that
 function emitEvaluationToString(

@@ -50,9 +50,13 @@ export function emitOperand(
 	if (!baseExpr.isAstAccepted) {
 		return baseExpr;
 	}
-	
+
 	if (targetType === ValueType.XSBOOLEAN) {
-		return determinePredicateTruthValue(baseExprIdentifier, baseExpr.code, baseExpr.generatedCodeType);	
+		return determinePredicateTruthValue(
+			baseExprIdentifier,
+			baseExpr.code,
+			baseExpr.generatedCodeType
+		);
 	}
 	return acceptAst(`${baseExprIdentifier}`, baseExpr.generatedCodeType, [baseExpr.code]);
 }

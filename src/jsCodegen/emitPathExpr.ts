@@ -60,7 +60,7 @@ function emitPredicates(
 		if (!predicateFunctionCall.isAstAccepted) {
 			return predicateFunctionCall;
 		}
-		
+
 		if (i === 0) {
 			evaluatePredicateConditionCode += predicateFunctionCall.code;
 		} else {
