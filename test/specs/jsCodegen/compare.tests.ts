@@ -1,8 +1,7 @@
 import * as chai from 'chai';
-import { Language, ReturnType } from 'fontoxpath';
+import { compileXPathToJavaScript, Language, ReturnType } from 'fontoxpath';
 import * as slimdom from 'slimdom';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
-import escapeJavaScriptString from '../../../src/jsCodegen/escapeJavaScriptString';
 import evaluateXPathWithJsCodegen from './evaluateXPathWithJsCodegen';
 
 describe('string tests', () => {
@@ -137,6 +136,19 @@ describe('node tests', () => {
 				{}
 			),
 			true
+		);
+	});
+
+	it('rejects compares with the lhs being something uncompilable', () => {
+		// Change this test when we do have full function support
+		chai.assert.isFalse(
+			compileXPathToJavaScript('count((1,2,3)) = 3', ReturnType.BOOLEAN, {}).isAstAccepted
+		);
+	});
+	it('rejects compares with the rhs being something uncompilable', () => {
+		// Change this test when we do have full function support
+		chai.assert.isFalse(
+			compileXPathToJavaScript('3 = count((1,2,3))', ReturnType.BOOLEAN, {}).isAstAccepted
 		);
 	});
 
