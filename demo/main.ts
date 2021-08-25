@@ -1,4 +1,5 @@
 import * as fontoxpath from '../src/index';
+import * as prettier from 'prettier';
 
 const allowXQuery = document.getElementById('allowXQuery') as HTMLInputElement;
 const allowXQueryUpdateFacility = document.getElementById(
@@ -6,6 +7,9 @@ const allowXQueryUpdateFacility = document.getElementById(
 ) as HTMLInputElement;
 const useAstAnnotation = document.getElementById('useAstAnnotation') as HTMLInputElement;
 const useJsCodegenBackend = document.getElementById('useJsCodegenBackend') as HTMLInputElement;
+const codegenReturnTypeChoice = document.getElementById(
+	'codegenReturnTypeChoice'
+) as HTMLInputElement;
 const astJsonMl = document.getElementById('astJsonMl');
 const astXml = document.getElementById('astXml');
 const bucketField = document.getElementById('bucketField');
@@ -15,6 +19,7 @@ const updateResult = document.getElementById('updateResult');
 const xmlSource = document.getElementById('xmlSource');
 const xpathField = document.getElementById('xpathField');
 const traceOutput = document.getElementById('traceOutput');
+const jsCodegenOutput = document.getElementById('jsCodegenOutput');
 
 const domParser = new DOMParser();
 
@@ -25,7 +30,9 @@ function setCookie() {
 
 	document.cookie = `xpath-editor-state=${allowXQuery.checked ? 1 : 0}${
 		allowXQueryUpdateFacility.checked ? 1 : 0
-	}${source.length}~${source}${xpath};max-age=${60 * 60 * 24 * 7}`;
+	}${useAstAnnotation.checked ? 1 : 0}${useJsCodegenBackend.checked ? 1 : 0}${
+		source.length
+	}~${source}${xpath};max-age=${60 * 60 * 24 * 7}`;
 }
 
 function serializeAsJsonMl(node: Node): any[] | string {
@@ -201,16 +208,40 @@ async function runNormalXPath(script: string, asXQuery: boolean, annotateAst: bo
 	resultText.innerText = JSON.stringify(raw, jsonXmlReplacer, '  ');
 }
 
-async function runXPathWithJsCodegen(xpath: string, annotateAst: boolean) {
+function getReturnTypeFromChoice(returnTypeString: string): fontoxpath.ReturnType | undefined {
+	switch (returnTypeString) {
+		case 'FIRST_NODE':
+			return fontoxpath.ReturnType.FIRST_NODE;
+		case 'NODES':
+			return fontoxpath.ReturnType.NODES;
+		case 'STRING':
+			return fontoxpath.ReturnType.STRING;
+		case 'BOOLEAN':
+			return fontoxpath.ReturnType.BOOLEAN;
+	}
+	return undefined;
+}
+
+async function runXPathWithJsCodegen(xpath: string, asXQuery: boolean, annotateAst: boolean) {
 	const compiledXPathResult = fontoxpath.compileXPathToJavaScript(
 		xpath,
-		fontoxpath.ReturnType.NODES,
+		getReturnTypeFromChoice(codegenReturnTypeChoice.value),
 		{
+			language: asXQuery
+				? fontoxpath.evaluateXPath.XQUERY_3_1_LANGUAGE
+				: fontoxpath.evaluateXPath.XPATH_3_1_LANGUAGE,
 			annotateAst,
 		}
 	);
 
 	if (compiledXPathResult.isAstAccepted === true) {
+		jsCodegenOutput.innerText = (window as any).js_beautify(compiledXPathResult.code, {
+			wrap_line_length: 160,
+			indent_size: 2,
+			unindent_chained_methods: true,
+			keep_array_indentation: false,
+		});
+		(window as any).hljs.highlightBlock(jsCodegenOutput);
 		// tslint:disable-next-line
 		const evalFunction = new Function(compiledXPathResult.code) as () => any;
 		const result = fontoxpath.executeJavaScriptCompiledXPath(evalFunction, xmlDoc);
@@ -228,6 +259,7 @@ async function rerunXPath() {
 	resultText.innerText = '';
 	updateResult.innerText = '';
 	traceOutput.innerText = '';
+	jsCodegenOutput.innerText = '';
 
 	const xpath = xpathField.innerText;
 
@@ -262,7 +294,7 @@ async function rerunXPath() {
 		(window as any).hljs.highlightBlock(astXml);
 
 		if (useJsCodegenBackend.checked) {
-			await runXPathWithJsCodegen(xpath, annotateAst);
+			await runXPathWithJsCodegen(xpath, allowXQuery.checked, annotateAst);
 		} else {
 			if (allowXQueryUpdateFacility.checked) {
 				await runUpdatingXQuery(xpath, annotateAst);
@@ -274,6 +306,8 @@ async function rerunXPath() {
 		(window as any).hljs.highlightBlock(resultText);
 		(window as any).hljs.highlightBlock(updateResult);
 	} catch (err) {
+		// tslint:disable-next-line
+		console.log(err);
 		let errorMessage = err.message;
 		if (err.location) {
 			const start = err.location.start.offset;
@@ -300,7 +334,22 @@ xmlSource.oninput = (_evt) => {
 	rerunXPath();
 };
 
-xpathField.oninput = (_evt) => {
+xpathField.oninput = (_evt) => xpathReload();
+
+useJsCodegenBackend.onclick = (evt) => {
+	codegenReturnTypeChoice.disabled = !useJsCodegenBackend.checked;
+	xpathReload();
+};
+
+useAstAnnotation.onclick = (_evt) => xpathReload();
+
+codegenReturnTypeChoice.onchange = (_evt) => xpathReload();
+
+allowXQuery.onclick = (_evt) => xpathReload();
+
+allowXQueryUpdateFacility.onclick = (_evt) => xpathReload();
+
+function xpathReload() {
 	setCookie();
 	try {
 		xmlDoc = domParser.parseFromString(xmlSource.innerText, 'text/xml');
@@ -309,7 +358,7 @@ xpathField.oninput = (_evt) => {
 	} catch (_) {
 		// Catch all exceptions
 	}
-};
+}
 
 function loadFromCookie() {
 	const cookie = document.cookie.split(/;\s/g).find((c) => c.startsWith('xpath-editor-state='));
@@ -331,7 +380,11 @@ function loadFromCookie() {
 
 	allowXQueryUpdateFacility.checked = firstPart[1] === '1';
 
-	const sourceLengthString = firstPart.substring(2);
+	useAstAnnotation.checked = firstPart[2] === '1';
+	useJsCodegenBackend.checked = firstPart[3] === '1';
+	codegenReturnTypeChoice.disabled = !useJsCodegenBackend.checked;
+
+	const sourceLengthString = firstPart.substring(4);
 
 	const sourceStart = headerPartLength + firstPart.length + 1;
 	const sourceLength = parseInt(sourceLengthString, 10);

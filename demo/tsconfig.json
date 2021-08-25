@@ -15,7 +15,7 @@
 				"import": "transform",
 				"alias": {
 					"^(fontoxpath)$": "/src",
-					"^(xspattern)$": "/web_modules/xspattern.js"
+					"^(xspattern)$": "/web_modules/xspattern.js",
 				},
 				"after": true,
 				"afterDeclarations": true,

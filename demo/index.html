@@ -7,6 +7,7 @@
 			href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/default.min.css"
 		/>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.0/beautify.js"></script>
 		<script src="./built/demo/main.js" type="module"></script>
 		<style>
 			#xmlFile * {
@@ -34,6 +35,17 @@
 			>
 			<label><input id="useAstAnnotation" type="checkbox" />Use AST annotation</label>
 			<label><input id="useJsCodegenBackend" type="checkbox" />Use JS codegen backend</label>
+			<br />
+			<label>
+				Codegen return type
+				<select id="codegenReturnTypeChoice">
+					<option value="FIRST_NODE">First Node</option>
+					<option value="NODES">Nodes</option>
+					<option value="STRING">String</option>
+					<option value="BOOLEAN">Boolean</option>
+				</select>
+			</label>
+			<br />
 			<pre
 				type="text"
 				contenteditable="true"
@@ -57,6 +69,8 @@
 			<pre id="astXml"></pre>
 			<h4>Trace Output</h4>
 			<pre id="traceOutput"></pre>
+			<h4>JS Codegen Output</h4>
+			<pre id="jsCodegenOutput"></pre>
 		</div>
 	</body>
 </html>

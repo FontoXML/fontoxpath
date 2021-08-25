@@ -3,6 +3,7 @@ import astHelper, { IAST } from '../parsing/astHelper';
 import {
 	acceptAst,
 	ContextItemIdentifier,
+	GeneratedCodeBaseType,
 	PartialCompilationResult,
 	rejectAst,
 } from './JavaScriptCompiledXPath';
@@ -51,7 +52,9 @@ function emitAttributeAxis(
 	// Only element nodes can have attributes.
 	const contextNodesCode = `
 	let ${attributeAxisContextNodesIdentifier}${nestLevel};
-	if (contextItem && contextItem${nestLevel - 1}.nodeType === ${NODE_TYPES.ELEMENT_NODE}) {
+	if (contextItem && contextItem${nestLevel - 1}.nodeType === /*ELEMENT_NODE*/ ${
+		NODE_TYPES.ELEMENT_NODE
+	}) {
 		${attributeAxisContextNodesIdentifier}${nestLevel} =  domFacade.getAllAttributes(contextItem${
 		nestLevel - 1
 	});
@@ -132,7 +135,9 @@ function emitMultipleNodeAxis(
 	${indexReset}
 	`;
 
-	return acceptAst(axisCode, [`let i${nestLevel} = 0;`]);
+	return acceptAst(axisCode, { type: GeneratedCodeBaseType.Statement }, [
+		`let i${nestLevel} = 0;`,
+	]);
 }
 
 // Emit code for an axis made up of exactly one node, that should only be
@@ -157,6 +162,7 @@ function emitSingleNodeAxis(
 			${nestedCode}
 		}
 		`,
+		{ type: GeneratedCodeBaseType.Statement },
 		[`let i${nestLevel} = 0;`]
 	);
 }

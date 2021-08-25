@@ -1,14 +1,16 @@
 import { NODE_TYPES } from '../domFacade/ConcreteNode';
 import QName from '../expressions/dataTypes/valueTypes/QName';
 import astHelper, { IAST } from '../parsing/astHelper';
+import { CodeGenContext } from './CodeGenContext';
 import escapeJavaScriptString from './escapeJavaScriptString';
 import {
 	acceptAst,
+	CompiledResultType,
 	ContextItemIdentifier,
+	GeneratedCodeBaseType,
 	PartialCompilationResult,
 	rejectAst,
 } from './JavaScriptCompiledXPath';
-import { StaticContext } from './StaticContext';
 
 const testAstNodes = {
 	TEXT_TEST: 'textTest',
@@ -22,10 +24,12 @@ export const tests = Object.values(testAstNodes);
 // text() matches any text node.
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-TextTest
 function emitTextTest(_ast: IAST, identifier: ContextItemIdentifier): PartialCompilationResult {
-	return acceptAst(`${identifier}.nodeType === ${NODE_TYPES.TEXT_NODE}`);
+	return acceptAst(`${identifier}.nodeType === /*TEXT_NODE*/ ${NODE_TYPES.TEXT_NODE}`, {
+		type: GeneratedCodeBaseType.Value,
+	});
 }
 
-function resolveNamespaceURI(qName: QName, staticContext: StaticContext) {
+function resolveNamespaceURI(qName: QName, staticContext: CodeGenContext) {
 	// Resolve prefix.
 	if (qName.namespaceURI === null && qName.prefix !== '*') {
 		qName.namespaceURI = staticContext.resolveNamespace(qName.prefix || '') || null;
@@ -38,22 +42,25 @@ function resolveNamespaceURI(qName: QName, staticContext: StaticContext) {
 function emitNameTestFromQName(
 	identifier: ContextItemIdentifier,
 	qName: QName,
-	staticContext: StaticContext
+	staticContext: CodeGenContext
 ): PartialCompilationResult {
 	resolveNamespaceURI(qName, staticContext);
 	const { prefix, namespaceURI, localName } = qName;
 
-	const isElementOrAttributeCode = `${identifier}.nodeType && (${identifier}.nodeType === ${NODE_TYPES.ELEMENT_NODE} || ${identifier}.nodeType === ${NODE_TYPES.ATTRIBUTE_NODE})`;
+	const isElementOrAttributeCode = `${identifier}.nodeType 
+		&& (${identifier}.nodeType === /*ELEMENT_NODE*/ ${NODE_TYPES.ELEMENT_NODE} 
+		|| ${identifier}.nodeType === /*ATTRIBUTE_NODE*/ ${NODE_TYPES.ATTRIBUTE_NODE})`;
 
 	// Simple cases.
 	if (prefix === '*') {
 		if (localName === '*') {
-			return acceptAst(isElementOrAttributeCode);
+			return acceptAst(isElementOrAttributeCode, { type: GeneratedCodeBaseType.Value });
 		}
 		return acceptAst(
 			`${isElementOrAttributeCode} && ${identifier}.localName === ${escapeJavaScriptString(
 				localName
-			)}`
+			)}`,
+			{ type: GeneratedCodeBaseType.Value }
 		);
 	}
 
@@ -66,14 +73,16 @@ function emitNameTestFromQName(
 			  )} && `
 			: '';
 
-	const isElementConditionCode = `${identifier}.nodeType && ${identifier}.nodeType === ${NODE_TYPES.ELEMENT_NODE}`;
+	const isElementConditionCode = `${identifier}.nodeType && ${identifier}.nodeType === /*ELEMENT_NODE*/ ${NODE_TYPES.ELEMENT_NODE}`;
 	const resolveNamespaceURICode =
 		prefix === ''
 			? `(${isElementConditionCode} ? ${escapeJavaScriptString(namespaceURI)} : null)`
 			: escapeJavaScriptString(namespaceURI);
 	const matchesNamespaceCode = `(${identifier}.namespaceURI || null) === (${resolveNamespaceURICode} || null)`;
 
-	return acceptAst(`${matchesLocalNameCode}${matchesNamespaceCode}`);
+	return acceptAst(`${matchesLocalNameCode}${matchesNamespaceCode}`, {
+		type: GeneratedCodeBaseType.Value,
+	});
 }
 
 // element() and element(*) match any single element node, regardless of its name or type annotation.
@@ -81,14 +90,14 @@ function emitNameTestFromQName(
 function emitElementTest(
 	ast: IAST,
 	identifier: ContextItemIdentifier,
-	staticContext: StaticContext
+	staticContext: CodeGenContext
 ): PartialCompilationResult {
 	const elementName = astHelper.getFirstChild(ast, 'elementName');
 	const star = elementName && astHelper.getFirstChild(elementName, 'star');
-	const isElementCode = `${identifier}.nodeType === ${NODE_TYPES.ELEMENT_NODE}`;
+	const isElementCode = `${identifier}.nodeType === /*ELEMENT_NODE*/ ${NODE_TYPES.ELEMENT_NODE}`;
 
 	if (elementName === null || star) {
-		return acceptAst(isElementCode);
+		return acceptAst(isElementCode, { type: GeneratedCodeBaseType.Value });
 	}
 
 	const qName = astHelper.getQName(astHelper.getFirstChild(elementName, 'QName'));
@@ -98,7 +107,7 @@ function emitElementTest(
 
 // A node test that consists only of an EQName or a Wildcard is called a name test.
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-NameTest
-function emitNameTest(ast: IAST, identifier: ContextItemIdentifier, staticContext: StaticContext) {
+function emitNameTest(ast: IAST, identifier: ContextItemIdentifier, staticContext: CodeGenContext) {
 	return emitNameTestFromQName(identifier, astHelper.getQName(ast), staticContext);
 }
 
@@ -108,7 +117,7 @@ function emitNameTest(ast: IAST, identifier: ContextItemIdentifier, staticContex
 function emitWildcard(
 	ast: IAST,
 	identifier: ContextItemIdentifier,
-	staticContext: StaticContext
+	staticContext: CodeGenContext
 ): PartialCompilationResult {
 	if (!astHelper.getFirstChild(ast, 'star')) {
 		return emitNameTestFromQName(
@@ -165,7 +174,7 @@ function emitWildcard(
 export default function emitTest(
 	ast: IAST,
 	identifier: ContextItemIdentifier,
-	staticContext: StaticContext
+	staticContext: CodeGenContext
 ): PartialCompilationResult {
 	const test = ast[0];
 

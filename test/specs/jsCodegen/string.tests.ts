@@ -1,8 +1,8 @@
 import * as chai from 'chai';
-import { ReturnType } from 'fontoxpath';
-import { sanitizeString } from 'fontoxpath/jsCodegen/escapeJavaScriptString';
+import { Language, ReturnType } from 'fontoxpath';
 import * as slimdom from 'slimdom';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
+import escapeJavaScriptString from '../../../src/jsCodegen/escapeJavaScriptString';
 import evaluateXPathWithJsCodegen from './evaluateXPathWithJsCodegen';
 
 describe('string tests', () => {
@@ -34,23 +34,23 @@ describe('string tests', () => {
 	});
 
 	it('test sanitize string', () => {
-		chai.assert.equal(sanitizeString('hello\\'), 'hello\\\\');
+		chai.assert.equal(escapeJavaScriptString('hello\\'), '"hello\\\\"');
 	});
 
 	it('test sanitize string double quote', () => {
-		chai.assert.equal(sanitizeString('\'\''), '\\\'\\\'');
+		chai.assert.equal(escapeJavaScriptString("''"), '"\'\'"');
 	});
 
 	it('test sanitize string triple quote', () => {
-		chai.assert.equal(sanitizeString('\'\'\''), '\\\'\\\'\\\'');
+		chai.assert.equal(escapeJavaScriptString("'''"), "\"'''\"");
 	});
 
 	it('test sanitize string double backslash', () => {
-		chai.assert.equal(sanitizeString('\\\\'), '\\\\\\\\');
+		chai.assert.equal(escapeJavaScriptString('\\\\'), '"\\\\\\\\"');
 	});
 
 	it('test sanitize string triple backslash', () => {
-		chai.assert.equal(sanitizeString('\\\\\\'), '\\\\\\\\\\\\');
+		chai.assert.equal(escapeJavaScriptString('\\\\\\'), '"\\\\\\\\\\\\"');
 	});
 
 	it('test string expression malicous code', () => {
@@ -76,6 +76,15 @@ describe('string tests', () => {
 				{}
 			),
 			'child::element()'
+		);
+	});
+
+	it('test xpath string with character reference', () => {
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen('"&#45;"', documentNode, null, ReturnType.STRING, {
+				language: Language.XQUERY_3_1_LANGUAGE,
+			}),
+			'-'
 		);
 	});
 });

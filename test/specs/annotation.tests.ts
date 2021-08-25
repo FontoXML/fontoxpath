@@ -78,7 +78,7 @@ describe('Annotate unary lookup', () => {
 describe('Path expression test', () => {
 	it('Path expression test', () => {
 		// The same query also triggers the path expression
-		assertValueType('map{"num":1}[?num]', undefined, undefined);
+		assertValueType('map{"num":1}[?num]', ValueType.MAP, undefined);
 	});
 
 	it('Path expression test get annotate as nodes', () => {
@@ -90,10 +90,10 @@ describe('Path expression test', () => {
 	});
 
 	it('Path expression test annotate as nodes with test', () => {
-		assertValueType('//*[@someAttribute]', undefined, undefined);
+		assertValueType('//*[@someAttribute]', ValueType.NODE, undefined);
 	});
 	it('Path expression test annotate as items with predicate', () => {
-		assertValueType('(array {1,2,3,4,5,6,7})?*[. mod 2 = 1]', undefined, undefined);
+		assertValueType('(array {1,2,3,4,5,6,7})?*[. mod 2 = 1]', ValueType.ARRAY, undefined);
 	});
 });
 
@@ -174,7 +174,7 @@ describe('annotateSimpleMapExpr', () => {
 	it('annotate mapExpr contextItem union', () =>
 		assertValueType('$nodeValues!(. union //b)', ValueType.NODE, undefined));
 	it('annotate mapExpr attributes of nodes', () =>
-		assertValueType('/ ! (@first, @middle, @last)', ValueType.NODE, undefined));
+		assertValueType('/ ! (@first, @middle, @last)', ValueType.ATTRIBUTE, undefined));
 	it('annotate mapExpr of strings', () =>
 		assertValueType('(1 to 5)!"*"', ValueType.XSSTRING, undefined));
 });

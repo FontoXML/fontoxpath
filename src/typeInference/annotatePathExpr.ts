@@ -29,6 +29,36 @@ export function annotatePathExpr(ast: IAST): SequenceType {
 	return retType;
 }
 
+function annotateXPathAxis(axis: string): SequenceType {
+	switch (axis) {
+		// Forward axis
+		case 'attribute': {
+			return {
+				type: ValueType.ATTRIBUTE,
+				mult: SequenceMultiplicity.ZERO_OR_MORE,
+			};
+		}
+		case 'child':
+		case 'decendant':
+		case 'self':
+		case 'descendant-or-self':
+		case 'following-sibling':
+		case 'following':
+		case 'namespace':
+		// Reverse axis
+		case 'parent':
+		case 'ancestor':
+		case 'preceding-sibling':
+		case 'preceding':
+		case 'ancestor-or-self': {
+			return {
+				type: ValueType.NODE,
+				mult: SequenceMultiplicity.ZERO_OR_MORE,
+			};
+		}
+	}
+}
+
 function annotateStep(step: IAST): SequenceType {
 	let seqType;
 	const item = { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE };
@@ -36,47 +66,37 @@ function annotateStep(step: IAST): SequenceType {
 		return item;
 	}
 	const children = astHelper.getChildren(step, '*');
-	const lastChild = children[children.length - 1];
-	switch (lastChild[0]) {
-		case 'filterExpr': {
-			seqType = astHelper.getAttribute(astHelper.followPath(lastChild, ['*']), 'type');
-			break;
+	for (const substep of children) {
+		switch (substep[0]) {
+			case 'filterExpr':
+				seqType = astHelper.getAttribute(astHelper.followPath(substep, ['*']), 'type');
+				break;
+			case 'xpathAxis':
+				seqType = annotateXPathAxis(substep[1] as string);
+				break;
+			case 'attributeTest':
+			case 'anyElementTest':
+			case 'piTest':
+			case 'documentTest':
+			case 'elementTest':
+			case 'commentTest':
+			case 'namespaceTest':
+			case 'anyKindTest':
+			case 'textTest':
+			case 'anyFunctionTest':
+			case 'typedFunctionTest':
+			case 'schemaAttributeTest':
+			case 'atomicType':
+			case 'anyItemType':
+			case 'parenthesizedItemType':
+			case 'typedMapTest':
+			case 'typedArrayTest':
+			case 'nameTest':
+			case 'Wildcard':
+			case 'predicate':
+			case 'predicates':
+			case 'lookup':
 		}
-		case 'xpathAxis':
-		case 'attributeTest':
-		case 'anyElementTest':
-		case 'piTest':
-		case 'documentTest':
-		case 'elementTest':
-		case 'commentTest':
-		case 'namespaceTest':
-		case 'anyKindTest':
-		case 'textTest':
-		case 'anyFunctionTest':
-		case 'typedFunctionTest':
-		case 'schemaAttributeTest':
-		case 'atomicType':
-		case 'anyItemType':
-		case 'parenthesizedItemType':
-		case 'typedMapTest':
-		case 'typedArrayTest':
-		case 'nameTest':
-		case 'Wildcard': {
-			seqType = {
-				type: ValueType.NODE,
-				mult: SequenceMultiplicity.ZERO_OR_MORE,
-			};
-			break;
-		}
-
-		case 'predicate':
-		case 'predicates':
-		case 'lookup': {
-			seqType = item;
-			break;
-		}
-		default:
-			return item;
 	}
 
 	if (seqType && seqType.type !== ValueType.ITEM) {

@@ -14,6 +14,12 @@ import {
 	registerXQueryModule,
 	ReturnType,
 } from 'fontoxpath';
+import {
+	acceptAst,
+	IAstRejected,
+	PartialCompilationResult,
+	rejectAst,
+} from 'fontoxpath/jsCodegen/JavaScriptCompiledXPath';
 import { Element, Node, XMLSerializer } from 'slimdom';
 import { slimdom } from 'slimdom-sax-parser';
 import {
@@ -311,33 +317,84 @@ function createAsserterForExpression(baseUrl: string, assertNode, language, anno
  * Contains workarounds for the js-codegen not supporting parts of the asserted
  * queries, such as functions and comparisons.
  */
-function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
+function createAsserterForJsCodegen(
+	baseUrl: string,
+	assertNode,
+	language
+): (
+	xpath,
+	contextNode,
+	variablesInScope,
+	namespaceResolver,
+	that
+) => JavaScriptCompiledXPathResult {
 	const nodesFactory = createNodesFactory(assertNode);
 
 	switch (assertNode.localName) {
 		case 'all-of': {
 			const asserts = evaluateXPathToNodes('*', assertNode, undefined, {
 				annotateAst: false,
+				language,
 			}).map((innerAssertNode) =>
 				createAsserterForJsCodegen(baseUrl, innerAssertNode, language)
 			);
-			return (xpath, contextNode, variablesInScope, namespaceResolver, that) =>
-				asserts.forEach((a) =>
-					a(xpath, contextNode, variablesInScope, namespaceResolver, that)
-				);
+			let isAstAccepted = true;
+			let isTestAstAccepted: JavaScriptCompiledXPathResult;
+			return (
+				xpath,
+				contextNode,
+				variablesInScope,
+				namespaceResolver,
+				that
+			): JavaScriptCompiledXPathResult => {
+				asserts.forEach((a) => {
+					isTestAstAccepted = a(
+						xpath,
+						contextNode,
+						variablesInScope,
+						namespaceResolver,
+						that
+					);
+					if (!isTestAstAccepted.isAstAccepted) {
+						isAstAccepted = false;
+					}
+				});
+				if (isAstAccepted) {
+					return acceptAst(undefined, undefined);
+				} else {
+					return rejectAst((isTestAstAccepted as IAstRejected).reason);
+				}
+			};
 		}
 		case 'any-of': {
 			const asserts = evaluateXPathToNodes('*', assertNode, undefined, {
 				annotateAst: false,
+				language,
 			}).map((innerAssertNode) =>
 				createAsserterForJsCodegen(baseUrl, innerAssertNode, language)
 			);
-			return (xpath, contextNode, variablesInScope, namespaceResolver, that) => {
+			let isAstAccepted = true;
+			return (
+				xpath,
+				contextNode,
+				variablesInScope,
+				namespaceResolver,
+				that
+			): JavaScriptCompiledXPathResult => {
 				const errors = [];
 				chai.assert(
 					asserts.some((a) => {
 						try {
-							a(xpath, contextNode, variablesInScope, namespaceResolver, that);
+							const isTestAstAccepted = a(
+								xpath,
+								contextNode,
+								variablesInScope,
+								namespaceResolver,
+								that
+							);
+							if (!isTestAstAccepted.isAstAccepted) {
+								isAstAccepted = false;
+							}
 						} catch (error) {
 							if (error instanceof TypeError) {
 								// TypeErrors are always errors
@@ -352,6 +409,11 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 						', '
 					)}.`
 				);
+				if (isAstAccepted) {
+					return acceptAst(undefined, undefined);
+				} else {
+					return rejectAst('one of the testcases causes it to fail');
+				}
 			};
 		}
 		case 'error': {
@@ -364,7 +426,7 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 				variablesInScope: object,
 				namespaceResolver: (str: string) => string,
 				that
-			) => {
+			): JavaScriptCompiledXPathResult => {
 				chai.assert.throws(
 					() => {
 						const compiled = compileXPathToJavaScript(xpath, ReturnType.NODES, {
@@ -382,16 +444,28 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 					errorCode === '*' ? /.*/ : new RegExp(errorCode),
 					xpath
 				);
+				try {
+					const compiled = compileXPathToJavaScript(xpath, ReturnType.NODES, {
+						namespaceResolver,
+						language,
+					});
+					return compiled;
+				} catch (e) {
+					that.skip(`Skipped`);
+				}
 			};
 		}
 		case 'assert':
-			return (xpath, contextNode, variablesInScope, namespaceResolver, that) => {
-				that.skip('Skipped: assert is not possible with js-codegen');
-			};
-		case 'assert-true':
-			return (xpath, contextNode, variablesInScope, namespaceResolver, that) => {
+			return (
+				xpath,
+				contextNode,
+				variablesInScope,
+				namespaceResolver,
+				that
+			): JavaScriptCompiledXPathResult => {
 				const compiled = compileXPathToJavaScript(xpath, ReturnType.BOOLEAN, {
 					namespaceResolver,
+					language,
 				});
 				if (compiled.isAstAccepted === true) {
 					// tslint:disable-next-line
@@ -403,15 +477,46 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 						executeJavaScriptCompiledXPath(fn, contextNode),
 						`Expected XPath ${xpath} to resolve to true`
 					);
-				} else {
-					that.skip(`Skipped: ${compiled.reason}`);
 				}
+				return compiled;
+			};
+		case 'assert-true':
+			return (
+				xpath,
+				contextNode,
+				variablesInScope,
+				namespaceResolver,
+				that
+			): JavaScriptCompiledXPathResult => {
+				const compiled = compileXPathToJavaScript(xpath, ReturnType.BOOLEAN, {
+					namespaceResolver,
+					language,
+				});
+				if (compiled.isAstAccepted === true) {
+					// tslint:disable-next-line
+					const fn = new Function(compiled.code) as CompiledXPathFunction<
+						Node,
+						ReturnType.BOOLEAN
+					>;
+					chai.assert.isTrue(
+						executeJavaScriptCompiledXPath(fn, contextNode),
+						`Expected XPath ${xpath} to resolve to true`
+					);
+				}
+				return compiled;
 			};
 		case 'assert-eq': {
 			const equalWith = evaluateXPathToString('.', assertNode, undefined, {
 				annotateAst: false,
+				language,
 			});
-			return (xpath, contextNode, variablesInScope, namespaceResolver, that) => {
+			return (
+				xpath,
+				contextNode,
+				variablesInScope,
+				namespaceResolver,
+				that
+			): JavaScriptCompiledXPathResult => {
 				// Strip away fn:count to make tests possible that would
 				// otherwise be unsupported. Workaround for js-codegen not
 				// supporting functions.
@@ -423,6 +528,7 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 				try {
 					compiled = compileXPathToJavaScript(xpath, ReturnType.NODES, {
 						namespaceResolver,
+						language,
 					});
 				} catch (e) {
 					// Parser error caused by substringing the query earlier.
@@ -430,7 +536,6 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 						that.skip('Skippped: parser error.');
 					}
 				}
-
 				if (compiled.isAstAccepted === true) {
 					// tslint:disable-next-line
 					const fn = new Function(compiled.code) as CompiledXPathFunction<
@@ -442,18 +547,25 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 						parseInt(equalWith, 10),
 						`Expected XPath ${xpath} to resolve to ${equalWith}`
 					);
-				} else {
-					that.skip(`Skipped: ${compiled.reason}`);
 				}
+				return compiled;
 			};
 		}
 		case 'assert-deep-eq': {
 			const equalWith = evaluateXPathToString('.', assertNode, undefined, {
 				annotateAst: false,
+				language,
 			});
-			return (xpath, contextNode, variablesInScope, namespaceResolver, that) => {
+			return (
+				xpath,
+				contextNode,
+				variablesInScope,
+				namespaceResolver,
+				that
+			): JavaScriptCompiledXPathResult => {
 				const compiled = compileXPathToJavaScript(xpath, ReturnType.NODES, {
 					namespaceResolver,
+					language,
 				});
 				if (compiled.isAstAccepted === true) {
 					// tslint:disable-next-line
@@ -471,15 +583,21 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 						}),
 						`Expected XPath ${xpath} to (deep equally) resolve to ${equalWith}`
 					);
-				} else {
-					that.skip(`Skipped: ${compiled.reason}`);
 				}
+				return compiled;
 			};
 		}
 		case 'assert-empty':
-			return (xpath, contextNode, variablesInScope, namespaceResolver, that) => {
+			return (
+				xpath,
+				contextNode,
+				variablesInScope,
+				namespaceResolver,
+				that
+			): JavaScriptCompiledXPathResult => {
 				const compiled = compileXPathToJavaScript(xpath, ReturnType.NODES, {
 					namespaceResolver,
+					language,
 				});
 				if (compiled.isAstAccepted === true) {
 					// tslint:disable-next-line
@@ -492,14 +610,20 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 						0,
 						`Expected XPath ${xpath} to resolve to the empty sequence`
 					);
-				} else {
-					that.skip(`Skipped: ${compiled.reason}`);
 				}
+				return compiled;
 			};
 		case 'assert-false':
-			return (xpath, contextNode, variablesInScope, namespaceResolver, that) => {
+			return (
+				xpath,
+				contextNode,
+				variablesInScope,
+				namespaceResolver,
+				that
+			): JavaScriptCompiledXPathResult => {
 				const compiled = compileXPathToJavaScript(xpath, ReturnType.BOOLEAN, {
 					namespaceResolver,
+					language,
 				});
 				if (compiled.isAstAccepted === true) {
 					// tslint:disable-next-line
@@ -511,17 +635,24 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 						executeJavaScriptCompiledXPath(fn, contextNode),
 						`Expected XPath ${xpath} to resolve to false`
 					);
-				} else {
-					that.skip(`Skipped: ${compiled.reason}`);
 				}
+				return compiled;
 			};
 		case 'assert-count': {
 			const expectedCount = evaluateXPathToNumber('number(.)', assertNode, undefined, {
 				annotateAst: false,
+				language,
 			});
-			return (xpath, contextNode, variablesInScope, namespaceResolver, that) => {
+			return (
+				xpath,
+				contextNode,
+				variablesInScope,
+				namespaceResolver,
+				that
+			): JavaScriptCompiledXPathResult => {
 				const compiled = compileXPathToJavaScript(xpath, ReturnType.NODES, {
 					namespaceResolver,
+					language,
 				});
 				if (compiled.isAstAccepted === true) {
 					// tslint:disable-next-line
@@ -534,17 +665,39 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 						expectedCount,
 						`Expected ${xpath} to resolve to ${expectedCount}`
 					);
-				} else {
-					that.skip(`Skipped: ${compiled.reason}`);
 				}
+				return compiled;
 			};
 		}
 		case 'assert-type': {
 			const expectedType = evaluateXPathToString('.', assertNode, undefined, {
 				annotateAst: false,
+				language,
 			});
-			return (xpath, contextNode, variablesInScope, namespaceResolver, that) => {
-				that.skip('Skipped: not possible with js-codegen');
+			return (
+				xpath,
+				contextNode,
+				variablesInScope,
+				namespaceResolver,
+				that
+			): JavaScriptCompiledXPathResult => {
+				const compiled = compileXPathToJavaScript(xpath, ReturnType.ANY, {
+					namespaceResolver,
+					language,
+				});
+				if (compiled.isAstAccepted === true) {
+					// tslint:disable-next-line
+					const fn = new Function(compiled.code) as CompiledXPathFunction<
+						Node,
+						ReturnType.ANY
+					>;
+					chai.assert.equal(
+						typeof executeJavaScriptCompiledXPath(fn, contextNode),
+						expectedType,
+						`Expected ${xpath} to resolve to type: ${expectedType}`
+					);
+				}
+				return compiled;
 			};
 		}
 		case 'assert-xml': {
@@ -552,24 +705,34 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 			if (
 				evaluateXPathToBoolean('@file', assertNode, undefined, {
 					annotateAst: false,
+					language,
 				})
 			) {
 				parsedFragment = getFile(
 					evaluateXPathToString('$baseUrl || "/" || @file', assertNode, null, {
 						baseUrl,
 						annotateAst: false,
+						language,
 					})
 				);
 			} else {
 				parsedFragment = parser.parseFromString(
 					`<xml>${evaluateXPathToString('.', assertNode, undefined, {
 						annotateAst: false,
+						language,
 					})}</xml>`
 				).documentElement;
 			}
-			return (xpath, contextNode, variablesInScope, namespaceResolver, that) => {
+			return (
+				xpath,
+				contextNode,
+				variablesInScope,
+				namespaceResolver,
+				that
+			): JavaScriptCompiledXPathResult => {
 				const compiled = compileXPathToJavaScript(xpath, ReturnType.NODES, {
 					namespaceResolver,
+					language,
 				});
 				if (compiled.isAstAccepted === true) {
 					// tslint:disable-next-line
@@ -589,6 +752,7 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 							},
 							{
 								annotateAst: false,
+								language,
 							}
 						),
 						`Expected XPath ${xpath} to resolve to the given XML. Expected ${results
@@ -603,21 +767,43 @@ function createAsserterForJsCodegen(baseUrl: string, assertNode, language) {
 								: parsedFragment.innerHTML
 						}`
 					);
-				} else {
-					that.skip(`Skipped: ${compiled.reason}`);
 				}
+				return compiled;
 			};
 		}
 		case 'assert-string-value': {
 			const expectedString = evaluateXPathToString('.', assertNode, undefined, {
 				annotateAst: false,
+				language,
 			});
-			return (xpath, contextNode, variablesInScope, namespaceResolver, that) => {
-				that.skip('Skipped: assert is not possible with js-codegen');
+			return (
+				xpath,
+				contextNode,
+				variablesInScope,
+				namespaceResolver,
+				that
+			): JavaScriptCompiledXPathResult => {
+				const compiled = compileXPathToJavaScript(xpath, ReturnType.STRING, {
+					namespaceResolver,
+					language,
+				});
+				if (compiled.isAstAccepted === true) {
+					// tslint:disable-next-line
+					const fn = new Function(compiled.code) as CompiledXPathFunction<
+						Node,
+						ReturnType.STRING
+					>;
+					chai.assert.equal(
+						executeJavaScriptCompiledXPath(fn, contextNode),
+						expectedString,
+						`Expected ${xpath} to resolve to ${expectedString}`
+					);
+				}
+				return compiled;
 			};
 		}
 		default:
-			return () => {
+			return (): JavaScriptCompiledXPathResult => {
 				chai.assert.fail(null, null, `Skipped test, it was a ${assertNode.localName}`);
 			};
 	}
@@ -689,11 +875,22 @@ function loadModule(testCase, baseUrl) {
 
 describe('qt3 test set', () => {
 	const annotateAst = process.argv.includes('--annotate');
+	const reportJSCodeGen = process.argv.includes('--reportcodegencases');
+	const forceJSCodeGen = process.argv.includes('--forcecodegen');
+	const successfulJSCodegenCases: string[] = [];
+	const unsuccessfulJSCodegenCases: string[] = [];
 	if (annotateAst) {
 		// tslint:disable-next-line: no-console
 		console.log('Running tests using annotation');
 	}
-
+	if (reportJSCodeGen) {
+		// tslint:disable-next-line: no-console
+		console.log('Reporting the amount of code executed with the code generation');
+	}
+	if (forceJSCodeGen) {
+		// tslint:disable-next-line: no-console
+		console.log('Forcing the tests to run with the codeGen');
+	}
 	const expressionBackendLog = unrunnableTestCases;
 	getAllTestSets().forEach((testSetFileName) => {
 		const testSet = getFile(testSetFileName);
@@ -710,64 +907,71 @@ describe('qt3 test set', () => {
 			testSet
 		);
 
-		describe(`${testName} (expression backend)`, function () {
-			this.timeout(60000);
-			for (const testCase of testCases) {
-				const name = getTestName(testCase);
-				const description = getTestDescription(testSetName, name, testCase);
+		if (!forceJSCodeGen) {
+			describe(`${testName} (expression backend)`, function () {
+				this.timeout(60000);
+				for (const testCase of testCases) {
+					const name = getTestName(testCase);
+					const description = getTestDescription(testSetName, name, testCase);
 
-				if (unrunnableTestCasesByName[name]) {
-					it.skip(`${unrunnableTestCasesByName[name]}. (${description})`);
-					continue;
-				}
+					if (unrunnableTestCasesByName[name]) {
+						it.skip(`${unrunnableTestCasesByName[name]}. (${description})`);
+						continue;
+					}
 
-				try {
-					// tslint:disable-next-line
-					const assertFn = function () {
-						const {
-							baseUrl,
-							contextNode,
-							testQuery,
-							language,
-							namespaceResolver,
-							variablesInScope,
-						} = getArguments(testSetFileName, testCase);
-
-						try {
-							loadModule(testCase, baseUrl);
-
-							const asserter = getExpressionBackendAsserterForTest(
+					try {
+						// tslint:disable-next-line
+						const assertFn = function () {
+							const {
 								baseUrl,
-								testCase,
+								contextNode,
+								testQuery,
 								language,
-								annotateAst
-							);
-							asserter(testQuery, contextNode, variablesInScope, namespaceResolver);
-						} catch (e) {
-							if (e instanceof TypeError) {
+								namespaceResolver,
+								variablesInScope,
+							} = getArguments(testSetFileName, testCase);
+
+							try {
+								loadModule(testCase, baseUrl);
+
+								const asserter = getExpressionBackendAsserterForTest(
+									baseUrl,
+									testCase,
+									language,
+									annotateAst
+								);
+								asserter(
+									testQuery,
+									contextNode,
+									variablesInScope,
+									namespaceResolver
+								);
+							} catch (e) {
+								if (e instanceof TypeError) {
+									throw e;
+								}
+
+								expressionBackendLog.push(
+									`${name},${e.toString().replace(/\n/g, ' ').trim()}`
+								);
+
+								// And rethrow the error
 								throw e;
 							}
+						};
 
-							expressionBackendLog.push(
-								`${name},${e.toString().replace(/\n/g, ' ').trim()}`
-							);
+						assertFn.toString = () =>
+							new slimdom.XMLSerializer().serializeToString(testCase);
 
-							// And rethrow the error
-							throw e;
-						}
-					};
-
-					assertFn.toString = () =>
-						new slimdom.XMLSerializer().serializeToString(testCase);
-
-					it(`${description}`, assertFn).timeout(60000);
-				} catch (e) {
-					// tslint:disable-next-line: no-console
-					console.error(e);
-					continue;
+						it(`${description}`, assertFn).timeout(60000);
+					} catch (e) {
+						// tslint:disable-next-line: no-console
+						console.error(e);
+						continue;
+					}
 				}
-			}
-		});
+			});
+		}
 
 		describe(`${testName} (js-codegen backend)`, function () {
 			this.timeout(60000);
@@ -801,13 +1005,30 @@ describe('qt3 test set', () => {
 								language
 							);
 
-							asserter(
+							const compiled = asserter(
 								testQuery,
 								contextNode,
 								variablesInScope,
 								namespaceResolver,
 								this
 							);
+							if (compiled && compiled.isAstAccepted) {
+								successfulJSCodegenCases.push(getTestName(testCase));
+							} else if (compiled) {
+								unsuccessfulJSCodegenCases.push(
+									getTestName(testCase) + ' ' + (compiled as IAstRejected).reason
+								);
+								if (forceJSCodeGen) {
+									throw new Error(
+										`Failed to convert to jsCodeGen: ${
+											(compiled as IAstRejected).reason
+										}`
+									);
+								}
+								this.skip(`Skipped: ${(compiled as IAstRejected).reason}`);
+							} else {
+								this.skip();
+							}
 						} catch (e) {
 							if (e instanceof TypeError) {
 								throw e;
@@ -835,5 +1056,20 @@ describe('qt3 test set', () => {
 		// tslint:disable-next-line: no-console
 		console.log(`Writing a log of ${expressionBackendLog.length}`);
 		testFs.writeFileSync('unrunnableTestCases.csv', expressionBackendLog.join('\n'));
+		if (reportJSCodeGen) {
+			let report = 'successFulCases: \n\n';
+			report += successfulJSCodegenCases.join('\n');
+			report += '\n\nunsuccessFulCases: \n\n';
+			report += unsuccessfulJSCodegenCases.join('\n');
+
+			testFs.writeFileSync('jsCodeGenReport.csv', report);
+			// tslint:disable-next-line: no-console
+			console.log(
+				unsuccessfulJSCodegenCases.length + successfulJSCodegenCases.length,
+				' tests have been run involving jscodegen and ',
+				successfulJSCodegenCases.length,
+				' tests have been succesfully compiled and executed with the JavaScript code generation'
+			);
+		}
 	});
 });

@@ -1,8 +1,6 @@
 import DomFacade from '../domFacade/DomFacade';
 import ExternalDomFacade from '../domFacade/ExternalDomFacade';
 import IDomFacade from '../domFacade/IDomFacade';
-import { adaptJavaScriptValueToArrayOfXPathValues } from '../expressions/adaptJavaScriptValueToXPathValue';
-import { SequenceMultiplicity, ValueType } from '../expressions/dataTypes/Value';
 import { IReturnTypes, ReturnType } from '../parsing/convertXDMReturnValue';
 import { Node } from '../types/Types';
 import runtimeLib from './runtimeLib';
@@ -47,22 +45,16 @@ const executeJavaScriptCompiledXPath = <TNode extends Node, TReturnType extends 
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null
 ): IReturnTypes<TNode>[TReturnType] => {
-	const wrappedDomFacade: DomFacade = new DomFacade(
-		!domFacade ? new ExternalDomFacade() : domFacade
-	);
+	domFacade = !domFacade ? new ExternalDomFacade() : domFacade;
 
-	const contextArray = adaptJavaScriptValueToArrayOfXPathValues(wrappedDomFacade, contextItem, {
-		type: ValueType.ITEM,
-		mult: SequenceMultiplicity.ZERO_OR_ONE,
-	});
+	// if (!contextItem) {
+	// 	throw XPDY0002('Context is needed to evaluate the given path expression.');
+	// }
+	// if (!contextItem.nodeType) {
+	// 	throw new Error('Context item must be subtype of node().');
+	// }
 
-	contextItem = contextArray[0];
-
-	return compiledXPathFunction()(
-		contextItem,
-		wrappedDomFacade as IInternalDomFacadeUnmangled,
-		runtimeLib
-	);
+	return compiledXPathFunction()(contextItem, domFacade, runtimeLib);
 };
 
 export default executeJavaScriptCompiledXPath;

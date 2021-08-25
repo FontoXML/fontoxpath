@@ -29,56 +29,56 @@ evaluateXPathToString(xpathExpression, contextNode, domFacade, variables, option
 evaluateXPathToStrings(xpathExpression, contextNode, domFacade, variables, options);
 ```
 
-* `xpathExpression` `<String>` The query to evaluate.
-* `contextNode` `<Node>` The node in which context the `xpathExpression` will be evaluated. Defaults
-  to `null`.
-* `domFacade` `<IDomFacade>` An [IDomFacade](src/domFacade/IDomFacade.ts) implementation which will
-  be used for querying the DOM. Defaults to an implementation which uses properties and methods on
-  the `contextNode` as described in the [DOM spec](https://dom.spec.whatwg.org/).
-* `variables` `<Object>` The properties of `variables` are available variables within the
-  `xpathExpression`. Defaults to an empty `Object`. Can only be used to set variables in the global namespace.
-* `returnType` `<number>` Determines the type of the result. Defaults to
-  `evaluateXPath.ANY_TYPE`. Possible values:
-  * `evaluateXPath.ANY_TYPE` Returns the result of the query, can be anything depending on the
-    query. Note that the return type is determined dynamically, not statically: XPaths returning
-    empty sequences will return empty arrays and not null, like one might expect.
-  * `evaluateXPath.NUMBER_TYPE` Resolve to a `number`, like count((1,2,3)) resolves to 3.
-  * `evaluateXPath.STRING_TYPE` Resolve to a `string`, like //someElement[1] resolves to the text
-    content of the first someElement.
-  * `evaluateXPath.BOOLEAN_TYPE` Resolves to a `boolean` true or false, uses the effective boolean
-    value to determine the result. count(1) resolves to true, count(()) resolves to false.
-  * `evaluateXPath.NODES_TYPE` Resolve to all nodes `Node[]` the XPath resolves to. Returns nodes in
-    the order the XPath would. Meaning (//a, //b) resolves to all A nodes, followed by all B
-    nodes. //*[self::a or self::b] resolves to A and B nodes in document order.
-  * `evaluateXPath.FIRST_NODE_TYPE` Resolves to the first `Node` node.NODES_TYPE would have resolved
-    to.
-  * `evaluateXPath.STRINGS_TYPE` Resolve to an array of strings `string[]`.
-  * `evaluateXPath.MAP_TYPE` Resolve to an `Object`, as a map.
-  * `evaluateXPath.ARRAY_TYPE` Resolve to an array `[]`.
-  * `evaluateXPath.ASYNC_ITERATOR_TYPE`
-  * `evaluateXPath.NUMBERS_TYPE` Resolve to an array of numbers `number[]`.
-* `options` `<Object>` Options used to modify the behavior. The following options are available:
-  * `namespaceResolver` `<function(string):string?>` By default, the namespaces in scope of the
-    context item (if it is a node) are used. This is fine for most queries if you can assume how
-    your XML uses prefixes. Use this function to override those namespaces to remove that
-    assumption. This function will be called with a prefix (the empty string for the default
-    namespaceURI) and should return a namespaceURI (or null for the null namespace).
-  * `nodesFactory` `INodesFactory` A [INodesFactory](src/nodesFactory/INodesFactory.ts)
-    implementation which will be used for creating nodes.
-  * `language` `string` The query language to use. Defaults to
-    `evaluateXPath.XPATH_3_1_LANGUAGE`. Possible values:
-    * `evaluateXPath.XPATH_3_1_LANGUAGE` Evaluate `xpathExpression` according the [XPath
-      spec](https://www.w3.org/TR/xpath-31/).
-    * `evaluateXPath.XQUERY_3_1_LANGUAGE` Evaluate `xpathExpression` according the [XQuery
-      spec](https://www.w3.org/TR/xquery-31/).
-  * `moduleImports` `<Object<string, string>`
-  * `debug` `<boolean>` If a debug trace should be tracked, see [debugging](#debugging) for more
-    information.
-  * `logger` `<Object>` Object with functions used to override the standard logger.
-    * `trace: <function(string):void>` The logger for the `trace()` function. The argument is the
-      string of the original message.
-  * `defaultFunctionNamespaceURI` `<string>` To modify or change the default function namespaceURI. Defaults to `http://www.w3.org/2005/xpath-functions`. Defining the default function namespaceURI in the xpath expression overwrites this option.
-  * `functionNameResolver` `<({prefix, localName}, arity) => {namespaceURI, localName}>` To influence the function name resolving algorithm. Useful to extend the protected namespaces, such as the `fn` namespace.
+-   `xpathExpression` `<String>` The query to evaluate.
+-   `contextNode` `<Node>` The node in which context the `xpathExpression` will be evaluated. Defaults
+    to `null`.
+-   `domFacade` `<IDomFacade>` An [IDomFacade](src/domFacade/IDomFacade.ts) implementation which will
+    be used for querying the DOM. Defaults to an implementation which uses properties and methods on
+    the `contextNode` as described in the [DOM spec](https://dom.spec.whatwg.org/).
+-   `variables` `<Object>` The properties of `variables` are available variables within the
+    `xpathExpression`. Defaults to an empty `Object`. Can only be used to set variables in the global namespace.
+-   `returnType` `<number>` Determines the type of the result. Defaults to
+    `evaluateXPath.ANY_TYPE`. Possible values:
+    -   `evaluateXPath.ANY_TYPE` Returns the result of the query, can be anything depending on the
+        query. Note that the return type is determined dynamically, not statically: XPaths returning
+        empty sequences will return empty arrays and not null, like one might expect.
+    -   `evaluateXPath.NUMBER_TYPE` Resolve to a `number`, like count((1,2,3)) resolves to 3.
+    -   `evaluateXPath.STRING_TYPE` Resolve to a `string`, like //someElement[1] resolves to the text
+        content of the first someElement.
+    -   `evaluateXPath.BOOLEAN_TYPE` Resolves to a `boolean` true or false, uses the effective boolean
+        value to determine the result. count(1) resolves to true, count(()) resolves to false.
+    -   `evaluateXPath.NODES_TYPE` Resolve to all nodes `Node[]` the XPath resolves to. Returns nodes in
+        the order the XPath would. Meaning (//a, //b) resolves to all A nodes, followed by all B
+        nodes. //\*[self::a or self::b] resolves to A and B nodes in document order.
+    -   `evaluateXPath.FIRST_NODE_TYPE` Resolves to the first `Node` node.NODES_TYPE would have resolved
+        to.
+    -   `evaluateXPath.STRINGS_TYPE` Resolve to an array of strings `string[]`.
+    -   `evaluateXPath.MAP_TYPE` Resolve to an `Object`, as a map.
+    -   `evaluateXPath.ARRAY_TYPE` Resolve to an array `[]`.
+    -   `evaluateXPath.ASYNC_ITERATOR_TYPE`
+    -   `evaluateXPath.NUMBERS_TYPE` Resolve to an array of numbers `number[]`.
+-   `options` `<Object>` Options used to modify the behavior. The following options are available:
+    -   `namespaceResolver` `<function(string):string?>` By default, the namespaces in scope of the
+        context item (if it is a node) are used. This is fine for most queries if you can assume how
+        your XML uses prefixes. Use this function to override those namespaces to remove that
+        assumption. This function will be called with a prefix (the empty string for the default
+        namespaceURI) and should return a namespaceURI (or null for the null namespace).
+    -   `nodesFactory` `INodesFactory` A [INodesFactory](src/nodesFactory/INodesFactory.ts)
+        implementation which will be used for creating nodes.
+    -   `language` `string` The query language to use. Defaults to
+        `evaluateXPath.XPATH_3_1_LANGUAGE`. Possible values:
+        -   `evaluateXPath.XPATH_3_1_LANGUAGE` Evaluate `xpathExpression` according the [XPath
+            spec](https://www.w3.org/TR/xpath-31/).
+        -   `evaluateXPath.XQUERY_3_1_LANGUAGE` Evaluate `xpathExpression` according the [XQuery
+            spec](https://www.w3.org/TR/xquery-31/).
+    -   `moduleImports` `<Object<string, string>`
+    -   `debug` `<boolean>` If a debug trace should be tracked, see [debugging](#debugging) for more
+        information.
+    -   `logger` `<Object>` Object with functions used to override the standard logger.
+        -   `trace: <function(string):void>` The logger for the `trace()` function. The argument is the
+            string of the original message.
+    -   `defaultFunctionNamespaceURI` `<string>` To modify or change the default function namespaceURI. Defaults to `http://www.w3.org/2005/xpath-functions`. Defining the default function namespaceURI in the xpath expression overwrites this option.
+    -   `functionNameResolver` `<({prefix, localName}, arity) => {namespaceURI, localName}>` To influence the function name resolving algorithm. Useful to extend the protected namespaces, such as the `fn` namespace.
 
 ### Example
 
@@ -96,15 +96,30 @@ const documentNode = new DOMParser().parseFromString('<xml/>', 'text/xml');
 console.log(evaluateXPathToBoolean('/xml => exists()', documentNode));
 // Outputs: true
 
-console.log(evaluateXPathToString('$foo', null, null, {'foo': 'bar'}));
+console.log(evaluateXPathToString('$foo', null, null, { foo: 'bar' }));
 // Outputs: "bar"
 
 // We pass the documentNode so the default INodesFactory can be used.
-console.log(evaluateXPathToFirstNode('<foo>bar</foo>', documentNode, null, null, {language: evaluateXPath.XQUERY_3_1_LANGUAGE}).outerHTML);
+console.log(
+	evaluateXPathToFirstNode('<foo>bar</foo>', documentNode, null, null, {
+		language: evaluateXPath.XQUERY_3_1_LANGUAGE,
+	}).outerHTML
+);
 // Outputs: "<foo>bar</foo>"
 
 // We pass the Math namespaceURI for the pi() function to be used
-console.log(evaluateXPathToNumber('pi()', documentNode, undefined, {}, { language: evaluateXPath.XQUERY_3_1_LANGUAGE, defaultFunctionNamespaceURI: 'http://www.w3.org/2005/xpath-functions/math'}));
+console.log(
+	evaluateXPathToNumber(
+		'pi()',
+		documentNode,
+		undefined,
+		{},
+		{
+			language: evaluateXPath.XQUERY_3_1_LANGUAGE,
+			defaultFunctionNamespaceURI: 'http://www.w3.org/2005/xpath-functions/math',
+		}
+	)
+);
 // Outputs: Math.PI (3.14...)
 ```
 
@@ -164,7 +179,7 @@ FontoXPath can use the Performance API to provide some insight in the speed of X
 first give FontoXPath an implementation of the Performance interface:
 
 ```js
-import {profiler} from "fontoxpath";
+import { profiler } from 'fontoxpath';
 
 profiler.setPerformanceImplementation(window.performance); // or global.performance or self.performance, depending on you surroundings
 
@@ -182,7 +197,6 @@ const summary = profiler.getPerformanceSummary();
 This summary contains an array of XPaths, their execution times, their total runtime and their
 average runtime. Starting a performance profile will also output measurements on the timeline of the
 performance profiler of the browser.
-
 
 ### Modifying XML
 
@@ -206,31 +220,27 @@ The pending update list can be executed using
 executePendingUpdateList(pendingUpdateList, domFacade, nodesFactory, documentWriter);
 ```
 
-* `pendingUpdateList` `<Object[]>` The pending update list returned by `evaluateUpdatingExpression`.
-* `domFacade` `<IDomFacade>` See `evaluateXPath`. The default will use nodes from the
-  `pendingUpdateList`.
-* `nodesFactory` `INodesFactory` A [INodesFactory](src/nodesFactory/INodesFactory.ts) implementation
-  which will be used for creating nodes. Defaults to an implementation which uses properties and
-  methods of nodes from the `pendingUpdateList`.
-* `documentWriter` `<IDocumentWriter>` An [IDocumentWriter](src/documentWriter/IDocumePntWriter.ts)
-  implementation which will be used for modifying a DOM. Defaults to an implementation which uses
-  properties and methods of nodes from the `pendingUpdateList`.
+-   `pendingUpdateList` `<Object[]>` The pending update list returned by `evaluateUpdatingExpression`.
+-   `domFacade` `<IDomFacade>` See `evaluateXPath`. The default will use nodes from the
+    `pendingUpdateList`.
+-   `nodesFactory` `INodesFactory` A [INodesFactory](src/nodesFactory/INodesFactory.ts) implementation
+    which will be used for creating nodes. Defaults to an implementation which uses properties and
+    methods of nodes from the `pendingUpdateList`.
+-   `documentWriter` `<IDocumentWriter>` An [IDocumentWriter](src/documentWriter/IDocumePntWriter.ts)
+    implementation which will be used for modifying a DOM. Defaults to an implementation which uses
+    properties and methods of nodes from the `pendingUpdateList`.
 
 ### Example
 
 ```js
-const {
-	evaluateUpdatingExpression,
-	executePendingUpdateList
-} = require('fontoxpath');
+const { evaluateUpdatingExpression, executePendingUpdateList } = require('fontoxpath');
 const documentNode = new DOMParser().parseFromString('<xml/>', 'text/xml');
 
-evaluateUpdatingExpression('replace node /xml with <foo/>', documentNode)
-	.then(result => {
-		executePendingUpdateList(result.pendingUpdateList);
-		console.log(documentNode.documentElement.outerHTML);
-		// Outputs: "<foo/>"
-	});
+evaluateUpdatingExpression('replace node /xml with <foo/>', documentNode).then((result) => {
+	executePendingUpdateList(result.pendingUpdateList);
+	console.log(documentNode.documentElement.outerHTML);
+	// Outputs: "<foo/>"
+});
 ```
 
 An example of using XQUF with XQuery modules:
@@ -247,19 +257,23 @@ declare %public %updating function my-custom-namespace:do-something ($ele as ele
 	attribute done {"true"}
 	into $ele, true())
 };
-`)
+`);
 // At some point:
 const contextNode = null;
-const pendingUpdatesAndXdmValue = evaluateUpdatingExpressionSync('ns:do-something(.)', contextNode, null, null, {moduleImports: {'ns': 'my-custom-uri'}})
+const pendingUpdatesAndXdmValue = evaluateUpdatingExpressionSync(
+	'ns:do-something(.)',
+	contextNode,
+	null,
+	null,
+	{ moduleImports: { ns: 'my-custom-uri' } }
+);
 
 console.log(pendingUpdatesAndXdmValue.xdmValue); // this is true or false, see function
 
 executePendingUpdateList(pendingUpdatesAndXdmValue.pendingUpdateList, null, null, null);
 
 // At this point the context node will have its attribute set
-
 ```
-
 
 ### Global functions
 
@@ -269,29 +283,32 @@ To register custom functions. They are registered globally.
 registerCustomXPathFunction(name, signature, returnType, callback);
 ```
 
-* `name` `{namespaceURI: string, localName: string}` The function name.
-* `signature` `string[]` The arguments of the function.
-* `returnType` `string` The return type of the function.
-* `callback` `function` The function itself.
+-   `name` `{namespaceURI: string, localName: string}` The function name.
+-   `signature` `string[]` The arguments of the function.
+-   `returnType` `string` The return type of the function.
+-   `callback` `function` The function itself.
 
 #### Example:
+
 ```js
-const fontoxpath = require("fontoxpath")
+const fontoxpath = require('fontoxpath');
 
 // Register a function called 'there' in the 'hello' namespace:
-fontoxpath.registerCustomXPathFunction({namespaceURI: 'hello', localName: 'there'}, ['xs:string'], 'xs:string', (_, str) => `Hello there, ${str}`);
+fontoxpath.registerCustomXPathFunction(
+	{ namespaceURI: 'hello', localName: 'there' },
+	['xs:string'],
+	'xs:string',
+	(_, str) => `Hello there, ${str}`
+);
 
 // and call it, using the BracedUriLiteral syntax (Q{})
 const out = fontoxpath.evaluateXPathToString('Q{hello}there("General Kenobi")');
 
 // Or by using a prefix instead:
-const URI_BY_PREFIX = {hi: 'hello'};
-const out2 = fontoxpath.evaluateXPathToString(
-	'hi:there("General Kenobi")',
-	null,
-	null,
-	null,
-	{namespaceResolver: (prefix) => (URI_BY_PREFIX[prefix])});
+const URI_BY_PREFIX = { hi: 'hello' };
+const out2 = fontoxpath.evaluateXPathToString('hi:there("General Kenobi")', null, null, null, {
+	namespaceResolver: (prefix) => URI_BY_PREFIX[prefix],
+});
 ```
 
 ### Including modules
@@ -313,7 +330,8 @@ fontoxpath.registerXQueryModule(`
 `);
 
 // Import the module using the XQuery way:
-fontoxpath.evaluateXPathToString(`
+fontoxpath.evaluateXPathToString(
+	`
 	import module namespace test = "https://www.example.org/test1";
 	(: Invoke the test:hello function :)
 	test:hello('there')
@@ -321,18 +339,19 @@ fontoxpath.evaluateXPathToString(`
 	null,
 	null,
 	null,
-	{language: fontoxpath.evaluateXPath.XQUERY_3_1_LANGUAGE}
+	{ language: fontoxpath.evaluateXPath.XQUERY_3_1_LANGUAGE }
 );
 
 // Or by using the moduleImports API, which can be used in XPath contexts as well
-fontoxpath.evaluateXPathToString(`
+fontoxpath.evaluateXPathToString(
+	`
 	(: Invoke the test:hello function :)
 	test:hello('there')
 	`,
 	null,
 	null,
 	null,
-	{moduleImports: { test: 'https://www.example.org/test1' } }
+	{ moduleImports: { test: 'https://www.example.org/test1' } }
 );
 ```
 
@@ -343,13 +362,9 @@ You can use generic types to get the type of the DOM implementation you are usin
 cast it.
 
 ```ts
-const myNodes = evaluateXPathToNodes<slimdom.Node>(
-  '<foo>bar</foo>',
-  null,
-  null,
-  null,
-  {language: evaluateXPath.XQUERY_3_1_LANGUAGE}
-);
+const myNodes = evaluateXPathToNodes<slimdom.Node>('<foo>bar</foo>', null, null, null, {
+	language: evaluateXPath.XQUERY_3_1_LANGUAGE,
+});
 
 // Type of myNodes is: slimdom.Node[] .
 ```
@@ -364,34 +379,43 @@ execution performance benefits from this: execution speed can be 2 to 7 times hi
 
 Two API's provide this functionality:
 
-- `compileXPathToJavaScript` Compiles a query and its return type to JavaScript code. This result
-  should be evaluated to a function, for example with `new Function`.
-- `executeJavaScriptCompiledXPath` Evaluates a to a function evaluated compiled query (see the
-  example below) and applies it to the given context node, returning its resulting value.
+-   `compileXPathToJavaScript` Compiles a query and its return type to JavaScript code. This result
+    should be evaluated to a function, for example with `new Function`.
+-   `executeJavaScriptCompiledXPath` Evaluates a to a function evaluated compiled query (see the
+    example below) and applies it to the given context node, returning its resulting value.
 
 #### Supported functionality
 
 Here is a list of supported functionality so you can determine if compiling to JavaScript is
 suitable for your project. These functionalities are supported:
 
-- Absolute and relative path expressions, including an arbitrary amount of steps.
-- `child`, `self`, `parent` and `attribute` axes.
-- NodeTests: NameTest, ElementTest, Wildcard and TextTest.
-- Predicates (the `[` and `]` in `/xml[child::title]`).
-- Logical operators (`and` and `or`).
-- Return types `evaluateXPath.NODES_TYPE`, `evaluateXPath.BOOLEAN_TYPE`,
-  `evaluateXPath.FIRST_NODE_TYPE`.
+-   Absolute and relative path expressions, including an arbitrary amount of steps.
+-   `child`, `self`, `parent` and `attribute` axes.
+-   NodeTests: NameTest, ElementTest, Wildcard and TextTest.
+-   Predicates (the `[` and `]` in `/xml[child::title]`).
+-   Logical operators (`and` and `or`).
+-   Compares (compare string to string and node to string).
+-   Return types `evaluateXPath.NODES_TYPE`, `evaluateXPath.BOOLEAN_TYPE`,
+    `evaluateXPath.FIRST_NODE_TYPE`, `evaluateXPath.STRING`, `evaluateXPath.ANY`.
 
 Functions, XQuery and other more advanced features are _not_ supported (yet).
 
 #### Example usage:
 
 ```ts
-import {compileXPathToJavaScript, CompiledXPathFunction, evaluateXPath, executeJavaScriptCompiledXPath } from 'fontoxpath';
+import {
+	compileXPathToJavaScript,
+	CompiledXPathFunction,
+	evaluateXPath,
+	executeJavaScriptCompiledXPath,
+} from 'fontoxpath';
 
 const documentNode = new DOMParser().parseFromString('<p>Beep beep.</p>', 'text/xml');
 
-const compiledXPathResult = compileXPathToJavaScript("/child::p/text()", evaluateXPath.BOOLEAN_TYPE);
+const compiledXPathResult = compileXPathToJavaScript(
+	'/child::p/text()',
+	evaluateXPath.BOOLEAN_TYPE
+);
 if (compiledXPathResult.isAstAccepted === true) {
 	// Query is compiled succesfully, it can be evaluated.
 	const evalFunction = new Function(compiledXPathResult.code) as CompiledXPathFunction;
@@ -405,9 +429,9 @@ if (compiledXPathResult.isAstAccepted === true) {
 
 ##### Ideas to improve the example to better fit your project:
 
-- If a query could not be compiled to JavaScript, fall back on the stable `evaluateXPath` function.
-- Add caching so compiling and `new Function` does not have happen more than once per unique query.
-- Store compiled code to disk.
+-   If a query could not be compiled to JavaScript, fall back on the stable `evaluateXPath` function.
+-   Add caching so compiling and `new Function` does not have happen more than once per unique query.
+-   Store compiled code to disk.
 
 ## Features
 
@@ -420,12 +444,12 @@ accept pull requests for missing features.
 The following features are unavailable at this moment, but will be implemented at some point in time
 ([and even sooner if you can help!](./CONTRIBUTING.md)):
 
-* Some DateTime related functions
-* Collation related functions (`fn:compare#3`)
-* Some other miscellaneous functions
-* XML parsing
-* The `treat as` operator
-* Some parts of FLWOR expressions
+-   Some DateTime related functions
+-   Collation related functions (`fn:compare#3`)
+-   Some other miscellaneous functions
+-   XML parsing
+-   The `treat as` operator
+-   Some parts of FLWOR expressions
 
 For all available features, see the unit tests, or just try it out on the [Demo
 page](https://xpath.playground.fontoxml.com).

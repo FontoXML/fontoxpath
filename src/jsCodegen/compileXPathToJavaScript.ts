@@ -1,13 +1,20 @@
 import {
+	createDefaultFunctionNameResolver,
 	createDefaultNamespaceResolver,
 	normalizeEndOfLines,
 } from '../evaluationUtils/buildEvaluationContext';
+import ExecutionSpecificStaticContext from '../expressions/ExecutionSpecificStaticContext';
+import { BUILT_IN_NAMESPACE_URIS } from '../expressions/staticallyKnownNamespaces';
+import StaticContext from '../expressions/StaticContext';
 import { ReturnType } from '../parsing/convertXDMReturnValue';
 import parseExpression from '../parsing/parseExpression';
+import annotateAst from '../typeInference/annotateAST';
+import { AnnotationContext } from '../typeInference/AnnotationContext';
 import { Language, Options } from '../types/Options';
+import { CodeGenContext } from './CodeGenContext';
 import compileAstToJavaScript from './compileAstToJavaScript';
 import { JavaScriptCompiledXPathResult } from './JavaScriptCompiledXPath';
-import { StaticContext } from './StaticContext';
+
 /**
  * Compile a given query to JavaScript code. For executing compiled code, see
  * {@link executeJavaScriptCompiledXPath}.
@@ -41,13 +48,28 @@ function compileXPathToJavaScript(
 
 	const ast = parseExpression(expressionString, parserOptions);
 
-	const staticContext: StaticContext = {
+	const codegenContext: CodeGenContext = {
 		resolveNamespace: options['namespaceResolver'] || createDefaultNamespaceResolver(null),
 	};
 
-	// const annotatedAst = annotateAst(ast, new AnnotationContext(staticContext));
+	annotateAst(
+		ast,
+		new AnnotationContext(
+			new StaticContext(
+				new ExecutionSpecificStaticContext(
+					codegenContext.resolveNamespace,
+					{},
+					options['defaultFunctionNamespaceURI'] ||
+						BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
+					createDefaultFunctionNameResolver(
+						BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI
+					)
+				)
+			)
+		)
+	);
 
-	return compileAstToJavaScript(ast, returnType, staticContext);
+	return compileAstToJavaScript(ast, returnType, codegenContext);
 }
 
 export default compileXPathToJavaScript;
