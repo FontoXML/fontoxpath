@@ -4,8 +4,6 @@
 		"start": "concurrently -k -p \"[{name}]\" -n \"tsc,server\" \"ttsc --watch\" servor --reload"
 	},
 	"dependencies": {
-		"@babel/parser": "^7.15.3",
-		"prettier": "^2.3.2",
 		"xspattern": "^1.2.1"
 	},
 	"devDependencies": {

@@ -16,7 +16,6 @@
 				"alias": {
 					"^(fontoxpath)$": "/src",
 					"^(xspattern)$": "/web_modules/xspattern.js",
-					"^(prettier)$": "/web_modules/prettier.js"
 				},
 				"after": true,
 				"afterDeclarations": true,

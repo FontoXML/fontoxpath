@@ -236,7 +236,6 @@ async function runXPathWithJsCodegen(xpath: string, asXQuery: boolean, annotateA
 
 	if (compiledXPathResult.isAstAccepted === true) {
 		jsCodegenOutput.innerText = (window as any).js_beautify(compiledXPathResult.code, {
-			// indent_char: '﷽',
 			wrap_line_length: 160,
 			indent_size: 2,
 			unindent_chained_methods: true,
