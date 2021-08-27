@@ -37,6 +37,8 @@ jobs:
               run: npm run ci-xqutstests -- --reporter dot;
             - name: Update Facility parser tests
               run: npm run ci-xqutstestsxqueryx -- --reporter dot;
+            - name: Fuzzer unit tests
+              run: npm run fuzzertest
             - name: Combine coverage
               run: npm run coverage
             - name: Coveralls Parallel

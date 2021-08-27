@@ -2,7 +2,7 @@ import { evaluateXPath } from 'fontoxpath';
 
 /**
  * Generates a random number number between 0 and {@link upper}.
- * 
+ *
  * @param upper - The upper bound of the random number.
  * @returns The generated random number.
  */
@@ -63,7 +63,7 @@ function randomString(len: number): string {
 
 /**
  * Mutate a random number of characters.
- * 
+ *
  * @param input - The input string which to mutate.
  * @returns Returns the mutated string.
  */
@@ -78,7 +78,7 @@ export function mutateCharactersInPlace(input: string): string {
 
 /**
  * Mutate the input string.
- * 
+ *
  * @param input - The input string which to mutate.
  * @returns Returns the mutated string.
  */

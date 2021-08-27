@@ -29,10 +29,26 @@
 // * [Twitch](https://www.twitch.tv/gamozo)
 //
 
-import CorpusBasedFuzzer from 'corpus_based_fuzzer';
+import CorpusBasedFuzzer, { ICorpusLoader } from 'corpus_based_fuzzer';
 import Engine from 'engine';
-import ISO_CORPUS from 'iso_corpus';
+import isoCorpusLoader from 'iso_corpus';
+import xpath31FunctionCatalogCorpusLoader from 'xpath-31-function-catalog-corpus';
 
-const fuzzer = new CorpusBasedFuzzer(ISO_CORPUS);
-const engine = new Engine<CorpusBasedFuzzer>();
-engine.run(fuzzer, __filename);
+// Select the corpus to use
+const corpora: { [key: string]: ICorpusLoader } = {
+	[isoCorpusLoader.name]: isoCorpusLoader,
+	[xpath31FunctionCatalogCorpusLoader.name]: xpath31FunctionCatalogCorpusLoader,
+};
+const corpusName = process.argv.slice(2)[0];
+const corpusLoader = corpora[corpusName];
+if (corpusLoader) {
+	// Bootstrap
+	const fuzzer = new CorpusBasedFuzzer(corpusLoader);
+	const engine = new Engine<CorpusBasedFuzzer>();
+	engine.run(fuzzer, __filename);
+} else {
+	const options = Object.keys(corpora)
+		.map((name) => `npm run fuzzer ${name}`)
+		.join('\n');
+	process.stdout.write(`Specify a valid corpus to use:\n${options}\n`);
+}
