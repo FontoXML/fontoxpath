@@ -41,7 +41,7 @@ const corpora: { [key: string]: ICorpusLoader } = {
 };
 const corpusName = process.argv.slice(2)[0];
 const corpusLoader = corpora[corpusName];
-if (corpusLoader !== null) {
+if (corpusLoader) {
 	// Bootstrap
 	const fuzzer = new CorpusBasedFuzzer(corpusLoader);
 	const engine = new Engine<CorpusBasedFuzzer>();

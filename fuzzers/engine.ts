@@ -76,7 +76,7 @@ export default class Engine<TFuzzer extends IFuzzer> {
 				}
 			});
 			worker.on('error', (err) => {
-				process.stderr.write(`Unexpected error of ${tid} with error ${err}\n`);
+				process.stderr.write(`Unexpected error of ${tid} with error ${err}\n${err.stack}`);
 			});
 			worker.on('exit', (code) => {
 				process.stderr.write(`Unexpected exit of ${tid} with exit code ${code}\n`);
