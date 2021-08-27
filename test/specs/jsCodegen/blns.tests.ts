@@ -47,7 +47,7 @@ describe('Big List of Naughty Strings tests for JSCodegen', () => {
 						`BLNS literal ${literalQuery} errored during evaluation but not during JS Codegen.`
 					);
 				} catch (errJs) {
-					//Only comparing the string representations, since the stack traces will differ.
+					// Only comparing the string representations, since the stack traces will differ.
 					chai.assert.equal(errEval.toString(), errJs.toString());
 				}
 			}
