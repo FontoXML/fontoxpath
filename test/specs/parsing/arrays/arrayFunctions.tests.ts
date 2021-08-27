@@ -86,12 +86,10 @@ describe('functions over arrays', () => {
 			chai.assert.deepEqual(evaluateXPathToArray('array:append([], 0)', documentNode), [0]));
 
 		it('appends an item to an array', () =>
-			chai.assert.deepEqual(evaluateXPathToArray('array:append([1,2,3], 4)', documentNode), [
-				1,
-				2,
-				3,
-				4,
-			]));
+			chai.assert.deepEqual(
+				evaluateXPathToArray('array:append([1,2,3], 4)', documentNode),
+				[1, 2, 3, 4]
+			));
 	});
 
 	describe('array:subarray', () => {
@@ -134,22 +132,22 @@ describe('functions over arrays', () => {
 
 	describe('array:remove', () => {
 		it('removes the first item from an array', () =>
-			chai.assert.deepEqual(evaluateXPathToArray('array:remove([1,2,3], 1)', documentNode), [
-				2,
-				3,
-			]));
+			chai.assert.deepEqual(
+				evaluateXPathToArray('array:remove([1,2,3], 1)', documentNode),
+				[2, 3]
+			));
 
 		it('removes a middle item from the array', () =>
-			chai.assert.deepEqual(evaluateXPathToArray('array:remove([1,2,3], 2)', documentNode), [
-				1,
-				3,
-			]));
+			chai.assert.deepEqual(
+				evaluateXPathToArray('array:remove([1,2,3], 2)', documentNode),
+				[1, 3]
+			));
 
 		it('removes the last item from the array', () =>
-			chai.assert.deepEqual(evaluateXPathToArray('array:remove([1,2,3], 3)', documentNode), [
-				1,
-				2,
-			]));
+			chai.assert.deepEqual(
+				evaluateXPathToArray('array:remove([1,2,3], 3)', documentNode),
+				[1, 2]
+			));
 
 		it('removes multiple items', () =>
 			chai.assert.deepEqual(
@@ -238,10 +236,10 @@ describe('functions over arrays', () => {
 			));
 
 		it('returns the tail of an array', () =>
-			chai.assert.deepEqual(evaluateXPathToArray('array:tail([1,2,3])', documentNode), [
-				2,
-				3,
-			]));
+			chai.assert.deepEqual(
+				evaluateXPathToArray('array:tail([1,2,3])', documentNode),
+				[2, 3]
+			));
 	});
 
 	describe('array:reverse', () => {
@@ -252,12 +250,10 @@ describe('functions over arrays', () => {
 			chai.assert.deepEqual(evaluateXPathToArray('array:reverse([1])', documentNode), [1]));
 
 		it('reverses an array with size n', () =>
-			chai.assert.deepEqual(evaluateXPathToArray('array:reverse([1,2,3,4])', documentNode), [
-				4,
-				3,
-				2,
-				1,
-			]));
+			chai.assert.deepEqual(
+				evaluateXPathToArray('array:reverse([1,2,3,4])', documentNode),
+				[4, 3, 2, 1]
+			));
 	});
 
 	describe('array:join', () => {
@@ -413,11 +409,10 @@ describe('functions over arrays', () => {
 			chai.assert.deepEqual(evaluateXPathToArray('array:sort([])', documentNode), []));
 
 		it('sorts the array', () =>
-			chai.assert.deepEqual(evaluateXPathToArray('array:sort([3,2,1])', documentNode), [
-				1,
-				2,
-				3,
-			]));
+			chai.assert.deepEqual(
+				evaluateXPathToArray('array:sort([3,2,1])', documentNode),
+				[1, 2, 3]
+			));
 	});
 
 	describe('array:flatten', () => {

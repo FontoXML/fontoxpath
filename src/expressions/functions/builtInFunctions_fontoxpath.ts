@@ -114,8 +114,10 @@ const fontoxpathEvaluate: FunctionDefinitionType = (
 				const innerDynamicContext = new DynamicContext(context);
 
 				try {
-					resultIterator = selector.evaluate(innerDynamicContext, executionParameters)
-						.value;
+					resultIterator = selector.evaluate(
+						innerDynamicContext,
+						executionParameters
+					).value;
 				} catch (error) {
 					printAndRethrowError(queryString, error);
 				}

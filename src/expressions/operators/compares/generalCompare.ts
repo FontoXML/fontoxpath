@@ -82,10 +82,8 @@ export default function generalCompare(
 					// In all other cases, V is cast to the primitive base type of T.
 					let secondValue = allSecondValues[i];
 
-					const [firstTargetType, secondTargetType]: [
-						ValueType,
-						ValueType
-					] = determineTargetType(firstValue.type, secondValue.type);
+					const [firstTargetType, secondTargetType]: [ValueType, ValueType] =
+						determineTargetType(firstValue.type, secondValue.type);
 					if (firstTargetType) firstValue = castToType(firstValue, firstTargetType);
 					else if (secondTargetType)
 						secondValue = castToType(secondValue, secondTargetType);

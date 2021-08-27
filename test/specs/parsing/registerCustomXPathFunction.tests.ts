@@ -441,7 +441,7 @@ describe('registerCustomXPathFunction', () => {
 	});
 
 	it('keeps domFacades intact', () => {
-		const outerDomFacade = ({ 'this-is-the-outer-one': true } as unknown) as IDomFacade;
+		const outerDomFacade = { 'this-is-the-outer-one': true } as unknown as IDomFacade;
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'custom-function-keeps-the-dom-facade' },
 			[],
@@ -493,7 +493,7 @@ describe('registerCustomXPathFunction', () => {
 			{},
 			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
 		);
-		const blueprint = ({
+		const blueprint = {
 			getAttribute(element, attrName) {
 				const attr = element.attributes.find(
 					(attribute) => attribute.localName === attrName
@@ -503,7 +503,7 @@ describe('registerCustomXPathFunction', () => {
 			getParentNode(element) {
 				return element.parentNode;
 			},
-		} as unknown) as IDomFacade;
+		} as unknown as IDomFacade;
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'my-custom-func-msc' },
 			['node()'],

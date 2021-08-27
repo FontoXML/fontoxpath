@@ -174,10 +174,10 @@ describe('function argument transformation', () => {
 			],
 			documentNode
 		);
-		chai.assert.deepEqual(evaluateXPathToNumbers('@attr to 2', documentNode.firstChild), [
-			1,
-			2,
-		]);
+		chai.assert.deepEqual(
+			evaluateXPathToNumbers('@attr to 2', documentNode.firstChild),
+			[1, 2]
+		);
 	});
 
 	it('also transforms the return value', () => {

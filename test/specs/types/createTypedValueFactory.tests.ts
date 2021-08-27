@@ -93,7 +93,7 @@ describe('createTypedValueFactory', () => {
 		const typedValueFactory = createTypedValueFactory('item()');
 
 		chai.assert.throws(
-			() => typedValueFactory((Symbol('foo') as unknown) as string, documentNode),
+			() => typedValueFactory(Symbol('foo') as unknown as string, documentNode),
 			'Value Symbol(foo) of type "symbol" is not adaptable to an XPath value.'
 		);
 	});

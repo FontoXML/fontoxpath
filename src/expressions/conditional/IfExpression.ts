@@ -54,7 +54,8 @@ class IfExpression extends PossiblyUpdatingExpression {
 		return sequenceFactory.create({
 			next: (hint: IterationHint) => {
 				if (!resultIterator) {
-					const ifExpressionResult = ifExpressionResultSequence.getEffectiveBooleanValue();
+					const ifExpressionResult =
+						ifExpressionResultSequence.getEffectiveBooleanValue();
 
 					const resultSequence = ifExpressionResult
 						? sequenceCallbacks[1](dynamicContext)

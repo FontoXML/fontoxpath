@@ -97,7 +97,7 @@ describe('measuring performance', () => {
 		now = 0;
 		const marks = new Map<string, PerformanceEntry>();
 		const measures = new Set<PerformanceEntry>();
-		const perfImplementationStub: Performance = ({
+		const perfImplementationStub: Performance = {
 			getEntriesByType(_typeString: string) {
 				return Array.from(measures.values());
 			},
@@ -129,7 +129,7 @@ describe('measuring performance', () => {
 					toJSON: () => '',
 				});
 			},
-		} as unknown) as Performance;
+		} as unknown as Performance;
 		profiler.setPerformanceImplementation(perfImplementationStub);
 	});
 

@@ -108,8 +108,10 @@ export default class StaticContext implements IContext {
 				Object.create(null),
 				this._registeredFunctionsByHash
 			);
-			contextAtThisPoint.registeredVariableDeclarationByHashKey = this.registeredVariableDeclarationByHashKey;
-			contextAtThisPoint.registeredDefaultFunctionNamespaceURI = this.registeredDefaultFunctionNamespaceURI;
+			contextAtThisPoint.registeredVariableDeclarationByHashKey =
+				this.registeredVariableDeclarationByHashKey;
+			contextAtThisPoint.registeredDefaultFunctionNamespaceURI =
+				this.registeredDefaultFunctionNamespaceURI;
 		}
 
 		return contextAtThisPoint;

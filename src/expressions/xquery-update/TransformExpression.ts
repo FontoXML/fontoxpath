@@ -108,11 +108,11 @@ class TransformExpression extends UpdatingExpression {
 
 						// Each variable binding is processed as follows:
 						if (!sourceValueIterator) {
-							sourceValueIterators[
-								i
-							] = sourceValueIterator = this.ensureUpdateListWrapper(
-								variableBinding.sourceExpr
-							)(dynamicContext, executionParameters);
+							sourceValueIterators[i] = sourceValueIterator =
+								this.ensureUpdateListWrapper(variableBinding.sourceExpr)(
+									dynamicContext,
+									executionParameters
+								);
 						}
 						const sv = sourceValueIterator.next(IterationHint.NONE);
 

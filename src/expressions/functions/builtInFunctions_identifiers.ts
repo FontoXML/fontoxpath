@@ -73,7 +73,7 @@ const fnId: FunctionDefinitionType = (
 	}
 
 	// Note the cast: The filter is only matching element node pointers
-	const matchingNodes = (findDescendants(domFacade, documentNode, (node) => {
+	const matchingNodes = findDescendants(domFacade, documentNode, (node) => {
 		// TODO: use the is-id property of attributes / elements
 		if (domFacade.getNodeType(node) !== NODE_TYPES.ELEMENT_NODE) {
 			return false;
@@ -89,7 +89,7 @@ const fnId: FunctionDefinitionType = (
 		// Only return the first match, per id
 		isMatchingIdById[idAttribute] = false;
 		return true;
-	}) as unknown) as ElementNodePointer[];
+	}) as unknown as ElementNodePointer[];
 	return sequenceFactory.create(matchingNodes.map((node) => createPointerValue(node, domFacade)));
 };
 
@@ -127,7 +127,7 @@ const fnIdref: FunctionDefinitionType = (
 
 	// Note the cast: The filter is only matching element node pointers
 	// TODO: Index idrefs to optimize this lookup
-	const matchingNodes = (findDescendants(domFacade, documentNode, (node) => {
+	const matchingNodes = findDescendants(domFacade, documentNode, (node) => {
 		// TODO: use the is-idrefs property of attributes / elements
 		if (domFacade.getNodeType(node) !== NODE_TYPES.ELEMENT_NODE) {
 			return false;
@@ -141,7 +141,7 @@ const fnIdref: FunctionDefinitionType = (
 		return idRefs.some((idRef) => {
 			return isMatchingIdRefById[idRef];
 		});
-	}) as unknown) as ElementNodePointer[];
+	}) as unknown as ElementNodePointer[];
 	return sequenceFactory.create(matchingNodes.map((node) => createPointerValue(node, domFacade)));
 };
 

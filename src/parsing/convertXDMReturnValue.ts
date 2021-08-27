@@ -223,9 +223,9 @@ export default function convertXDMReturnValue<
 						}),
 				};
 			} else {
-				toReturn = ({
+				toReturn = {
 					next: () => new Promise((resolve) => resolve(getNextResult())),
-				} as unknown) as AsyncIterableIterator<any>;
+				} as unknown as AsyncIterableIterator<any>;
 			}
 			return toReturn as IReturnTypes<TNode>[TReturnType];
 		}
