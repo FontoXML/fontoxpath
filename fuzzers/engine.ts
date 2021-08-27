@@ -25,6 +25,7 @@ export default class Engine<TFuzzer extends IFuzzer> {
 		let workersOnline = 0;
 		let totalCases = 0;
 		const uniqueStacks = new Set();
+		const argv = process.argv.slice(2);
 
 		// Start all the workers
 		const numOfCpus = os.cpus().length;
@@ -37,17 +38,18 @@ export default class Engine<TFuzzer extends IFuzzer> {
 				require(require('worker_threads').workerData.runThisFileInTheWorker);
 				`,
 				{
+					argv,
 					env: {
-						TS_NODE_PROJECT: './fuzzers/tsconfig.json'
+						TS_NODE_PROJECT: './fuzzers/tsconfig.json',
 					},
 					eval: true,
 					workerData: {
 						runThisFileInTheWorker: filename,
-						tid
-					}
+						tid,
+					},
 				}
 			);
-			worker.on('message', msg => {
+			worker.on('message', (msg) => {
 				switch (msg.type) {
 					case WorkerMessageTypes.Online: {
 						workersOnline += 1;
@@ -67,16 +69,16 @@ export default class Engine<TFuzzer extends IFuzzer> {
 
 						// Print the error
 						process.stdout.write(
-							`\n\n!!! \x1b[31mCrash found\x1b[0m !!!\nSelector: ${msg.selector}\nLanguage: ${msg.language}\nBackend: ${msg.backend}\n${msg.stack}\n\n`
+							`\n\n!!! \x1b[31mCrash found\x1b[0m !!!\nSelector: \`${msg.selector}\`\nLanguage: \`${msg.language}\`\nBackend: \`${msg.backend}\`\n\`\`\`\n${msg.stack}\n\`\`\`\n\n`
 						);
 						break;
 					}
 				}
 			});
-			worker.on('error', err => {
+			worker.on('error', (err) => {
 				process.stderr.write(`Unexpected error of ${tid} with error ${err}\n`);
 			});
-			worker.on('exit', code => {
+			worker.on('exit', (code) => {
 				process.stderr.write(`Unexpected exit of ${tid} with exit code ${code}\n`);
 			});
 		}
@@ -107,7 +109,7 @@ export default class Engine<TFuzzer extends IFuzzer> {
 		const tid = workerData.tid;
 		parentPort.postMessage({
 			type: WorkerMessageTypes.Online,
-			tid
+			tid,
 		});
 
 		let deltaCases = 0;
@@ -118,7 +120,7 @@ export default class Engine<TFuzzer extends IFuzzer> {
 				parentPort.postMessage({
 					type: WorkerMessageTypes.Progress,
 					totalCases: deltaCases,
-					tid
+					tid,
 				});
 				deltaCases = 0;
 			}
@@ -132,7 +134,7 @@ export default class Engine<TFuzzer extends IFuzzer> {
 				fuzzCase.run();
 			} catch (error) {
 				// Test if this is an expected error
-				if (fuzzer.isExpectedError(error)) {
+				if (fuzzCase.isExpectedError(error)) {
 					continue;
 				}
 
@@ -149,7 +151,7 @@ export default class Engine<TFuzzer extends IFuzzer> {
 					language: fuzzCase.language,
 					backend: fuzzCase.backend,
 					stack: error.stack,
-					tid
+					tid,
 				});
 			}
 		}

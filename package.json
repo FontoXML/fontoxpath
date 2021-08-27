@@ -27,7 +27,8 @@
 		"xqutstestsxqueryx": "ts-mocha --paths -p test/tsconfig.json test/xqutsTestsXQueryX.ts",
 		"browsertests": "karma start",
 		"lint": "tslint \"./src/**/*.ts\" --project . && prettier \"./src/**/*.ts\" --list-different",
-		"fuzzer": "ts-node -P fuzzers/tsconfig.json -r tsconfig-paths/register fuzzers/index.ts"
+		"fuzzer": "ts-node -P fuzzers/tsconfig.json -r tsconfig-paths/register fuzzers/index.ts",
+		"fuzzertest": "ts-mocha --paths -p test/tsconfig.json test/corpusfuzzertests.ts"
 	},
 	"repository": {
 		"type": "git",
@@ -70,6 +71,7 @@
 		"@types/node": "^14.0.1",
 		"@types/node-static": "^0.7.6",
 		"@types/sinon": "^9.0.10",
+		"blns": "^2.0.4",
 		"bundlemon": "^0.4.0",
 		"chai": "^4.2.0",
 		"concurrently": "^5.3.0",

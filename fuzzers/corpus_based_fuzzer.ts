@@ -1,12 +1,20 @@
-import { FuzzCase, IFuzzer } from 'fuzzer';
+import { sync } from 'slimdom-sax-parser';
+import { FuzzCase, IFuzzer } from './fuzzer';
 import {
 	mutateCharactersInPlace,
 	mutateString,
 	rand,
 	randomBackend,
 	randomLanguage,
-} from 'mutators';
-import { sync } from 'slimdom-sax-parser';
+} from './mutators';
+
+/**
+ * Defines the interface for loading a fuzzing corpus.
+ */
+export interface ICorpusLoader {
+	name: string;
+	get(): string[];
+}
 
 /**
  * Implements a corpus-based {@link Fuzzer}.
@@ -14,12 +22,14 @@ import { sync } from 'slimdom-sax-parser';
 export default class CorpusBasedFuzzer implements IFuzzer {
 	private corpus: string[];
 	private documentNode: any;
+	private loader: ICorpusLoader;
 
-	constructor(corpus: string[]) {
-		this.corpus = corpus;
+	constructor(loader: ICorpusLoader) {
+		this.loader = loader;
 	}
 
 	globalInit(): void {
+		this.corpus = this.loader.get();
 		this.documentNode = sync(
 			'<xml> \
 			<title>xpath.playground.fontoxml.com</title> \
@@ -31,26 +41,6 @@ export default class CorpusBasedFuzzer implements IFuzzer {
 			</tips> \
 		</xml>'
 		);
-	}
-
-	isExpectedError(error: Error): boolean {
-		// Not interested in static errors, we're looking for crashes
-		if (error.message.startsWith('XPST')) {
-			return true;
-		}
-
-		// Not interested in type errors, we're looking for crashes
-		if (error.message.startsWith('XPTY')) {
-			return true;
-		}
-
-		// Not interested in function errors, we're looking for crashes
-		if (error.message.startsWith('FORG')) {
-			return true;
-		}
-
-		// Did not expect error
-		return false;
 	}
 
 	prepareCase(): FuzzCase {
