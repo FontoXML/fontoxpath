@@ -9,8 +9,6 @@ jobs:
     build:
         name: Compute bundle size
         runs-on: ubuntu-latest
-        if: github.repository_owner == 'FontoXML'
-
         steps:
             - uses: actions/checkout@v2
             - uses: actions/setup-node@v1
@@ -26,4 +24,3 @@ jobs:
               run: npx bundlemon
               env:
                   BUNDLEMON_PROJECT_ID: '609024effb87a20009a6b096'
-                  BUNDLEMON_PROJECT_APIKEY: ${{ secrets.BUNDLEMON_PROJECT_APIKEY }}
