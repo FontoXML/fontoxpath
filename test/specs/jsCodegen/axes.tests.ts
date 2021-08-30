@@ -38,21 +38,35 @@ describe('axes (js-codegen)', () => {
 		);
 	});
 
-	it('compiles the attribute axis', () => {
-		chai.assert.isTrue(
-			evaluateXPathWithJsCodegen('/xml/@id', documentNode, null, ReturnType.BOOLEAN)
-		);
-	});
+	describe('attribute axis', () => {
+		it('compiles the attribute axis directly, to a string', () => {
+			chai.assert.equal(
+				evaluateXPathWithJsCodegen(
+					'@id',
+					documentNode.documentElement,
+					null,
+					ReturnType.STRING
+				),
+				'yes'
+			);
+		});
 
-	it('evaluates the attribute axis and handles absence of attributes', () => {
-		documentNode = new slimdom.Document();
-		jsonMlMapper.parse(['xml', 'Some text'], documentNode);
+		it('compiles the attribute axis combined with a childaxis', () => {
+			chai.assert.isTrue(
+				evaluateXPathWithJsCodegen('/xml/@id', documentNode, null, ReturnType.BOOLEAN)
+			);
+		});
 
-		const xmlNode: any = documentNode.firstChild;
+		it('evaluates the attribute axis and handles absence of attributes', () => {
+			documentNode = new slimdom.Document();
+			jsonMlMapper.parse(['xml', 'Some text'], documentNode);
 
-		chai.assert.isFalse(
-			evaluateXPathWithJsCodegen('@attribute or @id', xmlNode, null, ReturnType.BOOLEAN)
-		);
+			const xmlNode: any = documentNode.firstChild;
+
+			chai.assert.isFalse(
+				evaluateXPathWithJsCodegen('@attribute or @id', xmlNode, null, ReturnType.BOOLEAN)
+			);
+		});
 	});
 
 	it('compiles the parent axis', () => {
