@@ -23,16 +23,78 @@ import evaluableExpressionToString from './evaluableExpressionToString';
  * @public
  */
 export enum ReturnType {
+	/**
+	 * ANY Will result in ANY result. This closesly resembles what XPathResult.ANY_TYPE returns.
+	 *
+	 * If the result is a single item (ie. one node, one string, one number, etcetera), only that value is returned.
+	 *
+	 * If the result is the empty sequence, an empty array is returned
+	 *
+	 * If the result is multiple items, an array with those items is returned. Nodes are rutned as-is, but attribute nodes are atomized.
+	 *
+	 * Note that this is usually _not_ what you'd expect, and may cause bugs to show up when you
+	 * don't expect. Use ALL_RESULTS to get all results, always as an array, without special
+	 * handling for attribute nodes.
+	 *
+	 * @deprecated use ALL_RESULTS instead
+	 */
 	'ANY' = 0,
+
+	/**
+	 * Always returns a number. NaN if the result of the query is not a valid number
+	 */
 	'NUMBER' = 1,
+
+	/**
+	 * Always returns a string.
+	 */
 	'STRING' = 2,
+
+	/**
+	 * Always returns a boolean. Uses the `effective boolean value` algorithm to determine the result if the query did not return a boolean by itself
+	 */
 	'BOOLEAN' = 3,
+
+	/**
+	 * Returns all nodes, as an array. Throws an error if the result contains anything but nodes
+	 */
 	'NODES' = 7,
+
+	/**
+	 * Returns only the first node in the result
+	 */
 	'FIRST_NODE' = 9,
+
+	/**
+	 * Returns all strings the query returns, as an array
+	 */
 	'STRINGS' = 10,
+
+	/**
+	 * Returns the map the query returns. Error when the query does not result in exactly one map
+	 */
 	'MAP' = 11,
+
+	/**
+	 * Returns the array the query returns. Error when the query does not result in exactly one array
+	 */
 	'ARRAY' = 12,
+
+	/**
+	 * Returns all numbers the query resulted in. Invalid numbers are replaced with NaN
+	 */
 	'NUMBERS' = 13,
+
+	/**
+	 * Returns all results of the query, as completely as possible: nodes are nodes, attributes are attribute nodes, dateTimes are turned into DateTime objects.
+	 */
+	'ALL_RESULTS' = 14,
+
+	/**
+	 * Returns an async iterator of the results. Since FontoXPath can no longer return results asychronously, the ALL_RESULTS option is better to use.
+	 *
+	 * @deprecated Use ALL_RESULTS instead
+	 */
 	'ASYNC_ITERATOR' = 99,
 }
 
@@ -50,6 +112,15 @@ export interface IReturnTypes<T extends Node> {
 	[ReturnType.MAP]: { [s: string]: any };
 	[ReturnType.ARRAY]: any[];
 	[ReturnType.NUMBERS]: number[];
+	[ReturnType.ALL_RESULTS]: (
+		| T
+		| string
+		| Date
+		| boolean
+		| number
+		| any[]
+		| { [s: string]: any }
+	)[];
 	[ReturnType.ASYNC_ITERATOR]: AsyncIterableIterator<any>;
 }
 
@@ -255,6 +326,18 @@ export default function convertXDMReturnValue<
 				} as unknown as AsyncIterableIterator<any>;
 			}
 			return toReturn as IReturnTypes<TNode>[TReturnType];
+		}
+
+		case ReturnType.ALL_RESULTS: {
+			const allValues = rawResults.getAllValues();
+
+			return allValues.map((value) => {
+				// TODO: Make this function directly return its value instead of an iterator to a
+				// single value
+				return transformXPathItemToJavascriptObject(value, executionParameters).next(
+					IterationHint.NONE
+				).value;
+			}) as IReturnTypes<TNode>[TReturnType];
 		}
 
 		default: {

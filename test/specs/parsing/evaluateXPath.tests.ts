@@ -15,6 +15,7 @@ import {
 	evaluateXPathToString,
 	evaluateXPathToStrings,
 	getBucketForSelector,
+	ReturnType,
 } from 'fontoxpath';
 
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
@@ -25,46 +26,55 @@ describe('evaluateXPath', () => {
 		documentNode = new slimdom.Document();
 	});
 
-	it('Keeps booleans booleans', () =>
-		chai.assert.equal(evaluateXPath('true()', documentNode, domFacade), true));
-	it('Keeps numbers numbers', () =>
-		chai.assert.equal(evaluateXPath('1', documentNode, domFacade), 1));
-	it('Keeps strings strings', () =>
-		chai.assert.equal(evaluateXPath('"string"', documentNode, domFacade), 'string'));
-	it('Keeps nodes nodes', () =>
-		chai.assert.equal(evaluateXPath('.', documentNode, domFacade), documentNode));
-	it('Keeps arrays arrays', () =>
-		chai.assert.deepEqual(evaluateXPath('[1,2,3]', documentNode, domFacade), [1, 2, 3]));
-	it('Keeps maps maps', () =>
-		chai.assert.deepEqual(evaluateXPath('map{1:2,"a":"b"}', documentNode, domFacade), {
-			1: 2,
-			a: 'b',
-		}));
+	describe('ANY_TYPE', () => {
+		it('Keeps booleans booleans', () =>
+			chai.assert.equal(evaluateXPath('true()', documentNode, domFacade), true));
+		it('Keeps numbers numbers', () =>
+			chai.assert.equal(evaluateXPath('1', documentNode, domFacade), 1));
+		it('Keeps strings strings', () =>
+			chai.assert.equal(evaluateXPath('"string"', documentNode, domFacade), 'string'));
+		it('Keeps nodes nodes', () =>
+			chai.assert.equal(evaluateXPath('.', documentNode, domFacade), documentNode));
+		it('Makes attributes strings', () => {
+			// Note that this is annoying, but part of public API. Use the ALL_RESULTS_TYPE to have
+			// predictable API
+			const tmp = documentNode.createElement('tmp');
+			tmp.setAttribute('class', 'value');
+			chai.assert.equal(evaluateXPath('@class', tmp, domFacade), 'value');
+		});
+		it('Keeps arrays arrays', () =>
+			chai.assert.deepEqual(evaluateXPath('[1,2,3]', documentNode, domFacade), [1, 2, 3]));
+		it('Keeps maps maps', () =>
+			chai.assert.deepEqual(evaluateXPath('map{1:2,"a":"b"}', documentNode, domFacade), {
+				1: 2,
+				a: 'b',
+			}));
 
-	it('returns the correct number of results', () => {
-		chai.assert.equal(evaluateXPath('(1 to 250)').length, 250);
-	});
-	it('Returns the value of attribute nodes', () => {
-		jsonMlMapper.parse(
-			['someElement', { someAttribute: 'someValue' }, 'Some data'],
-			documentNode
-		);
-		chai.assert.equal(evaluateXPath('//@*', documentNode, domFacade), 'someValue');
-	});
+		it('returns the correct number of results', () => {
+			chai.assert.equal(evaluateXPath('(1 to 250)').length, 250);
+		});
+		it('Returns the value of attribute nodes', () => {
+			jsonMlMapper.parse(
+				['someElement', { someAttribute: 'someValue' }, 'Some data'],
+				documentNode
+			);
+			chai.assert.equal(evaluateXPath('//@*', documentNode, domFacade), 'someValue');
+		});
 
-	it('Can not evaluate updating expressions', () =>
-		chai.assert.throws(
-			() =>
-				evaluateXPath(
-					'insert node <element/> into .',
-					documentNode,
-					domFacade,
-					null,
-					null,
-					{ language: evaluateXPath.XQUERY_UPDATE_3_1_LANGUAGE }
-				),
-			'XUST0001'
-		));
+		it('Can not evaluate updating expressions', () =>
+			chai.assert.throws(
+				() =>
+					evaluateXPath(
+						'insert node <element/> into .',
+						documentNode,
+						domFacade,
+						null,
+						null,
+						{ language: evaluateXPath.XQUERY_UPDATE_3_1_LANGUAGE }
+					),
+				'XUST0001'
+			));
+	});
 
 	it('Can evaluate intermediately updating expressions', () => {
 		chai.assert.equal(
@@ -82,6 +92,90 @@ describe('evaluateXPath', () => {
 
 	it('Requires the XPath selector', () =>
 		chai.assert.throws(() => (evaluateXPath as any)(), 'xpathExpression must be a string'));
+
+	describe('ALL_RESULTS: the better ANY', () => {
+		it('Keeps booleans booleans', () =>
+			chai.assert.deepEqual(
+				evaluateXPath('true()', documentNode, domFacade, {}, ReturnType.ALL_RESULTS),
+				[true]
+			));
+		it('Keeps numbers numbers', () =>
+			chai.assert.deepEqual(
+				evaluateXPath('1', documentNode, domFacade, {}, ReturnType.ALL_RESULTS),
+				[1]
+			));
+		it('Keeps mixed sequences mixed', () =>
+			chai.assert.deepEqual(
+				evaluateXPath(
+					'1,true(),"test",.',
+					documentNode,
+					domFacade,
+					{},
+					ReturnType.ALL_RESULTS
+				),
+				[1, true, 'test', documentNode]
+			));
+		it('Keeps strings strings', () =>
+			chai.assert.deepEqual(
+				evaluateXPath('"string"', documentNode, domFacade, {}, ReturnType.ALL_RESULTS),
+				['string']
+			));
+		it('Keeps nodes nodes', () =>
+			chai.assert.deepEqual(
+				evaluateXPath('.', documentNode, domFacade, {}, ReturnType.ALL_RESULTS),
+				[documentNode]
+			));
+		it('Keeps attributes attributes', () => {
+			const tmp = documentNode.createElement('tmp');
+			tmp.setAttribute('class', 'value');
+			chai.assert.deepEqual(
+				evaluateXPath('@class', tmp, domFacade, {}, ReturnType.ALL_RESULTS),
+				[tmp.getAttributeNode('class')]
+			);
+		});
+		it('Keeps arrays arrays', () =>
+			chai.assert.deepEqual(
+				evaluateXPath('[1,2,3]', documentNode, domFacade, {}, ReturnType.ALL_RESULTS),
+				[[1, 2, 3]]
+			));
+		it('Keeps maps maps', () =>
+			chai.assert.deepEqual(
+				evaluateXPath(
+					'map{1:2,"a":"b"}',
+					documentNode,
+					domFacade,
+					{},
+					ReturnType.ALL_RESULTS
+				),
+				[
+					{
+						1: 2,
+						a: 'b',
+					},
+				]
+			));
+
+		it('returns the correct number of results', () => {
+			chai.assert.equal(
+				evaluateXPath('(1 to 250)', null, null, null, ReturnType.ALL_RESULTS).length,
+				250
+			);
+		});
+
+		it('Can not evaluate updating expressions', () =>
+			chai.assert.throws(
+				() =>
+					evaluateXPath(
+						'insert node <element/> into .',
+						documentNode,
+						domFacade,
+						null,
+						ReturnType.ALL_RESULTS,
+						{ language: evaluateXPath.XQUERY_UPDATE_3_1_LANGUAGE }
+					),
+				'XUST0001'
+			));
+	});
 
 	describe('toBoolean', () => {
 		it('Keeps booleans booleans', () =>
