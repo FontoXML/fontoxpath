@@ -64,7 +64,7 @@ function emitEvaluationToString(
 
 	const valueDataCode = getDataFromOperandCode(valueCode, valueCodeType.type, astType);
 
-	return acceptAst('return ' + valueDataCode + ';', { type: GeneratedCodeBaseType.Statement });
+	return acceptAst(`return ${valueDataCode};`, { type: GeneratedCodeBaseType.Statement });
 }
 
 function emitEvaluationToFirstNode(
