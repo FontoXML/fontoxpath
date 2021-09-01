@@ -3,6 +3,7 @@ import astHelper, { IAST } from '../parsing/astHelper';
 import { ReturnType } from '../parsing/convertXDMReturnValue';
 import { CodeGenContext } from './CodeGenContext';
 import { emitBaseExpr } from './emitBaseExpression';
+import { getDataFromOperandCode } from './emitCompare';
 import {
 	acceptAst,
 	acceptFullyCompiledAst,
@@ -52,14 +53,18 @@ function emitEvaluationToBoolean(
 // Strings can just be returned as is so lets do that
 function emitEvaluationToString(
 	identifier: string,
-	generatedCodeType: GeneratedCodeType
+	generatedCodeType: GeneratedCodeType,
+	astType: ValueType
 ): PartialCompilationResult {
-	return acceptAst(
-		`
-	return ${getCompiledValueCode(identifier, generatedCodeType)[0]};
-	`,
-		{ type: GeneratedCodeBaseType.Statement }
-	);
+	if (astType === undefined) {
+		return rejectAst("Full AST wasn't annotated so we cannot correctly emit a string return");
+	}
+
+	const [valueCode, valueCodeType] = getCompiledValueCode(identifier, generatedCodeType);
+
+	const valueDataCode = getDataFromOperandCode(valueCode, valueCodeType.type, astType);
+
+	return acceptAst(`return ${valueDataCode};`, { type: GeneratedCodeBaseType.Statement });
 }
 
 function emitEvaluationToFirstNode(
@@ -86,7 +91,8 @@ function emitEvaluationToFirstNode(
 function emitReturnTypeConversion(
 	identifier: string,
 	returnType: ReturnType,
-	generatedCodeType: GeneratedCodeType
+	generatedCodeType: GeneratedCodeType,
+	astType: ValueType
 ): PartialCompilationResult {
 	switch (returnType) {
 		case ReturnType.FIRST_NODE:
@@ -96,7 +102,7 @@ function emitReturnTypeConversion(
 		case ReturnType.BOOLEAN:
 			return emitEvaluationToBoolean(identifier, generatedCodeType);
 		case ReturnType.STRING:
-			return emitEvaluationToString(identifier, generatedCodeType);
+			return emitEvaluationToString(identifier, generatedCodeType, astType);
 		default:
 			return rejectAst(`Unsupported: the return type '${returnType}'.`);
 	}
@@ -167,10 +173,13 @@ function compileAstToJavaScript(
 		? compiledBaseExpr.variables.join('\n')
 		: '';
 
+	const queryType = astHelper.getAttribute(queryBodyContents, 'type');
+
 	const returnTypeConversionCode = emitReturnTypeConversion(
 		compiledXPathIdentifier,
 		returnType,
-		compiledBaseExpr.generatedCodeType
+		compiledBaseExpr.generatedCodeType,
+		queryType ? queryType.type : undefined
 	);
 
 	if (returnTypeConversionCode.isAstAccepted === false) {
