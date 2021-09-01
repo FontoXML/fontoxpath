@@ -17,7 +17,7 @@ import {
 	rejectAst,
 } from './JavaScriptCompiledXPath';
 
-function getDataFromOperandCode(
+export function getDataFromOperandCode(
 	identifier: string,
 	generatedType: GeneratedCodeBaseType,
 	valueType: ValueType
