@@ -67,7 +67,7 @@
 		"@microsoft/api-extractor": "^7.16.1",
 		"@tscc/tscc": "^0.6.4",
 		"@types/chai": "^4.2.19",
-		"@types/mocha": "^8.2.2",
+		"@types/mocha": "^9.0.0",
 		"@types/node": "^15.12.5",
 		"@types/node-static": "^0.7.6",
 		"blns": "^2.0.4",
