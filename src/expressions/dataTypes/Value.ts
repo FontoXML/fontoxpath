@@ -73,6 +73,7 @@ export const enum ValueType {
 	FUNCTION,
 	MAP,
 	ARRAY,
+	NONE,
 }
 
 /**
@@ -176,6 +177,7 @@ const typeToStringMap: Record<ValueType, string> = {
 	[ValueType.FUNCTION]: 'function(*)',
 	[ValueType.MAP]: 'map(*)',
 	[ValueType.ARRAY]: 'array(*)',
+	[ValueType.NONE]: 'none',
 };
 
 const stringToValueTypeMap: { [key: string]: ValueType } = {
@@ -242,6 +244,7 @@ const stringToValueTypeMap: { [key: string]: ValueType } = {
 	'function(*)': ValueType.FUNCTION,
 	'map(*)': ValueType.MAP,
 	'array(*)': ValueType.ARRAY,
+	none: ValueType.NONE,
 };
 
 /**
