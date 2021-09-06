@@ -1091,6 +1091,7 @@ export default {
 		concat: fnConcat,
 		endsWith: fnEndsWith,
 		normalizeSpace: fnNormalizeSpace,
+		replace: fnReplace,
 		startsWith: fnStartsWith,
 		string: fnString,
 		stringJoin: fnStringJoin,
