@@ -28,9 +28,10 @@ export function getDataFromOperandCode(
 		code = `${code}.next().value`;
 	}
 
-	// If the type is an attribute, get the value
+	// If the type is an attribute, get the value. Though: if the attribute is absent, return null
+	// instead.
 	if (valueType === ValueType.ATTRIBUTE) {
-		code = `domFacade.getData(${code})`;
+		code = `(function () { const attr = ${code}; return attr ? domFacade.getData(attr) : null})()`;
 	}
 
 	return code;
@@ -92,18 +93,18 @@ export function emitValueCompare(
 		return rejectAst("Operands in compare weren't annotated");
 	}
 
-	const compareOperators: Record<string, string> = {
-		eqOp: '===',
-		neOp: '!==',
-	};
+	const compareOperators = new Map<string, string>([
+		['eqOp', '==='],
+		['neOp', '!=='],
+	]);
 
 	// Make sure we support the comparison type
-	if (!compareOperators[compareType]) {
+	if (!compareOperators.has(compareType)) {
 		return rejectAst(compareType + ' not yet implemented');
 	}
 
 	// Get the correct operator
-	const operator = compareOperators[compareType];
+	const operator = compareOperators.get(compareType);
 
 	// Generate the code to get the value from both operands
 	const leftGenerated = getCompiledValueCode(firstExpr.code, firstExpr.generatedCodeType);

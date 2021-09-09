@@ -7,9 +7,9 @@ import INodesFactory from '../nodesFactory/INodesFactory';
  * @public
  */
 export enum Language {
-	XPATH_3_1_LANGUAGE = 'XPath3.1',
-	XQUERY_3_1_LANGUAGE = 'XQuery3.1',
-	XQUERY_UPDATE_3_1_LANGUAGE = 'XQueryUpdate3.1',
+	'XPATH_3_1_LANGUAGE' = 'XPath3.1',
+	'XQUERY_3_1_LANGUAGE' = 'XQuery3.1',
+	'XQUERY_UPDATE_3_1_LANGUAGE' = 'XQueryUpdate3.1',
 }
 
 /**

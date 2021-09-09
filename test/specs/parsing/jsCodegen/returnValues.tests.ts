@@ -65,4 +65,24 @@ describe('return values', () => {
 		);
 		chai.assert.equal(node, documentNode.firstChild);
 	});
+
+	it('evaluates to strings', () => {
+		const output: string = evaluateXPathWithJsCodegen(
+			'"abc"',
+			documentNode,
+			null,
+			ReturnType.STRING
+		);
+		chai.assert.equal(output, 'abc');
+	});
+
+	it('returns empty strings for absent attributes', () => {
+		const output: string = evaluateXPathWithJsCodegen(
+			'@absent',
+			documentNode,
+			null,
+			ReturnType.STRING
+		);
+		chai.assert.equal(output, '');
+	});
 });

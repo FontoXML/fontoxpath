@@ -79,4 +79,18 @@ describe('axes (js-codegen)', () => {
 			)
 		);
 	});
+
+	it('compiles attribute nametests with URILiterals (Q{})', () => {
+		const ele = documentNode.createElement('test');
+		ele.setAttributeNS('http://example.com', 'ns-attr', 'value');
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen(
+				'@Q{http://example.com}ns-attr',
+				ele,
+				null,
+				ReturnType.STRING
+			),
+			'value'
+		);
+	});
 });

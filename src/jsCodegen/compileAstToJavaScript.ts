@@ -1,3 +1,4 @@
+import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
 import { ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { ReturnType } from '../parsing/convertXDMReturnValue';
@@ -59,12 +60,17 @@ function emitEvaluationToString(
 	if (astType === undefined) {
 		return rejectAst("Full AST wasn't annotated so we cannot correctly emit a string return");
 	}
+	if (!isSubtypeOf(astType, ValueType.XSSTRING) && !isSubtypeOf(astType, ValueType.ATTRIBUTE)) {
+		return rejectAst(
+			'Not implemented: returning anything but strings and attributes from codegen'
+		);
+	}
 
 	const [valueCode, valueCodeType] = getCompiledValueCode(identifier, generatedCodeType);
 
 	const valueDataCode = getDataFromOperandCode(valueCode, valueCodeType.type, astType);
-
-	return acceptAst(`return ${valueDataCode};`, { type: GeneratedCodeBaseType.Statement });
+	// Note that `getDataFromOperandCode` can return null for empty strings. Stringify these cases
+	return acceptAst(`return ${valueDataCode} || '';`, { type: GeneratedCodeBaseType.Statement });
 }
 
 function emitEvaluationToFirstNode(
