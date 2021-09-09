@@ -94,4 +94,24 @@ describe('compare attributes tests', () => {
 		chai.assert.equal(normalEvaluation[0], jsCodegenEvaluation[0]);
 		chai.assert.equal(normalEvaluation[1], jsCodegenEvaluation[1]);
 	});
+
+	it('handles absent attributes correctly', () => {
+		const jsCodegenEvaluation = evaluateXPathWithJsCodegen(
+			"@absent eq 'value'",
+			xml,
+			null,
+			ReturnType.BOOLEAN
+		);
+		chai.assert.isFalse(jsCodegenEvaluation);
+	});
+
+	it('does not make absent attributes equal to the empty string', () => {
+		const jsCodegenEvaluation = evaluateXPathWithJsCodegen(
+			"@absent eq ''",
+			xml,
+			null,
+			ReturnType.BOOLEAN
+		);
+		chai.assert.isFalse(jsCodegenEvaluation);
+	});
 });

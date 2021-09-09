@@ -21,17 +21,17 @@ import { Node } from '../types/Types';
  * @public
  */
 export enum ReturnType {
-	ANY = 0,
-	NUMBER = 1,
-	STRING = 2,
-	BOOLEAN = 3,
-	NODES = 7,
-	FIRST_NODE = 9,
-	STRINGS = 10,
-	MAP = 11,
-	ARRAY = 12,
-	NUMBERS = 13,
-	ASYNC_ITERATOR = 99,
+	'ANY' = 0,
+	'NUMBER' = 1,
+	'STRING' = 2,
+	'BOOLEAN' = 3,
+	'NODES' = 7,
+	'FIRST_NODE' = 9,
+	'STRINGS' = 10,
+	'MAP' = 11,
+	'ARRAY' = 12,
+	'NUMBERS' = 13,
+	'ASYNC_ITERATOR' = 99,
 }
 
 /**

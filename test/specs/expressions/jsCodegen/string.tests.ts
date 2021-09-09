@@ -2,8 +2,8 @@ import * as chai from 'chai';
 import { Language, ReturnType } from 'fontoxpath';
 import * as slimdom from 'slimdom';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
-import escapeJavaScriptString from '../../../src/jsCodegen/escapeJavaScriptString';
-import evaluateXPathWithJsCodegen from './evaluateXPathWithJsCodegen';
+import escapeJavaScriptString from 'fontoxpath/jsCodegen/escapeJavaScriptString';
+import evaluateXPathWithJsCodegen from '../../parsing/jsCodegen/evaluateXPathWithJsCodegen';
 
 describe('string tests', () => {
 	let documentNode: slimdom.Document;

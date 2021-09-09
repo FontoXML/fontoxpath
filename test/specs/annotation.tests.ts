@@ -366,7 +366,6 @@ describe('Annotation counting', () => {
 		const ast = parseExpression('$x + 1', {});
 		annotateAst(ast, context);
 		const [total, annotated] = countQueryBodyAnnotations(ast);
-		console.log(total, annotated);
 		chai.assert.equal(annotated, total);
 		chai.assert.equal(total, 3);
 	});
@@ -374,7 +373,6 @@ describe('Annotation counting', () => {
 		const ast = parseExpression('$b + math:sin($a)', {});
 		annotateAst(ast, context);
 		const [total, annotated] = countQueryBodyAnnotations(ast);
-		console.log(total, annotated);
 		chai.assert.equal(annotated, 2);
 		chai.assert.equal(total, 4);
 	});

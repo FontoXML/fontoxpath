@@ -63,8 +63,8 @@ function emitEvaluationToString(
 	const [valueCode, valueCodeType] = getCompiledValueCode(identifier, generatedCodeType);
 
 	const valueDataCode = getDataFromOperandCode(valueCode, valueCodeType.type, astType);
-
-	return acceptAst(`return ${valueDataCode};`, { type: GeneratedCodeBaseType.Statement });
+	// Note that `getDataFromOperandCode` can return null for empty strings. Stringify these cases
+	return acceptAst(`return ${valueDataCode} || '';`, { type: GeneratedCodeBaseType.Statement });
 }
 
 function emitEvaluationToFirstNode(
