@@ -1,5 +1,4 @@
 import * as fontoxpath from '../src/index';
-import * as prettier from 'prettier';
 
 const allowXQuery = document.getElementById('allowXQuery') as HTMLInputElement;
 const allowXQueryUpdateFacility = document.getElementById(
