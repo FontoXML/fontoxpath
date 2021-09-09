@@ -47,8 +47,8 @@ function emitNameTestFromQName(
 	resolveNamespaceURI(qName, staticContext);
 	const { prefix, namespaceURI, localName } = qName;
 
-	const isElementOrAttributeCode = `${identifier}.nodeType 
-		&& (${identifier}.nodeType === /*ELEMENT_NODE*/ ${NODE_TYPES.ELEMENT_NODE} 
+	const isElementOrAttributeCode = `${identifier}.nodeType
+		&& (${identifier}.nodeType === /*ELEMENT_NODE*/ ${NODE_TYPES.ELEMENT_NODE}
 		|| ${identifier}.nodeType === /*ATTRIBUTE_NODE*/ ${NODE_TYPES.ATTRIBUTE_NODE})`;
 
 	// Simple cases.
@@ -73,11 +73,7 @@ function emitNameTestFromQName(
 			  )} && `
 			: '';
 
-	const isElementConditionCode = `${identifier}.nodeType && ${identifier}.nodeType === /*ELEMENT_NODE*/ ${NODE_TYPES.ELEMENT_NODE}`;
-	const resolveNamespaceURICode =
-		prefix === ''
-			? `(${isElementConditionCode} ? ${escapeJavaScriptString(namespaceURI)} : null)`
-			: escapeJavaScriptString(namespaceURI);
+	const resolveNamespaceURICode = escapeJavaScriptString(namespaceURI);
 	const matchesNamespaceCode = `(${identifier}.namespaceURI || null) === (${resolveNamespaceURICode} || null)`;
 
 	return acceptAst(`${matchesLocalNameCode}${matchesNamespaceCode}`, {

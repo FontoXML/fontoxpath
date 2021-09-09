@@ -1,3 +1,4 @@
+import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
 import { ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { ReturnType } from '../parsing/convertXDMReturnValue';
@@ -58,6 +59,11 @@ function emitEvaluationToString(
 ): PartialCompilationResult {
 	if (astType === undefined) {
 		return rejectAst("Full AST wasn't annotated so we cannot correctly emit a string return");
+	}
+	if (!isSubtypeOf(astType, ValueType.XSSTRING) && !isSubtypeOf(astType, ValueType.ATTRIBUTE)) {
+		return rejectAst(
+			'Not implemented: returning anything but strings and attributes from codegen'
+		);
 	}
 
 	const [valueCode, valueCodeType] = getCompiledValueCode(identifier, generatedCodeType);
