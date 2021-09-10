@@ -626,17 +626,29 @@ const fnReplace: FunctionDefinitionType = (
 		([inputValue, patternValue, replacementValue]) => {
 			const input = inputValue ? inputValue.value : '';
 			const pattern = patternValue.value;
-			let replacement = replacementValue.value;
+			let replacement: string = replacementValue.value;
 			if (replacement.includes('$0')) {
 				throw new Error(
 					'Using $0 in fn:replace to replace substrings with full matches is not supported.'
 				);
 			}
-			// Note: while XPath patterns escape dollars with backslashes, JavaScript escapes them by duplicating
-			replacement = replacement.split('\\$').join('$$');
-			// Similarly, backslashes are escaped by using two backslashes
-			replacement = replacement.split('\\\\').join('\\');
 
+			// Note: while XPath patterns escape dollars with backslashes, JavaScript escapes them by duplicating
+			replacement = replacement
+				.split(/((?:\$\$)|(?:\\\$)|(?:\\\\))/)
+				.map((part) => {
+					switch (part) {
+						case '\\$':
+							return '$$';
+						case '\\\\':
+							return '\\';
+						case '$$':
+							throw new Error('FORX0004: invalid replacement: "$$"');
+						default:
+							return part;
+					}
+				})
+				.join('');
 			const regex = compileJSRegex(pattern);
 			const result = input.replace(regex, replacement);
 

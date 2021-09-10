@@ -509,7 +509,16 @@ describe('functions over strings', () => {
 				() => evaluateXPathToString('replace("abracadabra", ".*?", "$1")'),
 				'FORX0003'
 			));
-		it('replace("AAAA", "A+", "b") returns "b"', () =>
+		it('replace("AAAA", "(A)", "\\$1") returns "$1$1$1$1"', () =>
+			chai.assert.equal(evaluateXPathToString('replace("AAAA", "(A)", "\\$1")'), '$1$1$1$1'));
+		it('replace("AAAA", "(A)", "\\\\") returns "\\\\\\\\" (four backslashes)', () =>
+			chai.assert.equal(evaluateXPathToString('replace("AAAA", "(A)", "\\\\")'), '\\\\\\\\'));
+		it('replace("AAAA", "(A)", "\\$$1") returns "$A$A$A$A"', () =>
+			chai.assert.equal(
+				evaluateXPathToString('replace("AAAA", "(A)", "\\$$1")'),
+				'$A$A$A$A'
+			));
+		it('replace("AAAA", "A", "") returns "b"', () =>
 			chai.assert.equal(evaluateXPathToString('replace("AAAA", "A+", "b")'), 'b'));
 		it('replace("AAAA", "A+?", "b") returns "bbbb"', () =>
 			chai.assert.equal(evaluateXPathToString('replace("AAAA", "A+?", "b")'), 'bbbb'));
