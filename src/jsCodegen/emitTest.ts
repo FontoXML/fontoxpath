@@ -44,6 +44,7 @@ function emitNameTestFromQName(
 	qName: QName,
 	staticContext: CodeGenContext
 ): PartialCompilationResult {
+	const namespaceURIWasResolved = !qName.namespaceURI;
 	resolveNamespaceURI(qName, staticContext);
 	const { prefix, namespaceURI, localName } = qName;
 
@@ -73,7 +74,18 @@ function emitNameTestFromQName(
 			  )} && `
 			: '';
 
-	const resolveNamespaceURICode = escapeJavaScriptString(namespaceURI);
+	let resolveNamespaceURICode: string;
+	if (namespaceURIWasResolved && !prefix) {
+		// This prefix came from the name
+		// While the namespaceuri is also present, this should not be used for _attribute_ name tests
+		resolveNamespaceURICode = `${identifier}.nodeType
+&& ${identifier}.nodeType === /*ELEMENT_NODE*/ ${
+			NODE_TYPES.ELEMENT_NODE
+		} ? ${escapeJavaScriptString(namespaceURI)} : null`;
+	} else {
+		// There was a prefix. This applies to elements and attributes
+		resolveNamespaceURICode = escapeJavaScriptString(namespaceURI);
+	}
 	const matchesNamespaceCode = `(${identifier}.namespaceURI || null) === (${resolveNamespaceURICode} || null)`;
 
 	return acceptAst(`${matchesLocalNameCode}${matchesNamespaceCode}`, {

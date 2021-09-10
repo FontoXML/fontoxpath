@@ -93,4 +93,15 @@ describe('axes (js-codegen)', () => {
 			'value'
 		);
 	});
+
+	it('Correctly handles attribute predicates', () => {
+		const ele = documentNode.createElementNS('http://www.example.com', 'test');
+		ele.setAttribute('present', 'value');
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen('self::test[@present]', ele, null, ReturnType.BOOLEAN, {
+				namespaceResolver: (_prefix) => 'http://www.example.com',
+			}),
+			true
+		);
+	});
 });

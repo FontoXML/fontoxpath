@@ -7,7 +7,6 @@ import {
 	acceptAst,
 	FunctionIdentifier,
 	GeneratedCodeBaseType,
-	getCompiledValueCode,
 	PartialCompilationResult,
 	rejectAst,
 } from './JavaScriptCompiledXPath';
