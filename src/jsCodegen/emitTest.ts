@@ -44,7 +44,7 @@ function emitNameTestFromQName(
 	qName: QName,
 	staticContext: CodeGenContext
 ): PartialCompilationResult {
-	const namespaceURIWasResolved = !qName.namespaceURI;
+	const namespaceURIWasResolved = qName.namespaceURI === null;
 	resolveNamespaceURI(qName, staticContext);
 	const { prefix, namespaceURI, localName } = qName;
 

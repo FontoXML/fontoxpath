@@ -39,6 +39,30 @@ describe('node tests', () => {
 		);
 	});
 
+	it('compiles name test containing namespace URIs for the null namespace for elements', () => {
+		documentNode = new slimdom.Document();
+		const element = documentNode.createElementNS('', 'someElement');
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen(
+				'self::Q{}someElement',
+				element,
+				null,
+				ReturnType.FIRST_NODE
+			),
+			element
+		);
+	});
+
+	it('compiles name test containing namespace URIs for the null namespace for attributes', () => {
+		documentNode = new slimdom.Document();
+		const element = documentNode.createElement('someElement');
+		element.setAttribute('attr', 'value');
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen('@Q{}attr', element, null, ReturnType.FIRST_NODE),
+			element.getAttributeNode('attr')
+		);
+	});
+
 	it('resolves prefixes to namespace URIs', () => {
 		documentNode = new slimdom.Document();
 		const namespace = 'http://fontoxml.com/ns/';
