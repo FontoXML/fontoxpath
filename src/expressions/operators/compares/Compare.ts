@@ -1,3 +1,4 @@
+import isSubtypeOf from '../../../expressions/dataTypes/isSubtypeOf';
 import zipSingleton from '../../../expressions/util/zipSingleton';
 import atomize from '../../dataTypes/atomize';
 import ISequence from '../../dataTypes/ISequence';
@@ -56,7 +57,9 @@ class Compare extends Expression {
 					firstType &&
 					secondType &&
 					!genericTypes.includes(firstType.type) &&
-					!genericTypes.includes(secondType.type)
+					!genericTypes.includes(secondType.type) &&
+					!isSubtypeOf(firstType.type, ValueType.NODE) &&
+					!isSubtypeOf(secondType.type, ValueType.NODE)
 				) {
 					if (
 						firstType.mult === SequenceMultiplicity.EXACTLY_ONE &&
