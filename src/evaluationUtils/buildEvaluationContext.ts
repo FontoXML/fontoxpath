@@ -92,6 +92,7 @@ export default function buildEvaluationContext(
 			namespaceResolver: externalOptions['namespaceResolver'],
 			functionNameResolver: externalOptions['functionNameResolver'],
 			nodesFactory: externalOptions['nodesFactory'],
+			xmlSerializer: externalOptions['xmlSerializer'],
 		};
 	} else {
 		internalOptions = {
@@ -102,6 +103,7 @@ export default function buildEvaluationContext(
 			namespaceResolver: null,
 			nodesFactory: null,
 			documentWriter: null,
+			xmlSerializer: null,
 		};
 	}
 	const wrappedDomFacade: DomFacade = new DomFacade(
@@ -143,6 +145,8 @@ export default function buildEvaluationContext(
 	const documentWriter: IDocumentWriter = internalOptions.documentWriter
 		? wrapExternalDocumentWriter(internalOptions.documentWriter)
 		: domBackedDocumentWriter;
+
+	const xmlSerializer: XMLSerializer = internalOptions.xmlSerializer;
 
 	const variableBindings: { [s: string]: () => ISequence } = Object.keys(variables).reduce(
 		(typedVariableByName, variableName) => {
@@ -193,6 +197,7 @@ export default function buildEvaluationContext(
 		externalOptions['currentContext'],
 		new Map(),
 		internalOptions.logger,
+		xmlSerializer,
 		true
 	);
 

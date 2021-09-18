@@ -112,6 +112,11 @@ export type Options = {
 	documentWriter?: IDocumentWriter;
 
 	/**
+	 * Serializer used for fn:serialize().
+	 */
+	xmlSerializer?: XMLSerializer;
+
+	/**
 	 * Hook that is called whenever a function name is resolved. Can be used to redirect function
 	 * calls to a different implementation.
 	 *
