@@ -123,14 +123,14 @@ function splitFunctionName(name: string | { localName: string; namespaceURI: str
 }
 
 /**
- * Add a custom test for use in xpath-serialized expressions.
+ * Add a custom function for use in xpath-serialized expressions.
  *
  * @public
  *
  * @param  name - The name of this custom function. The string overload is deprecated, please register functions using the object overload
- * @param  signature - The signature of the test, as array of strings (e.g. ['item()', 'node()?', 'xs:numeric'])
- * @param  returnType - The return type of the test, as sequence type (e.g. 'xs:boolean()')
- * @param  callback - The test itself, which gets the dynamicContext and arguments passed
+ * @param  signature - The signature of the function, as array of strings (e.g. ['item()', 'node()?', 'xs:numeric'])
+ * @param  returnType - The return type of the function, as sequence type (e.g. 'xs:boolean()')
+ * @param  callback - The function itself, which gets the dynamicContext and arguments passed
  */
 export default function registerCustomXPathFunction(
 	name: string | { localName: string; namespaceURI: string },
