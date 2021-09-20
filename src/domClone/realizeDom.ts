@@ -138,8 +138,14 @@ export default function realizeDom(
 		// So the node should not be cloned.
 		return node;
 	}
+
 	const rootPointerByRootNode = executionParameters.rootPointerByRootNodeMap;
 	const pathToNodeFromRoot: string[] = [];
+
+	if (forceCreateClone) {
+		// We are creating a forced clone for a PUL: never use the created nodes cache here!
+		return createNewNode(pointer, executionParameters);
+	}
 	const rootPointer = getRootPointer(pointer, pathToNodeFromRoot, executionParameters.domFacade);
 	let newRootPointer = rootPointerByRootNode.get(rootPointer.node);
 	if (!newRootPointer) {
