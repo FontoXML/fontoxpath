@@ -538,7 +538,7 @@ quantifiedExprInClause
 
 // 74
 TypeswitchExpr
- = "typeswitch" _ "(" expr:Expr ")" _ clauses:(c:CaseClause _ {return c})+ "default" S varName:("$" v:VarName S {return v})? "return" S resultExpr:ExprSingle
+ = "typeswitch" _ "(" _ expr:Expr _ ")" _ clauses:(c:CaseClause _ {return c})+ "default" S varName:("$" v:VarName S {return v})? "return" S resultExpr:ExprSingle
  {
 	 return ["typeswitchExpr", ["argExpr", expr]]
 	 	.concat(clauses)
