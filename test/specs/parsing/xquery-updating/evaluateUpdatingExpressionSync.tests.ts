@@ -2,6 +2,9 @@ import * as chai from 'chai';
 import * as slimdom from 'slimdom';
 
 import { evaluateUpdatingExpressionSync, executePendingUpdateList } from 'fontoxpath';
+import { IPendingUpdate } from 'fontoxpath/expressions/xquery-update/IPendingUpdate';
+import { InsertPendingUpdate } from 'fontoxpath/expressions/xquery-update/pendingUpdates/InsertPendingUpdate';
+import { TransferablePendingUpdate } from 'fontoxpath/expressions/xquery-update/createPendingUpdateFromTransferable';
 
 let documentNode: slimdom.Document;
 beforeEach(() => {
@@ -204,5 +207,44 @@ describe('evaluateUpdatingExpressionSync', () => {
 		chai.assert.isFalse(removeAttributeNSCalled, 'removeAttributeNSCalled');
 		chai.assert.isTrue(setAttributeNSCalled, 'setAttributeNSCalled');
 		chai.assert.isFalse(setDataCalled, 'setDataCalled');
+	});
+
+	it('creates proper clones for the nodes that are inserted', async () => {
+		const ele = documentNode.appendChild(documentNode.createElement('ele'));
+		const child = ele.appendChild(documentNode.createElement('child'));
+
+		const result = evaluateUpdatingExpressionSync(
+			'insert node ($doc/ele, $doc/ele, $doc/ele/child) into $doc/ele',
+			documentNode,
+			null,
+			{
+				doc: documentNode,
+			}
+		);
+
+		const pulItems = result.pendingUpdateList as TransferablePendingUpdate[];
+		chai.assert.equal(pulItems.length, 1);
+
+		const [firstPulItem] = pulItems;
+		chai.assert.equal(firstPulItem.type, 'insertInto');
+
+		chai.assert.equal((firstPulItem.content[0] as Element).nodeName, 'ele');
+		chai.assert.isNull((firstPulItem.content[0] as Element).parentNode);
+		chai.assert.isNull((firstPulItem.content[1] as Element).parentNode);
+		chai.assert.equal((firstPulItem.content[1] as Element).nodeName, 'ele');
+		chai.assert.notEqual(firstPulItem.content[0], ele);
+		chai.assert.notEqual(firstPulItem.content[1], ele);
+		chai.assert.notEqual(firstPulItem.content[0], firstPulItem.content[1]);
+
+		chai.assert.equal((firstPulItem.content[2] as Element).nodeName, 'child');
+		chai.assert.notEqual(firstPulItem.content[2], child);
+		chai.assert.isNull((firstPulItem.content[2] as Element).parentNode);
+
+		executePendingUpdateList(result.pendingUpdateList);
+
+		chai.assert.equal(
+			ele.outerHTML,
+			'<ele><child/><ele><child/></ele><ele><child/></ele><child/></ele>'
+		);
 	});
 });

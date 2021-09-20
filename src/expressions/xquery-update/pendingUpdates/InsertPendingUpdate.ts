@@ -1,12 +1,12 @@
 import { AttributeNodePointer, ChildNodePointer, NodePointer } from '../../../domClone/Pointer';
 import realizeDom from '../../../domClone/realizeDom';
 import ExecutionParameters from '../../../expressions/ExecutionParameters';
-import { IPendingUpdate } from '../IPendingUpdate';
+import { IPendingUpdate, PendingUpdateType } from '../IPendingUpdate';
 export class InsertPendingUpdate extends IPendingUpdate {
 	constructor(
 		readonly target: NodePointer,
 		readonly content: (ChildNodePointer | AttributeNodePointer)[],
-		type: string
+		type: PendingUpdateType
 	) {
 		super(type);
 	}
