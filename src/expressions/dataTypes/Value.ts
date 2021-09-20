@@ -244,7 +244,6 @@ const stringToValueTypeMap: { [key: string]: ValueType } = {
 	'function(*)': ValueType.FUNCTION,
 	'map(*)': ValueType.MAP,
 	'array(*)': ValueType.ARRAY,
-	none: ValueType.NONE,
 };
 
 /**

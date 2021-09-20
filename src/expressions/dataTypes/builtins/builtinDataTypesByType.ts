@@ -22,55 +22,66 @@ builtinModels.forEach((model) => {
 	const name = model.name;
 	const restrictionsByName = model.restrictions || {};
 
-	if (model.variety === Variety.PRIMITIVE) {
-		const parent = model.parent ? builtinDataTypesByType[model.parent] : null;
-		const validator = getValidatorForType(name) || null;
-		const facetHandlers = facetHandlersByDataTypeName.getFacetByDataType(name);
-		builtinDataTypesByType[name] = {
-			variety: Variety.PRIMITIVE,
-			type: name,
-			restrictionsByName,
-			parent,
-			validator,
-			facetHandlers,
-			memberTypes: [],
-		};
-	} else if (model.variety === Variety.DERIVED) {
-		const base = builtinDataTypesByType[model.base];
-		const validator = getValidatorForType(name) || null;
-		builtinDataTypesByType[name] = {
-			variety: Variety.DERIVED,
-			type: name,
-			restrictionsByName,
-			parent: base,
-			validator,
-			facetHandlers: base.facetHandlers,
-			memberTypes: [],
-		};
-	} else if (model.variety === Variety.LIST) {
-		const type = builtinDataTypesByType[model.type];
-		builtinDataTypesByType[name] = {
-			variety: Variety.LIST,
-			type: name,
-			restrictionsByName,
-			parent: type,
-			validator: null,
-			facetHandlers: facetHandlersByDataTypeName.list,
-			memberTypes: [],
-		};
-	} else {
-		const memberTypes = model.memberTypes.map(
-			(memberTypeRef) => builtinDataTypesByType[memberTypeRef]
-		);
-		builtinDataTypesByType[name] = {
-			variety: Variety.UNION,
-			type: name,
-			restrictionsByName,
-			parent: null,
-			validator: null,
-			facetHandlers: facetHandlersByDataTypeName.union,
-			memberTypes,
-		};
+	switch (model.variety) {
+		case Variety.PRIMITIVE: {
+			const parent = model.parent ? builtinDataTypesByType[model.parent] : null;
+			const validator = getValidatorForType(name) || null;
+			const facetHandlers = facetHandlersByDataTypeName.getFacetByDataType(name);
+			builtinDataTypesByType[name] = {
+				variety: Variety.PRIMITIVE,
+				type: name,
+				restrictionsByName,
+				parent,
+				validator,
+				facetHandlers,
+				memberTypes: [],
+			};
+			break;
+		}
+
+		case Variety.DERIVED: {
+			const base = builtinDataTypesByType[model.base];
+			const validator = getValidatorForType(name) || null;
+			builtinDataTypesByType[name] = {
+				variety: Variety.DERIVED,
+				type: name,
+				restrictionsByName,
+				parent: base,
+				validator,
+				facetHandlers: base.facetHandlers,
+				memberTypes: [],
+			};
+			break;
+		}
+
+		case Variety.LIST: {
+			const type = builtinDataTypesByType[model.type];
+			builtinDataTypesByType[name] = {
+				variety: Variety.LIST,
+				type: name,
+				restrictionsByName,
+				parent: type,
+				validator: null,
+				facetHandlers: facetHandlersByDataTypeName.list,
+				memberTypes: [],
+			};
+			break;
+		}
+
+		case Variety.UNION: {
+			const memberTypes = model.memberTypes.map(
+				(memberTypeRef) => builtinDataTypesByType[memberTypeRef]
+			);
+			builtinDataTypesByType[name] = {
+				variety: Variety.UNION,
+				type: name,
+				restrictionsByName,
+				parent: null,
+				validator: null,
+				facetHandlers: facetHandlersByDataTypeName.union,
+				memberTypes,
+			};
+		}
 	}
 });
 
