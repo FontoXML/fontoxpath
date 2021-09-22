@@ -1,0 +1,119 @@
+Loaded 19811 queries
+""""
+"&"
+'&#;'
+''''
+"&#0000045;"
+"0" and ''
+"0" or ''
+"&#0xA;"
+'&#100000000'
+'&#100000000x'
+"&#+20;"
+"&#-20;"
+"&#2A0;"
+"&#8364;"
+"a" and '0'
+"&amp;"
+"" and ''
+"" and 'a'
+"a" or '0'
+"&apos;"
+"a string &"
+"a string &#;"
+"a string &;"
+"a string &#1233 98;"
+"a string &#1233.98;"
+"a string &#1233a98;"
+"a string" = "a string"
+"a string" != "a stringDIFF"
+"a string &LT;"
+"a string &lte;"
+"a string &#x;"
+"a string &#x543 3;"
+"a string &#x543.3;"
+"a string &#x543g3;"
+count()
+"""" eq '"'
+'' eq ''
+'''' eq "'"
+'equals' eq 'equals'
+(false())
+false() and false()
+false() and true()
+false() eq false()
+((((((((((((false() eq false()) eq false()) eq false()) eq false()) eq false()) eq false()) eq false()) eq false()) eq false()) eq false()) eq false()) eq false()) eq false()
+false() ne true()
+false() or false()
+false() or true()
+fn:count( / )
+fn:count(//child::node())
+fn:count(/child::node())
+fn:count(/descendant::node())
+fn:count(/descendant-or-self::node())
+fn:count(//node())
+fn:count(/node())
+fn:count(//self::node())
+fn:count(/self::node())
+fn:false()
+fn:false() and fn:false()
+fn:false() eq fn:false()
+fn:false() != fn:false()
+fn:false() = fn:false()
+fn:false() ne fn:false()
+fn:false() or fn:false()
+fn:name()
+fn:true()
+fn:true() and fn:true()
+fn:true() eq fn:true()
+fn:true() != fn:true()
+fn:true() = fn:true()
+fn:true() ne fn:true()
+fn:true() or fn:true()
+(fn:true() or fn:true()) and fn:false()
+fn:true() or (fn:true() and fn:false())
+'fo''o' eq 'fo''o'
+'foo' eq "foo"
+"&gt;"
+"He said, ""I don't like it."""
+'He said, "I don''t like it."'
+"I love brownies&amp;cookies." eq "I love brownies&amp;cookies."
+"line1 line2"
+'line1 line2'
+"&lt;"
+"&lt; &gt; &amp; &quot; &apos; &#x48; &#48;" eq "< > &amp; "" ' &#x48; &#48;"
+'not' ne 'equal'
+"" or ''
+"" or 'a'
+"&quot;"
+"t" eq "t"
+"t" eq "&#x74;"
+"test"
+'test'
+(:*******************************************************:) (: Test: K2-Literals-28                                  :) (: Written by: Frans Englich                             :) (: Date: 2007-11-22T11:31:21+01:00                       :) (: Purpose: Ensure that EOLs are normalized in string literals. :) (:*******************************************************:) "a   string literal  "
+(:*******************************************************:) (: Test: K2-Literals-39                                  :) (: Written by: Frans Englich                             :) (: Date: 2007-11-22T11:31:21+01:00                       :) (: Purpose: Ensure that EOLs are normalized in string literals, using single quotes. :) (:*******************************************************:) 'a    string literal  '
+(:*******************************************************:) (: Test: K-XQueryComment-11                              :) (: Written by: Frans Englich                             :) (: Date: 2007-11-22T11:31:22+01:00                       :) (: Purpose: An empty comment after a function's paranteses. :) (:*******************************************************:) true()(::)
+(:*******************************************************:) (: Test: K-XQueryComment-4                               :) (: Written by: Frans Englich                             :) (: Date: 2007-11-22T11:31:22+01:00                       :) (: Purpose: Comparison of two string literals, whose content reminds of comments. :) (:*******************************************************:) "reminds of a comment :)" eq     "reminds of a comment :)"
+(true())
+true()
+true() and false()
+true() and true()
+true() eq true()
+((true() eq true()) eq true()) eq true()
+true() ne false()
+true() or false()
+true() or true()
+((true() = true()) = true()) = true()
+'&#x;'
+'&#x0;'
+"&#x00;"
+'&#x100000000'
+'&#x100000000x'
+"&#x+20;"
+"&#x-20;"
+"&#X4A;"
+"xquery version '1.0' encoding 'UTF-8|#%';" eq "xquery version '1.0' encoding 'UTF-8|#%';"
+'xquery version "1.0" encoding "UTF-8|#%";' eq 'xquery version "1.0" encoding "UTF-8|#%";'
+xs:name("input")
+"&#xW20;"
+117

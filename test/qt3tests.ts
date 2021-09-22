@@ -11,6 +11,7 @@ import {
 	executeJavaScriptCompiledXPath,
 	JavaScriptCompiledXPathResult,
 	Language,
+	NamespaceResolver,
 	registerXQueryModule,
 	ReturnType,
 } from 'fontoxpath';
@@ -319,14 +320,14 @@ function createAsserterForExpression(baseUrl: string, assertNode, language, anno
  */
 function createAsserterForJsCodegen(
 	baseUrl: string,
-	assertNode,
-	language
+	assertNode: any,
+	language: Language
 ): (
-	xpath,
-	contextNode,
-	variablesInScope,
-	namespaceResolver,
-	that
+	xpath: string,
+	contextNode: any,
+	variablesInScope: any,
+	namespaceResolver: NamespaceResolver,
+	that: any
 ) => JavaScriptCompiledXPathResult {
 	const nodesFactory = createNodesFactory(assertNode);
 
@@ -811,7 +812,7 @@ function createAsserterForJsCodegen(
 
 function getExpressionBackendAsserterForTest(
 	baseUrl: string,
-	testCase,
+	testCase: any,
 	language: Language,
 	annotateAst: boolean
 ) {
@@ -821,7 +822,7 @@ function getExpressionBackendAsserterForTest(
 	return createAsserterForExpression(baseUrl, assertNode, language, annotateAst);
 }
 
-function getJsCodegenBackendAsserterForTest(baseUrl: string, testCase, language) {
+function getJsCodegenBackendAsserterForTest(baseUrl: string, testCase: any, language: Language) {
 	const assertNode = evaluateXPathToFirstNode('./result/*', testCase, undefined, {
 		annotateAst: false,
 	});
@@ -830,13 +831,13 @@ function getJsCodegenBackendAsserterForTest(baseUrl: string, testCase, language)
 
 const registeredModuleURIByFileName = Object.create(null);
 
-function getTestName(testCase) {
+function getTestName(testCase: any) {
 	return evaluateXPathToString('./@name', testCase, undefined, {
 		annotateAst: false,
 	});
 }
 
-function getTestDescription(testSetName, testName, testCase) {
+function getTestDescription(testSetName: string, testName: string, testCase: any) {
 	return (
 		testSetName +
 		'~' +
@@ -853,7 +854,7 @@ function getTestDescription(testSetName, testName, testCase) {
 	);
 }
 
-function loadModule(testCase, baseUrl) {
+function loadModule(testCase: any, baseUrl: string) {
 	// Load the module within the try to catch any errors from the module
 	const moduleImports = evaluateXPathToArray(
 		'array{module!map{"uri": @uri/string(), "file": $baseUrl || "/" || @file/string()}}',
@@ -940,6 +941,7 @@ describe('qt3 test set', () => {
 									language,
 									annotateAst
 								);
+								console.error(testQuery.replace(/[\n\r\t]+/g, ' ').trim());
 								asserter(
 									testQuery,
 									contextNode,
@@ -1004,7 +1006,7 @@ describe('qt3 test set', () => {
 								testCase,
 								language
 							);
-
+							console.error(testQuery.replace(/[\n\r\t]+/g, ' ').trim());
 							const compiled = asserter(
 								testQuery,
 								contextNode,
