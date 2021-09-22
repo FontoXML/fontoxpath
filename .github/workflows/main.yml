@@ -23,7 +23,7 @@ jobs:
               run: npm ci
             - name: Unit tests against source
               run: npm run ci-test -- --reporter dot;
-            - name: Unit tests against source
+            - name: Unit tests against source with jscodegen
               run: npm run test-jscodegen -- --reporter dot;
             - name: QT3 tests against source
               run: npm run ci-qt3tests -- --reporter dot;
