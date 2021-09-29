@@ -154,8 +154,8 @@ class Compare extends Expression {
 				}
 
 				if (
-					firstSequence.first()?.type === this._firstType &&
-					secondSequence.first()?.type === this._secondType
+					firstSequence.first().type === this._firstType &&
+					secondSequence.first().type === this._secondType
 				) {
 					// Node compares should not be atomized
 					return this._evaluationFunction(firstSequence, secondSequence, dynamicContext)
