@@ -23,10 +23,16 @@ export const tests = Object.values(testAstNodes);
 
 // text() matches any text node.
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-TextTest
-function emitTextTest(_ast: IAST, identifier: ContextItemIdentifier): PartialCompilationResult {
-	return acceptAst(`${identifier}.nodeType === /*TEXT_NODE*/ ${NODE_TYPES.TEXT_NODE}`, {
-		type: GeneratedCodeBaseType.Value,
-	});
+function emitTextTest(
+	_ast: IAST,
+	identifier: ContextItemIdentifier
+): [PartialCompilationResult, string | null] {
+	return [
+		acceptAst(`${identifier}.nodeType === /*TEXT_NODE*/ ${NODE_TYPES.TEXT_NODE}`, {
+			type: GeneratedCodeBaseType.Value,
+		}),
+		null,
+	];
 }
 
 function resolveNamespaceURI(qName: QName, staticContext: CodeGenContext) {
@@ -43,7 +49,7 @@ function emitNameTestFromQName(
 	identifier: ContextItemIdentifier,
 	qName: QName,
 	staticContext: CodeGenContext
-): PartialCompilationResult {
+): [PartialCompilationResult, string | null] {
 	const namespaceURIWasResolved = qName.namespaceURI === null;
 	resolveNamespaceURI(qName, staticContext);
 	const { prefix, namespaceURI, localName } = qName;
@@ -55,14 +61,20 @@ function emitNameTestFromQName(
 	// Simple cases.
 	if (prefix === '*') {
 		if (localName === '*') {
-			return acceptAst(isElementOrAttributeCode, { type: GeneratedCodeBaseType.Value });
+			return [
+				acceptAst(isElementOrAttributeCode, { type: GeneratedCodeBaseType.Value }),
+				null,
+			];
 		}
-		return acceptAst(
-			`${isElementOrAttributeCode} && ${identifier}.localName === ${escapeJavaScriptString(
-				localName
-			)}`,
-			{ type: GeneratedCodeBaseType.Value }
-		);
+		return [
+			acceptAst(
+				`${isElementOrAttributeCode} && ${identifier}.localName === ${escapeJavaScriptString(
+					localName
+				)}`,
+				{ type: GeneratedCodeBaseType.Value }
+			),
+			`name-${localName}`,
+		];
 	}
 
 	// Return condition comparing localName and namespaceURI against the context
@@ -88,9 +100,12 @@ function emitNameTestFromQName(
 	}
 	const matchesNamespaceCode = `(${identifier}.namespaceURI || null) === (${resolveNamespaceURICode} || null)`;
 
-	return acceptAst(`${matchesLocalNameCode}${matchesNamespaceCode}`, {
-		type: GeneratedCodeBaseType.Value,
-	});
+	return [
+		acceptAst(`${matchesLocalNameCode}${matchesNamespaceCode}`, {
+			type: GeneratedCodeBaseType.Value,
+		}),
+		`name-${localName}`,
+	];
 }
 
 // element() and element(*) match any single element node, regardless of its name or type annotation.
@@ -99,13 +114,13 @@ function emitElementTest(
 	ast: IAST,
 	identifier: ContextItemIdentifier,
 	staticContext: CodeGenContext
-): PartialCompilationResult {
+): [PartialCompilationResult, string | null] {
 	const elementName = astHelper.getFirstChild(ast, 'elementName');
 	const star = elementName && astHelper.getFirstChild(elementName, 'star');
 	const isElementCode = `${identifier}.nodeType === /*ELEMENT_NODE*/ ${NODE_TYPES.ELEMENT_NODE}`;
 
 	if (elementName === null || star) {
-		return acceptAst(isElementCode, { type: GeneratedCodeBaseType.Value });
+		return [acceptAst(isElementCode, { type: GeneratedCodeBaseType.Value }), null];
 	}
 
 	const qName = astHelper.getQName(astHelper.getFirstChild(elementName, 'QName'));
@@ -126,7 +141,7 @@ function emitWildcard(
 	ast: IAST,
 	identifier: ContextItemIdentifier,
 	staticContext: CodeGenContext
-): PartialCompilationResult {
+): [PartialCompilationResult, string | null] {
 	if (!astHelper.getFirstChild(ast, 'star')) {
 		return emitNameTestFromQName(
 			identifier,
@@ -183,7 +198,9 @@ export default function emitTest(
 	ast: IAST,
 	identifier: ContextItemIdentifier,
 	staticContext: CodeGenContext
-): PartialCompilationResult {
+): [PartialCompilationResult, string | null] {
+	// emitTest returns a tuple of the generated code and an optional bucket.
+
 	const test = ast[0];
 
 	switch (test) {
@@ -196,6 +213,6 @@ export default function emitTest(
 		case testAstNodes.WILDCARD:
 			return emitWildcard(ast, identifier, staticContext);
 		default:
-			return rejectAst(`Unsupported: the test '${test}'.`);
+			return [rejectAst(`Unsupported: the test '${test}'.`), null];
 	}
 }

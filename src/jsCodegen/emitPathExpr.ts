@@ -124,7 +124,11 @@ function emitSteps(stepsAst: IAST[], staticContext: CodeGenContext): PartialComp
 					: `${emittedStepsCode}
 					   i${nestLevel}++;`;
 
-			const emittedTest = emitTest(testAst, `contextItem${nestLevel}`, staticContext);
+			const [emittedTest, bucket] = emitTest(
+				testAst,
+				`contextItem${nestLevel}`,
+				staticContext
+			);
 			if (!emittedTest.isAstAccepted) {
 				return emittedTest;
 			}
@@ -134,7 +138,8 @@ function emitSteps(stepsAst: IAST[], staticContext: CodeGenContext): PartialComp
 				emittedTest.code,
 				emittedPredicates.code,
 				nestLevel,
-				nestedCode
+				nestedCode,
+				bucket
 			);
 			if (!emittedStep.isAstAccepted) {
 				return emittedStep;
