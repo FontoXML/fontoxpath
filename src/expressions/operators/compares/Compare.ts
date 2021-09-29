@@ -47,8 +47,12 @@ class Compare extends Expression {
 		this._firstExpression = firstExpression;
 		this._secondExpression = secondExpression;
 
-		this._firstType = firstType?.type;
-		this._secondType = secondType?.type;
+		if (firstType) {
+			this._firstType = firstType.type;
+		}
+		if (secondType) {
+			this._secondType = secondType.type;
+		}
 
 		switch (kind) {
 			case 'equalOp':
