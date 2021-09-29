@@ -25,9 +25,9 @@ class Compare extends Expression {
 		context: DynamicContext
 	) => boolean;
 	private _firstExpression: Expression;
+	private _firstType: ValueType;
 	private _operator: string;
 	private _secondExpression: Expression;
-	private _firstType: ValueType;
 	private _secondType: ValueType;
 
 	constructor(
@@ -168,7 +168,7 @@ class Compare extends Expression {
 						return sequenceFactory.singletonFalseSequence();
 					}
 				}
-				
+
 				if (
 					firstAtomizedSequence.first().type === this._firstType &&
 					secondAtomizedSequence.first().type === this._secondType
