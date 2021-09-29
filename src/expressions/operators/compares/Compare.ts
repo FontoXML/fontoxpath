@@ -3,7 +3,13 @@ import zipSingleton from '../../../expressions/util/zipSingleton';
 import atomize from '../../dataTypes/atomize';
 import ISequence from '../../dataTypes/ISequence';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import Value, { SequenceMultiplicity, SequenceType, ValueType } from '../../dataTypes/Value';
+import Value, {
+	SequenceMultiplicity,
+	SequenceType,
+	sequenceTypeToString,
+	ValueType,
+	valueTypeToString,
+} from '../../dataTypes/Value';
 import DynamicContext from '../../DynamicContext';
 import ExecutionParameters from '../../ExecutionParameters';
 import Expression from '../../Expression';
@@ -21,6 +27,8 @@ class Compare extends Expression {
 	private _firstExpression: Expression;
 	private _operator: string;
 	private _secondExpression: Expression;
+	private _firstType: ValueType;
+	private _secondType: ValueType;
 
 	constructor(
 		kind: string,
@@ -38,6 +46,9 @@ class Compare extends Expression {
 		);
 		this._firstExpression = firstExpression;
 		this._secondExpression = secondExpression;
+
+		this._firstType = firstType?.type;
+		this._secondType = secondType?.type;
 
 		switch (kind) {
 			case 'equalOp':
@@ -126,6 +137,9 @@ class Compare extends Expression {
 			executionParameters
 		);
 
+		let firstAtomizedSequence: ISequence | undefined;
+		let secondAtomizedSequence: ISequence | undefined;
+
 		// If we have an evaluation function stored we can execute that immediately
 		// and make sure both sequences are of length 1
 		if (this._evaluationFunction) {
@@ -134,13 +148,19 @@ class Compare extends Expression {
 				if (firstSequence.isEmpty() || secondSequence.isEmpty()) {
 					return sequenceFactory.empty();
 				}
-				// Node compares should not be atomized
-				return this._evaluationFunction(firstSequence, secondSequence, dynamicContext)
-					? sequenceFactory.singletonTrueSequence()
-					: sequenceFactory.singletonFalseSequence();
+
+				if (
+					firstSequence.first()?.type === this._firstType &&
+					secondSequence.first()?.type === this._secondType
+				) {
+					// Node compares should not be atomized
+					return this._evaluationFunction(firstSequence, secondSequence, dynamicContext)
+						? sequenceFactory.singletonTrueSequence()
+						: sequenceFactory.singletonFalseSequence();
+				}
 			} else {
-				const firstAtomizedSequence = atomize(firstSequence, executionParameters);
-				const secondAtomizedSequence = atomize(secondSequence, executionParameters);
+				firstAtomizedSequence = atomize(firstSequence, executionParameters);
+				secondAtomizedSequence = atomize(secondSequence, executionParameters);
 				if (firstAtomizedSequence.isEmpty() || secondAtomizedSequence.isEmpty()) {
 					if (this._compare === 'valueCompare') {
 						return sequenceFactory.empty();
@@ -148,13 +168,19 @@ class Compare extends Expression {
 						return sequenceFactory.singletonFalseSequence();
 					}
 				}
-				return this._evaluationFunction(
-					firstAtomizedSequence,
-					secondAtomizedSequence,
-					dynamicContext
-				)
-					? sequenceFactory.singletonTrueSequence()
-					: sequenceFactory.singletonFalseSequence();
+				
+				if (
+					firstAtomizedSequence.first().type === this._firstType &&
+					secondAtomizedSequence.first().type === this._secondType
+				) {
+					return this._evaluationFunction(
+						firstAtomizedSequence,
+						secondAtomizedSequence,
+						dynamicContext
+					)
+						? sequenceFactory.singletonTrueSequence()
+						: sequenceFactory.singletonFalseSequence();
+				}
 			}
 		}
 
@@ -193,8 +219,12 @@ class Compare extends Expression {
 						}
 
 						// Atomize both sequences
-						const firstAtomizedSequence = atomize(firstSequence, executionParameters);
-						const secondAtomizedSequence = atomize(secondSequence, executionParameters);
+						if (!firstAtomizedSequence) {
+							firstAtomizedSequence = atomize(firstSequence, executionParameters);
+						}
+						if (!secondAtomizedSequence) {
+							secondAtomizedSequence = atomize(secondSequence, executionParameters);
+						}
 
 						if (this._compare === 'valueCompare') {
 							return firstAtomizedSequence.switchCases({
