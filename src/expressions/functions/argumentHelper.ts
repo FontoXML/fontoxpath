@@ -90,9 +90,9 @@ export const performFunctionConversion = (
 				throw new Error(
 					`XPTY0004: Multiplicity of ${
 						isReturn ? 'function return value' : 'function argument'
-					} of type ${valueTypeToString(argumentType.type)}${
-						argumentType.type || ''
-					} for ${functionName} is incorrect. Expected "?", but got "+".`
+					} of type ${sequenceTypeToString(
+						argumentType
+					)} for ${functionName} is incorrect. Expected "?", but got "+".`
 				);
 			},
 		});
@@ -103,8 +103,7 @@ export const performFunctionConversion = (
 				throw new Error(
 					`XPTY0004: Multiplicity of ${
 						isReturn ? 'function return value' : 'function argument'
-					} of type ${valueTypeToString(argumentType.type)}${
-						argumentType.type || ''
+					} of type ${sequenceTypeToString(argumentType)}
 					} for ${functionName} is incorrect. Expected "+", but got "empty-sequence()"`
 				);
 			},
@@ -129,9 +128,9 @@ export const performFunctionConversion = (
 			throw new Error(
 				`XPTY0004: Multiplicity of ${
 					isReturn ? 'function return value' : 'function argument'
-				} of type ${valueTypeToString(argumentType.type)}${
-					argumentType.type || ''
-				} for ${functionName} is incorrect. Expected exactly one`
+				} of type ${sequenceTypeToString(
+					argumentType
+				)} for ${functionName} is incorrect. Expected exactly one`
 			);
 		},
 	});
