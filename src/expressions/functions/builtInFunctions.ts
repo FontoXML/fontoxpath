@@ -6,6 +6,7 @@ import builtInDataTypeConstructors from './builtInFunctions_dataTypeConstructors
 import builtInDatetimeFunctions from './builtInFunctions_datetime';
 import builtInDebuggingFunctions from './builtInFunctions_debugging';
 import builtInDurationFunctions from './builtInFunctions_duration';
+import builtInErrorFunctions from './builtInFunctions_error';
 import builtInFontoxpathFunctions from './builtInFunctions_fontoxpath';
 import builtInFunctionsFunctions from './builtInFunctions_functions';
 import builtInIdentifierFunctions from './builtInFunctions_identifiers';
@@ -36,6 +37,7 @@ const builtInFunctions: BuiltinDeclarationType[] = [].concat(
 	builtInDatetimeFunctions.declarations,
 	builtInDebuggingFunctions.declarations,
 	builtInDurationFunctions.declarations,
+	builtInErrorFunctions.declarations,
 	builtInIdentifierFunctions.declarations,
 	builtInJsonFunctions.declarations,
 	builtInMapFunctions.declarations,

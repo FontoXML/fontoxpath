@@ -61,6 +61,14 @@ export function annotateFunctionCall(
 		};
 	}
 
+	if (functionProps.returnType.type === ValueType.NONE) {
+		// Special case: the `error` function. This does not really return anything ever. Do not use the return type.
+		return {
+			type: ValueType.ITEM,
+			mult: SequenceMultiplicity.ZERO_OR_MORE,
+		};
+	}
+
 	// If we found a return type, we annotate the AST with it
 	if (functionProps.returnType.type !== ValueType.ITEM) {
 		astHelper.insertAttribute(ast, 'type', functionProps.returnType);

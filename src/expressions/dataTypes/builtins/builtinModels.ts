@@ -622,6 +622,12 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 			ValueType.XSDOUBLE,
 		],
 	},
+
+	{
+		variety: Variety.UNION,
+		name: ValueType.NONE,
+		memberTypes: [],
+	},
 ];
 
 export default builtinModels;

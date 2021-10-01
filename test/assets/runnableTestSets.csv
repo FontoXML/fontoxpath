@@ -76,7 +76,7 @@ fn-empty,true
 fn-encode-for-uri,true
 fn-ends-with,true
 fn-environment-variable,false
-fn-error,false
+fn-error,true
 fn-escape-html-uri,false
 fn-exactly-one,true
 fn-exists,true

@@ -59,6 +59,7 @@ enum ETypeNames {
 	PROCESSINGINSTRUCTION = 'processing-instruction()',
 	DOCUMENT = 'document-node()',
 	XSNUMERIC = 'xs:numeric',
+	NONE = 'none',
 }
 
 export default ETypeNames;

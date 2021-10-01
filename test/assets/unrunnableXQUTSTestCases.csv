@@ -54,7 +54,6 @@ id-comma-expr-034,Error: Expected XPath (: Name: id-comma-expr-034 :) (: Descrip
 id-comma-expr-035,Error: Expected XPath (: Name: id-comma-expr-035 :) (: Description: Evaluation of a transform expression used with comma expression where the :) (: first expression is a mathematical expression and the second one is a transform expression. :)  (: insert-start :) declare variable $input-context external; (: insert-end :)  let $var := $input-context/employees[1]/employee[3] return   (xs:integer(1) + xs:integer(2), copy $newVar := $var modify delete node $newVar/salary[1] return $newVar) to resolve to a sequence of Nodes.
 id-function-call-05,Error: Expected XPath (: Name: id-function-call-05 :) (: Description: Evaluation of a transform expression used with function declaration. :) (: the function call contains an "updating" (transform) expression :)  (: insert-start :) declare variable $input-context external; (: insert-end :)   declare function     local:transformFunction($e as xs:anyAtomicType)     {    let $e1 := $e    return      $e1    };     let $arg1 := $input-context/employees[1]/employee[1] return   concat('"', local:transformFunction(copy $newVar := $arg1 modify delete node $newVar/salary[1] return $newVar), '"') to resolve to a sequence of Nodes.
 =====================TESTS ABOVE HAVE BEEN MARKED MANUALLY=====================
-id-function-declaration-04,Error: expected 'XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?' to match /FOER0000/
 id-function-declaration-017,Error: an XML declaration must be at the start of the document.
 function-declaration-02,Error: expected 'XPTY0004: Multiplicity of function return value of type xs:integer for test is incorrect. Expected exactly one' to match /XUST0028/
 id-insert-expr-081,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
@@ -85,7 +84,6 @@ complex-renames-q6,Error: More than one order spec is not supported for the orde
 complex-renames-q7,Error: More than one order spec is not supported for the order by clause.
 complex-renames-q8,Error: More than one order spec is not supported for the order by clause.
 id-transform-expr-06,Error: XUTY0013: The source expression of a copy modify expression must return a single node.
-id-transform-expr-09,Error: expected 'XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?' to match /FOER0000/
 id-transform-expr-041,Error: Not supported: renaming detached nodes.
 id-transform-expr-042,Error: Not Implemented: default namespace element.
 id-transform-expr-043,Error: Not Implemented: default namespace element.
@@ -100,37 +98,7 @@ id-transform-expr-051,Error: Not implemented: only module imports, namespace dec
 id-transform-expr-052,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 id-transform-expr-053,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 id-transform-expr-054,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-id-typeswitch-expr-04,Error: XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?
-id-typeswitch-expr-05,Error: expected 'XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?' to match /FOER0000/
-id-typeswitch-expr-011,Error: XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?
-id-typeswitch-expr-012,Error: expected 'XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?' to match /FOER0000/
-id-typeswitch-expr-018,Error: XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?
-id-typeswitch-expr-019,Error: XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?
-id-typeswitch-expr-025,Error: XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?
-id-typeswitch-expr-026,Error: expected 'XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?' to match /FOER0000/
 id-typeswitch-expr-029,Error: XPST0008, The variable i is not in scope.
-id-typeswitch-expr-032,Error: XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?
-id-typeswitch-expr-033,Error: XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?
-id-conditional-expr-03,Error: XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?
-id-conditional-expr-04,Error: XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?
-id-conditional-expr-09,Error: XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?
-id-conditional-expr-010,Error: XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?
-id-conditional-expr-015,Error: XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?
-id-conditional-expr-016,Error: XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?
-id-conditional-expr-021,Error: XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?
-id-conditional-expr-022,Error: XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?
-id-conditional-expr-027,Error: XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?
-id-conditional-expr-028,Error: XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?
-id-comma-expr-04,Error: expected 'XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?' to match /FOER0000/
-id-comma-expr-05,Error: expected 'XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?' to match /FOER0000/
-id-comma-expr-011,Error: expected 'XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?' to match /FOER0000/
-id-comma-expr-012,Error: expected 'XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?' to match /FOER0000/
-id-comma-expr-018,Error: expected 'XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?' to match /FOER0000/
-id-comma-expr-019,Error: expected 'XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?' to match /FOER0000/
-id-comma-expr-025,Error: expected 'XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?' to match /FOER0000/
-id-comma-expr-026,Error: expected 'XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?' to match /FOER0000/
-id-comma-expr-032,Error: expected 'XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?' to match /FOER0000/
-id-comma-expr-033,Error: expected 'XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?' to match /FOER0000/
 fn-put-001,Error: No selector counterpart for: computedDocumentConstructor.
 fn-put-007,Error: expected 'No selector counterpart for: computedDocumentConstructor.' to match /FOUP0002/
 fn-put-008,Error: expected 'No selector counterpart for: computedDocumentConstructor.' to match /XUST0001/
