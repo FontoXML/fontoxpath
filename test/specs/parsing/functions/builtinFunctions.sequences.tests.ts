@@ -956,5 +956,53 @@ describe('Functions and operators on sequences', () => {
 					'FORG0006'
 				));
 		});
+
+		describe('fn:serialize', () => {
+			it('can serialize a single element', () =>
+				chai.assert.equal(
+					evaluateXPathToString(
+						'serialize(.)',
+						documentNode.createElement('ele'),
+						null,
+						null,
+						{ xmlSerializer: new slimdom.XMLSerializer() }
+					),
+					'<ele/>'
+				));
+
+			it('can serialize a text node', () =>
+				chai.assert.equal(
+					evaluateXPathToString(
+						'serialize(.)',
+						documentNode.createTextNode('A piece of text'),
+						null,
+						null,
+						{ xmlSerializer: new slimdom.XMLSerializer() }
+					),
+					'A piece of text'
+				));
+
+			it('throws a readable error when no xmlSerializer is passed', () =>
+				chai.assert.throws(
+					() =>
+						evaluateXPathToString(
+							'serialize(.)',
+							documentNode.createTextNode('A piece of text'),
+							null,
+							null,
+							{ xmlSerializer: null }
+						),
+					'serialize() called but no xmlSerializer set in execution parameters.'
+				));
+
+			it('throws a readable error when no nodes are passed', () =>
+				chai.assert.throws(
+					() =>
+						evaluateXPathToString('serialize(42)', null, null, null, {
+							xmlSerializer: new slimdom.XMLSerializer(),
+						}),
+					'Expected argument to fn:serialize to resolve to a sequence of Nodes'
+				));
+		});
 	});
 });

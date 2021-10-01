@@ -1,3 +1,5 @@
+import { NodePointer } from '../../domClone/Pointer';
+import realizeDom from '../../domClone/realizeDom';
 import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
@@ -15,8 +17,6 @@ import { BuiltinDeclarationType } from './builtInFunctions';
 import sequenceDeepEqual, { anyAtomicTypeDeepEqual } from './builtInFunctions_sequences_deepEqual';
 import convertItemsToCommonType from './convertItemsToCommonType';
 import FunctionDefinitionType from './FunctionDefinitionType';
-import realizeDom from '../../domClone/realizeDom';
-import {NodePointer} from '../../domClone/Pointer';
 
 function subSequence(sequence: ISequence, start: number, length: number) {
 	// XPath starts from 1
@@ -697,9 +697,7 @@ const fnSerialize: FunctionDefinitionType = (
 	sequence
 ) => {
 	if (!executionParameters.xmlSerializer) {
-		throw new Error(
-			'serialize() called but no xmlSerializer set in execution parameters.'
-		)
+		throw new Error('serialize() called but no xmlSerializer set in execution parameters.');
 	}
 
 	const allResults = sequence.getAllValues();
@@ -709,22 +707,18 @@ const fnSerialize: FunctionDefinitionType = (
 			return isSubtypeOf(value.type, ValueType.NODE);
 		})
 	) {
-		throw new Error(
-			'Expected argument to fn:serialize to resolve to a sequence of Nodes.'
-		);
+		throw new Error('Expected argument to fn:serialize to resolve to a sequence of Nodes.');
 	}
-	return sequenceFactory.singleton(createAtomicValue(
-		allResults.map((nodeValue) => {
-			return executionParameters.xmlSerializer.serializeToString(
-				realizeDom(
-					nodeValue.value as NodePointer,
-					executionParameters,
-					false
-				) as Node
-			)
-		}),
-		ValueType.XSSTRING
-	));
+	return sequenceFactory.singleton(
+		createAtomicValue(
+			allResults.map((nodeValue) => {
+				return executionParameters.xmlSerializer.serializeToString(
+					realizeDom(nodeValue.value as NodePointer, executionParameters, false) as Node
+				);
+			}),
+			ValueType.XSSTRING
+		)
+	);
 };
 
 const declarations: BuiltinDeclarationType[] = [
@@ -1080,9 +1074,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		argumentTypes: [
-			{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
-		],
+		argumentTypes: [{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE }],
 		callFunction: fnSerialize,
 		localName: 'serialize',
 		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
