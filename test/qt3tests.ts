@@ -50,13 +50,20 @@ function createNodesFactory(assertNode: Node) {
 	return nodesFactory;
 }
 
+type AsserterForExpression = (
+	xpath: string,
+	contextNode: Node,
+	variablesInScope: { [s: string]: unknown },
+	namespaceResolver: (prefix: string) => string,
+) => void;
+
 function createAsserterForExpression(
 	baseUrl: string,
 	assertNode,
 	language,
 	annotateAst: boolean,
 	xmlSerializer: SlimdomXMLSerializer
-) {
+): AsserterForExpression {
 	const nodesFactory = createNodesFactory(assertNode);
 
 	switch (assertNode.localName) {
@@ -72,16 +79,8 @@ function createAsserterForExpression(
 					xmlSerializer
 				)
 			);
-			return (
-				xpath: string,
-				contextNode,
-				variablesInScope,
-				namespaceResolver,
-				xmlSerializer
-			) =>
-				asserts.forEach((a) =>
-					a(xpath, contextNode, variablesInScope, namespaceResolver, xmlSerializer)
-				);
+			return (xpath: string, contextNode, variablesInScope, namespaceResolver) =>
+				asserts.forEach((a) => a(xpath, contextNode, variablesInScope, namespaceResolver));
 		}
 		case 'any-of': {
 			const asserts = evaluateXPathToNodes('*', assertNode, undefined, {
@@ -95,18 +94,12 @@ function createAsserterForExpression(
 					xmlSerializer
 				)
 			);
-			return (xpath, contextNode, variablesInScope, namespaceResolver, xmlSerializer) => {
+			return (xpath, contextNode, variablesInScope, namespaceResolver) => {
 				const errors = [];
 				chai.assert(
 					asserts.some((a) => {
 						try {
-							a(
-								xpath,
-								contextNode,
-								variablesInScope,
-								namespaceResolver,
-								xmlSerializer
-							);
+							a(xpath, contextNode, variablesInScope, namespaceResolver);
 						} catch (error) {
 							if (error instanceof TypeError) {
 								// TypeErrors are always errors
@@ -131,8 +124,7 @@ function createAsserterForExpression(
 				xpath: string,
 				contextNode: Element,
 				variablesInScope: object,
-				namespaceResolver: (str: string) => string,
-				xmlSerializer: SlimdomXMLSerializer
+				namespaceResolver: (str: string) => string
 			) => {
 				chai.assert.throws(
 					() => {
@@ -173,7 +165,7 @@ function createAsserterForExpression(
 			};
 		}
 		case 'assert':
-			return (xpath, contextNode, variablesInScope, namespaceResolver, xmlSerializer) => {
+			return (xpath, contextNode, variablesInScope, namespaceResolver) => {
 				const result = evaluateXPathToString('.', assertNode, undefined, {
 					annotateAst,
 				});
@@ -211,7 +203,7 @@ function createAsserterForExpression(
 				);
 			};
 		case 'assert-true':
-			return (xpath, contextNode, variablesInScope, namespaceResolver, xmlSerializer) => {
+			return (xpath, contextNode, variablesInScope, namespaceResolver) => {
 				chai.assert.isTrue(
 					evaluateXPathToBoolean(xpath, contextNode, null, variablesInScope, {
 						namespaceResolver,
@@ -247,7 +239,7 @@ function createAsserterForExpression(
 			const equalWith = evaluateXPathToString('.', assertNode, undefined, {
 				annotateAst: false,
 			});
-			return (xpath, contextNode, variablesInScope, namespaceResolver, xmlSerializer) => {
+			return (xpath, contextNode, variablesInScope, namespaceResolver) => {
 				chai.assert.isTrue(
 					evaluateXPathToBoolean(
 						`${xpath} = ${equalWith}`,
@@ -285,7 +277,7 @@ function createAsserterForExpression(
 			const equalWith = evaluateXPathToString('.', assertNode, undefined, {
 				annotateAst: false,
 			});
-			return (xpath, contextNode, variablesInScope, namespaceResolver, xmlSerializer) => {
+			return (xpath, contextNode, variablesInScope, namespaceResolver) => {
 				chai.assert.isTrue(
 					evaluateXPathToBoolean(
 						`deep-equal((${xpath}), (${equalWith}))`,
@@ -320,7 +312,7 @@ function createAsserterForExpression(
 			};
 		}
 		case 'assert-empty':
-			return (xpath, contextNode, variablesInScope, namespaceResolver, xmlSerializer) => {
+			return (xpath, contextNode, variablesInScope, namespaceResolver) => {
 				chai.assert.isTrue(
 					evaluateXPathToBoolean(
 						`(${xpath}) => empty()`,
@@ -354,7 +346,7 @@ function createAsserterForExpression(
 				);
 			};
 		case 'assert-false':
-			return (xpath, contextNode, variablesInScope, namespaceResolver, xmlSerializer) => {
+			return (xpath, contextNode, variablesInScope, namespaceResolver) => {
 				chai.assert.isFalse(
 					evaluateXPathToBoolean(xpath, contextNode, null, variablesInScope, {
 						namespaceResolver,
@@ -390,7 +382,7 @@ function createAsserterForExpression(
 			const expectedCount = evaluateXPathToNumber('number(.)', assertNode, undefined, {
 				annotateAst: false,
 			});
-			return (xpath, contextNode, variablesInScope, namespaceResolver, xmlSerializer) => {
+			return (xpath, contextNode, variablesInScope, namespaceResolver) => {
 				chai.assert.equal(
 					evaluateXPathToNumber(
 						`(${xpath}) => count()`,
@@ -430,7 +422,7 @@ function createAsserterForExpression(
 			const expectedType = evaluateXPathToString('.', assertNode, undefined, {
 				annotateAst: false,
 			});
-			return (xpath, contextNode, variablesInScope, namespaceResolver, xmlSerializer) => {
+			return (xpath, contextNode, variablesInScope, namespaceResolver) => {
 				chai.assert.isTrue(
 					evaluateXPathToBoolean(
 						`(${xpath}) instance of ${expectedType}`,
@@ -487,7 +479,7 @@ function createAsserterForExpression(
 					})}</xml>`
 				).documentElement;
 			}
-			return (xpath, contextNode, variablesInScope, namespaceResolver, xmlSerializer) => {
+			return (xpath, contextNode, variablesInScope, namespaceResolver) => {
 				const results = evaluateXPathToNodes(xpath, contextNode, null, variablesInScope, {
 					namespaceResolver,
 					nodesFactory,
@@ -568,7 +560,7 @@ function createAsserterForExpression(
 				annotateAst: false,
 				xmlSerializer,
 			});
-			return (xpath, contextNode, variablesInScope, namespaceResolver, xmlSerializer) => {
+			return (xpath, contextNode, variablesInScope, namespaceResolver) => {
 				chai.assert.equal(
 					evaluateXPathToString(`${xpath}`, contextNode, null, variablesInScope, {
 						namespaceResolver,
@@ -597,20 +589,20 @@ function createAsserterForExpression(
  */
 function createAsserterForJsCodegen(
 	baseUrl: string,
-	assertNode,
-	language
+	assertNode: Element,
+	language: Language
 ): (
-	xpath,
-	contextNode,
-	variablesInScope,
-	namespaceResolver,
-	that
+	xpath: string,
+	contextNode: Node,
+	variablesInScope: { [s: string]: unknown },
+	namespaceResolver: (prefix: string) => string,
+	that: Mocha.TestFunction
 ) => JavaScriptCompiledXPathResult {
 	const nodesFactory = createNodesFactory(assertNode);
 
 	switch (assertNode.localName) {
 		case 'all-of': {
-			const asserts = evaluateXPathToNodes('*', assertNode, undefined, {
+			const asserts = evaluateXPathToNodes<Element>('*', assertNode, undefined, {
 				annotateAst: false,
 				language,
 			}).map((innerAssertNode) =>
@@ -645,7 +637,7 @@ function createAsserterForJsCodegen(
 			};
 		}
 		case 'any-of': {
-			const asserts = evaluateXPathToNodes('*', assertNode, undefined, {
+			const asserts = evaluateXPathToNodes<Element>('*', assertNode, undefined, {
 				annotateAst: false,
 				language,
 			}).map((innerAssertNode) =>
@@ -701,7 +693,7 @@ function createAsserterForJsCodegen(
 			return (
 				xpath: string,
 				contextNode: Element,
-				variablesInScope: object,
+				_variablesInScope: { [s: string]: unknown },
 				namespaceResolver: (str: string) => string,
 				that
 			): JavaScriptCompiledXPathResult => {
@@ -1097,19 +1089,23 @@ function createAsserterForJsCodegen(
 
 function getExpressionBackendAsserterForTest(
 	baseUrl: string,
-	testCase,
+	testCase: Element,
 	language: Language,
 	annotateAst: boolean,
 	xmlSerializer?: SlimdomXMLSerializer
 ) {
-	const assertNode = evaluateXPathToFirstNode('./result/*', testCase, undefined, {
+	const assertNode = evaluateXPathToFirstNode<Element>('./result/*', testCase, undefined, {
 		annotateAst,
 	});
 	return createAsserterForExpression(baseUrl, assertNode, language, annotateAst, xmlSerializer);
 }
 
-function getJsCodegenBackendAsserterForTest(baseUrl: string, testCase, language) {
-	const assertNode = evaluateXPathToFirstNode('./result/*', testCase, undefined, {
+function getJsCodegenBackendAsserterForTest(
+	baseUrl: string,
+	testCase: Element,
+	language: Language
+) {
+	const assertNode = evaluateXPathToFirstNode<Element>('./result/*', testCase, undefined, {
 		annotateAst: false,
 	});
 	return createAsserterForJsCodegen(baseUrl, assertNode, language);
@@ -1117,13 +1113,13 @@ function getJsCodegenBackendAsserterForTest(baseUrl: string, testCase, language)
 
 const registeredModuleURIByFileName = Object.create(null);
 
-function getTestName(testCase) {
+function getTestName(testCase: Element) {
 	return evaluateXPathToString('./@name', testCase, undefined, {
 		annotateAst: false,
 	});
 }
 
-function getTestDescription(testSetName, testName, testCase) {
+function getTestDescription(testSetName: string, testName: string, testCase: Element) {
 	return (
 		testSetName +
 		'~' +
@@ -1140,7 +1136,7 @@ function getTestDescription(testSetName, testName, testCase) {
 	);
 }
 
-function loadModule(testCase, baseUrl) {
+function loadModule(testCase: Element, baseUrl: string) {
 	// Load the module within the try to catch any errors from the module
 	const moduleImports = evaluateXPathToArray(
 		'array{module!map{"uri": @uri/string(), "file": $baseUrl || "/" || @file/string()}}',
@@ -1185,7 +1181,7 @@ describe('qt3 test set', () => {
 		const testSetName = evaluateXPathToString('/test-set/@name', testSet);
 
 		// Find all the tests we can run
-		const testCases: Node[] = evaluateXPathToNodes(ALL_TESTS_QUERY, testSet);
+		const testCases = evaluateXPathToNodes<Element>(ALL_TESTS_QUERY, testSet);
 		if (!testCases.length) {
 			return;
 		}
