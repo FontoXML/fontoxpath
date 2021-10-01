@@ -386,7 +386,7 @@ Expr
 ExprSingle
  = expr: FLWORExpr {return wrapInStackTrace(expr)}
  / expr: QuantifiedExpr {return wrapInStackTrace(expr)}
-// / SwitchExpr
+ / expr: SwitchExpr {return wrapInStackTrace(expr)}
  / expr: TypeswitchExpr {return wrapInStackTrace(expr)}
  / expr: IfExpr {return wrapInStackTrace(expr)}
 // / TryCatchExpr
@@ -535,6 +535,26 @@ quantifiedExprInClause
        ["sourceExpr", exprSingle]
      ]
    }
+
+// 71
+SwitchExpr
+ = "switch" _ "(" _ expr:Expr _ ")" _ clauses:(c:SwitchCaseClause _ {return c})+ "default" S "return" S resultExpr:ExprSingle
+ {
+	return ["switchExpr", ["argExpr", expr]]
+ 	 	.concat(clauses)
+		.concat([["switchExprDefaultClause", ["resultExpr", resultExpr]]])
+}
+
+// 72
+SwitchCaseClause
+ = operands:("case" S op:SwitchCaseOperand {return ["switchCaseExpr", op]})+ S "return" S expr:ExprSingle
+ {
+	 return ["switchExprCaseClause"].concat(operands).concat([["resultExpr", expr]]);
+ }
+
+// 73
+SwitchCaseOperand
+ = ExprSingle
 
 // 74
 TypeswitchExpr
