@@ -10,7 +10,7 @@ import ExecutionParameters from './ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from './Expression';
 import FlworExpression from './FlworExpression';
 import convertItemsToCommonType from './functions/convertItemsToCommonType';
-import valueCompare from './operators/compares/valueCompare';
+import { valueCompare } from './operators/compares/ValueCompare';
 import PossiblyUpdatingExpression from './PossiblyUpdatingExpression';
 import Specificity from './Specificity';
 import { DONE_TOKEN, IIterator, IterationHint, IterationResult, ready } from './util/iterators';

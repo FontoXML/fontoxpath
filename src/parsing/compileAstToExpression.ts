@@ -30,11 +30,9 @@ import BinaryOperator, {
 import Unary from '../expressions/operators/arithmetic/Unary';
 import AndOperator from '../expressions/operators/boolean/AndOperator';
 import OrOperator from '../expressions/operators/boolean/OrOperator';
-import {
-	NodeCompare,
-	ValueCompare,
-	GeneralCompare,
-} from '../expressions/operators/compares/Compare';
+import GeneralCompare from '../expressions/operators/compares/GeneralCompare';
+import NodeCompare from '../expressions/operators/compares/NodeCompare';
+import ValueCompare from '../expressions/operators/compares/ValueCompare';
 import IntersectExcept from '../expressions/operators/IntersectExcept';
 import SequenceOperator from '../expressions/operators/SequenceOperator';
 import SimpleMapOperator from '../expressions/operators/SimpleMapOperator';
