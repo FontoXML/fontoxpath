@@ -6,7 +6,7 @@ import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value, { SequenceMultiplicity, SequenceType, ValueType } from '../dataTypes/Value';
-import valueCompare from '../operators/compares/valueCompare';
+import { valueCompare } from '../operators/compares/ValueCompare';
 import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
 import { DONE_TOKEN, IIterator, IterationHint, ready } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';

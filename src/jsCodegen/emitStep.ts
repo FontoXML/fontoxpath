@@ -25,11 +25,12 @@ function emitChildAxis(
 	test: string,
 	predicates: string,
 	nestLevel: number,
-	nestedCode: string
+	nestedCode: string,
+	bucket: string | null
 ): PartialCompilationResult {
 	const contextNodesCode = `const ${childAxisContextNodesIdentifier}${nestLevel} = domFacade.getChildNodes(contextItem${
 		nestLevel - 1
-	});`;
+	} ${bucket ? `, "${bucket}"` : ''});`;
 
 	return emitMultipleNodeAxis(
 		test,
@@ -47,7 +48,8 @@ function emitAttributeAxis(
 	test: string,
 	predicates: string,
 	nestLevel: number,
-	nestedCode: string
+	nestedCode: string,
+	bucket: string | null
 ): PartialCompilationResult {
 	// Only element nodes can have attributes.
 	const contextNodesCode = `
@@ -57,7 +59,7 @@ function emitAttributeAxis(
 	}) {
 		${attributeAxisContextNodesIdentifier}${nestLevel} =  domFacade.getAllAttributes(contextItem${
 		nestLevel - 1
-	});
+	} ${bucket ? `, "${bucket}"` : ''});
 	}
 	`;
 
@@ -91,10 +93,13 @@ function emitParentAxis(
 	test: string,
 	predicates: string,
 	nestLevel: number,
-	nestedCode: string
+	nestedCode: string,
+	bucket: string | null
 ): PartialCompilationResult {
 	const contextNodeCode = `
-	const contextItem${nestLevel} = domFacade.getParentNode(contextItem${nestLevel - 1});
+	const contextItem${nestLevel} = domFacade.getParentNode(contextItem${nestLevel - 1} ${
+		bucket ? `, "${bucket}"` : ''
+	});
 	`;
 
 	return emitSingleNodeAxis(test, predicates, nestLevel, nestedCode, contextNodeCode);
@@ -172,17 +177,18 @@ function emitStep(
 	test: string,
 	predicates: string,
 	nestLevel: number,
-	nestedCode: string
+	nestedCode: string,
+	bucket: string | null
 ): PartialCompilationResult {
 	const axisName = astHelper.getTextContent(ast);
 
 	switch (axisName) {
 		case axisAstNodes.ATTRIBUTE:
-			return emitAttributeAxis(test, predicates, nestLevel, nestedCode);
+			return emitAttributeAxis(test, predicates, nestLevel, nestedCode, bucket);
 		case axisAstNodes.CHILD:
-			return emitChildAxis(test, predicates, nestLevel, nestedCode);
+			return emitChildAxis(test, predicates, nestLevel, nestedCode, bucket);
 		case axisAstNodes.PARENT:
-			return emitParentAxis(test, predicates, nestLevel, nestedCode);
+			return emitParentAxis(test, predicates, nestLevel, nestedCode, bucket);
 		case axisAstNodes.SELF:
 			return emitSelfAxis(test, predicates, nestLevel, nestedCode);
 		default:

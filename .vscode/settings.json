@@ -6,5 +6,6 @@
 		"**/coverage/**": true,
 		"**/dist/**": true
 	},
-	"mocha.enabled": false
+	"mocha.enabled": false,
+	"typescript.preferences.importModuleSpecifier": "relative"
 }

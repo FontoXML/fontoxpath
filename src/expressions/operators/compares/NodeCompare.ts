@@ -1,9 +1,12 @@
 import DomFacade from '../../../domFacade/DomFacade';
-import DynamicContext from '../../../expressions/DynamicContext';
+import Expression from '../../../expressions/Expression';
 import { compareNodePositions } from '../../dataTypes/documentOrderUtils';
 import ISequence from '../../dataTypes/ISequence';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
+import sequenceFactory from '../../dataTypes/sequenceFactory';
 import { ValueType } from '../../dataTypes/Value';
+import DynamicContext from '../../DynamicContext';
+import ExecutionParameters from '../../ExecutionParameters';
 import arePointersEqual from './arePointersEqual';
 
 /**
@@ -16,7 +19,7 @@ import arePointersEqual from './arePointersEqual';
  * @param second to be compared.
  * @returns Comparison function
  */
-export default function nodeCompare(
+function nodeCompare(
 	operator: string,
 	domFacade: DomFacade,
 	first: ValueType,
@@ -95,5 +98,69 @@ function isOpHandler(
 		};
 	} else {
 		return (firstSequenceParam: ISequence, secondSequenceParam: ISequence) => false;
+	}
+}
+
+export default class NodeCompare extends Expression {
+	private _firstExpression: Expression;
+	private _operator: string;
+	private _secondExpression: Expression;
+
+	constructor(kind: string, firstExpression: Expression, secondExpression: Expression) {
+		super(
+			firstExpression.specificity.add(secondExpression.specificity),
+			[firstExpression, secondExpression],
+			{
+				canBeStaticallyEvaluated: false,
+			}
+		);
+		this._firstExpression = firstExpression;
+		this._secondExpression = secondExpression;
+		this._operator = kind;
+	}
+
+	public evaluate(
+		dynamicContext: DynamicContext,
+		executionParameters: ExecutionParameters
+	): ISequence {
+		const firstSequence = this._firstExpression.evaluateMaybeStatically(
+			dynamicContext,
+			executionParameters
+		);
+		const secondSequence = this._secondExpression.evaluateMaybeStatically(
+			dynamicContext,
+			executionParameters
+		);
+
+		return firstSequence.switchCases({
+			empty: () => {
+				return sequenceFactory.empty();
+			},
+			multiple: () => {
+				throw new Error('XPTY0004: Sequences to compare are not singleton');
+			},
+			singleton: () =>
+				secondSequence.switchCases({
+					empty: () => {
+						return sequenceFactory.empty();
+					},
+					multiple: () => {
+						throw new Error('XPTY0004: Sequences to compare are not singleton');
+					},
+					singleton: () => {
+						const first = firstSequence.first();
+						const second = secondSequence.first();
+						const compareFunction = nodeCompare(
+							this._operator,
+							executionParameters.domFacade,
+							first.type,
+							second.type
+						);
+						return compareFunction(firstSequence, secondSequence, dynamicContext)
+							? sequenceFactory.singletonTrueSequence()
+							: sequenceFactory.singletonFalseSequence();
+					},
+				}),
+		});
 	}
 }

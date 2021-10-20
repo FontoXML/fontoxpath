@@ -30,7 +30,9 @@ import BinaryOperator, {
 import Unary from '../expressions/operators/arithmetic/Unary';
 import AndOperator from '../expressions/operators/boolean/AndOperator';
 import OrOperator from '../expressions/operators/boolean/OrOperator';
-import Compare from '../expressions/operators/compares/Compare';
+import GeneralCompare from '../expressions/operators/compares/GeneralCompare';
+import NodeCompare from '../expressions/operators/compares/NodeCompare';
+import ValueCompare from '../expressions/operators/compares/ValueCompare';
 import IntersectExcept from '../expressions/operators/IntersectExcept';
 import SequenceOperator from '../expressions/operators/SequenceOperator';
 import SimpleMapOperator from '../expressions/operators/SimpleMapOperator';
@@ -123,16 +125,18 @@ function compile(ast: IAST, compilationOptions: CompilationOptions): Expression 
 		case 'lessThanOp':
 		case 'greaterThanOrEqualOp':
 		case 'greaterThanOp':
+			return compare('generalCompare', ast, compilationOptions);
 		case 'eqOp':
 		case 'neOp':
 		case 'ltOp':
 		case 'leOp':
 		case 'gtOp':
 		case 'geOp':
+			return compare('valueCompare', ast, compilationOptions);
 		case 'isOp':
 		case 'nodeBeforeOp':
 		case 'nodeAfterOp':
-			return compare(ast, compilationOptions);
+			return compare('nodeCompare', ast, compilationOptions);
 
 		// Path
 		case 'pathExpr':
@@ -433,19 +437,21 @@ function castableAs(ast: IAST, compilationOptions: CompilationOptions) {
 }
 
 // Binary compare (=, !=, le, is, <<, >>, etc)
-function compare(ast: IAST, compilationOptions: CompilationOptions) {
+function compare(compareType: string, ast: IAST, compilationOptions: CompilationOptions) {
 	const firstOperand = astHelper.followPath(ast, ['firstOperand', '*']);
 	const secondOperand = astHelper.followPath(ast, ['secondOperand', '*']);
-	const firstType = astHelper.getAttribute(firstOperand, 'type');
-	const secondType = astHelper.getAttribute(secondOperand, 'type');
 
-	return new Compare(
-		ast[0],
-		compile(firstOperand, disallowUpdating(compilationOptions)),
-		compile(secondOperand, disallowUpdating(compilationOptions)),
-		firstType,
-		secondType
-	);
+	const firstExpression = compile(firstOperand, disallowUpdating(compilationOptions));
+	const secondExpression = compile(secondOperand, disallowUpdating(compilationOptions));
+
+	switch (compareType) {
+		case 'valueCompare':
+			return new ValueCompare(ast[0], firstExpression, secondExpression);
+		case 'nodeCompare':
+			return new NodeCompare(ast[0], firstExpression, secondExpression);
+		case 'generalCompare':
+			return new GeneralCompare(ast[0], firstExpression, secondExpression);
+	}
 }
 
 function IfThenElseExpr(ast: IAST, compilationOptions: CompilationOptions) {

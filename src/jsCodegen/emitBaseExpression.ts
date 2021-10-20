@@ -33,23 +33,23 @@ export function emitBaseExpr(
 		case baseExprAstNodes.STRING_LIT_EXPR:
 			return emitStringLiteralExpression(ast, identifier);
 		// generalCompare
-		case 'equalOp':
-		case 'notEqualOp':
-		case 'lessThanOrEqualOp':
-		case 'lessThanOp':
-		case 'greaterThanOrEqualOp':
-		case 'greaterThanOp':
+		case baseExprAstNodes.EQUAL_OP:
+		case baseExprAstNodes.NOT_EQUAL_OP:
+		case baseExprAstNodes.LESS_THAN_OR_EQUAL_OP:
+		case baseExprAstNodes.LESS_THAN_OP:
+		case baseExprAstNodes.GREATER_THAN_OR_EQUAL_OP:
+		case baseExprAstNodes.GREAtER_THAN_OP:
 		// valueCompare
-		case 'eqOp':
-		case 'neOp':
-		case 'ltOp':
-		case 'leOp':
-		case 'gtOp':
-		case 'geOp':
-		case 'isOp':
+		case baseExprAstNodes.EQ_OP:
+		case baseExprAstNodes.NE_OP:
+		case baseExprAstNodes.LT_OP:
+		case baseExprAstNodes.LE_OP:
+		case baseExprAstNodes.GT_OP:
+		case baseExprAstNodes.GE_OP:
+		case baseExprAstNodes.IS_OP:
 		// nodeCompare
-		case 'nodeBeforeOp':
-		case 'nodeAfterOp':
+		case baseExprAstNodes.NODE_BEFORE_OP:
+		case baseExprAstNodes.NODE_AFTER_OP:
 			return emitCompareExpr(ast, identifier, staticContext, name);
 		default:
 			return rejectAst(`Unsupported: the base expression '${name}'.`);

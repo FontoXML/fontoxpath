@@ -1,8 +1,9 @@
-import ISequence from '../../../expressions/dataTypes/ISequence';
-import { ValueType, valueTypeToString } from '../../../expressions/dataTypes/Value';
 import AtomicValue from '../../dataTypes/AtomicValue';
 import castToType from '../../dataTypes/castToType';
+import ISequence from '../../dataTypes/ISequence';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
+import sequenceFactory from '../../dataTypes/sequenceFactory';
+import { ValueType, valueTypeToString } from '../../dataTypes/Value';
 import {
 	equal as dateTimeEqual,
 	greaterThan as dateTimeGreaterThan,
@@ -17,6 +18,9 @@ import {
 	lessThan as yearMonthDurationLessThan,
 } from '../../dataTypes/valueTypes/YearMonthDuration';
 import DynamicContext from '../../DynamicContext';
+import ExecutionParameters from '../../ExecutionParameters';
+import Expression from '../../Expression';
+import atomizeSequence from '../../util/atomizeSequence';
 
 function handleQName(
 	operator: string,
@@ -390,7 +394,7 @@ function generateCompareFunction(
 
 const comparatorsByTypingKey = Object.create(null);
 
-function valueCompare(
+export function valueCompare(
 	operator: string,
 	typeA: ValueType,
 	typeB: ValueType
@@ -409,28 +413,65 @@ function valueCompare(
 	return prefabComparator;
 }
 
-export function getValueCompareEvaluationFunction(
-	operator: string,
-	typeA: ValueType,
-	typeB: ValueType
-): (
-	firstSequence: ISequence,
-	secondSequence: ISequence,
-	dynamicContext: DynamicContext
-) => boolean {
-	try {
-		const evaluationFunction = valueCompare(operator, typeA, typeB);
+export default class ValueCompare extends Expression {
+	private _firstExpression: Expression;
+	private _operator: string;
+	private _secondExpression: Expression;
 
-		return (first, second, dynamicContext) => {
-			if (first.getLength() > 1 || second.getLength() > 1) {
-				throw new Error('XPTY0004: Sequences to compare are not singleton.');
+	constructor(kind: string, firstExpression: Expression, secondExpression: Expression) {
+		super(
+			firstExpression.specificity.add(secondExpression.specificity),
+			[firstExpression, secondExpression],
+			{
+				canBeStaticallyEvaluated: false,
 			}
+		);
+		this._firstExpression = firstExpression;
+		this._secondExpression = secondExpression;
+		this._operator = kind;
+	}
 
-			return evaluationFunction(first.first(), second.first(), dynamicContext);
-		};
-	} catch {
-		return undefined;
+	public evaluate(
+		dynamicContext: DynamicContext,
+		executionParameters: ExecutionParameters
+	): ISequence {
+		const firstSequence = this._firstExpression.evaluateMaybeStatically(
+			dynamicContext,
+			executionParameters
+		);
+		const secondSequence = this._secondExpression.evaluateMaybeStatically(
+			dynamicContext,
+			executionParameters
+		);
+
+		const firstAtomizedSequence = atomizeSequence(firstSequence, executionParameters);
+		const secondAtomizedSequence = atomizeSequence(secondSequence, executionParameters);
+
+		return firstAtomizedSequence.switchCases({
+			empty: () => sequenceFactory.empty(),
+			singleton: () =>
+				secondAtomizedSequence.switchCases({
+					empty: () => sequenceFactory.empty(),
+					singleton: () => {
+						const onlyFirstValue = firstAtomizedSequence.first();
+						const onlySecondValue = secondAtomizedSequence.first();
+						const compareFunction = valueCompare(
+							this._operator,
+							onlyFirstValue.type,
+							onlySecondValue.type
+						);
+
+						return compareFunction(onlyFirstValue, onlySecondValue, dynamicContext)
+							? sequenceFactory.singletonTrueSequence()
+							: sequenceFactory.singletonFalseSequence();
+					},
+					multiple: () => {
+						throw new Error('XPTY0004: Sequences to compare are not singleton.');
+					},
+				}),
+			multiple: () => {
+				throw new Error('XPTY0004: Sequences to compare are not singleton.');
+			},
+		});
 	}
 }
-
-export default valueCompare;
