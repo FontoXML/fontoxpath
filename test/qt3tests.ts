@@ -427,31 +427,39 @@ function createAsserterForJsCodegen(
 				namespaceResolver: (str: string) => string,
 				that
 			): JavaScriptCompiledXPathResult => {
-				chai.assert.throws(
-					() => {
-						const compiled = compileXPathToJavaScript(xpath, ReturnType.NODES, {
+				for (const returnType of [
+					ReturnType.STRING,
+					ReturnType.BOOLEAN,
+					ReturnType.NODES,
+					ReturnType.FIRST_NODE,
+				]) {
+					chai.assert.throws(
+						() => {
+							const compiled = compileXPathToJavaScript(xpath, returnType, {
+								namespaceResolver,
+								language,
+							});
+							if (compiled.isAstAccepted === true) {
+								// tslint:disable-next-line
+								const fn = new Function(compiled.code) as CompiledXPathFunction;
+								executeJavaScriptCompiledXPath(fn, contextNode);
+							} else {
+								that.skip(`Skipped: ${compiled.reason}`);
+							}
+						},
+						errorCode === '*' ? /.*/ : new RegExp(errorCode),
+						xpath
+					);
+
+					try {
+						const compiled = compileXPathToJavaScript(xpath, returnType, {
 							namespaceResolver,
 							language,
 						});
-						if (compiled.isAstAccepted === true) {
-							// tslint:disable-next-line
-							const fn = new Function(compiled.code) as CompiledXPathFunction;
-							executeJavaScriptCompiledXPath(fn, contextNode);
-						} else {
-							that.skip(`Skipped: ${compiled.reason}`);
-						}
-					},
-					errorCode === '*' ? /.*/ : new RegExp(errorCode),
-					xpath
-				);
-				try {
-					const compiled = compileXPathToJavaScript(xpath, ReturnType.NODES, {
-						namespaceResolver,
-						language,
-					});
-					return compiled;
-				} catch (e) {
-					that.skip(`Skipped`);
+						return compiled;
+					} catch (e) {
+						that.skip(`Skipped`);
+					}
 				}
 			};
 		}
