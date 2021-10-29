@@ -67,7 +67,6 @@ functx-functx-sort-case-insensitive-all,result was not equal
 UseCaseJSON-010,result was not equal
 UseCaseJSON-011,Parse error
 UseCaseNLP-005,Parse error
-UseCaseR31-012,Parse error
 UseCaseR31-016,Parse error
 UseCaseR31-031,result was not equal
 UseCaseR31-032,Parse error
@@ -272,10 +271,6 @@ fn-document-uri-32,result was not equal
 fn-document-uri-33,result was not equal
 fn-document-uri-34,result was not equal
 fn-document-uri-35,result was not equal
-cbcl-error-021,Parse error
-cbcl-error-022,Parse error
-cbcl-error-028,Parse error
-cbcl-error-029,Parse error
 fn-false-22,result was not equal
 filter-001,XQuery script could not be found
 filter-002,XQuery script could not be found
@@ -1240,7 +1235,7 @@ K2-SeqIntersect-43,result was not equal
 K2-SeqIntersect-44,result was not equal
 K-NumericUnaryMinus-14,result was not equal
 same-key-023,result was not equal
-same-key-024,Parse error
+same-key-024,result was not equal
 same-key-025,result was not equal
 K2-SeqUnion-27,result was not equal
 outer-012,result was not equal
@@ -1986,21 +1981,8 @@ string-constructor-026,Parse error
 string-constructor-910,Parse error
 string-constructor-911,Parse error
 string-constructor-912,Parse error
-switch-001,Parse error
-switch-002,Parse error
-switch-003,Parse error
 switch-004,Parse error
 switch-005,Parse error
-switch-006,Parse error
-switch-007,Parse error
-switch-008,Parse error
-switch-009,Parse error
-switch-010,Parse error
-switch-011,Parse error
-switch-012,Parse error
-switch-013,Parse error
-switch-901,Parse error
-switch-902,Parse error
 try-001,Parse error
 try-002,Parse error
 try-003,Parse error
@@ -2187,7 +2169,6 @@ typeswitch-union-branch-both,result was not equal
 typeswitch-union-multi,result was not equal
 typeswitch-union-nomatch-2,result was not equal
 typeswitch-union-nomatch,result was not equal
-typeswitchhc16,Parse error
 UnaryLookup-020,result was not equal
 UnaryLookup-023,result was not equal
 K-OrderExpr-1a,Parse error
