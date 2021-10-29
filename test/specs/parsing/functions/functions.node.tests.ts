@@ -169,6 +169,24 @@ return $node/root() = $element`,
 			);
 		});
 
+		it('returns the top level nodes if the set only contains nephews', () => {
+			jsonMlMapper.parse(
+				[
+					'root',
+					['child', ['descendant', { pos: 'first' }]],
+					['child', ['descendant', { pos: 'last' }]],
+				],
+				documentNode
+			);
+			chai.assert.deepEqual(
+				evaluateXPathToStrings(
+					'(descendant::descendant => outermost())!@pos',
+					documentNode
+				),
+				['first', 'last']
+			);
+		});
+
 		it('sorts the passed sequence', () => {
 			jsonMlMapper.parse(['root', ['child1'], ['child2', ['descendant']]], documentNode);
 			chai.assert.deepEqual(
