@@ -65,7 +65,7 @@ export default class IteratorBackedSequence implements ISequence {
 					}
 
 					i++;
-					value = iterator.next(hint);
+					value = iterator.next(IterationHint.NONE);
 				}
 				return value;
 			},
