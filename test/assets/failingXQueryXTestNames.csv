@@ -19,7 +19,27 @@ Constr-compelem-baseuri-2,Contains unneeded sequenceExpr wrappers
 Constr-compelem-constrmod-7,Contains unneeded sequenceExpr wrappers
 Constr-compelem-parent-1,Contains unneeded sequenceExpr wrappers
 =====================TESTS ABOVE HAVE BEEN MARKED MANUALLY=====================
-functx-fn-root-all,result was not equal
+Catalog003,Parser related error, TypeError: Cannot read property 'mult' of undefined
+Catalog007,result was not equal
+Catalog008,Parser related error, TypeError: Cannot read property 'mult' of undefined
+Catalog009,result was not equal
+Catalog010,Parser related error, TypeError: Cannot read property 'mult' of undefined
+Catalog011,Parser related error, TypeError: Cannot read property 'mult' of undefined
+currencysvg,Parser related error, TypeError: Cannot read property 'mult' of undefined
+sudoku,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-fn-root-all,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-add-attributes-1,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-add-attributes-2,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-add-attributes-3,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-add-attributes-4,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-add-attributes-5,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-add-attributes-all,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-add-or-update-attributes-1,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-add-or-update-attributes-2,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-add-or-update-attributes-3,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-add-or-update-attributes-4,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-add-or-update-attributes-5,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-add-or-update-attributes-all,Parser related error, TypeError: Cannot read property 'mult' of undefined
 functx-functx-all-whitespace-1,result was not equal
 functx-functx-all-whitespace-2,result was not equal
 functx-functx-all-whitespace-3,result was not equal
@@ -27,7 +47,28 @@ functx-functx-all-whitespace-4,result was not equal
 functx-functx-all-whitespace-5,result was not equal
 functx-functx-all-whitespace-6,result was not equal
 functx-functx-all-whitespace-all,result was not equal
-functx-functx-dynamic-path-all,result was not equal
+functx-functx-change-element-ns-1,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-change-element-ns-2,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-change-element-ns-all,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-date-1,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-date-2,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-date-all,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-dateTime-1,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-dateTime-2,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-dateTime-all,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-day-in-year-1,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-day-in-year-2,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-day-in-year-3,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-day-in-year-all,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-dynamic-path-all,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-first-day-of-month-1,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-first-day-of-month-2,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-first-day-of-month-3,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-first-day-of-month-all,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-first-day-of-year-1,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-first-day-of-year-2,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-first-day-of-year-3,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-first-day-of-year-all,Parser related error, TypeError: Cannot read property 'mult' of undefined
 functx-functx-has-element-only-content-1,result was not equal
 functx-functx-has-element-only-content-2,result was not equal
 functx-functx-has-element-only-content-3,result was not equal
@@ -61,20 +102,137 @@ functx-functx-has-simple-content-4,result was not equal
 functx-functx-has-simple-content-5,result was not equal
 functx-functx-has-simple-content-6,result was not equal
 functx-functx-has-simple-content-all,result was not equal
-functx-functx-sort-all,result was not equal
-functx-functx-sort-as-numeric-all,result was not equal
-functx-functx-sort-case-insensitive-all,result was not equal
-UseCaseJSON-010,result was not equal
+functx-functx-last-day-of-month-1,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-last-day-of-month-2,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-last-day-of-month-3,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-last-day-of-month-all,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-last-day-of-year-1,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-last-day-of-year-2,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-last-day-of-year-3,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-last-day-of-year-all,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-pad-integer-to-length-1,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-pad-integer-to-length-2,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-pad-integer-to-length-3,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-pad-integer-to-length-all,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-pad-string-to-length-1,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-pad-string-to-length-2,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-pad-string-to-length-3,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-pad-string-to-length-all,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-remove-attributes-1,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-remove-attributes-2,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-remove-attributes-3,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-remove-attributes-4,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-remove-attributes-all,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-remove-elements-1,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-remove-elements-2,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-remove-elements-3,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-remove-elements-all,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-repeat-string-1,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-repeat-string-2,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-repeat-string-all,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-replace-element-values-1,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-replace-element-values-2,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-replace-element-values-all,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-sort-1,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-sort-2,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-sort-all,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-sort-as-numeric-1,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-sort-as-numeric-2,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-sort-as-numeric-all,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-sort-case-insensitive-1,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-sort-case-insensitive-2,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-sort-case-insensitive-all,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-time-1,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-time-2,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-time-all,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-update-attributes-1,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-update-attributes-2,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-update-attributes-3,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-update-attributes-4,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-update-attributes-all,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-wrap-values-in-elements-1,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-wrap-values-in-elements-2,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-wrap-values-in-elements-3,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-wrap-values-in-elements-4,Parser related error, TypeError: Cannot read property 'mult' of undefined
+functx-functx-wrap-values-in-elements-all,Parser related error, TypeError: Cannot read property 'mult' of undefined
+UseCaseJSON-002,Parser related error, TypeError: Cannot read property 'mult' of undefined
+UseCaseJSON-010,Parser related error, TypeError: Cannot read property 'mult' of undefined
 UseCaseJSON-011,Parse error
+UseCaseNLP-001,Parser related error, TypeError: Cannot read property 'mult' of undefined
+UseCaseNLP-002,Parser related error, TypeError: Cannot read property 'mult' of undefined
 UseCaseNLP-005,Parse error
+ns-queries-results-q4,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ns-queries-results-q8,Parser related error, TypeError: Cannot read property 'mult' of undefined
+rdb-queries-results-q1,Parser related error, TypeError: Cannot read property 'mult' of undefined
+rdb-queries-results-q10,Parser related error, TypeError: Cannot read property 'mult' of undefined
+rdb-queries-results-q11,Parser related error, TypeError: Cannot read property 'mult' of undefined
+rdb-queries-results-q12,Parser related error, TypeError: Cannot read property 'mult' of undefined
+rdb-queries-results-q13,Parser related error, TypeError: Cannot read property 'mult' of undefined
+rdb-queries-results-q14,Parser related error, TypeError: Cannot read property 'mult' of undefined
+rdb-queries-results-q15,Parser related error, TypeError: Cannot read property 'mult' of undefined
+rdb-queries-results-q16,Parser related error, TypeError: Cannot read property 'mult' of undefined
+rdb-queries-results-q18,Parser related error, TypeError: Cannot read property 'mult' of undefined
+rdb-queries-results-q2,Parser related error, TypeError: Cannot read property 'mult' of undefined
+rdb-queries-results-q3,Parser related error, TypeError: Cannot read property 'mult' of undefined
+rdb-queries-results-q4,Parser related error, TypeError: Cannot read property 'mult' of undefined
+rdb-queries-results-q5,Parser related error, TypeError: Cannot read property 'mult' of undefined
+rdb-queries-results-q6,Parser related error, TypeError: Cannot read property 'mult' of undefined
+rdb-queries-results-q7,Parser related error, TypeError: Cannot read property 'mult' of undefined
+rdb-queries-results-q8,Parser related error, TypeError: Cannot read property 'mult' of undefined
+rdb-queries-results-q9,Parser related error, TypeError: Cannot read property 'mult' of undefined
+UseCaseR31-009,Parser related error, TypeError: Cannot read property 'mult' of undefined
+UseCaseR31-013,Parser related error, TypeError: Cannot read property 'mult' of undefined
+UseCaseR31-014,Parser related error, TypeError: Cannot read property 'mult' of undefined
 UseCaseR31-016,Parse error
-UseCaseR31-031,result was not equal
+UseCaseR31-023,Parser related error, TypeError: Cannot read property 'mult' of undefined
+UseCaseR31-031,Parser related error, TypeError: Cannot read property 'mult' of undefined
 UseCaseR31-032,Parse error
+seq-queries-results-q4,Parser related error, TypeError: Cannot read property 'mult' of undefined
+seq-queries-results-q5,Parser related error, TypeError: Cannot read property 'mult' of undefined
+sgml-queries-results-q6,Parser related error, TypeError: Cannot read property 'mult' of undefined
+sgml-queries-results-q7,Parser related error, TypeError: Cannot read property 'mult' of undefined
+string-queries-results-q2,Parser related error, TypeError: Cannot read property 'mult' of undefined
+string-queries-results-q4,Parser related error, TypeError: Cannot read property 'mult' of undefined
+string-queries-results-q5,Parser related error, TypeError: Cannot read property 'mult' of undefined
+tree-queries-results-q1,Parser related error, TypeError: Cannot read property 'mult' of undefined
+tree-queries-results-q2,Parser related error, TypeError: Cannot read property 'mult' of undefined
+tree-queries-results-q5,Parser related error, TypeError: Cannot read property 'mult' of undefined
+tree-queries-results-q6,Parser related error, TypeError: Cannot read property 'mult' of undefined
+xmp-queries-results-q1,Parser related error, TypeError: Cannot read property 'mult' of undefined
+xmp-queries-results-q10,Parser related error, TypeError: Cannot read property 'mult' of undefined
+xmp-queries-results-q11,Parser related error, TypeError: Cannot read property 'mult' of undefined
+xmp-queries-results-q12,Parser related error, TypeError: Cannot read property 'mult' of undefined
+xmp-queries-results-q2,Parser related error, TypeError: Cannot read property 'mult' of undefined
+xmp-queries-results-q3,Parser related error, TypeError: Cannot read property 'mult' of undefined
+xmp-queries-results-q4,Parser related error, TypeError: Cannot read property 'mult' of undefined
+xmp-queries-results-q5,Parser related error, TypeError: Cannot read property 'mult' of undefined
+xmp-queries-results-q6,Parser related error, TypeError: Cannot read property 'mult' of undefined
+xmp-queries-results-q7,Parser related error, TypeError: Cannot read property 'mult' of undefined
+xmp-queries-results-q8,Parser related error, TypeError: Cannot read property 'mult' of undefined
+xmp-queries-results-q9,Parser related error, TypeError: Cannot read property 'mult' of undefined
 d1e13048,result was not equal
+d1e41094,Parser related error, TypeError: Cannot read property 'mult' of undefined
+d1e41148,Parser related error, TypeError: Cannot read property 'mult' of undefined
+d1e41255,Parser related error, TypeError: Cannot read property 'mult' of undefined
 d1e41590,Parse error
 d1e42207,Parse error
 d1e42362,Parser related error, TypeError: JsonML element should be an array or string
 d1e78807b,XQuery script could not be found
+XMark-All,Parser related error, TypeError: Cannot read property 'mult' of undefined
+XMark-Q10,Parser related error, TypeError: Cannot read property 'mult' of undefined
+XMark-Q11,Parser related error, TypeError: Cannot read property 'mult' of undefined
+XMark-Q12,Parser related error, TypeError: Cannot read property 'mult' of undefined
+XMark-Q13,Parser related error, TypeError: Cannot read property 'mult' of undefined
+XMark-Q15,Parser related error, TypeError: Cannot read property 'mult' of undefined
+XMark-Q16,Parser related error, TypeError: Cannot read property 'mult' of undefined
+XMark-Q17,Parser related error, TypeError: Cannot read property 'mult' of undefined
+XMark-Q19,Parser related error, TypeError: Cannot read property 'mult' of undefined
+XMark-Q2,Parser related error, TypeError: Cannot read property 'mult' of undefined
+XMark-Q20,Parser related error, TypeError: Cannot read property 'mult' of undefined
+XMark-Q3,Parser related error, TypeError: Cannot read property 'mult' of undefined
+XMark-Q4,Parser related error, TypeError: Cannot read property 'mult' of undefined
+XMark-Q8,Parser related error, TypeError: Cannot read property 'mult' of undefined
+XMark-Q9,Parser related error, TypeError: Cannot read property 'mult' of undefined
 array-filter-001,XQuery script could not be found
 array-filter-002,XQuery script could not be found
 array-filter-003,XQuery script could not be found
@@ -85,6 +243,7 @@ array-filter-007,XQuery script could not be found
 array-filter-008,XQuery script could not be found
 array-filter-009,XQuery script could not be found
 array-filter-010,XQuery script could not be found
+array-insert-before-510,Parser related error, TypeError: Cannot read property 'mult' of undefined
 array-join-201,XQuery script could not be found
 array-join-202,XQuery script could not be found
 array-join-203,XQuery script could not be found
@@ -96,6 +255,7 @@ array-join-208,XQuery script could not be found
 array-join-209,XQuery script could not be found
 array-join-210,XQuery script could not be found
 array-join-211,XQuery script could not be found
+array-put-010,Parser related error, TypeError: Cannot read property 'mult' of undefined
 array-reverse-801,XQuery script could not be found
 array-reverse-802,XQuery script could not be found
 array-reverse-803,XQuery script could not be found
@@ -155,6 +315,8 @@ fn-base-uri-39,result was not equal
 fn-base-uri-40,result was not equal
 fn-base-uri-41,result was not equal
 fn-base-uri-43,result was not equal
+cbcl-boolean-005,Parser related error, TypeError: Cannot read property 'mult' of undefined
+cbcl-boolean-006,Parser related error, TypeError: Cannot read property 'mult' of undefined
 K-ConcatFunc-1,XQuery script could not be found
 K-ConcatFunc-2,XQuery script could not be found
 K-ConcatFunc-3,XQuery script could not be found
@@ -431,7 +593,11 @@ numberformat126,Parse error
 numberformat901err,Parse error
 fn-function-lookup-402,result was not equal
 fn-function-lookup-404,result was not equal
+fn-function-lookup-605,result was not equal
+fn-function-lookup-606,result was not equal
 fn-function-lookup-609,result was not equal
+fn-function-lookup-610,result was not equal
+fn-function-lookup-611,result was not equal
 fn-has-children-008,result was not equal
 fn-has-children-014,result was not equal
 fn-has-children-015,result was not equal
@@ -448,6 +614,8 @@ K2-InScopePrefixesFunc-12,result was not equal
 K2-InScopePrefixesFunc-25,result was not equal
 K2-InScopePrefixesFunc-26,result was not equal
 K2-InScopePrefixesFunc-28,result was not equal
+fn-innermost-055,Parser related error, TypeError: Cannot read property 'mult' of undefined
+fn-innermost-056,Parser related error, TypeError: Cannot read property 'mult' of undefined
 K-SeqInsertBeforeFunc-1,XQuery script could not be found
 K-SeqInsertBeforeFunc-10,XQuery script could not be found
 K-SeqInsertBeforeFunc-11,XQuery script could not be found
@@ -511,6 +679,10 @@ fn-nilled-43,Parse error
 fn-nilled-49,Parse error
 fn-nilled-53,Parse error
 fn-node-name-30,result was not equal
+cbcl-not-001,Parser related error, TypeError: Cannot read property 'mult' of undefined
+cbcl-one-or-more-003,Parser related error, TypeError: Cannot read property 'mult' of undefined
+fn-outermost-055,Parser related error, TypeError: Cannot read property 'mult' of undefined
+fn-outermost-056,Parser related error, TypeError: Cannot read property 'mult' of undefined
 fn-random-number-generator-30,result was not equal
 K-SeqRemoveFunc-1,XQuery script could not be found
 K-SeqRemoveFunc-10,XQuery script could not be found
@@ -673,6 +845,7 @@ fn-sort-spec-5,XQuery script could not be found
 fn-sort-str-1,XQuery script could not be found
 fn-sort2-str-1,XQuery script could not be found
 fn-sort2-str-2,XQuery script could not be found
+cbcl-fn-string-join-001,Parser related error, TypeError: Cannot read property 'mult' of undefined
 fn-string-join-30,result was not equal
 tail-001,XQuery script could not be found
 tail-002,XQuery script could not be found
@@ -874,6 +1047,7 @@ map-keys-012,XQuery script could not be found
 map-keys-013,XQuery script could not be found
 map-keys-014,XQuery script could not be found
 map-merge-006d,result was not equal
+map-merge-010,Parser related error, TypeError: Cannot read property 'mult' of undefined
 map-put-002-hof,XQuery script could not be found
 map-put-002,XQuery script could not be found
 map-put-003-hof,XQuery script could not be found
@@ -1074,20 +1248,30 @@ math-tan-008,XQuery script could not be found
 math-tan-009,XQuery script could not be found
 math-tan-010,XQuery script could not be found
 math-tan-011,XQuery script could not be found
+annex-6,Parser related error, TypeError: Cannot read property 'mult' of undefined
+annex-7,Parser related error, TypeError: Cannot read property 'mult' of undefined
+annex-8,Parser related error, TypeError: Cannot read property 'mult' of undefined
 K-CombinedErrorCodes-2,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
 K-CombinedErrorCodes-3,Parse error
 K-CombinedErrorCodes-4,Parse error
 K-CombinedErrorCodes-5,Parse error
 K-CombinedErrorCodes-6,Parse error
 XPTY0004_06,result was not equal
+XPTY0004_09,Parser related error, TypeError: Cannot read property 'mult' of undefined
 XPTY0004_30,result was not equal
-XPTY0004_33,result was not equal
+XPTY0004_33,Parser related error, TypeError: Cannot read property 'mult' of undefined
+XPTY0004_48,Parser related error, TypeError: Cannot read property 'mult' of undefined
 XPTY0018,result was not equal
 XPTY0019_1,result was not equal
 XPTY0019_3,result was not equal
 XPTY0020,result was not equal
+XQDY0025_1,Parser related error, TypeError: Cannot read property 'mult' of undefined
+XQDY0025_2,Parser related error, TypeError: Cannot read property 'mult' of undefined
+XQDY0025_3,Parser related error, TypeError: Cannot read property 'mult' of undefined
+XQDY0025_4,Parser related error, TypeError: Cannot read property 'mult' of undefined
 XQST0022_1,Parser related error, Error: XQST0022: A namespace declaration may not contain enclosed expressions
 XQST0022_2,Parser related error, Error: XQST0022: The namespace declaration for 'xmlns:prefix' may not contain enclosed expressions
+XQST0031,result was not equal
 XQST0046_02,result was not equal
 XQST0046_09,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
 XQST0046_10,result was not equal
@@ -1107,16 +1291,20 @@ function-item-15,result was not equal
 function-item-16,result was not equal
 hof-012,result was not equal
 hof-013,result was not equal
+hof-026,Parser related error, TypeError: Cannot read property 'mult' of undefined
 hof-034,Parse error
 hof-035,Parse error
 hof-036,result was not equal
 hof-037,result was not equal
 hof-038,result was not equal
 hof-039,Parse error
-hof-046,result was not equal
-hof-047,result was not equal
+hof-046,Parser related error, TypeError: Cannot read property 'mult' of undefined
+hof-047,Parser related error, TypeError: Cannot read property 'mult' of undefined
 hof-048,result was not equal
 hof-049,result was not equal
+hof-050,Parser related error, TypeError: Cannot read property 'mult' of undefined
+hof-051,Parser related error, TypeError: Cannot read property 'mult' of undefined
+hof-052,Parser related error, TypeError: Cannot read property 'mult' of undefined
 hof-053,Parse error
 hof-911,result was not equal
 inline-function-6,result was not equal
@@ -1230,21 +1418,46 @@ op-concatusht2args-3,XQuery script could not be found
 op-concatusht2args-4,XQuery script could not be found
 op-concatusht2args-5,XQuery script could not be found
 K2-SeqExcept-23,result was not equal
+combiningnodeseqexcepthc4,Parser related error, TypeError: Cannot read property 'mult' of undefined
+combiningnodeseqexcepthc5,Parser related error, TypeError: Cannot read property 'mult' of undefined
+combiningnodeseqexcepthc6,Parser related error, TypeError: Cannot read property 'mult' of undefined
 K2-SeqIntersect-23,result was not equal
 K2-SeqIntersect-43,result was not equal
 K2-SeqIntersect-44,result was not equal
+combiningnodeseqintersecthc3,Parser related error, TypeError: Cannot read property 'mult' of undefined
+combiningnodeseqintersecthc4,Parser related error, TypeError: Cannot read property 'mult' of undefined
+fn-intersect-node-args-023,Parser related error, TypeError: Cannot read property 'mult' of undefined
 K-NumericUnaryMinus-14,result was not equal
 same-key-023,result was not equal
 same-key-024,result was not equal
 same-key-025,result was not equal
 K2-SeqUnion-27,result was not equal
-outer-012,result was not equal
-outer-013,result was not equal
-outer-014,result was not equal
-outer-015,result was not equal
-outer-016,result was not equal
-outer-017,result was not equal
-outer-018,result was not equal
+combiningnodeseqhc1,Parser related error, TypeError: Cannot read property 'mult' of undefined
+combiningnodeseqhc10,Parser related error, TypeError: Cannot read property 'mult' of undefined
+combiningnodeseqhc2,Parser related error, TypeError: Cannot read property 'mult' of undefined
+combiningnodeseqhc3,Parser related error, TypeError: Cannot read property 'mult' of undefined
+combiningnodeseqhc4,Parser related error, TypeError: Cannot read property 'mult' of undefined
+combiningnodeseqhc5,Parser related error, TypeError: Cannot read property 'mult' of undefined
+combiningnodeseqhc6,Parser related error, TypeError: Cannot read property 'mult' of undefined
+combiningnodeseqhc7,Parser related error, TypeError: Cannot read property 'mult' of undefined
+combiningnodeseqhc8,Parser related error, TypeError: Cannot read property 'mult' of undefined
+combiningnodeseqhc9,Parser related error, TypeError: Cannot read property 'mult' of undefined
+outer-001,Parser related error, TypeError: Cannot read property 'mult' of undefined
+outer-002,Parser related error, TypeError: Cannot read property 'mult' of undefined
+outer-003,Parser related error, TypeError: Cannot read property 'mult' of undefined
+outer-004,Parser related error, TypeError: Cannot read property 'mult' of undefined
+outer-007,Parser related error, TypeError: Cannot read property 'mult' of undefined
+outer-008,Parser related error, TypeError: Cannot read property 'mult' of undefined
+outer-009,Parser related error, TypeError: Cannot read property 'mult' of undefined
+outer-010,Parser related error, TypeError: Cannot read property 'mult' of undefined
+outer-011,Parser related error, TypeError: Cannot read property 'mult' of undefined
+outer-012,Parser related error, TypeError: Cannot read property 'mult' of undefined
+outer-013,Parser related error, TypeError: Cannot read property 'mult' of undefined
+outer-014,Parser related error, TypeError: Cannot read property 'mult' of undefined
+outer-015,Parser related error, TypeError: Cannot read property 'mult' of undefined
+outer-016,Parser related error, TypeError: Cannot read property 'mult' of undefined
+outer-017,Parser related error, TypeError: Cannot read property 'mult' of undefined
+outer-018,Parser related error, TypeError: Cannot read property 'mult' of undefined
 annotation-12,Parse error
 annotation-13,result was not equal
 annotation-14,result was not equal
@@ -1284,6 +1497,7 @@ ArrowPostfix-028,result was not equal
 ArrowPostfix-101,result was not equal
 ArrowPostfix-102,result was not equal
 ArrowPostfix-103,result was not equal
+Axes089,Parser related error, TypeError: Cannot read property 'mult' of undefined
 K2-Axes-102,result was not equal
 K2-Axes-3,result was not equal
 K2-Axes-38,result was not equal
@@ -1302,6 +1516,7 @@ K2-Axes-86,result was not equal
 K2-Axes-87,result was not equal
 K2-Axes-88,result was not equal
 axis-err-1,result was not equal
+cbcl-path-nodes-and-atomics,Parser related error, TypeError: Cannot read property 'mult' of undefined
 K2-ancestorAxis-21,result was not equal
 K2-ancestor-or-selfAxis-1,result was not equal
 K2-ancestor-or-selfAxis-2,result was not equal
@@ -1352,6 +1567,7 @@ CastAsNamespaceSensitiveType-8,result was not equal
 CastAsNamespaceSensitiveType-9,result was not equal
 CastAs-UnionType-33,result was not equal
 XQueryComment014,Parse error
+K2-ComputeConAttr-61,Parser related error, TypeError: Cannot read property 'mult' of undefined
 Constr-compcomment-enclexpr-2,result was not equal
 Constr-compcomment-parent-1,result was not equal
 K2-ComputeConComment-4a,result was not equal
@@ -1374,10 +1590,15 @@ nscons-009,result was not equal
 nscons-010,result was not equal
 nscons-011,result was not equal
 nscons-012,result was not equal
-nscons-019,result was not equal
-nscons-020,result was not equal
+nscons-013,Parser related error, TypeError: Cannot read property 'mult' of undefined
+nscons-014,Parser related error, TypeError: Cannot read property 'mult' of undefined
+nscons-016,Parser related error, TypeError: Cannot read property 'mult' of undefined
+nscons-017,Parser related error, TypeError: Cannot read property 'mult' of undefined
+nscons-018,Parser related error, TypeError: Cannot read property 'mult' of undefined
+nscons-019,Parser related error, TypeError: Cannot read property 'mult' of undefined
+nscons-020,Parser related error, TypeError: Cannot read property 'mult' of undefined
 nscons-021,result was not equal
-nscons-022,result was not equal
+nscons-022,Parser related error, TypeError: Cannot read property 'mult' of undefined
 nscons-023,result was not equal
 nscons-024,result was not equal
 nscons-025,result was not equal
@@ -1393,6 +1614,8 @@ nscons-036,result was not equal
 nscons-037,result was not equal
 nscons-038,result was not equal
 nscons-041,result was not equal
+nscons-043,Parser related error, TypeError: Cannot read property 'mult' of undefined
+nscons-044,Parser related error, TypeError: Cannot read property 'mult' of undefined
 Constr-comppi-compname-13,result was not equal
 Constr-comppi-compname-20,result was not equal
 Constr-comppi-compname-21,result was not equal
@@ -1499,6 +1722,7 @@ Constr-attr-nsdecl-1,result was not equal
 Constr-attr-nsdecl-2,result was not equal
 Constr-elem-empty-3,result was not equal
 Constr-elem-empty-4,result was not equal
+K2-DirectConElem-47,Parser related error, TypeError: Cannot read property 'mult' of undefined
 cbcl-directconelem-001,result was not equal
 cbcl-directconelem-002,result was not equal
 Constr-cont-adjtext-1,result was not equal
@@ -1522,6 +1746,12 @@ K2-DirectConElemContent-27,result was not equal
 K2-DirectConElemContent-28,result was not equal
 K2-DirectConElemContent-43,result was not equal
 K2-DirectConElemContent-48,result was not equal
+Constr-inscope-11,Parser related error, TypeError: Cannot read property 'mult' of undefined
+Constr-inscope-12,Parser related error, TypeError: Cannot read property 'mult' of undefined
+Constr-inscope-3,Parser related error, TypeError: Cannot read property 'mult' of undefined
+Constr-inscope-4,Parser related error, TypeError: Cannot read property 'mult' of undefined
+Constr-inscope-7,Parser related error, TypeError: Cannot read property 'mult' of undefined
+Constr-inscope-8,Parser related error, TypeError: Cannot read property 'mult' of undefined
 Constr-namespace-11,result was not equal
 Constr-namespace-12,result was not equal
 Constr-namespace-16,result was not equal
@@ -1541,11 +1771,16 @@ K2-DirectConElemNamespace-35,Parser related error, Error: XQST0022: A namespace 
 K2-DirectConElemNamespace-36,Parser related error, Error: XQST0022: A namespace declaration may not contain enclosed expressions
 K2-DirectConElemNamespace-37,Parser related error, Error: XQST0022: A namespace declaration may not contain enclosed expressions
 K2-DirectConElemNamespace-39,result was not equal
+K2-DirectConElemNamespace-41,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-DirectConElemNamespace-45,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-DirectConElemNamespace-46,Parser related error, TypeError: Cannot read property 'mult' of undefined
 K2-DirectConElemNamespace-56,result was not equal
 K2-DirectConElemNamespace-71,Parser related error, Error: XQST0022: The namespace declaration for 'xmlns:p' may not contain enclosed expressions
 K2-DirectConElemNamespace-72,Parser related error, Error: XQST0022: A namespace declaration may not contain enclosed expressions
 K2-DirectConElemNamespace-73,Parser related error, Error: XQST0022: The namespace declaration for 'xmlns:p' may not contain enclosed expressions
 K2-DirectConElemNamespace-74,Parser related error, Error: XQST0022: A namespace declaration may not contain enclosed expressions
+K2-DirectConElemNamespace-78,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-DirectConElemNamespace-79,Parser related error, TypeError: Cannot read property 'mult' of undefined
 Constr-ws-adjcdata-1,result was not equal
 Constr-ws-adjcdata-2,result was not equal
 Constr-ws-adjcdata-3,result was not equal
@@ -1617,6 +1852,7 @@ K2-DirectConElemWhitespace-8,result was not equal
 K2-DirectConOther-29,Parse error
 K2-DirectConOther-50,result was not equal
 K2-DirectConOther-51,result was not equal
+K2-DirectConOther-66,Parser related error, TypeError: Cannot read property 'mult' of undefined
 eqname-001,result was not equal
 eqname-005,result was not equal
 eqname-006,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
@@ -1644,34 +1880,34 @@ K-EmptyOrderProlog-1,result was not equal
 K-EmptyOrderProlog-2,result was not equal
 K-EmptyOrderProlog-3,result was not equal
 emptyorderdecl-1,result was not equal
-emptyorderdecl-10,result was not equal
-emptyorderdecl-11,result was not equal
-emptyorderdecl-12,result was not equal
-emptyorderdecl-13,result was not equal
-emptyorderdecl-14,result was not equal
-emptyorderdecl-15,result was not equal
-emptyorderdecl-16,result was not equal
-emptyorderdecl-17,result was not equal
-emptyorderdecl-18,result was not equal
-emptyorderdecl-19,result was not equal
-emptyorderdecl-2,result was not equal
-emptyorderdecl-20,result was not equal
-emptyorderdecl-21,result was not equal
-emptyorderdecl-22,result was not equal
-emptyorderdecl-23,result was not equal
-emptyorderdecl-24,result was not equal
-emptyorderdecl-25,result was not equal
-emptyorderdecl-26,result was not equal
-emptyorderdecl-27,result was not equal
-emptyorderdecl-28,result was not equal
-emptyorderdecl-29,result was not equal
-emptyorderdecl-3,result was not equal
-emptyorderdecl-4,result was not equal
-emptyorderdecl-5,result was not equal
-emptyorderdecl-6,result was not equal
-emptyorderdecl-7,result was not equal
-emptyorderdecl-8,result was not equal
-emptyorderdecl-9,result was not equal
+emptyorderdecl-10,Parser related error, TypeError: Cannot read property 'mult' of undefined
+emptyorderdecl-11,Parser related error, TypeError: Cannot read property 'mult' of undefined
+emptyorderdecl-12,Parser related error, TypeError: Cannot read property 'mult' of undefined
+emptyorderdecl-13,Parser related error, TypeError: Cannot read property 'mult' of undefined
+emptyorderdecl-14,Parser related error, TypeError: Cannot read property 'mult' of undefined
+emptyorderdecl-15,Parser related error, TypeError: Cannot read property 'mult' of undefined
+emptyorderdecl-16,Parser related error, TypeError: Cannot read property 'mult' of undefined
+emptyorderdecl-17,Parser related error, TypeError: Cannot read property 'mult' of undefined
+emptyorderdecl-18,Parser related error, TypeError: Cannot read property 'mult' of undefined
+emptyorderdecl-19,Parser related error, TypeError: Cannot read property 'mult' of undefined
+emptyorderdecl-2,Parser related error, TypeError: Cannot read property 'mult' of undefined
+emptyorderdecl-20,Parser related error, TypeError: Cannot read property 'mult' of undefined
+emptyorderdecl-21,Parser related error, TypeError: Cannot read property 'mult' of undefined
+emptyorderdecl-22,Parser related error, TypeError: Cannot read property 'mult' of undefined
+emptyorderdecl-23,Parser related error, TypeError: Cannot read property 'mult' of undefined
+emptyorderdecl-24,Parser related error, TypeError: Cannot read property 'mult' of undefined
+emptyorderdecl-25,Parser related error, TypeError: Cannot read property 'mult' of undefined
+emptyorderdecl-26,Parser related error, TypeError: Cannot read property 'mult' of undefined
+emptyorderdecl-27,Parser related error, TypeError: Cannot read property 'mult' of undefined
+emptyorderdecl-28,Parser related error, TypeError: Cannot read property 'mult' of undefined
+emptyorderdecl-29,Parser related error, TypeError: Cannot read property 'mult' of undefined
+emptyorderdecl-3,Parser related error, TypeError: Cannot read property 'mult' of undefined
+emptyorderdecl-4,Parser related error, TypeError: Cannot read property 'mult' of undefined
+emptyorderdecl-5,Parser related error, TypeError: Cannot read property 'mult' of undefined
+emptyorderdecl-6,Parser related error, TypeError: Cannot read property 'mult' of undefined
+emptyorderdecl-7,Parser related error, TypeError: Cannot read property 'mult' of undefined
+emptyorderdecl-8,Parser related error, TypeError: Cannot read property 'mult' of undefined
+emptyorderdecl-9,Parser related error, TypeError: Cannot read property 'mult' of undefined
 K-ExtensionExpression-3,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
 K-ExtensionExpression-4,result was not equal
 K-ExtensionExpression-4a,result was not equal
@@ -1739,64 +1975,109 @@ ForExprType053,result was not equal
 step-expr-si-1,result was not equal
 step-expr-si-2,result was not equal
 step-expr-si-3,result was not equal
+ForExpr002,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ForExpr003,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ForExpr004,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ForExpr006,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ForExpr010,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ForExpr011,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ForExpr028,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ForExpr032,Parser related error, TypeError: Cannot read property 'mult' of undefined
 ForExprType001,result was not equal
 ForExprType002,result was not equal
-ForExprType003,result was not equal
-ForExprType004,result was not equal
+ForExprType003,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ForExprType004,Parser related error, TypeError: Cannot read property 'mult' of undefined
 ForExprType005,result was not equal
 ForExprType006,result was not equal
-ForExprType009,result was not equal
-ForExprType011,result was not equal
-ForExprType014,result was not equal
+ForExprType009,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ForExprType011,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ForExprType014,Parser related error, TypeError: Cannot read property 'mult' of undefined
 ForExprType015,result was not equal
-ForExprType016,result was not equal
-ForExprType017,result was not equal
+ForExprType016,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ForExprType017,Parser related error, TypeError: Cannot read property 'mult' of undefined
 ForExprType018,result was not equal
 ForExprType019,result was not equal
-ForExprType020,result was not equal
+ForExprType020,Parser related error, TypeError: Cannot read property 'mult' of undefined
 ForExprType021,result was not equal
 ForExprType022,result was not equal
 ForExprType023,result was not equal
 ForExprType024,result was not equal
-ForExprType028,result was not equal
-ForExprType029,result was not equal
-ForExprType030,result was not equal
-ForExprType031,result was not equal
-ForExprType032,result was not equal
-ForExprType033,result was not equal
-ForExprType034,result was not equal
-ForExprType035,result was not equal
-ForExprType036,result was not equal
+ForExprType028,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ForExprType029,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ForExprType030,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ForExprType031,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ForExprType032,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ForExprType033,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ForExprType034,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ForExprType035,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ForExprType036,Parser related error, TypeError: Cannot read property 'mult' of undefined
 ForExprType045,result was not equal
-ForExprType046,result was not equal
+ForExprType046,Parser related error, TypeError: Cannot read property 'mult' of undefined
 ForExprType047,result was not equal
-ForExprType054,result was not equal
+ForExprType054,Parser related error, TypeError: Cannot read property 'mult' of undefined
 ForExprType055,result was not equal
 ForExprType056,result was not equal
-ForExprType057,result was not equal
-ForExprType058,result was not equal
-ForExprType059,result was not equal
-ForExprType060,result was not equal
-ForExprType061,result was not equal
-ForExprType062,result was not equal
-ForExprType063,result was not equal
-ForExprType064,result was not equal
-ForExprType065,result was not equal
-ForExprType066,result was not equal
-ForExprType067,result was not equal
-ForExprType068,result was not equal
-ForExprType069,result was not equal
-ForExprType070,result was not equal
-ForExprType071,result was not equal
-ForExprType072,result was not equal
-ForExprType073,result was not equal
-K2-ForExprWith-1,result was not equal
+ForExprType057,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ForExprType058,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ForExprType059,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ForExprType060,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ForExprType061,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ForExprType062,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ForExprType063,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ForExprType064,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ForExprType065,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ForExprType066,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ForExprType067,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ForExprType068,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ForExprType069,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ForExprType070,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ForExprType071,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ForExprType072,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ForExprType073,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K-ForExprWithout-53,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K-ForExprWithout-54,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-ForExprWith-1,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-ForExprWithout-10,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-ForExprWithout-12,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-ForExprWithout-13,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-ForExprWithout-14,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-ForExprWithout-15,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-ForExprWithout-16,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-ForExprWithout-17,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-ForExprWithout-18,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-ForExprWithout-19,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-ForExprWithout-20,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-ForExprWithout-21,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-ForExprWithout-22,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-ForExprWithout-23,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-ForExprWithout-24,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-ForExprWithout-25,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-ForExprWithout-26,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-ForExprWithout-27,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-ForExprWithout-28,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-ForExprWithout-29,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-ForExprWithout-30,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-ForExprWithout-31,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-ForExprWithout-32,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-ForExprWithout-33,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-ForExprWithout-34,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-ForExprWithout-35,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-ForExprWithout-36,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-ForExprWithout-37,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-ForExprWithout-38,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-ForExprWithout-39,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-ForExprWithout-6,Parser related error, TypeError: Cannot read property 'mult' of undefined
 K2-ForExprWithout-8,result was not equal
 FunctionCall-003,result was not equal
 FunctionCall-005,result was not equal
 FunctionCall-007,result was not equal
 FunctionCall-008,result was not equal
+K-FunctionProlog-40,Parser related error, TypeError: Cannot read property 'mult' of undefined
 K2-FunctionProlog-14,result was not equal
+K2-FunctionProlog-24,Parser related error, TypeError: Cannot read property 'mult' of undefined
+function-declaration-004,Parser related error, TypeError: Cannot read property 'mult' of undefined
+function-declaration-008,Parser related error, TypeError: Cannot read property 'mult' of undefined
+function-declaration-009,Parser related error, TypeError: Cannot read property 'mult' of undefined
 function-declaration-010,result was not equal
 function-declaration-016,result was not equal
 GenCompEq-22,result was not equal
@@ -1809,6 +2090,21 @@ K2-SeqExprInstanceOf-99,result was not equal
 instanceof132,result was not equal
 instanceof133,result was not equal
 instanceof134,result was not equal
+K2-LetExprWithout-1,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-LetExprWithout-2,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-LetExprWithout-20,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-LetExprWithout-21,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-LetExprWithout-22,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-LetExprWithout-26,Parser related error, TypeError: Cannot read property 'mult' of undefined
+LetExpr007,Parser related error, TypeError: Cannot read property 'mult' of undefined
+LetExpr009,Parser related error, TypeError: Cannot read property 'mult' of undefined
+LetExpr010,Parser related error, TypeError: Cannot read property 'mult' of undefined
+LetExpr012,Parser related error, TypeError: Cannot read property 'mult' of undefined
+LetExpr013,Parser related error, TypeError: Cannot read property 'mult' of undefined
+LetExpr014,Parser related error, TypeError: Cannot read property 'mult' of undefined
+LetExpr016,Parser related error, TypeError: Cannot read property 'mult' of undefined
+LetExpr017,Parser related error, TypeError: Cannot read property 'mult' of undefined
+LetExpr021,Parser related error, TypeError: Cannot read property 'mult' of undefined
 K2-Literals-1,Parser related error, Error: XQST0090: The character reference 0 (0) does not reference a valid codePoint.
 cbcl-literals-004,Parser related error, Error: XQST0090: The character reference 0 (0) does not reference a valid codePoint.
 cbcl-literals-008,Parser related error, Error: XQST0090: The character reference 0 (0) does not reference a valid codePoint.
@@ -1825,10 +2121,21 @@ module-URIs-17,result was not equal
 module-URIs-2,result was not equal
 module-URIs-3,result was not equal
 K2-NameTest-14,result was not equal
-K2-NameTest-60,result was not equal
+K2-NameTest-5,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-NameTest-60,Parser related error, TypeError: Cannot read property 'mult' of undefined
 function-literal-402,result was not equal
 function-literal-404,result was not equal
+namespaceDecl-10,Parser related error, TypeError: Cannot read property 'mult' of undefined
+namespaceDecl-11,Parser related error, TypeError: Cannot read property 'mult' of undefined
+namespaceDecl-12,Parser related error, TypeError: Cannot read property 'mult' of undefined
+namespaceDecl-13,Parser related error, TypeError: Cannot read property 'mult' of undefined
+namespaceDecl-14,Parser related error, TypeError: Cannot read property 'mult' of undefined
+namespaceDecl-15,Parser related error, TypeError: Cannot read property 'mult' of undefined
+namespaceDecl-16,Parser related error, TypeError: Cannot read property 'mult' of undefined
+namespaceDecl-18,Parser related error, TypeError: Cannot read property 'mult' of undefined
+namespaceDecl-19,Parser related error, TypeError: Cannot read property 'mult' of undefined
 namespaceDecl-23,result was not equal
+namespaceDecl-9,Parser related error, TypeError: Cannot read property 'mult' of undefined
 K2-NodeTest-31,result was not equal
 K2-NodeTest-33,result was not equal
 K2-NodeTest-34,result was not equal
@@ -1885,23 +2192,108 @@ Serialization-035,Parser related error, TypeError: JsonML element should be an a
 Serialization-036,Parser related error, TypeError: JsonML element should be an array or string
 Serialization-037,Parser related error, TypeError: JsonML element should be an array or string
 K2-OrderbyExprWithout-1,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
+K2-OrderbyExprWithout-10,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-OrderbyExprWithout-11,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-OrderbyExprWithout-12,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-OrderbyExprWithout-13,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-OrderbyExprWithout-14,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-OrderbyExprWithout-15,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-OrderbyExprWithout-16,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-OrderbyExprWithout-17,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-OrderbyExprWithout-18,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-OrderbyExprWithout-19,Parser related error, TypeError: Cannot read property 'mult' of undefined
 K2-OrderbyExprWithout-2,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
+K2-OrderbyExprWithout-20,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-OrderbyExprWithout-21,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-OrderbyExprWithout-22,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-OrderbyExprWithout-23,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-OrderbyExprWithout-24,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-OrderbyExprWithout-25,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-OrderbyExprWithout-26,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-OrderbyExprWithout-27,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-OrderbyExprWithout-28,Parser related error, TypeError: Cannot read property 'mult' of undefined
 K2-OrderbyExprWithout-3,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
+K2-OrderbyExprWithout-31,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-OrderbyExprWithout-32,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-OrderbyExprWithout-33,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-OrderbyExprWithout-34,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-OrderbyExprWithout-35,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-OrderbyExprWithout-36,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-OrderbyExprWithout-37,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-OrderbyExprWithout-40,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-OrderbyExprWithout-41,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-OrderbyExprWithout-42,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-OrderbyExprWithout-43,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-OrderbyExprWithout-44,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-OrderbyExprWithout-45,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-OrderbyExprWithout-46,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-OrderbyExprWithout-47,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-OrderbyExprWithout-5,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-OrderbyExprWithout-8,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-OrderbyExprWithout-9,Parser related error, TypeError: Cannot read property 'mult' of undefined
+orderBy1,Parser related error, TypeError: Cannot read property 'mult' of undefined
+orderBy2,Parser related error, TypeError: Cannot read property 'mult' of undefined
+orderBy20,Parser related error, TypeError: Cannot read property 'mult' of undefined
+orderBy21,Parser related error, TypeError: Cannot read property 'mult' of undefined
+orderBy30,Parser related error, TypeError: Cannot read property 'mult' of undefined
+orderBy31,Parser related error, TypeError: Cannot read property 'mult' of undefined
+orderBy40,Parser related error, TypeError: Cannot read property 'mult' of undefined
+orderBy41,Parser related error, TypeError: Cannot read property 'mult' of undefined
+orderBy50,Parser related error, TypeError: Cannot read property 'mult' of undefined
+orderBy51,Parser related error, TypeError: Cannot read property 'mult' of undefined
 orderBy60,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
 orderBy61,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
 orderBy62,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
+orderBy63,Parser related error, TypeError: Cannot read property 'mult' of undefined
 orderBy64,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
 orderBy65,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
 orderBy66,Parse error
+orderbylocal-40,Parser related error, TypeError: Cannot read property 'mult' of undefined
 orderbylocal-60,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
+orderbywithout-26,Parser related error, TypeError: Cannot read property 'mult' of undefined
+orderDecl-10,Parser related error, TypeError: Cannot read property 'mult' of undefined
+orderDecl-11,Parser related error, TypeError: Cannot read property 'mult' of undefined
+orderDecl-12,Parser related error, TypeError: Cannot read property 'mult' of undefined
+orderDecl-13,Parser related error, TypeError: Cannot read property 'mult' of undefined
+orderDecl-15,Parser related error, TypeError: Cannot read property 'mult' of undefined
+orderDecl-16,Parser related error, TypeError: Cannot read property 'mult' of undefined
 orderDecl-17,Parse error
 orderDecl-18,Parse error
+orderDecl-8,Parser related error, TypeError: Cannot read property 'mult' of undefined
+orderDecl-9,Parser related error, TypeError: Cannot read property 'mult' of undefined
+orderdecl-14,Parser related error, TypeError: Cannot read property 'mult' of undefined
+Parenexpr-11,Parser related error, TypeError: Cannot read property 'mult' of undefined
 Parenexpr-20,result was not equal
 PathExprErr-2,result was not equal
+K-ForExprPositionalVar-10,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K-ForExprPositionalVar-11,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K-ForExprPositionalVar-12,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K-ForExprPositionalVar-13,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K-ForExprPositionalVar-14,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K-ForExprPositionalVar-15,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K-ForExprPositionalVar-16,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K-ForExprPositionalVar-17,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K-ForExprPositionalVar-18,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K-ForExprPositionalVar-19,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K-ForExprPositionalVar-20,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K-ForExprPositionalVar-21,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K-ForExprPositionalVar-22,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K-ForExprPositionalVar-23,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K-ForExprPositionalVar-24,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K-ForExprPositionalVar-25,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K-ForExprPositionalVar-26,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K-ForExprPositionalVar-27,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K-ForExprPositionalVar-28,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K-ForExprPositionalVar-29,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K-ForExprPositionalVar-6,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K-ForExprPositionalVar-9,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-ForExprPositionalVar-1,Parser related error, TypeError: Cannot read property 'mult' of undefined
 K-FilterExpr-28,result was not equal
 K-FilterExpr-35,result was not equal
 K-FilterExpr-76,result was not equal
-K2-FilterExpr-5,result was not equal
+K2-FilterExpr-1,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-FilterExpr-2,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-FilterExpr-5,Parser related error, TypeError: Cannot read property 'mult' of undefined
 K2-FilterExpr-7,result was not equal
 K2-FilterExpr-8,result was not equal
 K2-Predicates-1,result was not equal
@@ -1909,6 +2301,12 @@ cbcl-first-in-sequence-008,result was not equal
 filter-limits-001,result was not equal
 filter-limits-002,result was not equal
 filter-limits-003,result was not equal
+quantexpr-66,Parser related error, TypeError: Cannot read property 'mult' of undefined
+quantexpr-67,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ReturnExpr001,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ReturnExpr002,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ReturnExpr003,Parser related error, TypeError: Cannot read property 'mult' of undefined
+ReturnExpr016,Parser related error, TypeError: Cannot read property 'mult' of undefined
 qischema002,result was not equal
 qischema003,result was not equal
 qischema004,result was not equal
@@ -1947,6 +2345,7 @@ qischema90702-err,result was not equal
 qischema90703-err,result was not equal
 schema-import-1,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
 K2-Steps-10,result was not equal
+K2-Steps-13,Parser related error, TypeError: Cannot read property 'mult' of undefined
 K2-Steps-18,result was not equal
 K2-Steps-19,result was not equal
 K2-Steps-20,result was not equal
@@ -2227,19 +2626,56 @@ K2-ExternalVariablesWithout-8,Parse error
 extvardef-015,Parser related error, TypeError: JsonML element should be an array or string
 extvardef-016a,Parser related error, TypeError: JsonML element should be an array or string
 extvardef-016b,Parser related error, TypeError: JsonML element should be an array or string
+K-VersionProlog-2-v3,result was not equal
+K-VersionProlog-2-v31,result was not equal
 K-VersionProlog-5-v3,Parser related error, TypeError: JsonML element should be an array or string
 K2-VersionProlog-3-v4,result was not equal
 K2-VersionProlog-6,result was not equal
+prolog-version-4-v3,result was not equal
+prolog-version-4-v31,result was not equal
 prolog-version-6-v3,result was not equal
 prolog-version-6-v31,result was not equal
 prolog-version-7-v3,result was not equal
 prolog-version-7-v31,result was not equal
+version_declaration-001,result was not equal
 version_declaration-005,Parser related error, TypeError: JsonML element should be an array or string
+version_declaration-007,result was not equal
+version_declaration-008,result was not equal
 version_declaration-021,result was not equal
 version_declaration-023-v3,result was not equal
+K-WhereExpr-1,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K-WhereExpr-2,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K-WhereExpr-3,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K-WhereExpr-5,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K-WhereExpr-6,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K-WhereExpr-7,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K-WhereExpr-8,Parser related error, TypeError: Cannot read property 'mult' of undefined
+K2-WhereExpr-1b,Parser related error, TypeError: Cannot read property 'mult' of undefined
+WhereExpr002,Parser related error, TypeError: Cannot read property 'mult' of undefined
+WhereExpr003,Parser related error, TypeError: Cannot read property 'mult' of undefined
+WhereExpr004,Parser related error, TypeError: Cannot read property 'mult' of undefined
+WhereExpr005,Parser related error, TypeError: Cannot read property 'mult' of undefined
+WhereExpr006,Parser related error, TypeError: Cannot read property 'mult' of undefined
+WhereExpr007,Parser related error, TypeError: Cannot read property 'mult' of undefined
 WhereExpr023,Parse error
 WhereExpr026,Parse error
-cbcl-left-outer-join-004,result was not equal
+WhereExpr028,Parser related error, TypeError: Cannot read property 'mult' of undefined
+WhereExpr029,Parser related error, TypeError: Cannot read property 'mult' of undefined
+WhereExpr030,Parser related error, TypeError: Cannot read property 'mult' of undefined
+WhereExpr033,Parser related error, TypeError: Cannot read property 'mult' of undefined
+cbcl-group-by-key-001,Parser related error, TypeError: Cannot read property 'mult' of undefined
+cbcl-group-by-key-002,Parser related error, TypeError: Cannot read property 'mult' of undefined
+cbcl-hash-join-005,Parser related error, TypeError: Cannot read property 'mult' of undefined
+cbcl-hash-join-012,Parser related error, TypeError: Cannot read property 'mult' of undefined
+cbcl-hash-join-1,Parser related error, TypeError: Cannot read property 'mult' of undefined
+cbcl-hash-join-2,Parser related error, TypeError: Cannot read property 'mult' of undefined
+cbcl-hash-join-3,Parser related error, TypeError: Cannot read property 'mult' of undefined
+cbcl-hash-join-4,Parser related error, TypeError: Cannot read property 'mult' of undefined
+cbcl-left-outer-join-002,Parser related error, TypeError: Cannot read property 'mult' of undefined
+cbcl-left-outer-join-003,Parser related error, TypeError: Cannot read property 'mult' of undefined
+cbcl-left-outer-join-004,Parser related error, TypeError: Cannot read property 'mult' of undefined
+whereClause-5,Parser related error, TypeError: Cannot read property 'mult' of undefined
+whereClause-6,Parser related error, TypeError: Cannot read property 'mult' of undefined
 SlidingWindowExpr501,Parse error
 SlidingWindowExpr502,Parse error
 SlidingWindowExpr503,Parse error

@@ -55,7 +55,7 @@ id-comma-expr-035,Error: Expected XPath (: Name: id-comma-expr-035 :) (: Descrip
 id-function-call-05,Error: Expected XPath (: Name: id-function-call-05 :) (: Description: Evaluation of a transform expression used with function declaration. :) (: the function call contains an "updating" (transform) expression :)  (: insert-start :) declare variable $input-context external; (: insert-end :)   declare function     local:transformFunction($e as xs:anyAtomicType)     {    let $e1 := $e    return      $e1    };     let $arg1 := $input-context/employees[1]/employee[1] return   concat('"', local:transformFunction(copy $newVar := $arg1 modify delete node $newVar/salary[1] return $newVar), '"') to resolve to a sequence of Nodes.
 =====================TESTS ABOVE HAVE BEEN MARKED MANUALLY=====================
 id-function-declaration-017,Error: an XML declaration must be at the start of the document.
-function-declaration-02,Error: expected 'XPTY0004: Multiplicity of function return value of type xs:integer for test is incorrect. Expected exactly one' to match /XUST0028/
+function-declaration-02,Error: expected 'XPTY0004: Multiplicity of function return value of type xs:integer5 for test is incorrect. Expected exactly one' to match /XUST0028/
 id-insert-expr-081,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 id-insert-expr-082,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 id-insert-expr-083,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
