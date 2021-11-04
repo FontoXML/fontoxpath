@@ -357,7 +357,6 @@ fn-distinct-values-2,AssertionError: Skipped test, it was a assert-permutation
 cbcl-distinct-values-002b,Error: Casting to xs:QName is not implemented.
 cbcl-distinct-values-003,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 1 not registered. Did you mean "Q{test}custom-dateTime-function ()"?
 cbcl-distinct-values-007,Error: XPST0017: Function adjust-time-to-timezone with arity of 2 not registered. No similar functions found.
-cbcl-distinct-values-013,AssertionError: for $value in fn:distinct-values(( xs:dayTimeDuration('P0D'), xs:yearMonthDuration('P0Y'), xs:duration('P0Y'), xs:duration('P0Y'), xs:yearMonthDuration('P0Y'), xs:dayTimeDuration('P0D'), xs:dayTimeDuration('P1D'), xs:yearMonthDuration('P1Y'), xs:duration('P1Y'))) order by string($value) return $value: expected 'P0M P0M P1D P1Y P1Y PT0S PT0S PT0S PT0S' to equal 'P1D P1Y PT0S'
 fn-emptyintg1args-1,Error: FOCA0003: can not cast -999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-emptyintg1args-2,Error: FOCA0003: can not cast 830993497117024304 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-emptyintg1args-3,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
@@ -1590,7 +1589,6 @@ op-divide-dayTimeDuration2args-2,AssertionError: xs:dayTimeDuration("P15DT11H59M
 op-divide-dayTimeDuration2args-3,AssertionError: xs:dayTimeDuration("P31DT23H59M59S") div xs:double("-1.7976931348623157E308"): expected '-PT1.5379704947317132e-302S' to equal 'PT0S'
 op-divide-dayTimeDuration-by-dTD-1,AssertionError: Expected executing the XPath "fn:round-half-to-even((xs:dayTimeDuration("P2DT53M11S") div xs:dayTimeDuration("P1DT10H")),15)" to resolve to one of the expected results, but got AssertionError: Expected XPath fn:round-half-to-even((xs:dayTimeDuration("P2DT53M11S") div xs:dayTimeDuration("P1DT10H")),15) to resolve to 1.437834967320261: expected false to be true, AssertionError: Expected XPath fn:round-half-to-even((xs:dayTimeDuration("P2DT53M11S") div xs:dayTimeDuration("P1DT10H")),15) to resolve to 1.4378349673: expected false to be true.
 cbcl-divide-yearMonthDuration-by-yearMonthDuration-001,AssertionError: expected [Function] to throw an error
-distinct-duration-equal-1,AssertionError: Expected executing the XPath "fn:distinct-values((xs:yearMonthDuration('P0Y'), xs:dayTimeDuration('P0D')))" to resolve to one of the expected results, but got AssertionError: fn:distinct-values((xs:yearMonthDuration('P0Y'), xs:dayTimeDuration('P0D'))): expected 'P0M PT0S' to equal 'P0M', AssertionError: fn:distinct-values((xs:yearMonthDuration('P0Y'), xs:dayTimeDuration('P0D'))): expected 'P0M PT0S' to equal 'PT0S'.
 K-HexBinaryEQ-1,AssertionError: Expected XPath xs:hexBinary("FF") eq xs:hexBinary("ff") to resolve to true: expected false to be true
 K-HexBinaryEQ-4,AssertionError: Expected XPath xs:hexBinary(xs:base64Binary(xs:hexBinary("03"))) eq xs:hexBinary("03") to resolve to true: expected false to be true
 K2-SeqIntersect-42,Error: No selector counterpart for: computedDocumentConstructor.
@@ -3859,12 +3857,7 @@ fo-test-fn-year-from-dateTime-004,AssertionError: Expected XPath          fn:yea
 fo-test-fn-month-from-dateTime-003,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 2 not registered. Did you mean "Q{test}custom-dateTime-function ()"?
 fo-test-fn-day-from-dateTime-003,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 2 not registered. Did you mean "Q{test}custom-dateTime-function ()"?
 fo-test-fn-hours-from-dateTime-003,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 2 not registered. Did you mean "Q{test}custom-dateTime-function ()"?
-fo-test-fn-timezone-from-dateTime-001,AssertionError: Expected XPath          fn:timezone-from-dateTime(xs:dateTime("1999-05-31T13:20:00-05:00"))        to (deep equally) resolve to xs:dayTimeDuration("-PT5H"): expected false to be true
-fo-test-fn-timezone-from-dateTime-002,AssertionError: Expected XPath          fn:timezone-from-dateTime(xs:dateTime("2000-06-12T13:20:00Z"))        to (deep equally) resolve to xs:dayTimeDuration("PT0S"): expected false to be true
-fo-test-fn-timezone-from-date-001,AssertionError: Expected XPath          fn:timezone-from-date(xs:date("1999-05-31-05:00"))        to (deep equally) resolve to xs:dayTimeDuration("-PT5H"): expected false to be true
-fo-test-fn-timezone-from-date-002,AssertionError: Expected XPath          fn:timezone-from-date(xs:date("2000-06-12Z"))        to (deep equally) resolve to xs:dayTimeDuration("PT0S"): expected false to be true
 fo-test-fn-hours-from-time-004,Error: XPST0017: Function fn:adjust-time-to-timezone with arity of 2 not registered. No similar functions found.
-fo-test-fn-timezone-from-time-001,AssertionError: Expected XPath          fn:timezone-from-time(xs:time("13:20:00-05:00"))        to (deep equally) resolve to xs:dayTimeDuration("-PT5H"): expected false to be true
 fo-test-fn-adjust-dateTime-to-timezone-002,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 1 not registered. Did you mean "Q{test}custom-dateTime-function ()"?
 fo-test-fn-adjust-dateTime-to-timezone-003,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 2 not registered. Did you mean "Q{test}custom-dateTime-function ()"?
 fo-test-fn-adjust-dateTime-to-timezone-004,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 2 not registered. Did you mean "Q{test}custom-dateTime-function ()"?
@@ -3906,7 +3899,6 @@ fo-test-fn-avg-002,Error: FORG0006: items passed to fn:avg are not all numeric.
 fo-test-fn-max-002,AssertionError: Expected XPath          fn:max([3,4,5])        to (deep equally) resolve to 5: expected false to be true
 fo-test-fn-min-002,AssertionError: Expected XPath          fn:min([3,4,5])        to (deep equally) resolve to 3: expected false to be true
 fo-test-fn-sum-001,Error: FORG0006: items passed to fn:sum are not all numeric.
-fo-test-fn-sum-002,AssertionError: Expected XPath            let $d1 := xs:yearMonthDuration("P20Y")                       return                      let $d2 := xs:yearMonthDuration("P10M")                       return                      let $seq1 := ($d1, $d2)                       return                    fn:sum($seq1[. lt xs:yearMonthDuration('P3M')],                   xs:yearMonthDuration('P0M'))        to (deep equally) resolve to xs:yearMonthDuration("P0M"): expected false to be true
 fo-test-fn-sum-007,Error: FORG0006: items passed to fn:sum are not all numeric.
 fo-test-fn-sum-008,Error: FORG0006: items passed to fn:sum are not all numeric.
 fo-test-fn-sum-009,Error: FORG0006: items passed to fn:sum are not all numeric.
