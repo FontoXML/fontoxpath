@@ -12,7 +12,7 @@ import { DONE_TOKEN, IIterator, IterationHint, ready } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
 import { performFunctionConversion } from './argumentHelper';
 import { BuiltinDeclarationType } from './builtInFunctions';
-import sequenceDeepEqual from './builtInFunctions_sequences_deepEqual';
+import sequenceDeepEqual, { anyAtomicTypeDeepEqual } from './builtInFunctions_sequences_deepEqual';
 import convertItemsToCommonType from './convertItemsToCommonType';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
@@ -230,6 +230,18 @@ const fnUnordered: FunctionDefinitionType = (
 	sequence
 ) => {
 	return sequence;
+};
+
+const fnDistinctValues: FunctionDefinitionType = (
+	dynamicContext,
+	executionParameters,
+	_staticContext,
+	sequence
+) => {
+	const xs = atomize(sequence, executionParameters).getAllValues();
+	const equals = (x: Value, y: Value): boolean =>
+		anyAtomicTypeDeepEqual(dynamicContext, executionParameters, _staticContext, x, y);
+	return sequenceFactory.create(xs).filter((x, i) => xs.slice(0, i).every((y) => ! equals(x, y)));
 };
 
 const fnIndexOf: FunctionDefinitionType = (
@@ -777,6 +789,28 @@ const declarations: BuiltinDeclarationType[] = [
 		localName: 'unordered',
 		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+	},
+
+	{
+		argumentTypes: [{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_MORE }],
+		callFunction: fnDistinctValues,
+		localName: 'distinct-values',
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_MORE },
+	},
+
+	{
+		argumentTypes: [
+			{ type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_MORE },
+			{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE }
+		],
+		callFunction() {
+			throw new Error('FOCH0002: No collations are supported');
+		},
+
+		localName: 'distinct-values',
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 
 	{

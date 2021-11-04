@@ -420,6 +420,18 @@ K2-SeqDeepEqualFunc-36,result was not equal
 K2-SeqDeepEqualFunc-37,result was not equal
 cbcl-deep-equal-005,Parse error
 default-language-004,result was not equal
+K-SeqDistinctValuesFunc-6,Parser related error, TypeError: Cannot read property 'mult' of undefined
+cbcl-distinct-values-002b,Parser related error, TypeError: Cannot read property 'mult' of undefined
+cbcl-distinct-values-004,Parser related error, TypeError: Cannot read property 'mult' of undefined
+cbcl-distinct-values-005,Parser related error, TypeError: Cannot read property 'mult' of undefined
+cbcl-distinct-values-006,Parser related error, TypeError: Cannot read property 'mult' of undefined
+cbcl-distinct-values-008,Parser related error, TypeError: Cannot read property 'mult' of undefined
+cbcl-distinct-values-009,Parser related error, TypeError: Cannot read property 'mult' of undefined
+cbcl-distinct-values-010,Parser related error, TypeError: Cannot read property 'mult' of undefined
+cbcl-distinct-values-011,Parser related error, TypeError: Cannot read property 'mult' of undefined
+cbcl-distinct-values-012,Parser related error, TypeError: Cannot read property 'mult' of undefined
+cbcl-distinct-values-013,Parser related error, TypeError: Cannot read property 'mult' of undefined
+cbcl-distinct-values-014,Parser related error, TypeError: Cannot read property 'mult' of undefined
 fn-doc-39,result was not equal
 fn-document-uri-22,result was not equal
 fn-document-uri-23,result was not equal
