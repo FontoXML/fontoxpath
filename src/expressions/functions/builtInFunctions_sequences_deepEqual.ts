@@ -57,7 +57,7 @@ function filterElementAndTextNodes(node: NodePointer, domFacade: DomFacade) {
 	return nodeType === NODE_TYPES.ELEMENT_NODE || nodeType === NODE_TYPES.TEXT_NODE;
 }
 
-function anyAtomicTypeDeepEqual(
+export function anyAtomicTypeDeepEqual(
 	_dynamicContext: DynamicContext,
 	_executionParameters: ExecutionParameters,
 	_staticContext: StaticContext,
