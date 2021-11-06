@@ -260,7 +260,7 @@ declare %public %updating function my-custom-namespace:do-something ($ele as ele
 `);
 // At some point:
 const contextNode = null;
-const pendingUpdatesAndXdmValue = evaluateUpdatingExpressionSync(
+const pendingUpdatesAndXdmValue = evaluateUpdatingExpression(
 	'ns:do-something(.)',
 	contextNode,
 	null,
