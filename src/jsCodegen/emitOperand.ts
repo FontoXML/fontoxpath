@@ -22,8 +22,7 @@ export const baseExprAstNodes = {
 	LESS_THAN_OR_EQUAL_OP: 'lessThanOrEqualOp',
 	LESS_THAN_OP: 'lessThanOp',
 	GREATER_THAN_OR_EQUAL_OP: 'greaterThanOrEqualOp',
-	GREAtER_THAN_OP: 'greaterThanOp',
-	// valueCompare
+	GREATER_THAN_OP: 'greaterThanOp',
 	EQ_OP: 'eqOp',
 	NE_OP: 'neOp',
 	LT_OP: 'ltOp',
@@ -31,9 +30,9 @@ export const baseExprAstNodes = {
 	GT_OP: 'gtOp',
 	GE_OP: 'geOp',
 	IS_OP: 'isOp',
-	// nodeCompare
 	NODE_BEFORE_OP: 'nodeBeforeOp',
 	NODE_AFTER_OP: 'nodeAfterOp',
+	FUNCTION_CALL_EXPR: 'functionCallExpr',
 };
 
 export const baseExpressions = Object.values(baseExprAstNodes);

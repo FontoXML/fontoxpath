@@ -17,7 +17,7 @@ describe('compare tests', () => {
 
 		chai.assert.throws(
 			() => evaluateXPathWithJsCodegen(query, node, null, ReturnType.BOOLEAN),
-			'Unsupported: a base expression used with an operand.'
+			'Unsupported function: true'
 		);
 
 		chai.assert.equal(evaluateXPathToBoolean(query, node), true);

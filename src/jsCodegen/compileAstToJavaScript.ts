@@ -24,7 +24,7 @@ function emitEvaluationToNodes(
 ): PartialCompilationResult {
 	const [valueCode, valueCodeType] = getCompiledValueCode(identifier, generatedCodeType);
 	if (valueCodeType.type !== GeneratedCodeBaseType.Iterator) {
-		return acceptAst(`return [];`, { type: GeneratedCodeBaseType.Statement });
+		return rejectAst('Return type was not an iterator');
 	}
 
 	return acceptAst(
@@ -141,7 +141,6 @@ function wrapCompiledCode(code: string, shouldUseContextItem: boolean): string {
 
 	finalCode += code + `}`;
 	finalCode += '\n//# sourceURL=generated.js';
-
 	return finalCode;
 }
 

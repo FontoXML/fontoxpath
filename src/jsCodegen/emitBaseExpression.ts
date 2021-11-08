@@ -1,11 +1,18 @@
 import { IAST } from '../parsing/astHelper';
 import { CodeGenContext } from './CodeGenContext';
 import { emitCompareExpr } from './emitCompare';
+import { emitFunctionCallExpr } from './emitFunctionCallExpr';
 import { emitStringLiteralExpression } from './emitLiterals';
 import { emitAndExpr, emitOrExpr } from './emitLogicalExpr';
-import { baseExprAstNodes } from './emitOperand';
+import { baseExprAstNodes, baseExpressions } from './emitOperand';
 import { emitPathExpr } from './emitPathExpr';
-import { FunctionIdentifier, PartialCompilationResult, rejectAst } from './JavaScriptCompiledXPath';
+import {
+	acceptAst,
+	FunctionIdentifier,
+	GeneratedCodeBaseType,
+	PartialCompilationResult,
+	rejectAst,
+} from './JavaScriptCompiledXPath';
 
 /**
  * Compile AST to base expression wrapped in a function named as the given identifier.
@@ -38,7 +45,7 @@ export function emitBaseExpr(
 		case baseExprAstNodes.LESS_THAN_OR_EQUAL_OP:
 		case baseExprAstNodes.LESS_THAN_OP:
 		case baseExprAstNodes.GREATER_THAN_OR_EQUAL_OP:
-		case baseExprAstNodes.GREAtER_THAN_OP:
+		case baseExprAstNodes.GREATER_THAN_OP:
 		// valueCompare
 		case baseExprAstNodes.EQ_OP:
 		case baseExprAstNodes.NE_OP:
@@ -51,6 +58,8 @@ export function emitBaseExpr(
 		case baseExprAstNodes.NODE_BEFORE_OP:
 		case baseExprAstNodes.NODE_AFTER_OP:
 			return emitCompareExpr(ast, identifier, staticContext, name);
+		case baseExprAstNodes.FUNCTION_CALL_EXPR:
+			return emitFunctionCallExpr(ast, identifier, staticContext);
 		default:
 			return rejectAst(`Unsupported: the base expression '${name}'.`);
 	}
