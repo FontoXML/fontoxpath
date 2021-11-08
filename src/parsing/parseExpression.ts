@@ -1,5 +1,11 @@
+import { CharStreams, CommonTokenStream } from 'antlr4ts';
 import { IAST } from './astHelper';
 import { parse, SyntaxError } from './xPathParser';
+import { XQueryLexer } from './XQueryLexer';
+import { CopyNamespacesDeclContext, XQueryParser } from './XQueryParser';
+import { XQueryParserVisitor } from './XQueryParserVisitor';
+import { ParseTreeWalker } from 'antlr4ts/tree/ParseTreeWalker';
+import { visitModule } from './ParseTreeVisitor';
 
 const astParseResultCache = Object.create(null);
 
@@ -21,6 +27,15 @@ export default function parseExpression(
 	xPathString: string,
 	compilationOptions: { allowXQuery?: boolean; debug?: boolean }
 ): IAST {
+	const inputStream = CharStreams.fromString(xPathString);
+	const lexer = new XQueryLexer(inputStream);
+	const tokenStream = new CommonTokenStream(lexer);
+	const parser = new XQueryParser(tokenStream);
+	const tree = parser.module();
+
+	console.log(visitModule(tree));
+
+
 	const language = compilationOptions.allowXQuery ? 'XQuery' : 'XPath';
 	const cached = compilationOptions.debug ? null : getParseResultFromCache(xPathString, language);
 

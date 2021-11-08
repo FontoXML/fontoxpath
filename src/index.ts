@@ -70,6 +70,8 @@ import {
 	Text,
 } from './types/Types';
 
+console.log(parseExpression("self::p", {}));
+
 function parseXPath(xpathString: string) {
 	const cachedExpression = getAnyStaticCompilationResultFromCache(xpathString, 'XPath', false);
 	if (cachedExpression) {

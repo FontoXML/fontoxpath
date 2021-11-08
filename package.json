@@ -30,7 +30,8 @@
 		"browsertests": "karma start",
 		"lint": "tslint \"./src/**/*.ts\" --project . && prettier \"./src/**/*.ts\" --list-different",
 		"fuzzer": "ts-node -P fuzzers/tsconfig.json -r tsconfig-paths/register fuzzers/index.ts",
-		"fuzzertest": "ts-mocha --paths -p test/tsconfig.json test/corpusfuzzertests.ts"
+		"fuzzertest": "ts-mocha --paths -p test/tsconfig.json test/corpusfuzzertests.ts",
+		"antlr": "antlr4ts src/parsing/XQueryLexer.g4 src/parsing/XQueryParser.g4 -visitor"
 	},
 	"repository": {
 		"type": "git",
@@ -72,9 +73,10 @@
 		"@types/mocha": "^8.2.2",
 		"@types/node": "^15.12.5",
 		"@types/node-static": "^0.7.6",
+		"@types/sinon": "^10.0.2",
+		"antlr4ts-cli": "^0.5.0-alpha.4",
 		"blns": "^2.0.4",
 		"bundlemon": "^1.0.0",
-		"@types/sinon": "^10.0.2",
 		"chai": "^4.3.4",
 		"concurrently": "^6.2.0",
 		"coveralls": "^3.1.0",
@@ -107,6 +109,7 @@
 		"typescript": "^4.3.4"
 	},
 	"dependencies": {
+		"antlr4ts": "^0.5.0-alpha.4",
 		"xspattern": "^2.0.0"
 	}
 }

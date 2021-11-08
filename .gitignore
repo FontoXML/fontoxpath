@@ -12,3 +12,12 @@
 /.nyc_output
 /tmp
 /.tscc_temp
+/src/parsing/XQueryLexer.interp
+/src/parsing/XQueryLexer.tokens
+/src/parsing/XQueryLexer.ts
+/src/parsing/XQueryParser.interp
+/src/parsing/XQueryParser.tokens
+/src/parsing/XQueryParser.ts
+/src/parsing/XQueryParserListener.ts
+/src/parsing/XQueryParserVisitor.ts
+/src/parsing/.antlr
