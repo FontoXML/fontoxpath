@@ -29,6 +29,7 @@
 		"xqutstestsxqueryx": "ts-mocha --paths -p test/tsconfig.json test/xqutsTestsXQueryX.ts",
 		"browsertests": "karma start",
 		"lint": "tslint \"./src/**/*.ts\" --project . && prettier \"./src/**/*.ts\" --list-different",
+		"lint-fix": "tslint \"./(src|test)/**/*.ts\" --project . --fix && prettier \"./(src|test)/**/*.ts\" --write",
 		"fuzzer": "ts-node -P fuzzers/tsconfig.json -r tsconfig-paths/register fuzzers/index.ts",
 		"fuzzertest": "ts-mocha --paths -p test/tsconfig.json test/corpusfuzzertests.ts"
 	},

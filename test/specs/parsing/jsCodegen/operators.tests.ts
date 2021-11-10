@@ -40,21 +40,15 @@ describe('operators', () => {
 
 	it('rejects logical operator when lhs is not compilable', () => {
 		chai.assert.isFalse(
-			compileXPathToJavaScript(
-				'count((1,2,3)) and self::xml',
-				ReturnType.BOOLEAN,
-				{}
-			).isAstAccepted
+			compileXPathToJavaScript('count((1,2,3)) and self::xml', ReturnType.BOOLEAN, {})
+				.isAstAccepted
 		);
 	});
 
 	it('rejects logical operator when rhs is not compilable', () => {
 		chai.assert.isFalse(
-			compileXPathToJavaScript(
-				'self::xml and count((1,2,3))',
-				ReturnType.BOOLEAN,
-				{}
-			).isAstAccepted
+			compileXPathToJavaScript('self::xml and count((1,2,3))', ReturnType.BOOLEAN, {})
+				.isAstAccepted
 		);
 	});
 });
