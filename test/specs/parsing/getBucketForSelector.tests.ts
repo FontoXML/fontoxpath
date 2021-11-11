@@ -1,34 +1,44 @@
 import * as chai from 'chai';
-import { getBucketForSelector } from 'fontoxpath';
+import { getBucketForSelector, parseScript } from 'fontoxpath';
+import { Document } from 'slimdom';
+
 describe('getBucketForSelector', () => {
+	const assertBucketForSelector = (selector, expectedBucket) => {
+		// Assert selector as a string
+		chai.assert.equal(getBucketForSelector(selector), expectedBucket);
+
+		// Assert selector as an AST
+		chai.assert.equal(
+			getBucketForSelector(parseScript(selector, {}, new Document())),
+			expectedBucket
+		);
+	};
+
 	it('returns the correct bucket for element expressions', () => {
-		chai.assert.equal(getBucketForSelector('self::element()'), 'type-1');
+		assertBucketForSelector('self::element()', 'type-1');
 	});
 	it('returns the correct bucket for expressions using the and operator', () => {
-		chai.assert.equal(getBucketForSelector('self::element() and self::node()'), 'type-1');
+		assertBucketForSelector('self::element() and self::node()', 'type-1');
 	});
 	it('returns the correct bucket for expressions using the and operator, first not having a bucket', () => {
-		chai.assert.equal(getBucketForSelector('true() and self::element()'), 'type-1');
+		assertBucketForSelector('true() and self::element()', 'type-1');
 	});
 	it('returns the correct bucket for expressions using the or operator, first not having a bucket', () => {
-		chai.assert.equal(getBucketForSelector('true() or self::element()'), null);
+		assertBucketForSelector('true() or self::element()', null);
 	});
 	it('returns the correct bucket for expressions using the or operator, all having the same bucket', () => {
-		chai.assert.equal(getBucketForSelector('self::element() or self::element()'), 'type-1');
+		assertBucketForSelector('self::element() or self::element()', 'type-1');
 	});
 	it('returns the correct bucket for PI expressions', () => {
-		chai.assert.equal(getBucketForSelector('self::processing-instruction()'), 'type-7');
+		assertBucketForSelector('self::processing-instruction()', 'type-7');
 	});
 	it('returns the correct bucket for named element expressions', () => {
-		chai.assert.equal(getBucketForSelector('self::someElement'), 'name-someElement');
+		assertBucketForSelector('self::someElement', 'name-someElement');
 	});
 	it('returns the correct bucket for filter expressions', () => {
-		chai.assert.equal(
-			getBucketForSelector('(self::someElement)[@type="whatever"]'),
-			'name-someElement'
-		);
+		assertBucketForSelector('(self::someElement)[@type="whatever"]', 'name-someElement');
 	});
 	it('returns the correct bucket for text expressions', () => {
-		chai.assert.equal(getBucketForSelector('self::text()'), 'type-3');
+		assertBucketForSelector('self::text()', 'type-3');
 	});
 });

@@ -1,24 +1,34 @@
 import * as chai from 'chai';
-import { compareSpecificity } from 'fontoxpath';
+import { compareSpecificity, parseScript } from 'fontoxpath';
+import { Document } from 'slimdom';
 
 describe('compareSpecificity', () => {
-	it('returns 0 for the same xpath', () => {
-		chai.assert.equal(compareSpecificity('self::*', 'self::*'), 0);
-	});
-	it('nodeType > universal', () =>
-		chai.assert.equal(compareSpecificity('self::element()', 'self::node()'), 1));
-	it('name > nodeType', () =>
-		chai.assert.equal(compareSpecificity('self::name', 'self::element()'), 1));
-	it('attributes > nodeName', () =>
-		chai.assert.equal(compareSpecificity('@id', 'self::name'), 1));
-	it('functions > attributes', () =>
-		chai.assert.equal(compareSpecificity('id("123")', '@id'), 1));
-	it('union is the maximum of its operands', () =>
+	function assertSpecificity(
+		selectorExpressionA: string,
+		selectorExpressionB: string,
+		expectedResult
+	) {
+		// Assert selectors as a string
+		chai.assert.equal(
+			compareSpecificity(selectorExpressionA, selectorExpressionB),
+			expectedResult
+		);
+
+		// Assert selectors as an AST
 		chai.assert.equal(
 			compareSpecificity(
-				'self::name | id("123") | self::otherName | id("123")',
-				'self::name'
+				parseScript(selectorExpressionA, {}, new Document()),
+				parseScript(selectorExpressionB, {}, new Document())
 			),
-			1
-		));
+			expectedResult
+		);
+	}
+
+	it('returns 0 for the same xpath', () => assertSpecificity('self::*', 'self::*', 0));
+	it('nodeType > universal', () => assertSpecificity('self::element()', 'self::node()', 1));
+	it('name > nodeType', () => assertSpecificity('self::name', 'self::element()', 1));
+	it('attributes > nodeName', () => assertSpecificity('@id', 'self::name', 1));
+	it('functions > attributes', () => assertSpecificity('id("123")', '@id', 1));
+	it('union is the maximum of its operands', () =>
+		assertSpecificity('self::name | id("123") | self::otherName | id("123")', 'self::name', 1));
 });

@@ -396,7 +396,7 @@ describe('Annotating flwor Expressions', () => {
 	it('annotate complex for expression', () => {
 		assertValueType(
 			'for $x in (3, 4, 5) for $y in (2, 5) return $x + $y',
-			ValueType.XSNUMERIC,
+			ValueType.XSINTEGER,
 			undefined
 		);
 	});

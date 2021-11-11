@@ -64,7 +64,10 @@ export function annotateNamedFunctionRef(
 	}
 
 	// Insert the type info into the AST and return
-	if (functionProperties.returnType.type !== ValueType.ITEM) {
+	if (
+		functionProperties.returnType.type !== ValueType.ITEM &&
+		functionProperties.returnType.type !== ValueType.NONE
+	) {
 		astHelper.insertAttribute(ast, 'type', functionProperties.returnType);
 	}
 	return functionProperties.returnType;

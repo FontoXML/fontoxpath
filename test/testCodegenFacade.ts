@@ -10,6 +10,7 @@ import {
 	Document,
 	domFacade,
 	Element,
+	EvaluableExpression,
 	evaluateUpdatingExpression,
 	evaluateUpdatingExpressionSync,
 	EvaluateXPath,
@@ -58,7 +59,7 @@ const evaluateXPathWithJsCodegen = <
 	TNode extends Node,
 	TReturnType extends keyof IReturnTypes<TNode>
 >(
-	query: string,
+	query: EvaluableExpression,
 	contextItem?: any | null,
 	localDomFacade?: IDomFacade | null,
 	returnType?: ReturnType,
@@ -67,7 +68,12 @@ const evaluateXPathWithJsCodegen = <
 ): IReturnTypes<TNode>[TReturnType] => {
 	totalCases++;
 
-	if (variables !== undefined && variables !== null && Object.keys(variables).length !== 0) {
+	// When query is not a string, it is a node which can be evaluated without reverting to an AST first.
+	// TODO: define query as EvaluableExpression and add JSCodegen for nodes.
+	if (
+		typeof query !== 'string' ||
+		(variables !== undefined && variables !== null && Object.keys(variables).length !== 0)
+	) {
 		// JSCodegen does not support user-defined variables (yet)
 		variablesCases++;
 		// console.log(
@@ -91,7 +97,7 @@ const evaluateXPathWithJsCodegen = <
 };
 
 export function evaluateXPathToArray(
-	selector: string,
+	selector: EvaluableExpression,
 	contextItem?: any | null,
 	localDomFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
@@ -108,7 +114,7 @@ export function evaluateXPathToArray(
 }
 
 export function evaluateXPathToAsyncIterator(
-	selector: string,
+	selector: EvaluableExpression,
 	contextItem?: any | null,
 	localDomFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
@@ -125,7 +131,7 @@ export function evaluateXPathToAsyncIterator(
 }
 
 export function evaluateXPathToBoolean(
-	selector: string,
+	selector: EvaluableExpression,
 	contextItem?: any | null,
 	localDomFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
@@ -142,7 +148,7 @@ export function evaluateXPathToBoolean(
 }
 
 export function evaluateXPathToFirstNode<T extends Node>(
-	selector: string,
+	selector: EvaluableExpression,
 	contextItem?: any | null,
 	localDomFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
@@ -159,7 +165,7 @@ export function evaluateXPathToFirstNode<T extends Node>(
 }
 
 export function evaluateXPathToMap(
-	selector: string,
+	selector: EvaluableExpression,
 	contextItem?: any | null,
 	localDomFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
@@ -176,7 +182,7 @@ export function evaluateXPathToMap(
 }
 
 export function evaluateXPathToNodes<T extends Node>(
-	selector: string,
+	selector: EvaluableExpression,
 	contextItem?: any | null,
 	localDomFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
@@ -193,7 +199,7 @@ export function evaluateXPathToNodes<T extends Node>(
 }
 
 export function evaluateXPathToNumber(
-	selector: string,
+	selector: EvaluableExpression,
 	contextItem?: any | null,
 	localDomFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
@@ -210,7 +216,7 @@ export function evaluateXPathToNumber(
 }
 
 export function evaluateXPathToNumbers(
-	selector: string,
+	selector: EvaluableExpression,
 	contextItem?: any | null,
 	localDomFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
@@ -227,7 +233,7 @@ export function evaluateXPathToNumbers(
 }
 
 export function evaluateXPathToString(
-	selector: string,
+	selector: EvaluableExpression,
 	contextItem?: any | null,
 	localDomFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
@@ -244,7 +250,7 @@ export function evaluateXPathToString(
 }
 
 export function evaluateXPathToStrings(
-	selector: string,
+	selector: EvaluableExpression,
 	contextItem?: any | null,
 	localDomFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,

@@ -8,7 +8,7 @@ import ISequence from '../expressions/dataTypes/ISequence';
 import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
 import MapValue from '../expressions/dataTypes/MapValue';
 import sequenceFactory from '../expressions/dataTypes/sequenceFactory';
-import Value, { ValueType } from '../expressions/dataTypes/Value';
+import Value, { ValueType, valueTypeToString } from '../expressions/dataTypes/Value';
 import ExecutionParameters from '../expressions/ExecutionParameters';
 import { IIterator, IterationHint } from '../expressions/util/iterators';
 import transformXPathItemToJavascriptObject, {
@@ -105,7 +105,10 @@ export default function convertXDMReturnValue<
 			}
 			if (!isSubtypeOf(first.type, ValueType.NODE)) {
 				throw new Error(
-					'Expected XPath ' + expression + ' to resolve to Node. Got ' + first.type
+					'Expected XPath ' +
+						expression +
+						' to resolve to Node. Got ' +
+						valueTypeToString(first.type)
 				);
 			}
 			// over here: unravel pointers. if they point to actual nodes:return them. if they point

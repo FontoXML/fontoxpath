@@ -1,6 +1,6 @@
 import IDomFacade from './domFacade/IDomFacade';
 import { UpdatingOptions } from './evaluateUpdatingExpression';
-import evaluateXPath from './evaluateXPath';
+import evaluateXPath, { EvaluableExpression } from './evaluateXPath';
 import buildEvaluationContext from './evaluationUtils/buildEvaluationContext';
 import convertUpdateResultToTransferable from './evaluationUtils/convertUpdateResultToTransferable';
 import { printAndRethrowError } from './evaluationUtils/printAndRethrowError';
@@ -11,6 +11,7 @@ import PossiblyUpdatingExpression from './expressions/PossiblyUpdatingExpression
 import UpdatingExpressionResult from './expressions/UpdatingExpressionResult';
 import { IterationHint, IterationResult } from './expressions/util/iterators';
 import { IReturnTypes, ReturnType } from './parsing/convertXDMReturnValue';
+import evaluableExpressionToString from './parsing/evaluableExpressionToString';
 import { Node } from './types/Types';
 
 /**
@@ -31,7 +32,7 @@ export default function evaluateUpdatingExpressionSync<
 	TNode extends Node,
 	TReturnType extends ReturnType
 >(
-	updateScript: string,
+	updateScript: EvaluableExpression,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
@@ -61,7 +62,7 @@ export default function evaluateUpdatingExpressionSync<
 		executionParameters = context.executionParameters;
 		expression = context.expression;
 	} catch (error) {
-		printAndRethrowError(updateScript, error);
+		printAndRethrowError(evaluableExpressionToString(updateScript), error);
 	}
 
 	if (!expression.isUpdating) {
@@ -90,12 +91,12 @@ export default function evaluateUpdatingExpressionSync<
 
 		attempt = resultIterator.next(IterationHint.NONE);
 	} catch (error) {
-		printAndRethrowError(updateScript, error);
+		printAndRethrowError(evaluableExpressionToString(updateScript), error);
 	}
 
 	return convertUpdateResultToTransferable(
 		attempt.value,
-		updateScript,
+		evaluableExpressionToString(updateScript),
 		options['returnType'],
 		executionParameters
 	);

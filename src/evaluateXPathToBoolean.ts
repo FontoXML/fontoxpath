@@ -1,5 +1,5 @@
 import IDomFacade from './domFacade/IDomFacade';
-import evaluateXPath from './evaluateXPath';
+import evaluateXPath, { EvaluableExpression } from './evaluateXPath';
 import { Options } from './types/Options';
 
 /**
@@ -16,7 +16,7 @@ import { Options } from './types/Options';
  * @returns A boolean result
  */
 export default function evaluateXPathToBoolean(
-	selector: string,
+	selector: EvaluableExpression,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,

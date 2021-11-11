@@ -1,21 +1,66 @@
 import domBackedDocumentWriter from './documentWriter/domBackedDocumentWriter';
 import IDocumentWriter from './documentWriter/IDocumentWriter';
 import { sequenceTypeToString } from './expressions/dataTypes/Value';
+import { BUILT_IN_NAMESPACE_URIS } from './expressions/staticallyKnownNamespaces';
 import ISimpleNodesFactory from './nodesFactory/ISimpleNodesFactory';
+import normalizeEndOfLines from './parsing/normalizeEndOfLines';
 import parseExpression from './parsing/parseExpression';
 import annotateAst from './typeInference/annotateAST';
 import { AnnotationContext } from './typeInference/AnnotationContext';
 import { Language, Options } from './types/Options';
 import { Element, Text } from './types/Types';
 
-const XQUERYX_UPDATING_NAMESPACE_URI = 'http://www.w3.org/2007/xquery-update-10';
-
-const XQUERYX_NAMESPACE_URI = 'http://www.w3.org/2005/XQueryX';
-
 const PREFERRED_PREFIX_BY_NAMESPACEURI: { [prefix: string]: string } = {
-	[XQUERYX_NAMESPACE_URI]: 'xqx',
-	[XQUERYX_UPDATING_NAMESPACE_URI]: 'xquf',
+	[BUILT_IN_NAMESPACE_URIS.XQUERYX_NAMESPACE_URI]: 'xqx',
+	[BUILT_IN_NAMESPACE_URIS.XQUERYX_UPDATING_NAMESPACE_URI]: 'xquf',
+	[BUILT_IN_NAMESPACE_URIS.FONTOXPATH_NAMESPACE_URI]: 'x',
 };
+
+function getQName(name: string, parentUri: string): { localName: string; namespaceUri: string } {
+	switch (name) {
+		case 'copySource':
+		case 'insertAfter':
+		case 'insertAsFirst':
+		case 'insertAsLast':
+		case 'insertBefore':
+		case 'insertInto':
+		case 'modifyExpr':
+		case 'newNameExpr':
+		case 'replacementExpr':
+		case 'replaceValue':
+		case 'returnExpr':
+		case 'sourceExpr':
+		case 'targetExpr':
+		case 'transformCopies':
+		case 'transformCopy':
+			// Some 'vanilla' elements are actually XQueryX elements. Check parent
+			return {
+				localName: name,
+				namespaceUri: parentUri || BUILT_IN_NAMESPACE_URIS.XQUERYX_NAMESPACE_URI,
+			};
+		case 'deleteExpr':
+		case 'insertExpr':
+		case 'renameExpr':
+		case 'replaceExpr':
+		case 'transformExpr':
+			// Elements added in the update facility need to be in a different namespace
+			return {
+				localName: name,
+				namespaceUri: BUILT_IN_NAMESPACE_URIS.XQUERYX_UPDATING_NAMESPACE_URI,
+			};
+		case 'x:stackTrace':
+			// Custom AST nodes introduced by fontoxpath for debugging
+			return {
+				localName: 'stackTrace',
+				namespaceUri: BUILT_IN_NAMESPACE_URIS.FONTOXPATH_NAMESPACE_URI,
+			};
+		default:
+			return {
+				localName: name,
+				namespaceUri: BUILT_IN_NAMESPACE_URIS.XQUERYX_NAMESPACE_URI,
+			};
+	}
+}
 
 /**
  * Transform the given JsonML fragment into the corresponding DOM structure, using the given document to
@@ -46,39 +91,10 @@ function parseNode(
 		throw new TypeError('JsonML element should be an array or string');
 	}
 
-	const name = jsonml[0];
-	let namespaceUri: string;
-	switch (name) {
-		case 'copySource':
-		case 'insertAfter':
-		case 'insertAsFirst':
-		case 'insertAsLast':
-		case 'insertBefore':
-		case 'insertInto':
-		case 'modifyExpr':
-		case 'newNameExpr':
-		case 'replacementExpr':
-		case 'replaceValue':
-		case 'returnExpr':
-		case 'sourceExpr':
-		case 'targetExpr':
-		case 'transformCopies':
-		case 'transformCopy':
-			// Some 'vanilla' elements are actually XQueryX elements. Check parent
-			namespaceUri = parentUri || XQUERYX_NAMESPACE_URI;
-			break;
-		case 'deleteExpr':
-		case 'insertExpr':
-		case 'renameExpr':
-		case 'replaceExpr':
-		case 'transformExpr':
-			// Elements added in the update facility need to be in a different namespace
-			namespaceUri = XQUERYX_UPDATING_NAMESPACE_URI;
-			break;
-		default:
-			namespaceUri = XQUERYX_NAMESPACE_URI;
-			break;
-	}
+	const qName = getQName(jsonml[0], parentUri);
+	const name = qName.localName;
+	const namespaceUri = qName.namespaceUri;
+
 	// Node must be a normal element
 	const element = simpleNodesFactory.createElementNS(
 		namespaceUri,
@@ -90,12 +106,15 @@ function parseNode(
 		for (const attributeName in firstChild) {
 			if (firstChild[attributeName] !== null) {
 				if (attributeName === 'type') {
-					documentWriter.setAttributeNS(
-						element,
-						namespaceUri,
-						'fontoxpath:' + attributeName,
-						sequenceTypeToString(firstChild[attributeName])
-					);
+					// TODO: prevent writing undefined to variables at the first place
+					if (firstChild[attributeName] !== undefined) {
+						documentWriter.setAttributeNS(
+							element,
+							namespaceUri,
+							'fontoxpath:' + attributeName,
+							sequenceTypeToString(firstChild[attributeName])
+						);
+					}
 				} else {
 					documentWriter.setAttributeNS(
 						element,
@@ -134,6 +153,14 @@ function parseNode(
  * Note that the parseScript function returns a detached element: it is not added to the passed
  * document.
  *
+ * The element also contains te original expression as a comment.
+ *
+ * This may later be used for error processing to display the full original script instead of only referring to the AST.
+ *
+ * The element also contains te original expression as a comment.
+ *
+ * This may later be used for error processing to display the full original script instead of only referring to the AST.
+ *
  * @example
  * Parse "self::element" to an XQueryX element and access it
  * ```
@@ -164,14 +191,22 @@ function parseNode(
  * @param documentWriter - The documentWriter will be used to append children to the newly created
  * dom
  */
-export default function parseScript<TElement extends Element>(
+export default function parseScript<
+	TElement extends Element & {
+		firstChild: unknown;
+		insertBefore: (nodeA: unknown, nodeB: unknown) => unknown;
+	}
+>(
 	script: string,
 	options: Options,
 	simpleNodesFactory: ISimpleNodesFactory,
 	documentWriter: IDocumentWriter = domBackedDocumentWriter
 ): TElement {
+	script = normalizeEndOfLines(script);
 	const ast = parseExpression(script, {
-		allowXQuery: options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE,
+		allowXQuery:
+			options['language'] === Language.XQUERY_3_1_LANGUAGE ||
+			options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE,
 		debug: options.debug,
 	});
 
@@ -179,5 +214,8 @@ export default function parseScript<TElement extends Element>(
 		annotateAst(ast, new AnnotationContext(undefined));
 	}
 
-	return parseNode(documentWriter, simpleNodesFactory, ast, null) as TElement;
+	const astAsXML = parseNode(documentWriter, simpleNodesFactory, ast, null) as TElement;
+	astAsXML.insertBefore(simpleNodesFactory.createComment(script), astAsXML.firstChild);
+
+	return astAsXML;
 }

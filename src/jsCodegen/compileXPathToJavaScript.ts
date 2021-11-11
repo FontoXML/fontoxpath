@@ -1,12 +1,14 @@
+import { EvaluableExpression } from '../evaluateXPath';
 import {
 	createDefaultFunctionNameResolver,
 	createDefaultNamespaceResolver,
-	normalizeEndOfLines,
 } from '../evaluationUtils/buildEvaluationContext';
 import ExecutionSpecificStaticContext from '../expressions/ExecutionSpecificStaticContext';
 import { BUILT_IN_NAMESPACE_URIS } from '../expressions/staticallyKnownNamespaces';
 import StaticContext from '../expressions/StaticContext';
 import { ReturnType } from '../parsing/convertXDMReturnValue';
+import convertXmlToAst from '../parsing/convertXmlToAst';
+import normalizeEndOfLines from '../parsing/normalizeEndOfLines';
 import parseExpression from '../parsing/parseExpression';
 import annotateAst from '../typeInference/annotateAST';
 import { AnnotationContext } from '../typeInference/AnnotationContext';
@@ -28,25 +30,29 @@ import { JavaScriptCompiledXPathResult } from './JavaScriptCompiledXPath';
  * @returns A string JavaScript code representing the given selector.
  */
 function compileXPathToJavaScript(
-	selector: string,
+	selector: EvaluableExpression,
 	returnType?: ReturnType,
 	options?: Options | null
 ): JavaScriptCompiledXPathResult {
 	options = options || {};
 	returnType = returnType || (ReturnType.ANY as any);
 
-	const expressionString = normalizeEndOfLines(selector);
+	let ast;
+	if (typeof selector === 'string') {
+		const expressionString = normalizeEndOfLines(selector);
+		const parserOptions = {
+			allowXQuery:
+				options['language'] === Language.XQUERY_3_1_LANGUAGE ||
+				options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE,
+			// Debugging inserts xs:stackTrace in the AST, but this is not supported
+			// yet by the js-codegen backend.
+			debug: false,
+		};
 
-	const parserOptions = {
-		allowXQuery:
-			options['language'] === Language.XQUERY_3_1_LANGUAGE ||
-			options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE,
-		// Debugging inserts xs:stackTrace in the AST, but this is not supported
-		// yet by the js-codegen backend.
-		debug: false,
-	};
-
-	const ast = parseExpression(expressionString, parserOptions);
+		ast = parseExpression(expressionString, parserOptions);
+	} else {
+		ast = convertXmlToAst(selector);
+	}
 
 	const codegenContext: CodeGenContext = {
 		resolveNamespace: options['namespaceResolver'] || createDefaultNamespaceResolver(null),

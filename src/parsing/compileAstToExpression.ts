@@ -334,8 +334,14 @@ function unwrapBinaryOperator(
 ) {
 	const compiledAstNodes: Expression[] = [];
 	function unwrapInner(innerAst: IAST) {
-		const firstOperand = astHelper.getFirstChild(innerAst, 'firstOperand')[1] as IAST;
-		const secondOperand = astHelper.getFirstChild(innerAst, 'secondOperand')[1] as IAST;
+		const firstOperand = astHelper.getFirstChild(
+			astHelper.getFirstChild(innerAst, 'firstOperand') as IAST,
+			'*'
+		) as IAST;
+		const secondOperand = astHelper.getFirstChild(
+			astHelper.getFirstChild(innerAst, 'secondOperand') as IAST,
+			'*'
+		) as IAST;
 
 		if (firstOperand[0] === operatorName) {
 			unwrapInner(firstOperand);
@@ -1030,8 +1036,8 @@ function simpleMap(ast: IAST, compilationOptions: CompilationOptions) {
 function stringConcatenateOp(ast: IAST, compilationOptions: CompilationOptions) {
 	const type = astHelper.getAttribute(ast, 'type');
 	const args = [
-		astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST,
-		astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST,
+		astHelper.followPath(ast, ['firstOperand', '*']),
+		astHelper.followPath(ast, ['secondOperand', '*']),
 	];
 	return new FunctionCall(
 		new NamedFunctionRef(
@@ -1051,8 +1057,8 @@ function stringConcatenateOp(ast: IAST, compilationOptions: CompilationOptions) 
 function rangeSequenceExpr(ast: IAST, compilationOptions: CompilationOptions) {
 	const type = astHelper.getAttribute(ast, 'type');
 	const args = [
-		astHelper.getFirstChild(ast, 'startExpr')[1] as IAST,
-		astHelper.getFirstChild(ast, 'endExpr')[1] as IAST,
+		astHelper.getFirstChild(astHelper.getFirstChild(ast, 'startExpr'), '*') as IAST,
+		astHelper.getFirstChild(astHelper.getFirstChild(ast, 'endExpr'), '*') as IAST,
 	];
 
 	const ref = new NamedFunctionRef(

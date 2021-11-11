@@ -8,6 +8,8 @@ export const enum BUILT_IN_NAMESPACE_URIS {
 	MAP_NAMESPACE_URI = 'http://www.w3.org/2005/xpath-functions/map',
 	MATH_NAMESPACE_URI = 'http://www.w3.org/2005/xpath-functions/math',
 	FONTOXPATH_NAMESPACE_URI = 'http://fontoxml.com/fontoxpath',
+	XQUERYX_UPDATING_NAMESPACE_URI = 'http://www.w3.org/2007/xquery-update-10',
+	XQUERYX_NAMESPACE_URI = 'http://www.w3.org/2005/XQueryX',
 }
 
 export const staticallyKnownNamespaceByPrefix: {

@@ -1,5 +1,6 @@
 import * as chai from 'chai';
 import {
+	EvaluableExpression,
 	evaluateUpdatingExpressionSync,
 	evaluateXPath,
 	EvaluateXPath,
@@ -9,9 +10,10 @@ import {
 	evaluateXPathToNodes,
 	evaluateXPathToString,
 	executePendingUpdateList,
+	parseScript,
 } from 'fontoxpath';
 import * as path from 'path';
-import { Element, Node } from 'slimdom';
+import { Element, Document, Node } from 'slimdom';
 import { slimdom, sync } from 'slimdom-sax-parser';
 import { getSkippedTests } from 'test-helpers/getSkippedTests';
 import testFs from 'test-helpers/testFs';
@@ -25,7 +27,7 @@ import testFs from 'test-helpers/testFs';
 };
 
 type ExpressionArguments = [
-	string,
+	EvaluableExpression,
 	any,
 	any,
 	Object,
@@ -71,6 +73,14 @@ function isUpdatingQuery(testName, query) {
 	return true;
 }
 
+function parseQuery(query: string) {
+	return parseScript(
+		query,
+		{ language: evaluateXPath.XQUERY_3_1_LANGUAGE, annotateAst: false, debug: false },
+		new Document()
+	);
+}
+
 function executePul(pul, args) {
 	executePendingUpdateList(pul, null, null, null);
 	const variables = args[3];
@@ -81,14 +91,23 @@ function executePul(pul, args) {
 	}
 }
 
-async function assertError(expectedError, args: ExpressionArguments, isUpdating) {
+async function assertError(
+	expectedError,
+	args: ExpressionArguments,
+	isUpdating,
+	shouldPreparseTheQuery?: boolean
+) {
 	let hasThrown = false;
 	try {
+		const newArgs: ExpressionArguments = [...args];
+		if (shouldPreparseTheQuery) {
+			newArgs[0] = parseQuery(newArgs[0] as string);
+		}
 		if (isUpdating) {
-			const it = evaluateUpdatingExpressionSync(...args);
-			executePul(it.pendingUpdateList, args);
+			const it = evaluateUpdatingExpressionSync(...newArgs);
+			executePul(it.pendingUpdateList, newArgs);
 		} else {
-			evaluateXPath(args[0], args[1], args[2], args[3], null, args[4]);
+			evaluateXPath(newArgs[0], newArgs[1], newArgs[2], newArgs[3], null, newArgs[4]);
 		}
 	} catch (e) {
 		hasThrown = true;
@@ -149,7 +168,13 @@ function assertFragment(actualNodes, expectedString) {
 	assertXml(actual, expected);
 }
 
-async function runAssertions(expectedErrors, outputFiles, args: ExpressionArguments, isUpdating) {
+async function runAssertions(
+	expectedErrors,
+	outputFiles,
+	args: ExpressionArguments,
+	isUpdating,
+	shouldPreparseTheQuery?: boolean
+) {
 	const failed = [];
 	const catchAssertion = (assertion) => {
 		try {
@@ -161,7 +186,7 @@ async function runAssertions(expectedErrors, outputFiles, args: ExpressionArgume
 
 	for (const expectedError of expectedErrors) {
 		try {
-			await assertError(expectedError, args, isUpdating);
+			await assertError(expectedError, args, isUpdating, shouldPreparseTheQuery);
 		} catch (e) {
 			failed.push(e);
 		}
@@ -172,13 +197,23 @@ async function runAssertions(expectedErrors, outputFiles, args: ExpressionArgume
 
 		let xdmValue: unknown;
 		const runQuery = (returnType: number) => {
-			const it = evaluateUpdatingExpressionSync(args[0], args[1], args[2], args[3], {
-				...args[4],
-				returnType,
-			});
+			const newArgs: ExpressionArguments = [...args];
+			if (shouldPreparseTheQuery) {
+				newArgs[0] = parseQuery(newArgs[0] as string);
+			}
+			const it = evaluateUpdatingExpressionSync(
+				newArgs[0],
+				newArgs[1],
+				newArgs[2],
+				newArgs[3],
+				{
+					...newArgs[4],
+					returnType,
+				}
+			);
 			xdmValue = it.xdmValue;
 			if (it.pendingUpdateList) {
-				executePul(it.pendingUpdateList, args);
+				executePul(it.pendingUpdateList, newArgs);
 			}
 			if (Array.isArray(xdmValue)) {
 				xdmValue.forEach((nodeValue) => {
@@ -228,7 +263,21 @@ async function runAssertions(expectedErrors, outputFiles, args: ExpressionArgume
 	}
 }
 
-async function runTestCase(testName: string, testCase: Node) {
+function createArgs(query, variables): ExpressionArguments {
+	return [
+		query,
+		new Document(),
+		null,
+		variables,
+		{
+			language: evaluateXPath.XQUERY_3_1_LANGUAGE,
+			returnType: evaluateXPath.STRING_TYPE,
+			annotateAst: false,
+		},
+	];
+}
+
+async function runTestCase(testName: string, testCase: Node, shouldPreparseTheQuery?: boolean) {
 	const states = evaluateXPathToAsyncIterator(
 		`declare function local:parse-input($state as element())
 	{
@@ -264,7 +313,9 @@ async function runTestCase(testName: string, testCase: Node) {
 		testCase,
 		null,
 		null,
-		{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+		{
+			language: evaluateXPath.XQUERY_3_1_LANGUAGE,
+		}
 	);
 
 	const loadedInputFiles = {};
@@ -285,25 +336,24 @@ async function runTestCase(testName: string, testCase: Node) {
 		const outputFiles = state['output-files'];
 		const expectedErrors = state['expected-errors'];
 
-		const args: ExpressionArguments = [
-			query,
-			new slimdom.Document(),
-			null,
-			variables,
-			{
-				language: evaluateXPath.XQUERY_3_1_LANGUAGE,
-				returnType: evaluateXPath.STRING_TYPE,
-				annotateAst: false,
-			},
-		];
+		const args = createArgs(query, variables);
 
 		try {
 			const isUpdating = isUpdatingQuery(testName, query);
 			if (expectedErrors.length || outputFiles.length) {
-				await runAssertions(expectedErrors, outputFiles, args, isUpdating);
+				await runAssertions(
+					expectedErrors,
+					outputFiles,
+					args,
+					isUpdating,
+					shouldPreparseTheQuery
+				);
 			} else if (isUpdating) {
-				const it = evaluateUpdatingExpressionSync(...args);
-				executePul(it.pendingUpdateList, args);
+				const arg2 = shouldPreparseTheQuery
+					? createArgs(parseQuery(query), variables)
+					: args;
+				const it2 = evaluateUpdatingExpressionSync(...arg2);
+				executePul(it2.pendingUpdateList, arg2);
 			} else {
 				throw new Error(
 					'A non-updating expression without an expected value is not supported in the test framework.'
@@ -343,7 +393,10 @@ function buildTestCases(testGroup) {
 					return;
 				}
 
-				it(testName, async () => runTestCase(testName, test));
+				it(testName, async () => {
+					await runTestCase(testName, test);
+					await runTestCase(testName, test, true);
+				});
 				break;
 			}
 		}

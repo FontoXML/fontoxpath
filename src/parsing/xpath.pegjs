@@ -335,10 +335,14 @@ VarValue
 VarDefaultValue
  = ExprSingle
 
-// 31 TODO: Convert to XQueryX
+// 31
 ContextItemDecl
- = "declare" S "context" S "item" (S "as" ItemType)? ((_ ":=" _ VarValue) / (S "external" (_ ":=" _ VarDefaultValue)?))
-   {return {type: 'contextItemDecl'}}
+ = "declare" S "context" S "item" itemType:(S "as" t:ItemType {return t})? val:((_ ":=" _ value:VarValue {return ['varValue', value]}) / (S "external" (_ ":=" _ VarDefaultValue)?{return ["external"]}))
+   {
+     return ["contextItemDecl"]
+        .concat(itemType ? [["contextItemType", itemType]]: [])
+        .concat([val])
+   }
 
 // 32
 FunctionDecl
@@ -371,7 +375,7 @@ EnclosedExpr
 
 // 37
 OptionDecl
- = "declare" S  "option" S EQName S StringLiteral {return {type: 'optionDecl'}}
+ = "declare" S  "option" S optionName:EQName S optionContents:StringLiteral {return ["optionDecl", ["optionName", optionName], ["optionContents", optionContents]]}
 
 // 38
 QueryBody
