@@ -2,12 +2,16 @@ import arrayGet from '../functions/builtInFunctions_arrays_get';
 import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
 import FunctionValue from './FunctionValue';
 import ISequence from './ISequence';
+import { JsonArray } from './MapValue';
 import sequenceFactory from './sequenceFactory';
 import { SequenceMultiplicity, ValueType } from './Value';
 
+export const ABSENT_JSON_ARRAY = Symbol('ABSENT_JSON_ARRAY');
+
 class ArrayValue extends FunctionValue {
 	public members: (() => ISequence)[];
-	constructor(members: (() => ISequence)[]) {
+	public jsonArray: JsonArray | typeof ABSENT_JSON_ARRAY;
+	constructor(members: (() => ISequence)[], jsonArray: JsonArray | typeof ABSENT_JSON_ARRAY) {
 		super({
 			value: (dynamicContext, executionParameters, staticContext, key) =>
 				arrayGet(
@@ -26,6 +30,7 @@ class ArrayValue extends FunctionValue {
 		});
 		this.type = ValueType.ARRAY;
 		this.members = members;
+		this.jsonArray = jsonArray;
 	}
 }
 

@@ -71,10 +71,7 @@ function adaptXPathValueToJavascriptValue(
 		if (valueSequence.isEmpty()) {
 			return null;
 		}
-		return transformXPathItemToJavascriptObject(
-			valueSequence.first(),
-			executionParameters
-		).next(IterationHint.NONE).value;
+		return transformXPathItemToJavascriptObject(valueSequence.first(), executionParameters);
 	}
 
 	if (
@@ -85,15 +82,11 @@ function adaptXPathValueToJavascriptValue(
 			if (isSubtypeOf(value.type, ValueType.ATTRIBUTE)) {
 				throw new Error('Cannot pass attribute nodes to custom functions');
 			}
-			return transformXPathItemToJavascriptObject(value, executionParameters).next(
-				IterationHint.NONE
-			).value;
+			return transformXPathItemToJavascriptObject(value, executionParameters);
 		});
 	}
 
-	return transformXPathItemToJavascriptObject(valueSequence.first(), executionParameters).next(
-		IterationHint.NONE
-	).value;
+	return transformXPathItemToJavascriptObject(valueSequence.first(), executionParameters);
 }
 
 function splitFunctionName(name: string | { localName: string; namespaceURI: string }): {

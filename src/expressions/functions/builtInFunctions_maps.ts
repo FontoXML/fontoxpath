@@ -1,5 +1,5 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
-import MapValue from '../dataTypes/MapValue';
+import MapValue, { AbsentJsonObject } from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
 import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
@@ -78,7 +78,8 @@ const mapMerge: FunctionDefinitionType = (
 						resultingKeyValuePairs.push(keyValuePair);
 					});
 					return resultingKeyValuePairs;
-				}, [])
+				}, []),
+				AbsentJsonObject
 			)
 		)
 	);
@@ -109,7 +110,7 @@ const mapPut: FunctionDefinitionType = (
 				value: createDoublyIterableSequence(newValueSequence),
 			});
 		}
-		return sequenceFactory.singleton(new MapValue(resultingKeyValuePairs));
+		return sequenceFactory.singleton(new MapValue(resultingKeyValuePairs, AbsentJsonObject));
 	});
 };
 
@@ -121,7 +122,11 @@ const mapEntry: FunctionDefinitionType = (
 	value
 ) => {
 	return keySequence.map(
-		(onlyKey) => new MapValue([{ key: onlyKey, value: createDoublyIterableSequence(value) }])
+		(onlyKey) =>
+			new MapValue(
+				[{ key: onlyKey, value: createDoublyIterableSequence(value) }],
+				AbsentJsonObject
+			)
 	);
 };
 
@@ -182,7 +187,9 @@ const mapRemove: FunctionDefinitionType = (
 					resultingKeyValuePairs.splice(indexOfExistingPair, 1);
 				}
 			});
-			return sequenceFactory.singleton(new MapValue(resultingKeyValuePairs));
+			return sequenceFactory.singleton(
+				new MapValue(resultingKeyValuePairs, AbsentJsonObject)
+			);
 		});
 	});
 };
@@ -287,15 +294,18 @@ const declarations: BuiltinDeclarationType[] = [
 				staticContext,
 				maps,
 				sequenceFactory.singleton(
-					new MapValue([
-						{
-							key: createAtomicValue('duplicates', ValueType.XSSTRING),
-							value: () =>
-								sequenceFactory.singleton(
-									createAtomicValue('use-first', ValueType.XSSTRING)
-								),
-						},
-					])
+					new MapValue(
+						[
+							{
+								key: createAtomicValue('duplicates', ValueType.XSSTRING),
+								value: () =>
+									sequenceFactory.singleton(
+										createAtomicValue('use-first', ValueType.XSSTRING)
+									),
+							},
+						],
+						AbsentJsonObject
+					)
 				)
 			);
 		},

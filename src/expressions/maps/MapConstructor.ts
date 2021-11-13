@@ -1,5 +1,5 @@
 import atomize from '../dataTypes/atomize';
-import MapValue from '../dataTypes/MapValue';
+import MapValue, { AbsentJsonObject } from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { SequenceType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
@@ -58,7 +58,8 @@ class MapConstructor extends Expression {
 								executionParameters
 							)
 						),
-					}))
+					})),
+					AbsentJsonObject
 				)
 			)
 		);
