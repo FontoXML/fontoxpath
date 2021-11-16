@@ -20,7 +20,7 @@ class CacheEntry {
 			| { namespaceURI: string; prefix: string }[],
 		public readonly defaultFunctionNamespaceURI: string,
 		public readonly resolvedFunctions: ResolvedFunction[]
-	) {}
+	) { }
 }
 
 function generateLanguageKey(language: string, debug: boolean): string {
@@ -127,7 +127,7 @@ export function getStaticCompilationResultFromCache(
 				return (
 					newResolvedFunction &&
 					newResolvedFunction.namespaceURI ===
-						resolvedFunction.resolvedQName.namespaceURI &&
+					resolvedFunction.resolvedQName.namespaceURI &&
 					newResolvedFunction.localName === resolvedFunction.resolvedQName.localName
 				);
 			})
@@ -177,6 +177,7 @@ export function storeStaticCompilationResultInCache(
 	debug: boolean,
 	defaultFunctionNamespaceURI: string
 ) {
+	console.log('mehmet');
 	removeHalfCompiledExpression(selectorExpression, language, debug, compiledExpression);
 
 	let cachesForExpression = compiledExpressionCache.get(selectorExpression);

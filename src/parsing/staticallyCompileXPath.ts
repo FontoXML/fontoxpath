@@ -7,7 +7,10 @@ import { AnnotationContext } from '../typeInference/AnnotationContext';
 import { FunctionNameResolver } from '../types/Options';
 import astHelper, { IAST } from './astHelper';
 import compileAstToExpression from './compileAstToExpression';
-import { getStaticCompilationResultFromCache } from './compiledExpressionCache';
+import {
+	getStaticCompilationResultFromCache,
+	storeStaticCompilationResultInCache,
+} from './compiledExpressionCache';
 import convertXmlToAst from './convertXmlToAst';
 import { enhanceStaticContextWithModule } from './globalModuleCache';
 import normalizeEndOfLines from './normalizeEndOfLines';
@@ -42,15 +45,15 @@ function createExpressionFromString(
 	const fromCache = compilationOptions.disableCache
 		? null
 		: getStaticCompilationResultFromCache(
-				xpathString,
-				language,
-				namespaceResolver,
-				variables,
-				moduleImports,
-				compilationOptions.debug,
-				defaultFunctionNamespaceURI,
-				functionNameResolver
-		  );
+			xpathString,
+			language,
+			namespaceResolver,
+			variables,
+			moduleImports,
+			compilationOptions.debug,
+			defaultFunctionNamespaceURI,
+			functionNameResolver
+		);
 
 	if (fromCache !== null) {
 		return {
@@ -176,6 +179,17 @@ export default function staticallyCompileXPath(
 					rootStaticContext
 				);
 				expressionFromAst.performStaticEvaluation(rootStaticContext);
+
+				if (!compilationOptions.disableCache) {
+					const language = compilationOptions.allowXQuery ? 'XQuery' : 'XPath';
+					storeStaticCompilationResultInCache(selector,
+						language,
+						executionSpecificStaticContext,
+						moduleImports,
+						expressionFromAst,
+						compilationOptions.debug,
+						defaultFunctionNamespaceURI)
+				}
 
 				return {
 					staticContext: rootStaticContext,
