@@ -69,7 +69,6 @@ const evaluateXPathWithJsCodegen = <
 	totalCases++;
 
 	// When query is not a string, it is a node which can be evaluated without reverting to an AST first.
-	// TODO: define query as EvaluableExpression and add JSCodegen for nodes.
 	if (
 		typeof query !== 'string' ||
 		(variables !== undefined && variables !== null && Object.keys(variables).length !== 0)

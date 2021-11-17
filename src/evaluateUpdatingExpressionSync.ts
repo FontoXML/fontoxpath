@@ -11,7 +11,6 @@ import PossiblyUpdatingExpression from './expressions/PossiblyUpdatingExpression
 import UpdatingExpressionResult from './expressions/UpdatingExpressionResult';
 import { IterationHint, IterationResult } from './expressions/util/iterators';
 import { IReturnTypes, ReturnType } from './parsing/convertXDMReturnValue';
-import evaluableExpressionToString from './parsing/evaluableExpressionToString';
 import { Node } from './types/Types';
 
 /**
@@ -62,7 +61,7 @@ export default function evaluateUpdatingExpressionSync<
 		executionParameters = context.executionParameters;
 		expression = context.expression;
 	} catch (error) {
-		printAndRethrowError(evaluableExpressionToString(updateScript), error);
+		printAndRethrowError(updateScript, error);
 	}
 
 	if (!expression.isUpdating) {
@@ -91,12 +90,12 @@ export default function evaluateUpdatingExpressionSync<
 
 		attempt = resultIterator.next(IterationHint.NONE);
 	} catch (error) {
-		printAndRethrowError(evaluableExpressionToString(updateScript), error);
+		printAndRethrowError(updateScript, error);
 	}
 
 	return convertUpdateResultToTransferable(
 		attempt.value,
-		evaluableExpressionToString(updateScript),
+		updateScript,
 		options['returnType'],
 		executionParameters
 	);

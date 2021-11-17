@@ -6,7 +6,6 @@ import ExecutionParameters from './expressions/ExecutionParameters';
 import Expression from './expressions/Expression';
 import { getBucketsForNode } from './getBuckets';
 import convertXDMReturnValue, { IReturnTypes, ReturnType } from './parsing/convertXDMReturnValue';
-import evaluableExpressionToString from './parsing/evaluableExpressionToString';
 import { markXPathEnd, markXPathStart } from './performance';
 import { TypedExternalValue, UntypedExternalValue } from './types/createTypedValueFactory';
 import { Language, Options } from './types/Options';
@@ -126,7 +125,8 @@ export type EvaluateXPath = {
 /**
  * An XQuery or XPath Expression that can be evaluated. Commonly a string like `descendant::p` or
  * `ancestor::div[@class="my-class"]`. This can also be an element that represents the root of an
- * [XQueryX](https://www.w3.org/TR/xqueryx-31/) DOM tree. These XQueryX elements can be acquired using the {@link parseScript} function or they can be built by hand
+ * [XQueryX](https://www.w3.org/TR/xqueryx-31/) DOM tree. These XQueryX elements can be acquired
+ * using the {@link parseScript} function or they can be built by hand
  *
  * @see parseScript
  *
@@ -177,7 +177,7 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 		executionParameters = context.executionParameters;
 		expression = context.expression;
 	} catch (error) {
-		printAndRethrowError(evaluableExpressionToString(selector), error);
+		printAndRethrowError(selector, error);
 	}
 
 	if (expression.isUpdating) {
@@ -199,23 +199,19 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 	}
 
 	try {
-		if (typeof selector === 'string') {
-			markXPathStart(selector);
-		}
+		markXPathStart(selector);
+
 		const rawResults = expression.evaluateMaybeStatically(dynamicContext, executionParameters);
 		const toReturn = convertXDMReturnValue<TNode, TReturnType>(
-			evaluableExpressionToString(selector),
+			selector,
 			rawResults,
 			returnType,
 			executionParameters
 		);
-		if (typeof selector === 'string') {
-			markXPathEnd(selector);
-		}
-
+		markXPathEnd(selector);
 		return toReturn;
 	} catch (error) {
-		printAndRethrowError(evaluableExpressionToString(selector), error);
+		printAndRethrowError(selector, error);
 	}
 };
 

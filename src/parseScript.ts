@@ -1,5 +1,6 @@
 import domBackedDocumentWriter from './documentWriter/domBackedDocumentWriter';
 import IDocumentWriter from './documentWriter/IDocumentWriter';
+import ExternalDomFacade from './domFacade/ExternalDomFacade';
 import { sequenceTypeToString } from './expressions/dataTypes/Value';
 import { BUILT_IN_NAMESPACE_URIS } from './expressions/staticallyKnownNamespaces';
 import ISimpleNodesFactory from './nodesFactory/ISimpleNodesFactory';
@@ -153,11 +154,7 @@ function parseNode(
  * Note that the parseScript function returns a detached element: it is not added to the passed
  * document.
  *
- * The element also contains te original expression as a comment.
- *
- * This may later be used for error processing to display the full original script instead of only referring to the AST.
- *
- * The element also contains te original expression as a comment.
+ * The element also contains the original expression as a comment.
  *
  * This may later be used for error processing to display the full original script instead of only referring to the AST.
  *
@@ -191,12 +188,7 @@ function parseNode(
  * @param documentWriter - The documentWriter will be used to append children to the newly created
  * dom
  */
-export default function parseScript<
-	TElement extends Element & {
-		firstChild: unknown;
-		insertBefore: (nodeA: unknown, nodeB: unknown) => unknown;
-	}
->(
+export default function parseScript<TElement extends Element>(
 	script: string,
 	options: Options,
 	simpleNodesFactory: ISimpleNodesFactory,
@@ -214,8 +206,13 @@ export default function parseScript<
 		annotateAst(ast, new AnnotationContext(undefined));
 	}
 
+	const domFacade = new ExternalDomFacade();
 	const astAsXML = parseNode(documentWriter, simpleNodesFactory, ast, null) as TElement;
-	astAsXML.insertBefore(simpleNodesFactory.createComment(script), astAsXML.firstChild);
+	documentWriter.insertBefore(
+		astAsXML,
+		simpleNodesFactory.createComment(script),
+		domFacade['getFirstChild'](astAsXML)
+	);
 
 	return astAsXML;
 }

@@ -30,7 +30,7 @@ export default function convertXmlToAst(element: Element): IAST {
 	}
 
 	const childNodes = domFacade.getChildNodes(element);
-	for (const child of Array.from(childNodes)) {
+	for (const child of childNodes) {
 		switch (child.nodeType) {
 			case NODE_TYPES.ELEMENT_NODE:
 				ast.push(convertXmlToAst(child as Element));

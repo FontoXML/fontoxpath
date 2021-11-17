@@ -1,4 +1,5 @@
 import { ConcreteNode, NODE_TYPES } from '../domFacade/ConcreteNode';
+import ExternalDomFacade from '../domFacade/ExternalDomFacade';
 import { EvaluableExpression } from '../evaluateXPath';
 
 export default function evaluableExpressionToString(
@@ -7,9 +8,10 @@ export default function evaluableExpressionToString(
 	if (typeof evaluableExpression === 'string') {
 		return evaluableExpression;
 	} else {
-		// Prevent us from defining the whole writable DOM interface by casting to any here:
-		const evaluableExpressionAny = evaluableExpression as any;
-		const commentNode: any = Array.from(evaluableExpressionAny.childNodes).find(
+		const domFacade = new ExternalDomFacade();
+
+		const childNodes = domFacade.getChildNodes(evaluableExpression);
+		const commentNode: any = childNodes.find(
 			(node: ConcreteNode) => node.nodeType === NODE_TYPES.COMMENT_NODE
 		);
 		return commentNode ? commentNode.data : 'some expression';

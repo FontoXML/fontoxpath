@@ -80,11 +80,6 @@ function buildExpressionFromAst(
 		debug: boolean | undefined;
 		disableCache: boolean | undefined;
 	},
-	namespaceResolver: (namespace: string) => string | null,
-	variables: { [varName: string]: any },
-	moduleImports: { [namespaceURI: string]: string },
-	defaultFunctionNamespaceURI: string,
-	functionNameResolver: FunctionNameResolver,
 	rootStaticContext: StaticContext
 ) {
 	const context = new AnnotationContext(rootStaticContext);
@@ -171,11 +166,6 @@ export default function staticallyCompileXPath(
 				const expressionFromAst = buildExpressionFromAst(
 					result.ast,
 					compilationOptions,
-					namespaceResolver,
-					variables,
-					moduleImports,
-					defaultFunctionNamespaceURI,
-					functionNameResolver,
 					rootStaticContext
 				);
 				expressionFromAst.performStaticEvaluation(rootStaticContext);
@@ -200,17 +190,21 @@ export default function staticallyCompileXPath(
 
 	// AST is an element: convert to jsonml
 	const ast = convertXmlToAst(selector);
-	const expression = buildExpressionFromAst(
-		ast,
-		compilationOptions,
-		namespaceResolver,
-		variables,
-		moduleImports,
-		defaultFunctionNamespaceURI,
-		functionNameResolver,
-		rootStaticContext
-	);
+	const expression = buildExpressionFromAst(ast, compilationOptions, rootStaticContext);
 	expression.performStaticEvaluation(rootStaticContext);
+
+	if (!compilationOptions.disableCache) {
+		storeStaticCompilationResultInCache(
+			selector,
+			compilationOptions.allowXQuery ? 'XQuery' : 'XPath',
+			executionSpecificStaticContext,
+			moduleImports,
+			expression,
+			compilationOptions.debug,
+			defaultFunctionNamespaceURI
+		);
+	}
+
 	return {
 		staticContext: rootStaticContext,
 		expression,

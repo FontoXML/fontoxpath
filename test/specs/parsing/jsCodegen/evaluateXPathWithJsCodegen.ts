@@ -1,7 +1,6 @@
 import {
 	CompiledXPathFunction,
 	compileXPathToJavaScript,
-	EvaluableExpression,
 	executeJavaScriptCompiledXPath,
 	IDomFacade,
 	IReturnTypes,

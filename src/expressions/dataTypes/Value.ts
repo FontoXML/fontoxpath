@@ -277,6 +277,8 @@ export function sequenceTypeToString(input: SequenceType): string {
 }
 
 export function stringToValueType(input: string): ValueType {
+	// 'none' is special because while you can have this as a return type
+	// in a function (aka the fn:error function), it is never a valid type.
 	if (input === 'none') {
 		throw new Error(`XPST0051: The type "none" could not be found`);
 	}

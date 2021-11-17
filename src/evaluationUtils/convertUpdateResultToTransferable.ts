@@ -1,3 +1,4 @@
+import { EvaluableExpression } from '..';
 import sequenceFactory from '../expressions/dataTypes/sequenceFactory';
 import ExecutionParameters from '../expressions/ExecutionParameters';
 import UpdatingExpressionResult from '../expressions/UpdatingExpressionResult';
@@ -9,7 +10,7 @@ export default function convertUpdateResultToTransferable<
 	TReturnType extends keyof IReturnTypes<TNode>
 >(
 	result: UpdatingExpressionResult,
-	script: string,
+	script: EvaluableExpression | string,
 	returnType: TReturnType,
 	executionParameters: ExecutionParameters
 ): { pendingUpdateList: object[]; xdmValue: IReturnTypes<TNode>[TReturnType] } {
