@@ -254,7 +254,11 @@ function binaryOp<TType extends ParserRuleContext>(
 	if (children.length === 1) {
 		return visitChild(children[0]);
 	}
-	return [astType, ...children.map(visitChild)];
+	let rhs = children.map(visitChild);
+	const lhs = rhs.shift();
+	return rhs.reduce(function (lh, rh) {
+		return [astType, ['firstOperand', lh], ['secondOperand', rh]];
+	}, lhs);
 }
 
 function visitAllNames(ctx: AllNamesContext): IAST {
@@ -389,8 +393,6 @@ function visitExpr(ctx: ExprContext): IAST {
 	}
 }
 function visitExprSingle(ctx: ExprSingleContext): IAST {
-	const child = ctx.children[0];
-	const y = child.payload;
 	if (ctx.orExpr() !== undefined) {
 		return visitOrExpr(ctx.orExpr());
 	} else {
@@ -530,7 +532,7 @@ function visitExistRenameExpr(ctx: ExistRenameExprContext): IAST {
 	throw new Error('Not implemented');
 }
 function visitOrExpr(ctx: OrExprContext): IAST {
-	return binaryOp('orExpr', ctx.andExpr(), visitAndExpr);
+	return binaryOp('orOp', ctx.andExpr(), visitAndExpr);
 }
 function visitAndExpr(ctx: AndExprContext): IAST {
 	return binaryOp('andExpr', ctx.comparisonExpr(), visitComparisonExpr);
@@ -702,7 +704,7 @@ function visitForwardStep(ctx: ForwardStepContext): IAST[] {
 	throw new Error('Not implemented');
 }
 function visitForwardAxis(ctx: ForwardAxisContext): IAST {
-	if (ctx.KW_SELF !== undefined) {
+	if (ctx.KW_SELF() !== undefined) {
 		return ['xpathAxis', 'self'];
 	}
 	throw new Error('Not implemented');
@@ -726,7 +728,7 @@ function visitNodeTest(ctx: NodeTestContext): IAST {
 	throw new Error('Not implemented');
 }
 function visitNameTest(ctx: NameTestContext): IAST {
-	if (ctx.eqName() !== undefined) {
+	if (ctx.eqName() !== undefined && ctx.wildcard() === undefined) {
 		return ['nameTest', visitEqName(ctx.eqName())];
 	}
 	throw new Error('Not implemented');
