@@ -27,12 +27,6 @@ export default function parseExpression(
 	xPathString: string,
 	compilationOptions: { allowXQuery?: boolean; debug?: boolean }
 ): IAST {
-	const inputStream = CharStreams.fromString(xPathString);
-	const lexer = new XQueryLexer(inputStream);
-	const tokenStream = new CommonTokenStream(lexer);
-	const parser = new XQueryParser(tokenStream);
-	const tree = parser.module();
-
 	const language = compilationOptions.allowXQuery ? 'XQuery' : 'XPath';
 	const cached = compilationOptions.debug ? null : getParseResultFromCache(xPathString, language);
 
@@ -47,6 +41,24 @@ export default function parseExpression(
 			});
 			if (!compilationOptions.debug) {
 				storeParseResultInCache(xPathString, language, ast);
+			}
+
+			const inputStream = CharStreams.fromString(xPathString);
+			const lexer = new XQueryLexer(inputStream);
+			const tokenStream = new CommonTokenStream(lexer);
+			const parser = new XQueryParser(tokenStream);
+			const tree = parser.module();
+			try {
+				if (JSON.stringify(visitModule(tree)) !== JSON.stringify(ast)) {
+					throw new Error(
+						'Parse result differs\n\nPEG:\n' +
+							JSON.stringify(ast, null, 4) +
+							'\n\nANTLR:\n' +
+							JSON.stringify(visitModule(tree), null, 4)
+					);
+				}
+			} catch (e) {
+				if (e.message !== 'Not implemented') throw new Error('Unknown error! ' + e);
 			}
 		}
 

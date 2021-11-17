@@ -59,6 +59,7 @@ export default function staticallyCompileXPath(
 	} else {
 		// We can not use anything from the cache, parse + compile
 		const ast = parseExpression(xpathString, compilationOptions);
+		
 		const context = new AnnotationContext(rootStaticContext);
 		if (compilationOptions.annotateAst) {
 			annotateAst(ast, context);
