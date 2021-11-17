@@ -267,7 +267,7 @@ function visitAllWithLocal(ctx: AllWithLocalContext): IAST {
 	throw new Error('Not implemented');
 }
 export function visitModule(ctx: ModuleContext): IAST {
-	return ['module', this.visitMainModule(ctx.mainModule(0))];
+	return ['module', visitMainModule(ctx.mainModule(0))];
 }
 function visitXqDocComment(ctx: XqDocCommentContext): IAST {
 	throw new Error('Not implemented');
@@ -276,10 +276,10 @@ function visitVersionDecl(ctx: VersionDeclContext): IAST {
 	throw new Error('Not implemented');
 }
 function visitMainModule(ctx: MainModuleContext): IAST {
-	return ['mainModule', this.visitQueryBody(ctx.queryBody())];
+	return ['mainModule', visitQueryBody(ctx.queryBody())];
 }
 function visitQueryBody(ctx: QueryBodyContext): IAST {
-	return this.visitExpr(ctx.expr());
+	return visitExpr(ctx.expr());
 }
 function visitLibraryModule(ctx: LibraryModuleContext): IAST {
 	throw new Error('Not implemented');
@@ -381,7 +381,7 @@ function visitExpr(ctx: ExprContext): IAST {
 	debugger;
 	if (ctx.exprSingle() !== undefined) {
 		if (ctx.exprSingle().length === 1) {
-			return this.visitExprSingle(ctx.exprSingle(0));
+			return visitExprSingle(ctx.exprSingle(0));
 		} else {
 			throw new Error('Not implemented');
 		}
@@ -393,8 +393,7 @@ function visitExprSingle(ctx: ExprSingleContext): IAST {
 	const child = ctx.children[0];
 	const y = child.payload;
 	if (ctx.orExpr() !== undefined) {
-		console.log(ctx.orExpr());
-		return ['A'];
+		return visitOrExpr(ctx.orExpr());
 	} else {
 		throw new Error('Not implemented');
 	}
@@ -538,25 +537,66 @@ function visitAndExpr(ctx: AndExprContext): IAST {
 	return binaryOp('andExpr', ctx.comparisonExpr(), visitComparisonExpr);
 }
 function visitComparisonExpr(ctx: ComparisonExprContext): IAST {
-	throw new Error('Not implemented');
+	if (ctx.valueComp()) {
+		return binaryOp('valueCompare', ctx.stringConcatExpr(), visitStringConcatExpr);
+	} else if (ctx.generalComp()) {
+		return binaryOp('generalCompare', ctx.stringConcatExpr(), visitStringConcatExpr);
+	} else if (ctx.nodeComp()) {
+		return binaryOp('nodeCompare', ctx.stringConcatExpr(), visitStringConcatExpr);
+	} else {
+		return visitStringConcatExpr(ctx.stringConcatExpr()[0]);
+	}
 }
 function visitStringConcatExpr(ctx: StringConcatExprContext): IAST {
-	throw new Error('Not implemented');
+	return binaryOp('stringConcatenateOp', ctx.rangeExpr(), visitRangeExpr);
 }
 function visitRangeExpr(ctx: RangeExprContext): IAST {
-	throw new Error('Not implemented');
+	return binaryOp('rangeSequenceExpr', ctx.additiveExpr(), visitAdditiveExpr);
 }
 function visitAdditiveExpr(ctx: AdditiveExprContext): IAST {
-	throw new Error('Not implemented');
+	for (let i = 0; i < 3; i++) {
+		console.log(ctx.PLUS(i));
+	}
+	const hasPlus = ctx.PLUS().length !== 0;
+	const hasMinus = ctx.MINUS().length !== 0;
+	if (hasPlus && !hasMinus) {
+		return binaryOp('addOp', ctx.multiplicativeExpr(), visitMultiplicativeExpr);
+	} else if (hasMinus && !hasPlus) {
+		return binaryOp('subtractOp', ctx.multiplicativeExpr(), visitMultiplicativeExpr);
+	} else {
+		if (!hasPlus && !hasMinus) {
+			return visitMultiplicativeExpr(ctx.multiplicativeExpr()[0]);
+		}
+		// TODO: add support for 'a + b - c'
+		throw new Error('Not implemented');
+	}
 }
 function visitMultiplicativeExpr(ctx: MultiplicativeExprContext): IAST {
-	throw new Error('Not implemented');
+	if (ctx.STAR().length != 0) {
+		return binaryOp('multiplyOp', ctx.unionExpr(), visitUnionExpr);
+	} else if (ctx.KW_DIV().length != 0) {
+		return binaryOp('divOp', ctx.unionExpr(), visitUnionExpr);
+	} else if (ctx.KW_IDIV().length != 0) {
+		return binaryOp('idivOp', ctx.unionExpr(), visitUnionExpr);
+	} else if (ctx.KW_MOD().length != 0) {
+		return binaryOp('modOp', ctx.unionExpr(), visitUnionExpr);
+	} else {
+		// TODO: add support for 'a * b / c'
+		throw new Error('Not implemented');
+	}
 }
 function visitUnionExpr(ctx: UnionExprContext): IAST {
-	throw new Error('Not implemented');
+	return binaryOp('unionOp', ctx.intersectExceptExpr(), visitIntersectExceptExpr);
 }
 function visitIntersectExceptExpr(ctx: IntersectExceptExprContext): IAST {
-	throw new Error('Not implemented');
+	if (ctx.KW_INTERSECT().length != 0) {
+		return binaryOp('intersectOp', ctx.instanceOfExpr(), visitInstanceOfExpr);
+	} else if (ctx.KW_EXCEPT().length != 0) {
+		return binaryOp('exceptOp', ctx.instanceOfExpr(), visitInstanceOfExpr);
+	} else {
+		// TODO: add support for 'a intersect b except c'
+		throw new Error('Not implemented');
+	}
 }
 function visitInstanceOfExpr(ctx: InstanceOfExprContext): IAST {
 	throw new Error('Not implemented');
