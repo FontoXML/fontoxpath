@@ -125,7 +125,7 @@ export type EvaluateXPath = {
 
 /**
  * An XQuery or XPath Expression that can be evaluated. Commonly a string like `descendant::p` or
- * `ancestor::div[@class="my-class"]`. This can also be a node that represents the root of an
+ * `ancestor::div[@class="my-class"]`. This can also be an element that represents the root of an
  * [XQueryX](https://www.w3.org/TR/xqueryx-31/) DOM tree. These XQueryX elements can be acquired using the {@link parseScript} function or they can be built by hand
  *
  * @see parseScript

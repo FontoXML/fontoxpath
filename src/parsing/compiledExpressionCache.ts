@@ -177,7 +177,6 @@ export function storeStaticCompilationResultInCache(
 	debug: boolean,
 	defaultFunctionNamespaceURI: string
 ) {
-	console.log('mehmet');
 	removeHalfCompiledExpression(selectorExpression, language, debug, compiledExpression);
 
 	let cachesForExpression = compiledExpressionCache.get(selectorExpression);
