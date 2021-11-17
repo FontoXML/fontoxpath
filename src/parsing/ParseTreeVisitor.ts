@@ -279,7 +279,7 @@ function visitMainModule(ctx: MainModuleContext): IAST {
 	return ['mainModule', visitQueryBody(ctx.queryBody())];
 }
 function visitQueryBody(ctx: QueryBodyContext): IAST {
-	return visitExpr(ctx.expr());
+	return ['queryBody', visitExpr(ctx.expr())];
 }
 function visitLibraryModule(ctx: LibraryModuleContext): IAST {
 	throw new Error('Not implemented');
@@ -378,7 +378,6 @@ function visitOptionDecl(ctx: OptionDeclContext): IAST {
 	throw new Error('Not implemented');
 }
 function visitExpr(ctx: ExprContext): IAST {
-	debugger;
 	if (ctx.exprSingle() !== undefined) {
 		if (ctx.exprSingle().length === 1) {
 			return visitExprSingle(ctx.exprSingle(0));
@@ -554,70 +553,91 @@ function visitRangeExpr(ctx: RangeExprContext): IAST {
 	return binaryOp('rangeSequenceExpr', ctx.additiveExpr(), visitAdditiveExpr);
 }
 function visitAdditiveExpr(ctx: AdditiveExprContext): IAST {
-	for (let i = 0; i < 3; i++) {
-		console.log(ctx.PLUS(i));
-	}
 	const hasPlus = ctx.PLUS().length !== 0;
 	const hasMinus = ctx.MINUS().length !== 0;
 	if (hasPlus && !hasMinus) {
 		return binaryOp('addOp', ctx.multiplicativeExpr(), visitMultiplicativeExpr);
 	} else if (hasMinus && !hasPlus) {
 		return binaryOp('subtractOp', ctx.multiplicativeExpr(), visitMultiplicativeExpr);
+	} else if (!hasPlus && !hasMinus) {
+		return visitMultiplicativeExpr(ctx.multiplicativeExpr()[0]);
 	} else {
-		if (!hasPlus && !hasMinus) {
-			return visitMultiplicativeExpr(ctx.multiplicativeExpr()[0]);
-		}
 		// TODO: add support for 'a + b - c'
 		throw new Error('Not implemented');
 	}
 }
 function visitMultiplicativeExpr(ctx: MultiplicativeExprContext): IAST {
-	if (ctx.STAR().length != 0) {
-		return binaryOp('multiplyOp', ctx.unionExpr(), visitUnionExpr);
-	} else if (ctx.KW_DIV().length != 0) {
-		return binaryOp('divOp', ctx.unionExpr(), visitUnionExpr);
-	} else if (ctx.KW_IDIV().length != 0) {
-		return binaryOp('idivOp', ctx.unionExpr(), visitUnionExpr);
-	} else if (ctx.KW_MOD().length != 0) {
-		return binaryOp('modOp', ctx.unionExpr(), visitUnionExpr);
-	} else {
-		// TODO: add support for 'a * b / c'
-		throw new Error('Not implemented');
+	if (
+		ctx.STAR().length === 0 &&
+		ctx.KW_DIV().length === 0 &&
+		ctx.KW_IDIV().length === 0 &&
+		ctx.KW_MOD().length === 0
+	) {
+		return visitUnionExpr(ctx.unionExpr()[0]);
 	}
+	throw new Error('Not implemented');
 }
 function visitUnionExpr(ctx: UnionExprContext): IAST {
 	return binaryOp('unionOp', ctx.intersectExceptExpr(), visitIntersectExceptExpr);
 }
 function visitIntersectExceptExpr(ctx: IntersectExceptExprContext): IAST {
-	if (ctx.KW_INTERSECT().length != 0) {
+	const hasIntersect = ctx.KW_INTERSECT().length !== 0;
+	const hasExcept = ctx.KW_EXCEPT().length !== 0;
+	if (hasIntersect && !hasExcept) {
 		return binaryOp('intersectOp', ctx.instanceOfExpr(), visitInstanceOfExpr);
-	} else if (ctx.KW_EXCEPT().length != 0) {
+	} else if (hasExcept && !hasIntersect) {
 		return binaryOp('exceptOp', ctx.instanceOfExpr(), visitInstanceOfExpr);
+	} else if (!hasExcept && !hasIntersect) {
+		return visitInstanceOfExpr(ctx.instanceOfExpr()[0]);
 	} else {
 		// TODO: add support for 'a intersect b except c'
 		throw new Error('Not implemented');
 	}
 }
 function visitInstanceOfExpr(ctx: InstanceOfExprContext): IAST {
+	if (ctx.sequenceType() === undefined) {
+		return visitTreatExpr(ctx.treatExpr());
+	}
 	throw new Error('Not implemented');
 }
 function visitTreatExpr(ctx: TreatExprContext): IAST {
+	if (ctx.sequenceType() === undefined) {
+		return visitCastableExpr(ctx.castableExpr());
+	}
 	throw new Error('Not implemented');
 }
 function visitCastableExpr(ctx: CastableExprContext): IAST {
+	if (ctx.singleType() === undefined) {
+		return visitCastExpr(ctx.castExpr());
+	}
 	throw new Error('Not implemented');
 }
 function visitCastExpr(ctx: CastExprContext): IAST {
+	if (ctx.singleType() === undefined) {
+		return visitArrowExpr(ctx.arrowExpr());
+	}
 	throw new Error('Not implemented');
 }
 function visitArrowExpr(ctx: ArrowExprContext): IAST {
+	if (ctx.argumentList().length === 0) {
+		return visitUnaryExpression(ctx.unaryExpression());
+	}
 	throw new Error('Not implemented');
 }
 function visitUnaryExpression(ctx: UnaryExpressionContext): IAST {
+	if (ctx.MINUS().length === 0 && ctx.PLUS().length === 0) {
+		return visitValueExpr(ctx.valueExpr());
+	}
 	throw new Error('Not implemented');
 }
 function visitValueExpr(ctx: ValueExprContext): IAST {
-	throw new Error('Not implemented');
+	if (ctx.validateExpr()) {
+		return visitValidateExpr(ctx.validateExpr());
+	} else if (ctx.extensionExpr()) {
+		return visitExtensionExpr(ctx.extensionExpr());
+	} else if (ctx.simpleMapExpr()) {
+		return visitSimpleMapExpr(ctx.simpleMapExpr());
+	}
 }
 function visitGeneralComp(ctx: GeneralCompContext): IAST {
 	throw new Error('Not implemented');
@@ -638,24 +658,53 @@ function visitExtensionExpr(ctx: ExtensionExprContext): IAST {
 	throw new Error('Not implemented');
 }
 function visitSimpleMapExpr(ctx: SimpleMapExprContext): IAST {
+	if (ctx.pathExpr().length === 1) {
+		return visitPathExpr(ctx.pathExpr()[0]);
+	}
 	throw new Error('Not implemented');
 }
 function visitPathExpr(ctx: PathExprContext): IAST {
+	if (ctx.SLASH() === undefined && ctx.DSLASH() === undefined) {
+		return ['pathExpr', visitRelativePathExpr(ctx.relativePathExpr())];
+	}
 	throw new Error('Not implemented');
 }
 function visitRelativePathExpr(ctx: RelativePathExprContext): IAST {
+	if (ctx.stepExpr().length === 1) {
+		return visitStepExpr(ctx.stepExpr()[0]);
+	}
 	throw new Error('Not implemented');
 }
+
 function visitStepExpr(ctx: StepExprContext): IAST {
+	if (ctx.axisStep() !== undefined) {
+		return (['stepExpr'] as IAST).concat(visitAxisStep(ctx.axisStep())) as IAST;
+	}
 	throw new Error('Not implemented');
 }
-function visitAxisStep(ctx: AxisStepContext): IAST {
+function visitAxisStep(ctx: AxisStepContext): IAST[] {
+	if (ctx.forwardStep() !== undefined && ctx.predicateList().predicate().length === 0) {
+		return visitForwardStep(ctx.forwardStep());
+	}
 	throw new Error('Not implemented');
 }
-function visitForwardStep(ctx: ForwardStepContext): IAST {
+function visitForwardStep(ctx: ForwardStepContext): IAST[] {
+	let result = [];
+	if (ctx.forwardAxis() !== undefined) {
+		result.push(visitForwardAxis(ctx.forwardAxis()));
+	}
+	if (ctx.nodeTest() !== undefined) {
+		result.push(visitNodeTest(ctx.nodeTest()));
+	}
+	if (result.length !== 0) {
+		return result;
+	}
 	throw new Error('Not implemented');
 }
 function visitForwardAxis(ctx: ForwardAxisContext): IAST {
+	if (ctx.KW_SELF !== undefined) {
+		return ['xpathAxis', 'self'];
+	}
 	throw new Error('Not implemented');
 }
 function visitAbbrevForwardStep(ctx: AbbrevForwardStepContext): IAST {
@@ -671,9 +720,15 @@ function visitAbbrevReverseStep(ctx: AbbrevReverseStepContext): IAST {
 	throw new Error('Not implemented');
 }
 function visitNodeTest(ctx: NodeTestContext): IAST {
+	if (ctx.nameTest() !== undefined) {
+		return visitNameTest(ctx.nameTest());
+	}
 	throw new Error('Not implemented');
 }
 function visitNameTest(ctx: NameTestContext): IAST {
+	if (ctx.eqName() !== undefined) {
+		return ['nameTest', visitEqName(ctx.eqName())];
+	}
 	throw new Error('Not implemented');
 }
 function visitWildcard(ctx: WildcardContext): IAST {
@@ -1000,13 +1055,22 @@ function visitMlBooleanNodeTest(ctx: MlBooleanNodeTestContext): IAST {
 function visitMlNullNodeTest(ctx: MlNullNodeTestContext): IAST {
 	throw new Error('Not implemented');
 }
-function visitEqName(ctx: EqNameContext): IAST {
+function visitEqName(ctx: EqNameContext): string {
+	if (ctx.qName() !== undefined) {
+		return visitQName(ctx.qName());
+	}
 	throw new Error('Not implemented');
 }
-function visitQName(ctx: QNameContext): IAST {
+function visitQName(ctx: QNameContext): string {
+	if (ctx.ncName() !== undefined) {
+		return visitNcName(ctx.ncName());
+	}
 	throw new Error('Not implemented');
 }
-function visitNcName(ctx: NcNameContext): IAST {
+function visitNcName(ctx: NcNameContext): string {
+	if (ctx.NCName() !== undefined) {
+		return ctx.NCName().text;
+	}
 	throw new Error('Not implemented');
 }
 function visitFunctionName(ctx: FunctionNameContext): IAST {

@@ -33,9 +33,6 @@ export default function parseExpression(
 	const parser = new XQueryParser(tokenStream);
 	const tree = parser.module();
 
-	console.log(visitModule(tree));
-
-
 	const language = compilationOptions.allowXQuery ? 'XQuery' : 'XPath';
 	const cached = compilationOptions.debug ? null : getParseResultFromCache(xPathString, language);
 
