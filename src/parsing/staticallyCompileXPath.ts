@@ -209,25 +209,4 @@ export default function staticallyCompileXPath(
 			};
 		}
 	}
-
-	// AST is an element: convert to jsonml
-	const expression = buildExpressionFromAst(ast, compilationOptions, rootStaticContext);
-	expression.performStaticEvaluation(rootStaticContext);
-
-	if (!compilationOptions.disableCache) {
-		storeStaticCompilationResultInCache(
-			selector,
-			compilationOptions.allowXQuery ? 'XQuery' : 'XPath',
-			executionSpecificStaticContext,
-			moduleImports,
-			expression,
-			compilationOptions.debug,
-			defaultFunctionNamespaceURI
-		);
-	}
-
-	return {
-		staticContext: rootStaticContext,
-		expression,
-	};
 }
