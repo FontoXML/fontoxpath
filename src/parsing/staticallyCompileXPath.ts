@@ -23,8 +23,8 @@ enum CACHE_STATE {
 	STATIC_ANALYZED,
 }
 
-function createExpressionFromString(
-	xpathString: string,
+function createExpressionFromSource(
+	xpathSource: EvaluableExpression,
 	compilationOptions: {
 		allowUpdating: boolean | undefined;
 		allowXQuery: boolean | undefined;
@@ -45,7 +45,7 @@ function createExpressionFromString(
 	const fromCache = compilationOptions.disableCache
 		? null
 		: getStaticCompilationResultFromCache(
-				xpathString,
+				xpathSource,
 				language,
 				namespaceResolver,
 				variables,
@@ -64,7 +64,12 @@ function createExpressionFromString(
 		};
 	} else {
 		// We can not use anything from the cache, parse + compile
-		const ast = parseExpression(xpathString, compilationOptions);
+		let ast: IAST;
+		if (typeof xpathSource === 'string') {
+			ast = parseExpression(xpathSource, compilationOptions);
+		} else {
+			ast = convertXmlToAst(xpathSource);
+		}
 
 		return {
 			state: CACHE_STATE.PARSED,
@@ -141,72 +146,71 @@ export default function staticallyCompileXPath(
 
 	if (typeof selector === 'string') {
 		selector = normalizeEndOfLines(selector);
-		const result = createExpressionFromString(
-			selector,
-			compilationOptions,
-			namespaceResolver,
-			variables,
-			moduleImports,
-			defaultFunctionNamespaceURI,
-			functionNameResolver
-		);
-		switch (result.state) {
-			case CACHE_STATE.STATIC_ANALYZED:
-				return {
-					staticContext: rootStaticContext,
-					expression: result.expression,
-				};
+	}
+	const result = createExpressionFromSource(
+		selector,
+		compilationOptions,
+		namespaceResolver,
+		variables,
+		moduleImports,
+		defaultFunctionNamespaceURI,
+		functionNameResolver
+	);
+	switch (result.state) {
+		case CACHE_STATE.STATIC_ANALYZED:
+			return {
+				staticContext: rootStaticContext,
+				expression: result.expression,
+			};
 
-			case CACHE_STATE.COMPILED: {
-				result.expression.performStaticEvaluation(rootStaticContext);
+		case CACHE_STATE.COMPILED: {
+			result.expression.performStaticEvaluation(rootStaticContext);
 
+			const language = compilationOptions.allowXQuery ? 'XQuery' : 'XPath';
+			storeStaticCompilationResultInCache(
+				selector,
+				language,
+				executionSpecificStaticContext,
+				moduleImports,
+				result.expression,
+				compilationOptions.debug,
+				defaultFunctionNamespaceURI
+			);
+
+			return {
+				staticContext: rootStaticContext,
+				expression: result.expression,
+			};
+		}
+		case CACHE_STATE.PARSED: {
+			const expressionFromAst = buildExpressionFromAst(
+				result.ast,
+				compilationOptions,
+				rootStaticContext
+			);
+			expressionFromAst.performStaticEvaluation(rootStaticContext);
+
+			if (!compilationOptions.disableCache) {
 				const language = compilationOptions.allowXQuery ? 'XQuery' : 'XPath';
 				storeStaticCompilationResultInCache(
 					selector,
 					language,
 					executionSpecificStaticContext,
 					moduleImports,
-					result.expression,
+					expressionFromAst,
 					compilationOptions.debug,
 					defaultFunctionNamespaceURI
 				);
-
-				return {
-					staticContext: rootStaticContext,
-					expression: result.expression,
-				};
 			}
-			case CACHE_STATE.PARSED: {
-				const expressionFromAst = buildExpressionFromAst(
-					result.ast,
-					compilationOptions,
-					rootStaticContext
-				);
-				expressionFromAst.performStaticEvaluation(rootStaticContext);
 
-				if (!compilationOptions.disableCache) {
-					const language = compilationOptions.allowXQuery ? 'XQuery' : 'XPath';
-					storeStaticCompilationResultInCache(
-						selector,
-						language,
-						executionSpecificStaticContext,
-						moduleImports,
-						expressionFromAst,
-						compilationOptions.debug,
-						defaultFunctionNamespaceURI
-					);
-				}
-
-				return {
-					staticContext: rootStaticContext,
-					expression: expressionFromAst,
-				};
-			}
+			return {
+				staticContext: rootStaticContext,
+				expression: expressionFromAst,
+			};
 		}
 	}
 
 	// AST is an element: convert to jsonml
-	const ast = convertXmlToAst(selector);
 	const expression = buildExpressionFromAst(ast, compilationOptions, rootStaticContext);
 	expression.performStaticEvaluation(rootStaticContext);
 
