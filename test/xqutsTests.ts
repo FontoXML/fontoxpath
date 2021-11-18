@@ -13,7 +13,7 @@ import {
 	parseScript,
 } from 'fontoxpath';
 import * as path from 'path';
-import { Element, Document, Node } from 'slimdom';
+import { Document, Element, Node } from 'slimdom';
 import { slimdom, sync } from 'slimdom-sax-parser';
 import { getSkippedTests } from 'test-helpers/getSkippedTests';
 import testFs from 'test-helpers/testFs';
