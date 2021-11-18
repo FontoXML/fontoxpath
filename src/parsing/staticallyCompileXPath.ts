@@ -45,19 +45,21 @@ function createExpressionFromString(
 	const fromCache = compilationOptions.disableCache
 		? null
 		: getStaticCompilationResultFromCache(
-			xpathString,
-			language,
-			namespaceResolver,
-			variables,
-			moduleImports,
-			compilationOptions.debug,
-			defaultFunctionNamespaceURI,
-			functionNameResolver
-		);
+				xpathString,
+				language,
+				namespaceResolver,
+				variables,
+				moduleImports,
+				compilationOptions.debug,
+				defaultFunctionNamespaceURI,
+				functionNameResolver
+		  );
 
 	if (fromCache !== null) {
 		return {
-			state: CACHE_STATE.COMPILED,
+			state: fromCache.requiresStaticCompilation
+				? CACHE_STATE.COMPILED
+				: CACHE_STATE.STATIC_ANALYZED,
 			expression: fromCache.expression,
 		};
 	} else {
@@ -155,14 +157,26 @@ export default function staticallyCompileXPath(
 					expression: result.expression,
 				};
 
-			case CACHE_STATE.COMPILED:
+			case CACHE_STATE.COMPILED: {
 				result.expression.performStaticEvaluation(rootStaticContext);
+
+				const language = compilationOptions.allowXQuery ? 'XQuery' : 'XPath';
+				storeStaticCompilationResultInCache(
+					selector,
+					language,
+					executionSpecificStaticContext,
+					moduleImports,
+					result.expression,
+					compilationOptions.debug,
+					defaultFunctionNamespaceURI
+				);
 
 				return {
 					staticContext: rootStaticContext,
 					expression: result.expression,
 				};
-			case CACHE_STATE.PARSED:
+			}
+			case CACHE_STATE.PARSED: {
 				const expressionFromAst = buildExpressionFromAst(
 					result.ast,
 					compilationOptions,
@@ -172,19 +186,22 @@ export default function staticallyCompileXPath(
 
 				if (!compilationOptions.disableCache) {
 					const language = compilationOptions.allowXQuery ? 'XQuery' : 'XPath';
-					storeStaticCompilationResultInCache(selector,
+					storeStaticCompilationResultInCache(
+						selector,
 						language,
 						executionSpecificStaticContext,
 						moduleImports,
 						expressionFromAst,
 						compilationOptions.debug,
-						defaultFunctionNamespaceURI)
+						defaultFunctionNamespaceURI
+					);
 				}
 
 				return {
 					staticContext: rootStaticContext,
 					expression: expressionFromAst,
 				};
+			}
 		}
 	}
 

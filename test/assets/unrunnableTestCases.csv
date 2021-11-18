@@ -1065,6 +1065,7 @@ K-ContextPositionFunc-20,Error: No selector counterpart for: treatExpr.
 K-ContextPositionFunc-21,Error: No selector counterpart for: treatExpr.
 K-ContextPositionFunc-22,Error: No selector counterpart for: treatExpr.
 K-ContextPositionFunc-23,Error: No selector counterpart for: treatExpr.
+fn-prefix-from-qname-20,Error: FONS0004: The value foo:bar can not be cast to a QName. Did you mean to use fn:QName?
 K-SeqRemoveFunc-17,AssertionError: expected [Function] to throw an error
 K-SeqRemoveFunc-18,AssertionError: expected [Function] to throw an error
 fn-replaceErr-1,AssertionError: expected [Function] to throw error matching /FORX0001/ but got 'Not implemented: Using flags in replace is not supported'
