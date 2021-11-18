@@ -64,12 +64,10 @@ function createExpressionFromSource(
 		};
 	} else {
 		// We can not use anything from the cache, parse + compile
-		let ast: IAST;
-		if (typeof xpathSource === 'string') {
-			ast = parseExpression(xpathSource, compilationOptions);
-		} else {
-			ast = convertXmlToAst(xpathSource);
-		}
+		const ast =
+			typeof xpathSource === 'string'
+				? parseExpression(xpathSource, compilationOptions)
+				: convertXmlToAst(xpathSource);
 
 		return {
 			state: CACHE_STATE.PARSED,
