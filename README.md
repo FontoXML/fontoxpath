@@ -204,10 +204,10 @@ To modify XML you can use [XQuery Update Facility 3.0](https://www.w3.org/TR/xqu
 following
 
 ```js
-evaluateUpdatingExpression(xpathExpression, contextNode, domFacade, variables, options);
+evaluateUpdatingExpressionSync(xpathExpression, contextNode, domFacade, variables, options);
 ```
 
-The arguments are the same as `evaluateXPath`. This returns a `Promise<Object>`, the object has a
+The arguments are the same as `evaluateXPath`. This returns an `Object`, the object has a
 `xdmValue` and `pendingUpdateList`. The `xdmValue` is the result of query as if it was run using
 `evaluateXPath` with `evaluateXPath.ANY_TYPE` as `returnType`. The `pendingUpdateList` is an
 `<Object[]>` in which each entry represents an [update
@@ -236,11 +236,11 @@ executePendingUpdateList(pendingUpdateList, domFacade, nodesFactory, documentWri
 const { evaluateUpdatingExpression, executePendingUpdateList } = require('fontoxpath');
 const documentNode = new DOMParser().parseFromString('<xml/>', 'text/xml');
 
-evaluateUpdatingExpression('replace node /xml with <foo/>', documentNode).then((result) => {
-	executePendingUpdateList(result.pendingUpdateList);
-	console.log(documentNode.documentElement.outerHTML);
-	// Outputs: "<foo/>"
-});
+const result = evaluateUpdatingExpressionSync('replace node /xml with <foo/>', documentNode)
+
+executePendingUpdateList(result.pendingUpdateList);
+console.log(documentNode.documentElement.outerHTML);
+// Outputs: "<foo/>";
 ```
 
 An example of using XQUF with XQuery modules:
