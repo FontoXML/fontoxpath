@@ -666,11 +666,11 @@ generate-id-902,AssertionError: expected [Function] to throw error matching /XPT
 generate-id-903,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0017: Function generate-id with arity of 1 not registered. No similar functions found.'
 generate-id-904,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0017: Function generate-id with arity of 1 not registered. No similar functions found.'
 generate-id-905,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0017: Function generate-id with arity of 1 not registered. No similar functions found.'
-fn-has-children-007,AssertionError: Expected executing the XPath "(1)[fn:has-children()]" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Cannot read property \'isTinyNode\' of undefined'.
-fn-has-children-008,AssertionError: Expected executing the XPath "(fn:concat#2)[fn:has-children()]" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Cannot read property \'isTinyNode\' of undefined'.
+fn-has-children-007,AssertionError: Expected executing the XPath "(1)[fn:has-children()]" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Cannot read properties of undefined (reading \'isTinyNode\')'.
+fn-has-children-008,AssertionError: Expected executing the XPath "(fn:concat#2)[fn:has-children()]" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Cannot read properties of undefined (reading \'isTinyNode\')'.
 fn-has-children-012,AssertionError: expected [Function] to throw an error
 fn-has-children-013,AssertionError: expected [Function] to throw an error
-fn-has-children-014,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Cannot read property \'isTinyNode\' of undefined'
+fn-has-children-014,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Cannot read properties of undefined (reading \'isTinyNode\')'
 fn-hours-from-dateTime-3,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 2 not registered. No similar functions found.
 fn-hours-from-time-4,Error: XPST0017: Function fn:adjust-time-to-timezone with arity of 2 not registered. No similar functions found.
 fn-id-4,Error: No selector counterpart for: computedDocumentConstructor.
@@ -919,8 +919,8 @@ fn-node-name-15,Error: No selector counterpart for: computedDocumentConstructor.
 fn-node-name-16,Error: No selector counterpart for: computedDocumentConstructor.
 fn-node-name-17,Error: No selector counterpart for: computedDocumentConstructor.
 fn-node-name-28,Error: No selector counterpart for: computedNamespaceConstructor.
-fn-node-name-30,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Cannot read property \'nodeType\' of undefined'
-fn-node-name-31,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Cannot read property \'nodeType\' of undefined'
+fn-node-name-30,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Cannot read properties of undefined (reading \'nodeType\')'
+fn-node-name-31,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Cannot read properties of undefined (reading \'nodeType\')'
 fn-notintg1args-1,Error: FOCA0003: can not cast -999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-notintg1args-2,Error: FOCA0003: can not cast 830993497117024304 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-notintg1args-3,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
@@ -2969,11 +2969,11 @@ K2-NameTest-22,AssertionError: Expected XPath empty(let $e := <a b ="content"><?
 K2-NameTest-23,AssertionError: expected [Function] to throw an error
 K2-NameTest-30,Error: XPST0003: Unable to parse: "let $result := (       	declare namespace a = "http://example.com/1";        	declare namespace b = "http://example.com/2";        	let $e := <e a:n1="content" b:n1="content">        	            <a:n1/>        	            <b:n1/>        	            <?n1 ?>        	            <n1/>        	          </e>        	return $e/*:n1) return count($result) = 3". Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "n" found. let $result := (       	declare [Error is around here]namespace a = "http://example.com/1";        	declare namespace b = "http://example.com/2";        	let $e := <e a:n1="content" b:n1="content">        	            <a:n1/>        	            <b:n1/>        	            <?n1 ?>        	            <n1/>        	          </e>        	return $e/*:n1) return count($result) = 3
 K2-NameTest-31,Error: XPST0003: Unable to parse: "let $result := (       	declare namespace a = "http://example.com/1";        	declare namespace b = "http://example.com/2";        	let $e := <e a:n1="content" b:n1="content">        				<a:n1/>        				<b:n1/>        				<?n1 ?>        				<n1/>        			  </e>        	return $e/a:*) return count($result) = 1". Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "n" found. let $result := (       	declare [Error is around here]namespace a = "http://example.com/1";        	declare namespace b = "http://example.com/2";        	let $e := <e a:n1="content" b:n1="content">        				<a:n1/>        				<b:n1/>        				<?n1 ?>        				<n1/>        			  </e>        	return $e/a:*) return count($result) = 1
-K2-NameTest-35,AssertionError: expected [Function] to throw error matching /XPST0081/ but got 'Cannot read property \'0\' of null'
+K2-NameTest-35,AssertionError: expected [Function] to throw error matching /XPST0081/ but got 'Cannot read properties of null (reading \'0\')'
 K2-NameTest-36,AssertionError: expected [Function] to throw error matching /XPST0081/ but got 'No selector counterpart for: schemaAttributeTest.'
-K2-NameTest-37,AssertionError: expected [Function] to throw error matching /XPST0008/ but got 'Cannot read property \'0\' of null'
+K2-NameTest-37,AssertionError: expected [Function] to throw error matching /XPST0008/ but got 'Cannot read properties of null (reading \'0\')'
 K2-NameTest-38,AssertionError: expected [Function] to throw error matching /XPST0008/ but got 'No selector counterpart for: schemaAttributeTest.'
-K2-NameTest-39,AssertionError: expected [Function] to throw error matching /XPST0008/ but got 'Cannot read property \'0\' of null'
+K2-NameTest-39,AssertionError: expected [Function] to throw error matching /XPST0008/ but got 'Cannot read properties of null (reading \'0\')'
 K2-NameTest-40,AssertionError: expected [Function] to throw error matching /XPST0008/ but got 'No selector counterpart for: schemaAttributeTest.'
 K2-NameTest-47,NamespaceError: NamespaceError: xmlns prefix or qualifiedName must use the XMLNS namespace
 K2-NameTest-50,AssertionError: Expected executing the XPath "declare namespace p = "http://example.com/"; <a>{document {<p:e/>}/@p:*}</a>" to resolve to one of the expected results, but got Error: No selector counterpart for: computedDocumentConstructor., AssertionError: expected [Function] to throw error matching /XPST0005/ but got 'No selector counterpart for: computedDocumentConstructor.'.
@@ -2993,7 +2993,7 @@ K2-NodeTest-19,AssertionError: expected [Function] to throw error matching /XPST
 K2-NodeTest-20,AssertionError: expected [Function] to throw error matching /XPST0008/ but got 'XPDY0002: context is absent, it needs to be present to use axes.'
 K2-NodeTest-22,AssertionError: expected [Function] to throw error matching /XPST0081/ but got 'XPDY0002: context is absent, it needs to be present to use axes.'
 K2-NodeTest-25,AssertionError: expected [Function] to throw error matching /XPST0081/ but got 'XPDY0002: context is absent, it needs to be present to use axes.'
-K2-NodeTest-26,AssertionError: expected [Function] to throw error matching /XPST0081/ but got 'Cannot read property \'0\' of null'
+K2-NodeTest-26,AssertionError: expected [Function] to throw error matching /XPST0081/ but got 'Cannot read properties of null (reading \'0\')'
 K2-NodeTest-27,AssertionError: expected [Function] to throw error matching /XPST0081/ but got 'No selector counterpart for: schemaAttributeTest.'
 op-logical-and-100,Error: FORG0001: Cannot cast 9223372036854776000 to xs:long, pattern validation failed.
 op-logical-and-101,Error: FORG0001: Cannot cast 9223372036854776000 to xs:long, pattern validation failed.
@@ -3245,7 +3245,7 @@ K-OrderExpr-1a,Error: XPST0003: Unable to parse: "(ordered{}) => empty()". Expec
 K-OrderExpr-2a,Error: XPST0003: Unable to parse: "(unordered{}) => empty()". Expected " ", "!", "!=", "#", "(", "(:", ")", "*", "+", ",", "-", "/", "//", ":", ":*", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", "||", [A-Z,_,a-z,À-Ö,Ø-ö,ø-˿,Ͱ-ͽ,Ϳ-῿,‌,‍,⁰-↏,Ⰰ-⿯,、-퟿,豈-﷏,ﷰ-�], [\-,.,0-9,·,̀-ͯ,‿,⁀], or [�-�] but "{" found. (unordered[Error is around here]{}) => empty()
 K-OrderExpr-3,Error: XPST0003: Unable to parse: "ordered{true()}". Expected " ", "!", "!=", "#", "(", "(:", "*", "+", ",", "-", "/", "//", ":", ":*", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", "||", [A-Z,_,a-z,À-Ö,Ø-ö,ø-˿,Ͱ-ͽ,Ϳ-῿,‌,‍,⁰-↏,Ⰰ-⿯,、-퟿,豈-﷏,ﷰ-�], [\-,.,0-9,·,̀-ͯ,‿,⁀], [�-�], or end of input but "{" found. ordered[Error is around here]{true()}
 K-OrderExpr-4,Error: XPST0003: Unable to parse: "unordered{true()}". Expected " ", "!", "!=", "#", "(", "(:", "*", "+", ",", "-", "/", "//", ":", ":*", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", "||", [A-Z,_,a-z,À-Ö,Ø-ö,ø-˿,Ͱ-ͽ,Ϳ-῿,‌,‍,⁰-↏,Ⰰ-⿯,、-퟿,豈-﷏,ﷰ-�], [\-,.,0-9,·,̀-ͯ,‿,⁀], [�-�], or end of input but "{" found. unordered[Error is around here]{true()}
-UnaryLookup-011,AssertionError: expected [Function] to throw error matching /XPDY0002/ but got 'Cannot read property \'type\' of null'
+UnaryLookup-011,AssertionError: expected [Function] to throw error matching /XPDY0002/ but got 'Cannot read properties of null (reading \'type\')'
 UnaryLookup-016,Error: FOCH0002: No collations are supported
 UnaryLookup-021,Error: XPTY0004: The key specifier is not an integer.
 K-ValCompTypeChecking-16,AssertionError: expected [Function] to throw an error
