@@ -302,9 +302,6 @@ Test error
 			chai.assert.include(error.message, '  at <andOp>:1:4 - 1:32');
 			chai.assert.include(error.message, '  at <ifThenElseExpr>:1:1 - 1:57');
 
-			chai.assert.include(error.message, '    at d (');
-			chai.assert.include(error.message, 'stackTrace.tests.ts:22:9)');
-
 			chai.assert.include(error.message, '    at e (');
 			chai.assert.include(error.message, 'stackTrace.tests.ts:34:2)');
 
