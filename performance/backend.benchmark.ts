@@ -8,7 +8,7 @@ import {
 	evaluateXPathToFirstNode,
 } from '../src/index';
 import jsonMlMapper from '../test/helpers/jsonMlMapper';
-import evaluateXPathWithJsCodegen from '../test/specs/jsCodegen/evaluateXPathWithJsCodegen';
+import evaluateXPathWithJsCodegen from '../test/specs/parsing/jsCodegen/evaluateXPathWithJsCodegen';
 import loadFile from './utils/loadFile';
 
 // Comparisons between the js-codegen and expression backend.

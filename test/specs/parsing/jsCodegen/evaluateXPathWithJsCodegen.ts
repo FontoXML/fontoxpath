@@ -6,7 +6,7 @@ import {
 	IReturnTypes,
 	Options,
 	ReturnType,
-} from 'fontoxpath';
+} from '../../../../src/index';
 
 function generateKey(query: string, returnType: ReturnType) {
 	return `${query} ${returnType}`;
