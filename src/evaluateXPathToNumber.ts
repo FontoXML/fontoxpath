@@ -1,5 +1,5 @@
 import IDomFacade from './domFacade/IDomFacade';
-import evaluateXPath from './evaluateXPath';
+import evaluateXPath, { EvaluableExpression } from './evaluateXPath';
 import { Options } from './types/Options';
 
 /**
@@ -16,7 +16,7 @@ import { Options } from './types/Options';
  * @returns The numerical result.
  */
 export default function evaluateXPathToNumber(
-	selector: string,
+	selector: EvaluableExpression,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,

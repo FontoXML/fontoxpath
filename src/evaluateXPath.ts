@@ -9,7 +9,7 @@ import convertXDMReturnValue, { IReturnTypes, ReturnType } from './parsing/conve
 import { markXPathEnd, markXPathStart } from './performance';
 import { TypedExternalValue, UntypedExternalValue } from './types/createTypedValueFactory';
 import { Language, Options } from './types/Options';
-import { Node } from './types/Types';
+import { Element, Node } from './types/Types';
 
 /**
  * @public
@@ -37,7 +37,7 @@ export type EvaluateXPath = {
 	 * @returns The result of executing this XPath
 	 */
 	<TNode extends Node, TReturnType extends ReturnType>(
-		selector: string,
+		selector: EvaluableExpression,
 		contextItem?: any | null,
 		domFacade?: IDomFacade | null,
 		variables?: { [s: string]: any } | null,
@@ -121,8 +121,21 @@ export type EvaluateXPath = {
 	 */
 	XQUERY_UPDATE_3_1_LANGUAGE: Language.XQUERY_UPDATE_3_1_LANGUAGE;
 };
+
+/**
+ * An XQuery or XPath Expression that can be evaluated. Commonly a string like `descendant::p` or
+ * `ancestor::div[@class="my-class"]`. This can also be an element that represents the root of an
+ * [XQueryX](https://www.w3.org/TR/xqueryx-31/) DOM tree. These XQueryX elements can be acquired
+ * using the {@link parseScript} function or they can be built by hand
+ *
+ * @see parseScript
+ *
+ * @public
+ */
+export type EvaluableExpression = string | Element;
+
 const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnTypes<TNode>>(
-	selector: string,
+	selector: EvaluableExpression,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
 	variables?: {
@@ -132,8 +145,10 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 	options?: Options | null
 ): IReturnTypes<TNode>[TReturnType] => {
 	returnType = returnType || (ReturnType.ANY as any);
-	if (!selector || typeof selector !== 'string') {
-		throw new TypeError("Failed to execute 'evaluateXPath': xpathExpression must be a string.");
+	if (!selector || (typeof selector !== 'string' && !('nodeType' in selector))) {
+		throw new TypeError(
+			"Failed to execute 'evaluateXPath': xpathExpression must be a string or an element depicting an XQueryX DOM tree."
+		);
 	}
 
 	options = options || {};
@@ -185,6 +200,7 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 
 	try {
 		markXPathStart(selector);
+
 		const rawResults = expression.evaluateMaybeStatically(dynamicContext, executionParameters);
 		const toReturn = convertXDMReturnValue<TNode, TReturnType>(
 			selector,
@@ -193,7 +209,6 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 			executionParameters
 		);
 		markXPathEnd(selector);
-
 		return toReturn;
 	} catch (error) {
 		printAndRethrowError(selector, error);

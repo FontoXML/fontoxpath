@@ -11,15 +11,11 @@ import {
 	executeJavaScriptCompiledXPath,
 	JavaScriptCompiledXPathResult,
 	Language,
+	parseScript,
 	registerXQueryModule,
 	ReturnType,
 } from 'fontoxpath';
-import {
-	acceptAst,
-	IAstRejected,
-	PartialCompilationResult,
-	rejectAst,
-} from 'fontoxpath/jsCodegen/JavaScriptCompiledXPath';
+import { acceptAst, IAstRejected, rejectAst } from 'fontoxpath/jsCodegen/JavaScriptCompiledXPath';
 import { Element, Node, XMLSerializer } from 'slimdom';
 import { slimdom } from 'slimdom-sax-parser';
 import {
@@ -104,7 +100,7 @@ function createAsserterForExpression(baseUrl: string, assertNode, language, anno
 				contextNode: Element,
 				variablesInScope: object,
 				namespaceResolver: (str: string) => string
-			) =>
+			) => {
 				chai.assert.throws(
 					() => {
 						evaluateXPathToString(xpath, contextNode, null, variablesInScope, {
@@ -117,19 +113,40 @@ function createAsserterForExpression(baseUrl: string, assertNode, language, anno
 					errorCode === '*' ? /.*/ : new RegExp(errorCode),
 					xpath
 				);
-		}
-		case 'assert':
-			return (xpath, contextNode, variablesInScope, namespaceResolver) =>
-				chai.assert.isTrue(
-					evaluateXPathToBoolean(
-						`let $result := (${xpath}) return ${evaluateXPathToString(
-							'.',
-							assertNode,
-							undefined,
+
+				chai.assert.throws(
+					() => {
+						evaluateXPathToString(
+							parseScript(
+								xpath,
+								{ namespaceResolver, nodesFactory, language, annotateAst },
+								nodesFactory
+							),
+							contextNode,
+							null,
+							variablesInScope,
 							{
+								namespaceResolver,
+								nodesFactory,
+								language,
 								annotateAst,
 							}
-						)}`,
+						);
+					},
+					errorCode === '*' ? /.*/ : new RegExp(errorCode),
+					xpath
+				);
+			};
+		}
+		case 'assert':
+			return (xpath, contextNode, variablesInScope, namespaceResolver) => {
+				const result = evaluateXPathToString('.', assertNode, undefined, {
+					annotateAst,
+				});
+
+				chai.assert.isTrue(
+					evaluateXPathToBoolean(
+						`let $result := (${xpath}) return ${result}`,
 						contextNode,
 						null,
 						variablesInScope,
@@ -137,8 +154,24 @@ function createAsserterForExpression(baseUrl: string, assertNode, language, anno
 					),
 					xpath
 				);
+
+				chai.assert.isTrue(
+					evaluateXPathToBoolean(
+						parseScript(
+							`let $result := (${xpath}) return ${result}`,
+							{ namespaceResolver, nodesFactory, language, annotateAst: false },
+							nodesFactory
+						),
+						contextNode,
+						null,
+						variablesInScope,
+						{ namespaceResolver, nodesFactory, language, annotateAst: false }
+					),
+					xpath
+				);
+			};
 		case 'assert-true':
-			return (xpath, contextNode, variablesInScope, namespaceResolver) =>
+			return (xpath, contextNode, variablesInScope, namespaceResolver) => {
 				chai.assert.isTrue(
 					evaluateXPathToBoolean(xpath, contextNode, null, variablesInScope, {
 						namespaceResolver,
@@ -148,52 +181,121 @@ function createAsserterForExpression(baseUrl: string, assertNode, language, anno
 					}),
 					`Expected XPath ${xpath} to resolve to true`
 				);
+
+				chai.assert.isTrue(
+					evaluateXPathToBoolean(
+						parseScript(
+							xpath,
+							{ namespaceResolver, language, annotateAst, nodesFactory },
+							nodesFactory
+						),
+						contextNode,
+						null,
+						variablesInScope,
+						{
+							namespaceResolver,
+							nodesFactory,
+							language,
+							annotateAst,
+						}
+					),
+					`Expected preparsed XPath ${xpath} to resolve to true`
+				);
+			};
 		case 'assert-eq': {
 			const equalWith = evaluateXPathToString('.', assertNode, undefined, {
 				annotateAst: false,
 			});
-			return (xpath, contextNode, variablesInScope, namespaceResolver) =>
+			return (xpath, contextNode, variablesInScope, namespaceResolver) => {
 				chai.assert.isTrue(
 					evaluateXPathToBoolean(
 						`${xpath} = ${equalWith}`,
 						contextNode,
 						null,
 						variablesInScope,
-						{ namespaceResolver, nodesFactory, language, annotateAst: annotateAst }
+						{ namespaceResolver, nodesFactory, language, annotateAst }
 					),
 					`Expected XPath ${xpath} to resolve to ${equalWith}`
 				);
+
+				chai.assert.isTrue(
+					evaluateXPathToBoolean(
+						parseScript(
+							`${xpath} = ${equalWith}`,
+							{ namespaceResolver, nodesFactory, language, annotateAst },
+							nodesFactory
+						),
+						contextNode,
+						null,
+						variablesInScope,
+						{ namespaceResolver, nodesFactory, language, annotateAst }
+					),
+					`Expected preparsed XPath ${xpath} to resolve to ${equalWith}`
+				);
+			};
 		}
 		case 'assert-deep-eq': {
 			const equalWith = evaluateXPathToString('.', assertNode, undefined, {
 				annotateAst: false,
 			});
-			return (xpath, contextNode, variablesInScope, namespaceResolver) =>
+			return (xpath, contextNode, variablesInScope, namespaceResolver) => {
 				chai.assert.isTrue(
 					evaluateXPathToBoolean(
 						`deep-equal((${xpath}), (${equalWith}))`,
 						contextNode,
 						null,
 						variablesInScope,
-						{ namespaceResolver, nodesFactory, language, annotateAst: annotateAst }
+						{ namespaceResolver, nodesFactory, language, annotateAst }
 					),
 					`Expected XPath ${xpath} to (deep equally) resolve to ${equalWith}`
 				);
+
+				chai.assert.isTrue(
+					evaluateXPathToBoolean(
+						parseScript(
+							`deep-equal((${xpath}), (${equalWith}))`,
+							{ namespaceResolver, nodesFactory, language, annotateAst },
+							nodesFactory
+						),
+						contextNode,
+						null,
+						variablesInScope,
+						{ namespaceResolver, nodesFactory, language, annotateAst }
+					),
+					`Expected preparsed XPath ${xpath} to (deep equally) resolve to ${equalWith}`
+				);
+			};
 		}
 		case 'assert-empty':
-			return (xpath, contextNode, variablesInScope, namespaceResolver) =>
+			return (xpath, contextNode, variablesInScope, namespaceResolver) => {
 				chai.assert.isTrue(
 					evaluateXPathToBoolean(
 						`(${xpath}) => empty()`,
 						contextNode,
 						null,
 						variablesInScope,
-						{ namespaceResolver, nodesFactory, language, annotateAst: annotateAst }
+						{ namespaceResolver, nodesFactory, language, annotateAst }
 					),
 					`Expected XPath ${xpath} to resolve to the empty sequence`
 				);
+
+				chai.assert.isTrue(
+					evaluateXPathToBoolean(
+						parseScript(
+							`(${xpath}) => empty()`,
+							{ namespaceResolver, nodesFactory, language, annotateAst },
+							nodesFactory
+						),
+						contextNode,
+						null,
+						variablesInScope,
+						{ namespaceResolver, nodesFactory, language, annotateAst }
+					),
+					`Expected preparsed XPath ${xpath} to resolve to the empty sequence`
+				);
+			};
 		case 'assert-false':
-			return (xpath, contextNode, variablesInScope, namespaceResolver) =>
+			return (xpath, contextNode, variablesInScope, namespaceResolver) => {
 				chai.assert.isFalse(
 					evaluateXPathToBoolean(xpath, contextNode, null, variablesInScope, {
 						namespaceResolver,
@@ -203,38 +305,92 @@ function createAsserterForExpression(baseUrl: string, assertNode, language, anno
 					}),
 					`Expected XPath ${xpath} to resolve to false`
 				);
+
+				chai.assert.isFalse(
+					evaluateXPathToBoolean(
+						parseScript(
+							xpath,
+							{ namespaceResolver, nodesFactory, language, annotateAst },
+							nodesFactory
+						),
+						contextNode,
+						null,
+						variablesInScope,
+						{
+							namespaceResolver,
+							nodesFactory,
+							language,
+							annotateAst,
+						}
+					),
+					`Expected preparsed XPath ${xpath} to resolve to false`
+				);
+			};
 		case 'assert-count': {
 			const expectedCount = evaluateXPathToNumber('number(.)', assertNode, undefined, {
 				annotateAst: false,
 			});
-			return (xpath, contextNode, variablesInScope, namespaceResolver) =>
+			return (xpath, contextNode, variablesInScope, namespaceResolver) => {
 				chai.assert.equal(
 					evaluateXPathToNumber(
 						`(${xpath}) => count()`,
 						contextNode,
 						null,
 						variablesInScope,
-						{ namespaceResolver, nodesFactory, language, annotateAst: annotateAst }
+						{ namespaceResolver, nodesFactory, language, annotateAst }
 					),
 					expectedCount,
 					`Expected ${xpath} to resolve to ${expectedCount}`
 				);
+
+				chai.assert.equal(
+					evaluateXPathToNumber(
+						parseScript(
+							`(${xpath}) => count()`,
+							{ namespaceResolver, nodesFactory, language, annotateAst },
+							nodesFactory
+						),
+						contextNode,
+						null,
+						variablesInScope,
+						{ namespaceResolver, nodesFactory, language, annotateAst }
+					),
+					expectedCount,
+					`Expected preparsed ${xpath} to resolve to ${expectedCount}`
+				);
+			};
 		}
 		case 'assert-type': {
 			const expectedType = evaluateXPathToString('.', assertNode, undefined, {
 				annotateAst: false,
 			});
-			return (xpath, contextNode, variablesInScope, namespaceResolver) =>
+			return (xpath, contextNode, variablesInScope, namespaceResolver) => {
 				chai.assert.isTrue(
 					evaluateXPathToBoolean(
 						`(${xpath}) instance of ${expectedType}`,
 						contextNode,
 						null,
 						variablesInScope,
-						{ namespaceResolver, nodesFactory, language, annotateAst: annotateAst }
+						{ namespaceResolver, nodesFactory, language, annotateAst }
 					),
 					`Expected XPath ${xpath} to resolve to something of type ${expectedType}`
 				);
+
+				chai.assert.isTrue(
+					evaluateXPathToBoolean(
+						parseScript(
+							`(${xpath}) instance of ${expectedType}`,
+							{ namespaceResolver, nodesFactory, language, annotateAst },
+							nodesFactory
+						),
+						contextNode,
+						null,
+						variablesInScope,
+						{ namespaceResolver, nodesFactory, language, annotateAst: annotateAst }
+					),
+					`Expected preparsed XPath ${xpath} to resolve to something of type ${expectedType}`
+				);
+			};
 		}
 		case 'assert-xml': {
 			let parsedFragment;
@@ -263,6 +419,7 @@ function createAsserterForExpression(baseUrl: string, assertNode, language, anno
 					language,
 					annotateAst,
 				}) as Node[];
+
 				chai.assert(
 					evaluateXPathToBoolean(
 						'deep-equal($a, $b)',
@@ -286,13 +443,54 @@ function createAsserterForExpression(baseUrl: string, assertNode, language, anno
 							: parsedFragment.innerHTML
 					}`
 				);
+
+				const resultsWithPreparsedQuery = evaluateXPathToNodes(
+					parseScript(
+						xpath,
+						{ namespaceResolver, language, annotateAst, nodesFactory },
+						nodesFactory
+					),
+					contextNode,
+					null,
+					variablesInScope,
+					{
+						namespaceResolver,
+						nodesFactory,
+						language,
+						annotateAst,
+					}
+				) as Node[];
+
+				chai.assert(
+					evaluateXPathToBoolean(
+						'deep-equal($a, $b)',
+						null,
+						null,
+						{
+							a: resultsWithPreparsedQuery,
+							b: Array.from(parsedFragment.childNodes),
+						},
+						{
+							annotateAst,
+						}
+					),
+					`Expected preparsed XPath ${xpath} to resolve to the given XML. Expected ${resultsWithPreparsedQuery
+						.map((result) => new XMLSerializer().serializeToString(result))
+						.join(' ')} to equal ${
+						parsedFragment.nodeType === parsedFragment.DOCUMENT_FRAGMENT_NODE
+							? parsedFragment.childNodes
+									.map((n) => new slimdom.XMLSerializer().serializeToString(n))
+									.join(' ')
+							: parsedFragment.innerHTML
+					}`
+				);
 			};
 		}
 		case 'assert-string-value': {
 			const expectedString = evaluateXPathToString('.', assertNode, undefined, {
 				annotateAst: false,
 			});
-			return (xpath, contextNode, variablesInScope, namespaceResolver) =>
+			return (xpath, contextNode, variablesInScope, namespaceResolver) => {
 				chai.assert.equal(
 					evaluateXPathToString(`${xpath}`, contextNode, null, variablesInScope, {
 						namespaceResolver,
@@ -303,6 +501,7 @@ function createAsserterForExpression(baseUrl: string, assertNode, language, anno
 					expectedString,
 					xpath
 				);
+			};
 		}
 		default:
 			return () => {
@@ -948,6 +1147,7 @@ describe('qt3 test set', () => {
 									language,
 									annotateAst
 								);
+
 								asserter(
 									testQuery,
 									contextNode,

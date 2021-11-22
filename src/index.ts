@@ -3,7 +3,7 @@ import ExternalDomFacade from './domFacade/ExternalDomFacade';
 import IDomFacade from './domFacade/IDomFacade';
 import evaluateUpdatingExpression, { UpdatingOptions } from './evaluateUpdatingExpression';
 import evaluateUpdatingExpressionSync from './evaluateUpdatingExpressionSync';
-import evaluateXPath, { EvaluateXPath } from './evaluateXPath';
+import evaluateXPath, { EvaluableExpression, EvaluateXPath } from './evaluateXPath';
 import evaluateXPathToArray from './evaluateXPathToArray';
 import evaluateXPathToAsyncIterator from './evaluateXPathToAsyncIterator';
 import evaluateXPathToBoolean from './evaluateXPathToBoolean';
@@ -35,6 +35,7 @@ import {
 	storeHalfCompiledCompilationResultInCache,
 } from './parsing/compiledExpressionCache';
 import { IReturnTypes, ReturnType } from './parsing/convertXDMReturnValue';
+import convertXmlToAst from './parsing/convertXmlToAst';
 import parseExpression from './parsing/parseExpression';
 import { Profiler, profiler, XPathPerformanceMeasurement } from './performance';
 import precompileXPath from './precompileXPath';
@@ -70,13 +71,21 @@ import {
 	Text,
 } from './types/Types';
 
-function parseXPath(xpathString: string) {
-	const cachedExpression = getAnyStaticCompilationResultFromCache(xpathString, 'XPath', false);
+function parseXPath(xpathExpression: EvaluableExpression) {
+	const cachedExpression = getAnyStaticCompilationResultFromCache(
+		xpathExpression,
+		'XPath',
+		false
+	);
 	if (cachedExpression) {
 		return cachedExpression;
 	}
 
-	const ast = parseExpression(xpathString, { allowXQuery: false });
+	const ast =
+		typeof xpathExpression === 'string'
+			? parseExpression(xpathExpression, { allowXQuery: false })
+			: // AST is an element: convert to jsonml
+			  convertXmlToAst(xpathExpression);
 
 	annotateAst(ast, new AnnotationContext(undefined));
 
@@ -91,17 +100,17 @@ function parseXPath(xpathString: string) {
 		allowXQuery: false,
 	});
 
-	storeHalfCompiledCompilationResultInCache(xpathString, 'XPath', expression, false);
+	storeHalfCompiledCompilationResultInCache(xpathExpression, 'XPath', expression, false);
 
 	return expression;
 }
 
 /**
  * @public
- * @param xpathString - The XPath for which a bucket should be retrieved
+ * @param xpathExpression - The XPath for which a bucket should be retrieved
  */
-function getBucketForSelector(xpathString: string) {
-	return parseXPath(xpathString).getBucket();
+function getBucketForSelector(xpathExpression: EvaluableExpression) {
+	return parseXPath(xpathExpression).getBucket();
 }
 
 /**
@@ -115,13 +124,18 @@ function getBucketForSelector(xpathString: string) {
  * compareSpecificity('self::*', 'self::a') === 1;
  * compareSpecificity('self::a', 'self::a') === 0;
  *
- * @param xpathStringA - The first XPath to compare
- * @param xpathStringB - The XPath to compare to
+ * @param xpathExpressionA - The first XPath to compare
+ * @param xpathExpressionB - The XPath to compare to
  *
  * @returns Either 1, 0, or -1
  */
-function compareSpecificity(xpathStringA: string, xpathStringB: string): -1 | 0 | 1 {
-	return parseXPath(xpathStringA).specificity.compareTo(parseXPath(xpathStringB).specificity);
+function compareSpecificity(
+	xpathExpressionA: EvaluableExpression,
+	xpathExpressionB: EvaluableExpression
+): -1 | 0 | 1 {
+	return parseXPath(xpathExpressionA).specificity.compareTo(
+		parseXPath(xpathExpressionB).specificity
+	);
 }
 
 /**
@@ -245,4 +259,5 @@ export {
 	profiler,
 	registerCustomXPathFunction,
 	registerXQueryModule,
+	EvaluableExpression,
 };

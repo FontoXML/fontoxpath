@@ -8,7 +8,7 @@ import { SourceRange } from '../expressions/debug/StackTraceGenerator';
 
 type QName = { localName: string; namespaceURI: string | null; prefix: string };
 
-type ASTAttributes = { [attrName: string]: string | SequenceType };
+export type ASTAttributes = { [attrName: string]: string | SequenceType };
 
 export interface IAST extends Array<string | ASTAttributes | SourceRange | IAST> {
 	0: string;

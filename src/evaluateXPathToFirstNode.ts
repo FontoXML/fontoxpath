@@ -1,5 +1,5 @@
 import IDomFacade from './domFacade/IDomFacade';
-import evaluateXPath from './evaluateXPath';
+import evaluateXPath, { EvaluableExpression } from './evaluateXPath';
 import { ReturnType } from './parsing/convertXDMReturnValue';
 import { Options } from './types/Options';
 import { Node } from './types/Types';
@@ -18,7 +18,7 @@ import { Node } from './types/Types';
  * @returns The first matching node, in the order defined by the XPath.
  */
 export default function evaluateXPathToFirstNode<T extends Node>(
-	selector: string,
+	selector: EvaluableExpression,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,

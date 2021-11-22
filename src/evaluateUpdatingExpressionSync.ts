@@ -1,6 +1,6 @@
 import IDomFacade from './domFacade/IDomFacade';
 import { UpdatingOptions } from './evaluateUpdatingExpression';
-import evaluateXPath from './evaluateXPath';
+import evaluateXPath, { EvaluableExpression } from './evaluateXPath';
 import buildEvaluationContext from './evaluationUtils/buildEvaluationContext';
 import convertUpdateResultToTransferable from './evaluationUtils/convertUpdateResultToTransferable';
 import { printAndRethrowError } from './evaluationUtils/printAndRethrowError';
@@ -31,7 +31,7 @@ export default function evaluateUpdatingExpressionSync<
 	TNode extends Node,
 	TReturnType extends ReturnType
 >(
-	updateScript: string,
+	updateScript: EvaluableExpression,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,

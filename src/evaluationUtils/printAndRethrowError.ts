@@ -1,13 +1,22 @@
+import { EvaluableExpression } from '../evaluateXPath';
 import { StackTraceEntry } from '../expressions/debug/StackTraceEntry';
+import evaluableExpressionToString from '../parsing/evaluableExpressionToString';
 import { PositionedError } from './PositionedError';
 
 function getNumberStringLength(i: number) {
 	return Math.floor(Math.log10(i)) + 1;
 }
 
-export function printAndRethrowError(selector: string, error: Error | StackTraceEntry): never {
+export function printAndRethrowError(
+	selector: string | EvaluableExpression,
+	error: Error | StackTraceEntry
+): never {
 	if (error instanceof Error) {
 		throw error;
+	}
+
+	if (typeof selector !== 'string') {
+		selector = evaluableExpressionToString(selector as EvaluableExpression);
 	}
 
 	// This must be a StackTraceEntry 'error'

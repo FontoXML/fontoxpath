@@ -1,6 +1,9 @@
 // Import the Performance interface locally to this file
 /// <reference lib="dom" />
 
+import { EvaluableExpression } from '.';
+import evaluableExpressionToString from './parsing/evaluableExpressionToString';
+
 let profilingEnabled = false;
 
 let performance: Performance = null;
@@ -152,17 +155,26 @@ let xpathDepth = 0;
 function buildKey(xpath: string) {
 	return `${xpath}${xpathDepth === 0 ? '' : '@' + xpathDepth}`;
 }
-export function markXPathStart(xpath: string) {
+export function markXPathStart(xpath: string | EvaluableExpression) {
 	if (!profilingEnabled) {
 		return;
 	}
+
+	if (typeof xpath !== 'string') {
+		xpath = evaluableExpressionToString(xpath as EvaluableExpression);
+	}
+
 	performance.mark(buildKey(xpath));
 	xpathDepth++;
 }
-export function markXPathEnd(xpath: string) {
+export function markXPathEnd(xpath: string | EvaluableExpression) {
 	if (!profilingEnabled) {
 		return;
 	}
+	if (typeof xpath !== 'string') {
+		xpath = evaluableExpressionToString(xpath as EvaluableExpression);
+	}
+
 	// Replace the mark with a measure of the time spent
 	xpathDepth--;
 	const xpathPerfEntry = buildKey(xpath);

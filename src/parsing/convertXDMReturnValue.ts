@@ -1,5 +1,6 @@
 import { NodePointer } from '../domClone/Pointer';
 import realizeDom from '../domClone/realizeDom';
+import { EvaluableExpression } from '../evaluateXPath';
 import { printAndRethrowError } from '../evaluationUtils/printAndRethrowError';
 import ArrayValue from '../expressions/dataTypes/ArrayValue';
 import atomize, { atomizeSingleValue } from '../expressions/dataTypes/atomize';
@@ -8,7 +9,7 @@ import ISequence from '../expressions/dataTypes/ISequence';
 import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
 import MapValue from '../expressions/dataTypes/MapValue';
 import sequenceFactory from '../expressions/dataTypes/sequenceFactory';
-import Value, { ValueType } from '../expressions/dataTypes/Value';
+import Value, { ValueType, valueTypeToString } from '../expressions/dataTypes/Value';
 import ExecutionParameters from '../expressions/ExecutionParameters';
 import { IIterator, IterationHint } from '../expressions/util/iterators';
 import transformXPathItemToJavascriptObject, {
@@ -16,6 +17,7 @@ import transformXPathItemToJavascriptObject, {
 	transformMapToObject,
 } from '../transformXPathItemToJavascriptObject';
 import { Node } from '../types/Types';
+import evaluableExpressionToString from './evaluableExpressionToString';
 
 /**
  * @public
@@ -55,7 +57,7 @@ export default function convertXDMReturnValue<
 	TNode extends Node,
 	TReturnType extends keyof IReturnTypes<TNode>
 >(
-	expression: string,
+	expression: EvaluableExpression | string,
 	rawResults: ISequence,
 	returnType: TReturnType,
 	executionParameters: ExecutionParameters
@@ -105,7 +107,10 @@ export default function convertXDMReturnValue<
 			}
 			if (!isSubtypeOf(first.type, ValueType.NODE)) {
 				throw new Error(
-					'Expected XPath ' + expression + ' to resolve to Node. Got ' + first.type
+					'Expected XPath ' +
+						evaluableExpressionToString(expression) +
+						' to resolve to Node. Got ' +
+						valueTypeToString(first.type)
 				);
 			}
 			// over here: unravel pointers. if they point to actual nodes:return them. if they point
@@ -127,7 +132,9 @@ export default function convertXDMReturnValue<
 				})
 			) {
 				throw new Error(
-					'Expected XPath ' + expression + ' to resolve to a sequence of Nodes.'
+					'Expected XPath ' +
+						evaluableExpressionToString(expression) +
+						' to resolve to a sequence of Nodes.'
 				);
 			}
 			return allResults.map((nodeValue) => {
@@ -143,11 +150,19 @@ export default function convertXDMReturnValue<
 			const allValues = rawResults.getAllValues();
 
 			if (allValues.length !== 1) {
-				throw new Error('Expected XPath ' + expression + ' to resolve to a single map.');
+				throw new Error(
+					'Expected XPath ' +
+						evaluableExpressionToString(expression) +
+						' to resolve to a single map.'
+				);
 			}
 			const first = allValues[0];
 			if (!isSubtypeOf(first.type, ValueType.MAP)) {
-				throw new Error('Expected XPath ' + expression + ' to resolve to a map');
+				throw new Error(
+					'Expected XPath ' +
+						evaluableExpressionToString(expression) +
+						' to resolve to a map'
+				);
 			}
 			const transformedMap = transformMapToObject(
 				first as MapValue,
@@ -160,11 +175,19 @@ export default function convertXDMReturnValue<
 			const allValues = rawResults.getAllValues();
 
 			if (allValues.length !== 1) {
-				throw new Error('Expected XPath ' + expression + ' to resolve to a single array.');
+				throw new Error(
+					'Expected XPath ' +
+						evaluableExpressionToString(expression) +
+						' to resolve to a single array.'
+				);
 			}
 			const first = allValues[0];
 			if (!isSubtypeOf(first.type, ValueType.ARRAY)) {
-				throw new Error('Expected XPath ' + expression + ' to resolve to an array');
+				throw new Error(
+					'Expected XPath ' +
+						evaluableExpressionToString(expression) +
+						' to resolve to an array'
+				);
 			}
 			const transformedArray = transformArrayToArray(
 				first as ArrayValue,
@@ -177,7 +200,11 @@ export default function convertXDMReturnValue<
 			const allValues = rawResults.getAllValues();
 			return allValues.map((value) => {
 				if (!isSubtypeOf(value.type, ValueType.XSNUMERIC)) {
-					throw new Error('Expected XPath ' + expression + ' to resolve to numbers');
+					throw new Error(
+						'Expected XPath ' +
+							evaluableExpressionToString(expression) +
+							' to resolve to numbers'
+					);
 				}
 				return value.value;
 			}) as IReturnTypes<TNode>[TReturnType];

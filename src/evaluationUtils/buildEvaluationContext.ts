@@ -4,6 +4,7 @@ import wrapExternalDocumentWriter from '../documentWriter/wrapExternalDocumentWr
 import DomFacade from '../domFacade/DomFacade';
 import ExternalDomFacade from '../domFacade/ExternalDomFacade';
 import IDomFacade from '../domFacade/IDomFacade';
+import { EvaluableExpression } from '../evaluateXPath';
 import { adaptJavaScriptValueToSequence } from '../expressions/adaptJavaScriptValueToXPathValue';
 import ISequence from '../expressions/dataTypes/ISequence';
 import sequenceFactory from '../expressions/dataTypes/sequenceFactory';
@@ -44,11 +45,6 @@ export function createDefaultNamespaceResolver(contextItem: any): (s: string) =>
 	return (prefix) => contextItem['lookupNamespaceURI'](prefix || null);
 }
 
-export function normalizeEndOfLines(xpathString: string) {
-	// Replace all character sequences of 0xD followed by 0xA and all 0xD not followed by 0xA with 0xA.
-	return xpathString.replace(/(\x0D\x0A)|(\x0D(?!\x0A))/g, String.fromCharCode(0xa));
-}
-
 export function createDefaultFunctionNameResolver(defaultFunctionNamespaceURI: string) {
 	return (
 		{ prefix, localName }: LexicalQualifiedName,
@@ -65,7 +61,7 @@ export function createDefaultFunctionNameResolver(defaultFunctionNamespaceURI: s
 }
 
 export default function buildEvaluationContext(
-	expressionString: string,
+	expression: EvaluableExpression,
 	contextItem: TypedExternalValue | UntypedExternalValue,
 	domFacade: IDomFacade | null,
 	variables: { [s: string]: TypedExternalValue | UntypedExternalValue },
@@ -112,8 +108,6 @@ export default function buildEvaluationContext(
 		domFacade === null ? new ExternalDomFacade() : domFacade
 	);
 
-	expressionString = normalizeEndOfLines(expressionString);
-
 	const moduleImports = internalOptions.moduleImports || Object.create(null);
 
 	const namespaceResolver =
@@ -128,7 +122,7 @@ export default function buildEvaluationContext(
 		createDefaultFunctionNameResolver(defaultFunctionNamespaceURI);
 
 	const expressionAndStaticContext = staticallyCompileXPath(
-		expressionString,
+		expression,
 		compilationOptions,
 		namespaceResolver,
 		variables,

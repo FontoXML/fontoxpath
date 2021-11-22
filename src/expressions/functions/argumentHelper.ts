@@ -70,6 +70,19 @@ function mapItem(
 	return item;
 }
 
+function multiplicityToString(mult: SequenceMultiplicity): string {
+	switch (mult) {
+		case SequenceMultiplicity.ZERO_OR_MORE:
+			return '*';
+		case SequenceMultiplicity.ONE_OR_MORE:
+			return '+';
+		case SequenceMultiplicity.ZERO_OR_ONE:
+			return '?';
+		case SequenceMultiplicity.EXACTLY_ONE:
+			return '';
+	}
+}
+
 /**
  * Test whether the provided argument is valid to be used as an function argument of the given type
  */
@@ -90,9 +103,9 @@ export const performFunctionConversion = (
 				throw new Error(
 					`XPTY0004: Multiplicity of ${
 						isReturn ? 'function return value' : 'function argument'
-					} of type ${valueTypeToString(argumentType.type)}${
-						argumentType.type || ''
-					} for ${functionName} is incorrect. Expected "?", but got "+".`
+					} of type ${valueTypeToString(argumentType.type)}${multiplicityToString(
+						argumentType.mult
+					)} for ${functionName} is incorrect. Expected "?", but got "+".`
 				);
 			},
 		});
@@ -103,9 +116,9 @@ export const performFunctionConversion = (
 				throw new Error(
 					`XPTY0004: Multiplicity of ${
 						isReturn ? 'function return value' : 'function argument'
-					} of type ${valueTypeToString(argumentType.type)}${
-						argumentType.type || ''
-					} for ${functionName} is incorrect. Expected "+", but got "empty-sequence()"`
+					} of type ${valueTypeToString(argumentType.type)}${multiplicityToString(
+						argumentType.mult
+					)} for ${functionName} is incorrect. Expected "+", but got "empty-sequence()"`
 				);
 			},
 			default: () =>
@@ -129,9 +142,9 @@ export const performFunctionConversion = (
 			throw new Error(
 				`XPTY0004: Multiplicity of ${
 					isReturn ? 'function return value' : 'function argument'
-				} of type ${valueTypeToString(argumentType.type)}${
-					argumentType.type || ''
-				} for ${functionName} is incorrect. Expected exactly one`
+				} of type ${valueTypeToString(argumentType.type)}${multiplicityToString(
+					argumentType.mult
+				)} for ${functionName} is incorrect. Expected exactly one`
 			);
 		},
 	});

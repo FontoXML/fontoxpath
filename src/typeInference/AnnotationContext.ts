@@ -15,10 +15,12 @@ export class AnnotationContext {
 	public getVariable(varName: string): SequenceType {
 		for (let i = this._scopeIndex; i >= 0; i--) {
 			const variableType = this._variableScope[i][varName];
-			return variableType;
+			if (variableType) {
+				return variableType;
+			}
 		}
-
-		throw new Error('XPST0008, The variable ' + varName + ' is not in scope.');
+		// The variable is not found, indicate this to the caller by returning undefined.
+		return undefined;
 	}
 
 	public insertVariable(varName: string, varType: SequenceType): void {
