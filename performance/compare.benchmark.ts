@@ -1,13 +1,15 @@
+import benchmarkRunner from '@fontoxml/fonto-benchmark-runner';
 import { Document, Node } from 'slimdom';
 import * as slimdomSaxParser from 'slimdom-sax-parser';
+
 import {
 	domFacade,
+	Element,
 	evaluateXPath,
 	evaluateXPathToFirstNode,
 	evaluateXPathToNumber,
+	parseScript,
 } from '../src/index';
-
-import benchmarkRunner from '@fontoxml/fonto-benchmark-runner';
 import jsonMlMapper from '../test/helpers/jsonMlMapper';
 import loadFile from './utils/loadFile';
 
@@ -147,6 +149,100 @@ benchmarkRunner.compareBenchmarks(
 
 			const res = document.createElement('XMark-result-Q14');
 			res.append(textNode);
+		},
+	}
+);
+
+// compare evaluating with preparsed and unparsed queries
+let query: string;
+let preparsedQuery: Element;
+
+benchmarkRunner.compareBenchmarks(
+	'compare evaluating preparsed and unparsed queries: XMark-Q14 ~ this is one of the more expensive tests in the qt3ts',
+	async () => {
+		query = `(: Purpose: Return the names of all items whose description contains the word ;'gold'. :)
+		<XMark-result-Q14> {
+			let $auction := (/) return
+			for $i in $auction/site//item
+			where contains(string(exactly-one($i/description)), "gold")
+			return $i/name/text() }
+		</XMark-result-Q14>`;
+		preparsedQuery = parseScript(query, {}, new Document());
+
+		const content = await loadFile(testDocumentFilename);
+		document = slimdomSaxParser.sync(content);
+	},
+	undefined,
+	{
+		name: 'preparsed query',
+		test: () => {
+			evaluateXPathToFirstNode(
+				preparsedQuery,
+				document,
+				domFacade,
+				{},
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			);
+		},
+	},
+	{
+		name: 'unparsed query',
+		test: () => {
+			evaluateXPathToFirstNode(
+				query,
+				document,
+				domFacade,
+				{},
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			);
+		},
+	}
+);
+
+benchmarkRunner.compareBenchmarks(
+	'compare evaluating preparsed and unparsed queries: count 3190 text elements',
+	async () => {
+		query = 'count(//text)';
+		preparsedQuery = parseScript(query, {}, new Document());
+
+		const content = await loadFile(testDocumentFilename);
+		document = slimdomSaxParser.sync(content);
+	},
+	undefined,
+	{
+		name: 'preparsed query',
+		test: () => {
+			evaluateXPathToNumber(preparsedQuery, document, domFacade);
+		},
+	},
+	{
+		name: 'unparsed query',
+		test: () => {
+			evaluateXPathToNumber(query, document, domFacade);
+		},
+	}
+);
+
+benchmarkRunner.compareBenchmarks(
+	'compare evaluating preparsed and unparsed queries: simple traversal to first descendant',
+	async () => {
+		query = 'descendant::c';
+		preparsedQuery = parseScript(query, {}, new Document());
+
+		document = new Document();
+		jsonMlMapper.parse(['r', ['a', ['b', ['c']]]], document);
+	},
+	undefined,
+	{
+		name: 'preparsed query',
+		test: () => {
+			evaluateXPathToNumber(preparsedQuery, document, domFacade);
+		},
+	},
+	{
+		name: 'unparsed query',
+		test: () => {
+			evaluateXPathToNumber(query, document, domFacade);
 		},
 	}
 );
