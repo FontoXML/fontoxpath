@@ -1,4 +1,5 @@
 import {
+	error,
 	complete,
 	followed,
 	peek,
@@ -8,9 +9,11 @@ import {
 	Parser,
 	ParseResult,
 	preceded,
+	plus,
 	star,
 	then,
 	token,
+	okWithValue,
 } from 'prsc';
 import { IAST } from './astHelper';
 
@@ -55,16 +58,128 @@ function alias(tokenNames: string[], name: string): Parser<string> {
 	return map(or(tokenNames.map(token)), (_) => name);
 }
 
-// TODO: add other whitespace characters
 const assertAdjacentOpeningTerminal: Parser<string> = peek(
+	// TODO: add other whitespace characters
 	or([token('('), token('"'), token("'"), token(' ')])
 );
 
-const pathExpr: Parser<IAST> = map(token('unimplemented'), (x) => [x]);
+const unimplemented: Parser<IAST> = map(token('unimplemented'), (x) => [x]);
 
-const validateExpr: Parser<IAST> = map(token('unimplemented'), (x) => [x]);
+const predicate: Parser<IAST> = preceded(
+	token('['),
+	followed(surrounded(expr, whitespace), token(']'))
+);
 
-const extensionExpr: Parser<IAST> = map(token('unimplemented'), (x) => [x]);
+const forwardAxis: Parser<string> = map(
+	or(
+		[
+			'child::',
+			'descendant::',
+			'attribute::',
+			'self::',
+			'descendant-or-self::',
+			'following-sibling::',
+			'following::',
+		].map(token)
+	),
+	(x: string) => x.substring(0, x.length - 2)
+);
+
+const reverseAxis: Parser<string> = map(
+	or(
+		['parent::', 'ancestor::', 'preceding-sibling::', 'preceding::', 'ancestor-or-self::'].map(
+			token
+		)
+	),
+	(x: string) => x.substring(0, x.length - 2)
+);
+
+const kindTest: Parser<IAST> = unimplemented;
+
+function regex(reg: RegExp): Parser<string> {
+	return (input: string, offset: number): ParseResult<string> => {
+		const match = reg.exec(input);
+		if (match && match.index === offset) {
+			return okWithValue(offset + match[0].length, match[0]);
+		} else {
+			return error(offset, [reg.source], true);
+		}
+	};
+}
+
+const ncNameStartChar: Parser<string> = or([
+	regex(
+		/[A-Z_a-z\xC0-\xD6\xD8-\xF6\xF8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD]/
+	),
+	then(regex(/[\uD800-\uDB7F]/), regex(/[\uDC00-\uDFFF]/), (a, b) => a + b),
+]);
+
+// FIXME: ncNameStartChar seems to be working but combining that with otiher chars breaks the code
+// Take for example: `ncName('test', 0)`
+const ncNameChar: Parser<string> = or([
+	ncNameStartChar,
+	regex(/[\-\.0-9\xB7\u0300-\u036F\u203F\u2040]/),
+]);
+
+const ncName: Parser<string> = then(ncNameStartChar, star(ncNameChar), (a, b) => a + b.join(''));
+
+const localPart: Parser<string> = ncName;
+
+const unprefixedName: Parser<IAST> = map(localPart, (x) => [x]);
+
+// TODO: add prefixed name
+const qName: Parser<IAST> = unprefixedName;
+
+// TODO: add uri qualified name
+const eqName: Parser<IAST> = qName;
+
+const nameTest: Parser<IAST> = map(
+	or([
+		// TODO: implement wildcard
+		eqName,
+	]),
+	(x: IAST) => ['nameTest', ...x]
+);
+
+const nodeTest: Parser<IAST> = or([kindTest, nameTest]);
+
+// TODO: add abbrev forward step
+const forwardStep: Parser<IAST> = then(forwardAxis, nodeTest, (axis, test) => [
+	'stepExpr',
+	['xpathAxis', axis],
+	test,
+]);
+
+const reverseStep: Parser<IAST> = then(reverseAxis, nodeTest, (axis, test) => [
+	'stepExpr',
+	['xpathAxis', axis],
+	test,
+]);
+
+const predicateList: Parser<IAST | undefined> = map(
+	star(preceded(whitespace, predicate)),
+	(x: IAST[]) => (x.length > 0 ? ['predicates', ...x] : undefined)
+);
+
+const axisStep: Parser<IAST> = then(
+	or([forwardStep, reverseStep]),
+	predicateList,
+	(a: IAST, b: IAST | undefined) => (b === undefined ? a : (a.concat([b]) as IAST))
+);
+
+// TODO: add other variants
+const stepExprWithForcedStep: Parser<IAST> = axisStep;
+
+// TODO: add other variants
+const relativePathExpr: Parser<IAST> = or([map(stepExprWithForcedStep, (x) => ['pathExpr', x])]);
+
+const absolutePathExpr: Parser<IAST> = unimplemented;
+
+const pathExpr: Parser<IAST> = or([relativePathExpr, absolutePathExpr]);
+
+const validateExpr: Parser<IAST> = unimplemented;
+
+const extensionExpr: Parser<IAST> = unimplemented;
 
 function wrapInSequenceExprIfNeeded(exp: IAST): IAST {
 	switch (exp[0]) {
@@ -227,7 +342,9 @@ const orExpr: Parser<IAST> = binaryOperator(andExpr, alias(['or'], 'orOp'));
 const exprSingle: Parser<IAST> = orExpr;
 
 // TODO: add support for sequence expressions
-const expr: Parser<IAST> = exprSingle;
+function expr(input: string, offset: number): ParseResult<IAST> {
+	return exprSingle(input, offset);
+}
 
 const queryBody: Parser<IAST> = map(expr, (x) => ['queryBody', x]);
 
