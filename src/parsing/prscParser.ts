@@ -1,15 +1,16 @@
 import {
 	map,
+	peek,
 	then,
 	preceded,
 	token,
 	star,
+	optional,
 	Parser,
 	ParseResult,
 	or,
 	followed,
 	okWithValue,
-	error,
 } from 'prsc';
 import { IAST } from './astHelper';
 
@@ -29,36 +30,29 @@ function binaryOperator(expr: Parser<IAST>, operator: Parser<string>): Parser<IA
 }
 
 function nonRepeatableBinaryOperator(expr: Parser<IAST>, operator: Parser<string>): Parser<IAST> {
-	return function (input, offset): ParseResult<IAST> {
-		const lhs = expr(input, offset);
-		if (!lhs.success) {
-			return lhs;
+	return then(
+		expr,
+		optional(then(operator, expr, (a, b) => [a, b])),
+		(lhs: IAST, rhs: [string, IAST | null]) => {
+			if (rhs[1] === null) {
+				return lhs;
+			}
+			return [rhs[0], ['firstOperand', lhs], ['secondOperand', rhs]];
 		}
-
-		const opParser = surrounded(operator, whitespace);
-		const op = opParser(input, lhs.offset);
-		if (!op.success) {
-			return error(op.offset, ['operator'], true);
-		}
-
-		const rhs = expr(input, op.offset);
-		if (!rhs.success) {
-			return rhs;
-		}
-
-		return okWithValue(rhs.offset, [
-			op.value,
-			['firstOperand', lhs.value],
-			['secondOperand', rhs.value],
-		]);
-	};
+	);
 }
 
 function alias(tokenNames: string[], name: string): Parser<string> {
 	return map(or(tokenNames.map(token)), (_) => name);
 }
 
-const valueExpr: Parser<IAST> = map(token('value'), (x) => [x]);
+const validateExpr: Parser<IAST> = map(token('unimplemented'), (x) => [x]);
+
+const extensionExpr: Parser<IAST> = map(token('unimplemented'), (x) => [x]);
+
+const simpleMapExpr: Parser<IAST> = map(token('unimplemented'), (x) => [x]);
+
+const valueExpr: Parser<IAST> = or([validateExpr, extensionExpr, simpleMapExpr]);
 
 const unaryExpr: Parser<IAST> = or([
 	then(
@@ -141,12 +135,15 @@ const andExpr: Parser<IAST> = binaryOperator(comparisonExpr, alias(['and'], 'and
 
 const orExpr: Parser<IAST> = binaryOperator(andExpr, alias(['or'], 'orOp'));
 
+// TODO: add support for flwor, quantified, switch, typeswitch, if, insert, delete, rename, replace, and copymodify
 const exprSingle: Parser<IAST> = orExpr;
 
+// TODO: add support for sequence expressions
 const expr: Parser<IAST> = exprSingle;
 
 const queryBody: Parser<IAST> = map(expr, (x) => ['queryBody', x]);
 
+// TODO: add prolog
 const mainModule: Parser<IAST> = map(queryBody, (x) => ['mainModule', x]);
 
 export function parseUsingPrsc(xpath: string): ParseResult<IAST> {
