@@ -1,6 +1,7 @@
 import {
 	complete,
 	followed,
+	peek,
 	map,
 	optional,
 	or,
@@ -53,6 +54,11 @@ function nonRepeatableBinaryOperator(exp: Parser<IAST>, operator: Parser<string>
 function alias(tokenNames: string[], name: string): Parser<string> {
 	return map(or(tokenNames.map(token)), (_) => name);
 }
+
+// TODO: add other whitespace characters
+const assertAdjacentOpeningTerminal: Parser<string> = peek(
+	or([token('('), token('"'), token("'"), token(' ')])
+);
 
 const pathExpr: Parser<IAST> = map(token('unimplemented'), (x) => [x]);
 
@@ -147,14 +153,21 @@ const treatExpr: Parser<IAST> = castableExpr;
 // TODO: adjacent opening terminal
 const instanceofExpr: Parser<IAST> = treatExpr;
 
-// TODO: adjacent opening terminal
 const intersectExpr: Parser<IAST> = binaryOperator(
 	instanceofExpr,
-	or([alias(['intersect'], 'intersectOp'), alias(['except'], 'excetpOp')])
+	followed(
+		or([alias(['intersect'], 'intersectOp'), alias(['except'], 'excetpOp')]),
+		assertAdjacentOpeningTerminal
+	)
 );
 
-// TODO: adjacent opening terminal
-const unionExpr: Parser<IAST> = binaryOperator(intersectExpr, alias(['|', 'union'], 'unionOp'));
+const unionExpr: Parser<IAST> = binaryOperator(
+	intersectExpr,
+	or([
+		alias(['|'], 'unionOp'),
+		followed(alias(['union'], 'unionOp'), assertAdjacentOpeningTerminal),
+	])
+);
 
 const multiplicativeExpr: Parser<IAST> = binaryOperator(
 	unionExpr,
