@@ -2,6 +2,7 @@ const peg = require('peggy');
 const fs = require('fs-extra');
 
 const ts = require('typescript');
+const prsc = require('prsc');
 
 const { Extractor, ExtractorConfig } = require('@microsoft/api-extractor');
 
@@ -99,7 +100,7 @@ function doTSCCBuild() {
 				debug: false,
 				assume_function_wrapper: true,
 				compilation_level: 'ADVANCED',
-				output_wrapper: `function (xspattern) {
+				output_wrapper: `function (xspattern, prsc) {
 const VERSION='${require('./package.json').version}';
 const fontoxpathGlobal = {};
 %output%
@@ -107,7 +108,7 @@ return fontoxpathGlobal;
 }
 `,
 			},
-			external: { xspattern: 'xspattern' },
+			external: { xspattern: 'xspattern', prsc: 'prsc' },
 		},
 		'./tsconfig.json',
 		{
@@ -134,6 +135,7 @@ function doModuleBuild() {
 
 	const fontoxpathFunction = fs.readFileSync('./dist/fontoxpath-raw.js', 'utf8');
 	const fullModule = `import * as xspattern from 'xspattern';
+import * as prsc from 'prsc';
 const fontoxpath = (${fontoxpathFunction})
 	.call(typeof window === 'undefined' ? undefined : window, xspattern);
 ${exports.join('\n')}
@@ -143,17 +145,17 @@ export default fontoxpath;
 	const umdModule = `(function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD
-		define(['xspattern'], factory);
+		define(['xspattern', 'prsc'], factory);
 	} else if (typeof exports === 'object') {
 		// Node, CommonJS-like
-		module.exports = factory(require('xspattern'));
+		module.exports = [factory(require('xspattern')), factor(require('prsc'))];
 	} else {
 		// Browser globals (root is window)
 		// Maybe it is in scope:
-		root.fontoxpath = factory(root.xspattern);
+		root.fontoxpath = [factory(root.xspattern), factory(root.prsc)];
 	}
-})(this, function (xspattern) {
-	return (${fontoxpathFunction})(xspattern);
+})(this, function (xspattern, prsc) {
+	return (${fontoxpathFunction})(xspattern, prsc);
 });
 `;
 
