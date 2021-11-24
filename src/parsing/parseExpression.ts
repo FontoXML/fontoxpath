@@ -1,4 +1,5 @@
 import { IAST } from './astHelper';
+import { parseUsingPrsc } from './prscParser';
 import { parse, SyntaxError } from './xPathParser';
 
 const astParseResultCache = Object.create(null);
@@ -29,10 +30,16 @@ export default function parseExpression(
 		if (cached) {
 			ast = cached;
 		} else {
-			ast = parse(xPathString, {
-				xquery: !!compilationOptions.allowXQuery,
-				outputDebugInfo: !!compilationOptions.debug,
-			});
+			// ast = parse(xPathString, {
+			// 	xquery: !!compilationOptions.allowXQuery,
+			// 	outputDebugInfo: !!compilationOptions.debug,
+			// });
+
+			const parseResult = parseUsingPrsc(xPathString);
+			if (parseResult.success) {
+				ast = parseResult.value;
+			}
+
 			if (!compilationOptions.debug) {
 				storeParseResultInCache(xPathString, language, ast);
 			}
