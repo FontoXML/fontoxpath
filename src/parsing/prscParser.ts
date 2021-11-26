@@ -277,8 +277,21 @@ const varName: Parser<IAST> = eqName;
 
 const varRef: Parser<IAST> = map(preceded(token('$'), varName), (x) => ['varRef', ['name', ...x]]);
 
+const parenthesizedExpr: Parser<IAST> = or([
+	delimited(token('('), surrounded(expr, whitespace), token(')')),
+	map(delimited(token('('), whitespace, token(')')), (_) => ['sequenceExpr']),
+]);
+
+const contextItemExpr: Parser<IAST> = map(
+	followed(
+		token('.'),
+		peek(not(token('.'), ['context item should not be followed by another .']))
+	),
+	(_) => ['contextItemExpr']
+);
+
 // TODO: add other variants
-const primaryExpr: Parser<IAST> = or([literal, varRef]);
+const primaryExpr: Parser<IAST> = or([literal, varRef, parenthesizedExpr, contextItemExpr]);
 
 // TODO: actually add the postfix expr
 const postfixExprWithStep: Parser<IAST> = unimplemented;
@@ -469,9 +482,10 @@ const orExpr: Parser<IAST> = binaryOperator(andExpr, alias(['or'], 'orOp'));
 // TODO: add support for flwor, quantified, switch, typeswitch, if, insert, delete, rename, replace, and copymodify
 const exprSingle: Parser<IAST> = orExpr;
 
-// TODO: add support for sequence expressions
 function expr(input: string, offset: number): ParseResult<IAST> {
-	return exprSingle(input, offset);
+	return binaryOperator(exprSingle, token(','), (lhs, rhs) => {
+		return rhs.length === 0 ? lhs : ['sequenceExpr', lhs, ...rhs];
+	})(input, offset);
 }
 
 const queryBody: Parser<IAST> = map(expr, (x) => ['queryBody', x]);
@@ -484,7 +498,7 @@ export function parseUsingPrsc(xpath: string): ParseResult<IAST> {
 	return complete(parser)(xpath, 0);
 }
 
-const query = '12 + $test';
+const query = '(12, 13, 14)';
 
 const prscResult = parseUsingPrsc(query);
 
