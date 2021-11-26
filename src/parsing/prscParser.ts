@@ -9,18 +9,19 @@ import {
 	Parser,
 	ParseResult,
 	preceded,
-	plus,
 	star,
 	then,
 	token,
 	okWithValue,
+	delimited,
 } from 'prsc';
 import { IAST } from './astHelper';
+import parseExpression from './parseExpression';
 
 const whitespace: Parser<string[]> = star(token(' '));
 
 function surrounded<T, S>(parser: Parser<T>, around: Parser<S>): Parser<T> {
-	return preceded(around, followed(parser, around));
+	return delimited(around, parser, around);
 }
 
 function binaryOperator(
@@ -98,11 +99,11 @@ const kindTest: Parser<IAST> = unimplemented;
 
 function regex(reg: RegExp): Parser<string> {
 	return (input: string, offset: number): ParseResult<string> => {
-		const match = reg.exec(input);
-		if (match && match.index === offset) {
+		const match = reg.exec(input.substring(offset));
+		if (match && match.index === 0) {
 			return okWithValue(offset + match[0].length, match[0]);
 		} else {
-			return error(offset, [reg.source], true);
+			return error(offset, [reg.source], false);
 		}
 	};
 }
@@ -352,5 +353,29 @@ const queryBody: Parser<IAST> = map(expr, (x) => ['queryBody', x]);
 const mainModule: Parser<IAST> = map(queryBody, (x) => ['mainModule', x]);
 
 export function parseUsingPrsc(xpath: string): ParseResult<IAST> {
-	return complete(mainModule)(xpath, 0);
+	const parser: Parser<IAST> = map(mainModule, (x) => ['module', x]);
+	return complete(parser)(xpath, 0);
 }
+
+const query = '-parent::p';
+
+const prscResult = parseUsingPrsc(query);
+
+if (prscResult.success === true) {
+	const old = parseExpression(query, {});
+	const prsc = prscResult.value;
+	if (JSON.stringify(old) !== JSON.stringify(prsc)) {
+		console.log('DIFFER');
+		console.log('OLD');
+		console.log(JSON.stringify(old, null, 4));
+		console.log('PRSC');
+		console.log(JSON.stringify(prsc, null, 4));
+	} else {
+		console.log('CORRECT!');
+		console.log(JSON.stringify(prsc, null, 4));
+	}
+} else {
+	console.log('Failed to parse:');
+	console.log(prscResult.expected);
+}
+
