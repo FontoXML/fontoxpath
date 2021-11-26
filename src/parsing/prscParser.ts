@@ -75,6 +75,10 @@ function regex(reg: RegExp): Parser<string> {
 	};
 }
 
+function isAttributeTest(nodeTest: IAST): boolean {
+	return nodeTest[0] === 'attributeTest' || nodeTest[0] === 'schemaAttributeTest';
+}
+
 function assertValidCodePoint(codePoint: number) {
 	if (
 		(codePoint >= 0x1 && codePoint <= 0xd7ff) ||
@@ -92,7 +96,7 @@ function assertValidCodePoint(codePoint: number) {
 	);
 }
 
-function parseCharacterReferences(input: string) {
+function parseCharacterReferences(input: string): string {
 	// TODO: this is not supported in xpath
 
 	return input.replace(/(&[^;]+);/g, function (match) {
@@ -226,11 +230,15 @@ const nameTest: Parser<IAST> = map(
 
 const nodeTest: Parser<IAST> = or([kindTest, nameTest]);
 
-// TODO: add abbrev forward step
-const forwardStep: Parser<IAST> = then(forwardAxis, nodeTest, (axis, test) => [
-	'stepExpr',
-	['xpathAxis', axis],
-	test,
+const abbrevForwardStep: Parser<IAST> = then(optional(token('@')), nodeTest, (a, b) => {
+	return a !== null || isAttributeTest(b)
+		? ['stepExpr', ['xpathAxis', 'attribute'], b]
+		: ['stepExpr', ['xpathAxis', 'child'], b];
+});
+
+const forwardStep: Parser<IAST> = or([
+	then(forwardAxis, nodeTest, (axis, test) => ['stepExpr', ['xpathAxis', axis], test]),
+	abbrevForwardStep,
 ]);
 
 const reverseStep: Parser<IAST> = then(reverseAxis, nodeTest, (axis, test) => [
@@ -290,8 +298,53 @@ const contextItemExpr: Parser<IAST> = map(
 	(_) => ['contextItemExpr']
 );
 
+const reservedFunctionNames = or([
+	token('array'),
+	token('attribute'),
+	token('comment'),
+	token('document-node'),
+	token('element'),
+	token('empty-sequence'),
+	token('function'),
+	token('if'),
+	token('item'),
+	token('map'),
+	token('namespace-node'),
+	token('node'),
+	token('processing-instruction'),
+	token('schema-attribute'),
+	token('schema-element'),
+	token('switch'),
+	token('text'),
+	token('typeswitch'),
+]);
+
+const argumentList: Parser<IAST[]> = map(preceded(token('('), token(')')), (_) => []);
+
+const functionCall: Parser<IAST> = preceded(
+	not(
+		then(
+			reservedFunctionNames,
+			then(whitespace, token('('), (_a, _b) => undefined),
+			(_a, _b) => undefined
+		),
+		['cannot use reseved keyword for function names']
+	),
+	then(eqName, preceded(whitespace, argumentList), (name, args) => [
+		'functionCallExpr',
+		['functionName', ...name],
+		['arguments', ...args],
+	])
+);
+
 // TODO: add other variants
-const primaryExpr: Parser<IAST> = or([literal, varRef, parenthesizedExpr, contextItemExpr]);
+const primaryExpr: Parser<IAST> = or([
+	literal,
+	varRef,
+	parenthesizedExpr,
+	contextItemExpr,
+	functionCall,
+]);
 
 // TODO: actually add the postfix expr
 const postfixExprWithStep: Parser<IAST> = unimplemented;
@@ -310,8 +363,8 @@ const stepExprWithoutStep: Parser<IAST> = postfixExprWithoutStep;
 
 // TODO: add other variants
 const relativePathExpr: Parser<IAST> = or([
-	map(stepExprWithForcedStep, (x) => ['pathExpr', x]),
 	stepExprWithoutStep,
+	map(stepExprWithForcedStep, (x) => ['pathExpr', x]),
 ]);
 
 const absolutePathExpr: Parser<IAST> = unimplemented;
@@ -498,24 +551,24 @@ export function parseUsingPrsc(xpath: string): ParseResult<IAST> {
 	return complete(parser)(xpath, 0);
 }
 
-const query = '(12, 13, 14)';
-
-const prscResult = parseUsingPrsc(query);
-
-if (prscResult.success === true) {
-	const old = parseExpression(query, {});
-	const prsc = prscResult.value;
-	if (JSON.stringify(old) !== JSON.stringify(prsc)) {
-		console.log('DIFFER');
-		console.log('OLD');
-		console.log(JSON.stringify(old, null, 4));
-		console.log('PRSC');
-		console.log(JSON.stringify(prsc, null, 4));
-	} else {
-		console.log('CORRECT!');
-		console.log(JSON.stringify(prsc, null, 4));
-	}
-} else {
-	console.log('Failed to parse:');
-	console.log(prscResult.expected);
-}
+//const query = 'true()';
+//
+//const prscResult = parseUsingPrsc(query);
+//
+//if (prscResult.success === true) {
+//	const old = parseExpression(query, {});
+//	const prsc = prscResult.value;
+//	if (JSON.stringify(old) !== JSON.stringify(prsc)) {
+//		console.log('DIFFER');
+//		console.log('OLD');
+//		console.log(JSON.stringify(old, null, 4));
+//		console.log('PRSC');
+//		console.log(JSON.stringify(prsc, null, 4));
+//	} else {
+//		console.log('CORRECT!');
+//		console.log(JSON.stringify(prsc, null, 4));
+//	}
+//} else {
+//	console.log('Failed to parse:');
+//	console.log(prscResult.expected);
+//}
