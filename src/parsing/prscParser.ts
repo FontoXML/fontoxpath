@@ -220,19 +220,37 @@ const localPart: Parser<string> = ncName;
 
 const unprefixedName: Parser<IAST> = wrapArray(localPart);
 
-// TODO: add prefixed name
-const qName: Parser<IAST> = unprefixedName;
+const xmlPrefix: Parser<string> = ncName;
+
+// TODO: give this better types
+const prefixedName: Parser<any> = then(
+	xmlPrefix,
+	preceded(token(':'), localPart),
+	(prefix, local) => [{ ['prefix']: prefix }, local]
+);
+
+// TODO: give this better types
+const qName: Parser<any> = or([prefixedName, unprefixedName]);
 
 // TODO: add uri qualified name
-const eqName: Parser<IAST> = qName;
+const eqName: Parser<IAST> = or([qName]) as Parser<IAST>;
 
-const nameTest: Parser<IAST> = map(
-	or([
-		// TODO: implement wildcard
-		eqName,
-	]),
-	(x: IAST) => ['nameTest', ...x]
-);
+const wildcard: Parser<IAST> = or([
+	map(preceded(token('*:'), ncName), (x) => [
+		'Wildcard',
+		['star'],
+		['NCName', x],
+	]) as Parser<IAST>,
+	wrapArray(alias(['*'], 'Wildcard')),
+	// TODO: implement bracedURILiteral
+	map(followed(ncName, token(':*')), (x) => [
+		'Wildcard',
+		['NCName', x],
+		['star'],
+	]) as Parser<IAST>,
+]);
+
+const nameTest: Parser<IAST> = map(or([wildcard, eqName]), (x: IAST) => ['nameTest', ...x]);
 
 const nodeTest: Parser<IAST> = or([kindTest, nameTest]);
 
@@ -536,40 +554,61 @@ const castableExpr: Parser<IAST> = then(
 	(lhs, rhs) => (rhs !== null ? ['castableExpr', ['argExpr', lhs], rhs] : lhs)
 );
 
+const atomicOrUnionType: Parser<IAST> = map(eqName, (x) => ['atomicType', ...x]);
+
 // TODO: add other tests
-const itemType: Parser<IAST> = or([kindTest, wrapArray(alias(['item()'], 'anyItemType'))]);
+const itemType: Parser<IAST> = or([
+	kindTest,
+	wrapArray(alias(['item()'], 'anyItemType')),
+	atomicOrUnionType,
+]);
 
 const occurrenceIndicator: Parser<string> = or(['?', '*', '+'].map(token));
 
-//const sequenceType: Parser<IAST> = or([
-//	wrapArray(wrapArray(alias(['empty-sequence()'], 'voidSequenceType'))),
-//	then(itemType, optional(occurrenceIndicator), (type, occurrence) => [
-//		type,
-//		...(occurrence !== null ? [['occurrenceIndicator', occurrence]] : []),
-//	]),
-//]);
+const sequenceType: Parser<any> = or([
+	map(token('empty-sequence()'), (_) => [['voidSequenceType']]),
+	then(itemType, optional(occurrenceIndicator), (type, occurrence) => [
+		type,
+		...(occurrence !== null ? [['occurrenceIndicator', occurrence]] : []),
+	]),
+]);
 
-const treatExpr: Parser<IAST> = castableExpr;
-//then(
-//	castableExpr,
-//	optional(
-//		precededMultiple(
-//			[
-//				whitespace,
-//				token('treat'),
-//				whitespacePlus,
-//				token('as'),
-//				assertAdjacentOpeningTerminal,
-//				whitespace,
-//			],
-//			sequenceType
-//		)
-//	),
-//	(lhs, rhs) => (rhs !== null ? ['treatExpr', ['argExpr', lhs], ['sequenceType', ...rhs]] : lhs)
-//);
+const treatExpr: Parser<IAST> = then(
+	castableExpr,
+	optional(
+		precededMultiple(
+			[
+				whitespace,
+				token('treat'),
+				whitespacePlus,
+				token('as'),
+				assertAdjacentOpeningTerminal,
+				whitespace,
+			],
+			sequenceType
+		)
+	),
+	(lhs, rhs) => (rhs !== null ? ['treatExpr', ['argExpr', lhs], ['sequenceType', ...rhs]] : lhs)
+);
 
-// TODO: adjacent opening terminal
-const instanceofExpr: Parser<IAST> = treatExpr;
+const instanceofExpr: Parser<IAST> = then(
+	treatExpr,
+	optional(
+		precededMultiple(
+			[
+				whitespace,
+				token('instance'),
+				whitespacePlus,
+				token('of'),
+				assertAdjacentOpeningTerminal,
+				whitespace,
+			],
+			map(token('integer'), (x) => [x])
+		)
+	),
+	(lhs, rhs) =>
+		rhs !== null ? ['instanceOfExpr', ['argExpr', lhs], ['sequenceType', ...rhs]] : lhs
+);
 
 const intersectExpr: Parser<IAST> = binaryOperator(
 	instanceofExpr,
@@ -662,7 +701,7 @@ export function parseUsingPrsc(xpath: string): ParseResult<IAST> {
 	return complete(parser)(xpath, 0);
 }
 
-//const query = '$test castable as banana';
+//const query = '$var instance of integer';
 //
 //const prscResult = parseUsingPrsc(query);
 //
