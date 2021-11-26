@@ -11,6 +11,7 @@ import {
 	Parser,
 	ParseResult,
 	peek,
+	plus,
 	preceded,
 	star,
 	then,
@@ -19,10 +20,15 @@ import {
 import { IAST } from './astHelper';
 import parseExpression from './parseExpression';
 
-const whitespace: Parser<string[]> = star(token(' '));
+const whitespace: Parser<string> = map(star(token(' ')), (x) => x.join(''));
+const whitespacePlus: Parser<string> = map(plus(token(' ')), (x) => x.join(''));
 
 function surrounded<T, S>(parser: Parser<T>, around: Parser<S>): Parser<T> {
 	return delimited(around, parser, around);
+}
+
+function precededMultiple<T, S>(before: Parser<S>[], parser: Parser<T>): Parser<T> {
+	return before.reverse().reduce((prev, curr) => preceded(curr, prev), parser);
 }
 
 function wrapArray<T>(parser: Parser<T>): Parser<[T]> {
@@ -262,7 +268,13 @@ const digits: Parser<string> = regex(/[0-9]+/);
 
 const doubleLiteral: Parser<IAST> = unimplemented;
 
-const decimalLiteral: Parser<IAST> = unimplemented;
+const decimalLiteral: Parser<IAST> = or([
+	map(preceded(token('.'), digits), (x) => ['decimalConstantExpr', ['value', '.' + x]]),
+	then(followed(digits, token('.')), optional(digits), (first, second) => [
+		'decimalConstantExpr',
+		['value', first + '.' + (second !== null ? second : '')],
+	]),
+]);
 
 const integerLiteral: Parser<IAST> = map(
 	digits,
@@ -319,7 +331,24 @@ const reservedFunctionNames = or([
 	token('typeswitch'),
 ]);
 
-const argumentList: Parser<IAST[]> = map(preceded(token('('), token(')')), (_) => []);
+const argumentPlaceholder: Parser<IAST> = wrapArray(alias(['?'], 'argumentPlaceholder'));
+
+const argument: Parser<IAST> = or([exprSingle, argumentPlaceholder]);
+
+const argumentList: Parser<IAST[]> = delimited(
+	token('('),
+	surrounded(
+		optional(
+			then(
+				argument,
+				star(preceded(surrounded(token(','), whitespace), argument)),
+				(first, following) => [first, ...following]
+			)
+		),
+		whitespace
+	),
+	token(')')
+);
 
 const functionCall: Parser<IAST> = preceded(
 	not(
@@ -356,7 +385,18 @@ const stepExprWithForcedStep: Parser<IAST> = or([
 
 const postfixExprWithoutStep: Parser<IAST> = followed(
 	primaryExpr,
-	not(peek(or([])), ['predicate', 'argument list', 'lookup'])
+	not(
+		peek(
+			preceded(
+				whitespace,
+				or([
+					// TODO: add predicate before and lookup after
+					argumentList,
+				])
+			)
+		),
+		['predicate', 'argument list', 'lookup']
+	)
 );
 
 const stepExprWithoutStep: Parser<IAST> = postfixExprWithoutStep;
@@ -450,14 +490,83 @@ function unaryExprIndirect(input: string, offset: number): ParseResult<IAST> {
 
 const arrowExpr: Parser<IAST> = unaryExpr;
 
-// TODO: adjacent opening terminal
-const castExpr: Parser<IAST> = arrowExpr;
+const typeName: Parser<IAST> = eqName;
 
-// TODO: adjacent opening terminal
-const castableExpr: Parser<IAST> = castExpr;
+const simpleTypeName: Parser<IAST> = typeName;
 
-// TODO: adjacent opening terminal
+const singleType: Parser<IAST> = then(simpleTypeName, optional(token('?')), (typeName, optional) =>
+	optional !== null
+		? ['singleType', ['atomicType', ...typeName], ['optional']]
+		: ['singleType', ['atomicType', ...typeName]]
+);
+
+const castExpr: Parser<IAST> = then(
+	arrowExpr,
+	optional(
+		precededMultiple(
+			[
+				whitespace,
+				token('cast'),
+				whitespacePlus,
+				token('as'),
+				assertAdjacentOpeningTerminal,
+				whitespace,
+			],
+			singleType
+		)
+	),
+	(lhs, rhs) => (rhs !== null ? ['castExpr', ['argExpr', lhs], rhs] : lhs)
+);
+
+const castableExpr: Parser<IAST> = then(
+	castExpr,
+	optional(
+		precededMultiple(
+			[
+				whitespace,
+				token('castable'),
+				whitespacePlus,
+				token('as'),
+				assertAdjacentOpeningTerminal,
+				whitespace,
+			],
+			singleType
+		)
+	),
+	(lhs, rhs) => (rhs !== null ? ['castableExpr', ['argExpr', lhs], rhs] : lhs)
+);
+
+// TODO: add other tests
+const itemType: Parser<IAST> = or([kindTest, wrapArray(alias(['item()'], 'anyItemType'))]);
+
+const occurrenceIndicator: Parser<string> = or(['?', '*', '+'].map(token));
+
+//const sequenceType: Parser<IAST> = or([
+//	wrapArray(wrapArray(alias(['empty-sequence()'], 'voidSequenceType'))),
+//	then(itemType, optional(occurrenceIndicator), (type, occurrence) => [
+//		type,
+//		...(occurrence !== null ? [['occurrenceIndicator', occurrence]] : []),
+//	]),
+//]);
+
 const treatExpr: Parser<IAST> = castableExpr;
+//then(
+//	castableExpr,
+//	optional(
+//		precededMultiple(
+//			[
+//				whitespace,
+//				token('treat'),
+//				whitespacePlus,
+//				token('as'),
+//				assertAdjacentOpeningTerminal,
+//				whitespace,
+//			],
+//			sequenceType
+//		)
+//	),
+//	(lhs, rhs) => (rhs !== null ? ['treatExpr', ['argExpr', lhs], ['sequenceType', ...rhs]] : lhs)
+//);
 
 // TODO: adjacent opening terminal
 const instanceofExpr: Parser<IAST> = treatExpr;
@@ -533,7 +642,9 @@ const andExpr: Parser<IAST> = binaryOperator(comparisonExpr, alias(['and'], 'and
 const orExpr: Parser<IAST> = binaryOperator(andExpr, alias(['or'], 'orOp'));
 
 // TODO: add support for flwor, quantified, switch, typeswitch, if, insert, delete, rename, replace, and copymodify
-const exprSingle: Parser<IAST> = orExpr;
+function exprSingle(input: string, offset: number): ParseResult<IAST> {
+	return orExpr(input, offset);
+}
 
 function expr(input: string, offset: number): ParseResult<IAST> {
 	return binaryOperator(exprSingle, token(','), (lhs, rhs) => {
@@ -551,7 +662,7 @@ export function parseUsingPrsc(xpath: string): ParseResult<IAST> {
 	return complete(parser)(xpath, 0);
 }
 
-//const query = 'true()';
+//const query = '$test castable as banana';
 //
 //const prscResult = parseUsingPrsc(query);
 //
