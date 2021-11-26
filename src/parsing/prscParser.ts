@@ -1,4 +1,3 @@
-import { lookup } from 'dns';
 import {
 	complete,
 	delimited,
@@ -20,6 +19,7 @@ import {
 } from 'prsc';
 import { IAST } from './astHelper';
 import parseExpression from './parseExpression';
+import { parse } from './xPathParser';
 
 const whitespace: Parser<string> = map(star(token(' ')), (x) => x.join(''));
 const whitespacePlus: Parser<string> = map(plus(token(' ')), (x) => x.join(''));
@@ -54,7 +54,12 @@ function binaryOperator(
 	);
 }
 
-function nonRepeatableBinaryOperator(exp: Parser<IAST>, operator: Parser<string>): Parser<IAST> {
+function nonRepeatableBinaryOperator(
+	exp: Parser<IAST>,
+	operator: Parser<string>,
+	firstArgName: string = 'firstOperand',
+	secondArgName: string = 'secondOperand'
+): Parser<IAST> {
 	return then(
 		exp,
 		optional(then(surrounded(operator, whitespace), exp, (a, b) => [a, b])),
@@ -62,7 +67,7 @@ function nonRepeatableBinaryOperator(exp: Parser<IAST>, operator: Parser<string>
 			if (rhs === null) {
 				return lhs;
 			}
-			return [rhs[0], ['firstOperand', lhs], ['secondOperand', rhs[1]]];
+			return [rhs[0], [firstArgName, lhs], [secondArgName, rhs[1]]];
 		}
 	);
 }
@@ -279,7 +284,7 @@ const wildcard: Parser<IAST> = or([
 	]) as Parser<IAST>,
 ]);
 
-const nameTest: Parser<IAST> = map(or([wildcard, eqName]), (x: IAST) => ['nameTest', ...x]);
+const nameTest: Parser<IAST> = or([wildcard, map(eqName, (x) => ['nameTest', ...x])]);
 
 const nodeTest: Parser<IAST> = or([kindTest, nameTest]);
 
@@ -697,7 +702,7 @@ const instanceofExpr: Parser<IAST> = then(
 				assertAdjacentOpeningTerminal,
 				whitespace,
 			],
-			map(token('integer'), (x) => [x])
+			sequenceType
 		)
 	),
 	(lhs, rhs) =>
@@ -707,7 +712,7 @@ const instanceofExpr: Parser<IAST> = then(
 const intersectExpr: Parser<IAST> = binaryOperator(
 	instanceofExpr,
 	followed(
-		or([alias(['intersect'], 'intersectOp'), alias(['except'], 'excetpOp')]),
+		or([alias(['intersect'], 'intersectOp'), alias(['except'], 'exceptOp')]),
 		assertAdjacentOpeningTerminal
 	)
 );
@@ -737,7 +742,9 @@ const additiveExpr: Parser<IAST> = binaryOperator(
 
 const rangeExpr: Parser<IAST> = nonRepeatableBinaryOperator(
 	additiveExpr,
-	alias(['to'], 'rangeSequenceExpr')
+	alias(['to'], 'rangeSequenceExpr'),
+	'startExpr',
+	'endExpr'
 );
 
 const stringConcatExpr: Parser<IAST> = binaryOperator(
@@ -781,7 +788,7 @@ function exprSingle(input: string, offset: number): ParseResult<IAST> {
 
 function expr(input: string, offset: number): ParseResult<IAST> {
 	return binaryOperator(exprSingle, token(','), (lhs, rhs) => {
-		return rhs.length === 0 ? lhs : ['sequenceExpr', lhs, ...rhs];
+		return rhs.length === 0 ? lhs : ['sequenceExpr', lhs, ...rhs.map((x) => x[1])];
 	})(input, offset);
 }
 
@@ -795,24 +802,24 @@ export function parseUsingPrsc(xpath: string): ParseResult<IAST> {
 	return complete(parser)(xpath, 0);
 }
 
-//const query = "'test'";
-//
-//const prscResult = parseUsingPrsc(query);
-//
-//if (prscResult.success === true) {
-//	const old = parseExpression(query, {});
-//	const prsc = prscResult.value;
-//	if (JSON.stringify(old) !== JSON.stringify(prsc)) {
-//		console.log('DIFFER');
-//		console.log('OLD');
-//		console.log(JSON.stringify(old, null, 4));
-//		console.log('PRSC');
-//		console.log(JSON.stringify(prsc, null, 4));
-//	} else {
-//		console.log('CORRECT!');
-//		console.log(JSON.stringify(prsc, null, 4));
-//	}
-//} else {
-//	console.log('Failed to parse:');
-//	console.log(prscResult.expected);
-//}
+const query = '@*';
+
+const prscResult = parseUsingPrsc(query);
+
+if (prscResult.success === true) {
+	const old = parse(query, { outputDebugInfo: false, xquery: true });
+	const prsc = prscResult.value;
+	if (JSON.stringify(old) !== JSON.stringify(prsc)) {
+		console.log('DIFFER');
+		console.log('OLD');
+		console.log(JSON.stringify(old, null, 4));
+		console.log('PRSC');
+		console.log(JSON.stringify(prsc, null, 4));
+	} else {
+		console.log('CORRECT!');
+		console.log(JSON.stringify(prsc, null, 4));
+	}
+} else {
+	console.log('Failed to parse:');
+	console.log(prscResult.expected);
+}
