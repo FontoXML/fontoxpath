@@ -18,7 +18,6 @@ import {
 	token,
 } from 'prsc';
 import { IAST } from './astHelper';
-import parseExpression from './parseExpression';
 import { parse } from './xPathParser';
 
 const whitespace: Parser<string> = map(star(token(' ')), (x) => x.join(''));
@@ -87,8 +86,8 @@ function regex(reg: RegExp): Parser<string> {
 	};
 }
 
-function isAttributeTest(nodeTest: IAST): boolean {
-	return nodeTest[0] === 'attributeTest' || nodeTest[0] === 'schemaAttributeTest';
+function isAttributeTest(test: IAST): boolean {
+	return test[0] === 'attributeTest' || test[0] === 'schemaAttributeTest';
 }
 
 function assertValidCodePoint(codePoint: number) {
@@ -110,16 +109,15 @@ function assertValidCodePoint(codePoint: number) {
 
 function parseCharacterReferences(input: string): string {
 	// TODO: this is not supported in xpath
-
-	return input.replace(/(&[^;]+);/g, function (match) {
+	return input.replace(/(&[^;]+);/g, (match) => {
 		if (/^&#x/.test(match)) {
-			var codePoint = parseInt(match.slice(3, -1), 16);
+			const codePoint = parseInt(match.slice(3, -1), 16);
 			assertValidCodePoint(codePoint);
 			return String.fromCodePoint(codePoint);
 		}
 
 		if (/^&#/.test(match)) {
-			var codePoint = parseInt(match.slice(2, -1), 10);
+			const codePoint = parseInt(match.slice(2, -1), 10);
 			assertValidCodePoint(codePoint);
 			return String.fromCodePoint(codePoint);
 		}
@@ -461,8 +459,8 @@ const postfixExprWithStep: Parser<IAST> = then(
 			preceded(whitespace, lookup),
 		])
 	),
-	(expr, postfixExpr) => {
-		let toWrap: any = expr;
+	(expression, postfixExpr) => {
+		let toWrap: any = expression;
 
 		const predicates: IAST[] = [];
 		const filters: IAST[] = [];
@@ -611,10 +609,10 @@ const typeName: Parser<IAST> = eqName;
 
 const simpleTypeName: Parser<IAST> = typeName;
 
-const singleType: Parser<IAST> = then(simpleTypeName, optional(token('?')), (typeName, optional) =>
-	optional !== null
-		? ['singleType', ['atomicType', ...typeName], ['optional']]
-		: ['singleType', ['atomicType', ...typeName]]
+const singleType: Parser<IAST> = then(simpleTypeName, optional(token('?')), (type, opt) =>
+	opt !== null
+		? ['singleType', ['atomicType', ...type], ['optional']]
+		: ['singleType', ['atomicType', ...type]]
 );
 
 const castExpr: Parser<IAST> = then(
