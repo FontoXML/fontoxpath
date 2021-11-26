@@ -1,3 +1,4 @@
+import { lookup } from 'dns';
 import {
 	complete,
 	delimited,
@@ -430,8 +431,94 @@ const primaryExpr: Parser<IAST> = or([
 	functionCall,
 ]);
 
-// TODO: actually add the postfix expr
-const postfixExprWithStep: Parser<IAST> = unimplemented;
+const keySpecifier: Parser<string | IAST> = or([
+	ncName as Parser<string | IAST>,
+	integerLiteral,
+	parenthesizedExpr,
+	token('*'),
+]);
+
+const lookup: Parser<IAST> = map(precededMultiple([token('?'), whitespace], keySpecifier), (x) =>
+	x === '*'
+		? ['lookup', ['star']]
+		: // TODO: Maybe get rid of the typeof
+		typeof x === 'string'
+		? ['lookup', ['NCName', x]]
+		: ['lookup', x]
+);
+
+const postfixExprWithStep: Parser<IAST> = then(
+	map(primaryExpr, (x) => wrapInSequenceExprIfNeeded(x)),
+	star(
+		or([
+			map(preceded(whitespace, predicate), (x) => ['predicate', x] as IAST),
+			map(preceded(whitespace, argumentList), (x) => ['argumentList', x] as IAST),
+			preceded(whitespace, lookup),
+		])
+	),
+	(expr, postfixExpr) => {
+		let toWrap: any = expr;
+
+		const predicates: IAST[] = [];
+		const filters: IAST[] = [];
+
+		let allowSinglePredicate = false;
+
+		function flushPredicates() {
+			if (allowSinglePredicate && predicates.length === 1) {
+				filters.push(['predicate', predicates[0]]);
+			} else if (predicates.length !== 0) {
+				filters.push(['predicates', ...predicates]);
+			}
+			predicates.length = 0;
+		}
+
+		function flushFilters(ensureFilter: boolean) {
+			flushPredicates();
+			if (filters.length !== 0) {
+				if (toWrap[0] === 'sequenceExpr' && toWrap.length > 2) {
+					toWrap = ['sequenceExpr', toWrap];
+				}
+				toWrap = [['filterExpr', toWrap], ...filters];
+			} else if (ensureFilter) {
+				toWrap = [['filterExpr', toWrap]];
+			} else {
+				toWrap = [toWrap];
+			}
+		}
+
+		for (const postFix of postfixExpr) {
+			switch (postFix[0]) {
+				case 'predicate':
+					predicates.push(postFix[1] as IAST);
+					break;
+				case 'lookup':
+					allowSinglePredicate = true;
+					flushPredicates();
+					filters.push(postFix);
+					break;
+				case 'argumentList':
+					flushFilters(false);
+					if (toWrap.length > 1) {
+						toWrap = [['sequenceExpr', ['pathExpr', ['stepExpr', ...toWrap]]]];
+					}
+					toWrap = [
+						'dynamicFunctionInvocationExpr',
+						['functionItem', ...toWrap],
+						...((postFix[1] as IAST).length
+							? [['arguments', ...(postFix[1] as IAST)]]
+							: [[]]),
+					];
+				default:
+					throw new Error('unreachable');
+			}
+		}
+
+		flushFilters(true);
+
+		return toWrap;
+	}
+);
 
 const stepExprWithForcedStep: Parser<IAST> = or([
 	map(postfixExprWithStep, (x) => ['stepExpr', ...x]),
