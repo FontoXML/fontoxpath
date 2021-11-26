@@ -134,6 +134,36 @@ function parseCharacterReferences(input: string): string {
 	});
 }
 
+function wrapInSequenceExprIfNeeded(exp: IAST): IAST {
+	switch (exp[0]) {
+		// These expressions do not have to be wrapped (are allowed in a filterExpr)
+		case 'constantExpr':
+		case 'varRef':
+		case 'contextItemExpr':
+		case 'functionCallExpr':
+		case 'sequenceExpr':
+		case 'elementConstructor':
+		case 'computedElementConstructor':
+		case 'computedAttributeConstructor':
+		case 'computedDocumentConstructor':
+		case 'computedTextConstructor':
+		case 'computedCommentConstructor':
+		case 'computedNamespaceConstructor':
+		case 'computedPIConstructor':
+		case 'orderedExpr':
+		case 'unorderedExpr':
+		case 'namedFunctionRef':
+		case 'inlineFunctionExpr':
+		case 'dynamicFunctionInvocationExpr':
+		case 'mapConstructor':
+		case 'arrayConstructor':
+		case 'stringConstructor':
+		case 'unaryLookup':
+			return exp;
+	}
+	return ['sequenceExpr', exp];
+}
+
 const assertAdjacentOpeningTerminal: Parser<string> = peek(
 	// TODO: add other whitespace characters
 	or([token('('), token('"'), token("'"), token(' ')])
@@ -207,8 +237,6 @@ const ncNameStartChar: Parser<string> = or([
 	then(regex(/[\uD800-\uDB7F]/), regex(/[\uDC00-\uDFFF]/), (a, b) => a + b),
 ]);
 
-// FIXME: ncNameStartChar seems to be working but combining that with otiher chars breaks the code
-// Take for example: `ncName('test', 0)`
 const ncNameChar: Parser<string> = or([
 	ncNameStartChar,
 	regex(/[\-\.0-9\xB7\u0300-\u036F\u203F\u2040]/),
@@ -304,7 +332,16 @@ const numericLiteral: Parser<IAST> = followed(
 	peek(not(regex(/[a-zA-Z]/), ['no alphabetical characters after numeric literal']))
 );
 
-const stringLiteral: Parser<string> = token('unimplemented');
+const escapeQuot: Parser<string> = alias(['""'], '"');
+
+const escapeApos: Parser<string> = alias(["''"], "'");
+
+// TODO: add check for xquery
+const stringLiteral: Parser<string> = or([
+	// TODO: add more advanced string literals
+	map(surrounded(star(or([escapeQuot, regex(/[^\"]/)])), token('"')), (x) => x.join('')),
+	map(surrounded(star(or([escapeApos, regex(/[^']/)])), token("'")), (x) => x.join('')),
+]);
 
 const literal: Parser<IAST> = or([
 	numericLiteral,
@@ -432,36 +469,6 @@ const pathExpr: Parser<IAST> = or([relativePathExpr, absolutePathExpr]);
 const validateExpr: Parser<IAST> = unimplemented;
 
 const extensionExpr: Parser<IAST> = unimplemented;
-
-function wrapInSequenceExprIfNeeded(exp: IAST): IAST {
-	switch (exp[0]) {
-		// These expressions do not have to be wrapped (are allowed in a filterExpr)
-		case 'constantExpr':
-		case 'varRef':
-		case 'contextItemExpr':
-		case 'functionCallExpr':
-		case 'sequenceExpr':
-		case 'elementConstructor':
-		case 'computedElementConstructor':
-		case 'computedAttributeConstructor':
-		case 'computedDocumentConstructor':
-		case 'computedTextConstructor':
-		case 'computedCommentConstructor':
-		case 'computedNamespaceConstructor':
-		case 'computedPIConstructor':
-		case 'orderedExpr':
-		case 'unorderedExpr':
-		case 'namedFunctionRef':
-		case 'inlineFunctionExpr':
-		case 'dynamicFunctionInvocationExpr':
-		case 'mapConstructor':
-		case 'arrayConstructor':
-		case 'stringConstructor':
-		case 'unaryLookup':
-			return exp;
-	}
-	return ['sequenceExpr', exp];
-}
 
 // TODO: wrap in stacktrace
 const simpleMapExpr: Parser<IAST> = binaryOperator(
@@ -701,7 +708,7 @@ export function parseUsingPrsc(xpath: string): ParseResult<IAST> {
 	return complete(parser)(xpath, 0);
 }
 
-//const query = '$var instance of integer';
+//const query = "'test'";
 //
 //const prscResult = parseUsingPrsc(query);
 //
