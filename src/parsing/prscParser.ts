@@ -24,6 +24,10 @@ function surrounded<T, S>(parser: Parser<T>, around: Parser<S>): Parser<T> {
 	return delimited(around, parser, around);
 }
 
+function wrapArray<T>(parser: Parser<T>): Parser<[T]> {
+	return map(parser, (x) => [x]);
+}
+
 function binaryOperator(
 	exp: Parser<IAST>,
 	operator: Parser<string>,
@@ -64,7 +68,7 @@ const assertAdjacentOpeningTerminal: Parser<string> = peek(
 	or([token('('), token('"'), token("'"), token(' ')])
 );
 
-const unimplemented: Parser<IAST> = map(token('unimplemented'), (x) => [x]);
+const unimplemented: Parser<IAST> = wrapArray(token('unimplemented'));
 
 const predicate: Parser<IAST> = preceded(
 	token('['),
@@ -95,7 +99,35 @@ const reverseAxis: Parser<string> = map(
 	(x: string) => x.substring(0, x.length - 2)
 );
 
-const kindTest: Parser<IAST> = unimplemented;
+const documentTest: Parser<IAST> = unimplemented;
+
+const elementTest: Parser<IAST> = unimplemented;
+
+const attributeTest: Parser<IAST> = unimplemented;
+
+const schemaElementTest: Parser<IAST> = unimplemented;
+
+const piTest: Parser<IAST> = unimplemented;
+
+const commentTest: Parser<IAST> = wrapArray(alias(['comment()'], 'commentTest'));
+
+const textTest: Parser<IAST> = wrapArray(alias(['text()'], 'textTest'));
+
+const namespaceNodeTest: Parser<IAST> = wrapArray(alias(['namespace-node()'], 'namespaceTest'));
+
+const anyKindTest: Parser<IAST> = wrapArray(alias(['node()'], 'anyKindTest'));
+
+const kindTest: Parser<IAST> = or([
+	documentTest,
+	elementTest,
+	attributeTest,
+	schemaElementTest,
+	piTest,
+	commentTest,
+	textTest,
+	namespaceNodeTest,
+	anyKindTest,
+]);
 
 function regex(reg: RegExp): Parser<string> {
 	return (input: string, offset: number): ParseResult<string> => {
@@ -126,7 +158,7 @@ const ncName: Parser<string> = then(ncNameStartChar, star(ncNameChar), (a, b) =>
 
 const localPart: Parser<string> = ncName;
 
-const unprefixedName: Parser<IAST> = map(localPart, (x) => [x]);
+const unprefixedName: Parser<IAST> = wrapArray(localPart);
 
 // TODO: add prefixed name
 const qName: Parser<IAST> = unprefixedName;
@@ -357,7 +389,7 @@ export function parseUsingPrsc(xpath: string): ParseResult<IAST> {
 	return complete(parser)(xpath, 0);
 }
 
-const query = '-parent::p';
+const query = 'self::text()';
 
 const prscResult = parseUsingPrsc(query);
 
