@@ -1,19 +1,20 @@
 import {
-	error,
 	complete,
+	delimited,
+	error,
 	followed,
-	peek,
 	map,
+	not,
+	okWithValue,
 	optional,
 	or,
 	Parser,
 	ParseResult,
+	peek,
 	preceded,
 	star,
 	then,
 	token,
-	okWithValue,
-	delimited,
 } from 'prsc';
 import { IAST } from './astHelper';
 import parseExpression from './parseExpression';
@@ -61,6 +62,66 @@ function nonRepeatableBinaryOperator(exp: Parser<IAST>, operator: Parser<string>
 
 function alias(tokenNames: string[], name: string): Parser<string> {
 	return map(or(tokenNames.map(token)), (_) => name);
+}
+
+function regex(reg: RegExp): Parser<string> {
+	return (input: string, offset: number): ParseResult<string> => {
+		const match = reg.exec(input.substring(offset));
+		if (match && match.index === 0) {
+			return okWithValue(offset + match[0].length, match[0]);
+		} else {
+			return error(offset, [reg.source], false);
+		}
+	};
+}
+
+function assertValidCodePoint(codePoint: number) {
+	if (
+		(codePoint >= 0x1 && codePoint <= 0xd7ff) ||
+		(codePoint >= 0xe000 && codePoint <= 0xfffd) ||
+		(codePoint >= 0x10000 && codePoint <= 0x10ffff)
+	) {
+		return;
+	}
+	throw new Error(
+		'XQST0090: The character reference ' +
+			codePoint +
+			' (' +
+			codePoint.toString(16) +
+			') does not reference a valid codePoint.'
+	);
+}
+
+function parseCharacterReferences(input: string) {
+	// TODO: this is not supported in xpath
+
+	return input.replace(/(&[^;]+);/g, function (match) {
+		if (/^&#x/.test(match)) {
+			var codePoint = parseInt(match.slice(3, -1), 16);
+			assertValidCodePoint(codePoint);
+			return String.fromCodePoint(codePoint);
+		}
+
+		if (/^&#/.test(match)) {
+			var codePoint = parseInt(match.slice(2, -1), 10);
+			assertValidCodePoint(codePoint);
+			return String.fromCodePoint(codePoint);
+		}
+
+		switch (match) {
+			case '&lt;':
+				return '<';
+			case '&gt;':
+				return '>';
+			case '&amp;':
+				return '&';
+			case '&quot;':
+				return String.fromCharCode(34);
+			case '&apos;':
+				return String.fromCharCode(39);
+		}
+		throw new Error('XPST0003: Unknown character reference: "' + match + '"');
+	});
 }
 
 const assertAdjacentOpeningTerminal: Parser<string> = peek(
@@ -129,17 +190,6 @@ const kindTest: Parser<IAST> = or([
 	anyKindTest,
 ]);
 
-function regex(reg: RegExp): Parser<string> {
-	return (input: string, offset: number): ParseResult<string> => {
-		const match = reg.exec(input.substring(offset));
-		if (match && match.index === 0) {
-			return okWithValue(offset + match[0].length, match[0]);
-		} else {
-			return error(offset, [reg.source], false);
-		}
-	};
-}
-
 const ncNameStartChar: Parser<string> = or([
 	regex(
 		/[A-Z_a-z\xC0-\xD6\xD8-\xF6\xF8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD]/
@@ -200,11 +250,56 @@ const axisStep: Parser<IAST> = then(
 	(a: IAST, b: IAST | undefined) => (b === undefined ? a : (a.concat([b]) as IAST))
 );
 
-// TODO: add other variants
-const stepExprWithForcedStep: Parser<IAST> = axisStep;
+const digits: Parser<string> = regex(/[0-9]+/);
+
+const doubleLiteral: Parser<IAST> = unimplemented;
+
+const decimalLiteral: Parser<IAST> = unimplemented;
+
+const integerLiteral: Parser<IAST> = map(
+	digits,
+	(x) => ['integerConstantExpr', ['value', x]] as IAST
+);
+
+const numericLiteral: Parser<IAST> = followed(
+	or([doubleLiteral, decimalLiteral, integerLiteral]),
+	peek(not(regex(/[a-zA-Z]/), ['no alphabetical characters after numeric literal']))
+);
+
+const stringLiteral: Parser<string> = token('unimplemented');
+
+const literal: Parser<IAST> = or([
+	numericLiteral,
+	map(stringLiteral, (x) => ['stringConstantExpr', ['value', parseCharacterReferences(x)]]),
+]);
+
+const varName: Parser<IAST> = eqName;
+
+const varRef: Parser<IAST> = map(preceded(token('$'), varName), (x) => ['varRef', ['name', ...x]]);
 
 // TODO: add other variants
-const relativePathExpr: Parser<IAST> = or([map(stepExprWithForcedStep, (x) => ['pathExpr', x])]);
+const primaryExpr: Parser<IAST> = or([literal, varRef]);
+
+// TODO: actually add the postfix expr
+const postfixExprWithStep: Parser<IAST> = unimplemented;
+
+const stepExprWithForcedStep: Parser<IAST> = or([
+	map(postfixExprWithStep, (x) => ['stepExpr', ...x]),
+	axisStep,
+]);
+
+const postfixExprWithoutStep: Parser<IAST> = followed(
+	primaryExpr,
+	not(peek(or([])), ['predicate', 'argument list', 'lookup'])
+);
+
+const stepExprWithoutStep: Parser<IAST> = postfixExprWithoutStep;
+
+// TODO: add other variants
+const relativePathExpr: Parser<IAST> = or([
+	map(stepExprWithForcedStep, (x) => ['pathExpr', x]),
+	stepExprWithoutStep,
+]);
 
 const absolutePathExpr: Parser<IAST> = unimplemented;
 
@@ -389,7 +484,7 @@ export function parseUsingPrsc(xpath: string): ParseResult<IAST> {
 	return complete(parser)(xpath, 0);
 }
 
-const query = 'self::text()';
+const query = '12 + $test';
 
 const prscResult = parseUsingPrsc(query);
 
@@ -410,4 +505,3 @@ if (prscResult.success === true) {
 	console.log('Failed to parse:');
 	console.log(prscResult.expected);
 }
-
