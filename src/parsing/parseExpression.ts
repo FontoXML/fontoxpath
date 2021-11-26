@@ -36,8 +36,12 @@ export default function parseExpression(
 			// });
 
 			const parseResult = parseUsingPrsc(xPathString);
-			if (parseResult.success) {
+			if (parseResult.success === true) {
 				ast = parseResult.value;
+			} else {
+				throw new Error(
+					`Failed to parse '${xPathString}' expected: ${parseResult.expected}`
+				);
 			}
 
 			if (!compilationOptions.debug) {
