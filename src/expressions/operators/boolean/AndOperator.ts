@@ -11,6 +11,44 @@ import Expression from '../../Expression';
 import Specificity from '../../Specificity';
 import { DONE_TOKEN, ready } from '../../util/iterators';
 
+function intersectBuckets(bucket1: string | null, bucket2: string | null): string | null {
+	// null bucket applies to everything
+	if (bucket1 === null) {
+		return bucket2;
+	}
+	if (bucket2 === null) {
+		return bucket1;
+	}
+	// empty bucket applies to nothing
+	if (bucket1 === 'empty' || bucket2 === 'empty') {
+		return 'empty';
+	}
+	// Same bucket is same
+	if (bucket1 === bucket2) {
+		return bucket1;
+	}
+
+	if (bucket1.startsWith('name-')) {
+		// Name bucket always refers to an element or attribute
+		if (bucket2 === 'type-1' || bucket2 === 'type-1-or-type-2' || bucket2 === 'type-2') {
+			// A name is more specific than a type
+			return bucket1;
+		}
+		// Even if bucket2 is a name, we know it's not equal, so intersection is empty
+		return 'empty';
+	}
+
+	if (bucket1 === 'type-1-or-type-2' && (bucket2 === 'type-1' || bucket2 === 'type-2')) {
+		return bucket2;
+	}
+	if (bucket2 === 'type-1-or-type-2' && (bucket1 === 'type-1' || bucket1 === 'type-2')) {
+		return bucket1;
+	}
+
+	// Can't match anything
+	return 'empty';
+}
+
 class AndOperator extends Expression {
 	private _subExpressions: Expression[];
 	constructor(expressions: Expression[], type: SequenceType) {
@@ -84,14 +122,10 @@ class AndOperator extends Expression {
 	}
 
 	public getBucket() {
-		// Any bucket of our subexpressions should do, and is preferable to no bucket
-		for (let i = 0, l = this._subExpressions.length; i < l; ++i) {
-			const bucket = this._subExpressions[i].getBucket();
-			if (bucket) {
-				return bucket;
-			}
-		}
-		return null;
+		return this._subExpressions.reduce<string | null>(
+			(bucket, expression) => intersectBuckets(bucket, expression.getBucket()),
+			null
+		);
 	}
 }
 export default AndOperator;
