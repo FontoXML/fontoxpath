@@ -11,6 +11,12 @@ import Expression from '../../Expression';
 import Specificity from '../../Specificity';
 import { DONE_TOKEN, ready } from '../../util/iterators';
 
+const subBucketsByBucket: Record<string, string[]> = {
+	'type-1-or-type-2': ['name', 'type-1', 'type-2'],
+	'type-1': ['name'],
+	'type-2': ['name'],
+};
+
 function intersectBuckets(bucket1: string | null, bucket2: string | null): string | null {
 	// null bucket applies to everything
 	if (bucket1 === null) {
@@ -19,47 +25,31 @@ function intersectBuckets(bucket1: string | null, bucket2: string | null): strin
 	if (bucket2 === null) {
 		return bucket1;
 	}
-	// empty bucket applies to nothing
-	if (bucket1 === 'empty' || bucket2 === 'empty') {
-		return 'empty';
-	}
 	// Same bucket is same
 	if (bucket1 === bucket2) {
 		return bucket1;
 	}
-
-	if (bucket1.startsWith('name-')) {
-		// Name bucket always refers to an element or attribute
-		if (bucket2 === 'type-1' || bucket2 === 'type-1-or-type-2' || bucket2 === 'type-2') {
-			// A name is more specific than a type
-			return bucket1;
-		}
-		// Even if bucket2 is a name, we know it's not equal, so intersection is empty
-		return 'empty';
-	}
-
-	if (bucket2.startsWith('name-')) {
-		// Name bucket always refers to an element or attribute
-		if (bucket1 === 'type-1' || bucket1 === 'type-1-or-type-2' || bucket1 === 'type-2') {
-			// A name is more specific than a type
-			return bucket2;
-		}
-		return 'empty';
-	}
-
-	if (bucket1 === 'type-1-or-type-2' && (bucket2 === 'type-1' || bucket2 === 'type-2')) {
+	// Find the more specific one, given that the buckets are not equal
+	const type1 = bucket1.startsWith('name-') ? 'name' : bucket1;
+	const type2 = bucket2.startsWith('name-') ? 'name' : bucket2;
+	const subtypes1 = subBucketsByBucket[type1];
+	if (subtypes1 !== undefined && subtypes1.includes(type2)) {
+		// bucket 2 is more specific
 		return bucket2;
 	}
-	if (bucket2 === 'type-1-or-type-2' && (bucket1 === 'type-1' || bucket1 === 'type-2')) {
+	const subtypes2 = subBucketsByBucket[type2];
+	if (subtypes2 !== undefined && subtypes2.includes(type1)) {
+		// bucket 1 is more specific
 		return bucket1;
 	}
 
-	// Can't match anything
+	// Expression will never match any nodes
 	return 'empty';
 }
 
 class AndOperator extends Expression {
-	private _subExpressions: Expression[];
+	private readonly _bucket: string | null;
+	private readonly _subExpressions: Expression[];
 	constructor(expressions: Expression[], type: SequenceType) {
 		super(
 			expressions.reduce((specificity, selector) => {
@@ -75,6 +65,10 @@ class AndOperator extends Expression {
 			type
 		);
 		this._subExpressions = expressions;
+		this._bucket = expressions.reduce<string | null>(
+			(bucket, expression) => intersectBuckets(bucket, expression.getBucket()),
+			null
+		);
 	}
 
 	public evaluate(
@@ -131,10 +125,7 @@ class AndOperator extends Expression {
 	}
 
 	public getBucket() {
-		return this._subExpressions.reduce<string | null>(
-			(bucket, expression) => intersectBuckets(bucket, expression.getBucket()),
-			null
-		);
+		return this._bucket;
 	}
 }
 export default AndOperator;
