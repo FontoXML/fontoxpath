@@ -11,6 +11,10 @@ import Expression from '../../Expression';
 import Specificity from '../../Specificity';
 import { DONE_TOKEN, ready } from '../../util/iterators';
 
+// Some buckets include others. For the purpose of determining their intersection, this lists
+// "subtypes" per bucket, with all name-* buckets collapsed into "name".
+// Note that although "name" is not a strict subtype of either "type-1" or "type-2", it is generally
+// more specific than the type-based ones, so we consider it a subtype of both.
 const subBucketsByBucket: Record<string, string[]> = {
 	'type-1-or-type-2': ['name', 'type-1', 'type-2'],
 	'type-1': ['name'],
