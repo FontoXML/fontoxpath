@@ -38,6 +38,15 @@ function intersectBuckets(bucket1: string | null, bucket2: string | null): strin
 		return 'empty';
 	}
 
+	if (bucket2.startsWith('name-')) {
+		// Name bucket always refers to an element or attribute
+		if (bucket1 === 'type-1' || bucket1 === 'type-1-or-type-2' || bucket1 === 'type-2') {
+			// A name is more specific than a type
+			return bucket2;
+		}
+		return 'empty';
+	}
+
 	if (bucket1 === 'type-1-or-type-2' && (bucket2 === 'type-1' || bucket2 === 'type-2')) {
 		return bucket2;
 	}

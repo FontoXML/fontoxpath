@@ -18,7 +18,21 @@ describe('getBucketForSelector', () => {
 		assertBucketForSelector('self::element()', 'type-1');
 	});
 	it('returns the correct bucket for expressions using the and operator', () => {
+		assertBucketForSelector('self::node() and self::element()', 'type-1');
 		assertBucketForSelector('self::element() and self::node()', 'type-1');
+		assertBucketForSelector('self::element() and self::attribute()', 'empty');
+		assertBucketForSelector('self::element() and self::p', 'name-p');
+		assertBucketForSelector('self::p and self::element()', 'name-p');
+		assertBucketForSelector('self::p and self::attribute()', 'name-p');
+		assertBucketForSelector('self::p and self::*', 'name-p');
+		assertBucketForSelector('self::p and self::p', 'name-p');
+		assertBucketForSelector('self::p and self::q', 'empty');
+		assertBucketForSelector('self::p and self::q and self::p', 'empty');
+		assertBucketForSelector('self::p and self::processing-instruction()', 'empty');
+		assertBucketForSelector('self::element() and self::*', 'type-1');
+		assertBucketForSelector('self::attribute() and self::*', 'type-2');
+		assertBucketForSelector('self::* and self::attribute()', 'type-2');
+		assertBucketForSelector('self::* and self::p', 'name-p');
 	});
 	it('returns the correct bucket for expressions using the and operator, first not having a bucket', () => {
 		assertBucketForSelector('true() and self::element()', 'type-1');
