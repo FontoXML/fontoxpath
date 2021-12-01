@@ -1,28 +1,28 @@
-import convertXmlToAst from '../../parsing/convertXmlToAst';
+import { ElementNodePointer } from 'src/domClone/Pointer';
 import { printAndRethrowError } from '../../evaluationUtils/printAndRethrowError';
 import astHelper, { IAST } from '../../parsing/astHelper';
 import compileAstToExpression from '../../parsing/compileAstToExpression';
+import convertXmlToAst from '../../parsing/convertXmlToAst';
 import parseExpression from '../../parsing/parseExpression';
 import processProlog from '../../parsing/processProlog';
 import annotateAst from '../../typeInference/annotateAST';
 import { AnnotationContext } from '../../typeInference/AnnotationContext';
 import createAtomicValue from '../dataTypes/createAtomicValue';
+import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value, { SequenceMultiplicity, ValueType, valueTypeToString } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
 import ExecutionSpecificStaticContext from '../ExecutionSpecificStaticContext';
 import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
 import StaticContext from '../StaticContext';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import { IIterator, IterationHint } from '../util/iterators';
+import { errXPTY0004 } from '../XPathErrors';
 import { BuiltinDeclarationType } from './builtInFunctions';
 import FunctionDefinitionType from './FunctionDefinitionType';
-import { errXPTY0004 } from '../XPathErrors';
-import { ElementNodePointer } from 'src/domClone/Pointer';
-import ExecutionParameters from '../ExecutionParameters';
-import ISequence from '../dataTypes/ISequence';
 
 function createAstFromValue(queryValue: Value, debug: boolean): IAST {
 	if (isSubtypeOf(queryValue.type, ValueType.XSSTRING)) {
@@ -128,7 +128,7 @@ function buildResultIterator(
 	try {
 		return {
 			resultIterator: selector.evaluate(innerDynamicContext, executionParameters).value,
-			queryValue: queryValue,
+			queryValue,
 		};
 	} catch (error) {
 		printAndRethrowError(queryValue.value, error);
