@@ -421,7 +421,7 @@ const functionCall: Parser<IAST> = preceded(
 	then(eqName, preceded(whitespace, argumentList), (name, args) => [
 		'functionCallExpr',
 		['functionName', ...name],
-		['arguments', ...args],
+		args !== null ? ['arguments', ...args] : ['arguments'],
 	])
 );
 
@@ -829,7 +829,7 @@ export function parseUsingPrsc(xpath: string): ParseResult<IAST> {
 	return complete(parser)(xpath, 0);
 }
 
-const query = 'array {1, 2}';
+const query = 'true()';
 
 const prscResult = parseUsingPrsc(query);
 
