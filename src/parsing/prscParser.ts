@@ -445,6 +445,17 @@ const functionCall: Parser<IAST> = preceded(
 	])
 );
 
+const namedFunctionRef: Parser<IAST> = then(
+	eqName,
+	preceded(token('#'), integerLiteral),
+	(name, integer) => ['namedFunctionRef', ['functionName', ...name], integer]
+);
+
+const functionItemExpr: Parser<IAST> = or([
+	namedFunctionRef,
+	//TODO: inlineFunctionExpr,
+]);
+
 const mapKeyExpr: Parser<IAST> = map(exprSingle, (x) => ['mapKeyExpr', x]);
 const mapValueExpr: Parser<IAST> = map(exprSingle, (x) => ['mapValueExpr', x]);
 
@@ -475,16 +486,21 @@ const mapConstructor: Parser<IAST> = preceded(
 	)
 );
 
-const squareArrayConstructor: Parser<IAST> = delimited(
-	token('['),
-	surrounded(
-		binaryOperator(exprSingle, token(','), (lhs, rhs) => {
-			const elements: IAST[] = [lhs, ...rhs.map((x) => x[1])].map((x) => ['arrayElem', x]);
-			return ['squareArray', ...elements];
-		}),
-		whitespace
+const squareArrayConstructor: Parser<IAST> = map(
+	delimited(
+		token('['),
+		surrounded(
+			optional(
+				binaryOperator(exprSingle, token(','), (lhs, rhs) =>
+					[lhs, ...rhs.map((x) => x[1])].map((x) => ['arrayElem', x])
+				)
+			),
+			whitespace
+		),
+		token(']')
 	),
-	token(']')
+	// TODO: this null seems weird, try the query `[]`
+	(x) => ['squareArray', ...(x !== null ? x : [null])] as IAST
 );
 
 const enclosedExpr: Parser<IAST | null> = delimited(
@@ -495,7 +511,7 @@ const enclosedExpr: Parser<IAST | null> = delimited(
 
 const curlyArrayConstructor: Parser<IAST> = map(
 	preceded(token('array'), preceded(whitespace, enclosedExpr)),
-	(x) => ['curlyArray', ...(x != null ? [['arrayElem', x]] : [])] as IAST
+	(x) => ['curlyArray', ...(x !== null ? [['arrayElem', x]] : [])] as IAST
 );
 
 const arrayConstructor: Parser<IAST> = map(
@@ -528,6 +544,7 @@ const primaryExpr: Parser<IAST> = or([
 	parenthesizedExpr,
 	contextItemExpr,
 	functionCall,
+	functionItemExpr,
 	mapConstructor,
 	arrayConstructor,
 	unaryLookup,
@@ -895,9 +912,39 @@ const orExpr: Parser<IAST> = binaryOperator(
 	defaultBinaryOperatorFn
 );
 
+const ifExpr: Parser<IAST> = then(
+	then(
+		precededMultiple([token('if'), whitespace, token('('), whitespace], expr),
+		precededMultiple(
+			[
+				whitespace,
+				token(')'),
+				whitespace,
+				token('then'),
+				assertAdjacentOpeningTerminal,
+				whitespace,
+			],
+			exprSingle
+		),
+		(ifClause, thenClause) => [ifClause, thenClause]
+	),
+	precededMultiple(
+		[whitespace, token('else'), assertAdjacentOpeningTerminal, whitespace],
+		exprSingle
+	),
+	(ifthen, elseClause) => {
+		return [
+			'ifThenElseExpr',
+			['ifClause', ifthen[0]],
+			['thenClause', ifthen[1]],
+			['elseClause', elseClause],
+		];
+	}
+);
+
 // TODO: add support for flwor, quantified, switch, typeswitch, if, insert, delete, rename, replace, and copymodify
 function exprSingle(input: string, offset: number): ParseResult<IAST> {
-	return orExpr(input, offset);
+	return or([ifExpr, orExpr])(input, offset);
 }
 
 function expr(input: string, offset: number): ParseResult<IAST> {
