@@ -203,7 +203,16 @@ const reverseAxis: Parser<string> = map(
 
 const documentTest: Parser<IAST> = unimplemented;
 
-const elementTest: Parser<IAST> = unimplemented;
+// TODO: implement other variants
+const elementTest: Parser<IAST> = or([
+	map(
+		precededMultiple(
+			[token('element'), whitespace],
+			delimited(token('('), whitespace, token(')'))
+		),
+		(_) => ['elementTest']
+	),
+]);
 
 const attributeTest: Parser<IAST> = unimplemented;
 
@@ -532,6 +541,12 @@ const lookup: Parser<IAST> = map(precededMultiple([token('?'), whitespace], keyS
 		: ['lookup', x]
 );
 
+const locationPathAbbreviation: Parser<IAST> = map(token('//'), (_) => [
+	'stepExpr',
+	['xpathAxis', 'descendant-or-self'],
+	['anyKindTest'],
+]);
+
 const postfixExprWithStep: Parser<IAST> = then(
 	map(primaryExpr, (x) => wrapInSequenceExprIfNeeded(x)),
 	star(
@@ -628,7 +643,19 @@ const relativePathExpr: Parser<IAST> = or([
 	map(stepExprWithForcedStep, (x) => ['pathExpr', x]),
 ]);
 
-const absoluteLocationPath: Parser<IAST> = unimplemented;
+// TODO: add other variants
+const relativePathExprWithForcedStep: Parser<IAST[]> = or([
+	map(stepExprWithForcedStep, (x) => [x]),
+]);
+
+// TODO: add other variants
+const absoluteLocationPath: Parser<IAST> = or([
+	then(
+		locationPathAbbreviation,
+		preceded(whitespace, relativePathExprWithForcedStep),
+		(abbrev, path) => ['pathExpr', ['rootExpr'], abbrev, ...path]
+	),
+]);
 
 const pathExpr: Parser<IAST> = or([relativePathExpr, absoluteLocationPath]);
 
