@@ -1,5 +1,5 @@
 import { IAST } from './astHelper';
-import { parseUsingPrsc } from './prscParser';
+import { parseUsingPrsc } from './prsc/prscParser';
 import { parse, SyntaxError } from './xPathParser';
 
 const astParseResultCache = Object.create(null);

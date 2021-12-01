@@ -17,169 +17,34 @@ import {
 	then,
 	token,
 } from 'prsc';
-import { IAST } from './astHelper';
-import { parse } from './xPathParser';
+import { IAST } from '../astHelper';
+import {
+	unimplemented,
+	wrapArray,
+	alias,
+	regex,
+	isAttributeTest,
+	surrounded,
+	parseCharacterReferences,
+	precededMultiple,
+	whitespace,
+	whitespacePlus,
+	wrapInSequenceExprIfNeeded,
+	binaryOperator,
+	assertAdjacentOpeningTerminal,
+	nonRepeatableBinaryOperator,
+} from './prscParser';
 
-const whitespace: Parser<string> = map(star(token(' ')), (x) => x.join(''));
-const whitespacePlus: Parser<string> = map(plus(token(' ')), (x) => x.join(''));
+import {
+	ncName,
+	qName,
+	eqName,
+	reservedFunctionNames,
+	typeName,
+	simpleTypeName,
+} from './prscNames';
 
-function surrounded<T, S>(parser: Parser<T>, around: Parser<S>): Parser<T> {
-	return delimited(around, parser, around);
-}
-
-function precededMultiple<T, S>(before: Parser<S>[], parser: Parser<T>): Parser<T> {
-	return before.reverse().reduce((prev, curr) => preceded(curr, prev), parser);
-}
-
-function wrapArray<T>(parser: Parser<T>): Parser<[T]> {
-	return map(parser, (x) => [x]);
-}
-
-function binaryOperator(
-	exp: Parser<IAST>,
-	operator: Parser<string>,
-	constructionFn?: (lhs: IAST, rhs: [string, IAST][]) => IAST
-): Parser<IAST> {
-	return then(
-		exp,
-		star(then(surrounded(operator, whitespace), exp, (a, b) => [a, b])),
-		constructionFn
-			? constructionFn
-			: (lhs: IAST, rhs: [string, IAST][]) =>
-					rhs.reduce(
-						(lh, rh) => [rh[0], ['firstOperand', lh], ['secondOperand', rh[1]]],
-						lhs
-					)
-	);
-}
-
-function nonRepeatableBinaryOperator(
-	exp: Parser<IAST>,
-	operator: Parser<string>,
-	firstArgName: string = 'firstOperand',
-	secondArgName: string = 'secondOperand'
-): Parser<IAST> {
-	return then(
-		exp,
-		optional(then(surrounded(operator, whitespace), exp, (a, b) => [a, b])),
-		(lhs: IAST, rhs: [string, IAST] | null) => {
-			if (rhs === null) {
-				return lhs;
-			}
-			return [rhs[0], [firstArgName, lhs], [secondArgName, rhs[1]]];
-		}
-	);
-}
-
-function alias(tokenNames: string[], name: string): Parser<string> {
-	return map(or(tokenNames.map(token)), (_) => name);
-}
-
-function regex(reg: RegExp): Parser<string> {
-	return (input: string, offset: number): ParseResult<string> => {
-		const match = reg.exec(input.substring(offset));
-		if (match && match.index === 0) {
-			return okWithValue(offset + match[0].length, match[0]);
-		} else {
-			return error(offset, [reg.source], false);
-		}
-	};
-}
-
-function isAttributeTest(test: IAST): boolean {
-	return test[0] === 'attributeTest' || test[0] === 'schemaAttributeTest';
-}
-
-function assertValidCodePoint(codePoint: number) {
-	if (
-		(codePoint >= 0x1 && codePoint <= 0xd7ff) ||
-		(codePoint >= 0xe000 && codePoint <= 0xfffd) ||
-		(codePoint >= 0x10000 && codePoint <= 0x10ffff)
-	) {
-		return;
-	}
-	throw new Error(
-		'XQST0090: The character reference ' +
-			codePoint +
-			' (' +
-			codePoint.toString(16) +
-			') does not reference a valid codePoint.'
-	);
-}
-
-function parseCharacterReferences(input: string): string {
-	// TODO: this is not supported in xpath
-	return input.replace(/(&[^;]+);/g, (match) => {
-		if (/^&#x/.test(match)) {
-			const codePoint = parseInt(match.slice(3, -1), 16);
-			assertValidCodePoint(codePoint);
-			return String.fromCodePoint(codePoint);
-		}
-
-		if (/^&#/.test(match)) {
-			const codePoint = parseInt(match.slice(2, -1), 10);
-			assertValidCodePoint(codePoint);
-			return String.fromCodePoint(codePoint);
-		}
-
-		switch (match) {
-			case '&lt;':
-				return '<';
-			case '&gt;':
-				return '>';
-			case '&amp;':
-				return '&';
-			case '&quot;':
-				return String.fromCharCode(34);
-			case '&apos;':
-				return String.fromCharCode(39);
-		}
-		throw new Error('XPST0003: Unknown character reference: "' + match + '"');
-	});
-}
-
-function wrapInSequenceExprIfNeeded(exp: IAST): IAST {
-	switch (exp[0]) {
-		// These expressions do not have to be wrapped (are allowed in a filterExpr)
-		case 'constantExpr':
-		case 'varRef':
-		case 'contextItemExpr':
-		case 'functionCallExpr':
-		case 'sequenceExpr':
-		case 'elementConstructor':
-		case 'computedElementConstructor':
-		case 'computedAttributeConstructor':
-		case 'computedDocumentConstructor':
-		case 'computedTextConstructor':
-		case 'computedCommentConstructor':
-		case 'computedNamespaceConstructor':
-		case 'computedPIConstructor':
-		case 'orderedExpr':
-		case 'unorderedExpr':
-		case 'namedFunctionRef':
-		case 'inlineFunctionExpr':
-		case 'dynamicFunctionInvocationExpr':
-		case 'mapConstructor':
-		case 'arrayConstructor':
-		case 'stringConstructor':
-		case 'unaryLookup':
-			return exp;
-	}
-	return ['sequenceExpr', exp];
-}
-
-const assertAdjacentOpeningTerminal: Parser<string> = peek(
-	// TODO: add other whitespace characters
-	or([token('('), token('"'), token("'"), token(' ')])
-);
-
-const unimplemented: Parser<IAST> = wrapArray(token('unimplemented'));
-
-const predicate: Parser<IAST> = preceded(
-	token('['),
-	followed(surrounded(expr, whitespace), token(']'))
-);
-
+// 113: ForwardAxis - https://www.w3.org/TR/xquery-31/#doc-xquery31-ForwardAxis
 const forwardAxis: Parser<string> = map(
 	or(
 		[
@@ -195,6 +60,7 @@ const forwardAxis: Parser<string> = map(
 	(x: string) => x.substring(0, x.length - 2)
 );
 
+// 116: ReverseAxis - https://www.w3.org/TR/xquery-31/#doc-xquery31-ReverseAxis
 const reverseAxis: Parser<string> = map(
 	or(
 		['parent::', 'ancestor::', 'preceding-sibling::', 'preceding::', 'ancestor-or-self::'].map(
@@ -204,69 +70,41 @@ const reverseAxis: Parser<string> = map(
 	(x: string) => x.substring(0, x.length - 2)
 );
 
-const documentTest: Parser<IAST> = unimplemented;
-
-const elementTest: Parser<IAST> = unimplemented;
-
-const attributeTest: Parser<IAST> = unimplemented;
-
-const schemaElementTest: Parser<IAST> = unimplemented;
-
-const piTest: Parser<IAST> = unimplemented;
-
-const commentTest: Parser<IAST> = wrapArray(alias(['comment()'], 'commentTest'));
-
-const textTest: Parser<IAST> = wrapArray(alias(['text()'], 'textTest'));
-
-const namespaceNodeTest: Parser<IAST> = wrapArray(alias(['namespace-node()'], 'namespaceTest'));
-
-const anyKindTest: Parser<IAST> = wrapArray(alias(['node()'], 'anyKindTest'));
-
-const kindTest: Parser<IAST> = or([
-	documentTest,
-	elementTest,
-	attributeTest,
-	schemaElementTest,
-	piTest,
-	commentTest,
-	textTest,
-	namespaceNodeTest,
-	anyKindTest,
-]);
-
-const ncNameStartChar: Parser<string> = or([
-	regex(
-		/[A-Z_a-z\xC0-\xD6\xD8-\xF6\xF8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD]/
-	),
-	then(regex(/[\uD800-\uDB7F]/), regex(/[\uDC00-\uDFFF]/), (a, b) => a + b),
-]);
-
-const ncNameChar: Parser<string> = or([
-	ncNameStartChar,
-	regex(/[\-\.0-9\xB7\u0300-\u036F\u203F\u2040]/),
-]);
-
-const ncName: Parser<string> = then(ncNameStartChar, star(ncNameChar), (a, b) => a + b.join(''));
-
-const localPart: Parser<string> = ncName;
-
-const unprefixedName: Parser<IAST> = wrapArray(localPart);
-
-const xmlPrefix: Parser<string> = ncName;
-
-// TODO: give this better types
-const prefixedName: Parser<any> = then(
-	xmlPrefix,
-	preceded(token(':'), localPart),
-	(prefix, local) => [{ ['prefix']: prefix }, local]
+const predicate: Parser<IAST> = preceded(
+	token('['),
+	followed(surrounded(expr, whitespace), token(']'))
 );
 
-// TODO: give this better types
-const qName: Parser<any> = or([prefixedName, unprefixedName]);
+// 40: ExprSingle
+// https://www.w3.org/TR/xquery-31/#doc-xquery31-ExprSingle
+function exprSingle(input: string, offset: number): ParseResult<IAST> {
+	// TODO: add support for flwor, quantified, switch, typeswitch, if, insert, delete, rename, replace, and copymodify
+	return orExpr(input, offset);
+}
 
-// TODO: add uri qualified name
-const eqName: Parser<IAST> = or([qName]) as Parser<IAST>;
+// 39: Expr
+// https://www.w3.org/TR/xquery-31/#doc-xquery31-Expr
+function expr(input: string, offset: number): ParseResult<IAST> {
+	return binaryOperator(exprSingle, token(','), (lhs, rhs) => {
+		return rhs.length === 0 ? lhs : ['sequenceExpr', lhs, ...rhs.map((x) => x[1])];
+	})(input, offset);
+}
 
+// 38: QueryBody
+// https://www.w3.org/TR/xquery-31/#doc-xquery31-QueryBody
+const queryBody: Parser<IAST> = map(expr, (x) => ['queryBody', x]);
+
+// 3: MainModule
+// https://www.w3.org/TR/xquery-31/#doc-xquery31-MainModule
+// TODO: add prolog
+export const mainModule: Parser<IAST> = map(queryBody, (x) => ['mainModule', x]);
+
+// 2: VersionDecl
+// https://www.w3.org/TR/xquery-31/#doc-xquery31-VersionDecl
+const versionDecl: Parser<IAST> = unimplemented;
+
+// 120: Wildcard
+// https://www.w3.org/TR/xquery-31/#prod-xquery31-Wildcard
 const wildcard: Parser<IAST> = or([
 	map(preceded(token('*:'), ncName), (x) => [
 		'Wildcard',
@@ -282,42 +120,112 @@ const wildcard: Parser<IAST> = or([
 	]) as Parser<IAST>,
 ]);
 
+// 201: SchemaElementTest
+// https://www.w3.org/TR/xquery-31/#doc-xquery31-SchemaElementTest
+const schemaElementTest: Parser<IAST> = unimplemented;
+
+// 199: ElementTest
+// https://www.w3.org/TR/xquery-31/#doc-xquery31-ElementTest
+const elementTest: Parser<IAST> = unimplemented;
+
+// 195: AttributeTest
+// https://www.w3.org/TR/xquery-31/#doc-xquery31-AttributeTest
+const attributeTest: Parser<IAST> = unimplemented;
+
+// 194: PITest
+// https://www.w3.org/TR/xquery-31/#doc-xquery31-PITest
+const piTest: Parser<IAST> = unimplemented;
+
+// 193: NamespaceNodeTest
+// https://www.w3.org/TR/xquery-31/#doc-xquery31-NamespaceNodeTest
+const namespaceNodeTest: Parser<IAST> = wrapArray(alias(['namespace-node()'], 'namespaceTest'));
+
+// 192: CommentTest
+// https://www.w3.org/TR/xquery-31/#doc-xquery31-CommentTest
+const commentTest: Parser<IAST> = wrapArray(alias(['comment()'], 'commentTest'));
+
+// 191: TextTest
+// https://www.w3.org/TR/xquery-31/#doc-xquery31-TextTest
+const textTest: Parser<IAST> = wrapArray(alias(['text()'], 'textTest'));
+
+// 190: DocumentTest
+// https://www.w3.org/TR/xquery-31/#doc-xquery31-DocumentTest
+const documentTest: Parser<IAST> = unimplemented;
+
+// 189: AnyKindTest
+// https://www.w3.org/TR/xquery-31/#prod-xquery31-AnyKindTest
+const anyKindTest: Parser<IAST> = wrapArray(alias(['node()'], 'anyKindTest'));
+
+// 188: KindTest
+// https://www.w3.org/TR/xquery-31/#prod-xquery31-KindTest
+const kindTest: Parser<IAST> = or([
+	documentTest,
+	elementTest,
+	attributeTest,
+	schemaElementTest,
+	piTest,
+	commentTest,
+	textTest,
+	namespaceNodeTest,
+	anyKindTest,
+]);
+
+// 119 - NameTest
+// https://www.w3.org/TR/xquery-31/#prod-xquery31-NameTest
 const nameTest: Parser<IAST> = or([wildcard, map(eqName, (x) => ['nameTest', ...x])]);
 
-const nodeTest: Parser<IAST> = or([kindTest, nameTest]);
+// 118 - NodeTest
+// https://www.w3.org/TR/xquery-31/#prod-xquery31-NodeTest
+export const nodeTest: Parser<IAST> = or([kindTest, nameTest]);
 
+// 114 - AbbrevForwardStep
+// https://www.w3.org/TR/xquery-31/#prod-xquery31-AbbrevForwardStep
 const abbrevForwardStep: Parser<IAST> = then(optional(token('@')), nodeTest, (a, b) => {
 	return a !== null || isAttributeTest(b)
 		? ['stepExpr', ['xpathAxis', 'attribute'], b]
 		: ['stepExpr', ['xpathAxis', 'child'], b];
 });
 
+// 112 - ForwardStep
+// https://www.w3.org/TR/xquery-31/#doc-xquery31-ForwardStep
 const forwardStep: Parser<IAST> = or([
 	then(forwardAxis, nodeTest, (axis, test) => ['stepExpr', ['xpathAxis', axis], test]),
 	abbrevForwardStep,
 ]);
 
+// 115 - ReverseStep
+// https://www.w3.org/TR/xquery-31/#doc-xquery31-ReverseStep
 const reverseStep: Parser<IAST> = then(reverseAxis, nodeTest, (axis, test) => [
 	'stepExpr',
 	['xpathAxis', axis],
 	test,
 ]);
 
+// 123 - PredicateList
+// https://www.w3.org/TR/xquery-31/#doc-xquery31-PredicateList
 const predicateList: Parser<IAST | undefined> = map(
 	star(preceded(whitespace, predicate)),
 	(x: IAST[]) => (x.length > 0 ? ['predicates', ...x] : undefined)
 );
 
+// 111 - AxisStep
+// https://www.w3.org/TR/xquery-31/#doc-xquery31-AxisStep
 const axisStep: Parser<IAST> = then(
 	or([forwardStep, reverseStep]),
 	predicateList,
 	(a: IAST, b: IAST | undefined) => (b === undefined ? a : (a.concat([b]) as IAST))
 );
 
+// 238 - Digits
+// https://www.w3.org/TR/xquery-31/#doc-xquery31-Digits
 const digits: Parser<string> = regex(/[0-9]+/);
 
+// 221 - DoubleLiteral
+// https://www.w3.org/TR/xquery-31/#doc-xquery31-DoubleLiteral
 const doubleLiteral: Parser<IAST> = unimplemented;
 
+// 220 - DecimalLiteral
+// https://www.w3.org/TR/xquery-31/#doc-xquery31-DecimalLiteral
 const decimalLiteral: Parser<IAST> = or([
 	map(preceded(token('.'), digits), (x) => ['decimalConstantExpr', ['value', '.' + x]]),
 	then(followed(digits, token('.')), optional(digits), (first, second) => [
@@ -326,20 +234,30 @@ const decimalLiteral: Parser<IAST> = or([
 	]),
 ]);
 
+// 219 - IntegerLiteral
+// https://www.w3.org/TR/xquery-31/#doc-xquery31-IntegerLiteral
 const integerLiteral: Parser<IAST> = map(
 	digits,
 	(x) => ['integerConstantExpr', ['value', x]] as IAST
 );
 
+// 130 - NumericLiteral
+// https://www.w3.org/TR/xquery-31/#prod-xquery31-NumericLiteral
 const numericLiteral: Parser<IAST> = followed(
 	or([doubleLiteral, decimalLiteral, integerLiteral]),
 	peek(not(regex(/[a-zA-Z]/), ['no alphabetical characters after numeric literal']))
 );
 
+// 226 - EscapeQuot
+// https://www.w3.org/TR/xquery-31/#prod-xquery31-EscapeQuot
 const escapeQuot: Parser<string> = alias(['""'], '"');
 
+// 227 - EscapeApos
+// https://www.w3.org/TR/xquery-31/#prod-xquery31-EscapeApos
 const escapeApos: Parser<string> = alias(["''"], "'");
 
+// 222 - StringLiteral
+// https://www.w3.org/TR/xquery-31/#prod-xquery31-StringLiteral
 // TODO: add check for xquery
 const stringLiteral: Parser<string> = or([
 	// TODO: add more advanced string literals
@@ -347,20 +265,30 @@ const stringLiteral: Parser<string> = or([
 	map(surrounded(star(or([escapeApos, regex(/[^']/)])), token("'")), (x) => x.join('')),
 ]);
 
+// 129 - Literal
+// https://www.w3.org/TR/xquery-31/#prod-xquery31-Literal
 const literal: Parser<IAST> = or([
 	numericLiteral,
 	map(stringLiteral, (x) => ['stringConstantExpr', ['value', parseCharacterReferences(x)]]),
 ]);
 
+// 132 - VarName
+// https://www.w3.org/TR/xquery-31/#prod-xquery31-VarName
 const varName: Parser<IAST> = eqName;
 
+// 131 - VarRef
+// https://www.w3.org/TR/xquery-31/#prod-xquery31-VarRef
 const varRef: Parser<IAST> = map(preceded(token('$'), varName), (x) => ['varRef', ['name', ...x]]);
 
+// 133 - ParenthesizedExpr
+// https://www.w3.org/TR/xquery-31/#prod-xquery31-ParenthesizedExpr
 const parenthesizedExpr: Parser<IAST> = or([
 	delimited(token('('), surrounded(expr, whitespace), token(')')),
 	map(delimited(token('('), whitespace, token(')')), (_) => ['sequenceExpr']),
 ]);
 
+// 134 - ContextItemExpr
+// https://www.w3.org/TR/xquery-31/#prod-xquery31-ContextItemExpr
 const contextItemExpr: Parser<IAST> = map(
 	followed(
 		token('.'),
@@ -369,31 +297,16 @@ const contextItemExpr: Parser<IAST> = map(
 	(_) => ['contextItemExpr']
 );
 
-const reservedFunctionNames = or([
-	token('array'),
-	token('attribute'),
-	token('comment'),
-	token('document-node'),
-	token('element'),
-	token('empty-sequence'),
-	token('function'),
-	token('if'),
-	token('item'),
-	token('map'),
-	token('namespace-node'),
-	token('node'),
-	token('processing-instruction'),
-	token('schema-attribute'),
-	token('schema-element'),
-	token('switch'),
-	token('text'),
-	token('typeswitch'),
-]);
-
+// 139 - ArgumentPlaceholder
+// https://www.w3.org/TR/xquery-31/#prod-xquery31-ArgumentPlaceholder
 const argumentPlaceholder: Parser<IAST> = wrapArray(alias(['?'], 'argumentPlaceholder'));
 
+// 138 - Argument
+// https://www.w3.org/TR/xquery-31/#prod-xquery31-Argument
 const argument: Parser<IAST> = or([exprSingle, argumentPlaceholder]);
 
+// 122 - ArgumentList
+// https://www.w3.org/TR/xquery-31/#doc-xquery31-ArgumentList
 const argumentList: Parser<IAST[]> = delimited(
 	token('('),
 	surrounded(
@@ -409,6 +322,8 @@ const argumentList: Parser<IAST[]> = delimited(
 	token(')')
 );
 
+// 137 - FunctionCall
+// https://www.w3.org/TR/xquery-31/#prod-xquery31-FunctionCall
 const functionCall: Parser<IAST> = preceded(
 	not(
 		then(
@@ -425,6 +340,7 @@ const functionCall: Parser<IAST> = preceded(
 	])
 );
 
+// 128 - PrimaryExpr
 // TODO: add other variants
 const primaryExpr: Parser<IAST> = or([
 	literal,
@@ -434,6 +350,8 @@ const primaryExpr: Parser<IAST> = or([
 	functionCall,
 ]);
 
+// 126 - KeySpecifier
+// https://www.w3.org/TR/xquery-31/#prod-xquery31-KeySpecifier
 const keySpecifier: Parser<string | IAST> = or([
 	ncName as Parser<string | IAST>,
 	integerLiteral,
@@ -441,6 +359,8 @@ const keySpecifier: Parser<string | IAST> = or([
 	token('*'),
 ]);
 
+// 181 - UnaryLookup
+// https://www.w3.org/TR/xquery-31/#prod-xquery31-UnaryLookup
 const lookup: Parser<IAST> = map(precededMultiple([token('?'), whitespace], keySpecifier), (x) =>
 	x === '*'
 		? ['lookup', ['star']]
@@ -588,8 +508,12 @@ const simpleMapExpr: Parser<IAST> = binaryOperator(
 	}
 );
 
+// 98 - ValueExpr
+// https://www.w3.org/TR/xquery-31/#prod-xquery31-ValueExpr
 const valueExpr: Parser<IAST> = or([validateExpr, extensionExpr, simpleMapExpr]);
 
+// 97 - UnaryExpr
+// https://www.w3.org/TR/xquery-31/#prod-xquery31-UnaryExpr
 const unaryExpr: Parser<IAST> = or([
 	then(
 		or([alias(['-'], 'unaryMinusOp'), alias(['+'], 'unaryPlusOp')]),
@@ -603,11 +527,9 @@ function unaryExprIndirect(input: string, offset: number): ParseResult<IAST> {
 	return unaryExpr(input, offset);
 }
 
+// 96 - ArrowExpr
+// https://www.w3.org/TR/xquery-31/#prod-xquery31-ArrowExpr
 const arrowExpr: Parser<IAST> = unaryExpr;
-
-const typeName: Parser<IAST> = eqName;
-
-const simpleTypeName: Parser<IAST> = typeName;
 
 const singleType: Parser<IAST> = then(simpleTypeName, optional(token('?')), (type, opt) =>
 	opt !== null
@@ -778,46 +700,3 @@ const comparisonExpr: Parser<IAST> = nonRepeatableBinaryOperator(
 const andExpr: Parser<IAST> = binaryOperator(comparisonExpr, alias(['and'], 'andOp'));
 
 const orExpr: Parser<IAST> = binaryOperator(andExpr, alias(['or'], 'orOp'));
-
-// TODO: add support for flwor, quantified, switch, typeswitch, if, insert, delete, rename, replace, and copymodify
-function exprSingle(input: string, offset: number): ParseResult<IAST> {
-	return orExpr(input, offset);
-}
-
-function expr(input: string, offset: number): ParseResult<IAST> {
-	return binaryOperator(exprSingle, token(','), (lhs, rhs) => {
-		return rhs.length === 0 ? lhs : ['sequenceExpr', lhs, ...rhs.map((x) => x[1])];
-	})(input, offset);
-}
-
-const queryBody: Parser<IAST> = map(expr, (x) => ['queryBody', x]);
-
-// TODO: add prolog
-const mainModule: Parser<IAST> = map(queryBody, (x) => ['mainModule', x]);
-
-export function parseUsingPrsc(xpath: string): ParseResult<IAST> {
-	const parser: Parser<IAST> = map(mainModule, (x) => ['module', x]);
-	return complete(parser)(xpath, 0);
-}
-
-const query = '@*';
-
-const prscResult = parseUsingPrsc(query);
-
-if (prscResult.success === true) {
-	const old = parse(query, { outputDebugInfo: false, xquery: true });
-	const prsc = prscResult.value;
-	if (JSON.stringify(old) !== JSON.stringify(prsc)) {
-		console.log('DIFFER');
-		console.log('OLD');
-		console.log(JSON.stringify(old, null, 4));
-		console.log('PRSC');
-		console.log(JSON.stringify(prsc, null, 4));
-	} else {
-		console.log('CORRECT!');
-		console.log(JSON.stringify(prsc, null, 4));
-	}
-} else {
-	console.log('Failed to parse:');
-	console.log(prscResult.expected);
-}
