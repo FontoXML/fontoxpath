@@ -306,7 +306,7 @@ const predicateList: Parser<IAST | undefined> = map(
 );
 
 const axisStep: Parser<IAST> = then(
-	or([forwardStep, reverseStep]),
+	or([reverseStep, forwardStep]),
 	predicateList,
 	(a: IAST, b: IAST | undefined) => (b === undefined ? a : (a.concat([b]) as IAST))
 );
@@ -628,9 +628,9 @@ const relativePathExpr: Parser<IAST> = or([
 	map(stepExprWithForcedStep, (x) => ['pathExpr', x]),
 ]);
 
-const absolutePathExpr: Parser<IAST> = unimplemented;
+const absoluteLocationPath: Parser<IAST> = unimplemented;
 
-const pathExpr: Parser<IAST> = or([relativePathExpr, absolutePathExpr]);
+const pathExpr: Parser<IAST> = or([relativePathExpr, absoluteLocationPath]);
 
 const validateExpr: Parser<IAST> = unimplemented;
 
@@ -886,5 +886,5 @@ const mainModule: Parser<IAST> = map(queryBody, (x) => ['mainModule', x]);
 
 export function parseUsingPrsc(xpath: string): ParseResult<IAST> {
 	const parser: Parser<IAST> = map(mainModule, (x) => ['module', x]);
-	return complete(parser)(xpath, 0);
+	return parser(xpath, 0);
 }
