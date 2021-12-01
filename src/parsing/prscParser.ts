@@ -18,7 +18,6 @@ import {
 	token,
 } from 'prsc';
 import { IAST } from './astHelper';
-import { parse } from './xPathParser';
 
 const whitespace: Parser<string> = map(star(token(' ')), (x) => x.join(''));
 const whitespacePlus: Parser<string> = map(plus(token(' ')), (x) => x.join(''));
@@ -35,21 +34,19 @@ function wrapArray<T>(parser: Parser<T>): Parser<[T]> {
 	return map(parser, (x) => [x]);
 }
 
-function binaryOperator(
+function defaultBinaryOperatorFn(lhs: IAST, rhs: [string, IAST][]): IAST {
+	return rhs.reduce((lh, rh) => [rh[0], ['firstOperand', lh], ['secondOperand', rh[1]]], lhs);
+}
+
+function binaryOperator<T>(
 	exp: Parser<IAST>,
 	operator: Parser<string>,
-	constructionFn?: (lhs: IAST, rhs: [string, IAST][]) => IAST
-): Parser<IAST> {
+	constructionFn: (lhs: IAST, rhs: [string, IAST][]) => T
+): Parser<T> {
 	return then(
 		exp,
 		star(then(surrounded(operator, whitespace), exp, (a, b) => [a, b])),
 		constructionFn
-			? constructionFn
-			: (lhs: IAST, rhs: [string, IAST][]) =>
-					rhs.reduce(
-						(lh, rh) => [rh[0], ['firstOperand', lh], ['secondOperand', rh[1]]],
-						lhs
-					)
 	);
 }
 
@@ -439,6 +436,36 @@ const functionCall: Parser<IAST> = preceded(
 	])
 );
 
+const mapKeyExpr: Parser<IAST> = map(exprSingle, (x) => ['mapKeyExpr', x]);
+const mapValueExpr: Parser<IAST> = map(exprSingle, (x) => ['mapValueExpr', x]);
+
+const mapConstructorEntry: Parser<IAST> = then(
+	mapKeyExpr,
+	preceded(surrounded(token(':'), whitespace), mapValueExpr),
+	(k, v) => ['mapConstructorEntry', k, v]
+);
+
+const mapConstructor: Parser<IAST> = preceded(
+	token('map'),
+	preceded(
+		whitespace,
+		delimited(
+			token('{'),
+			map(
+				optional(
+					binaryOperator(
+						mapConstructorEntry,
+						surrounded(token(','), whitespace),
+						(lhs, rhs) => [lhs, ...rhs.map((x) => x[1])]
+					)
+				),
+				(entries) => (entries ? ['mapConstructor', ...entries] : ['mapConstructor'])
+			),
+			token('}')
+		)
+	)
+);
+
 const squareArrayConstructor: Parser<IAST> = delimited(
 	token('['),
 	surrounded(
@@ -467,16 +494,6 @@ const arrayConstructor: Parser<IAST> = map(
 	(x) => ['arrayConstructor', x]
 );
 
-// TODO: add other variants
-const primaryExpr: Parser<IAST> = or([
-	literal,
-	varRef,
-	parenthesizedExpr,
-	contextItemExpr,
-	functionCall,
-	arrayConstructor,
-]);
-
 const keySpecifier: Parser<string | IAST> = or([
 	ncName as Parser<string | IAST>,
 	integerLiteral,
@@ -484,11 +501,33 @@ const keySpecifier: Parser<string | IAST> = or([
 	token('*'),
 ]);
 
+const unaryLookup: Parser<IAST> = map(
+	preceded(token('?'), preceded(whitespace, keySpecifier)),
+	(x) => {
+		return x === '*'
+			? ['unaryLookup', ['star']]
+			: typeof x === 'string'
+			? ['unaryLookup', ['NCName', x]]
+			: ['unaryLookup', x];
+	}
+);
+
+// TODO: add other variants
+const primaryExpr: Parser<IAST> = or([
+	literal,
+	varRef,
+	parenthesizedExpr,
+	contextItemExpr,
+	functionCall,
+	mapConstructor,
+	arrayConstructor,
+	unaryLookup,
+]);
+
 const lookup: Parser<IAST> = map(precededMultiple([token('?'), whitespace], keySpecifier), (x) =>
 	x === '*'
 		? ['lookup', ['star']]
-		: // TODO: Maybe get rid of the typeof
-		typeof x === 'string'
+		: typeof x === 'string'
 		? ['lookup', ['NCName', x]]
 		: ['lookup', x]
 );
@@ -574,17 +613,10 @@ const stepExprWithForcedStep: Parser<IAST> = or([
 
 const postfixExprWithoutStep: Parser<IAST> = followed(
 	primaryExpr,
-	not(
-		peek(
-			preceded(
-				whitespace,
-				or([
-					// TODO: add predicate before and lookup after
-					argumentList,
-				])
-			)
-		),
-		['predicate', 'argument list', 'lookup']
+	peek(
+		not(preceded(whitespace, or([predicate, argumentList as Parser<IAST>, lookup])), [
+			'primary expression not followed by predicate, argumentList, or lookup',
+		])
 	)
 );
 
@@ -756,7 +788,8 @@ const intersectExpr: Parser<IAST> = binaryOperator(
 	followed(
 		or([alias(['intersect'], 'intersectOp'), alias(['except'], 'exceptOp')]),
 		assertAdjacentOpeningTerminal
-	)
+	),
+	defaultBinaryOperatorFn
 );
 
 const unionExpr: Parser<IAST> = binaryOperator(
@@ -764,7 +797,8 @@ const unionExpr: Parser<IAST> = binaryOperator(
 	or([
 		alias(['|'], 'unionOp'),
 		followed(alias(['union'], 'unionOp'), assertAdjacentOpeningTerminal),
-	])
+	]),
+	defaultBinaryOperatorFn
 );
 
 const multiplicativeExpr: Parser<IAST> = binaryOperator(
@@ -774,12 +808,14 @@ const multiplicativeExpr: Parser<IAST> = binaryOperator(
 		alias(['div'], 'divOp'),
 		alias(['idiv'], 'idivOp'),
 		alias(['mod'], 'modOp'),
-	])
+	]),
+	defaultBinaryOperatorFn
 );
 
 const additiveExpr: Parser<IAST> = binaryOperator(
 	multiplicativeExpr,
-	or([alias(['-'], 'subtractOp'), alias(['+'], 'addOp')])
+	or([alias(['-'], 'subtractOp'), alias(['+'], 'addOp')]),
+	defaultBinaryOperatorFn
 );
 
 const rangeExpr: Parser<IAST> = nonRepeatableBinaryOperator(
@@ -791,7 +827,8 @@ const rangeExpr: Parser<IAST> = nonRepeatableBinaryOperator(
 
 const stringConcatExpr: Parser<IAST> = binaryOperator(
 	rangeExpr,
-	alias(['||'], 'stringConcatenateOp')
+	alias(['||'], 'stringConcatenateOp'),
+	defaultBinaryOperatorFn
 );
 
 const valueCompare: Parser<string> = map(
@@ -819,9 +856,17 @@ const comparisonExpr: Parser<IAST> = nonRepeatableBinaryOperator(
 	or([valueCompare, nodeCompare, generalCompare])
 );
 
-const andExpr: Parser<IAST> = binaryOperator(comparisonExpr, alias(['and'], 'andOp'));
+const andExpr: Parser<IAST> = binaryOperator(
+	comparisonExpr,
+	alias(['and'], 'andOp'),
+	defaultBinaryOperatorFn
+);
 
-const orExpr: Parser<IAST> = binaryOperator(andExpr, alias(['or'], 'orOp'));
+const orExpr: Parser<IAST> = binaryOperator(
+	andExpr,
+	alias(['or'], 'orOp'),
+	defaultBinaryOperatorFn
+);
 
 // TODO: add support for flwor, quantified, switch, typeswitch, if, insert, delete, rename, replace, and copymodify
 function exprSingle(input: string, offset: number): ParseResult<IAST> {
@@ -829,7 +874,7 @@ function exprSingle(input: string, offset: number): ParseResult<IAST> {
 }
 
 function expr(input: string, offset: number): ParseResult<IAST> {
-	return binaryOperator(exprSingle, token(','), (lhs, rhs) => {
+	return binaryOperator<IAST>(exprSingle, token(','), (lhs, rhs) => {
 		return rhs.length === 0 ? lhs : ['sequenceExpr', lhs, ...rhs.map((x) => x[1])];
 	})(input, offset);
 }
