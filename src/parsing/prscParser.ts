@@ -672,6 +672,16 @@ const absoluteLocationPath: Parser<IAST> = or([
 		preceded(whitespace, relativePathExprWithForcedStep),
 		(abbrev, path) => ['pathExpr', ['rootExpr'], abbrev, ...path]
 	),
+	// TODO: add xquery check
+	map(
+		followed(
+			token('/'),
+			not(preceded(whitespace, or([regex(/[*<a-zA-Z]/), regex(/[*a-zA-Z]/)])), [
+				'Single rootExpr cannot be by followed by something that can be interpreted as a relative path',
+			])
+		),
+		(_) => ['pathExpr', ['rootExpr']] as IAST
+	),
 ]);
 
 const pathExpr: Parser<IAST> = or([relativePathExpr, absoluteLocationPath]);
