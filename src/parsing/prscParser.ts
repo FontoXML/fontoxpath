@@ -425,6 +425,25 @@ const functionCall: Parser<IAST> = preceded(
 	])
 );
 
+const squareArrayConstructor: Parser<IAST> = delimited(
+	token('['),
+	surrounded(
+		binaryOperator(exprSingle, token(','), (lhs, rhs) => {
+			const elements: IAST[] = [lhs, ...rhs.map((x) => x[1])].map((x) => ['arrayElem', x]);
+			return ['squareArray', ...elements];
+		}),
+		whitespace
+	),
+	token(']')
+);
+
+const curlyArrayConstructor: Parser<IAST> = unimplemented;
+
+const arrayConstructor: Parser<IAST> = map(
+	or([squareArrayConstructor, curlyArrayConstructor]),
+	(x) => ['arrayConstructor', x]
+);
+
 // TODO: add other variants
 const primaryExpr: Parser<IAST> = or([
 	literal,
@@ -432,6 +451,7 @@ const primaryExpr: Parser<IAST> = or([
 	parenthesizedExpr,
 	contextItemExpr,
 	functionCall,
+	arrayConstructor,
 ]);
 
 const keySpecifier: Parser<string | IAST> = or([
@@ -800,7 +820,7 @@ export function parseUsingPrsc(xpath: string): ParseResult<IAST> {
 	return complete(parser)(xpath, 0);
 }
 
-const query = '@*';
+const query = '[1, 2, 3]';
 
 const prscResult = parseUsingPrsc(query);
 
