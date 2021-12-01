@@ -181,7 +181,7 @@ describe('extension functions', () => {
 						null,
 						{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
 					),
-				'XPTY0004',
+				/XPTY0004/,
 				'When passed an integer'
 			);
 
@@ -194,7 +194,7 @@ describe('extension functions', () => {
 						null,
 						{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
 					),
-				'XPTY0004',
+				/XPTY0004/,
 				'When passed a map'
 			);
 
@@ -207,7 +207,7 @@ describe('extension functions', () => {
 						null,
 						{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
 					),
-				'XPTY0004',
+				/XPTY0004/,
 				'When passed a boolean'
 			);
 		});
