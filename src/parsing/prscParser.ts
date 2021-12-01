@@ -665,8 +665,12 @@ const relativePathExprWithForcedStep: Parser<IAST[]> = or([
 	map(stepExprWithForcedStep, (x) => [x]),
 ]);
 
-// TODO: add other variants
 const absoluteLocationPath: Parser<IAST> = or([
+	map(precededMultiple([token('/'), whitespace], relativePathExprWithForcedStep), (x) => [
+		'pathExpr',
+		['rootExpr'],
+		...x,
+	]),
 	then(
 		locationPathAbbreviation,
 		preceded(whitespace, relativePathExprWithForcedStep),
