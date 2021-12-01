@@ -414,19 +414,22 @@ const argumentPlaceholder: Parser<IAST> = wrapArray(alias(['?'], 'argumentPlaceh
 
 const argument: Parser<IAST> = or([exprSingle, argumentPlaceholder]);
 
-const argumentList: Parser<IAST[]> = delimited(
-	token('('),
-	surrounded(
-		optional(
-			then(
-				argument,
-				star(preceded(surrounded(token(','), whitespace), argument)),
-				(first, following) => [first, ...following]
-			)
+const argumentList: Parser<IAST[]> = map(
+	delimited(
+		token('('),
+		surrounded(
+			optional(
+				then(
+					argument,
+					star(preceded(surrounded(token(','), whitespace), argument)),
+					(first, following) => [first, ...following]
+				)
+			),
+			whitespace
 		),
-		whitespace
+		token(')')
 	),
-	token(')')
+	(x) => (x !== null ? x : [])
 );
 
 const functionCall: Parser<IAST> = preceded(
@@ -737,7 +740,30 @@ function unaryExprIndirect(input: string, offset: number): ParseResult<IAST> {
 	return unaryExpr(input, offset);
 }
 
-const arrowExpr: Parser<IAST> = unaryExpr;
+const arrowFunctionSpecifier: Parser<IAST> = or([
+	map(eqName, (x) => ['EQName', ...x]),
+	varRef,
+	parenthesizedExpr,
+]);
+
+const arrowExpr: Parser<IAST> = then(
+	unaryExpr,
+	star(
+		precededMultiple(
+			[whitespace, token('=>'), whitespace],
+			then(
+				arrowFunctionSpecifier,
+				preceded(whitespace, argumentList),
+				(specifier: IAST, argumentList: IAST[]) => [specifier, argumentList]
+			)
+		)
+	),
+	(argExpr, functionParts: [IAST, IAST[]][]) =>
+		functionParts.reduce(
+			(arg, part) => ['arrowExpr', ['argExpr', arg], part[0], ['arguments', ...part[1]]],
+			argExpr
+		)
+);
 
 const typeName: Parser<IAST> = eqName;
 
