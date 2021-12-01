@@ -555,6 +555,7 @@ const postfixExprWithStep: Parser<IAST> = then(
 							? [['arguments', ...(postFix[1] as IAST)]]
 							: [[]]),
 					];
+					break;
 				default:
 					throw new Error('unreachable');
 			}
@@ -841,26 +842,4 @@ const mainModule: Parser<IAST> = map(queryBody, (x) => ['mainModule', x]);
 export function parseUsingPrsc(xpath: string): ParseResult<IAST> {
 	const parser: Parser<IAST> = map(mainModule, (x) => ['module', x]);
 	return complete(parser)(xpath, 0);
-}
-
-const query = '1.3e-12';
-
-const prscResult = parseUsingPrsc(query);
-
-if (prscResult.success === true) {
-	const old = parse(query, { outputDebugInfo: false, xquery: true });
-	const prsc = prscResult.value;
-	if (JSON.stringify(old) !== JSON.stringify(prsc)) {
-		console.log('DIFFER');
-		console.log('OLD');
-		console.log(JSON.stringify(old, null, 4));
-		console.log('PRSC');
-		console.log(JSON.stringify(prsc, null, 4));
-	} else {
-		console.log('CORRECT!');
-		console.log(JSON.stringify(prsc, null, 4));
-	}
-} else {
-	console.log('Failed to parse:');
-	console.log(prscResult.expected);
 }
