@@ -316,7 +316,21 @@ const axisStep: Parser<IAST> = then(
 
 const digits: Parser<string> = regex(/[0-9]+/);
 
-const doubleLiteral: Parser<IAST> = unimplemented;
+const doubleLiteral: Parser<IAST> = then(
+	or([
+		preceded(token('.'), digits),
+		then(digits, preceded(token('.'), digits), (a, b) => a + '.' + b),
+	]),
+	preceded(
+		or([token('e'), token('E')]),
+		then(
+			optional(or([token('+'), token('-')])),
+			digits,
+			(expSign, expDigits) => (expSign ? expSign : '') + expDigits
+		)
+	),
+	(base, exponent) => ['doubleConstantExpr', ['value', base + 'e' + exponent]]
+);
 
 const decimalLiteral: Parser<IAST> = or([
 	map(preceded(token('.'), digits), (x) => ['decimalConstantExpr', ['value', '.' + x]]),
@@ -829,7 +843,7 @@ export function parseUsingPrsc(xpath: string): ParseResult<IAST> {
 	return complete(parser)(xpath, 0);
 }
 
-const query = 'true()';
+const query = '1.3e-12';
 
 const prscResult = parseUsingPrsc(query);
 
