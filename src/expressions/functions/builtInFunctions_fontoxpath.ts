@@ -1,4 +1,4 @@
-import { ElementNodePointer } from 'src/domClone/Pointer';
+import { ElementNodePointer } from '../../domClone/Pointer';
 import { printAndRethrowError } from '../../evaluationUtils/printAndRethrowError';
 import astHelper, { IAST } from '../../parsing/astHelper';
 import compileAstToExpression from '../../parsing/compileAstToExpression';
