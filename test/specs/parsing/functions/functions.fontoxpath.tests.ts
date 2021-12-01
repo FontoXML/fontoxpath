@@ -138,6 +138,80 @@ describe('extension functions', () => {
 				1000
 			));
 
+		it('also allows XQueryX programs to be evaluated', () =>
+			chai.assert.equal(
+				evaluateXPathToNumber(
+					`fontoxpath:evaluate(<xqx:module xmlns:xqx="http://www.w3.org/2005/XQueryX" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2005/XQueryX http://www.w3.org/2005/XQueryX/xqueryx.xsd">
+    <xqx:mainModule>
+      <xqx:queryBody>
+        <xqx:integerConstantExpr>
+          <xqx:value>42</xqx:value>
+        </xqx:integerConstantExpr>
+      </xqx:queryBody>
+    </xqx:mainModule>
+</xqx:module>, map{})`,
+					documentNode,
+					domFacade,
+					null,
+					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				),
+				42
+			));
+
+		it('throws when passed nonsense as an XQueryX program', () =>
+			chai.assert.throws(
+				() =>
+					evaluateXPathToNumber(
+						`fontoxpath:evaluate(<nonsense />, map{})`,
+						documentNode,
+						domFacade,
+						null,
+						{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+					),
+				'XPTY0004'
+			));
+
+		it('throws when passed invalid arguments', () => {
+			chai.assert.throws(
+				() =>
+					evaluateXPathToNumber(
+						`fontoxpath:evaluate(42, map{})`,
+						documentNode,
+						domFacade,
+						null,
+						{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+					),
+				'XPTY0004',
+				'When passed an integer'
+			);
+
+			chai.assert.throws(
+				() =>
+					evaluateXPathToNumber(
+						`fontoxpath:evaluate(map{}, map{})`,
+						documentNode,
+						domFacade,
+						null,
+						{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+					),
+				'XPTY0004',
+				'When passed a map'
+			);
+
+			chai.assert.throws(
+				() =>
+					evaluateXPathToNumber(
+						`fontoxpath:evaluate(true(), map{})`,
+						documentNode,
+						domFacade,
+						null,
+						{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+					),
+				'XPTY0004',
+				'When passed a boolean'
+			);
+		});
+
 		it('throws for an invalid expression during static evaluation and preserves debug details', () => {
 			// Execute a query which executes our registered custom xpath function
 			// Test if the error contains the actual failing XPath query
