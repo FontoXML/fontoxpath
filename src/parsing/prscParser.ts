@@ -437,7 +437,16 @@ const squareArrayConstructor: Parser<IAST> = delimited(
 	token(']')
 );
 
-const curlyArrayConstructor: Parser<IAST> = unimplemented;
+const enclosedExpr: Parser<IAST | null> = delimited(
+	token('{'),
+	surrounded(optional(expr), whitespace),
+	token('}')
+);
+
+const curlyArrayConstructor: Parser<IAST> = map(
+	preceded(token('array'), preceded(whitespace, enclosedExpr)),
+	(x) => ['curlyArray', ...(x != null ? [['arrayElem', x]] : [])] as IAST
+);
 
 const arrayConstructor: Parser<IAST> = map(
 	or([squareArrayConstructor, curlyArrayConstructor]),
@@ -820,7 +829,7 @@ export function parseUsingPrsc(xpath: string): ParseResult<IAST> {
 	return complete(parser)(xpath, 0);
 }
 
-const query = '[1, 2, 3]';
+const query = 'array {1, 2}';
 
 const prscResult = parseUsingPrsc(query);
 
