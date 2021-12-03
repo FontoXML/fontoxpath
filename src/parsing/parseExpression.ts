@@ -30,12 +30,13 @@ export default function parseExpression(
 		if (cached) {
 			ast = cached;
 		} else {
-			ast = parse(xPathString, {
+			const options = {
 				xquery: !!compilationOptions.allowXQuery,
 				outputDebugInfo: !!compilationOptions.debug,
-			});
+			};
+			ast = parse(xPathString, options);
 
-			const parseResult = parseUsingPrsc(xPathString);
+			const parseResult = parseUsingPrsc(xPathString, options);
 			if (parseResult.success === true) {
 				const prscAst = parseResult.value;
 				if (JSON.stringify(ast) !== JSON.stringify(prscAst)) {
