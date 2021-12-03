@@ -67,7 +67,7 @@ fn-days-from-duration,true
 fn-deep-equal,true
 fn-default-collation,false
 fn-default-language,false
-fn-distinct-values,false
+fn-distinct-values,true
 fn-doc,false
 fn-doc-available,false
 fn-document-uri,false

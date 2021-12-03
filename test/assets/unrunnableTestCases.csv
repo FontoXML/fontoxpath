@@ -4005,3 +4005,31 @@ fo-test-array-subarray-006,Error: FOAY0001: subarray start out of bounds.
 fo-test-array-subarray-007,Error: FOAY0001: subarray start out of bounds.
 fo-test-array-fold-right-003,AssertionError: Expected XPath          array:fold-right([1,2,3], [], function($x, $y){[$x, $y]})        to (deep equally) resolve to [1, [2, [3, []]]]: expected false to be true
 fo-test-array-sort-002,Error: XPST0017: Function array:sort with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}sort (array(*))", "Q{http://www.w3.org/2001/XMLSchema}short (xs:anyAtomicType?)" or "Q{http://www.w3.org/2005/xpath-functions/math}sqrt (xs:double?)"?
+fn-distinct-valuesintg1args-1,Error: FOCA0003: can not cast -999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
+fn-distinct-valuesintg1args-2,Error: FOCA0003: can not cast 830993497117024304 to xs:integer, it is out of bounds for JavaScript numbers.
+fn-distinct-valuesintg1args-3,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
+fn-distinct-valueslng1args-1,Error: FOCA0003: can not cast -92233720368547758 to xs:integer, it is out of bounds for JavaScript numbers.
+fn-distinct-valueslng1args-2,Error: FOCA0003: can not cast -47175562203048468 to xs:integer, it is out of bounds for JavaScript numbers.
+fn-distinct-valueslng1args-3,Error: FOCA0003: can not cast 92233720368547758 to xs:integer, it is out of bounds for JavaScript numbers.
+fn-distinct-valuesnint1args-1,Error: FOCA0003: can not cast -999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
+fn-distinct-valuesnint1args-2,Error: FOCA0003: can not cast -297014075999096793 to xs:integer, it is out of bounds for JavaScript numbers.
+fn-distinct-valuespint1args-2,Error: FOCA0003: can not cast 52704602390610033 to xs:integer, it is out of bounds for JavaScript numbers.
+fn-distinct-valuespint1args-3,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
+fn-distinct-valuesulng1args-2,Error: FOCA0003: can not cast 130747108607674654 to xs:integer, it is out of bounds for JavaScript numbers.
+fn-distinct-valuesulng1args-3,Error: FOCA0003: can not cast 184467440737095516 to xs:integer, it is out of bounds for JavaScript numbers.
+fn-distinct-valuesnpi1args-1,Error: FOCA0003: can not cast -999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
+fn-distinct-valuesnpi1args-2,Error: FOCA0003: can not cast -475688437271870490 to xs:integer, it is out of bounds for JavaScript numbers.
+fn-distinct-valuesnni1args-2,Error: FOCA0003: can not cast 303884545991464527 to xs:integer, it is out of bounds for JavaScript numbers.
+fn-distinct-valuesnni1args-3,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
+fn-distinct-values-mixed-args-005,AssertionError: Skipped test, it was a assert-permutation
+fn-distinct-values-mixed-args-006,AssertionError: Skipped test, it was a assert-permutation
+fn-distinct-values-mixed-args-009,AssertionError: Skipped test, it was a assert-permutation
+fn-distinct-values-mixed-args-010,AssertionError: Skipped test, it was a assert-permutation
+fn-distinct-values-mixed-args-011,AssertionError: Skipped test, it was a assert-permutation
+fn-distinct-values-mixed-args-018,AssertionError: Skipped test, it was a assert-permutation
+fn-distinct-values-mixed-args-032,AssertionError: Skipped test, it was a assert-permutation
+K-SeqDistinctValuesFunc-4,Error: FOCH0002: No collations are supported
+fn-distinct-values-2,AssertionError: Skipped test, it was a assert-permutation
+cbcl-distinct-values-002b,Error: Casting to xs:QName is not implemented.
+cbcl-distinct-values-003,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 1 not registered. Did you mean "Q{test}custom-dateTime-function ()"?
+cbcl-distinct-values-007,Error: XPST0017: Function adjust-time-to-timezone with arity of 2 not registered. No similar functions found.

@@ -57,7 +57,7 @@ function filterElementAndTextNodes(node: NodePointer, domFacade: DomFacade) {
 	return nodeType === NODE_TYPES.ELEMENT_NODE || nodeType === NODE_TYPES.TEXT_NODE;
 }
 
-function anyAtomicTypeDeepEqual(
+export function anyAtomicTypeDeepEqual(
 	_dynamicContext: DynamicContext,
 	_executionParameters: ExecutionParameters,
 	_staticContext: StaticContext,
@@ -113,6 +113,18 @@ function anyAtomicTypeDeepEqual(
 	) {
 		return equal(item1.value, item2.value);
 	}
+
+	if (
+		(isSubtypeOf(item1.type, ValueType.XSYEARMONTHDURATION) ||
+			isSubtypeOf(item1.type, ValueType.XSDAYTIMEDURATION) ||
+			isSubtypeOf(item1.type, ValueType.XSDURATION)) &&
+		(isSubtypeOf(item2.type, ValueType.XSYEARMONTHDURATION) ||
+			isSubtypeOf(item2.type, ValueType.XSDAYTIMEDURATION) ||
+			isSubtypeOf(item2.type, ValueType.XSDAYTIMEDURATION))
+	) {
+		return item1.value.equals(item2.value);
+	}
+
 	return item1.value === item2.value;
 }
 
