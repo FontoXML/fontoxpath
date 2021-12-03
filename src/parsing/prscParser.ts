@@ -20,8 +20,13 @@ import {
 import { IAST } from './astHelper';
 
 function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }): Parser<IAST> {
-	const whitespace: Parser<string> = map(star(token(' ')), (x) => x.join(''));
-	const whitespacePlus: Parser<string> = map(plus(token(' ')), (x) => x.join(''));
+	const whitespaceCharacter: Parser<string> = or(
+		['\u0020', '\u0009', '\u000D', '\u000A'].map(token)
+	);
+
+	const whitespace: Parser<string> = map(star(whitespaceCharacter), (x) => x.join(''));
+
+	const whitespacePlus: Parser<string> = map(plus(whitespaceCharacter), (x) => x.join(''));
 
 	function surrounded<T, S>(parser: Parser<T>, around: Parser<S>): Parser<T> {
 		return delimited(around, parser, around);
@@ -315,10 +320,15 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		abbrevForwardStep,
 	]);
 
-	const reverseStep: Parser<IAST> = then(reverseAxis, nodeTest, (axis, test) => [
+	const abbrevReverseStep: Parser<IAST> = map(token('..'), (_) => [
 		'stepExpr',
-		['xpathAxis', axis],
-		test,
+		['xpathAxis', 'parent'],
+		['anyKindTest'],
+	]);
+
+	const reverseStep: Parser<IAST> = or([
+		then(reverseAxis, nodeTest, (axis, test) => ['stepExpr', ['xpathAxis', axis], test]),
+		abbrevReverseStep,
 	]);
 
 	const predicateList: Parser<IAST | undefined> = map(
@@ -713,6 +723,15 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 	// TODO: add other variants
 	const relativePathExpr: Parser<IAST> = or([
 		then(
+			then(
+				stepExprWithForcedStep,
+				preceded(whitespace, locationPathAbbreviation),
+				(lhs, abbrev) => [lhs, abbrev]
+			),
+			preceded(whitespace, relativePathExprWithForcedStepIndirect),
+			([lhs, abbrev], rhs) => ['pathExpr', lhs, abbrev, ...rhs]
+		),
+		then(
 			stepExprWithForcedStep,
 			preceded(surrounded(token('/'), whitespace), relativePathExprWithForcedStepIndirect),
 			(lhs, rhs) => ['pathExpr', lhs, ...rhs]
@@ -723,6 +742,15 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	// TODO: add other variants
 	const relativePathExprWithForcedStep: Parser<IAST[]> = or([
+		then(
+			then(
+				stepExprWithForcedStep,
+				preceded(whitespace, locationPathAbbreviation),
+				(lhs, abbrev) => [lhs, abbrev]
+			),
+			preceded(whitespace, relativePathExprWithForcedStepIndirect),
+			([lhs, abbrev], rhs) => [lhs, abbrev, ...rhs]
+		),
 		then(
 			stepExprWithForcedStep,
 			preceded(surrounded(token('/'), whitespace), relativePathExprWithForcedStepIndirect),
@@ -1120,9 +1148,62 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		])
 	);
 
-	const prolog: Parser<IAST> = map(
-		star(followed(namespaceDecl, preceded(whitespace, token(';')))),
-		(moduleSettings) => (moduleSettings.length === 0 ? null : ['prolog', ...moduleSettings])
+	const typeDeclaration: Parser<IAST> = map(
+		precededMultiple([token('as'), whitespacePlus], sequenceType),
+		(x) => ['typeDeclaration', ...x]
+	);
+
+	const varValue: Parser<IAST> = exprSingle;
+
+	const varDefaultValue: Parser<IAST> = exprSingle;
+
+	const varDecl: Parser<IAST> = then(
+		precededMultiple(
+			[token('variable'), whitespacePlus, token('$'), whitespace],
+			then(varName, optional(preceded(whitespace, typeDeclaration)), (name, t) => [name, t])
+		),
+		or([
+			map(precededMultiple([whitespace, token(':='), whitespace], varValue), (x) => [
+				'varValue',
+				x,
+			]),
+			map(
+				precededMultiple(
+					[whitespacePlus, token('external')],
+					optional(
+						precededMultiple([whitespace, token(':='), whitespace], varDefaultValue)
+					)
+				),
+				(x) => ['external', ...(x ? [x] : [])]
+			),
+		]),
+		([name, t], value) =>
+			['varDecl', ['varName', ...name], ...(t !== null ? [t] : []), ...[value]] as IAST
+	);
+
+	const functionDecl: Parser<IAST> = unimplemented;
+
+	const annotation: Parser<IAST> = unimplemented;
+
+	const compatibilityAnnotation: Parser<IAST> = unimplemented;
+
+	const annotatedDecl: Parser<IAST> = precededMultiple(
+		[token('declare'), whitespacePlus],
+		then(
+			// TODO: add annotations
+			star(followed(or([annotation, compatibilityAnnotation]), whitespacePlus)),
+			or([varDecl, functionDecl]),
+			(annotations, decl) => [decl[0], ...annotations, ...decl.slice(1)]
+		)
+	);
+
+	const prolog: Parser<IAST> = then(
+		star(followed(namespaceDecl, surrounded(token(';'), whitespace))),
+		star(followed(annotatedDecl, surrounded(token(';'), whitespace))),
+		(moduleSettings, declarations) =>
+			moduleSettings.length === 0 && declarations.length === 0
+				? null
+				: ['prolog', ...moduleSettings, ...declarations]
 	);
 
 	// TODO: add prolog
@@ -1134,12 +1215,16 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const moduleParser: Parser<IAST> = map(mainModule, (x) => ['module', x]);
 
-	return complete(moduleParser);
+	return moduleParser;
 }
 
 export function parseUsingPrsc(
 	xpath: string,
-	options: { outputDebugInfo: boolean; xquery: boolean }
+	options: { outputDebugInfo: boolean; xquery: boolean },
+	shouldConsumeAll: boolean = true
 ): ParseResult<IAST> {
-	return generateParser(options)(xpath, 0);
+	return (shouldConsumeAll ? complete(generateParser(options)) : generateParser(options))(
+		xpath.trim(),
+		0
+	);
 }
