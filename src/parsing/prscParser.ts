@@ -1105,8 +1105,28 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const queryBody: Parser<IAST> = map(expr, (x) => ['queryBody', x]);
 
+	const uriLiteral: Parser<string> = stringLiteral;
+
+	const namespaceDecl: Parser<IAST> = precededMultiple(
+		[token('declare'), whitespacePlus, token('namespace'), whitespacePlus],
+		then(ncName, preceded(surrounded(token('='), whitespace), uriLiteral), (prefix, uri) => [
+			'namespaceDecl',
+			['prefix', prefix],
+			['uri', uri],
+		])
+	);
+
+	const prolog: Parser<IAST> = map(
+		star(followed(namespaceDecl, preceded(whitespace, token(';')))),
+		(moduleSettings) => (moduleSettings.length === 0 ? null : ['prolog', ...moduleSettings])
+	);
+
 	// TODO: add prolog
-	const mainModule: Parser<IAST> = map(queryBody, (x) => ['mainModule', x]);
+	const mainModule: Parser<IAST> = then(
+		prolog,
+		preceded(whitespace, queryBody),
+		(prolog, body) => ['mainModule', ...(prolog ? [prolog] : []), body]
+	);
 
 	const moduleParser: Parser<IAST> = map(mainModule, (x) => ['module', x]);
 
