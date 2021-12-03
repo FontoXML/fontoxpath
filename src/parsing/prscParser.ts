@@ -20,9 +20,29 @@ import {
 import { IAST } from './astHelper';
 
 function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }): Parser<IAST> {
-	const whitespaceCharacter: Parser<string> = or(
-		['\u0020', '\u0009', '\u000D', '\u000A'].map(token)
+	const char: Parser<string> = or([
+		regex(/[\t\n\r -\uD7FF\uE000\uFFFD]/),
+		regex(/[\uD800-\uDBFF][\uDC00-\uDFFF]/),
+	]);
+
+	const commentContents: Parser<string> = preceded(
+		peek(not(or([token('(:'), token(':)')]), ['comment contents cannot contain "(:" or ":)"'])),
+		char
 	);
+
+	const comment: Parser<string> = map(
+		delimited(token('(:'), star(or([commentContents, commentIndirect])), token(':)')),
+		(x) => x.join('')
+	);
+
+	function commentIndirect(input: string, offset: number) {
+		return comment(input, offset);
+	}
+
+	const whitespaceCharacter: Parser<string> = or([
+		or(['\u0020', '\u0009', '\u000D', '\u000A'].map(token)),
+		comment,
+	]);
 
 	const whitespace: Parser<string> = map(star(whitespaceCharacter), (x) => x.join(''));
 
