@@ -471,10 +471,45 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		(name, integer) => ['namedFunctionRef', ['functionName', ...name], integer]
 	);
 
-	const functionItemExpr: Parser<IAST> = or([
-		namedFunctionRef,
-		//TODO: inlineFunctionExpr,
+	const enclosedExpr: Parser<IAST | null> = delimited(
+		token('{'),
+		surrounded(optional(expr), whitespace),
+		token('}')
+	);
+
+	const functionBody: Parser<IAST> = map(enclosedExpr, (x) => (x ? x : ['sequenceExpr']));
+
+	// TODO: add type declarations
+	const param: Parser<IAST> = map(preceded(token('$'), eqName), (x) => [
+		'param',
+		['varName', ...x],
 	]);
+
+	const paramList: Parser<IAST[]> = binaryOperator(param, token(', '), (lhs, rhs) => [
+		lhs,
+		...rhs.map((x) => x[1]),
+	]);
+
+	// TODO: add annotations, and declarations
+	const inlineFunctionExpr: Parser<IAST> = map(
+		then(
+			precededMultiple(
+				[token('function'), whitespace, token('(')],
+				surrounded(optional(paramList), whitespace)
+			),
+			precededMultiple([token(')'), whitespace], functionBody),
+			(args, body) => [args, body]
+		),
+
+		([args, body]) =>
+			[
+				'inlineFunctionExpr',
+				['paramList', ...(args ? args : [])],
+				['functionBody', body],
+			] as IAST
+	);
+
+	const functionItemExpr: Parser<IAST> = or([namedFunctionRef, inlineFunctionExpr]);
 
 	const mapKeyExpr: Parser<IAST> = map(exprSingle, (x) => ['mapKeyExpr', x]);
 	const mapValueExpr: Parser<IAST> = map(exprSingle, (x) => ['mapValueExpr', x]);
@@ -521,12 +556,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		),
 		// TODO: this null seems weird, try the query `[]`
 		(x) => ['squareArray', ...(x !== null ? x : [null])] as IAST
-	);
-
-	const enclosedExpr: Parser<IAST | null> = delimited(
-		token('{'),
-		surrounded(optional(expr), whitespace),
-		token('}')
 	);
 
 	const curlyArrayConstructor: Parser<IAST> = map(
@@ -646,7 +675,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 							['functionItem', ...toWrap],
 							...((postFix[1] as IAST).length
 								? [['arguments', ...(postFix[1] as IAST)]]
-								: [[]]),
+								: []),
 						];
 						break;
 					default:
@@ -1035,7 +1064,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const moduleParser: Parser<IAST> = map(mainModule, (x) => ['module', x]);
 
-	return moduleParser;
+	return complete(moduleParser);
 }
 
 export function parseUsingPrsc(
