@@ -707,6 +707,11 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	// TODO: add other variants
 	const relativePathExpr: Parser<IAST> = or([
+		then(
+			stepExprWithForcedStep,
+			preceded(surrounded(token('/'), whitespace), relativePathExprWithForcedStepIndirect),
+			(lhs, rhs) => ['pathExpr', lhs, ...rhs]
+		),
 		stepExprWithoutStep,
 		map(stepExprWithForcedStep, (x) => ['pathExpr', x]),
 	]);
@@ -1046,9 +1051,48 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		}
 	);
 
+	const forClause: Parser<IAST> = unimplemented;
+
+	const letBinding: Parser<IAST> = then(
+		preceded(token('$'), varName),
+		preceded(surrounded(token(':='), whitespace), exprSingle),
+		(name, expr) => [
+			'letClauseItem',
+			['typedVariableBinding', ['varName', ...name]],
+			['letExpr', expr],
+		]
+	);
+
+	const letClause: Parser<IAST> = map(
+		precededMultiple(
+			[token('let'), whitespace],
+			binaryOperator(letBinding, token(','), (lhs, rhs) => [lhs, ...rhs])
+		),
+		(x) => ['letClause', ...x]
+	);
+
+	const initialClause: Parser<IAST> = or([forClause, letClause]);
+
+	const intermediateClause: Parser<IAST> = unimplemented;
+
+	const returnClause: Parser<IAST> = map(
+		precededMultiple([token('return'), whitespace], exprSingle),
+		(x) => ['returnClause', x]
+	);
+
+	const flworExpr: Parser<IAST> = then(
+		then(
+			initialClause,
+			star(preceded(whitespace, intermediateClause)),
+			(initial, intermediate) => [initial, intermediate]
+		),
+		preceded(whitespace, returnClause),
+		([initial, intermediate], ret) => ['flworExpr', initial, ...intermediate, ret] as IAST
+	);
+
 	// TODO: add support for flwor, quantified, switch, typeswitch, insert, delete, rename, replace, and copymodify
 	function exprSingle(input: string, offset: number): ParseResult<IAST> {
-		return or([ifExpr, orExpr])(input, offset);
+		return or([flworExpr, ifExpr, orExpr])(input, offset);
 	}
 
 	function expr(input: string, offset: number): ParseResult<IAST> {
@@ -1064,7 +1108,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const moduleParser: Parser<IAST> = map(mainModule, (x) => ['module', x]);
 
-	return complete(moduleParser);
+	return moduleParser;
 }
 
 export function parseUsingPrsc(
