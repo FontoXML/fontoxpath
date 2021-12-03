@@ -337,7 +337,11 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 	const doubleLiteral: Parser<IAST> = then(
 		or([
 			preceded(token('.'), digits),
-			then(digits, preceded(token('.'), digits), (a, b) => a + '.' + b),
+			then(
+				digits,
+				optional(preceded(token('.'), digits)),
+				(a, b) => a + (b !== null ? '.' + b : '')
+			),
 		]),
 		then(
 			or([token('e'), token('E')]),
