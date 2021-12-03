@@ -339,15 +339,16 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			preceded(token('.'), digits),
 			then(digits, preceded(token('.'), digits), (a, b) => a + '.' + b),
 		]),
-		preceded(
+		then(
 			or([token('e'), token('E')]),
 			then(
 				optional(or([token('+'), token('-')])),
 				digits,
 				(expSign, expDigits) => (expSign ? expSign : '') + expDigits
-			)
+			),
+			(e, exponent) => e + exponent
 		),
-		(base, exponent) => ['doubleConstantExpr', ['value', base + 'e' + exponent]]
+		(base, exponent) => ['doubleConstantExpr', ['value', base + exponent]]
 	);
 
 	const decimalLiteral: Parser<IAST> = or([
@@ -1063,10 +1064,11 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		]
 	);
 
+	// TODO: add type declaration
 	const letClause: Parser<IAST> = map(
 		precededMultiple(
 			[token('let'), whitespace],
-			binaryOperator(letBinding, token(','), (lhs, rhs) => [lhs, ...rhs])
+			binaryOperator(letBinding, token(','), (lhs, rhs) => [lhs, ...rhs.map((x) => x[1])])
 		),
 		(x) => ['letClause', ...x]
 	);
@@ -1108,7 +1110,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const moduleParser: Parser<IAST> = map(mainModule, (x) => ['module', x]);
 
-	return moduleParser;
+	return complete(moduleParser);
 }
 
 export function parseUsingPrsc(
