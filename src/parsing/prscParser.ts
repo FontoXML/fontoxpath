@@ -1104,7 +1104,21 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		}
 	);
 
-	const forClause: Parser<IAST> = unimplemented;
+	// TODO: add TypeDeclaration, AllowingEmpty, and PositionalVar
+	const forBinding: Parser<IAST> = then(
+		preceded(token('$'), varName),
+		precededMultiple([whitespace, token('in'), whitespace], exprSingle),
+		(varName, expr) => [
+			'forClauseItem',
+			['typedVariableBinding', ['varName', ...varName]],
+			['forExpr', expr],
+		]
+	);
+
+	const forClause: Parser<IAST> = precededMultiple(
+		[token('for'), whitespacePlus],
+		binaryOperator(forBinding, token(','), (lhs, rhs) => ['forClause', lhs, ...rhs])
+	);
 
 	const letBinding: Parser<IAST> = then(
 		preceded(token('$'), varName),
