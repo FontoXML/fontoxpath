@@ -684,8 +684,20 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	// TODO: add other variants
 	const relativePathExprWithForcedStep: Parser<IAST[]> = or([
+		then(
+			stepExprWithForcedStep,
+			preceded(surrounded(token('/'), whitespace), relativePathExprWithForcedStepIndirect),
+			(lhs, rhs) => [lhs, ...rhs]
+		),
 		map(stepExprWithForcedStep, (x) => [x]),
 	]);
+
+	function relativePathExprWithForcedStepIndirect(
+		input: string,
+		offset: number
+	): ParseResult<IAST[]> {
+		return relativePathExprWithForcedStep(input, offset);
+	}
 
 	const absoluteLocationPath: Parser<IAST> = or([
 		map(precededMultiple([token('/'), whitespace], relativePathExprWithForcedStep), (x) => [
