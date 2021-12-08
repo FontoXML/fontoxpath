@@ -1150,7 +1150,11 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const forClause: Parser<IAST> = precededMultiple(
 		[token('for'), whitespacePlus],
-		binaryOperator(forBinding, token(','), (lhs, rhs) => ['forClause', lhs, ...rhs])
+		binaryOperator(forBinding, token(','), (lhs, rhs) => [
+			'forClause',
+			lhs,
+			...rhs.map((x) => x[1]),
+		])
 	);
 
 	const letBinding: Parser<IAST> = then(
@@ -1274,10 +1278,10 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			then(varName, optional(preceded(whitespace, typeDeclaration)), (name, t) => [name, t])
 		),
 		or([
-			map(precededMultiple([whitespace, token(':='), whitespace], varValue), (x) => [
-				'varValue',
-				x,
-			]),
+			map(
+				precededMultiple([whitespace, token(':='), whitespace], varValue),
+				(x) => ['varValue', x] as IAST
+			),
 			map(
 				precededMultiple(
 					[whitespacePlus, token('external')],
@@ -1285,7 +1289,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 						precededMultiple([whitespace, token(':='), whitespace], varDefaultValue)
 					)
 				),
-				(x) => ['external', ...(x ? [x] : [])]
+				(x) => ['external', ...(x ? [['varValue', x]] : [])] as IAST
 			),
 		]),
 		([name, t], value) =>
