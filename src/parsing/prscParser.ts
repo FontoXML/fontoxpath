@@ -21,7 +21,7 @@ import { IAST } from './astHelper';
 
 function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }): Parser<IAST> {
 	function cached<T>(parser: Parser<T>): Parser<T> {
-		let cache: {[key: number]: ParseResult<T>} = {};
+		let cache: { [key: number]: ParseResult<T> } = {};
 		return (input: string, offset: number): ParseResult<T> => {
 			if (cache[offset]) {
 				return cache[offset];
@@ -59,7 +59,9 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const whitespace: Parser<string> = cached(map(star(whitespaceCharacter), (x) => x.join('')));
 
-	const whitespacePlus: Parser<string> = cached(map(plus(whitespaceCharacter), (x) => x.join('')));
+	const whitespacePlus: Parser<string> = cached(
+		map(plus(whitespaceCharacter), (x) => x.join(''))
+	);
 
 	function surrounded<T, S>(parser: Parser<T>, around: Parser<S>): Parser<T> {
 		return delimited(around, parser, around);
@@ -67,6 +69,37 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	function precededMultiple<T, S>(before: Parser<S>[], parser: Parser<T>): Parser<T> {
 		return before.reverse().reduce((prev, curr) => preceded(curr, prev), parser);
+	}
+
+	function then3<T, S, U, V>(
+		aParser: Parser<T>,
+		bParser: Parser<S>,
+		cParser: Parser<U>,
+		func: (aValue: T, bValue: S, cValue: U) => V
+	): Parser<V> {
+		return then(
+			then(aParser, bParser, (a, b): [T, S] => [a, b]),
+			cParser,
+			([a, b], c) => func(a, b, c)
+		);
+	}
+
+	function then4<T, S, U, V, P>(
+		aParser: Parser<T>,
+		bParser: Parser<S>,
+		cParser: Parser<U>,
+		dParser: Parser<V>,
+		func: (aValue: T, bValue: S, cValue: U, dValue: V) => P
+	): Parser<P> {
+		return then(
+			then(
+				then(aParser, bParser, (a, b) => [a, b]),
+				cParser,
+				([a, b], c) => [a, b, c]
+			),
+			dParser,
+			([a, b, c]: [T, S, U], d) => func(a, b, c, d)
+		);
 	}
 
 	function wrapArray<T>(parser: Parser<T>): Parser<[T]> {
@@ -386,14 +419,11 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				(a, b) => a + (b !== null ? '.' + b : '')
 			),
 		]),
-		then(
+		then3(
 			or([token('e'), token('E')]),
-			then(
-				optional(or([token('+'), token('-')])),
-				digits,
-				(expSign, expDigits) => (expSign ? expSign : '') + expDigits
-			),
-			(e, exponent) => e + exponent
+			optional(or([token('+'), token('-')])),
+			digits,
+			(e, expSign, expDigits) => e + (expSign ? expSign : '') + expDigits
 		),
 		(base, exponent) => ['doubleConstantExpr', ['value', base + exponent]]
 	);
@@ -499,11 +529,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const functionCall: Parser<IAST> = preceded(
 		not(
-			then(
-				reservedFunctionNames,
-				then(whitespace, token('('), (_a, _b) => undefined),
-				(_a, _b) => undefined
-			),
+			then3(reservedFunctionNames, whitespace, token('('), (_a, _b, _c) => undefined),
 			['cannot use reseved keyword for function names']
 		),
 		then(eqName, preceded(whitespace, argumentList), (name, args) => [
@@ -755,14 +781,11 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	// TODO: add other variants
 	const relativePathExpr: Parser<IAST> = or([
-		then(
-			then(
-				stepExprWithForcedStep,
-				preceded(whitespace, locationPathAbbreviation),
-				(lhs, abbrev) => [lhs, abbrev]
-			),
+		then3(
+			stepExprWithForcedStep,
+			preceded(whitespace, locationPathAbbreviation),
 			preceded(whitespace, relativePathExprWithForcedStepIndirect),
-			([lhs, abbrev], rhs) => ['pathExpr', lhs, abbrev, ...rhs]
+			(lhs, abbrev, rhs) => ['pathExpr', lhs, abbrev, ...rhs]
 		),
 		then(
 			stepExprWithForcedStep,
@@ -775,14 +798,11 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	// TODO: add other variants
 	const relativePathExprWithForcedStep: Parser<IAST[]> = or([
-		then(
-			then(
-				stepExprWithForcedStep,
-				preceded(whitespace, locationPathAbbreviation),
-				(lhs, abbrev) => [lhs, abbrev]
-			),
+		then3(
+			stepExprWithForcedStep,
+			preceded(whitespace, locationPathAbbreviation),
 			preceded(whitespace, relativePathExprWithForcedStepIndirect),
-			([lhs, abbrev], rhs) => [lhs, abbrev, ...rhs]
+			(lhs, abbrev, rhs) => [lhs, abbrev, ...rhs]
 		),
 		then(
 			stepExprWithForcedStep,
@@ -1154,7 +1174,8 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const initialClause: Parser<IAST> = or([forClause, letClause]);
 
-	const intermediateClause: Parser<IAST> = unimplemented;
+	// TODO: add other variants
+	const intermediateClause: Parser<IAST> = or([initialClause]);
 
 	const returnClause: Parser<IAST> = map(
 		precededMultiple([token('return'), whitespace], exprSingle),
@@ -1171,9 +1192,52 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		([initial, intermediate], ret) => ['flworExpr', initial, ...intermediate, ret] as IAST
 	);
 
+	const sequenceTypeUnion: Parser<IAST> = binaryOperator(sequenceType, token('|'), (lhs, rhs) =>
+		rhs.length === 0
+			? ['sequenceType', ...lhs]
+			: ([
+					'sequenceTypeUnion',
+					['sequenceType', ...lhs],
+					...rhs.map((x) => ['sequenceType', ...x[1]]),
+			  ] as IAST)
+	);
+
+	const caseClause: Parser<IAST> = then3(
+		precededMultiple(
+			[token('case'), whitespace],
+			optional(preceded(token('$'), followed(followed(varName, whitespacePlus), token('as'))))
+		),
+		preceded(whitespace, sequenceTypeUnion),
+		precededMultiple([whitespacePlus, token('return'), whitespacePlus], exprSingle),
+		(varName, sequence, expr) =>
+			(['typeswitchExprCaseClause'] as IAST)
+				.concat(varName ? [['variableBinding', ...varName]] : [])
+				.concat([sequence])
+				.concat([['resultExpr', expr]]) as IAST
+	);
+
+	const typeswitchExpr: Parser<IAST> = then4(
+		preceded(
+			token('typeswitch'),
+			surrounded(delimited(token('('), surrounded(expr, whitespace), token(')')), whitespace)
+		),
+		plus(followed(caseClause, whitespace)),
+		precededMultiple(
+			[token('default'), whitespacePlus],
+			optional(preceded(token('$'), followed(varName, whitespacePlus)))
+		),
+		precededMultiple([token('return'), whitespacePlus], exprSingle),
+		(expr, clauses, varName, resultExpr) => [
+			'typeswitchExpr',
+			['argExpr', expr],
+			...clauses,
+			['typeswitchExprDefaultClause', ['resultExpr', resultExpr]],
+		]
+	);
+
 	// TODO: add support for flwor, quantified, switch, typeswitch, insert, delete, rename, replace, and copymodify
 	function exprSingle(input: string, offset: number): ParseResult<IAST> {
-		return or([flworExpr, ifExpr, orExpr])(input, offset);
+		return or([flworExpr, typeswitchExpr, ifExpr, orExpr])(input, offset);
 	}
 
 	function expr(input: string, offset: number): ParseResult<IAST> {
