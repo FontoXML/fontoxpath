@@ -20,6 +20,19 @@ import {
 import { IAST } from './astHelper';
 
 function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }): Parser<IAST> {
+	function cached<T>(parser: Parser<T>): Parser<T> {
+		let cache: {[key: number]: ParseResult<T>} = {};
+		return (input: string, offset: number): ParseResult<T> => {
+			if (cache[offset]) {
+				return cache[offset];
+			}
+
+			const result = parser(input, offset);
+			cache[offset] = result;
+			return result;
+		};
+	}
+
 	const char: Parser<string> = or([
 		regex(/[\t\n\r -\uD7FF\uE000\uFFFD]/),
 		regex(/[\uD800-\uDBFF][\uDC00-\uDFFF]/),
@@ -44,9 +57,9 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		comment,
 	]);
 
-	const whitespace: Parser<string> = map(star(whitespaceCharacter), (x) => x.join(''));
+	const whitespace: Parser<string> = cached(map(star(whitespaceCharacter), (x) => x.join('')));
 
-	const whitespacePlus: Parser<string> = map(plus(whitespaceCharacter), (x) => x.join(''));
+	const whitespacePlus: Parser<string> = cached(map(plus(whitespaceCharacter), (x) => x.join('')));
 
 	function surrounded<T, S>(parser: Parser<T>, around: Parser<S>): Parser<T> {
 		return delimited(around, parser, around);
@@ -809,7 +822,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		),
 	]);
 
-	const pathExpr: Parser<IAST> = or([relativePathExpr, absoluteLocationPath]);
+	const pathExpr: Parser<IAST> = cached(or([relativePathExpr, absoluteLocationPath]));
 
 	const validateExpr: Parser<IAST> = unimplemented;
 
