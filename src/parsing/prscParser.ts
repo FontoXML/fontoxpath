@@ -1071,7 +1071,10 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 	);
 
 	const valueCompare: Parser<string> = map(
-		or([token('eq'), token('ne'), token('lt'), token('le'), token('gt'), token('ge')]),
+		followed(
+			or([token('eq'), token('ne'), token('lt'), token('le'), token('gt'), token('ge')]),
+			assertAdjacentOpeningTerminal
+		),
 		(x) => x + 'Op'
 	);
 
@@ -1140,7 +1143,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 	// TODO: add TypeDeclaration, AllowingEmpty, and PositionalVar
 	const forBinding: Parser<IAST> = then(
 		preceded(token('$'), varName),
-		precededMultiple([whitespace, token('in'), whitespace], exprSingle),
+		preceded(surrounded(token('in'), whitespace), exprSingle),
 		(varName, expr) => [
 			'forClauseItem',
 			['typedVariableBinding', ['varName', ...varName]],
@@ -1171,7 +1174,11 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 	const letClause: Parser<IAST> = map(
 		precededMultiple(
 			[token('let'), whitespace],
-			binaryOperator(letBinding, token(','), (lhs, rhs) => [lhs, ...rhs.map((x) => x[1])])
+			then(
+				followed(letBinding, whitespace),
+				star(precededMultiple([token(','), whitespace], letBinding)),
+				(first, rest) => [first, ...rest]
+			)
 		),
 		(x) => ['letClause', ...x]
 	);
@@ -1186,14 +1193,11 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		(x) => ['returnClause', x]
 	);
 
-	const flworExpr: Parser<IAST> = then(
-		then(
-			initialClause,
-			star(preceded(whitespace, intermediateClause)),
-			(initial, intermediate) => [initial, intermediate]
-		),
+	const flworExpr: Parser<IAST> = then3(
+		initialClause,
+		preceded(whitespace, intermediateClause),
 		preceded(whitespace, returnClause),
-		([initial, intermediate], ret) => ['flworExpr', initial, ...intermediate, ret] as IAST
+		(initial, intermediate, ret) => ['flworExpr', initial, intermediate, ret] as IAST
 	);
 
 	const sequenceTypeUnion: Parser<IAST> = binaryOperator(sequenceType, token('|'), (lhs, rhs) =>
