@@ -52,6 +52,11 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		return comment(input, offset);
 	}
 
+	const explicitWhitespace: Parser<string> = map(
+		plus(or(['\u0020', '\u0009', '\u000D', '\u000A'].map(token))),
+		(x) => x.join('')
+	);
+
 	const whitespaceCharacter: Parser<string> = or([
 		or(['\u0020', '\u0009', '\u000D', '\u000A'].map(token)),
 		comment,
@@ -238,6 +243,61 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				return exp;
 		}
 		return ['sequenceExpr', exp];
+	}
+
+	function accumulateDirContents(
+		parts: any | any[],
+		expressionsOnly: boolean,
+		normalizeWhitespace: boolean
+	) {
+		if (!parts.length) {
+			return [];
+		}
+		var result = [parts[0]];
+		for (var i = 1; i < parts.length; ++i) {
+			if (typeof result[result.length - 1] === 'string' && typeof parts[i] === 'string') {
+				result[result.length - 1] += parts[i];
+				continue;
+			}
+			result.push(parts[i]);
+		}
+
+		if (typeof result[0] === 'string' && result.length === 0) {
+			return [];
+		}
+
+		result = result.reduce(function (filteredItems, item, i) {
+			if (typeof item !== 'string') {
+				filteredItems.push(item);
+			} else if (!normalizeWhitespace || !/^\s*$/.test(item)) {
+				// Not only whitespace
+				filteredItems.push(parseCharacterReferences(item));
+			} else {
+				var next = result[i + 1];
+				if (next && next[0] === 'CDataSection') {
+					filteredItems.push(parseCharacterReferences(item));
+				} else {
+					var previous = result[i - 1];
+					if (previous && previous[0] === 'CDataSection') {
+						filteredItems.push(parseCharacterReferences(item));
+					}
+				}
+			}
+			return filteredItems;
+		}, []);
+
+		if (!result.length) {
+			return result;
+		}
+
+		if (result.length > 1 || expressionsOnly) {
+			for (var i = 0; i < result.length; i++) {
+				if (typeof result[i] === 'string') {
+					result[i] = ['stringConstantExpr', ['value', result[i]]];
+				}
+			}
+		}
+		return result;
 	}
 
 	const assertAdjacentOpeningTerminal: Parser<string> = peek(
@@ -624,22 +684,19 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const mapConstructor: Parser<IAST> = preceded(
 		token('map'),
-		preceded(
-			whitespace,
-			delimited(
-				token('{'),
-				map(
-					optional(
-						binaryOperator(
-							mapConstructorEntry,
-							surrounded(token(','), whitespace),
-							(lhs, rhs) => [lhs, ...rhs.map((x) => x[1])]
-						)
-					),
-					(entries) => (entries ? ['mapConstructor', ...entries] : ['mapConstructor'])
+		delimited(
+			surrounded(token('{'), whitespace),
+			map(
+				optional(
+					binaryOperator(
+						mapConstructorEntry,
+						surrounded(token(','), whitespace),
+						(lhs, rhs) => [lhs, ...rhs.map((x) => x[1])]
+					)
 				),
-				token('}')
-			)
+				(entries) => (entries ? ['mapConstructor', ...entries] : ['mapConstructor'])
+			),
+			preceded(whitespace, token('}'))
 		)
 	);
 
@@ -688,6 +745,73 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		}
 	);
 
+	const commonContent: Parser<IAST | string> = or([
+		// TODO: add predefinedEntityRef, charRef
+		alias(['{{'], '{') as Parser<IAST | string>,
+		alias(['}}'], '}'),
+		map(enclosedExpr, (x) => x || ['sequenceExpr']),
+	]);
+
+	const elementContentChar = preceded(
+		peek(not(regex(/[{}<&]/), ['elementContentChar cannot be {, }, <, or &'])),
+		char
+	);
+
+	const dirElemContent: Parser<IAST | string> = or([
+		// TODO: add cDataSection
+		directConstructorIndirect,
+		commonContent,
+		elementContentChar,
+	]);
+
+	const dirElemConstructor: Parser<IAST> = then3(
+		preceded(token('<'), qName),
+		// TODO: add dir attribute list
+		// dirAttributeList,
+		token(''),
+		or([
+			map(token('/>'), (_) => null),
+			then(
+				preceded(token('>'), star(dirElemContent)),
+				precededMultiple(
+					[whitespace, token('</')],
+					followed(
+						qName,
+						then(optional(explicitWhitespace), token('>'), (_) => null)
+					)
+				),
+				(contents, _endName) => {
+					//TODO: add assertEqualNames(name, endName);
+					return accumulateDirContents(contents, true, true);
+				}
+			),
+		]),
+		(name, attList, contents) =>
+			[
+				'elementConstructor',
+				['tagName', ...name],
+				...(contents && contents.length ? [['elementContent', ...contents]] : []),
+			] as IAST
+	);
+
+	const dirCommentConstructor: Parser<IAST> = unimplemented;
+
+	const dirPiConstructor: Parser<IAST> = unimplemented;
+
+	const directConstructor: Parser<IAST> = or([
+		dirElemConstructor,
+		dirCommentConstructor,
+		dirPiConstructor,
+	]);
+
+	function directConstructorIndirect(input: string, offset: number): ParseResult<IAST> {
+		return directConstructor(input, offset);
+	}
+
+	const computedConstructor: Parser<IAST> = unimplemented;
+
+	const nodeConstructor: Parser<IAST> = or([directConstructor, computedConstructor]);
+
 	// TODO: add other variants
 	const primaryExpr: Parser<IAST> = or([
 		literal,
@@ -695,6 +819,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		parenthesizedExpr,
 		contextItemExpr,
 		functionCall,
+		nodeConstructor,
 		functionItemExpr,
 		mapConstructor,
 		arrayConstructor,
