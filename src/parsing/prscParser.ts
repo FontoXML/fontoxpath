@@ -764,11 +764,86 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		elementContentChar,
 	]);
 
+	const quotAttrValueContentChar: Parser<string> = preceded(
+		peek(not(regex(/[\"{}<&]/), ['quotAttrValueContentChar cannot be ", {, }, <, or &'])),
+		char
+	);
+
+	const aposAttrValueContentChar: Parser<string> = preceded(
+		peek(not(regex(/[\'{}<&]/), ["aposAttrValueContentChar cannot be ', {, }, <, or &"])),
+		char
+	);
+
+	const quotAttrValueContent: Parser<IAST | string> = or([
+		map(quotAttrValueContentChar, (x) => x.replace(/[\x20\x0D\x0A\x09]/g, ' ')) as Parser<
+			IAST | string
+		>,
+		commonContent,
+	]);
+
+	const aposAttrValueContent: Parser<IAST | string> = or([
+		map(aposAttrValueContentChar, (x) => x.replace(/[\x20\x0D\x0A\x09]/g, ' ')) as Parser<
+			IAST | string
+		>,
+		commonContent,
+	]);
+
+	// TODO: determine type of accumulateDirContents
+	const dirAttributeValue: Parser<any[]> = map(
+		or([
+			surrounded(star(or([escapeQuot, quotAttrValueContent])), token('"')),
+			surrounded(star(or([escapeApos, aposAttrValueContent])), token("'")),
+		]),
+		(x) => accumulateDirContents(x.join(''), false, false)
+	);
+
+	const attribute: Parser<IAST> = then(
+		qName,
+		preceded(surrounded(token('='), optional(explicitWhitespace)), dirAttributeValue),
+		(name, value) => {
+			if (name.length === 1 && name[0] === 'xmlns') {
+				if (value.length && typeof value[0] !== 'string') {
+					// TODO: These could get replaced with a fatal parse error
+					throw new Error(
+						'XQST0022: A namespace declaration may not contain enclosed expressions'
+					);
+				}
+				return ['namespaceDeclaration', value.length ? ['uri', value[0]] : ['uri']];
+			}
+			if ((name[0] as ASTAttributes).prefix === 'xmlns') {
+				if (value.length && typeof value[0] !== 'string') {
+					throw new Error(
+						"XQST0022: The namespace declaration for 'xmlns:" +
+							name[1] +
+							"' may not contain enclosed expressions"
+					);
+				}
+				return [
+					'namespaceDeclaration',
+					['prefix', name[1]],
+					value.length ? ['uri', value[0]] : ['uri'],
+				] as IAST;
+			}
+			return [
+				'attributeConstructor',
+				['attributeName'].concat(name as string[]),
+				value.length === 0
+					? ['attributeValue']
+					: value.length === 1 && typeof value[0] === 'string'
+					? ['attributeValue', value[0]]
+					: ['attributeValueExpr'].concat(value),
+			] as IAST;
+		}
+	);
+
+	const dirAttributeList: Parser<IAST[]> = map(
+		star(preceded(explicitWhitespace, optional(attribute))),
+		(x) => x.filter(Boolean)
+	);
+
 	const dirElemConstructor: Parser<IAST> = then3(
 		preceded(token('<'), qName),
-		// TODO: add dir attribute list
-		// dirAttributeList,
-		token(''),
+		dirAttributeList,
 		or([
 			map(token('/>'), (_) => null),
 			then(
@@ -790,6 +865,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			[
 				'elementConstructor',
 				['tagName', ...name],
+				...(attList.length ? [['attributeList', ...attList]] : []),
 				...(contents && contents.length ? [['elementContent', ...contents]] : []),
 			] as IAST
 	);
