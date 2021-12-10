@@ -1174,11 +1174,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 	const letClause: Parser<IAST> = map(
 		precededMultiple(
 			[token('let'), whitespace],
-			then(
-				followed(letBinding, whitespace),
-				star(precededMultiple([token(','), whitespace], letBinding)),
-				(first, rest) => [first, ...rest]
-			)
+			binaryOperator(letBinding, token(','), (lhs, rhs) => [lhs, ...rhs.map((x) => x[1])])
 		),
 		(x) => ['letClause', ...x]
 	);
@@ -1193,11 +1189,14 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		(x) => ['returnClause', x]
 	);
 
-	const flworExpr: Parser<IAST> = then3(
-		initialClause,
-		preceded(whitespace, intermediateClause),
+	const flworExpr: Parser<IAST> = then(
+		then(
+			initialClause,
+			star(preceded(whitespace, intermediateClause)),
+			(initial, intermediate) => [initial, intermediate]
+		),
 		preceded(whitespace, returnClause),
-		(initial, intermediate, ret) => ['flworExpr', initial, intermediate, ret] as IAST
+		([initial, intermediate], ret) => ['flworExpr', initial, ...intermediate, ret] as IAST
 	);
 
 	const sequenceTypeUnion: Parser<IAST> = binaryOperator(sequenceType, token('|'), (lhs, rhs) =>
