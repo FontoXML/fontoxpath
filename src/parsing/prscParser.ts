@@ -280,8 +280,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		(x: string) => x.substring(0, x.length - 2)
 	);
 
-	const documentTest: Parser<IAST> = unimplemented;
-
 	// TODO: implement other variants
 	const elementTest: Parser<IAST> = or([
 		map(
@@ -296,6 +294,17 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 	const attributeTest: Parser<IAST> = unimplemented;
 
 	const schemaElementTest: Parser<IAST> = unimplemented;
+
+	const documentTest: Parser<IAST> = map(
+		preceded(
+			token('document-node('),
+			followed(
+				surrounded(optional(or([elementTest, schemaElementTest])), whitespace),
+				token(')')
+			)
+		),
+		(x) => ['documentTest', ...(x ? [x] : [])]
+	);
 
 	const piTest: Parser<IAST> = unimplemented;
 
@@ -984,6 +993,11 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		]),
 	]);
 
+	const typeDeclaration: Parser<IAST> = map(
+		precededMultiple([token('as'), whitespacePlus], sequenceType),
+		(x) => ['typeDeclaration', ...x]
+	);
+
 	const treatExpr: Parser<IAST> = then(
 		castableExpr,
 		optional(
@@ -1238,13 +1252,42 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			'typeswitchExpr',
 			['argExpr', expr],
 			...clauses,
-			['typeswitchExprDefaultClause', ['resultExpr', resultExpr]],
+			['typeswitchExprDefaultClause', ...(varName || []), ['resultExpr', resultExpr]],
 		]
 	);
 
-	// TODO: add support for flwor, quantified, switch, typeswitch, insert, delete, rename, replace, and copymodify
+	const quantifiedExprInClause: Parser<IAST> = then3(
+		preceded(token('$'), varName),
+		optional(preceded(whitespacePlus, typeDeclaration)),
+		preceded(surrounded(token('in'), whitespacePlus), exprSingle),
+		(varName, type, exprSingle) => [
+			'quantifiedExprInClause',
+			['typedVariableBinding', ['varName', ...varName], ...(type ? [type] : [])],
+			['sourceExpr', exprSingle],
+		]
+	);
+
+	const quantifiedExprInClauses: Parser<IAST[]> = binaryOperator(
+		quantifiedExprInClause,
+		token(','),
+		(lhs, rhs) => [lhs, ...rhs.map((x) => x[1])]
+	);
+
+	const quantifiedExpr: Parser<IAST> = then3(
+		or([token('some'), token('every')]),
+		preceded(whitespacePlus, quantifiedExprInClauses),
+		preceded(surrounded(token('satisfies'), whitespace), exprSingle),
+		(kind, clauses, predicate) => [
+			'quantifiedExpr',
+			['quantifier', kind],
+			...clauses,
+			['predicateExpr', predicate],
+		]
+	);
+
+	// TODO: add support for switch, typeswitch, insert, delete, rename, replace, and copymodify
 	function exprSingle(input: string, offset: number): ParseResult<IAST> {
-		return or([flworExpr, typeswitchExpr, ifExpr, orExpr])(input, offset);
+		return or([flworExpr, quantifiedExpr, typeswitchExpr, ifExpr, orExpr])(input, offset);
 	}
 
 	function expr(input: string, offset: number): ParseResult<IAST> {
@@ -1264,11 +1307,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			['prefix', prefix],
 			['uri', uri],
 		])
-	);
-
-	const typeDeclaration: Parser<IAST> = map(
-		precededMultiple([token('as'), whitespacePlus], sequenceType),
-		(x) => ['typeDeclaration', ...x]
 	);
 
 	const varValue: Parser<IAST> = exprSingle;
