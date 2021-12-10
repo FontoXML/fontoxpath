@@ -1505,9 +1505,22 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		]
 	);
 
-	// TODO: add support for switch, typeswitch, insert, delete, rename, replace, and copymodify
+	const targetExpr: Parser<IAST> = exprSingle;
+
+	const deleteExpr: Parser<IAST> = map(
+		precededMultiple(
+			[token('delete'), whitespacePlus, or(['node', 'nodes'].map(token)), whitespacePlus],
+			targetExpr
+		),
+		(x) => ['deleteExpr', ['targetExpr', x]]
+	);
+
+	// TODO: add support for switch, insert, rename, replace, and copymodify
 	function exprSingle(input: string, offset: number): ParseResult<IAST> {
-		return or([flworExpr, quantifiedExpr, typeswitchExpr, ifExpr, orExpr])(input, offset);
+		return or([flworExpr, quantifiedExpr, typeswitchExpr, ifExpr, deleteExpr, orExpr])(
+			input,
+			offset
+		);
 	}
 
 	function expr(input: string, offset: number): ParseResult<IAST> {
