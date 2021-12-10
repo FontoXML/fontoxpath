@@ -1415,8 +1415,13 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const initialClause: Parser<IAST> = or([forClause, letClause]);
 
+	const whereClause: Parser<IAST> = map(
+		precededMultiple([token('where'), assertAdjacentOpeningTerminal, whitespace], exprSingle),
+		(x) => ['whereClause', x]
+	);
+
 	// TODO: add other variants
-	const intermediateClause: Parser<IAST> = or([initialClause]);
+	const intermediateClause: Parser<IAST> = or([initialClause, whereClause]);
 
 	const returnClause: Parser<IAST> = map(
 		precededMultiple([token('return'), whitespace], exprSingle),
@@ -1515,12 +1520,37 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		(x) => ['deleteExpr', ['targetExpr', x]]
 	);
 
+	const replaceExpr: Parser<IAST> = then3(
+		precededMultiple(
+			[token('replace'), whitespacePlus],
+			optional(
+				precededMultiple([token('value'), whitespacePlus, token('of')], whitespacePlus)
+			)
+		),
+		precededMultiple([token('node'), whitespacePlus], targetExpr),
+		preceded(surrounded(token('with'), whitespacePlus), exprSingle),
+		(replaceValue, targetExpr, replacementExpr) =>
+			replaceValue
+				? [
+						'replaceExpr',
+						['replaceValue'],
+						['targetExpr', targetExpr],
+						['replacementExpr', replacementExpr],
+				  ]
+				: ['replaceExpr', ['targetExpr', targetExpr], ['replacementExpr', replacementExpr]]
+	);
+
 	// TODO: add support for switch, insert, rename, replace, and copymodify
 	function exprSingle(input: string, offset: number): ParseResult<IAST> {
-		return or([flworExpr, quantifiedExpr, typeswitchExpr, ifExpr, deleteExpr, orExpr])(
-			input,
-			offset
-		);
+		return or([
+			flworExpr,
+			quantifiedExpr,
+			typeswitchExpr,
+			ifExpr,
+			deleteExpr,
+			replaceExpr,
+			orExpr,
+		])(input, offset);
 	}
 
 	function expr(input: string, offset: number): ParseResult<IAST> {
