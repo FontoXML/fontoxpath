@@ -17,7 +17,7 @@ import {
 	then,
 	token,
 } from 'prsc';
-import { IAST } from './astHelper';
+import { ASTAttributes, IAST } from './astHelper';
 
 function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }): Parser<IAST> {
 	function cached<T>(parser: Parser<T>): Parser<T> {
@@ -352,18 +352,38 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const xmlPrefix: Parser<string> = ncName;
 
-	// TODO: give this better types
-	const prefixedName: Parser<any> = then(
+	const prefixedName: Parser<(string | ASTAttributes)[]> = then(
 		xmlPrefix,
 		preceded(token(':'), localPart),
 		(prefix, local) => [{ ['prefix']: prefix }, local]
 	);
 
-	// TODO: give this better types
-	const qName: Parser<any> = or([prefixedName, unprefixedName]);
+	const qName: Parser<IAST | (string | ASTAttributes)[]> = or([
+		prefixedName as Parser<IAST | (string | ASTAttributes)[]>,
+		unprefixedName,
+	]);
 
-	// TODO: add uri qualified name
-	const eqName: Parser<IAST> = or([qName]) as Parser<IAST>;
+	const bracedURILiteral: Parser<string> = followed(
+		precededMultiple(
+			[token('Q'), whitespace, token('{')],
+			// TODO: add xquery version
+			map(star(regex(/[^{}]/)), (x) => x.join(''))
+		),
+		token('}')
+	);
+
+	const uriQualifiedName: Parser<IAST> = then(bracedURILiteral, ncName, (uri, localName) => [
+		uri,
+		localName,
+	]);
+
+	const eqName: Parser<IAST | [ASTAttributes, string]> = or([
+		map(
+			uriQualifiedName,
+			(x) => [{ ['prefix']: null, ['URI']: x[0] }, x[1]] as [ASTAttributes, string]
+		),
+		qName as Parser<IAST | [ASTAttributes, string]>,
+	]);
 
 	const wildcard: Parser<IAST> = or([
 		map(preceded(token('*:'), ncName), (x) => [
@@ -372,7 +392,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			['NCName', x],
 		]) as Parser<IAST>,
 		wrapArray(alias(['*'], 'Wildcard')),
-		// TODO: implement bracedURILiteral
+		map(followed(bracedURILiteral, token('*')), (x) => ['Wildcard', ['uri', x], ['star']]),
 		map(followed(ncName, token(':*')), (x) => [
 			'Wildcard',
 			['NCName', x],
@@ -471,7 +491,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		map(stringLiteral, (x) => ['stringConstantExpr', ['value', parseCharacterReferences(x)]]),
 	]);
 
-	const varName: Parser<IAST> = eqName;
+	const varName: Parser<IAST | [ASTAttributes, string]> = eqName;
 
 	const varRef: Parser<IAST> = map(preceded(token('$'), varName), (x) => [
 		'varRef',
@@ -928,9 +948,9 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			)
 	);
 
-	const typeName: Parser<IAST> = eqName;
+	const typeName: Parser<IAST | [ASTAttributes, string]> = eqName;
 
-	const simpleTypeName: Parser<IAST> = typeName;
+	const simpleTypeName: Parser<IAST | [ASTAttributes, string]> = typeName;
 
 	const singleType: Parser<IAST> = then(simpleTypeName, optional(token('?')), (type, opt) =>
 		opt !== null
@@ -1341,12 +1361,14 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const annotation: Parser<IAST> = unimplemented;
 
-	const compatibilityAnnotation: Parser<IAST> = unimplemented;
+	const compatibilityAnnotation: Parser<IAST> = map(token('updating'), (_) => [
+		'annotation',
+		['annotationName', 'updating'],
+	]);
 
 	const annotatedDecl: Parser<IAST> = precededMultiple(
 		[token('declare'), whitespacePlus],
 		then(
-			// TODO: add annotations
 			star(followed(or([annotation, compatibilityAnnotation]), whitespacePlus)),
 			or([varDecl, functionDecl]),
 			(annotations, decl) => [decl[0], ...annotations, ...decl.slice(1)]
