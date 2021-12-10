@@ -241,8 +241,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 	}
 
 	const assertAdjacentOpeningTerminal: Parser<string> = peek(
-		// TODO: add other whitespace characters
-		or(['(', '"', "'", ' '].map(token))
+		or([token('('), token('"'), token("'"), whitespaceCharacter])
 	);
 
 	const unimplemented: Parser<IAST> = wrapArray(token('unimplemented'));
