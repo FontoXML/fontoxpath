@@ -1751,7 +1751,20 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		(prolog, body) => ['mainModule', ...(prolog ? [prolog] : []), body]
 	);
 
-	const libraryModule: Parser<IAST> = unimplemented;
+	const moduleDecl: Parser<IAST> = precededMultiple(
+		[token('module'), whitespacePlus, token('namespace'), whitespacePlus],
+		then(
+			followed(ncName, surrounded(token('='), whitespace)),
+			followed(uriLiteral, preceded(whitespace, separator)),
+			(prefix, uri) => ['moduleDecl', ['prefix', prefix], ['uri', uri]]
+		)
+	);
+
+	const libraryModule: Parser<IAST> = then(
+		moduleDecl,
+		preceded(whitespace, prolog),
+		(moduleDecl, prolog) => ['libraryModule', moduleDecl, ...(prolog ? [prolog] : [])] as IAST
+	);
 
 	const versionDecl: Parser<IAST> = precededMultiple(
 		[token('xquery'), whitespace],
