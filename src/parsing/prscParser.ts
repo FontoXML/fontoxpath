@@ -1749,9 +1749,18 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		(prolog, body) => ['mainModule', ...(prolog ? [prolog] : []), body]
 	);
 
-	const moduleParser: Parser<IAST> = map(mainModule, (x) => ['module', x]);
+	const libraryModule: Parser<IAST> = unimplemented;
 
-	return moduleParser;
+	const versionDecl: Parser<IAST> = unimplemented;
+
+	const module: Parser<IAST> = then(
+		optional(surrounded(versionDecl, whitespace)),
+		or([libraryModule, mainModule]),
+		(versionDecl, module) =>
+			['module', ...(versionDecl ? [versionDecl] : []), ...[module]] as IAST
+	);
+
+	return module;
 }
 
 export function parseUsingPrsc(
