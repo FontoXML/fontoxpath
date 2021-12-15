@@ -1329,9 +1329,9 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		unionExpr,
 		or([
 			alias(['*'], 'multiplyOp'),
-			alias(['div'], 'divOp'),
-			alias(['idiv'], 'idivOp'),
-			alias(['mod'], 'modOp'),
+			followed(alias(['div'], 'divOp'), assertAdjacentOpeningTerminal),
+			followed(alias(['idiv'], 'idivOp'), assertAdjacentOpeningTerminal),
+			followed(alias(['mod'], 'modOp'), assertAdjacentOpeningTerminal),
 		]),
 		defaultBinaryOperatorFn
 	);
@@ -1591,15 +1591,79 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				: ['replaceExpr', ['targetExpr', targetExpr], ['replacementExpr', replacementExpr]]
 	);
 
-	// TODO: add support for switch, insert, rename, replace, and copymodify
+	const transformCopy: Parser<IAST> = then(
+		varRef,
+		preceded(surrounded(token(':='), whitespace), exprSingle),
+		(varRef, copySource) => ['transformCopy', varRef, ['copySource', copySource]]
+	);
+
+	const copyModifyExpr: Parser<IAST> = then3(
+		precededMultiple(
+			[token('copy'), whitespacePlus],
+			binaryOperator(transformCopy, token(','), (lhs, rhs) => [lhs, ...rhs.map((x) => x[1])])
+		),
+		precededMultiple([whitespace, token('modify'), whitespacePlus], exprSingle),
+		preceded(surrounded(token('return'), whitespacePlus), exprSingle),
+		(transformExprs, modifyExpr, returnExpr) =>
+			[
+				'transformExpr',
+				['transformCopies', ...transformExprs],
+				['modifyExpr', modifyExpr],
+				['returnExpr', returnExpr],
+			] as IAST
+	);
+
+	const sourceExpr: Parser<IAST> = exprSingle;
+
+	const insertExprTargetChoice: Parser<IAST> = or([
+		followed(
+			map(
+				optional(
+					followed(
+						precededMultiple(
+							[token('as'), whitespacePlus],
+							or([
+								map(token('first'), (_) => ['insertAsFirst']),
+								map(token('last'), (_) => ['insertAsLast']),
+							])
+						),
+						whitespacePlus
+					)
+				),
+				(x) => (x ? ['insertInto', x] : ['insertInto']) as IAST
+			),
+			token('into')
+		),
+		map(token('after'), (_) => ['insertAfter']),
+		map(token('before'), (_) => ['insertBefore']),
+	]);
+
+	const insertExpr: Parser<IAST> = then3(
+		precededMultiple(
+			[token('insert'), whitespacePlus, or(['nodes', 'node'].map(token)), whitespacePlus],
+			sourceExpr
+		),
+		preceded(whitespacePlus, insertExprTargetChoice),
+		preceded(whitespacePlus, targetExpr),
+		(sourceExpr, ietc, targetExpr) => [
+			'insertExpr',
+			['sourceExpr', sourceExpr],
+			ietc,
+			['targetExpr', targetExpr],
+		]
+	);
+
+	// TODO: add support for switch, insert, rename, replace
 	function exprSingle(input: string, offset: number): ParseResult<IAST> {
 		return or([
 			flworExpr,
 			quantifiedExpr,
 			typeswitchExpr,
 			ifExpr,
+			insertExpr,
 			deleteExpr,
 			replaceExpr,
+			copyModifyExpr,
 			orExpr,
 		])(input, offset);
 	}
