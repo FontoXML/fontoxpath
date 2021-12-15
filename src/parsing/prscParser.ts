@@ -935,7 +935,38 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		return directConstructor(input, offset);
 	}
 
-	const computedConstructor: Parser<IAST> = unimplemented;
+	const compDocConstructor: Parser<IAST> = map(
+		precededMultiple([token('document'), whitespace], enclosedExpr),
+		(x) => ['computedDocumentConstructor', ...(x ? [['argExpr', x]] : [])] as IAST
+	);
+
+	const compElemConstructor: Parser<IAST> = unimplemented;
+
+	const compAttrConstructor: Parser<IAST> = unimplemented;
+
+	const compNamespaceConstructor: Parser<IAST> = unimplemented;
+
+	const compTextConstructor: Parser<IAST> = map(
+		precededMultiple([token('text'), whitespace], enclosedExpr),
+		(x) => ['computedTextConstructor', ...(x ? [['argExpr', x]] : [])] as IAST
+	);
+
+	const compCommentConstructor: Parser<IAST> = map(
+		precededMultiple([token('comment'), whitespace], enclosedExpr),
+		(x) => ['computedCommentConstructor', ...(x ? [['argExpr', x]] : [])] as IAST
+	);
+
+	const compPiConstructor: Parser<IAST> = unimplemented;
+
+	const computedConstructor: Parser<IAST> = or([
+		compDocConstructor,
+		compElemConstructor,
+		compAttrConstructor,
+		compNamespaceConstructor,
+		compTextConstructor,
+		compCommentConstructor,
+		compPiConstructor,
+	]);
 
 	const nodeConstructor: Parser<IAST> = or([directConstructor, computedConstructor]);
 
