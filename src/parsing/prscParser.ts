@@ -1733,22 +1733,30 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		)
 	);
 
+	const defaultNamespaceDecl: Parser<IAST> = then(
+		precededMultiple(
+			[token('declare'), whitespacePlus, token('default'), whitespacePlus],
+			or([token('element'), token('function')])
+		),
+		precededMultiple([whitespacePlus, token('namespace'), whitespacePlus], uriLiteral),
+		(elementOrFunction, uri) => [
+			'defaultNamespaceDecl',
+			['defaultNamespaceCategory', elementOrFunction],
+			['uri', uri],
+		]
+	);
+
 	const separator: Parser<string> = token(';');
 
 	const prolog: Parser<IAST> = then(
-		star(followed(namespaceDecl, surrounded(separator, whitespace))),
+		star(
+			followed(or([namespaceDecl, defaultNamespaceDecl]), surrounded(separator, whitespace))
+		),
 		star(followed(annotatedDecl, surrounded(separator, whitespace))),
 		(moduleSettings, declarations) =>
 			moduleSettings.length === 0 && declarations.length === 0
 				? null
 				: ['prolog', ...moduleSettings, ...declarations]
-	);
-
-	// TODO: add prolog
-	const mainModule: Parser<IAST> = then(
-		prolog,
-		preceded(whitespace, queryBody),
-		(prolog, body) => ['mainModule', ...(prolog ? [prolog] : []), body]
 	);
 
 	const moduleDecl: Parser<IAST> = precededMultiple(
@@ -1764,6 +1772,12 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		moduleDecl,
 		preceded(whitespace, prolog),
 		(moduleDecl, prolog) => ['libraryModule', moduleDecl, ...(prolog ? [prolog] : [])] as IAST
+	);
+
+	const mainModule: Parser<IAST> = then(
+		prolog,
+		preceded(whitespace, queryBody),
+		(prolog, body) => ['mainModule', ...(prolog ? [prolog] : []), body]
 	);
 
 	const versionDecl: Parser<IAST> = precededMultiple(
