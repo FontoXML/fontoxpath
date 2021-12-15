@@ -794,7 +794,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			surrounded(star(or([escapeQuot, quotAttrValueContent])), token('"')),
 			surrounded(star(or([escapeApos, aposAttrValueContent])), token("'")),
 		]),
-		(x) => accumulateDirContents(x.join(''), false, false)
+		(x: (IAST | string)[]) => accumulateDirContents(x, false, false)
 	);
 
 	const attribute: Parser<IAST> = then(
@@ -1759,6 +1759,8 @@ export function parseUsingPrsc(
 	options: { outputDebugInfo: boolean; xquery: boolean },
 	shouldConsumeAll: boolean = true
 ): ParseResult<IAST> {
+	if (options.outputDebugInfo) throw new Error('DEBUG NOT SUPPORTED YET');
+
 	return (shouldConsumeAll ? complete(generateParser(options)) : generateParser(options))(
 		xpath.trim(),
 		0
