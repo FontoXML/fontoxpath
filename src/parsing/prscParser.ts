@@ -1733,9 +1733,11 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		)
 	);
 
+	const separator: Parser<string> = token(';');
+
 	const prolog: Parser<IAST> = then(
-		star(followed(namespaceDecl, surrounded(token(';'), whitespace))),
-		star(followed(annotatedDecl, surrounded(token(';'), whitespace))),
+		star(followed(namespaceDecl, surrounded(separator, whitespace))),
+		star(followed(annotatedDecl, surrounded(separator, whitespace))),
 		(moduleSettings, declarations) =>
 			moduleSettings.length === 0 && declarations.length === 0
 				? null
@@ -1751,7 +1753,24 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const libraryModule: Parser<IAST> = unimplemented;
 
-	const versionDecl: Parser<IAST> = unimplemented;
+	const versionDecl: Parser<IAST> = precededMultiple(
+		[token('xquery'), whitespace],
+		followed(
+			or([
+				then(preceded(token('encoding'), whitespacePlus), stringLiteral, (encoding) => [
+					'encoding',
+					encoding,
+				]),
+				then(
+					precededMultiple([token('version'), whitespacePlus], stringLiteral),
+					optional(precededMultiple([token('encoding'), whitespacePlus], stringLiteral)),
+					(version, encoding) =>
+						['version', version, ...(encoding ? [['encoding', encoding]] : [])] as IAST
+				),
+			]),
+			separator
+		)
+	);
 
 	const module: Parser<IAST> = then(
 		optional(surrounded(versionDecl, whitespace)),
