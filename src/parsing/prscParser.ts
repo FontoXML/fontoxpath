@@ -870,9 +870,60 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			] as IAST
 	);
 
-	const dirCommentConstructor: Parser<IAST> = unimplemented;
+	const dirCommentContents: Parser<string> = map(
+		star(
+			or([
+				preceded(peek(not(token('-'), [])), char),
+				precededMultiple([token('-'), peek(not(token('-'), [])) as Parser<string>], char),
+			])
+		),
+		(x) => x.join('')
+	);
 
-	const dirPiConstructor: Parser<IAST> = unimplemented;
+	const dirCommentConstructor: Parser<IAST> = map(
+		delimited(token('<!--'), dirCommentContents, token('-->')),
+		(x) => ['computedCommentConstructor', ['argExpr', ['stringConstantExpr', ['value', x]]]]
+	);
+
+	const nameStartChar: Parser<string> = or([ncNameStartChar, token(':')]);
+
+	const nameChar: Parser<string> = or([ncNameChar, token(':')]);
+
+	const name: Parser<string> = then(
+		nameStartChar,
+		star(nameChar),
+		(start, rest) => start + rest.join('')
+	);
+
+	const piTarget: Parser<string> = preceded(
+		peek(
+			not(
+				then3(
+					or(['X', 'x'].map(token)),
+					or(['M', 'm'].map(token)),
+					or(['L', 'l'].map(token)),
+					(_a, _b, _c) => []
+				),
+				[]
+			)
+		),
+		name
+	);
+
+	const dirPiContents: Parser<string> = map(
+		star(preceded(peek(not(token('?>'), [])), char)),
+		(x) => x.join('')
+	);
+
+	const dirPiConstructor: Parser<IAST> = then(
+		preceded(token('<?'), piTarget),
+		followed(optional(preceded(explicitWhitespace, dirPiContents)), token('?>')),
+		(target, contents) => [
+			'computedPIConstructor',
+			['piTarget', target],
+			['piValueExpr', ['stringConstantExpr', ['value', contents]]],
+		]
+	);
 
 	const directConstructor: Parser<IAST> = or([
 		dirElemConstructor,
