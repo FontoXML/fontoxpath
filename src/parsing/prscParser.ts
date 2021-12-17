@@ -1919,7 +1919,19 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		]
 	);
 
-	// TODO: add support for switch, rename
+	const newNameExpr: Parser<IAST> = exprSingle;
+
+	const renameExpr: Parser<IAST> = then(
+		precededMultiple([token('rename'), whitespacePlus, token('node'), whitespace], targetExpr),
+		precededMultiple([whitespacePlus, token('as'), whitespacePlus], newNameExpr),
+		(targetExpr, newNameExpr) => [
+			'renameExpr',
+			['targetExpr', targetExpr],
+			['newNameExpr', newNameExpr],
+		]
+	);
+
+	// TODO: add support for switch
 	function exprSingle(input: string, offset: number): ParseResult<IAST> {
 		return wrapInStackTrace(
 			or([
@@ -1929,6 +1941,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				ifExpr,
 				insertExpr,
 				deleteExpr,
+				renameExpr,
 				replaceExpr,
 				copyModifyExpr,
 				orExpr,
