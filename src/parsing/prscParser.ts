@@ -1081,6 +1081,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 						toWrap = ['sequenceExpr', toWrap];
 					}
 					toWrap = [['filterExpr', toWrap], ...filters];
+					filters.length = 0;
 				} else if (ensureFilter) {
 					toWrap = [['filterExpr', toWrap]];
 				} else {
