@@ -2026,5 +2026,8 @@ export function parseUsingPrsc(
 	options: { outputDebugInfo: boolean; xquery: boolean },
 	shouldConsumeAll: boolean = true
 ): ParseResult<IAST> {
-	return generateParser(options)(xpath, 0);
+	return (shouldConsumeAll ? complete(generateParser(options)) : generateParser(options))(
+		xpath,
+		0
+	);
 }
