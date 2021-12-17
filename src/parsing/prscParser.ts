@@ -387,6 +387,24 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		(x: string) => x.substring(0, x.length - 2)
 	);
 
+	const ncNameStartChar: Parser<string> = or([
+		regex(
+			/[A-Z_a-z\xC0-\xD6\xD8-\xF6\xF8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD]/
+		),
+		then(regex(/[\uD800-\uDB7F]/), regex(/[\uDC00-\uDFFF]/), (a, b) => a + b),
+	]);
+
+	const ncNameChar: Parser<string> = or([
+		ncNameStartChar,
+		regex(/[\-\.0-9\xB7\u0300-\u036F\u203F\u2040]/),
+	]);
+
+	const ncName: Parser<string> = then(
+		ncNameStartChar,
+		star(ncNameChar),
+		(a, b) => a + b.join('')
+	);
+
 	// TODO: implement other variants
 	const elementTest: Parser<IAST> = or([
 		map(
@@ -413,7 +431,28 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		(x) => ['documentTest', ...(x ? [x] : [])]
 	);
 
-	const piTest: Parser<IAST> = unimplemented;
+	const escapeQuot: Parser<string> = alias(['""'], '"');
+
+	const escapeApos: Parser<string> = alias(["''"], "'");
+
+	// TODO: add check for xquery
+	const stringLiteral: Parser<string> = or([
+		// TODO: add more advanced string literals
+		map(surrounded(star(or([escapeQuot, regex(/[^\"]/)])), token('"')), (x) => x.join('')),
+		map(surrounded(star(or([escapeApos, regex(/[^']/)])), token("'")), (x) => x.join('')),
+	]);
+
+	const piTest: Parser<IAST> = or([
+		map(
+			preceded(
+				token('processing-instruction('),
+				followed(surrounded(or([ncName, stringLiteral]), whitespace), token(')'))
+			),
+			(piTarget) => ['piTest', ['piTarget', piTarget]] as IAST
+		),
+
+		wrapArray(alias(['processing-instruction()'], 'piTest')),
+	]);
 
 	const commentTest: Parser<IAST> = wrapArray(alias(['comment()'], 'commentTest'));
 
@@ -434,24 +473,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		namespaceNodeTest,
 		anyKindTest,
 	]);
-
-	const ncNameStartChar: Parser<string> = or([
-		regex(
-			/[A-Z_a-z\xC0-\xD6\xD8-\xF6\xF8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD]/
-		),
-		then(regex(/[\uD800-\uDB7F]/), regex(/[\uDC00-\uDFFF]/), (a, b) => a + b),
-	]);
-
-	const ncNameChar: Parser<string> = or([
-		ncNameStartChar,
-		regex(/[\-\.0-9\xB7\u0300-\u036F\u203F\u2040]/),
-	]);
-
-	const ncName: Parser<string> = then(
-		ncNameStartChar,
-		star(ncNameChar),
-		(a, b) => a + b.join('')
-	);
 
 	const localPart: Parser<string> = ncName;
 
@@ -581,17 +602,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		or([doubleLiteral, decimalLiteral, integerLiteral]),
 		peek(not(regex(/[a-zA-Z]/), ['no alphabetical characters after numeric literal']))
 	);
-
-	const escapeQuot: Parser<string> = alias(['""'], '"');
-
-	const escapeApos: Parser<string> = alias(["''"], "'");
-
-	// TODO: add check for xquery
-	const stringLiteral: Parser<string> = or([
-		// TODO: add more advanced string literals
-		map(surrounded(star(or([escapeQuot, regex(/[^\"]/)])), token('"')), (x) => x.join('')),
-		map(surrounded(star(or([escapeApos, regex(/[^']/)])), token("'")), (x) => x.join('')),
-	]);
 
 	const literal: Parser<IAST> = or([
 		numericLiteral,
@@ -2002,8 +2012,5 @@ export function parseUsingPrsc(
 	options: { outputDebugInfo: boolean; xquery: boolean },
 	shouldConsumeAll: boolean = true
 ): ParseResult<IAST> {
-	return (shouldConsumeAll ? complete(generateParser(options)) : generateParser(options))(
-		xpath.trim(),
-		0
-	);
+	return generateParser(options)(xpath, 0);
 }
