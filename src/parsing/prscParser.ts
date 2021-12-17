@@ -530,8 +530,45 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			(_) => ['elementTest']
 		),
 	]);
-
-	const attributeTest: Parser<IAST> = unimplemented;
+	const attribNameOrWildCard: Parser<IAST> = or([
+		map(elementName, (name) => ['QName', ...name]),
+		map(token('*'), (_token) => ['star']),
+	]);
+	const attributeTest: Parser<IAST> = or([
+		map(
+			precededMultiple(
+				[token('attribute'), whitespace],
+				delimited(
+					token('('),
+					then(
+						attribNameOrWildCard,
+						precededMultiple([whitespace, token(','), whitespace], typeName),
+						(attributeName, typeName) =>
+							[
+								['attributeName', attributeName],
+								['typeName', ...typeName],
+							] as [IAST, IAST]
+					),
+					token(')')
+				)
+			),
+			([nameOrWildcard, typeName]) => ['attributeTest', nameOrWildcard, typeName] as IAST
+		),
+		map(
+			precededMultiple(
+				[token('attribute'), whitespace],
+				delimited(token('('), attribNameOrWildCard, token(')'))
+			),
+			(nameOrWildcard) => ['attributeTest', ['attributeName', nameOrWildcard]] as IAST
+		),
+		map(
+			precededMultiple(
+				[token('attribute'), whitespace],
+				delimited(token('('), whitespace, token(')'))
+			),
+			(_) => ['attributeTest']
+		),
+	]);
 
 	const schemaElementTest: Parser<IAST> = unimplemented;
 
