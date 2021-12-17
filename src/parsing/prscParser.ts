@@ -1957,23 +1957,33 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		(prolog, body) => ['mainModule', ...(prolog ? [prolog] : []), body]
 	);
 
-	const versionDecl: Parser<IAST> = precededMultiple(
-		[token('xquery'), whitespace],
-		followed(
-			or([
-				then(preceded(token('encoding'), whitespacePlus), stringLiteral, (encoding) => [
-					'encoding',
-					encoding,
+	const versionDecl: Parser<IAST> = map(
+		precededMultiple(
+			[token('xquery'), whitespace],
+			followed(
+				or([
+					then(
+						preceded(token('encoding'), whitespacePlus),
+						stringLiteral,
+						(encoding) => ['encoding', encoding] as IAST
+					),
+					then(
+						precededMultiple([token('version'), whitespacePlus], stringLiteral),
+						optional(
+							precededMultiple([token('encoding'), whitespacePlus], stringLiteral)
+						),
+						(version, encoding) =>
+							[
+								'version',
+								version,
+								...(encoding ? [['encoding', encoding]] : []),
+							] as IAST
+					),
 				]),
-				then(
-					precededMultiple([token('version'), whitespacePlus], stringLiteral),
-					optional(precededMultiple([token('encoding'), whitespacePlus], stringLiteral)),
-					(version, encoding) =>
-						['version', version, ...(encoding ? [['encoding', encoding]] : [])] as IAST
-				),
-			]),
-			separator
-		)
+				separator
+			)
+		),
+		(x) => ['versionDecl', x]
 	);
 
 	const module: Parser<IAST> = then(
