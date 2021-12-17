@@ -300,6 +300,54 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		return result;
 	}
 
+	function getLineData(input: string, offset: number): [number, number] {
+		let col = 1;
+		let line = 1;
+		for (let i = 0; i < offset; i++) {
+			const c = input[i];
+			if (c === '\r\n' || c === '\r' || c === '\n') {
+				line++;
+				col = 1;
+			} else {
+				col++;
+			}
+		}
+		return [col, line];
+	}
+
+	function wrapInStackTrace(parser: Parser<IAST>): Parser<IAST> {
+		if (!options.outputDebugInfo) {
+			return parser;
+		}
+
+		return (input: string, offset: number): ParseResult<IAST> => {
+			const result = parser(input, offset);
+			if (!result.success) {
+				return result;
+			}
+
+			const [startCol, startLine] = getLineData(input, offset);
+			const [endCol, endLine] = getLineData(input, result.offset);
+
+			return okWithValue(result.offset, [
+				'x:stackTrace',
+				{
+					start: {
+						offset: offset,
+						line: startLine,
+						column: startCol,
+					},
+					end: {
+						offset: result.offset,
+						line: endLine,
+						column: endCol,
+					},
+				},
+				result.value,
+			] as unknown as IAST);
+		};
+	}
+
 	const assertAdjacentOpeningTerminal: Parser<string> = peek(
 		or([token('('), token('"'), token("'"), whitespaceCharacter])
 	);
@@ -1160,10 +1208,8 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 	const extensionExpr: Parser<IAST> = unimplemented;
 
 	// TODO: wrap in stacktrace
-	const simpleMapExpr: Parser<IAST> = binaryOperator(
-		pathExpr,
-		token('!'),
-		(lhs: IAST, rhs: [string, IAST][]) => {
+	const simpleMapExpr: Parser<IAST> = wrapInStackTrace(
+		binaryOperator(pathExpr, token('!'), (lhs: IAST, rhs: [string, IAST][]) => {
 			if (rhs.length === 0) {
 				return lhs;
 			} else {
@@ -1187,7 +1233,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 					})
 				) as IAST;
 			}
-		}
+		})
 	);
 
 	const valueExpr: Parser<IAST> = or([validateExpr, extensionExpr, simpleMapExpr]);
@@ -1686,17 +1732,19 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	// TODO: add support for switch, insert, rename, replace
 	function exprSingle(input: string, offset: number): ParseResult<IAST> {
-		return or([
-			flworExpr,
-			quantifiedExpr,
-			typeswitchExpr,
-			ifExpr,
-			insertExpr,
-			deleteExpr,
-			replaceExpr,
-			copyModifyExpr,
-			orExpr,
-		])(input, offset);
+		return wrapInStackTrace(
+			or([
+				flworExpr,
+				quantifiedExpr,
+				typeswitchExpr,
+				ifExpr,
+				insertExpr,
+				deleteExpr,
+				replaceExpr,
+				copyModifyExpr,
+				orExpr,
+			])
+		)(input, offset);
 	}
 
 	function expr(input: string, offset: number): ParseResult<IAST> {
@@ -1837,7 +1885,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			['module', ...(versionDecl ? [versionDecl] : []), ...[module]] as IAST
 	);
 
-	return module;
+	return surrounded(module, whitespace);
 }
 
 export function parseUsingPrsc(
@@ -1845,8 +1893,6 @@ export function parseUsingPrsc(
 	options: { outputDebugInfo: boolean; xquery: boolean },
 	shouldConsumeAll: boolean = true
 ): ParseResult<IAST> {
-	if (options.outputDebugInfo) throw new Error('DEBUG NOT SUPPORTED YET');
-
 	return (shouldConsumeAll ? complete(generateParser(options)) : generateParser(options))(
 		xpath.trim(),
 		0
