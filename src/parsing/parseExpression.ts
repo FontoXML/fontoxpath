@@ -36,7 +36,7 @@ export default function parseExpression(
 			};
 			ast = parse(xPathString, options);
 
-			const parseResult = parseUsingPrsc(xPathString, options, true);
+			const parseResult = parseUsingPrsc(xPathString, options);
 			if (parseResult.success === true) {
 				const prscAst = parseResult.value;
 				if (JSON.stringify(ast) !== JSON.stringify(prscAst)) {

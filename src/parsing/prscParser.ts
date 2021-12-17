@@ -1421,7 +1421,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const rangeExpr: Parser<IAST> = nonRepeatableBinaryOperator(
 		additiveExpr,
-		alias(['to'], 'rangeSequenceExpr'),
+		followed(alias(['to'], 'rangeSequenceExpr'), assertAdjacentOpeningTerminal),
 		'startExpr',
 		'endExpr'
 	);
@@ -1441,7 +1441,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 	);
 
 	const nodeCompare: Parser<string> = or([
-		alias(['is'], 'isOp'),
+		followed(alias(['is'], 'isOp'), assertAdjacentOpeningTerminal),
 		alias(['<<'], 'nodeBeforeOp'),
 		alias(['>>'], 'nodeAfterOp'),
 	]);
@@ -1462,13 +1462,13 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const andExpr: Parser<IAST> = binaryOperator(
 		comparisonExpr,
-		alias(['and'], 'andOp'),
+		followed(alias(['and'], 'andOp'), assertAdjacentOpeningTerminal),
 		defaultBinaryOperatorFn
 	);
 
 	const orExpr: Parser<IAST> = binaryOperator(
 		andExpr,
-		alias(['or'], 'orOp'),
+		followed(alias(['or'], 'orOp'), assertAdjacentOpeningTerminal),
 		defaultBinaryOperatorFn
 	);
 
@@ -1548,22 +1548,122 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		(x) => ['whereClause', x]
 	);
 
-	// TODO: add other variants
-	const intermediateClause: Parser<IAST> = or([initialClause, whereClause]);
+	const uriLiteral: Parser<string> = stringLiteral;
+
+	const groupingVariable: Parser<IAST> = map(preceded(token('$'), varName), (x) => [
+		'varName',
+		...x,
+	]);
+
+	const groupVarInitialize: Parser<IAST> = then(
+		preceded(whitespace, optional(typeDeclaration)),
+		preceded(surrounded(token(':='), whitespace), exprSingle),
+		(t, val) =>
+			[
+				'groupVarIntialize',
+				...(t ? [['typeDeclaration', ...t]] : []),
+				['varValue', val],
+			] as IAST
+	);
+
+	const groupingSpec: Parser<IAST> = then3(
+		groupingVariable,
+		optional(groupVarInitialize),
+		optional(
+			map(preceded(surrounded(token('collation'), whitespace), uriLiteral), (x) => [
+				'collation',
+				x,
+			])
+		),
+		(varName, init, col) =>
+			['groupingSpec', varName, ...(init ? [init] : []), ...(col ? [col] : [])] as IAST
+	);
+
+	const groupingSpecList: Parser<IAST[]> = binaryOperator(
+		groupingSpec,
+		token(','),
+		(lhs, rhs) => [lhs, ...rhs.map((x) => x[1])]
+	);
+
+	const groupByClause: Parser<IAST> = map(
+		precededMultiple(
+			[token('group'), whitespacePlus, token('by'), whitespace],
+			groupingSpecList
+		),
+		(x) => ['groupByClause', ...x]
+	);
+
+	const orderModifier: Parser<IAST | null> = then3(
+		optional(or(['ascending', 'descending'].map(token))),
+		optional(
+			precededMultiple(
+				[token('empty'), whitespace],
+				or([alias(['greatest'], 'empty greatest'), alias(['least'], 'empty least')])
+			)
+		),
+		preceded(
+			whitespace,
+			optional(precededMultiple([token('collation'), whitespace], uriLiteral))
+		),
+		(kind, empty, collation) => {
+			if (!kind && !empty && !collation) {
+				return null;
+			} else {
+				return [
+					'orderModifier',
+					...(kind ? [['orderingKind', kind]] : []),
+					...(empty ? [['emptyOrderingMode', empty]] : []),
+					...(collation ? [['collation', collation]] : []),
+				] as IAST;
+			}
+		}
+	);
+
+	const orderSpec: Parser<IAST> = then(
+		exprSingle,
+		preceded(whitespace, orderModifier),
+		(expr, modifier) => ['orderBySpec', ['orderByExpr', expr], ...(modifier ? [modifier] : [])]
+	);
+
+	const orderSpecList: Parser<IAST[]> = binaryOperator(orderSpec, token(','), (lhs, rhs) => [
+		lhs,
+		...rhs.map((x) => x[1]),
+	]);
+
+	const orderByClause: Parser<IAST> = then(
+		or([
+			// TODO: the `order by` part is common so this could be simplified
+			map(precededMultiple([token('order'), whitespacePlus], token('by')), (_) => false),
+			map(
+				precededMultiple(
+					[token('stable'), whitespacePlus, token('order'), whitespacePlus],
+					token('by')
+				),
+				(_) => true
+			),
+		]),
+		preceded(whitespace, orderSpecList),
+		(stable, specList) =>
+			['orderByClause', ...(stable ? [['stable']] : []), ...specList] as IAST
+	);
+
+	const intermediateClause: Parser<IAST> = or([
+		initialClause,
+		whereClause,
+		groupByClause,
+		orderByClause,
+	]);
 
 	const returnClause: Parser<IAST> = map(
 		precededMultiple([token('return'), whitespace], exprSingle),
 		(x) => ['returnClause', x]
 	);
 
-	const flworExpr: Parser<IAST> = then(
-		then(
-			initialClause,
-			star(preceded(whitespace, intermediateClause)),
-			(initial, intermediate) => [initial, intermediate]
-		),
+	const flworExpr: Parser<IAST> = then3(
+		initialClause,
+		star(preceded(whitespace, intermediateClause)),
 		preceded(whitespace, returnClause),
-		([initial, intermediate], ret) => ['flworExpr', initial, ...intermediate, ret] as IAST
+		(initial, intermediate, ret) => ['flworExpr', initial, ...intermediate, ret] as IAST
 	);
 
 	const sequenceTypeUnion: Parser<IAST> = binaryOperator(sequenceType, token('|'), (lhs, rhs) =>
@@ -1754,8 +1854,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 	}
 
 	const queryBody: Parser<IAST> = map(expr, (x) => ['queryBody', x]);
-
-	const uriLiteral: Parser<string> = stringLiteral;
 
 	const namespaceDecl: Parser<IAST> = precededMultiple(
 		[token('declare'), whitespacePlus, token('namespace'), whitespacePlus],
