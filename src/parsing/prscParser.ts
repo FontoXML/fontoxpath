@@ -815,8 +815,22 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		char
 	);
 
+	const cdataSection: Parser<IAST> = map(
+		delimited(
+			token('<![CDATA['),
+			star(
+				preceded(
+					peek(not(token(']]>'), ['CDataSection content may not contain "]]>"'])),
+					char
+				)
+			),
+			token(']]>')
+		),
+		(contents) => ['CDataSection', contents.join('')]
+	);
+
 	const dirElemContent: Parser<IAST | string> = or([
-		// TODO: add cDataSection
+		cdataSection,
 		directConstructorIndirect,
 		commonContent,
 		elementContentChar,
