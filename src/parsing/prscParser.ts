@@ -1266,7 +1266,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const stepExprWithoutStep: Parser<IAST> = postfixExprWithoutStep;
 
-	// TODO: add other variants
 	const relativePathExpr: Parser<IAST> = or([
 		then3(
 			stepExprWithForcedStep,
@@ -1283,7 +1282,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		map(stepExprWithForcedStep, (x) => ['pathExpr', x]),
 	]);
 
-	// TODO: add other variants
 	const relativePathExprWithForcedStep: Parser<IAST[]> = or([
 		then3(
 			stepExprWithForcedStep,
@@ -1335,7 +1333,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const extensionExpr: Parser<IAST> = unimplemented;
 
-	// TODO: wrap in stacktrace
 	const simpleMapExpr: Parser<IAST> = wrapInStackTrace(
 		binaryOperator(pathExpr, token('!'), (lhs: IAST, rhs: [string, IAST][]) => {
 			if (rhs.length === 0) {
