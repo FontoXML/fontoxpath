@@ -405,6 +405,48 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		(a, b) => a + b.join('')
 	);
 
+	const escapeQuot: Parser<string> = alias(['""'], '"');
+
+	const escapeApos: Parser<string> = alias(["''"], "'");
+
+	const predefinedEntityRef: Parser<string> = then3(
+		token('&'),
+		or(['lt', 'gt', 'amp', 'quot', 'apos'].map(token)),
+		token(';'),
+		(a, b, c) => a + b + c
+	);
+
+	const charRef: Parser<string> = or([
+		then3(token('&#x'), regex(/[0-9a-fA-F]+/), token(';'), (a, b, c) => a + b + c),
+		then3(token('&#'), regex(/[0-9]+/), token(';'), (a, b, c) => a + b + c),
+	]);
+
+	const stringLiteral: Parser<string> = options.xquery
+		? or([
+				map(
+					surrounded(
+						star(or([predefinedEntityRef, charRef, escapeQuot, regex(/[^\"]/)])),
+						token('"')
+					),
+					(x) => x.join('')
+				),
+				map(
+					surrounded(
+						star(or([predefinedEntityRef, charRef, escapeApos, regex(/[^']/)])),
+						token("'")
+					),
+					(x) => x.join('')
+				),
+		  ])
+		: or([
+				map(surrounded(star(or([escapeQuot, regex(/[^\"]/)])), token('"')), (x) =>
+					x.join('')
+				),
+				map(surrounded(star(or([escapeApos, regex(/[^']/)])), token("'")), (x) =>
+					x.join('')
+				),
+		  ]);
+
 	// TODO: implement other variants
 	const elementTest: Parser<IAST> = or([
 		map(
@@ -430,17 +472,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		),
 		(x) => ['documentTest', ...(x ? [x] : [])]
 	);
-
-	const escapeQuot: Parser<string> = alias(['""'], '"');
-
-	const escapeApos: Parser<string> = alias(["''"], "'");
-
-	// TODO: add check for xquery
-	const stringLiteral: Parser<string> = or([
-		// TODO: add more advanced string literals
-		map(surrounded(star(or([escapeQuot, regex(/[^\"]/)])), token('"')), (x) => x.join('')),
-		map(surrounded(star(or([escapeApos, regex(/[^']/)])), token("'")), (x) => x.join('')),
-	]);
 
 	const piTest: Parser<IAST> = or([
 		map(
@@ -804,7 +835,8 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 	);
 
 	const commonContent: Parser<IAST | string> = or([
-		// TODO: add predefinedEntityRef, charRef
+		predefinedEntityRef,
+		charRef,
 		alias(['{{'], '{') as Parser<IAST | string>,
 		alias(['}}'], '}'),
 		map(enclosedExpr, (x) => x || ['sequenceExpr']),
@@ -1855,7 +1887,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		]
 	);
 
-	// TODO: add support for switch, insert, rename, replace
+	// TODO: add support for switch, rename
 	function exprSingle(input: string, offset: number): ParseResult<IAST> {
 		return wrapInStackTrace(
 			or([
