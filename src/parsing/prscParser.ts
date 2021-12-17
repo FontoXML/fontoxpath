@@ -447,8 +447,81 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				),
 		  ]);
 
-	// TODO: implement other variants
+	const localPart: Parser<string> = ncName;
+
+	const unprefixedName: Parser<IAST> = wrapArray(localPart);
+
+	const xmlPrefix: Parser<string> = ncName;
+
+	const prefixedName: Parser<(string | ASTAttributes)[]> = then(
+		xmlPrefix,
+		preceded(token(':'), localPart),
+		(prefix, local) => [{ ['prefix']: prefix }, local]
+	);
+
+	const qName: Parser<IAST | (string | ASTAttributes)[]> = or([
+		prefixedName as Parser<IAST | (string | ASTAttributes)[]>,
+		unprefixedName,
+	]);
+
+	const bracedURILiteral: Parser<string> = followed(
+		precededMultiple(
+			[token('Q'), whitespace, token('{')],
+			// TODO: add xquery version
+			map(star(regex(/[^{}]/)), (x) => x.join(''))
+		),
+		token('}')
+	);
+
+	const uriQualifiedName: Parser<IAST> = then(bracedURILiteral, ncName, (uri, localName) => [
+		uri,
+		localName,
+	]);
+
+	const eqName: Parser<IAST | [ASTAttributes, string]> = or([
+		map(
+			uriQualifiedName,
+			(x) => [{ ['prefix']: null, ['URI']: x[0] }, x[1]] as [ASTAttributes, string]
+		),
+		qName as Parser<IAST | [ASTAttributes, string]>,
+	]);
+
+	const elementName = eqName;
+
+	const elementNameOrWildCard: Parser<IAST> = or([
+		map(elementName, (name) => ['QName', ...name]),
+		map(token('*'), (_token) => ['star']),
+	]);
+
+	const typeName: Parser<IAST | [ASTAttributes, string]> = eqName;
+
 	const elementTest: Parser<IAST> = or([
+		map(
+			precededMultiple(
+				[token('element'), whitespace],
+				delimited(
+					token('('),
+					then(
+						elementNameOrWildCard,
+						precededMultiple([whitespace, token(','), whitespace], typeName),
+						(elementName, typeName) =>
+							[
+								['elementName', elementName],
+								['typeName', ...typeName],
+							] as [IAST, IAST]
+					),
+					token(')')
+				)
+			),
+			([nameOrWildcard, typeName]) => ['elementTest', nameOrWildcard, typeName] as IAST
+		),
+		map(
+			precededMultiple(
+				[token('element'), whitespace],
+				delimited(token('('), elementNameOrWildCard, token(')'))
+			),
+			(nameOrWildcard) => ['elementTest', ['elementName', nameOrWildcard]] as IAST
+		),
 		map(
 			precededMultiple(
 				[token('element'), whitespace],
@@ -503,45 +576,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		textTest,
 		namespaceNodeTest,
 		anyKindTest,
-	]);
-
-	const localPart: Parser<string> = ncName;
-
-	const unprefixedName: Parser<IAST> = wrapArray(localPart);
-
-	const xmlPrefix: Parser<string> = ncName;
-
-	const prefixedName: Parser<(string | ASTAttributes)[]> = then(
-		xmlPrefix,
-		preceded(token(':'), localPart),
-		(prefix, local) => [{ ['prefix']: prefix }, local]
-	);
-
-	const qName: Parser<IAST | (string | ASTAttributes)[]> = or([
-		prefixedName as Parser<IAST | (string | ASTAttributes)[]>,
-		unprefixedName,
-	]);
-
-	const bracedURILiteral: Parser<string> = followed(
-		precededMultiple(
-			[token('Q'), whitespace, token('{')],
-			// TODO: add xquery version
-			map(star(regex(/[^{}]/)), (x) => x.join(''))
-		),
-		token('}')
-	);
-
-	const uriQualifiedName: Parser<IAST> = then(bracedURILiteral, ncName, (uri, localName) => [
-		uri,
-		localName,
-	]);
-
-	const eqName: Parser<IAST | [ASTAttributes, string]> = or([
-		map(
-			uriQualifiedName,
-			(x) => [{ ['prefix']: null, ['URI']: x[0] }, x[1]] as [ASTAttributes, string]
-		),
-		qName as Parser<IAST | [ASTAttributes, string]>,
 	]);
 
 	const wildcard: Parser<IAST> = or([
@@ -1332,8 +1366,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				argExpr
 			)
 	);
-
-	const typeName: Parser<IAST | [ASTAttributes, string]> = eqName;
 
 	const simpleTypeName: Parser<IAST | [ASTAttributes, string]> = typeName;
 
