@@ -702,7 +702,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const doubleLiteral: Parser<IAST> = then(
 		or([
-			preceded(token('.'), digits),
+			then(token('.'), digits, (dot, digits) => dot + digits),
 			then(
 				digits,
 				optional(preceded(token('.'), digits)),
@@ -845,7 +845,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const sequenceType: Parser<any> = or([
 		map(token('empty-sequence()'), (_) => [['voidSequenceType']]),
-		then(itemType, optional(occurrenceIndicator), (type, occurrence) => [
+		then(itemType, optional(preceded(whitespace, occurrenceIndicator)), (type, occurrence) => [
 			type,
 			...(occurrence !== null ? [['occurrenceIndicator', occurrence]] : []),
 		]),
@@ -871,21 +871,28 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		...rhs.map((x) => x[1]),
 	]);
 
-	// TODO: add annotations, and declarations
-	const inlineFunctionExpr: Parser<IAST> = map(
-		then(
-			precededMultiple(
-				[token('function'), whitespace, token('(')],
-				surrounded(optional(paramList), whitespace)
-			),
-			precededMultiple([token(')'), whitespace], functionBody),
-			(args, body) => [args, body]
+	//TODO: Add annotation
+	const inlineFunctionExpr: Parser<IAST> = then3(
+		precededMultiple(
+			[token('function'), whitespace, token('('), whitespace],
+			optional(paramList)
 		),
-
-		([args, body]) =>
+		precededMultiple(
+			[whitespace, token(')'), whitespace],
+			optional(
+				map(
+					precededMultiple([token('as'), whitespace], followed(sequenceType, whitespace)),
+					(x) => ['typeDeclaration', ...x]
+				)
+			)
+		),
+		functionBody,
+		(params, typeDeclaration, body) =>
 			[
 				'inlineFunctionExpr',
-				['paramList', ...(args ? args : [])],
+				//		...annotations,
+				['paramList', ...(params ? params : [])],
+				...(typeDeclaration ? [typeDeclaration] : []),
 				['functionBody', body],
 			] as IAST
 	);
@@ -1108,7 +1115,13 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		star(
 			or([
 				preceded(peek(not(token('-'), [])), char),
-				precededMultiple([token('-'), peek(not(token('-'), [])) as Parser<string>], char),
+				map(
+					precededMultiple(
+						[token('-'), peek(not(token('-'), [])) as Parser<string>],
+						char
+					),
+					(x) => '-' + x
+				),
 			])
 		),
 		(x) => x.join('')
@@ -1233,7 +1246,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			or([prefix as Parser<IAST[] | IAST>, enclosedPrefixExpr])
 		),
 		preceded(whitespace, enclosedUriExpr),
-		(prefix, uri) => ['comuptedNamespaceConstructor', ...prefix, ...uri]
+		(prefix, uri) => ['computedNamespaceConstructor', ...prefix, ...uri]
 	);
 
 	const compTextConstructor: Parser<IAST> = map(
@@ -1854,7 +1867,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		preceded(surrounded(token(':='), whitespace), exprSingle),
 		(t, val) =>
 			[
-				'groupVarIntialize',
+				'groupVarInitialize',
 				...(t ? [['typeDeclaration', ...t]] : []),
 				['varValue', val],
 			] as IAST
