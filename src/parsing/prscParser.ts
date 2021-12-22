@@ -1131,7 +1131,25 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		(x) => ['computedCommentConstructor', ...(x ? [['argExpr', x]] : [])] as IAST
 	);
 
-	const compPiConstructor: Parser<IAST> = unimplemented;
+	const compPiConstructor: Parser<IAST> = precededMultiple(
+		[token('processing-instruction'), whitespace],
+		then(
+			or([
+				map(ncName, (x) => ['piTarget', x]),
+				map(delimited(token('{'), surrounded(expr, whitespace), token('}')), (x) => [
+					'piTargetExpr',
+					x,
+				]),
+			]),
+			preceded(whitespace, enclosedExpr),
+			(target, value) =>
+				[
+					'computedPIConstructor',
+					target,
+					...(value ? [['piValueExpr', value]] : []),
+				] as IAST
+		)
+	);
 
 	const computedConstructor: Parser<IAST> = or([
 		compDocConstructor,
