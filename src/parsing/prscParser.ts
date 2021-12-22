@@ -871,8 +871,28 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		...rhs.map((x) => x[1]),
 	]);
 
-	//TODO: Add annotation
-	const inlineFunctionExpr: Parser<IAST> = then3(
+	const annotation: Parser<IAST> = then(
+		precededMultiple([token('%'), whitespace], eqName),
+		optional(
+			followed(
+				then(
+					precededMultiple([token('('), whitespace], literal),
+					star(precededMultiple([token(','), whitespace], literal)),
+					(lhs, rhs) => lhs.concat(rhs)
+				),
+				token(')')
+			)
+		),
+		(annotation, params) =>
+			[
+				'annotation',
+				['annotationName', ...annotation],
+				...(params ? ['arguments', params] : []),
+			] as IAST
+	);
+
+	const inlineFunctionExpr: Parser<IAST> = then4(
+		star(annotation),
 		precededMultiple(
 			[token('function'), whitespace, token('('), whitespace],
 			optional(paramList)
@@ -887,10 +907,10 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			)
 		),
 		functionBody,
-		(params, typeDeclaration, body) =>
+		(annotations, params, typeDeclaration, body) =>
 			[
 				'inlineFunctionExpr',
-				//		...annotations,
+				...annotations,
 				['paramList', ...(params ? params : [])],
 				...(typeDeclaration ? [typeDeclaration] : []),
 				['functionBody', body],
@@ -2242,29 +2262,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				['paramList', ...(paramList || [])],
 				...(typeDeclarations ? [['typeDeclaration', ...typeDeclarations]] : []),
 				body,
-			] as IAST
-	);
-
-	// "%" _ annotation:EQName params:(_ "(" _ lhs:Literal rhs:(_ "," _ part:Literal {return part})* _")" {return lhs.concat(rhs)})?
-	//    {return ["annotation", ["annotationName"].concat(annotation)].concat(params ? ["arguments", params] : [])}
-
-	const annotation: Parser<IAST> = then(
-		precededMultiple([token('%'), whitespace], eqName),
-		optional(
-			followed(
-				then(
-					precededMultiple([token('('), whitespace], literal),
-					star(precededMultiple([token(','), whitespace], literal)),
-					(lhs, rhs) => lhs.concat(rhs)
-				),
-				token(')')
-			)
-		),
-		(annotation, params) =>
-			[
-				'annotation',
-				['annotationName', ...annotation],
-				...(params ? ['arguments', params] : []),
 			] as IAST
 	);
 
