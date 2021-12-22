@@ -2048,13 +2048,37 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const functionDecl: Parser<IAST> = unimplemented;
 
-	const annotation: Parser<IAST> = unimplemented;
+	// "%" _ annotation:EQName params:(_ "(" _ lhs:Literal rhs:(_ "," _ part:Literal {return part})* _")" {return lhs.concat(rhs)})?
+	//    {return ["annotation", ["annotationName"].concat(annotation)].concat(params ? ["arguments", params] : [])}
+
+	const annotation: Parser<IAST> = then(
+		precededMultiple([token('%'), whitespace], eqName),
+		optional(
+			followed(
+				then(
+					precededMultiple([token('('), whitespace], literal),
+					star(precededMultiple([token(','), whitespace], literal)),
+					(lhs, rhs) => lhs.concat(rhs)
+				),
+				token(')')
+			)
+		),
+		(annotation, params) =>
+			[
+				'annotation',
+				['annotationName', ...annotation],
+				...(params ? ['arguments', params] : []),
+			] as IAST
+	);
 
 	const compatibilityAnnotation: Parser<IAST> = map(token('updating'), (_) => [
 		'annotation',
 		['annotationName', 'updating'],
 	]);
 
+	// 	AnnotatedDecl
+	//  = "declare" S annotations:(a:(Annotation / CompatibilityAnnotation) S {return a})* decl:(VarDecl / FunctionDecl)
+	//    {return [decl[0]].concat(annotations).concat(decl.slice(1))}
 	const annotatedDecl: Parser<IAST> = precededMultiple(
 		[token('declare'), whitespacePlus],
 		then(
@@ -2083,7 +2107,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		star(
 			followed(or([namespaceDecl, defaultNamespaceDecl]), surrounded(separator, whitespace))
 		),
-		star(followed(annotatedDecl, surrounded(separator, whitespace))),
+		star(followed(or([annotatedDecl]), surrounded(separator, whitespace))),
 		(moduleSettings, declarations) =>
 			moduleSettings.length === 0 && declarations.length === 0
 				? null
@@ -2094,7 +2118,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		[token('module'), whitespacePlus, token('namespace'), whitespacePlus],
 		then(
 			followed(ncName, surrounded(token('='), whitespace)),
-			followed(uriLiteral, preceded(whitespace, separator)),
+			followed(uriLiteral, surrounded(separator, whitespace)),
 			(prefix, uri) => ['moduleDecl', ['prefix', prefix], ['uri', uri]]
 		)
 	);
