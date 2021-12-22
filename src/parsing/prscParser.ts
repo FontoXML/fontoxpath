@@ -570,7 +570,15 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		),
 	]);
 
-	const schemaElementTest: Parser<IAST> = unimplemented;
+	const elementDeclaration: Parser<IAST | [ASTAttributes, string]> = elementName;
+
+	const schemaElementTest: Parser<IAST> = map(
+		precededMultiple(
+			[token('schema-element'), whitespace, token('(')],
+			followed(elementDeclaration, token(')'))
+		),
+		(x) => ['schemaElementTest', ...x]
+	);
 
 	const documentTest: Parser<IAST> = map(
 		preceded(
@@ -1403,7 +1411,25 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const pathExpr: Parser<IAST> = cached(or([relativePathExpr, absoluteLocationPath]));
 
-	const validateExpr: Parser<IAST> = unimplemented;
+	const validationMode: Parser<string> = or([token('lax'), token('strict')]);
+
+	const validateExpr: Parser<IAST> = then(
+		optional(
+			preceded(
+				token('validate'),
+				or([
+					map(preceded(whitespace, validationMode), (x) => ['validationMode', x]),
+					map(
+						precededMultiple([whitespace, token('type'), whitespace], typeName),
+						(x) => ['type', ...x]
+					),
+				])
+			)
+		),
+		preceded(whitespace, delimited(token('{'), surrounded(expr, whitespace), token('}'))),
+		(modeOrType, expr) =>
+			['validateExpr', ...(modeOrType ? [modeOrType] : []), ['argExpr', expr]] as IAST
+	);
 
 	const extensionExpr: Parser<IAST> = unimplemented;
 
