@@ -2386,12 +2386,15 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 	// 	SchemaPrefix
 	//  = "namespace" S prefix:NCName _ "=" {return ["namespacePrefix", prefix]}
 	//  / ("default" S "element" S "namespace" AssertAdjacentOpeningTerminal) {return ["defaultElementNamespace"]}
-	
+
 	const schemaPrefix: Parser<IAST> = or([
-		map(precededMultiple([token('namespace'), whitespacePlus], ncName), (prefix) => [
-			'namespacePrefix',
-			prefix,
-		]),
+		map(
+			followed(
+				precededMultiple([token('namespace'), whitespacePlus], ncName),
+				preceded(whitespace, token('='))
+			),
+			(prefix) => ['namespacePrefix', prefix]
+		),
 		map(
 			precededMultiple(
 				[token('default'), whitespacePlus, token('element'), whitespacePlus],
