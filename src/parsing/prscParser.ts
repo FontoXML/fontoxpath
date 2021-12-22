@@ -1237,7 +1237,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				map(
 					preceded(
 						whitespacePlus,
-						delimited(token('{'), surrounded(whitespace, expr), token('}'))
+						delimited(token('{'), surrounded(expr, whitespace), token('}'))
 					),
 					(x) => ['tagNameExpr', x]
 				),
