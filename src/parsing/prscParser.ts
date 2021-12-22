@@ -2383,10 +2383,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const separator: Parser<string> = token(';');
 
-	// 	SchemaPrefix
-	//  = "namespace" S prefix:NCName _ "=" {return ["namespacePrefix", prefix]}
-	//  / ("default" S "element" S "namespace" AssertAdjacentOpeningTerminal) {return ["defaultElementNamespace"]}
-
 	const schemaPrefix: Parser<IAST> = or([
 		map(
 			followed(
@@ -2454,10 +2450,150 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const importExpr: Parser<IAST> = or([schemaImport, moduleImport]);
 
+	const boundarySpaceDecl: Parser<IAST> = map(
+		precededMultiple(
+			[token('declare'), whitespacePlus, token('boundary-space'), whitespacePlus],
+			or([token('preserve'), token('strip')])
+		),
+		(x) => ['boundarySpaceDecl', x]
+	);
+
+	const defaultCollationDecl: Parser<IAST> = map(
+		precededMultiple(
+			[
+				token('declare'),
+				whitespacePlus,
+				token('default'),
+				whitespacePlus,
+				token('collation'),
+				whitespacePlus,
+			],
+			uriLiteral
+		),
+		(x) => ['defaultCollationDecl', x]
+	);
+
+	const baseUriDecl: Parser<IAST> = map(
+		precededMultiple(
+			[token('declare'), whitespacePlus, token('base-uri'), whitespacePlus],
+			uriLiteral
+		),
+		(x) => ['baseUriDecl', x]
+	);
+
+	const constructionDecl: Parser<IAST> = map(
+		precededMultiple(
+			[token('declare'), whitespacePlus, token('construction'), whitespacePlus],
+			or([token('strip'), token('preserve')])
+		),
+		(x) => ['constructionDecl', x]
+	);
+
+	const orderingModeDecl: Parser<IAST> = map(
+		precededMultiple(
+			[token('declare'), whitespacePlus, token('ordering'), whitespacePlus],
+			or([token('ordered'), token('unordered')])
+		),
+		(x) => ['orderingModeDecl', x]
+	);
+
+	const emptyOrderDecl: Parser<IAST> = map(
+		precededMultiple(
+			[
+				token('declare'),
+				whitespacePlus,
+				token('default'),
+				whitespacePlus,
+				token('order'),
+				whitespacePlus,
+				token('empty'),
+				whitespacePlus,
+			],
+			or([token('greatest'), token('least')])
+		),
+		(x) => ['emptyOrderDecl', x]
+	);
+
+	const preserveMode: Parser<string> = or([token('preserve'), token('no-preserve')]);
+
+	const inheritMode: Parser<string> = or([token('inherit'), token('no-inherit')]);
+
+	const copyNamespaceDecl: Parser<IAST> = then(
+		precededMultiple(
+			[token('declare'), whitespacePlus, token('copy-namespaces'), whitespacePlus],
+			preserveMode
+		),
+		precededMultiple([whitespacePlus, token(','), whitespacePlus], inheritMode),
+		(preserveMode, inheritMode) => [
+			'copyNamespaceDecl',
+			['preserveMode', preserveMode],
+			['inheritMode', inheritMode],
+		]
+	);
+
+	const decimalFormatPropertyName: Parser<string> = or(
+		[
+			'decimal-separator',
+			'grouping-separator',
+			'infinity',
+			'minus-sign',
+			'NaN',
+			'percent',
+			'per-mille',
+			'zero-digit',
+			'digit',
+			'pattern-separator',
+			'exponent-separator',
+		].map(token)
+	);
+
+	const decimalFormatDecl: Parser<IAST> = then(
+		precededMultiple(
+			[token('declare'), whitespacePlus],
+			or([
+				map(precededMultiple([token('decimal-format'), whitespacePlus], eqName), (x) => [
+					'decimalFormatName',
+					...x,
+				]),
+				map(
+					precededMultiple([token('default'), whitespacePlus], token('decimal-format')),
+					(_) => null
+				),
+			])
+		),
+		star(
+			then(
+				preceded(whitespacePlus, decimalFormatPropertyName),
+				preceded(surrounded(token('='), whitespacePlus), stringLiteral),
+				(name, value) => [
+					'decimalFormatParam',
+					['decimalFormatParanName', name],
+					['decimalFormatParamValue', value],
+				]
+			)
+		),
+		(decimalFormatName, decimalFormatParams) => [
+			'decimalFormatDecl',
+			...(decimalFormatName ? [decimalFormatName] : []),
+			...decimalFormatParams,
+		]
+	);
+
+	const setter: Parser<IAST> = or([
+		boundarySpaceDecl,
+		defaultCollationDecl,
+		baseUriDecl,
+		constructionDecl,
+		orderingModeDecl,
+		emptyOrderDecl,
+		copyNamespaceDecl,
+		decimalFormatDecl,
+	]);
+
 	const prolog: Parser<IAST> = then(
 		star(
 			followed(
-				or([namespaceDecl, defaultNamespaceDecl, importExpr]),
+				or([defaultNamespaceDecl, setter, namespaceDecl, importExpr]),
 				surrounded(separator, whitespace)
 			)
 		),
