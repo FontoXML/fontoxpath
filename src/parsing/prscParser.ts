@@ -2028,8 +2028,8 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		optional(or(['ascending', 'descending'].map(token))),
 		optional(
 			precededMultiple(
-				[token('empty'), whitespace],
-				or([alias(['greatest'], 'empty greatest'), alias(['least'], 'empty least')])
+				[whitespace, token('empty'), whitespace],
+				or(['greatest', 'least'].map((x) => map(token(x), (y) => 'empty ' + y)))
 			)
 		),
 		preceded(
