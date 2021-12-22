@@ -2128,7 +2128,38 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			['varDecl', ['varName', ...name], ...(t !== null ? [t] : []), ...[value]] as IAST
 	);
 
-	const functionDecl: Parser<IAST> = unimplemented;
+	const functionDecl: Parser<IAST> = then4(
+		precededMultiple(
+			[
+				token('function'),
+				whitespacePlus,
+				peek(
+					not(reservedFunctionNames, ['Cannot use reserved function name'])
+				) as Parser<string>,
+			],
+			eqName
+		),
+		precededMultiple([whitespace, token('('), whitespace], optional(paramList)),
+		precededMultiple(
+			[whitespace, token(')')],
+			optional(precededMultiple([whitespacePlus, token('as'), whitespacePlus], sequenceType))
+		),
+		preceded(
+			whitespace,
+			or([
+				map(functionBody, (x) => ['functionBody', x]),
+				map(token('external'), (_) => ['externalDefinition']),
+			])
+		),
+		(name, paramList, typeDeclarations, body) =>
+			[
+				'functionDecl',
+				['functionName', ...name],
+				['paramList', ...(paramList || [])],
+				...(typeDeclarations ? [['typeDeclaration', ...typeDeclarations]] : []),
+				body,
+			] as IAST
+	);
 
 	// "%" _ annotation:EQName params:(_ "(" _ lhs:Literal rhs:(_ "," _ part:Literal {return part})* _")" {return lhs.concat(rhs)})?
 	//    {return ["annotation", ["annotationName"].concat(annotation)].concat(params ? ["arguments", params] : [])}
