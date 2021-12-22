@@ -2328,7 +2328,45 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const separator: Parser<string> = token(';');
 
-	const schemaImport: Parser<IAST> = unimplemented;
+	// 	SchemaPrefix
+	//  = "namespace" S prefix:NCName _ "=" {return ["namespacePrefix", prefix]}
+	//  / ("default" S "element" S "namespace" AssertAdjacentOpeningTerminal) {return ["defaultElementNamespace"]}
+	
+	const schemaPrefix: Parser<IAST> = or([
+		map(precededMultiple([token('namespace'), whitespacePlus], ncName), (prefix) => [
+			'namespacePrefix',
+			prefix,
+		]),
+		map(
+			precededMultiple(
+				[token('default'), whitespacePlus, token('element'), whitespacePlus],
+				token('namespace')
+			),
+			(_) => ['defaultElementNamespace'] as IAST
+		),
+	]);
+
+	const schemaImport: Parser<IAST> = precededMultiple(
+		[token('import'), whitespacePlus, token('schema')],
+		then3(
+			optional(preceded(whitespacePlus, schemaPrefix)),
+			preceded(whitespace, uriLiteral),
+			optional(
+				then(
+					precededMultiple([whitespacePlus, token('at'), whitespacePlus], uriLiteral),
+					star(precededMultiple([whitespace, token(','), whitespace], uriLiteral)),
+					(lhs, rhs) => [lhs, ...rhs]
+				)
+			),
+			(prefix, namespace, targetLocations) =>
+				[
+					'schemaImport',
+					...(prefix ? [prefix] : []),
+					...[['targetNamespace', namespace]],
+					...(targetLocations ? [targetLocations] : []),
+				] as IAST
+		)
+	);
 
 	const moduleImport: Parser<IAST> = precededMultiple(
 		[token('import'), whitespacePlus, token('module')],
