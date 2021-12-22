@@ -848,7 +848,62 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const atomicOrUnionType: Parser<IAST> = map(eqName, (x) => ['atomicType', ...x]);
 
-	const functionTest: Parser<IAST> = unimplemented;
+	const annotation: Parser<IAST> = then(
+		precededMultiple([token('%'), whitespace], eqName),
+		optional(
+			followed(
+				then(
+					precededMultiple([token('('), whitespace], literal),
+					star(precededMultiple([token(','), whitespace], literal)),
+					(lhs, rhs) => lhs.concat(rhs)
+				),
+				token(')')
+			)
+		),
+		(annotation, params) =>
+			[
+				'annotation',
+				['annotationName', ...annotation],
+				...(params ? ['arguments', params] : []),
+			] as IAST
+	);
+
+	const anyFunctionTest: Parser<IAST> = map(
+		precededMultiple(
+			[token('function'), whitespace, token('('), whitespace, token('*'), whitespace],
+			token(')')
+		),
+		(_) => ['anyFunctionTest']
+	);
+
+	const typedFunctionTest: Parser<IAST> = then(
+		precededMultiple(
+			[token('function'), whitespace, token('('), whitespace],
+			optional(
+				binaryOperator(sequenceType, token(','), (lhs, rhs) =>
+					lhs.concat.apply(
+						lhs,
+						rhs.map((x) => x[1])
+					)
+				)
+			)
+		),
+		precededMultiple(
+			[whitespace, token(')'), whitespacePlus, token('as'), whitespacePlus],
+			sequenceType
+		),
+		(paramTypeList, returnType) => [
+			'typedFunctionTest',
+			['paramTypeList', ['sequenceType', ...paramTypeList]],
+			['sequenceType', ...returnType],
+		]
+	);
+
+	const functionTest: Parser<IAST> = then(
+		star(annotation),
+		or([anyFunctionTest, typedFunctionTest]),
+		(annotations, test) => [test[0], ...annotations, ...test.slice(1)]
+	);
 
 	const anyMapTest: Parser<IAST> = map(
 		precededMultiple(
@@ -921,35 +976,15 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		]
 	);
 
-	const paramList: Parser<IAST[]> = binaryOperator(param, token(', '), (lhs, rhs) => [
+	const paramList: Parser<IAST[]> = binaryOperator(param, token(','), (lhs, rhs) => [
 		lhs,
 		...rhs.map((x) => x[1]),
 	]);
 
-	const annotation: Parser<IAST> = then(
-		precededMultiple([token('%'), whitespace], eqName),
-		optional(
-			followed(
-				then(
-					precededMultiple([token('('), whitespace], literal),
-					star(precededMultiple([token(','), whitespace], literal)),
-					(lhs, rhs) => lhs.concat(rhs)
-				),
-				token(')')
-			)
-		),
-		(annotation, params) =>
-			[
-				'annotation',
-				['annotationName', ...annotation],
-				...(params ? ['arguments', params] : []),
-			] as IAST
-	);
-
 	const inlineFunctionExpr: Parser<IAST> = then4(
 		star(annotation),
 		precededMultiple(
-			[token('function'), whitespace, token('('), whitespace],
+			[whitespace, token('function'), whitespace, token('('), whitespace],
 			optional(paramList)
 		),
 		precededMultiple(
@@ -2567,7 +2602,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				preceded(surrounded(token('='), whitespacePlus), stringLiteral),
 				(name, value) => [
 					'decimalFormatParam',
-					['decimalFormatParanName', name],
+					['decimalFormatParamName', name],
 					['decimalFormatParamValue', value],
 				]
 			)
