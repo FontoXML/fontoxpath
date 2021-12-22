@@ -834,6 +834,18 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const occurrenceIndicator: Parser<string> = or(['?', '*', '+'].map(token));
 
+	const sequenceType: Parser<any> = or([
+		map(token('empty-sequence()'), (_) => [['voidSequenceType']]),
+		then(
+			itemTypeIndirect,
+			optional(preceded(whitespace, occurrenceIndicator)),
+			(type, occurrence) => [
+				type,
+				...(occurrence !== null ? [['occurrenceIndicator', occurrence]] : []),
+			]
+		),
+	]);
+
 	const atomicOrUnionType: Parser<IAST> = map(eqName, (x) => ['atomicType', ...x]);
 
 	const functionTest: Parser<IAST> = unimplemented;
@@ -850,16 +862,35 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		precededMultiple([token('map'), whitespace, token('('), whitespace], atomicOrUnionType),
 		precededMultiple(
 			[whitespace, token(',')],
-			followed(surrounded(sequenceTypeIndirect, whitespace), token(')'))
+			followed(surrounded(sequenceType, whitespace), token(')'))
 		),
 		(keyType, valueType) => ['typedMapTest', keyType, ['sequenceType', ...valueType]]
 	);
 
 	const mapTest: Parser<IAST> = or([anyMapTest, typedMapTest]);
 
-	const arrayTest: Parser<IAST> = unimplemented;
+	const anyArrayTest: Parser<IAST> = map(
+		precededMultiple(
+			[token('array'), whitespace, token('('), whitespace, token('*'), whitespace],
+			token(')')
+		),
+		(_) => ['anyArrayTest']
+	);
 
-	const parenthesizedItemType: Parser<IAST> = unimplemented;
+	const typedArrayTest: Parser<IAST> = map(
+		precededMultiple(
+			[token('array'), whitespace, token('(')],
+			followed(surrounded(sequenceType, whitespace), token(')'))
+		),
+		(type) => ['typedArrayTest', ['sequenceType', ...type]]
+	);
+
+	const arrayTest: Parser<IAST> = or([anyArrayTest, typedArrayTest]);
+
+	const parenthesizedItemType: Parser<IAST> = map(
+		delimited(token('('), surrounded(itemTypeIndirect, whitespace), token(')')),
+		(x) => ['parenthesizedItemType', x]
+	);
 
 	const itemType: Parser<IAST> = or([
 		kindTest,
@@ -871,16 +902,8 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		parenthesizedItemType,
 	]);
 
-	const sequenceType: Parser<any> = or([
-		map(token('empty-sequence()'), (_) => [['voidSequenceType']]),
-		then(itemType, optional(preceded(whitespace, occurrenceIndicator)), (type, occurrence) => [
-			type,
-			...(occurrence !== null ? [['occurrenceIndicator', occurrence]] : []),
-		]),
-	]);
-
-	function sequenceTypeIndirect(input: string, offset: number): ParseResult<IAST> {
-		return sequenceType(input, offset);
+	function itemTypeIndirect(input: string, offset: number): ParseResult<IAST> {
+		return itemType(input, offset);
 	}
 
 	const typeDeclaration: Parser<IAST> = map(
