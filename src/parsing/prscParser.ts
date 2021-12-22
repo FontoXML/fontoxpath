@@ -107,6 +107,29 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		);
 	}
 
+	function then5<T, S, U, V, W, P>(
+		aParser: Parser<T>,
+		bParser: Parser<S>,
+		cParser: Parser<U>,
+		dParser: Parser<V>,
+		eParser: Parser<W>,
+		func: (aValue: T, bValue: S, cValue: U, dValue: V, eValue: W) => P
+	): Parser<P> {
+		return then(
+			then(
+				then(
+					then(aParser, bParser, (a, b) => [a, b]),
+					cParser,
+					([a, b], c) => [a, b, c]
+				),
+				dParser,
+				([a, b, c]: [T, S, U], d) => [a, b, c, d]
+			),
+			eParser,
+			([a, b, c, d]: [T, S, U, V], e) => func(a, b, c, d, e)
+		);
+	}
+
 	function wrapArray<T>(parser: Parser<T>): Parser<[T]> {
 		return map(parser, (x) => [x]);
 	}
@@ -1753,15 +1776,31 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		}
 	);
 
-	// TODO: add TypeDeclaration, AllowingEmpty, and PositionalVar
-	const forBinding: Parser<IAST> = then(
+	const allowingEmpty: Parser<string> = delimited(
+		token('allowing'),
+		whitespacePlus,
+		token('empty')
+	);
+
+	const positionalVar: Parser<IAST> = map(
+		precededMultiple([token('at'), whitespacePlus, token('$')], varName),
+		(x) => ['positionalVariableBinding', ...x]
+	);
+
+	const forBinding: Parser<IAST> = then5(
 		preceded(token('$'), varName),
+		preceded(whitespace, optional(typeDeclaration)),
+		preceded(whitespace, optional(allowingEmpty)),
+		preceded(whitespace, optional(positionalVar)),
 		preceded(surrounded(token('in'), whitespace), exprSingle),
-		(varName, expr) => [
-			'forClauseItem',
-			['typedVariableBinding', ['varName', ...varName]],
-			['forExpr', expr],
-		]
+		(varName, typeDecl, empty, pos, expr) =>
+			[
+				'forClauseItem',
+				['typedVariableBinding', ['varName', ...varName, ...(typeDecl ? [typeDecl] : [])]],
+				...(empty ? [['allowingEmpty']] : []),
+				...(pos ? [pos] : []),
+				['forExpr', expr],
+			] as IAST
 	);
 
 	const forClause: Parser<IAST> = precededMultiple(
