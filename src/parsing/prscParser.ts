@@ -2169,12 +2169,43 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		]
 	);
 
-	// TODO: add support for switch
+	const switchCaseOperand: Parser<IAST> = exprSingle;
+
+	const switchCaseClause: Parser<IAST> = then(
+		plus(
+			map(precededMultiple([token('case'), whitespacePlus], switchCaseOperand), (x) => [
+				'switchCaseExpr',
+				x,
+			])
+		),
+		precededMultiple([whitespacePlus, token('return'), whitespacePlus], exprSingle),
+		(operands, expr) => ['switchExprCaseClause', ...operands, ['resultExpr', expr]] as IAST
+	);
+
+	const switchExpr: Parser<IAST> = then3(
+		precededMultiple([token('switch'), whitespace, token('(')], expr),
+		precededMultiple(
+			[whitespace, token(')'), whitespace],
+			plus(followed(switchCaseClause, whitespace))
+		),
+		precededMultiple(
+			[token('default'), whitespacePlus, token('return'), whitespacePlus],
+			exprSingle
+		),
+		(expr, clauses, resultExpr) => [
+			'switchExpr',
+			['argExpr', expr],
+			...clauses,
+			['switchExprDefaultClause', ['resultExpr', resultExpr]],
+		]
+	);
+
 	function exprSingle(input: string, offset: number): ParseResult<IAST> {
 		return wrapInStackTrace(
 			or([
 				flworExpr,
 				quantifiedExpr,
+				switchExpr,
 				typeswitchExpr,
 				ifExpr,
 				insertExpr,
