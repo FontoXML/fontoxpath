@@ -2287,9 +2287,42 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const separator: Parser<string> = token(';');
 
+	const schemaImport: Parser<IAST> = unimplemented;
+
+	const moduleImport: Parser<IAST> = precededMultiple(
+		[token('import'), whitespacePlus, token('module')],
+		then3(
+			optional(
+				followed(
+					precededMultiple([whitespacePlus, token('namespace'), whitespacePlus], ncName),
+					preceded(whitespace, token('='))
+				)
+			),
+			preceded(whitespace, uriLiteral),
+			optional(
+				then(
+					precededMultiple([whitespacePlus, token('at'), whitespacePlus], uriLiteral),
+					star(precededMultiple([whitespace, token(','), whitespace], uriLiteral)),
+					(lhs, rhs) => [lhs, ...rhs]
+				)
+			),
+			(prefix, uri, uris) => [
+				// Implementing the uris part into the AST.
+				'moduleImport',
+				['namespacePrefix', prefix],
+				['targetNamespace', uri],
+			]
+		)
+	);
+
+	const importExpr: Parser<IAST> = or([schemaImport, moduleImport]);
+
 	const prolog: Parser<IAST> = then(
 		star(
-			followed(or([namespaceDecl, defaultNamespaceDecl]), surrounded(separator, whitespace))
+			followed(
+				or([namespaceDecl, defaultNamespaceDecl, importExpr]),
+				surrounded(separator, whitespace)
+			)
 		),
 		star(followed(or([annotatedDecl]), surrounded(separator, whitespace))),
 		(moduleSettings, declarations) =>
