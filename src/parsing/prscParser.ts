@@ -1115,11 +1115,67 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		(x) => ['computedDocumentConstructor', ...(x ? [['argExpr', x]] : [])] as IAST
 	);
 
-	const compElemConstructor: Parser<IAST> = unimplemented;
+	const enclosedContentExpr: Parser<IAST[]> = map(enclosedExpr, (x) =>
+		x ? [['contentExpr', x]] : []
+	);
 
-	const compAttrConstructor: Parser<IAST> = unimplemented;
+	const compElemConstructor: Parser<IAST> = then(
+		precededMultiple(
+			[token('element'), whitespace],
+			or([
+				map(eqName, (x) => ['tagName', ...x]),
+				map(delimited(token('{'), surrounded(expr, whitespace), token('}')), (x) => [
+					'tagNameExpr',
+					x,
+				]),
+			])
+		),
+		preceded(whitespace, enclosedContentExpr),
+		(tagName, content) => ['computedElementConstructor', tagName, ...content] as IAST
+	);
 
-	const compNamespaceConstructor: Parser<IAST> = unimplemented;
+	const compAttrConstructor: Parser<IAST> = then(
+		preceded(
+			token('attribute'),
+			or([
+				map(precededMultiple([assertAdjacentOpeningTerminal, whitespace], eqName), (x) => [
+					'tagName',
+					...x,
+				]),
+				map(
+					preceded(
+						whitespacePlus,
+						delimited(token('{'), surrounded(whitespace, expr), token('}'))
+					),
+					(x) => ['tagNameExpr', x]
+				),
+			])
+		),
+		preceded(whitespace, enclosedExpr),
+		(name, expr) =>
+			[
+				'computedAttributeConstructor',
+				name,
+				['valueExpr', expr ? expr : ['sequenceExpr']],
+			] as IAST
+	);
+
+	const prefix: Parser<IAST> = map(ncName, (x) => ['prefix', x]);
+
+	const enclosedPrefixExpr: Parser<IAST[]> = map(enclosedExpr, (x) =>
+		x ? [['prefixExpr', x]] : []
+	);
+
+	const enclosedUriExpr: Parser<IAST[]> = map(enclosedExpr, (x) => (x ? [['URIExpr', x]] : []));
+
+	const compNamespaceConstructor: Parser<IAST> = then(
+		precededMultiple(
+			[token('namespace'), whitespace],
+			or([prefix as Parser<IAST[] | IAST>, enclosedPrefixExpr])
+		),
+		preceded(whitespace, enclosedUriExpr),
+		(prefix, uri) => ['comuptedNamespaceConstructor', ...prefix, ...uri]
+	);
 
 	const compTextConstructor: Parser<IAST> = map(
 		precededMultiple([token('text'), whitespace], enclosedExpr),
