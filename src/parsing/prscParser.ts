@@ -832,11 +832,39 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const functionBody: Parser<IAST> = map(enclosedExpr, (x) => (x ? x : ['sequenceExpr']));
 
-	// TODO: add type declarations
-	const param: Parser<IAST> = map(preceded(token('$'), eqName), (x) => [
-		'param',
-		['varName', ...x],
+	const occurrenceIndicator: Parser<string> = or(['?', '*', '+'].map(token));
+
+	const atomicOrUnionType: Parser<IAST> = map(eqName, (x) => ['atomicType', ...x]);
+
+	// TODO: add other tests
+	const itemType: Parser<IAST> = or([
+		kindTest,
+		wrapArray(alias(['item()'], 'anyItemType')),
+		atomicOrUnionType,
 	]);
+
+	const sequenceType: Parser<any> = or([
+		map(token('empty-sequence()'), (_) => [['voidSequenceType']]),
+		then(itemType, optional(occurrenceIndicator), (type, occurrence) => [
+			type,
+			...(occurrence !== null ? [['occurrenceIndicator', occurrence]] : []),
+		]),
+	]);
+
+	const typeDeclaration: Parser<IAST> = map(
+		precededMultiple([token('as'), whitespacePlus], sequenceType),
+		(x) => ['typeDeclaration', ...x]
+	);
+
+	const param: Parser<IAST> = then(
+		preceded(token('$'), eqName),
+		optional(preceded(whitespacePlus, typeDeclaration)),
+		(varName, typeDeclaration) => [
+			'param',
+			['varName', ...varName],
+			...(typeDeclaration ? [typeDeclaration] : []),
+		]
+	);
 
 	const paramList: Parser<IAST[]> = binaryOperator(param, token(', '), (lhs, rhs) => [
 		lhs,
@@ -1594,30 +1622,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			)
 		),
 		(lhs, rhs) => (rhs !== null ? ['castableExpr', ['argExpr', lhs], rhs] : lhs)
-	);
-
-	const atomicOrUnionType: Parser<IAST> = map(eqName, (x) => ['atomicType', ...x]);
-
-	// TODO: add other tests
-	const itemType: Parser<IAST> = or([
-		kindTest,
-		wrapArray(alias(['item()'], 'anyItemType')),
-		atomicOrUnionType,
-	]);
-
-	const occurrenceIndicator: Parser<string> = or(['?', '*', '+'].map(token));
-
-	const sequenceType: Parser<any> = or([
-		map(token('empty-sequence()'), (_) => [['voidSequenceType']]),
-		then(itemType, optional(occurrenceIndicator), (type, occurrence) => [
-			type,
-			...(occurrence !== null ? [['occurrenceIndicator', occurrence]] : []),
-		]),
-	]);
-
-	const typeDeclaration: Parser<IAST> = map(
-		precededMultiple([token('as'), whitespacePlus], sequenceType),
-		(x) => ['typeDeclaration', ...x]
 	);
 
 	const treatExpr: Parser<IAST> = then(
