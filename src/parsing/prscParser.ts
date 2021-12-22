@@ -1552,22 +1552,22 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const validationMode: Parser<string> = or([token('lax'), token('strict')]);
 
-	const validateExpr: Parser<IAST> = then(
-		optional(
-			preceded(
-				token('validate'),
+	const validateExpr: Parser<IAST> = preceded(
+		token('validate'),
+		then(
+			optional(
 				or([
-					map(preceded(whitespace, validationMode), (x) => ['validationMode', x]),
+					map(preceded(whitespace, validationMode), (mode) => ['validationMode', mode]),
 					map(
 						precededMultiple([whitespace, token('type'), whitespace], typeName),
-						(x) => ['type', ...x]
+						(t) => ['type', ...t]
 					),
 				])
-			)
-		),
-		preceded(whitespace, delimited(token('{'), surrounded(expr, whitespace), token('}'))),
-		(modeOrType, expr) =>
-			['validateExpr', ...(modeOrType ? [modeOrType] : []), ['argExpr', expr]] as IAST
+			),
+			delimited(preceded(whitespace, token('{')), surrounded(expr, whitespace), token('}')),
+			(modeOrType, expr) =>
+				['validateExpr', ...(modeOrType ? [modeOrType] : []), ['argExpr', expr]] as IAST
+		)
 	);
 
 	const pragmaContents: Parser<string> = map(
