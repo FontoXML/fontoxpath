@@ -2550,14 +2550,14 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const inheritMode: Parser<string> = or([token('inherit'), token('no-inherit')]);
 
-	const copyNamespaceDecl: Parser<IAST> = then(
+	const copyNamespacesDecl: Parser<IAST> = then(
 		precededMultiple(
 			[token('declare'), whitespacePlus, token('copy-namespaces'), whitespacePlus],
 			preserveMode
 		),
 		precededMultiple([whitespace, token(','), whitespace], inheritMode),
 		(preserveMode, inheritMode) => [
-			'copyNamespaceDecl',
+			'copyNamespacesDecl',
 			['preserveMode', preserveMode],
 			['inheritMode', inheritMode],
 		]
@@ -2618,7 +2618,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		constructionDecl,
 		orderingModeDecl,
 		emptyOrderDecl,
-		copyNamespaceDecl,
+		copyNamespacesDecl,
 		decimalFormatDecl,
 	]);
 
