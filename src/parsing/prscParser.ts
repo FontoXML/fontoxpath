@@ -2391,9 +2391,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		['annotationName', 'updating'],
 	]);
 
-	// 	AnnotatedDecl
-	//  = "declare" S annotations:(a:(Annotation / CompatibilityAnnotation) S {return a})* decl:(VarDecl / FunctionDecl)
-	//    {return [decl[0]].concat(annotations).concat(decl.slice(1))}
 	const annotatedDecl: Parser<IAST> = precededMultiple(
 		[token('declare'), whitespacePlus],
 		then(
@@ -2474,7 +2471,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 					(lhs, rhs) => [lhs, ...rhs]
 				)
 			),
-			(prefix, uri, uris) => [
+			(prefix, uri, _uris) => [
 				// Implementing the uris part into the AST.
 				'moduleImport',
 				['namespacePrefix', prefix],
@@ -2558,7 +2555,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			[token('declare'), whitespacePlus, token('copy-namespaces'), whitespacePlus],
 			preserveMode
 		),
-		precededMultiple([whitespacePlus, token(','), whitespacePlus], inheritMode),
+		precededMultiple([whitespace, token(','), whitespace], inheritMode),
 		(preserveMode, inheritMode) => [
 			'copyNamespaceDecl',
 			['preserveMode', preserveMode],
