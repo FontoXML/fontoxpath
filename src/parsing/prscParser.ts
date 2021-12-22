@@ -1431,7 +1431,35 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			['validateExpr', ...(modeOrType ? [modeOrType] : []), ['argExpr', expr]] as IAST
 	);
 
-	const extensionExpr: Parser<IAST> = unimplemented;
+	const pragmaContents: Parser<string> = map(
+		star(followed(char, peek(not(token('#)'), ["Pragma contents should not contain '#)'"])))),
+		(x) => x.join('')
+	);
+
+	const pragma: Parser<IAST> = delimited(
+		token('(#'),
+		then(
+			// TODO: isn't an optional whitespacePlus just a whitespace?
+			preceded(optional(whitespacePlus), eqName),
+			optional(preceded(whitespacePlus, pragmaContents)),
+			(name, contents) =>
+				(contents
+					? ['pragma', ['pragmaName', name], ['pragmaContents', contents]]
+					: ['pragma', ['pragmaName', name]]) as IAST
+		),
+		token('#)')
+	);
+
+	const extensionExpr: Parser<IAST> = map(
+		followed(
+			plus(pragma),
+			preceded(
+				whitespace,
+				delimited(token('{'), surrounded(optional(expr), whitespace), token('}'))
+			)
+		),
+		(pragma) => ['extensionExpr', ...pragma] as IAST
+	);
 
 	const simpleMapExpr: Parser<IAST> = wrapInStackTrace(
 		binaryOperator(pathExpr, token('!'), (lhs: IAST, rhs: [string, IAST][]) => {
