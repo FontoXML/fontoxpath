@@ -603,6 +603,19 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		(x) => ['schemaElementTest', ...x]
 	);
 
+	const attributeName = eqName;
+
+	const attributeDeclaration = attributeName;
+
+	const schemaAttributeTest: Parser<IAST> = map(
+		delimited(
+			token('schema-attribute('),
+			surrounded(attributeDeclaration, whitespace),
+			token(')')
+		),
+		(decl) => ['schemaAttributeTest', ...decl]
+	);
+
 	const documentTest: Parser<IAST> = map(
 		preceded(
 			token('document-node('),
@@ -639,6 +652,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		elementTest,
 		attributeTest,
 		schemaElementTest,
+		schemaAttributeTest,
 		piTest,
 		commentTest,
 		textTest,
@@ -705,7 +719,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			then(token('.'), digits, (dot, digits) => dot + digits),
 			then(
 				digits,
-				optional(preceded(token('.'), digits)),
+				optional(preceded(token('.'), regex(/[0-9]*/))),
 				(a, b) => a + (b !== null ? '.' + b : '')
 			),
 		]),
