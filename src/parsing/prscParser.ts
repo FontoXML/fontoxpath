@@ -1849,17 +1849,17 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		])
 	);
 
-	const letBinding: Parser<IAST> = then(
+	const letBinding: Parser<IAST> = then3(
 		preceded(token('$'), varName),
+		preceded(whitespace, optional(typeDeclaration)),
 		preceded(surrounded(token(':='), whitespace), exprSingle),
-		(name, expr) => [
+		(name, typeDecl, expr) => [
 			'letClauseItem',
-			['typedVariableBinding', ['varName', ...name]],
+			['typedVariableBinding', ['varName', ...name], ...(typeDecl ? [typeDecl] : [])],
 			['letExpr', expr],
 		]
 	);
 
-	// TODO: add type declaration
 	const letClause: Parser<IAST> = map(
 		precededMultiple(
 			[token('let'), whitespace],
