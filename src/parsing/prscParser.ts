@@ -2488,7 +2488,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 							] as IAST[]
 					),
 				]),
-				separator
+				preceded(whitespace, separator)
 			)
 		),
 		(x) => ['versionDecl', ...x]
