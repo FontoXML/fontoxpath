@@ -836,11 +836,39 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const atomicOrUnionType: Parser<IAST> = map(eqName, (x) => ['atomicType', ...x]);
 
-	// TODO: add other tests
+	const functionTest: Parser<IAST> = unimplemented;
+
+	const anyMapTest: Parser<IAST> = map(
+		precededMultiple(
+			[token('map'), whitespace, token('('), whitespace, token('*'), whitespace],
+			token(')')
+		),
+		(_) => ['anyMapTest']
+	);
+
+	const typedMapTest: Parser<IAST> = then(
+		precededMultiple([token('map'), whitespace, token('('), whitespace], atomicOrUnionType),
+		precededMultiple(
+			[whitespace, token(',')],
+			followed(surrounded(sequenceTypeIndirect, whitespace), token(')'))
+		),
+		(keyType, valueType) => ['typedMapTest', keyType, ['sequenceType', ...valueType]]
+	);
+
+	const mapTest: Parser<IAST> = or([anyMapTest, typedMapTest]);
+
+	const arrayTest: Parser<IAST> = unimplemented;
+
+	const parenthesizedItemType: Parser<IAST> = unimplemented;
+
 	const itemType: Parser<IAST> = or([
 		kindTest,
 		wrapArray(alias(['item()'], 'anyItemType')),
+		functionTest,
+		mapTest,
+		arrayTest,
 		atomicOrUnionType,
+		parenthesizedItemType,
 	]);
 
 	const sequenceType: Parser<any> = or([
@@ -850,6 +878,10 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			...(occurrence !== null ? [['occurrenceIndicator', occurrence]] : []),
 		]),
 	]);
+
+	function sequenceTypeIndirect(input: string, offset: number): ParseResult<IAST> {
+		return sequenceType(input, offset);
+	}
 
 	const typeDeclaration: Parser<IAST> = map(
 		precededMultiple([token('as'), whitespacePlus], sequenceType),
