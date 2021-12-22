@@ -2393,7 +2393,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		(prolog, body) => ['mainModule', ...(prolog ? [prolog] : []), body]
 	);
 
-	const versionDecl: Parser<IAST> = map(
+	const versionDeclaration: Parser<IAST> = map(
 		precededMultiple(
 			[token('xquery'), whitespace],
 			followed(
@@ -2401,29 +2401,31 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 					then(
 						preceded(token('encoding'), whitespacePlus),
 						stringLiteral,
-						(encoding) => ['encoding', encoding] as IAST
+						(encoding) => ['encoding', encoding] as IAST | IAST[]
 					),
 					then(
 						precededMultiple([token('version'), whitespacePlus], stringLiteral),
 						optional(
-							precededMultiple([token('encoding'), whitespacePlus], stringLiteral)
+							precededMultiple(
+								[whitespacePlus, token('encoding'), whitespacePlus],
+								stringLiteral
+							)
 						),
 						(version, encoding) =>
 							[
-								'version',
-								version,
+								['version', version],
 								...(encoding ? [['encoding', encoding]] : []),
-							] as IAST
+							] as IAST[]
 					),
 				]),
 				separator
 			)
 		),
-		(x) => ['versionDecl', x]
+		(x) => ['versionDecl', ...x]
 	);
 
 	const module: Parser<IAST> = then(
-		optional(surrounded(versionDecl, whitespace)),
+		optional(surrounded(versionDeclaration, whitespace)),
 		or([libraryModule, mainModule]),
 		(versionDecl, module) =>
 			['module', ...(versionDecl ? [versionDecl] : []), ...[module]] as IAST
