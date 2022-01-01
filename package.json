@@ -94,7 +94,7 @@
 		"prettier": "^2.4.1",
 		"sinon": "^12.0.1",
 		"sinon-chai": "^3.7.0",
-		"slimdom": "^2.3.2",
+		"slimdom": "^3.0.0",
 		"slimdom-sax-parser": "^1.4.1",
 		"source-map-support": "^0.5.21",
 		"ts-mocha": "^8.0.0",
