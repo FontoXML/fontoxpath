@@ -320,7 +320,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				}
 			}
 		}
-		return result;
+	return result;
 	}
 
 	function getLineData(input: string, offset: number): [number, number] {
@@ -523,7 +523,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			precededMultiple(
 				[token('element'), whitespace],
 				delimited(
-					token('('),
+					followed(token('('), whitespace),
 					then(
 						elementNameOrWildCard,
 						precededMultiple([whitespace, token(','), whitespace], typeName),
@@ -533,7 +533,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 								['typeName', ...typeName],
 							] as [IAST, IAST]
 					),
-					token(')')
+					preceded(whitespace, token(')'))
 				)
 			),
 			([nameOrWildcard, typeName]) => ['elementTest', nameOrWildcard, typeName] as IAST
@@ -553,16 +553,18 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			(_) => ['elementTest']
 		),
 	]);
+
 	const attribNameOrWildCard: Parser<IAST> = or([
 		map(elementName, (name) => ['QName', ...name]),
 		map(token('*'), (_token) => ['star']),
 	]);
+
 	const attributeTest: Parser<IAST> = or([
 		map(
 			precededMultiple(
 				[token('attribute'), whitespace],
 				delimited(
-					token('('),
+					followed(token('('), whitespace),
 					then(
 						attribNameOrWildCard,
 						precededMultiple([whitespace, token(','), whitespace], typeName),
@@ -572,7 +574,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 								['typeName', ...typeName],
 							] as [IAST, IAST]
 					),
-					token(')')
+					preceded(whitespace, token(')'))
 				)
 			),
 			([nameOrWildcard, typeName]) => ['attributeTest', nameOrWildcard, typeName] as IAST
@@ -1635,7 +1637,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 					? ['pragma', ['pragmaName', name], ['pragmaContents', contents]]
 					: ['pragma', ['pragmaName', name]]) as IAST
 		),
-		token('#)')
+		preceded(whitespace, token('#)'))
 	);
 
 	const extensionExpr: Parser<IAST> = map(
@@ -2636,6 +2638,35 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		decimalFormatDecl,
 	]);
 
+	const optionDecl: Parser<IAST> = then(
+		precededMultiple(
+			[token('declare'), whitespacePlus, token('option'), whitespacePlus],
+			eqName
+		),
+		preceded(whitespacePlus, stringLiteral),
+		(optionName, optionContents) =>
+			['optionDecl', ['optionName', optionName], ['optionContents', optionContents]] as IAST
+	);
+
+	const contextItemDecl: Parser<IAST> = then(
+		precededMultiple(
+			[token('declare'), whitespacePlus, token('context'), whitespacePlus, token('item')],
+			optional(precededMultiple([whitespacePlus, token('as')], itemType))
+		),
+		or([
+			map(preceded(surrounded(token(':='), whitespace), varValue), (x) => ['varValue', x]),
+			map(
+				precededMultiple(
+					[whitespacePlus, token('external')],
+					optional(preceded(surrounded(token(':='), whitespace), varDefaultValue))
+				),
+				(_) => ['external']
+			),
+		]),
+		(itemType, val) =>
+			['contextItemDecl', ...(itemType ? [['contextItemType', itemType]] : []), val] as IAST
+	);
+
 	const prolog: Parser<IAST> = then(
 		star(
 			followed(
@@ -2643,7 +2674,12 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				surrounded(separator, whitespace)
 			)
 		),
-		star(followed(or([annotatedDecl]), surrounded(separator, whitespace))),
+		star(
+			followed(
+				or([contextItemDecl, annotatedDecl, optionDecl]),
+				surrounded(separator, whitespace)
+			)
+		),
 		(moduleSettings, declarations) =>
 			moduleSettings.length === 0 && declarations.length === 0
 				? null
@@ -2722,3 +2758,4 @@ export function parseUsingPrsc(
 		0
 	);
 }
+	
