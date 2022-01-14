@@ -329,8 +329,8 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 	}
 
 	function assertEqualQNames(a: any, b: any) {
-		var nameA = getQName(a);
-		var nameB = getQName(b);
+		const nameA = getQName(a);
+		const nameB = getQName(b);
 		if (nameA !== nameB) {
 			throw new Error(
 				'XQST0118: The start and the end tag of an element constructor must be equal. "' +
