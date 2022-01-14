@@ -320,7 +320,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				}
 			}
 		}
-	return result;
+		return result;
 	}
 
 	function getLineData(input: string, offset: number): [number, number] {
@@ -910,7 +910,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		),
 		(paramTypeList, returnType) => [
 			'typedFunctionTest',
-			['paramTypeList', ['sequenceType', ...paramTypeList]],
+			['paramTypeList', ['sequenceType', ...(paramTypeList ? paramTypeList : [])]],
 			['sequenceType', ...returnType],
 		]
 	);
@@ -2758,4 +2758,3 @@ export function parseUsingPrsc(
 		0
 	);
 }
-	
