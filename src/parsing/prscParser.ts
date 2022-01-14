@@ -501,7 +501,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		precededMultiple(
 			[token('Q'), whitespace, token('{')],
 			// TODO: add xquery version
-			map(star(regex(/[^{}]/)), (x) => x.join('').replace(/\s+/g, ' ').trim())
+			map(star(regex(/[^{}]/)), (x) => x.join(''))
 		),
 		token('}')
 	);
@@ -2493,7 +2493,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			(prefixPart, namespace, targetLocations) =>
 				[
 					'schemaImport',
-					...(prefix ? [prefix] : []),
+					...(prefixPart ? [prefixPart] : []),
 					...[['targetNamespace', namespace]],
 					...(targetLocations ? [targetLocations] : []),
 				] as IAST
