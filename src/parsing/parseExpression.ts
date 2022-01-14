@@ -38,9 +38,10 @@ export default function parseExpression(
 			ast = parseResult.value;
 		} else {
 			throw new Error(
-				`XPST0003: Failed to parse '${xPathString}' expected: ${parseResult.expected}\n${xPathString.slice(0, parseResult.offset) +
-				'[Error is around here]' +
-				xPathString.slice(parseResult.offset)
+				`XPST0003: Failed to parse '${xPathString}' expected: ${parseResult.expected}\n${
+					xPathString.slice(0, parseResult.offset) +
+					'[Error is around here]' +
+					xPathString.slice(parseResult.offset)
 				}`
 			);
 		}
