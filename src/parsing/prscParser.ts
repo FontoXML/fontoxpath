@@ -501,7 +501,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		precededMultiple(
 			[token('Q'), whitespace, token('{')],
 			// TODO: add xquery version
-			map(star(regex(/[^{}]/)), (x) => x.join(''))
+			map(star(regex(/[^{}]/)), (x) => x.join('').replace(/\s+/g, ' ').trim())
 		),
 		token('}')
 	);
