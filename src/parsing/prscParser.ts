@@ -323,6 +323,25 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		return result;
 	}
 
+	// TODO: add proper typing
+	function getQName(qname: any): string {
+		return qname.length === 1 ? qname[0] : qname[0].prefix + ':' + qname[1];
+	}
+
+	function assertEqualQNames(a: any, b: any) {
+		var nameA = getQName(a);
+		var nameB = getQName(b);
+		if (nameA !== nameB) {
+			throw new Error(
+				'XQST0118: The start and the end tag of an element constructor must be equal. "' +
+					nameA +
+					'" does not match "' +
+					nameB +
+					'"'
+			);
+		}
+	}
+
 	function getLineData(input: string, offset: number): [number, number] {
 		let col = 1;
 		let line = 1;
@@ -374,8 +393,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 	const assertAdjacentOpeningTerminal: Parser<string> = peek(
 		or([token('('), token('"'), token("'"), whitespaceCharacter])
 	);
-
-	const unimplemented: Parser<IAST> = wrapArray(token('unimplemented'));
 
 	const predicate: Parser<IAST> = preceded(
 		token('['),
@@ -444,31 +461,24 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		then3(token('&#'), regex(/[0-9]+/), token(';'), (a, b, c) => a + b + c),
 	]);
 
-	const stringLiteral: Parser<string> = options.xquery
-		? or([
-				map(
+	const stringLiteral: Parser<string> = map(
+		options.xquery
+			? or([
 					surrounded(
-						star(or([predefinedEntityRef, charRef, escapeQuot, regex(/[^\"]/)])),
+						star(or([predefinedEntityRef, charRef, escapeQuot, regex(/[^\"&]/)])),
 						token('"')
 					),
-					(x) => x.join('')
-				),
-				map(
 					surrounded(
-						star(or([predefinedEntityRef, charRef, escapeApos, regex(/[^']/)])),
+						star(or([predefinedEntityRef, charRef, escapeApos, regex(/[^'&]/)])),
 						token("'")
 					),
-					(x) => x.join('')
-				),
-		  ])
-		: or([
-				map(surrounded(star(or([escapeQuot, regex(/[^\"]/)])), token('"')), (x) =>
-					x.join('')
-				),
-				map(surrounded(star(or([escapeApos, regex(/[^']/)])), token("'")), (x) =>
-					x.join('')
-				),
-		  ]);
+			  ])
+			: or([
+					surrounded(star(or([escapeQuot, regex(/[^\"]/)])), token('"')),
+					surrounded(star(or([escapeApos, regex(/[^']/)])), token("'")),
+			  ]),
+		(x) => x.join('')
+	);
 
 	const localPart: Parser<string> = ncName;
 
@@ -491,7 +501,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		precededMultiple(
 			[token('Q'), whitespace, token('{')],
 			// TODO: add xquery version
-			map(star(regex(/[^{}]/)), (x) => x.join(''))
+			map(star(regex(/[^{}]/)), (x) => x.join('').replace(/\s+/g, ' ').trim())
 		),
 		token('}')
 	);
@@ -1222,19 +1232,24 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 						then(optional(explicitWhitespace), token('>'), (_) => null)
 					)
 				),
-				(contents, _endName) => {
-					// TODO: add assertEqualNames(name, endName);
-					return accumulateDirContents(contents, true, true);
+				(contents, endName) => {
+					return [accumulateDirContents(contents, true, true), endName];
 				}
 			),
 		]),
-		(tagName, attList, contents) =>
-			[
+		(tagName, attList, contentsEndName) => {
+			let contents = contentsEndName;
+			if (contentsEndName && contentsEndName.length) {
+				assertEqualQNames(tagName, contentsEndName[1]);
+				contents = contentsEndName[0];
+			}
+			return [
 				'elementConstructor',
 				['tagName', ...tagName],
 				...(attList.length ? [['attributeList', ...attList]] : []),
 				...(contents && contents.length ? [['elementContent', ...contents]] : []),
-			] as IAST
+			] as IAST;
+		}
 	);
 
 	const dirCommentContents: Parser<string> = map(
@@ -1342,7 +1357,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				]),
 				map(
 					preceded(
-						whitespacePlus,
+						whitespace,
 						delimited(token('{'), surrounded(expr, whitespace), token('}'))
 					),
 					(x) => ['tagNameExpr', x]
@@ -1591,9 +1606,12 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		map(
 			followed(
 				token('/'),
-				not(preceded(whitespace, or([regex(/[*<a-zA-Z]/), regex(/[*a-zA-Z]/)])), [
-					'Single rootExpr cannot be by followed by something that can be interpreted as a relative path',
-				])
+				not(
+					preceded(whitespace, options.xquery ? regex(/[*<a-zA-Z]/) : regex(/[*a-zA-Z]/)),
+					[
+						'Single rootExpr cannot be by followed by something that can be interpreted as a relative path',
+					]
+				)
 			),
 			(_) => ['pathExpr', ['rootExpr']] as IAST
 		),
@@ -2034,7 +2052,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		optional(
 			precededMultiple(
 				[whitespace, token('empty'), whitespace],
-				or(['greatest', 'least'].map((x) => map(token(x), (y) => 'empty' + y)))
+				or(['greatest', 'least'].map((x) => map(token(x), (y) => 'empty ' + y)))
 			)
 		),
 		preceded(
