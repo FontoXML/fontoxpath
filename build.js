@@ -80,7 +80,7 @@ function doModuleBuild() {
 	const fullModule = `import * as xspattern from 'xspattern';
 import * as prsc from 'prsc';
 const fontoxpath = (${fontoxpathFunction})
-	.call(typeof window === 'undefined' ? undefined : window, xspattern);
+	.call(typeof window === 'undefined' ? undefined : window, xspattern, prsc);
 ${exports.join('\n')}
 export default fontoxpath;
 `;
@@ -91,11 +91,11 @@ export default fontoxpath;
 		define(['xspattern', 'prsc'], factory);
 	} else if (typeof exports === 'object') {
 		// Node, CommonJS-like
-		module.exports = [factory(require('xspattern')), factor(require('prsc'))];
+		module.exports = factory(require('xspattern'), require('prsc'));
 	} else {
 		// Browser globals (root is window)
 		// Maybe it is in scope:
-		root.fontoxpath = [factory(root.xspattern), factory(root.prsc)];
+		root.fontoxpath = factory(root.xspattern, root.prsc);
 	}
 })(this, function (xspattern, prsc) {
 	return (${fontoxpathFunction})(xspattern, prsc);
