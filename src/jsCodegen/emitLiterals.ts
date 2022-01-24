@@ -20,7 +20,8 @@ export function emitStringLiteralExpression(
 	ast: IAST,
 	identifier: FunctionIdentifier
 ): PartialCompilationResult {
-	let text = astHelper.getFirstChild(ast, 'value')[1] as string;
+	// Note: default the value to the emptyy string. The XQueryX roundtrip may omit them
+	let text = (astHelper.getFirstChild(ast, 'value')[1] as string) || '';
 	text = escapeJavaScriptString(text);
 	return acceptAst(`const ${identifier} = ${text};`, { type: GeneratedCodeBaseType.Variable });
 }

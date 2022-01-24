@@ -1,5 +1,13 @@
 import * as chai from 'chai';
-import { Language, ReturnType } from 'fontoxpath';
+import {
+	CompiledXPathFunction,
+	compileXPathToJavaScript,
+	executeJavaScriptCompiledXPath,
+	IAstAccepted,
+	Language,
+	parseScript,
+	ReturnType,
+} from 'fontoxpath';
 import * as slimdom from 'slimdom';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 import escapeJavaScriptString from 'fontoxpath/jsCodegen/escapeJavaScriptString';
@@ -85,6 +93,19 @@ describe('string tests', () => {
 				language: Language.XQUERY_3_1_LANGUAGE,
 			}),
 			'-'
+		);
+	});
+
+	it('test empty string codegen with xqueryx', () => {
+		debugger;
+		const xqueryx = parseScript('""', {}, documentNode);
+		const script = compileXPathToJavaScript(xqueryx, ReturnType.STRING);
+		chai.assert.isTrue(script.isAstAccepted);
+		chai.assert.equal(
+			executeJavaScriptCompiledXPath(
+				new Function((script as IAstAccepted).code) as CompiledXPathFunction
+			),
+			''
 		);
 	});
 });
