@@ -54,6 +54,7 @@ import NameTest from '../expressions/tests/NameTest';
 import PITest from '../expressions/tests/PITest';
 import TestAbstractExpression from '../expressions/tests/TestAbstractExpression';
 import TypeTest from '../expressions/tests/TypeTest';
+import { Bucket, intersectBuckets } from '../expressions/util/Bucket';
 import VarRef from '../expressions/VarRef';
 import WhereExpression from '../expressions/WhereExpression';
 import DeleteExpression from '../expressions/xquery-update/DeleteExpression';
@@ -814,6 +815,31 @@ function pathExpr(ast: IAST, compilationOptions: CompilationOptions) {
 
 		let stepExpression: Expression;
 
+		const children = astHelper.getChildren(step, '*');
+		const postFixExpressions: (['lookup', '*' | Expression] | ['predicate', Expression])[] = [];
+		let intersectingBucket: Bucket = null;
+		for (const child of children) {
+			switch (child[0]) {
+				case 'lookup':
+					postFixExpressions.push(['lookup', compileLookup(child, compilationOptions)]);
+					break;
+				case 'predicate':
+				case 'predicates':
+					for (const childPredicate of astHelper.getChildren(child, '*')) {
+						const predicateExpression = compile(
+							childPredicate,
+							disallowUpdating(compilationOptions)
+						);
+						intersectingBucket = intersectBuckets(
+							intersectingBucket,
+							predicateExpression.getBucket()
+						);
+						postFixExpressions.push(['predicate', predicateExpression]);
+					}
+					break;
+			}
+		}
+
 		if (axis) {
 			hasAxisStep = true;
 			const test = astHelper.getFirstChild(step, [
@@ -847,10 +873,10 @@ function pathExpr(ast: IAST, compilationOptions: CompilationOptions) {
 					stepExpression = new AncestorAxis(testExpression, { inclusive: true });
 					break;
 				case 'attribute':
-					stepExpression = new AttributeAxis(testExpression);
+					stepExpression = new AttributeAxis(testExpression, intersectingBucket);
 					break;
 				case 'child':
-					stepExpression = new ChildAxis(testExpression);
+					stepExpression = new ChildAxis(testExpression, intersectingBucket);
 					break;
 				case 'descendant':
 					stepExpression = new DescendantAxis(testExpression, { inclusive: false });
@@ -859,13 +885,13 @@ function pathExpr(ast: IAST, compilationOptions: CompilationOptions) {
 					stepExpression = new DescendantAxis(testExpression, { inclusive: true });
 					break;
 				case 'parent':
-					stepExpression = new ParentAxis(testExpression);
+					stepExpression = new ParentAxis(testExpression, intersectingBucket);
 					break;
 				case 'following-sibling':
-					stepExpression = new FollowingSiblingAxis(testExpression);
+					stepExpression = new FollowingSiblingAxis(testExpression, intersectingBucket);
 					break;
 				case 'preceding-sibling':
-					stepExpression = new PrecedingSiblingAxis(testExpression);
+					stepExpression = new PrecedingSiblingAxis(testExpression, intersectingBucket);
 					break;
 				case 'following':
 					stepExpression = new FollowingAxis(testExpression);
@@ -874,7 +900,7 @@ function pathExpr(ast: IAST, compilationOptions: CompilationOptions) {
 					stepExpression = new PrecedingAxis(testExpression);
 					break;
 				case 'self':
-					stepExpression = new SelfAxis(testExpression);
+					stepExpression = new SelfAxis(testExpression, intersectingBucket);
 					break;
 			}
 		} else {
@@ -883,28 +909,13 @@ function pathExpr(ast: IAST, compilationOptions: CompilationOptions) {
 			stepExpression = compile(filterExpr, disallowUpdating(compilationOptions));
 		}
 
-		const children = astHelper.getChildren(step, '*');
-
-		for (const child of children) {
-			switch (child[0]) {
+		for (const postfix of postFixExpressions) {
+			switch (postfix[0]) {
 				case 'lookup':
-					stepExpression = new Lookup(
-						stepExpression,
-						compileLookup(child, compilationOptions)
-					);
+					stepExpression = new Lookup(stepExpression, postfix[1]);
 					break;
 				case 'predicate':
-				case 'predicates':
-					stepExpression = astHelper
-						.getChildren(child, '*')
-						.reduce(
-							(innerStep, predicate) =>
-								new Filter(
-									innerStep,
-									compile(predicate, disallowUpdating(compilationOptions))
-								),
-							stepExpression
-						);
+					stepExpression = new Filter(stepExpression, postfix[1]);
 					break;
 			}
 		}

@@ -75,6 +75,22 @@ describe('child', () => {
 		evaluateXPathToNodes('child::childElement', parent, testDomFacade);
 	});
 
+	it('passes the intersecting bucket for getChildNodes', () => {
+		jsonMlMapper.parse(['parentElement', ['childElement']], documentNode);
+
+		const parent = documentNode.firstChild;
+		const expectedBucket = getBucketForSelector('self::childElement');
+
+		const testDomFacade: IDomFacade = {
+			getChildNodes: (node, bucket: string | null) => {
+				chai.assert.equal(expectedBucket, bucket);
+				return [];
+			},
+		} as any;
+
+		evaluateXPathToNodes('child::*[self::childElement]', parent, testDomFacade);
+	});
+
 	it('throws the correct error if context is absent', () => {
 		chai.assert.throws(() => evaluateXPathToFirstNode('*', null), 'XPDY0002');
 	});

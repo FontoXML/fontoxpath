@@ -59,6 +59,22 @@ describe('parent', () => {
 		evaluateXPathToFirstNode('parent::parentElement', childNode, testDomFacade);
 	});
 
+	it('passes the intersecting buckets for getParentNode', () => {
+		jsonMlMapper.parse(['parentElement', ['childElement']], documentNode);
+
+		const childNode = documentNode.firstChild.firstChild;
+		const expectedBucket = getBucketForSelector('self::parentElement');
+
+		const testDomFacade: IDomFacade = {
+			getParentNode: (_node: Node, bucket: string | null) => {
+				chai.assert.equal(expectedBucket, bucket);
+				return null;
+			},
+		} as any;
+
+		evaluateXPathToFirstNode('parent::*[self::parentElement]', childNode, testDomFacade);
+	});
+
 	it('throws the correct error if context is absent', () => {
 		chai.assert.throws(() => evaluateXPathToNodes('parent::*', null), 'XPDY0002');
 	});

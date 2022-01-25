@@ -1,11 +1,11 @@
 import { NODE_TYPES } from '../domFacade/ConcreteNode';
 import QName from '../expressions/dataTypes/valueTypes/QName';
+import { Bucket } from '../expressions/util/Bucket';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { CodeGenContext } from './CodeGenContext';
 import escapeJavaScriptString from './escapeJavaScriptString';
 import {
 	acceptAst,
-	CompiledResultType,
 	ContextItemIdentifier,
 	GeneratedCodeBaseType,
 	PartialCompilationResult,
@@ -26,7 +26,7 @@ export const tests = Object.values(testAstNodes);
 function emitTextTest(
 	_ast: IAST,
 	identifier: ContextItemIdentifier
-): [PartialCompilationResult, string | null] {
+): [PartialCompilationResult, Bucket | null] {
 	return [
 		acceptAst(`${identifier}.nodeType === /*TEXT_NODE*/ ${NODE_TYPES.TEXT_NODE}`, {
 			type: GeneratedCodeBaseType.Value,
@@ -49,7 +49,7 @@ function emitNameTestFromQName(
 	identifier: ContextItemIdentifier,
 	qName: QName,
 	staticContext: CodeGenContext
-): [PartialCompilationResult, string | null] {
+): [PartialCompilationResult, Bucket | null] {
 	const namespaceURIWasResolved = qName.namespaceURI === null;
 	resolveNamespaceURI(qName, staticContext);
 	const { prefix, namespaceURI, localName } = qName;
@@ -114,7 +114,7 @@ function emitElementTest(
 	ast: IAST,
 	identifier: ContextItemIdentifier,
 	staticContext: CodeGenContext
-): [PartialCompilationResult, string | null] {
+): [PartialCompilationResult, Bucket | null] {
 	const elementName = astHelper.getFirstChild(ast, 'elementName');
 	const star = elementName && astHelper.getFirstChild(elementName, 'star');
 	const isElementCode = `${identifier}.nodeType === /*ELEMENT_NODE*/ ${NODE_TYPES.ELEMENT_NODE}`;
@@ -141,7 +141,7 @@ function emitWildcard(
 	ast: IAST,
 	identifier: ContextItemIdentifier,
 	staticContext: CodeGenContext
-): [PartialCompilationResult, string | null] {
+): [PartialCompilationResult, Bucket | null] {
 	if (!astHelper.getFirstChild(ast, 'star')) {
 		return emitNameTestFromQName(
 			identifier,
@@ -198,7 +198,7 @@ export default function emitTest(
 	ast: IAST,
 	identifier: ContextItemIdentifier,
 	staticContext: CodeGenContext
-): [PartialCompilationResult, string | null] {
+): [PartialCompilationResult, Bucket | null] {
 	// emitTest returns a tuple of the generated code and an optional bucket.
 
 	const test = ast[0];

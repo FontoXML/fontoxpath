@@ -3,8 +3,10 @@ import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import Value, { ValueType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
+import {} from '../Expression';
 import Specificity from '../Specificity';
 import StaticContext from '../StaticContext';
+import { Bucket } from '../util/Bucket';
 import TestAbstractExpression from './TestAbstractExpression';
 
 class NameTest extends TestAbstractExpression {
@@ -82,14 +84,14 @@ class NameTest extends TestAbstractExpression {
 		return (domFacade.getNamespaceURI(node) || null) === (resolvedNamespaceURI || null);
 	}
 
-	public getBucket() {
+	public override getBucket(): Bucket {
 		if (this._localName === '*') {
 			if (this._kind === null) {
 				return 'type-1-or-type-2';
 			}
-			return `type-${this._kind}`;
+			return `type-${this._kind}` as Bucket;
 		}
-		return 'name-' + this._localName;
+		return `name-${this._localName}`;
 	}
 
 	public performStaticEvaluation(staticContext: StaticContext) {
