@@ -8,10 +8,11 @@ import DynamicContext from '../../DynamicContext';
 import ExecutionParameters from '../../ExecutionParameters';
 import Expression from '../../Expression';
 import Specificity from '../../Specificity';
+import { Bucket } from '../../util/Bucket';
 import { DONE_TOKEN, ready } from '../../util/iterators';
 
 class OrOperator extends Expression {
-	private _bucket: string;
+	private _bucket: Bucket | null;
 	private _subExpressions: Expression[];
 
 	constructor(expressions: Expression[], type: SequenceType) {
@@ -35,7 +36,7 @@ class OrOperator extends Expression {
 		);
 
 		// If all subExpressions define the same bucket: use that one, else, use no bucket.
-		let bucket: string;
+		let bucket: Bucket | null;
 		for (let i = 0; i < expressions.length; ++i) {
 			if (bucket === undefined) {
 				bucket = expressions[i].getBucket();
@@ -106,7 +107,7 @@ class OrOperator extends Expression {
 		});
 	}
 
-	public getBucket() {
+	public override getBucket(): Bucket | null {
 		return this._bucket;
 	}
 }

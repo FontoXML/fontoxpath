@@ -8,11 +8,13 @@ import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
 import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
+import { Bucket, intersectBuckets } from '../util/Bucket';
 import validateContextNode from './validateContextNode';
 
 class AttributeAxis extends Expression {
-	private _attributeTestExpression: TestAbstractExpression;
-	constructor(attributeTestExpression: TestAbstractExpression) {
+	private readonly _attributeTestExpression: TestAbstractExpression;
+	private readonly _filterBucket: Bucket;
+	constructor(attributeTestExpression: TestAbstractExpression, filterBucket: Bucket) {
 		super(
 			new Specificity({
 				[Specificity.ATTRIBUTE_KIND]: 1,
@@ -27,6 +29,10 @@ class AttributeAxis extends Expression {
 		);
 
 		this._attributeTestExpression = attributeTestExpression;
+		this._filterBucket = intersectBuckets(
+			this._attributeTestExpression.getBucket(),
+			filterBucket
+		);
 	}
 
 	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
@@ -43,7 +49,7 @@ class AttributeAxis extends Expression {
 		// This includes all of the "special" attributes (xml:lang, xml:space, xsi:type, etc.)
 		// but does not include namespace declarations (because they are not attributes).
 		const matchingAttributes = domFacade
-			.getAllAttributePointers(contextItem, this._attributeTestExpression.getBucket())
+			.getAllAttributePointers(contextItem, this._filterBucket)
 			.filter(
 				(attr) =>
 					domFacade.getNamespaceURI(attr) !== BUILT_IN_NAMESPACE_URIS.XMLNS_NAMESPACE_URI
@@ -59,7 +65,7 @@ class AttributeAxis extends Expression {
 		return sequenceFactory.create(matchingAttributes);
 	}
 
-	public getBucket() {
+	public override getBucket(): Bucket {
 		// The attribute axis is a non-empty sequence for only elements
 		return 'type-1';
 	}

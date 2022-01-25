@@ -1,25 +1,26 @@
 import { AttributeNodePointer, ElementNodePointer, NodePointer } from './domClone/Pointer';
 import { NODE_TYPES } from './domFacade/ConcreteNode';
 import DomFacade from './domFacade/DomFacade';
+import { Bucket } from './expressions/util/Bucket';
 import { Attr, Element, Node } from './types/Types';
 
-function createBuckets(nodeType: NODE_TYPES, localName?: string): string[] {
-	const buckets = [];
+function createBuckets(nodeType: NODE_TYPES, localName?: string): Bucket[] {
+	const buckets: Bucket[] = [];
 
 	if (nodeType === NODE_TYPES.ATTRIBUTE_NODE || nodeType === NODE_TYPES.ELEMENT_NODE) {
 		buckets.push('type-1-or-type-2');
 	}
 
-	buckets.push('type-' + nodeType);
+	buckets.push(`type-${nodeType}`);
 
 	if (localName) {
-		buckets.push('name-' + localName);
+		buckets.push(`name-${localName}`);
 	}
 
 	return buckets;
 }
 
-export function getBucketsForPointer(pointer: NodePointer, domFacade: DomFacade): string[] {
+export function getBucketsForPointer(pointer: NodePointer, domFacade: DomFacade): Bucket[] {
 	const nodeType = domFacade.getNodeType(pointer);
 	let localName;
 	if (nodeType === NODE_TYPES.ATTRIBUTE_NODE || nodeType === NODE_TYPES.ELEMENT_NODE) {
@@ -40,7 +41,7 @@ export function getBucketsForPointer(pointer: NodePointer, domFacade: DomFacade)
  *
  * @param node - The node which buckets should be retrieved
  */
-export function getBucketsForNode(node: Node): string[] {
+export function getBucketsForNode(node: Node): Bucket[] {
 	const nodeType = node.nodeType;
 	let localName;
 

@@ -6,11 +6,13 @@ import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
+import { Bucket, intersectBuckets } from '../util/Bucket';
 import validateContextNode from './validateContextNode';
 
 class ParentAxis extends Expression {
-	private _parentExpression: TestAbstractExpression;
-	constructor(parentExpression: TestAbstractExpression) {
+	private readonly _filterBucket: Bucket;
+	private readonly _parentExpression: TestAbstractExpression;
+	constructor(parentExpression: TestAbstractExpression, filterBucket: Bucket) {
 		super(parentExpression.specificity, [parentExpression], {
 			resultOrder: RESULT_ORDERINGS.REVERSE_SORTED,
 			peer: true,
@@ -19,6 +21,7 @@ class ParentAxis extends Expression {
 		});
 
 		this._parentExpression = parentExpression;
+		this._filterBucket = intersectBuckets(filterBucket, this._parentExpression.getBucket());
 	}
 
 	public evaluate(
@@ -30,7 +33,7 @@ class ParentAxis extends Expression {
 
 		const parentNode = domFacade.getParentNodePointer(
 			contextPointer as ChildNodePointer,
-			this._parentExpression.getBucket()
+			this._filterBucket
 		);
 		if (!parentNode) {
 			return sequenceFactory.empty();

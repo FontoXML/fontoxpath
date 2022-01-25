@@ -4,11 +4,14 @@ import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
+import { Bucket, intersectBuckets } from '../util/Bucket';
 import validateContextNode from './validateContextNode';
 
 class SelfAxis extends Expression {
-	private _selector: TestAbstractExpression;
-	constructor(selector: TestAbstractExpression) {
+	private readonly _bucket: Bucket;
+	private readonly _selector: TestAbstractExpression;
+
+	constructor(selector: TestAbstractExpression, filterBucket: Bucket) {
 		super(selector.specificity, [selector], {
 			resultOrder: RESULT_ORDERINGS.SORTED,
 			subtree: true,
@@ -17,6 +20,7 @@ class SelfAxis extends Expression {
 		});
 
 		this._selector = selector;
+		this._bucket = intersectBuckets(this._selector.getBucket(), filterBucket);
 	}
 
 	public evaluate(
@@ -35,8 +39,8 @@ class SelfAxis extends Expression {
 			: sequenceFactory.empty();
 	}
 
-	public getBucket() {
-		return this._selector.getBucket();
+	public override getBucket(): Bucket {
+		return this._bucket;
 	}
 }
 export default SelfAxis;

@@ -2,7 +2,9 @@ import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import Value, { ValueType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
+import {} from '../Expression';
 import Specificity from '../Specificity';
+import { Bucket } from '../util/Bucket';
 import TestAbstractExpression from './TestAbstractExpression';
 
 class PITest extends TestAbstractExpression {
@@ -30,7 +32,7 @@ class PITest extends TestAbstractExpression {
 		return isMatchingProcessingInstruction;
 	}
 
-	public getBucket() {
+	public override getBucket(): Bucket {
 		return 'type-7';
 	}
 }

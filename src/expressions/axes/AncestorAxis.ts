@@ -7,13 +7,14 @@ import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
+import { Bucket } from '../util/Bucket';
 import { DONE_TOKEN, ready } from '../util/iterators';
 import validateContextNode from './validateContextNode';
 
 function generateAncestors(
 	domFacade: DomFacade,
 	contextPointer: ChildNodePointer,
-	bucket: string | null
+	bucket: Bucket | null
 ) {
 	let ancestor = contextPointer as ParentNodePointer;
 	return {

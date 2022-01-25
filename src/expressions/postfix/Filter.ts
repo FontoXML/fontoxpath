@@ -5,6 +5,7 @@ import Value, { ValueType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression from '../Expression';
+import { Bucket } from '../util/Bucket';
 import { DONE_TOKEN, IterationHint, IterationResult, ready } from '../util/iterators';
 
 class Filter extends Expression {
@@ -137,7 +138,7 @@ class Filter extends Expression {
 		});
 	}
 
-	public getBucket() {
+	public override getBucket(): Bucket | null {
 		return this._selector.getBucket();
 	}
 }

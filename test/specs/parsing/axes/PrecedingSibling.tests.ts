@@ -69,6 +69,37 @@ describe('preceding-sibling', () => {
 		);
 	});
 
+	it('passes intersecting buckets for preceding-sibling', () => {
+		jsonMlMapper.parse(
+			['parentElement', ['firstChildElement'], ['secondChildElement']],
+			documentNode
+		);
+
+		const secondChildNode = documentNode.firstChild.lastChild;
+		const expectedBucket = getBucketForSelector('self::firstChildElement');
+
+		const testDomFacade: IDomFacade = {
+			getLastChild: (node: slimdom.Node, bucket: string | null) => {
+				chai.assert.equal(bucket, expectedBucket);
+				return node.lastChild;
+			},
+			getParentNode: (node: slimdom.Node, bucket: string | null) => {
+				chai.assert.equal(bucket, expectedBucket);
+				return node.parentNode;
+			},
+			getPreviousSibling: (node: slimdom.Node, bucket: string | null) => {
+				chai.assert.equal(bucket, expectedBucket);
+				return node.previousSibling;
+			},
+		} as any;
+
+		evaluateXPathToNodes(
+			'preceding-sibling::*[self::firstChildElement]',
+			secondChildNode,
+			testDomFacade
+		);
+	});
+
 	it('throws the correct error if context is absent', () => {
 		chai.assert.throws(() => evaluateXPathToNodes('preceding-sibling::*', null), 'XPDY0002');
 	});

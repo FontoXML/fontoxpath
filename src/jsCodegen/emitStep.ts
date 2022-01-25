@@ -1,4 +1,5 @@
 import { NODE_TYPES } from '../domFacade/ConcreteNode';
+import { Bucket } from '../expressions/util/Bucket';
 import astHelper, { IAST } from '../parsing/astHelper';
 import {
 	acceptAst,
@@ -26,7 +27,7 @@ function emitChildAxis(
 	predicates: string,
 	nestLevel: number,
 	nestedCode: string,
-	bucket: string | null
+	bucket: Bucket | null
 ): PartialCompilationResult {
 	const contextNodesCode = `const ${childAxisContextNodesIdentifier}${nestLevel} = domFacade.getChildNodes(contextItem${
 		nestLevel - 1
@@ -49,7 +50,7 @@ function emitAttributeAxis(
 	predicates: string,
 	nestLevel: number,
 	nestedCode: string,
-	bucket: string | null
+	bucket: Bucket | null
 ): PartialCompilationResult {
 	// Only element nodes can have attributes.
 	const contextNodesCode = `
@@ -94,7 +95,7 @@ function emitParentAxis(
 	predicates: string,
 	nestLevel: number,
 	nestedCode: string,
-	bucket: string | null
+	bucket: Bucket | null
 ): PartialCompilationResult {
 	const contextNodeCode = `
 	const contextItem${nestLevel} = domFacade.getParentNode(contextItem${nestLevel - 1} ${
@@ -178,7 +179,7 @@ function emitStep(
 	predicates: string,
 	nestLevel: number,
 	nestedCode: string,
-	bucket: string | null
+	bucket: Bucket | null
 ): PartialCompilationResult {
 	const axisName = astHelper.getTextContent(ast);
 

@@ -1,13 +1,16 @@
+import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import Value, { ValueType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
+import {} from '../Expression';
 import Specificity from '../Specificity';
+import { Bucket } from '../util/Bucket';
 import TestAbstractExpression from './TestAbstractExpression';
 
 class KindTest extends TestAbstractExpression {
-	private _nodeType: number;
-	constructor(nodeType: number) {
+	private _nodeType: NODE_TYPES;
+	constructor(nodeType: NODE_TYPES) {
 		super(
 			new Specificity({
 				[Specificity.NODETYPE_KIND]: 1,
@@ -32,9 +35,8 @@ class KindTest extends TestAbstractExpression {
 		}
 		return this._nodeType === nodeType;
 	}
-
-	public getBucket() {
-		return 'type-' + this._nodeType;
+	public override getBucket(): Bucket {
+		return `type-${this._nodeType}`;
 	}
 }
 export default KindTest;
