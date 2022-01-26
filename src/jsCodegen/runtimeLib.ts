@@ -1,12 +1,10 @@
 import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
 import getEffectiveBooleanValue from '../expressions/dataTypes/Sequences/getEffectiveBooleanValue';
-import Value from '../expressions/dataTypes/Value';
-import { DONE_TOKEN, IterationResult, ready } from '../expressions/util/iterators';
+import { DONE_TOKEN, ready } from '../expressions/util/iterators';
 import {
 	acceptAst,
 	GeneratedCodeBaseType,
 	GeneratedCodeType,
-	getCompiledValueCode,
 	PartialCompilationResult,
 } from './JavaScriptCompiledXPath';
 
@@ -36,7 +34,7 @@ export function determinePredicateTruthValue(
 			return acceptAst(
 				`(() => {
 					const result = ${identifier}.next();
-					return result.done ? false : !!result.value; 
+					return result.done ? false : !!result.value;
 				})()`,
 				{ type: GeneratedCodeBaseType.Value }
 			);

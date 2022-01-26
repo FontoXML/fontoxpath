@@ -1,12 +1,10 @@
 import { ValueType } from '../expressions/dataTypes/Value';
+import { Bucket } from '../expressions/util/Bucket';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { CodeGenContext } from './CodeGenContext';
 import {
 	acceptAst,
-	CompiledResultType,
 	FunctionIdentifier,
-	GeneratedCodeBaseType,
-	getCompiledValueCode,
 	PartialCompilationResult,
 	rejectAst,
 } from './JavaScriptCompiledXPath';
@@ -53,26 +51,36 @@ export function emitOperand(
 	operandKind: 'firstOperand' | 'secondOperand',
 	staticContext: CodeGenContext,
 	targetType?: ValueType
-): PartialCompilationResult {
+): [PartialCompilationResult, Bucket] {
 	const operand = astHelper.getFirstChild(ast, operandKind);
 	const exprAst = astHelper.getFirstChild(operand, baseExpressions);
 	if (!exprAst) {
-		return rejectAst('Unsupported: a base expression used with an operand.');
+		return [rejectAst('Unsupported: a base expression used with an operand.'), null];
 	}
 
 	const baseExprIdentifier = identifier + operandKind;
 
-	const baseExpr = staticContext.emitBaseExpr(exprAst, baseExprIdentifier, staticContext);
+	const [baseExpr, bucket] = staticContext.emitBaseExpr(
+		exprAst,
+		baseExprIdentifier,
+		staticContext
+	);
 	if (!baseExpr.isAstAccepted) {
-		return baseExpr;
+		return [baseExpr, null];
 	}
 
 	if (targetType === ValueType.XSBOOLEAN) {
-		return determinePredicateTruthValue(
-			baseExprIdentifier,
-			baseExpr.code,
-			baseExpr.generatedCodeType
-		);
+		return [
+			determinePredicateTruthValue(
+				baseExprIdentifier,
+				baseExpr.code,
+				baseExpr.generatedCodeType
+			),
+			null,
+		];
 	}
-	return acceptAst(`${baseExprIdentifier}`, baseExpr.generatedCodeType, [baseExpr.code]);
+	return [
+		acceptAst(`${baseExprIdentifier}`, baseExpr.generatedCodeType, [baseExpr.code]),
+		bucket,
+	];
 }

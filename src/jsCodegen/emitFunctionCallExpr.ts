@@ -5,9 +5,7 @@ import {
 	FunctionIdentifier,
 	GeneratedCodeBaseType,
 	getCompiledValueCode,
-	IAstRejected,
 	PartialCompilationResult,
-	PartiallyCompiledAstAccepted,
 	rejectAst,
 } from './JavaScriptCompiledXPath';
 
@@ -28,7 +26,7 @@ function emitArgument(
 	staticContext: CodeGenContext,
 	identifier: FunctionIdentifier
 ): PartialCompilationResult {
-	const baseExpr = staticContext.emitBaseExpr(ast, identifier, staticContext);
+	const [baseExpr, _bucket] = staticContext.emitBaseExpr(ast, identifier, staticContext);
 
 	if (!baseExpr.isAstAccepted) {
 		return baseExpr;
@@ -60,7 +58,7 @@ function createLocalNameGetter(itemName: string) {
 }
 
 function createNameGetter(itemName: string) {
-	return `(((${itemName}.prefix || '').length !== 0 ? ${itemName}.prefix + ':' : '') 
+	return `(((${itemName}.prefix || '').length !== 0 ? ${itemName}.prefix + ':' : '')
 		+ (${itemName}.localName || ${itemName}.target || ''))`;
 }
 

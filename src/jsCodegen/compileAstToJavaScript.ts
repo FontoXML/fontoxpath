@@ -165,7 +165,7 @@ function compileAstToJavaScript(
 
 	staticContext.emitBaseExpr = emitBaseExpr;
 
-	const compiledBaseExpr = emitBaseExpr(
+	const [compiledBaseExpr, _bucket] = emitBaseExpr(
 		queryBodyContents,
 		compiledXPathIdentifier,
 		staticContext

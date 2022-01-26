@@ -1,3 +1,4 @@
+import { Bucket } from '../expressions/util/Bucket';
 import astHelper, { IAST } from '../parsing/astHelper';
 import escapeJavaScriptString from './escapeJavaScriptString';
 import {
@@ -19,9 +20,12 @@ import {
 export function emitStringLiteralExpression(
 	ast: IAST,
 	identifier: FunctionIdentifier
-): PartialCompilationResult {
+): [PartialCompilationResult, Bucket] {
 	// Note: default the value to the emptyy string. The XQueryX roundtrip may omit them
 	let text = (astHelper.getFirstChild(ast, 'value')[1] as string) || '';
 	text = escapeJavaScriptString(text);
-	return acceptAst(`const ${identifier} = ${text};`, { type: GeneratedCodeBaseType.Variable });
+	return [
+		acceptAst(`const ${identifier} = ${text};`, { type: GeneratedCodeBaseType.Variable }),
+		null,
+	];
 }
