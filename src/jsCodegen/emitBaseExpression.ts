@@ -1,18 +1,13 @@
+import { Bucket } from '../expressions/util/Bucket';
 import { IAST } from '../parsing/astHelper';
 import { CodeGenContext } from './CodeGenContext';
 import { emitCompareExpr } from './emitCompare';
 import { emitFunctionCallExpr } from './emitFunctionCallExpr';
 import { emitStringLiteralExpression } from './emitLiterals';
 import { emitAndExpr, emitOrExpr } from './emitLogicalExpr';
-import { baseExprAstNodes, baseExpressions } from './emitOperand';
+import { baseExprAstNodes } from './emitOperand';
 import { emitPathExpr } from './emitPathExpr';
-import {
-	acceptAst,
-	FunctionIdentifier,
-	GeneratedCodeBaseType,
-	PartialCompilationResult,
-	rejectAst,
-} from './JavaScriptCompiledXPath';
+import { FunctionIdentifier, PartialCompilationResult, rejectAst } from './JavaScriptCompiledXPath';
 
 /**
  * Compile AST to base expression wrapped in a function named as the given identifier.
@@ -27,7 +22,7 @@ export function emitBaseExpr(
 	ast: IAST,
 	identifier: FunctionIdentifier,
 	staticContext: CodeGenContext
-): PartialCompilationResult {
+): [PartialCompilationResult, Bucket] {
 	const name = ast[0];
 
 	switch (name) {
@@ -57,10 +52,10 @@ export function emitBaseExpr(
 		// nodeCompare
 		case baseExprAstNodes.NODE_BEFORE_OP:
 		case baseExprAstNodes.NODE_AFTER_OP:
-			return emitCompareExpr(ast, identifier, staticContext, name);
+			return [emitCompareExpr(ast, identifier, staticContext, name), null];
 		case baseExprAstNodes.FUNCTION_CALL_EXPR:
-			return emitFunctionCallExpr(ast, identifier, staticContext);
+			return [emitFunctionCallExpr(ast, identifier, staticContext), null];
 		default:
-			return rejectAst(`Unsupported: the base expression '${name}'.`);
+			return [rejectAst(`Unsupported: the base expression '${name}'.`), null];
 	}
 }

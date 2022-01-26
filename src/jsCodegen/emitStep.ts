@@ -180,20 +180,20 @@ function emitStep(
 	nestLevel: number,
 	nestedCode: string,
 	bucket: Bucket | null
-): PartialCompilationResult {
+): [PartialCompilationResult, Bucket] {
 	const axisName = astHelper.getTextContent(ast);
 
 	switch (axisName) {
 		case axisAstNodes.ATTRIBUTE:
-			return emitAttributeAxis(test, predicates, nestLevel, nestedCode, bucket);
+			return [emitAttributeAxis(test, predicates, nestLevel, nestedCode, bucket), 'type-1'];
 		case axisAstNodes.CHILD:
-			return emitChildAxis(test, predicates, nestLevel, nestedCode, bucket);
+			return [emitChildAxis(test, predicates, nestLevel, nestedCode, bucket), null];
 		case axisAstNodes.PARENT:
-			return emitParentAxis(test, predicates, nestLevel, nestedCode, bucket);
+			return [emitParentAxis(test, predicates, nestLevel, nestedCode, bucket), null];
 		case axisAstNodes.SELF:
-			return emitSelfAxis(test, predicates, nestLevel, nestedCode);
+			return [emitSelfAxis(test, predicates, nestLevel, nestedCode), bucket];
 		default:
-			return rejectAst(`Unsupported: the ${axisName} axis`);
+			return [rejectAst(`Unsupported: the ${axisName} axis`), null];
 	}
 }
 

@@ -7,7 +7,6 @@ import {
 import astHelper, { IAST } from '../parsing/astHelper';
 import { CodeGenContext } from './CodeGenContext';
 import { emitOperand } from './emitOperand';
-// import { emitBaseExpr } from './emitBaseExpression';
 import {
 	acceptAst,
 	FunctionIdentifier,
@@ -149,9 +148,7 @@ export function emitGeneralCompare(
 	identifier: string,
 	staticContext: CodeGenContext
 ): PartialCompilationResult {
-	const firstAstOp = astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST;
 	const firstType: SequenceType = astHelper.getAttribute(ast, 'type');
-	const secondAstOp = astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST;
 	const secondType: SequenceType = astHelper.getAttribute(ast, 'type');
 	if (!firstType || !secondType) {
 		return rejectAst('types of compare are not known');
@@ -189,12 +186,17 @@ export function emitCompareExpr(
 	staticContext: CodeGenContext,
 	compareType: string
 ): PartialCompilationResult {
-	const firstExpr = emitOperand(ast, identifier, 'firstOperand', staticContext);
+	const [firstExpr, _firstBucket] = emitOperand(ast, identifier, 'firstOperand', staticContext);
 	if (!firstExpr.isAstAccepted) {
 		return firstExpr;
 	}
 
-	const secondExpr = emitOperand(ast, identifier, 'secondOperand', staticContext);
+	const [secondExpr, _secondBucket] = emitOperand(
+		ast,
+		identifier,
+		'secondOperand',
+		staticContext
+	);
 	if (!secondExpr.isAstAccepted) {
 		return secondExpr;
 	}

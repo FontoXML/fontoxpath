@@ -1,4 +1,5 @@
 import { ValueType } from '../expressions/dataTypes/Value';
+import { Bucket, intersectBuckets } from '../expressions/util/Bucket';
 import { IAST } from '../parsing/astHelper';
 import { CodeGenContext } from './CodeGenContext';
 import { emitOperand } from './emitOperand';
@@ -8,9 +9,6 @@ import {
 	GeneratedCodeBaseType,
 	PartialCompilationResult,
 } from './JavaScriptCompiledXPath';
-
-const FIRST_OPERAND = 'firstOperand';
-const SECOND_OPERAND = 'secondOperand';
 
 /**
  * Helper function to compile an and expressions to a JavaScript function.
@@ -26,7 +24,7 @@ export function emitAndExpr(
 	ast: IAST,
 	identifier: FunctionIdentifier,
 	staticContext: CodeGenContext
-): PartialCompilationResult {
+): [PartialCompilationResult, Bucket] {
 	return emitLogicalExpr(ast, identifier, staticContext, '&&');
 }
 
@@ -44,7 +42,7 @@ export function emitOrExpr(
 	ast: IAST,
 	identifier: FunctionIdentifier,
 	staticContext: CodeGenContext
-): PartialCompilationResult {
+): [PartialCompilationResult, Bucket] {
 	return emitLogicalExpr(ast, identifier, staticContext, '||');
 }
 
@@ -64,8 +62,8 @@ function emitLogicalExpr(
 	identifier: FunctionIdentifier,
 	staticContext: CodeGenContext,
 	logicalExprOperator: '&&' | '||'
-): PartialCompilationResult {
-	const firstExpr = emitOperand(
+): [PartialCompilationResult, Bucket] {
+	const [firstExpr, firstBucket] = emitOperand(
 		ast,
 		identifier,
 		'firstOperand',
@@ -73,10 +71,10 @@ function emitLogicalExpr(
 		ValueType.XSBOOLEAN
 	);
 	if (!firstExpr.isAstAccepted) {
-		return firstExpr;
+		return [firstExpr, null];
 	}
 
-	const secondExpr = emitOperand(
+	const [secondExpr, secondBucket] = emitOperand(
 		ast,
 		identifier,
 		'secondOperand',
@@ -84,7 +82,7 @@ function emitLogicalExpr(
 		ValueType.XSBOOLEAN
 	);
 	if (!secondExpr.isAstAccepted) {
-		return secondExpr;
+		return [secondExpr, null];
 	}
 
 	const logicalOpCode = `
@@ -94,8 +92,13 @@ function emitLogicalExpr(
 		return ${firstExpr.code} ${logicalExprOperator} ${secondExpr.code};
 	}
 	`;
-	return acceptAst(logicalOpCode, {
-		type: GeneratedCodeBaseType.Function,
-		returnType: { type: GeneratedCodeBaseType.Value },
-	});
+	return [
+		acceptAst(logicalOpCode, {
+			type: GeneratedCodeBaseType.Function,
+			returnType: { type: GeneratedCodeBaseType.Value },
+		}),
+		logicalExprOperator === '&&'
+			? intersectBuckets(firstBucket, secondBucket)
+			: firstBucket || secondBucket,
+	];
 }
