@@ -1,5 +1,11 @@
 import * as chai from 'chai';
-import { evaluateUpdatingExpression, evaluateXPath, executePendingUpdateList } from 'fontoxpath';
+import {
+	evaluateUpdatingExpression,
+	evaluateXPath,
+	executePendingUpdateList,
+	Language,
+	parseScript,
+} from 'fontoxpath';
 import * as slimdom from 'slimdom';
 
 let documentNode: slimdom.Document;
@@ -98,6 +104,23 @@ describe('evaluateUpdatingExpression', () => {
 		documentNode.appendChild(documentNode.createElement('ele'));
 		const result = await evaluateUpdatingExpression(
 			'replace node ele with <ele/>',
+			documentNode,
+			null,
+			null,
+			{ returnType: evaluateXPath.NODES_TYPE }
+		);
+
+		chai.assert.deepEqual(result.xdmValue, []);
+	});
+
+	it('can evaluate an expression that is already parsed', async () => {
+		documentNode.appendChild(documentNode.createElement('ele'));
+		const result = await evaluateUpdatingExpression(
+			parseScript(
+				'replace node ele with <ele/>',
+				{ language: Language.XQUERY_UPDATE_3_1_LANGUAGE },
+				documentNode
+			),
 			documentNode,
 			null,
 			null,
