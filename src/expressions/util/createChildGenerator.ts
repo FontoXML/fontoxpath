@@ -1,12 +1,13 @@
 import { ChildNodePointer, NodePointer, ParentNodePointer } from '../../domClone/Pointer';
 import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import DomFacade from '../../domFacade/DomFacade';
+import { Bucket } from './Bucket';
 import { DONE_TOKEN, IIterator, ready } from './iterators';
 
 export default function createChildGenerator(
 	domFacade: DomFacade,
 	pointer: NodePointer,
-	bucket: string | null
+	bucket: Bucket | null
 ): IIterator<ChildNodePointer> {
 	const nodeType = domFacade.getNodeType(pointer);
 	if (nodeType !== NODE_TYPES.ELEMENT_NODE && nodeType !== NODE_TYPES.DOCUMENT_NODE) {

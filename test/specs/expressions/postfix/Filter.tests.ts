@@ -17,10 +17,13 @@ describe('Filter', () => {
 	describe('Filter.getBucket()', () => {
 		it('returns the bucket of its selector', () => {
 			const filter = new Filter(
-				{ getBucket: () => 'bucket', specificity: new Specificity({}) } as Expression,
+				{
+					getBucket: () => 'name-just-for-testing',
+					specificity: new Specificity({}),
+				} as unknown as Expression,
 				equalExpression
 			);
-			chai.assert.equal(filter.getBucket(), 'bucket');
+			chai.assert.equal(filter.getBucket(), 'name-just-for-testing');
 		});
 	});
 

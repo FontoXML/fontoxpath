@@ -1,4 +1,5 @@
 import { NODE_TYPES } from '../domFacade/ConcreteNode';
+import { Bucket } from '../expressions/util/Bucket';
 import astHelper, { IAST } from '../parsing/astHelper';
 import {
 	acceptAst,
@@ -26,7 +27,7 @@ function emitChildAxis(
 	predicates: string,
 	nestLevel: number,
 	nestedCode: string,
-	bucket: string | null
+	bucket: Bucket | null
 ): PartialCompilationResult {
 	const contextNodesCode = `const ${childAxisContextNodesIdentifier}${nestLevel} = domFacade.getChildNodes(contextItem${
 		nestLevel - 1
@@ -49,7 +50,7 @@ function emitAttributeAxis(
 	predicates: string,
 	nestLevel: number,
 	nestedCode: string,
-	bucket: string | null
+	bucket: Bucket | null
 ): PartialCompilationResult {
 	// Only element nodes can have attributes.
 	const contextNodesCode = `
@@ -94,7 +95,7 @@ function emitParentAxis(
 	predicates: string,
 	nestLevel: number,
 	nestedCode: string,
-	bucket: string | null
+	bucket: Bucket | null
 ): PartialCompilationResult {
 	const contextNodeCode = `
 	const contextItem${nestLevel} = domFacade.getParentNode(contextItem${nestLevel - 1} ${
@@ -178,21 +179,21 @@ function emitStep(
 	predicates: string,
 	nestLevel: number,
 	nestedCode: string,
-	bucket: string | null
-): PartialCompilationResult {
+	bucket: Bucket | null
+): [PartialCompilationResult, Bucket] {
 	const axisName = astHelper.getTextContent(ast);
 
 	switch (axisName) {
 		case axisAstNodes.ATTRIBUTE:
-			return emitAttributeAxis(test, predicates, nestLevel, nestedCode, bucket);
+			return [emitAttributeAxis(test, predicates, nestLevel, nestedCode, bucket), 'type-1'];
 		case axisAstNodes.CHILD:
-			return emitChildAxis(test, predicates, nestLevel, nestedCode, bucket);
+			return [emitChildAxis(test, predicates, nestLevel, nestedCode, bucket), null];
 		case axisAstNodes.PARENT:
-			return emitParentAxis(test, predicates, nestLevel, nestedCode, bucket);
+			return [emitParentAxis(test, predicates, nestLevel, nestedCode, bucket), null];
 		case axisAstNodes.SELF:
-			return emitSelfAxis(test, predicates, nestLevel, nestedCode);
+			return [emitSelfAxis(test, predicates, nestLevel, nestedCode), bucket];
 		default:
-			return rejectAst(`Unsupported: the ${axisName} axis`);
+			return [rejectAst(`Unsupported: the ${axisName} axis`), null];
 	}
 }
 

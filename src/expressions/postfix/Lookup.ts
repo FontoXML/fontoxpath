@@ -2,6 +2,7 @@ import EmptySequence from '../dataTypes/Sequences/EmptySequence';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression from '../Expression';
+import { Bucket } from '../util/Bucket';
 import evaluateLookup from './evaluateLookup';
 
 class Lookup extends Expression {
@@ -36,7 +37,8 @@ class Lookup extends Expression {
 			}, new EmptySequence());
 		});
 	}
-	public getBucket() {
+
+	public override getBucket(): Bucket | null {
 		return this._selector.getBucket();
 	}
 }

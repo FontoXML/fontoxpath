@@ -15,6 +15,7 @@ import evaluateXPathToNumbers from './evaluateXPathToNumbers';
 import evaluateXPathToString from './evaluateXPathToString';
 import evaluateXPathToStrings from './evaluateXPathToStrings';
 import executePendingUpdateList from './executePendingUpdateList';
+import { Bucket } from './expressions/util/Bucket';
 import { getBucketsForNode } from './getBuckets';
 import compileXPathToJavaScript from './jsCodegen/compileXPathToJavaScript';
 import executeJavaScriptCompiledXPath, {
@@ -109,7 +110,7 @@ function parseXPath(xpathExpression: EvaluableExpression) {
  * @public
  * @param xpathExpression - The XPath for which a bucket should be retrieved
  */
-function getBucketForSelector(xpathExpression: EvaluableExpression) {
+function getBucketForSelector(xpathExpression: EvaluableExpression): Bucket {
 	return parseXPath(xpathExpression).getBucket();
 }
 
@@ -202,6 +203,7 @@ export const createTypedValueFactory = internalCreateTypedValueFactory as Extern
 
 export {
 	Attr,
+	Bucket,
 	CDATASection,
 	CharacterData,
 	Comment,

@@ -8,6 +8,7 @@ import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
+import { Bucket } from '../util/Bucket';
 import createSingleValueIterator from '../util/createSingleValueIterator';
 import { DONE_TOKEN, IIterator, IterationHint, ready } from '../util/iterators';
 import { concatSortedSequences, mergeSortedSequences } from '../util/sortedSequenceUtils';
@@ -165,7 +166,7 @@ class PathExpression extends Expression {
 		return result;
 	}
 
-	public getBucket() {
+	public override getBucket(): Bucket | null {
 		return this._stepExpressions[0].getBucket();
 	}
 }

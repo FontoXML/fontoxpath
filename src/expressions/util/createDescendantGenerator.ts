@@ -3,13 +3,14 @@ import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import DomFacade from '../../domFacade/DomFacade';
 import createPointerValue from '../dataTypes/createPointerValue';
 import arePointersEqual from '../operators/compares/arePointersEqual';
+import { Bucket } from './Bucket';
 import createChildGenerator from './createChildGenerator';
 import { DONE_TOKEN, IterationHint, ready } from './iterators';
 
 function findDeepestLastDescendant(
 	pointer: NodePointer,
 	domFacade: DomFacade,
-	bucket: string | null
+	bucket: Bucket | null
 ): NodePointer {
 	const nodeType = domFacade.getNodeType(pointer);
 	if (nodeType !== NODE_TYPES.ELEMENT_NODE && nodeType !== NODE_TYPES.DOCUMENT_NODE) {
@@ -32,7 +33,7 @@ export default function createDescendantGenerator(
 	domFacade: DomFacade,
 	pointer: NodePointer,
 	returnInReverse = false,
-	bucket: string | null
+	bucket: Bucket | null
 ) {
 	if (returnInReverse) {
 		let currentPointer: NodePointer = pointer;

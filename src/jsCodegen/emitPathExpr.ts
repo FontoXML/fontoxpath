@@ -1,4 +1,5 @@
 import { NODE_TYPES } from '../domFacade/ConcreteNode';
+import { Bucket, intersectBuckets } from '../expressions/util/Bucket';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { CodeGenContext } from './CodeGenContext';
 import emitStep from './emitStep';
@@ -24,28 +25,30 @@ function emitPredicates(
 	predicatesAst: IAST,
 	nestLevel: number,
 	staticContext: CodeGenContext
-): PartialCompilationResult {
+): [PartialCompilationResult, Bucket] {
 	let evaluatePredicateConditionCode = '';
 	const functionDeclarations: string[] = [];
 
 	if (!predicatesAst) {
-		return acceptAst(``, { type: GeneratedCodeBaseType.None }, functionDeclarations);
+		return [acceptAst(``, { type: GeneratedCodeBaseType.None }, functionDeclarations), null];
 	}
 
 	const children = astHelper.getChildren(predicatesAst, '*');
+	let intersectingPredicateBucket = null;
 	for (let i = 0; i < children.length; i++) {
 		const predicate = children[i];
 		const predicateFunctionIdentifier = `step${nestLevel}_predicate${i}`;
 
-		const compiledPredicate = staticContext.emitBaseExpr(
+		const [compiledPredicate, bucket] = staticContext.emitBaseExpr(
 			predicate,
 			predicateFunctionIdentifier,
 			staticContext
 		);
 
 		if (!compiledPredicate.isAstAccepted) {
-			return compiledPredicate;
+			return [compiledPredicate, null];
 		}
+		intersectingPredicateBucket = intersectBuckets(intersectingPredicateBucket, bucket);
 
 		// Prepare condition used to determine if an axis should
 		// return a node.
@@ -57,7 +60,7 @@ function emitPredicates(
 		);
 
 		if (!predicateFunctionCall.isAstAccepted) {
-			return predicateFunctionCall;
+			return [predicateFunctionCall, null];
 		}
 
 		if (i === 0) {
@@ -68,11 +71,14 @@ function emitPredicates(
 
 		functionDeclarations.push(compiledPredicate.code);
 	}
-	return acceptAst(
-		evaluatePredicateConditionCode,
-		{ type: GeneratedCodeBaseType.Value },
-		functionDeclarations
-	);
+	return [
+		acceptAst(
+			evaluatePredicateConditionCode,
+			{ type: GeneratedCodeBaseType.Value },
+			functionDeclarations
+		),
+		intersectingPredicateBucket,
+	];
 }
 
 /**
@@ -82,30 +88,41 @@ function emitPredicates(
  * @param staticContext Static context parameter to retrieve context-dependent information.
  * @returns JavaScript code of the path expression steps.
  */
-function emitSteps(stepsAst: IAST[], staticContext: CodeGenContext): PartialCompilationResult {
+function emitSteps(
+	stepsAst: IAST[],
+	staticContext: CodeGenContext
+): [PartialCompilationResult, Bucket] {
 	if (stepsAst.length === 0) {
-		return acceptAst(
-			`
+		return [
+			acceptAst(
+				`
 			if (!hasReturned) {
 				hasReturned = true;
 				return ready(contextItem);
 			}
 			`,
-			{ type: GeneratedCodeBaseType.Statement },
-			['let hasReturned = false;']
-		);
+				{ type: GeneratedCodeBaseType.Statement },
+				['let hasReturned = false;']
+			),
+			null,
+		];
 	}
 
 	let emittedCode = '';
 	const emittedVariables: string[] = [];
+	let intersectingBucket: Bucket = null;
 	for (let i = stepsAst.length - 1; i >= 0; i--) {
 		const step = stepsAst[i];
 		const nestLevel = i + 1;
 
 		const predicatesAst = astHelper.getFirstChild(step, 'predicates');
-		const emittedPredicates = emitPredicates(predicatesAst, nestLevel, staticContext);
+		const [emittedPredicates, predicateBucket] = emitPredicates(
+			predicatesAst,
+			nestLevel,
+			staticContext
+		);
 		if (!emittedPredicates.isAstAccepted) {
-			return emittedPredicates;
+			return [emittedPredicates, null];
 		}
 
 		const axisAst = astHelper.getFirstChild(step, 'xpathAxis');
@@ -113,7 +130,7 @@ function emitSteps(stepsAst: IAST[], staticContext: CodeGenContext): PartialComp
 			const emittedStepsCode = emittedCode;
 			const testAst = astHelper.getFirstChild(step, tests);
 			if (!testAst) {
-				return rejectAst(`Unsupported: the test in the '${step}' step.`);
+				return [rejectAst(`Unsupported: the test in the '${step}' step.`), null];
 			}
 
 			// Only the innermost nested step returns a value.
@@ -124,42 +141,52 @@ function emitSteps(stepsAst: IAST[], staticContext: CodeGenContext): PartialComp
 					: `${emittedStepsCode}
 					   i${nestLevel}++;`;
 
-			const [emittedTest, bucket] = emitTest(
+			const [emittedTest, testBucket] = emitTest(
 				testAst,
 				`contextItem${nestLevel}`,
 				staticContext
 			);
 			if (!emittedTest.isAstAccepted) {
-				return emittedTest;
+				return [emittedTest, null];
 			}
 
-			const emittedStep = emitStep(
+			const intersectingBucketForStep = intersectBuckets(testBucket, predicateBucket);
+
+			const [emittedStep, stepBucket] = emitStep(
 				axisAst,
 				emittedTest.code,
 				emittedPredicates.code,
 				nestLevel,
 				nestedCode,
-				bucket
+				intersectingBucketForStep
 			);
 			if (!emittedStep.isAstAccepted) {
-				return emittedStep;
+				return [emittedStep, null];
+			}
+
+			if (i === 0) {
+				// For the first iteration, the bucket of the steps is actually the bucket for the whole thing
+				intersectingBucket = stepBucket;
 			}
 
 			emittedVariables.push(...emittedStep.variables, ...emittedPredicates.variables);
 			emittedCode = emittedStep.code;
 		} else {
-			return rejectAst('Unsupported: filter expressions.');
+			return [rejectAst('Unsupported: filter expressions.'), null];
 		}
 
 		const lookups = astHelper.getChildren(step, 'lookup');
 		if (lookups.length > 0) {
-			return rejectAst('Unsupported: lookups.');
+			return [rejectAst('Unsupported: lookups.'), null];
 		}
 	}
 	const contextDeclaration = 'const contextItem0 = contextItem;';
 	emittedCode = contextDeclaration + emittedCode;
 
-	return acceptAst(emittedCode, { type: GeneratedCodeBaseType.Statement }, emittedVariables);
+	return [
+		acceptAst(emittedCode, { type: GeneratedCodeBaseType.Statement }, emittedVariables),
+		intersectingBucket,
+	];
 }
 
 /**
@@ -178,7 +205,7 @@ export function emitPathExpr(
 	ast: IAST,
 	identifier: FunctionIdentifier,
 	staticContext: CodeGenContext
-): PartialCompilationResult {
+): [PartialCompilationResult, Bucket] {
 	// Find the root node from the context.
 	const isAbsolute = astHelper.getFirstChild(ast, 'rootExpr');
 	let absoluteCode = '';
@@ -195,9 +222,9 @@ export function emitPathExpr(
 		`;
 	}
 
-	const emittedSteps = emitSteps(astHelper.getChildren(ast, 'stepExpr'), staticContext);
+	const [emittedSteps, bucket] = emitSteps(astHelper.getChildren(ast, 'stepExpr'), staticContext);
 	if (!emittedSteps.isAstAccepted) {
-		return emittedSteps;
+		return [emittedSteps, null];
 	}
 
 	const pathExprCode = `
@@ -215,8 +242,11 @@ export function emitPathExpr(
 	}
 	`;
 
-	return acceptAst(pathExprCode, {
-		type: GeneratedCodeBaseType.Function,
-		returnType: { type: GeneratedCodeBaseType.Iterator },
-	});
+	return [
+		acceptAst(pathExprCode, {
+			type: GeneratedCodeBaseType.Function,
+			returnType: { type: GeneratedCodeBaseType.Iterator },
+		}),
+		bucket,
+	];
 }

@@ -9,6 +9,7 @@ import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
+import { Bucket } from '../util/Bucket';
 import createDescendantGenerator from '../util/createDescendantGenerator';
 import { DONE_TOKEN, IIterator, IterationHint, ready } from '../util/iterators';
 import validateContextNode from './validateContextNode';
@@ -16,7 +17,7 @@ import validateContextNode from './validateContextNode';
 function createPrecedingGenerator(
 	domFacade: DomFacade,
 	node: ChildNodePointer,
-	bucket: string | null
+	bucket: Bucket | null
 ) {
 	const nodeStack: NodePointer[] = [];
 
@@ -78,7 +79,7 @@ function createPrecedingGenerator(
 }
 
 class PrecedingAxis extends Expression {
-	private _bucket: string;
+	private _bucket: Bucket;
 	private _testExpression: TestAbstractExpression;
 
 	constructor(testExpression: TestAbstractExpression) {

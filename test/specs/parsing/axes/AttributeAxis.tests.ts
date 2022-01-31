@@ -170,4 +170,20 @@ describe('attribute', () => {
 
 		evaluateXPathToString('@xxx', element, testDomFacade);
 	});
+
+	it('passes the intersecting bucket', () => {
+		const element = documentNode.createElement('someElement');
+		const attr = element.setAttribute('xxx', 'yyy');
+		const expectedBucket = getBucketForSelector('self::xxx');
+
+		const testDomFacade: IDomFacade = {
+			getAllAttributes: (node, bucket: string | null) => {
+				chai.assert.equal(bucket, expectedBucket);
+				return node.attributes;
+			},
+			getData: (attribute: Attr) => attribute.value,
+		} as any;
+
+		evaluateXPathToString('@*[self::xxx]', element, testDomFacade);
+	});
 });

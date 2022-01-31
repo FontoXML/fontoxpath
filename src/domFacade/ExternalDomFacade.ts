@@ -1,10 +1,11 @@
+import { Bucket } from '../expressions/util/Bucket';
 import { getBucketsForNode } from '../getBuckets';
 import { Attr, CharacterData, Node } from '../types/Types';
 import { NODE_TYPES } from './ConcreteNode';
 import IDomFacade from './IDomFacade';
 
 export default class ExternalDomFacade implements IDomFacade {
-	public ['getAllAttributes'](node: Node, bucket: string | null = null): Attr[] {
+	public ['getAllAttributes'](node: Node, bucket: Bucket | null = null): Attr[] {
 		if (node.nodeType !== NODE_TYPES.ELEMENT_NODE) {
 			return [];
 		}
@@ -20,7 +21,7 @@ export default class ExternalDomFacade implements IDomFacade {
 		}
 		return (node as any)['getAttribute'](attributeName);
 	}
-	public ['getChildNodes'](node: Node, bucket: string | null = null): Node[] {
+	public ['getChildNodes'](node: Node, bucket: Bucket | null = null): Node[] {
 		const childNodes = Array.from((node as any)['childNodes'] as Node[]);
 
 		if (bucket === null) {
@@ -34,7 +35,7 @@ export default class ExternalDomFacade implements IDomFacade {
 			? (node as any)['value']
 			: (node as any)['data'];
 	}
-	public ['getFirstChild'](node: Node, bucket: string | null = null): Node | null {
+	public ['getFirstChild'](node: Node, bucket: Bucket | null = null): Node | null {
 		for (
 			let child = (node as any)['firstChild'] as Node;
 			child;
@@ -47,7 +48,7 @@ export default class ExternalDomFacade implements IDomFacade {
 
 		return null;
 	}
-	public ['getLastChild'](node: Node, bucket: string | null = null): Node | null {
+	public ['getLastChild'](node: Node, bucket: Bucket | null = null): Node | null {
 		for (
 			let child = (node as any)['lastChild'] as Node;
 			child;
@@ -60,7 +61,7 @@ export default class ExternalDomFacade implements IDomFacade {
 
 		return null;
 	}
-	public ['getNextSibling'](node: Node, bucket: string | null = null): Node | null {
+	public ['getNextSibling'](node: Node, bucket: Bucket | null = null): Node | null {
 		for (
 			let sibling = (node as any)['nextSibling'] as Node;
 			sibling;
@@ -73,7 +74,7 @@ export default class ExternalDomFacade implements IDomFacade {
 
 		return null;
 	}
-	public ['getParentNode'](node: Node, bucket: string | null = null): Node | null {
+	public ['getParentNode'](node: Node, bucket: Bucket | null = null): Node | null {
 		const parentNode =
 			(node as any)['nodeType'] === NODE_TYPES.ATTRIBUTE_NODE
 				? (node as any)['ownerElement']
@@ -88,7 +89,7 @@ export default class ExternalDomFacade implements IDomFacade {
 		}
 		return null;
 	}
-	public ['getPreviousSibling'](node: Node, bucket: string | null = null): Node | null {
+	public ['getPreviousSibling'](node: Node, bucket: Bucket | null = null): Node | null {
 		for (
 			let sibling = (node as any)['previousSibling'] as Node;
 			sibling;

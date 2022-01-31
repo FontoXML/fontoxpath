@@ -15,6 +15,7 @@ import {
 	TinyNode,
 	TinyParentNode,
 } from '../domClone/Pointer';
+import { Bucket } from '../expressions/util/Bucket';
 import {
 	ConcreteAttributeNode,
 	ConcreteCharacterDataNode,
@@ -63,7 +64,7 @@ class DomFacade {
 
 	public getAllAttributePointers(
 		pointer: ElementNodePointer,
-		bucket: string | null = null
+		bucket: Bucket | null = null
 	): AttributeNodePointer[] {
 		return this.getAllAttributes(pointer.node, bucket).map(
 			(attributeNode: ConcreteAttributeNode | TinyAttributeNode) =>
@@ -73,7 +74,7 @@ class DomFacade {
 
 	public getAllAttributes(
 		node: ConcreteElementNode | TinyElementNode,
-		bucket: string | null = null
+		bucket: Bucket | null = null
 	): (ConcreteAttributeNode | TinyAttributeNode)[] {
 		return isTinyNode(node)
 			? node.attributes
@@ -95,7 +96,7 @@ class DomFacade {
 
 	public getChildNodePointers(
 		parentPointer: ParentNodePointer,
-		bucket: string | null = null
+		bucket: Bucket | null = null
 	): ChildNodePointer[] {
 		return this.getChildNodes(parentPointer.node, bucket).map(
 			(childNode: ConcreteChildNode | TinyChildNode, index) =>
@@ -105,7 +106,7 @@ class DomFacade {
 
 	public getChildNodes(
 		parentNode: ConcreteParentNode | TinyParentNode,
-		bucket: string | null = null
+		bucket: Bucket | null = null
 	) {
 		const childNodes = isTinyNode(parentNode)
 			? parentNode.childNodes
@@ -144,7 +145,7 @@ class DomFacade {
 
 	public getFirstChildPointer(
 		parentPointer: ParentNodePointer,
-		bucket: string | null = null
+		bucket: Bucket | null = null
 	): ChildNodePointer {
 		const parentNode = parentPointer.node;
 		let firstChild: ConcreteChildNode | TinyChildNode;
@@ -164,7 +165,7 @@ class DomFacade {
 
 	public getLastChildPointer(
 		parentPointer: ParentNodePointer,
-		bucket: string | null = null
+		bucket: Bucket | null = null
 	): ChildNodePointer {
 		const parentNode = parentPointer.node;
 		let lastChild: ConcreteChildNode | TinyChildNode;
@@ -194,7 +195,7 @@ class DomFacade {
 
 	public getNextSiblingPointer(
 		pointer: ChildNodePointer,
-		bucket: string | null = null
+		bucket: Bucket | null = null
 	): ChildNodePointer {
 		const node = pointer.node;
 		let nextSibling;
@@ -260,14 +261,14 @@ class DomFacade {
 	 */
 	public getParentNode(
 		node: ConcreteChildNode | ConcreteAttributeNode,
-		bucket: string | null = null
+		bucket: Bucket | null = null
 	): ConcreteParentNode {
 		return this._domFacade['getParentNode'](node, bucket) as ConcreteParentNode;
 	}
 
 	public getParentNodePointer(
 		pointer: ChildNodePointer | AttributeNodePointer,
-		bucket: string | null = null
+		bucket: Bucket | null = null
 	): ParentNodePointer {
 		const childNode = pointer.node;
 		const graftAncestor = pointer.graftAncestor;
@@ -308,7 +309,7 @@ class DomFacade {
 
 	public getPreviousSiblingPointer(
 		pointer: ChildNodePointer,
-		bucket: string | null = null
+		bucket: Bucket | null = null
 	): ChildNodePointer {
 		const node = pointer.node;
 		let previousSibling;

@@ -1,5 +1,6 @@
 import IDocumentWriter from './documentWriter/IDocumentWriter';
 import IDomFacade from './domFacade/IDomFacade';
+import { EvaluableExpression } from './evaluateXPath';
 import evaluateXPathToAsyncIterator from './evaluateXPathToAsyncIterator';
 import buildEvaluationContext from './evaluationUtils/buildEvaluationContext';
 import convertUpdateResultToTransferable from './evaluationUtils/convertUpdateResultToTransferable';
@@ -55,7 +56,7 @@ export type UpdatingOptions = {
  * @returns The query result and pending update list.
  */
 export default async function evaluateUpdatingExpression(
-	updateScript: string,
+	updateScript: EvaluableExpression,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,

@@ -8,6 +8,7 @@ import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
+import { Bucket } from '../util/Bucket';
 import createChildGenerator from '../util/createChildGenerator';
 import createSingleValueIterator from '../util/createSingleValueIterator';
 import { DONE_TOKEN, IIterator, IterationHint, ready } from '../util/iterators';
@@ -16,7 +17,7 @@ import validateContextNode from './validateContextNode';
 function createInclusiveDescendantGenerator(
 	domFacade: DomFacade,
 	node: ChildNodePointer,
-	bucket: string | null
+	bucket: Bucket | null
 ): IIterator<Value> {
 	const descendantIteratorStack: IIterator<ChildNodePointer>[] = [
 		createSingleValueIterator(node),
@@ -50,7 +51,7 @@ function createInclusiveDescendantGenerator(
 }
 
 class DescendantAxis extends Expression {
-	private _descendantBucket: string;
+	private _descendantBucket: Bucket;
 	private _descendantExpression: TestAbstractExpression;
 	private _isInclusive: boolean;
 
