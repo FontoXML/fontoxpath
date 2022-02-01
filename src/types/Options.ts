@@ -1,6 +1,6 @@
 import IDocumentWriter from '../documentWriter/IDocumentWriter';
 import INodesFactory from '../nodesFactory/INodesFactory';
-
+import { Node } from './Types';
 /**
  * Specifies which language to use.
  *
@@ -55,6 +55,14 @@ export type FunctionNameResolver = (
  * @public
  */
 export type NamespaceResolver = (prefix: string) => string | null;
+
+/**
+ * An XML serializer that can serialzie nodes. Used when the `fn:serialize` function is called with
+ * a node
+ *
+ * @public
+ */
+export type XMLSerializer = { serializeToString: (root: Node) => string };
 
 /**
  * @public
@@ -163,4 +171,9 @@ export type Options = {
 	 * elements using the document implementation related to the passed context node.
 	 */
 	nodesFactory?: INodesFactory;
+
+	/**
+	 * Serializer used for fn:serialize().
+	 */
+	xmlSerializer?: XMLSerializer;
 };

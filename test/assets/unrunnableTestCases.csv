@@ -594,8 +594,6 @@ fn-function-lookup-393,AssertionError: Expected XPath exists(function-lookup(fn:
 fn-function-lookup-394,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-395,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'parse-xml-fragment'), 1)) to resolve to true: expected false to be true
 fn-function-lookup-396,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
-fn-function-lookup-397,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'serialize'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-398,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-399,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'serialize'), 2)) to resolve to true: expected false to be true
 fn-function-lookup-400,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-413,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'default-collation'), 0)) to resolve to true: expected false to be true
@@ -2942,8 +2940,6 @@ function-literal-393,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-fu
 function-literal-394,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}parse-xml with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}parse-json (xs:string)"?
 function-literal-395,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}parse-xml-fragment with arity of 1 not registered. No similar functions found.
 function-literal-396,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}parse-xml-fragment with arity of 1 not registered. No similar functions found.
-function-literal-397,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}serialize with arity of 1 not registered. No similar functions found.
-function-literal-398,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}serialize with arity of 1 not registered. No similar functions found.
 function-literal-399,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}serialize with arity of 2 not registered. No similar functions found.
 function-literal-400,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}serialize with arity of 2 not registered. No similar functions found.
 function-literal-413,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}default-collation with arity of 0 not registered. No similar functions found.
@@ -3916,8 +3912,6 @@ fo-test-fn-element-with-id-001,Error: No selector counterpart for: validateExpr.
 fo-test-fn-element-with-id-002,Error: No selector counterpart for: validateExpr.
 fo-test-fn-idref-001,Error: No selector counterpart for: validateExpr.
 fo-test-fn-idref-002,Error: No selector counterpart for: validateExpr.
-fo-test-fn-serialize-001,Error: XPST0017: Function fn:serialize with arity of 2 not registered. No similar functions found.
-fo-test-fn-serialize-002,Error: XPST0017: Function fn:serialize with arity of 2 not registered. No similar functions found.
 fo-test-fn-filter-002,Error: XPST0017: Function fn:lang with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}long (xs:anyAtomicType?)"?
 fo-test-fn-for-each-pair-001,Error: XPST0017: Function fn:for-each-pair with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}for-each-pair (array(*), array(*), function(*))", "Q{http://www.w3.org/2005/xpath-functions/array}for-each (array(*), function(*))", "Q{http://www.w3.org/2005/xpath-functions/map}for-each (map(*), item()*)" or "Q{http://www.w3.org/2005/xpath-functions}for-each (item()*, function(*))"?
 fo-test-fn-for-each-pair-002,Error: XPST0017: Function fn:for-each-pair with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}for-each-pair (array(*), array(*), function(*))", "Q{http://www.w3.org/2005/xpath-functions/array}for-each (array(*), function(*))", "Q{http://www.w3.org/2005/xpath-functions/map}for-each (map(*), item()*)" or "Q{http://www.w3.org/2005/xpath-functions}for-each (item()*, function(*))"?
@@ -3947,3 +3941,120 @@ fo-test-array-subarray-006,Error: FOAY0001: subarray start out of bounds.
 fo-test-array-subarray-007,Error: FOAY0001: subarray start out of bounds.
 fo-test-array-fold-right-003,AssertionError: Expected XPath          array:fold-right([1,2,3], [], function($x, $y){[$x, $y]})        to (deep equally) resolve to [1, [2, [3, []]]]: expected false to be true
 fo-test-array-sort-002,Error: XPST0017: Function array:sort with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}sort (array(*))", "Q{http://www.w3.org/2001/XMLSchema}short (xs:anyAtomicType?)" or "Q{http://www.w3.org/2005/xpath-functions/math}sqrt (xs:double?)"?
+serialize-xml-003,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-xml-004,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-xml-005,AssertionError: expected [Function] to throw error matching /SEPM0017/ but got 'XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?'
+serialize-xml-006,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-xml-007,AssertionError: expected [Function] to throw error matching /SEPM0017/ but got 'XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?'
+serialize-xml-007a,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-xml-008,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-xml-009,AssertionError: expected [Function] to throw error matching /SEPM0017/ but got 'XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?'
+serialize-xml-012,AssertionError: expected [Function] to throw error matching /SENR0001/ but got 'XPST0003: Unable to parse: "serialize((//namespace::*)[1])".\nExpected [A-Z,_,a-z,À-Ö,Ø-ö,ø-˿,Ͱ-ͽ,Ϳ-῿,‌,‍,⁰-↏,Ⰰ-⿯,、-퟿,豈-﷏,ﷰ-�] or [\ud800-\udb7f] but ":" found.\nserialize((//namespace:[Error is around here]:*)[1])'
+serialize-xml-013,AssertionError: expected [Function] to throw error matching /SENR0001/ but got 'No selector counterpart for: computedNamespaceConstructor.'
+serialize-xml-014,AssertionError: expected [Function] to throw error matching /SEPM0017/ but got 'XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?'
+serialize-xml-015,AssertionError: expected [Function] to throw error matching /SEPM0017/ but got 'XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?'
+serialize-xml-016,AssertionError: expected [Function] to throw error matching /SEPM0017/ but got 'XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?'
+serialize-xml-017,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?'
+serialize-xml-018,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?'
+serialize-xml-019,AssertionError: expected [Function] to throw error matching /SEPM0019/ but got 'XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?'
+serialize-xml-020,AssertionError: expected [Function] to throw error matching /SEPM0017/ but got 'XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?'
+serialize-xml-021,AssertionError: expected [Function] to throw error matching /SEPM0017/ but got 'XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?'
+serialize-xml-022,AssertionError: expected [Function] to throw error matching /SEPM0017/ but got 'XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?'
+serialize-xml-023,AssertionError: expected [Function] to throw error matching /SEPM0017/ but got 'XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?'
+serialize-xml-024,AssertionError: expected [Function] to throw error matching /SEPM0018/ but got 'XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?'
+serialize-xml-025,AssertionError: expected [Function] to throw error matching /SEPM0019/ but got 'XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?'
+serialize-xml-026,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-xml-027,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-xml-028,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-xml-029,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-xml-030,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-xml-031,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-xml-032,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-xml-033,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-xml-034,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-xml-101,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-xml-102,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?'
+serialize-xml-103,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-xml-104,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-xml-105,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?'
+serialize-xml-106,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-xml-106a,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-xml-107,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-xml-107a,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-xml-108,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-xml-109,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?'
+serialize-xml-110,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-xml-119,AssertionError: expected [Function] to throw error matching /XQDY0137/ but got 'XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?'
+serialize-xml-120,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-xml-123,AssertionError: expected [Function] to throw error matching /SEPM0016/ but got 'XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?'
+serialize-xml-124,AssertionError: expected [Function] to throw error matching /XQDY0137/ but got 'XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?'
+serialize-xml-125,AssertionError: expected [Function] to throw error matching /XQDY0137/ but got 'XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?'
+serialize-xml-126,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-xml-127,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-xml-128,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-xml-129,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-xml-130,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-xml-131,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-xml-131a,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?'
+serialize-xml-132,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-xml-133,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-xml-134,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-xml-137,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-xml-138,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-xml-139,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?'
+serialize-xml-140,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?'
+serialize-xml-141,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?'
+serialize-xml-142,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-json-001,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-json-002,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-json-003,Error: XPST0003: Unable to parse: "(let $params := map {             "method" : "json"             },                $arg := [1, 2 , [3,4,5], 6]                     return serialize($arg, $params)         ) instance of xs:string". Expected " ", "!", "!=", "(", "(:", "*", "+", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "?", "[", "\n", "\r", "\t", "]", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "," found. (let $params := map {             "method" : "json"             },                $arg := [1, 2 [Error is around here], [3,4,5], 6]                     return serialize($arg, $params)         ) instance of xs:string
+serialize-json-004,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-json-005,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-json-006,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-json-007,AssertionError: expected [Function] to throw error matching /SERE0023/ but got 'XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?'
+serialize-json-008,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-json-009,Error: No selector counterpart for: computedDocumentConstructor.
+serialize-json-010,AssertionError: expected [Function] to throw error matching /SERE0022/ but got 'XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?'
+serialize-json-011,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-json-101,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-json-102,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-json-103,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-json-104,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-json-105,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-json-106,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-json-107,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-json-108,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-json-109,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-json-110,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-json-111,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-json-112,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-json-113,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-json-114,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-json-115,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-json-116,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-json-117,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-json-118,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-json-119,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-json-120,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-json-121,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-json-122,AssertionError: expected [Function] to throw error matching /SERE0020/ but got 'XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?'
+serialize-json-123,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-json-124,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-json-125,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-json-126,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-json-127,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-json-128,Error: XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+serialize-json-130,AssertionError: expected [Function] to throw error matching /SERE0023/ but got 'XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?'
+serialize-json-131,AssertionError: expected [Function] to throw error matching /SERE0023/ but got 'XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?'
+serialize-json-132,AssertionError: expected [Function] to throw error matching /SERE0023/ but got 'XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?'
+serialize-json-133,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?'
+serialize-json-134,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?'
+serialize-json-135,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0017: Function serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?'
+fo-test-fn-serialize-001,Error: XPST0017: Function fn:serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+fo-test-fn-serialize-002,Error: XPST0017: Function fn:serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
+fn-function-lookup-398,Error: serialize() called but no xmlSerializer set in execution parameters.
+serialize-xml-001,Error: serialize() called but no xmlSerializer set in execution parameters.
+serialize-xml-002,AssertionError: expected [Function] to throw error matching /SENR0001/ but got 'serialize() called but no xmlSerializer set in execution parameters.'
+serialize-xml-010,AssertionError: expected [Function] to throw error matching /SENR0001/ but got 'serialize() called but no xmlSerializer set in execution parameters.'
+serialize-xml-011,AssertionError: expected [Function] to throw error matching /SENR0001/ but got 'serialize() called but no xmlSerializer set in execution parameters.'
+function-literal-398,Error: serialize() called but no xmlSerializer set in execution parameters.

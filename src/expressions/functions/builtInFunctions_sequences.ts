@@ -1,3 +1,5 @@
+import { NodePointer } from '../../domClone/Pointer';
+import realizeDom from '../../domClone/realizeDom';
 import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
@@ -688,6 +690,37 @@ const fnFoldRight: FunctionDefinitionType = (
 	);
 };
 
+const fnSerialize: FunctionDefinitionType = (
+	_dynamicContext,
+	executionParameters,
+	_staticContext,
+	sequence
+) => {
+	if (!executionParameters.xmlSerializer) {
+		throw new Error('serialize() called but no xmlSerializer set in execution parameters.');
+	}
+
+	const allResults = sequence.getAllValues();
+
+	if (
+		!allResults.every((value) => {
+			return isSubtypeOf(value.type, ValueType.NODE);
+		})
+	) {
+		throw new Error('Expected argument to fn:serialize to resolve to a sequence of Nodes.');
+	}
+	return sequenceFactory.singleton(
+		createAtomicValue(
+			allResults.map((nodeValue) => {
+				return executionParameters.xmlSerializer.serializeToString(
+					realizeDom(nodeValue.value as NodePointer, executionParameters, false) as Node
+				);
+			}),
+			ValueType.XSSTRING
+		)
+	);
+};
+
 const declarations: BuiltinDeclarationType[] = [
 	{
 		argumentTypes: [{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE }],
@@ -1038,6 +1071,14 @@ const declarations: BuiltinDeclarationType[] = [
 		localName: 'fold-right',
 		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+	},
+
+	{
+		argumentTypes: [{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE }],
+		callFunction: fnSerialize,
+		localName: 'serialize',
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
 	},
 ];
 

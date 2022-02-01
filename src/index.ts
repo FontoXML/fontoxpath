@@ -59,6 +59,7 @@ import {
 	NamespaceResolver,
 	Options,
 	ResolvedQualifiedName,
+	XMLSerializer,
 } from './types/Options';
 import {
 	Attr,
@@ -257,6 +258,7 @@ export {
 	getBucketForSelector,
 	getBucketsForNode,
 	parseScript,
+	XMLSerializer,
 	precompileXPath,
 	profiler,
 	registerCustomXPathFunction,

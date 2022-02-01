@@ -158,7 +158,7 @@ fn-round-half-to-even,true
 fn-seconds-from-dateTime,true
 fn-seconds-from-duration,true
 fn-seconds-from-time,true
-fn-serialize,false
+fn-serialize,true
 fn-serialize-json,false
 fn-sort,false
 fn-starts-with,true
