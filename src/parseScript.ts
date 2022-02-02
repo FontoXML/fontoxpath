@@ -3,9 +3,12 @@ import IDocumentWriter from './documentWriter/IDocumentWriter';
 import ExternalDomFacade from './domFacade/ExternalDomFacade';
 import { sequenceTypeToString } from './expressions/dataTypes/Value';
 import { BUILT_IN_NAMESPACE_URIS } from './expressions/staticallyKnownNamespaces';
+import StaticContext from './expressions/StaticContext';
 import ISimpleNodesFactory from './nodesFactory/ISimpleNodesFactory';
+import astHelper from './parsing/astHelper';
 import normalizeEndOfLines from './parsing/normalizeEndOfLines';
 import parseExpression from './parsing/parseExpression';
+import processProlog from './parsing/processProlog';
 import annotateAst from './typeInference/annotateAST';
 import { AnnotationContext } from './typeInference/AnnotationContext';
 import { Language, Options } from './types/Options';
@@ -203,7 +206,15 @@ export default function parseScript<TElement extends Element>(
 	});
 
 	if (options.annotateAst) {
-		annotateAst(ast, new AnnotationContext(undefined));
+		const rootStaticContext = new StaticContext(null);
+		const prolog = astHelper.followPath(ast, ['mainModule', 'prolog']);
+
+		if (prolog) {
+			processProlog(prolog, rootStaticContext);
+		}
+
+		const context = new AnnotationContext(rootStaticContext);
+		annotateAst(ast, context);
 	}
 
 	const domFacade = new ExternalDomFacade();

@@ -24,7 +24,8 @@ export function annotateNamedFunctionRef(
 	}
 
 	// Get qualified function name
-	const qName: QName = astHelper.getQName(astHelper.getFirstChild(ast, 'functionName'));
+	const functionNameAstNode = astHelper.getFirstChild(ast, 'functionName');
+	const qName: QName = astHelper.getQName(functionNameAstNode);
 	let localName = qName.localName;
 	let namespaceURI = qName.namespaceURI;
 	const prefix = qName.prefix;
@@ -49,6 +50,9 @@ export function annotateNamedFunctionRef(
 
 		localName = functionName.localName;
 		namespaceURI = functionName.namespaceURI;
+
+		// Set the namespace uri to the AST so we can use it later
+		astHelper.insertAttribute(functionNameAstNode, 'URI', namespaceURI);
 	}
 
 	// With all components there, look up the function properties

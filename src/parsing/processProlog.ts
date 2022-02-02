@@ -115,24 +115,15 @@ export default function processProlog(
 	});
 
 	// Default function namespace declaration
-	const defaultNamespaceFunctionDecl = astHelper
-		.getChildren(prolog, 'defaultNamespaceDecl')
-		.filter((child) => {
-			const type = astHelper.getTextContent(
-				astHelper.getFirstChild(child, 'defaultNamespaceCategory')
-			);
+	let defaultNamespaceFunctionDecl: string = null;
+	let defaultNamespaceElementDecl: string = null;
 
-			if (type === 'function') {
-				return type;
-			} else if (type === 'element') {
-				throw new Error('Not Implemented: default namespace element.');
-			}
-		});
-
-	if (defaultNamespaceFunctionDecl.length === 1) {
-		const namespaceURI = astHelper.getTextContent(
-			astHelper.getFirstChild(astHelper.getFirstChild(prolog, 'defaultNamespaceDecl'), 'uri')
+	for (const astNode of astHelper.getChildren(prolog, 'defaultNamespaceDecl')) {
+		const category = astHelper.getTextContent(
+			astHelper.getFirstChild(astNode, 'defaultNamespaceCategory')
 		);
+
+		const namespaceURI = astHelper.getTextContent(astHelper.getFirstChild(astNode, 'uri'));
 
 		if (!namespaceURI) {
 			throw errXQST0060();
@@ -145,9 +136,24 @@ export default function processProlog(
 			throw errXQST0070();
 		}
 
-		staticContext.registeredDefaultFunctionNamespaceURI = namespaceURI;
-	} else if (defaultNamespaceFunctionDecl.length > 1) {
-		throw errXQST0066();
+		if (category === 'function') {
+			if (defaultNamespaceFunctionDecl) {
+				throw errXQST0066();
+			}
+			defaultNamespaceFunctionDecl = namespaceURI;
+		} else if (category === 'element') {
+			if (defaultNamespaceElementDecl) {
+				throw errXQST0066();
+			}
+			defaultNamespaceElementDecl = namespaceURI;
+		}
+	}
+
+	if (defaultNamespaceFunctionDecl) {
+		staticContext.registeredDefaultFunctionNamespaceURI = defaultNamespaceFunctionDecl;
+	}
+	if (defaultNamespaceElementDecl) {
+		staticContext.registerNamespace('', defaultNamespaceElementDecl);
 	}
 
 	astHelper.getChildren(prolog, 'functionDecl').forEach((declaration) => {

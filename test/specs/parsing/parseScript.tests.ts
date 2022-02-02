@@ -34,6 +34,78 @@ describe('parseScript', () => {
 		chai.assert.isOk(ast);
 	});
 
+	it('resolve namespaces for nameTests in a script', () => {
+		const ast = parseScript(
+			`
+declare namespace xxx="http://www.example.com/";
+
+self::xxx:element
+`,
+			{
+				annotateAst: true,
+			},
+			new Document()
+		);
+
+		chai.assert.isTrue(
+			evaluateXPathToBoolean(
+				`descendant::xqx:nameTest/@xqx:URI = "http://www.example.com/"`,
+				ast,
+				null,
+				{},
+				{ namespaceResolver }
+			)
+		);
+	});
+
+	it('resolve namespaces for functionNames in a script', () => {
+		const ast = parseScript(
+			`
+declare namespace xxx="http://www.example.com/";
+
+xxx:some-function()
+`,
+			{
+				annotateAst: true,
+			},
+			new Document()
+		);
+
+		chai.assert.isTrue(
+			evaluateXPathToBoolean(
+				`descendant::xqx:functionName/@xqx:URI = "http://www.example.com/"`,
+				ast,
+				null,
+				{},
+				{ namespaceResolver }
+			)
+		);
+	});
+
+	it('resolve namespaces for named function references in a script', () => {
+		const ast = parseScript(
+			`
+declare namespace xxx="http://www.example.com/";
+
+xxx:some-function#0()
+`,
+			{
+				annotateAst: true,
+			},
+			new Document()
+		);
+
+		chai.assert.isTrue(
+			evaluateXPathToBoolean(
+				`descendant::xqx:functionName/@xqx:URI = "http://www.example.com/"`,
+				ast,
+				null,
+				{},
+				{ namespaceResolver }
+			)
+		);
+	});
+
 	it('can execute an AST, resolving to a number', () => {
 		const ast = parseScript('1+1', {}, new Document());
 		const result = evaluateXPathToNumber(ast);

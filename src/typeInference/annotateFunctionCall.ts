@@ -24,7 +24,8 @@ export function annotateFunctionCall(
 	}
 
 	// Get qualified function name
-	const qName: QName = astHelper.getQName(astHelper.getFirstChild(ast, 'functionName'));
+	const functionNameAstNode = astHelper.getFirstChild(ast, 'functionName');
+	const qName: QName = astHelper.getQName(functionNameAstNode);
 	const localName = qName.localName;
 	const prefix = qName.prefix;
 
@@ -45,6 +46,7 @@ export function annotateFunctionCall(
 			mult: SequenceMultiplicity.ZERO_OR_MORE,
 		};
 	}
+	astHelper.insertAttribute(functionNameAstNode, 'URI', resolvedName.namespaceURI);
 
 	// Lookup the function properties (return type)
 	const functionProps = annotationContext.staticContext.lookupFunction(

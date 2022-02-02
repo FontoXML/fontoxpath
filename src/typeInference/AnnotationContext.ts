@@ -4,12 +4,14 @@ import StaticContext from '../expressions/StaticContext';
 export class AnnotationContext {
 	public staticContext?: StaticContext;
 
+	private _namespaceScope: { [prefix: string]: string }[];
 	private _scopeIndex: number = 0;
 	private _variableScope: { [key: string]: SequenceType }[];
 
 	constructor(staticContext?: StaticContext) {
 		this.staticContext = staticContext;
 		this._variableScope = [{}];
+		this._namespaceScope = [{}];
 	}
 
 	public getVariable(varName: string): SequenceType {
@@ -47,5 +49,20 @@ export class AnnotationContext {
 	public pushScope(): void {
 		this._scopeIndex++;
 		this._variableScope.push({});
+	}
+
+	public registerNamespace(prefix: string, uri: string | null) {
+		this._namespaceScope[this._scopeIndex][prefix] = uri;
+	}
+
+	public resolveNamespace(prefix: string): string | null {
+		for (let i = this._scopeIndex; i >= 0; i--) {
+			const namespaceURI = this._namespaceScope[i][prefix];
+			if (namespaceURI !== undefined) {
+				return namespaceURI;
+			}
+		}
+		// The namespace is not found. Look it up using the static context if we have it
+		return this.staticContext ? this.staticContext.resolveNamespace(prefix) : undefined;
 	}
 }
