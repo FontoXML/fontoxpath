@@ -166,7 +166,7 @@ export default function processProlog(
 			// Note: Never use the function namespace resolver to resolve the name of a function
 			// declaration.
 			declarationNamespaceURI =
-				declarationPrefix === null
+				declarationPrefix === ''
 					? staticContext.registeredDefaultFunctionNamespaceURI ||
 					  BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI
 					: staticContext.resolveNamespace(declarationPrefix);

@@ -40,6 +40,7 @@ export class AnnotationContext {
 		if (this._scopeIndex > 0) {
 			this._scopeIndex--;
 			this._variableScope.pop();
+			this._namespaceScope.pop();
 			return;
 		}
 
@@ -49,6 +50,7 @@ export class AnnotationContext {
 	public pushScope(): void {
 		this._scopeIndex++;
 		this._variableScope.push({});
+		this._namespaceScope.push({});
 	}
 
 	public registerNamespace(prefix: string, uri: string | null) {

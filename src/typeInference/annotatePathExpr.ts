@@ -80,15 +80,14 @@ function annotateStep(step: IAST, annotationContext: AnnotationContext): Sequenc
 			case 'nameTest': {
 				// Nametest: resolve the namespace URI and save it
 				const qName: QName = astHelper.getQName(substep);
-				if (qName.namespaceURI) {
+				if (qName.namespaceURI !== null) {
 					// Already resolved, no need
 					break;
 				}
-				astHelper.insertAttribute(
-					substep,
-					'URI',
-					annotationContext.resolveNamespace(qName.prefix)
-				);
+				const resolvedNamespaceURI = annotationContext.resolveNamespace(qName.prefix || '');
+				if (resolvedNamespaceURI !== undefined) {
+					astHelper.insertAttribute(substep, 'URI', resolvedNamespaceURI);
+				}
 				break;
 			}
 			case 'attributeTest':

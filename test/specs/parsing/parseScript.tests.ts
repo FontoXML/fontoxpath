@@ -58,6 +58,30 @@ self::xxx:element
 		);
 	});
 
+	it('resolve namespaces for varrefs in a script', () => {
+		const ast = parseScript(
+			`
+declare namespace xxx="http://www.example.com/";
+
+$xxx:yyy
+`,
+			{
+				annotateAst: true,
+			},
+			new Document()
+		);
+
+		chai.assert.isTrue(
+			evaluateXPathToBoolean(
+				`descendant::xqx:varRef/@xqx:URI = "http://www.example.com/"`,
+				ast,
+				null,
+				{},
+				{ namespaceResolver }
+			)
+		);
+	});
+
 	it('resolve namespaces for functionNames in a script', () => {
 		const ast = parseScript(
 			`
@@ -88,6 +112,30 @@ xxx:some-function()
 declare namespace xxx="http://www.example.com/";
 
 xxx:some-function#0()
+`,
+			{
+				annotateAst: true,
+			},
+			new Document()
+		);
+
+		chai.assert.isTrue(
+			evaluateXPathToBoolean(
+				`descendant::xqx:functionName/@xqx:URI = "http://www.example.com/"`,
+				ast,
+				null,
+				{},
+				{ namespaceResolver }
+			)
+		);
+	});
+
+	it('resolve namespaces for named function references in a script', () => {
+		const ast = parseScript(
+			`
+declare default function namespace "http://www.example.com/";
+
+some-function#0()
 `,
 			{
 				annotateAst: true,

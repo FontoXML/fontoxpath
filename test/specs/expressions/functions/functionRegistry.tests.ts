@@ -5,27 +5,45 @@ import registerCustomXPathFunction from 'fontoxpath/registerCustomXPathFunction'
 
 describe('functionRegistry.getFunctionByArity', () => {
 	before(() => {
-		registerCustomXPathFunction('fonto:functionName', [], 'xs:boolean', function () {});
+		registerCustomXPathFunction(
+			'fontoxpath_test_prefix:functionName',
+			[],
+			'xs:boolean',
+			function () {}
+		);
 
 		registerCustomXPathFunction(
-			'fonto:functionName',
+			'fontoxpath_test_prefix:functionName',
 			['xs:boolean'],
 			'xs:boolean',
 			function () {}
 		);
 
-		registerCustomXPathFunction('fonto:otherFunctionName', [], 'xs:boolean', function () {});
+		registerCustomXPathFunction(
+			'fontoxpath_test_prefix:otherFunctionName',
+			[],
+			'xs:boolean',
+			function () {}
+		);
 	});
 
 	it('return null if a custom function cannot be found', () => {
 		chai.assert.isNull(
-			functionRegistry.getFunctionByArity('fonto:bla', 'functionLocalName', 0)
+			functionRegistry.getFunctionByArity(
+				'fontoxpath_test_prefix:bla',
+				'functionLocalName',
+				0
+			)
 		);
 	});
 
 	it('return null if a custom function with a given arity cannot be found', () => {
 		chai.assert.isNull(
-			functionRegistry.getFunctionByArity('fonto:functionName', 'functionLocalName', 3)
+			functionRegistry.getFunctionByArity(
+				'fontoxpath_test_prefix:functionName',
+				'functionLocalName',
+				3
+			)
 		);
 	});
 

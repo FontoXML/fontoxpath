@@ -259,11 +259,11 @@ export default class StaticContext implements IContext {
 	}
 
 	public resolveNamespace(prefix: string, useExternalResolver: boolean = true): string {
-		const uri = lookupInOverrides(this._registeredNamespaceURIByPrefix, prefix);
+		const uri = lookupInOverrides(this._registeredNamespaceURIByPrefix, prefix || '');
 		if (uri === undefined) {
 			return this.parentContext === null
 				? undefined
-				: this.parentContext.resolveNamespace(prefix, useExternalResolver);
+				: this.parentContext.resolveNamespace(prefix || '', useExternalResolver);
 		}
 		return uri;
 	}

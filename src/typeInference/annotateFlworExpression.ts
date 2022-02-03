@@ -98,14 +98,14 @@ function annotateLetClause(
 ): void {
 	const pathToVarName: string[] = ['letClauseItem', 'typedVariableBinding', 'varName'];
 	const varNameNode: IAST = astHelper.followPath(ast, pathToVarName);
-	const varName = varNameNode[1] as string;
+	const varName = astHelper.getQName(varNameNode);
 
 	const pathToVarType: string[] = ['letClauseItem', 'letExpr'];
 	const varTypeNode: IAST = astHelper.followPath(ast, pathToVarType);
 
 	const varType: SequenceType = annotate(varTypeNode[1] as IAST, annotationContext);
 
-	annotationContext.insertVariable(varName, varType);
+	annotationContext.insertVariable(varName.localName, varType);
 }
 
 /**
@@ -122,7 +122,7 @@ function annotateForClause(
 	const pathToTypedVariableBinding = ['forClauseItem', 'typedVariableBinding', 'varName'];
 	const pathToForExpr = ['forClauseItem', 'forExpr', 'sequenceExpr'];
 
-	const varName = astHelper.followPath(ast, pathToTypedVariableBinding)[1] as string;
+	const varName = astHelper.getQName(astHelper.followPath(ast, pathToTypedVariableBinding));
 
 	const varTypeNode: IAST = astHelper.followPath(ast, pathToForExpr);
 	if (!varTypeNode) {
@@ -144,7 +144,7 @@ function annotateForClause(
 
 	// if there is only 1 unique type we can add the variable to have this type.
 	if (types.length === 1) {
-		annotationContext.insertVariable(varName, types[0]);
+		annotationContext.insertVariable(varName.localName, types[0]);
 	}
 }
 

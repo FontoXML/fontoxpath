@@ -60,6 +60,7 @@ describe('DefaultFunctionDeclaration', () => {
 			'XQST0070: The prefixes xml and xmlns may not be used in a namespace declaration or be bound to another namespaceURI.'
 		);
 	});
+
 	it('Cannot create a default namespace with two functions namespace', () => {
 		chai.assert.throws(
 			() =>
@@ -71,19 +72,6 @@ describe('DefaultFunctionDeclaration', () => {
 					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
 				),
 			'XQST0066: A Prolog may contain at most one default function namespace declaration.'
-		);
-	});
-	it('Cannot create a default element namespace', () => {
-		chai.assert.throws(
-			() =>
-				evaluateXPathToBoolean(
-					'declare default element namespace "http://example.com"; declare default function namespace "http://example.com"; declare %private function lt() as item()*{ true() }; Q{http://example.com}lt()',
-					documentNode,
-					undefined,
-					{},
-					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-				),
-			'Not Implemented: default namespace element.'
 		);
 	});
 });

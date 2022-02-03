@@ -46,6 +46,7 @@ export function annotateFunctionCall(
 			mult: SequenceMultiplicity.ZERO_OR_MORE,
 		};
 	}
+
 	astHelper.insertAttribute(functionNameAstNode, 'URI', resolvedName.namespaceURI);
 
 	// Lookup the function properties (return type)
