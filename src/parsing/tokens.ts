@@ -229,7 +229,7 @@ export const PROCESSING_INSTRUCTION_TEST = token('processing-instruction()');
 
 export const COMMENT_TEST = token('comment()');
 export const TEXT_TEST = token('text()');
-export const NAMESPACE_NODE_TEST = token('comment()');
+export const NAMESPACE_NODE_TEST = token('namespace-node()');
 export const ANY_KIND_TEST = token('node()');
 export const ITEM_TYPE_TEST = token('item()');
 export const EMPTY_SEQUENCE_TEST = token('empty-sequence()');
