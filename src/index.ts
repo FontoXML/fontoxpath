@@ -31,10 +31,7 @@ import ISimpleNodesFactory from './nodesFactory/ISimpleNodesFactory';
 import parseScript from './parseScript';
 import astHelper from './parsing/astHelper';
 import compileAstToExpression from './parsing/compileAstToExpression';
-import {
-	getAnyStaticCompilationResultFromCache,
-	storeHalfCompiledCompilationResultInCache,
-} from './parsing/compiledExpressionCache';
+import { getAnyStaticCompilationResultFromCache } from './parsing/compiledExpressionCache';
 import { IReturnTypes, ReturnType } from './parsing/convertXDMReturnValue';
 import convertXmlToAst from './parsing/convertXmlToAst';
 import parseExpression from './parsing/parseExpression';
@@ -101,8 +98,6 @@ function parseXPath(xpathExpression: EvaluableExpression) {
 		allowUpdating: false,
 		allowXQuery: false,
 	});
-
-	storeHalfCompiledCompilationResultInCache(xpathExpression, 'XPath', expression, false);
 
 	return expression;
 }

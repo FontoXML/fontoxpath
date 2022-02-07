@@ -34,7 +34,7 @@ class NameTest extends TestAbstractExpression {
 
 		this._localName = localName;
 		this._namespaceURI = namespaceURI;
-		this._prefix = prefix || (namespaceURI ? null : '');
+		this._prefix = prefix;
 
 		this._kind = options.kind;
 	}

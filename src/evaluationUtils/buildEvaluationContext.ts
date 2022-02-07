@@ -116,8 +116,9 @@ export default function buildEvaluationContext(
 		internalOptions.namespaceResolver || createDefaultNamespaceResolver(contextItem);
 
 	const defaultFunctionNamespaceURI =
-		externalOptions['defaultFunctionNamespaceURI'] ||
-		BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI;
+		externalOptions['defaultFunctionNamespaceURI'] === undefined
+			? BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI
+			: externalOptions['defaultFunctionNamespaceURI'];
 
 	const functionNameResolver =
 		internalOptions.functionNameResolver ||

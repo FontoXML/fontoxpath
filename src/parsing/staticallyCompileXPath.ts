@@ -87,11 +87,6 @@ function buildExpressionFromAst(
 	},
 	rootStaticContext: StaticContext
 ) {
-	const context = new AnnotationContext(rootStaticContext);
-	if (compilationOptions.annotateAst) {
-		annotateAst(ast, context);
-	}
-
 	const mainModule = astHelper.getFirstChild(ast, 'mainModule');
 	if (!mainModule) {
 		// This must be a library module
@@ -99,7 +94,6 @@ function buildExpressionFromAst(
 	}
 
 	const prolog = astHelper.getFirstChild(mainModule, 'prolog');
-	const queryBodyContents = astHelper.followPath(mainModule, ['queryBody', '*']);
 
 	if (prolog) {
 		if (!compilationOptions.allowXQuery) {
@@ -109,6 +103,11 @@ function buildExpressionFromAst(
 		}
 		processProlog(prolog, rootStaticContext);
 	}
+
+	const context = new AnnotationContext(rootStaticContext);
+	annotateAst(ast, context);
+
+	const queryBodyContents = astHelper.followPath(mainModule, ['queryBody', '*']);
 
 	return compileAstToExpression(queryBodyContents, compilationOptions);
 }

@@ -102,7 +102,7 @@ function emitNameTestFromQName(
 		// There was a prefix, or the namespace was already resolved. This applies to elements and attributes
 		resolveNamespaceURICode = escapeJavaScriptString(namespaceURI);
 	}
-	const matchesNamespaceCode = `(${identifier}.namespaceURI || null) === (${resolveNamespaceURICode} || null)`;
+	const matchesNamespaceCode = `(${identifier}.namespaceURI || null) === ((${resolveNamespaceURICode}) || null)`;
 
 	return [
 		acceptAst(`${matchesLocalNameCode}${matchesNamespaceCode}`, {
@@ -159,7 +159,7 @@ function emitWildcard(
 	}
 
 	const uri = astHelper.getFirstChild(ast, 'uri');
-	if (uri) {
+	if (uri !== null) {
 		return emitNameTestFromQName(
 			identifier,
 			{

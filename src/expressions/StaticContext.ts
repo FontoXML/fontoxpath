@@ -237,15 +237,14 @@ export default class StaticContext implements IContext {
 	): ResolvedQualifiedName {
 		const { prefix, localName } = lexicalQName;
 		// First consider local definitions
-		if (!prefix && this.registeredDefaultFunctionNamespaceURI) {
+		debugger;
+		if (prefix === '' && this.registeredDefaultFunctionNamespaceURI) {
 			return {
 				localName,
 				namespaceURI: this.registeredDefaultFunctionNamespaceURI,
 			};
 		} else if (prefix) {
-			// Try to resolve the NS. Note: do not go to the outside to resolve that
-			// namespace. There is special config for function name resolveing that should have its
-			// turn
+			// Try to resolve the NS.
 			const namespaceURI = this.resolveNamespace(prefix, false);
 			if (namespaceURI) {
 				return { localName, namespaceURI };
