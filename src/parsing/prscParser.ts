@@ -15,8 +15,8 @@ import {
 	preceded,
 	star,
 	then,
-	token,
 } from 'prsc';
+import QName from 'src/expressions/dataTypes/valueTypes/QName';
 import { ASTAttributes, IAST } from './astHelper';
 import * as tokens from './tokens';
 
@@ -326,12 +326,13 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		return result;
 	}
 
-	// TODO: add proper typing
-	function getQName(qname: any): string {
+	type QNameIAST = [string] | [{ prefix: string }, string];
+
+	function getQName(qname: QNameIAST): string {
 		return qname.length === 1 ? qname[0] : qname[0].prefix + ':' + qname[1];
 	}
 
-	function assertEqualQNames(a: any, b: any) {
+	function assertEqualQNames(a: QNameIAST, b: QNameIAST) {
 		const nameA = getQName(a);
 		const nameB = getQName(b);
 		if (nameA !== nameB) {
@@ -499,7 +500,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 	const bracedURILiteral: Parser<string> = followed(
 		precededMultiple(
 			[tokens.Q_UPPER, whitespace, tokens.CURLY_BRACE_OPEN],
-			// TODO: add xquery version
 			map(star(regex(/[^{}]/)), (x) => x.join('').replace(/\s+/g, ' ').trim())
 		),
 		tokens.CURLY_BRACE_CLOSE
@@ -1090,8 +1090,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			),
 			tokens.BRACKET_CLOSE
 		),
-		// TODO: this null seems weird, try the query `[]`
-		(x) => ['squareArray', ...(x !== null ? x : [null])] as IAST
+		(x) => ['squareArray', ...(x !== null ? x : [])] as IAST
 	);
 
 	const curlyArrayConstructor: Parser<IAST> = map(
@@ -1180,7 +1179,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		commonContent,
 	]);
 
-	// TODO: determine type of accumulateDirContents
 	const dirAttributeValue: Parser<any[]> = map(
 		or([
 			surrounded(star(or([escapeQuot, quotAttrValueContent])), tokens.DOUBLE_QUOTE),
@@ -1195,7 +1193,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		(attrName, value) => {
 			if (attrName.length === 1 && attrName[0] === 'xmlns') {
 				if (value.length && typeof value[0] !== 'string') {
-					// TODO: These could get replaced with a fatal parse error
 					throw new Error(
 						'XQST0022: A namespace declaration may not contain enclosed expressions'
 					);
@@ -1255,7 +1252,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		(tagName, attList, contentsEndName) => {
 			let contents = contentsEndName;
 			if (contentsEndName && contentsEndName.length) {
-				assertEqualQNames(tagName, contentsEndName[1]);
+				assertEqualQNames(tagName as QNameIAST, contentsEndName[1]);
 				contents = contentsEndName[0];
 			}
 			return [
@@ -1459,17 +1456,19 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const nodeConstructor: Parser<IAST> = or([directConstructor, computedConstructor]);
 
-	// TODO: add other variants
 	const primaryExpr: Parser<IAST> = or([
 		literal,
 		varRef,
 		parenthesizedExpr,
 		contextItemExpr,
 		functionCall,
+		// orderedExpr,
+		// unorderedExpr,
 		nodeConstructor,
 		functionItemExpr,
 		mapConstructor,
 		arrayConstructor,
+		// stringConstructor,
 		unaryLookup,
 	]);
 
@@ -1498,7 +1497,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				preceded(whitespace, lookup),
 			])
 		),
-		(expression, postfixExpr) => {
+		(expression: IAST, postfixExpr: IAST[]) => {
 			let toWrap: any = expression;
 
 			const predicates: IAST[] = [];
@@ -1629,7 +1628,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			preceded(whitespace, relativePathExprWithForcedStep),
 			(abbrev, path) => ['pathExpr', ['rootExpr'], abbrev, ...path]
 		),
-		// TODO: add xquery check
 		map(
 			followed(
 				tokens.SLASH,
@@ -1683,8 +1681,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 	const pragma: Parser<IAST> = delimited(
 		tokens.PRAGMA_START,
 		then(
-			// TODO: isn't an optional whitespacePlus just a whitespace?
-			preceded(optional(whitespacePlus), eqName),
+			preceded(whitespace, eqName),
 			optional(preceded(whitespacePlus, pragmaContents)),
 			(pragmaName, contents) =>
 				(contents
@@ -2126,7 +2123,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const orderByClause: Parser<IAST> = then(
 		or([
-			// TODO: the `order by` part is common so this could be simplified
 			map(precededMultiple([tokens.ORDER, whitespacePlus], tokens.BY), (_) => false),
 			map(
 				precededMultiple(
