@@ -16,7 +16,6 @@ import {
 	star,
 	then,
 } from 'prsc';
-import QName from 'src/expressions/dataTypes/valueTypes/QName';
 import { ASTAttributes, IAST } from './astHelper';
 import * as tokens from './tokens';
 
@@ -2816,16 +2815,12 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			['module', ...(versionDecl ? [versionDecl] : []), ...[modulePart]] as IAST
 	);
 
-	return surrounded(module, whitespace);
+	return complete(surrounded(module, whitespace));
 }
 
 export function parseUsingPrsc(
 	xpath: string,
-	options: { outputDebugInfo: boolean; xquery: boolean },
-	shouldConsumeAll: boolean = true
+	options: { outputDebugInfo: boolean; xquery: boolean }
 ): ParseResult<IAST> {
-	return (shouldConsumeAll ? complete(generateParser(options)) : generateParser(options))(
-		xpath,
-		0
-	);
+	return generateParser(options)(xpath, 0);
 }
