@@ -2200,7 +2200,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const deleteExpr: Parser<IAST> = map(
 		precededMultiple(
-			[token('delete'), whitespacePlus, or(['node', 'nodes'].map(token)), whitespacePlus],
+			[token('delete'), whitespacePlus, or(['nodes', 'node'].map(token)), whitespacePlus],
 			targetExpr
 		),
 		(x) => ['deleteExpr', ['targetExpr', x]]
