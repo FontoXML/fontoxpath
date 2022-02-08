@@ -5,7 +5,7 @@ export default class DomBackedNodesFactory implements INodesFactory {
 	private _documentNode: Document | null;
 
 	constructor(contextItem: any) {
-		if (contextItem && 'nodeType' in contextItem) {
+		if (contextItem && typeof contextItem === 'object' && 'nodeType' in contextItem) {
 			const ownerDocument = contextItem.ownerDocument || contextItem;
 			if (
 				typeof ownerDocument.createElementNS === 'function' &&
