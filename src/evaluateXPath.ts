@@ -189,7 +189,12 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 	// Shortcut: if the xpathExpression defines buckets, the
 	// contextItem is a node and we are evaluating to a bucket, we can
 	// use it to return false if we are sure it won't match.
-	if (returnType === ReturnType.BOOLEAN && contextItem && 'nodeType' in contextItem) {
+	if (
+		returnType === ReturnType.BOOLEAN &&
+		contextItem &&
+		typeof contextItem === 'object' &&
+		'nodeType' in contextItem
+	) {
 		const selectorBucket = expression.getBucket();
 		const bucketsForNode = getBucketsForNode(contextItem);
 		if (selectorBucket !== null && !bucketsForNode.includes(selectorBucket)) {

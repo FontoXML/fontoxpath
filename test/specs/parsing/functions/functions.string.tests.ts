@@ -118,6 +118,10 @@ describe('functions over strings', () => {
 	});
 
 	describe('starts-with()', () => {
+		it('accepts a string as context item', () => {
+			chai.assert.isTrue(evaluateXPathToBoolean('starts-with("tattoo", .)', 'tat', null, {}));
+		});
+
 		it('returns true for tattoo starts with tat', () =>
 			chai.assert.isTrue(
 				evaluateXPathToBoolean('starts-with("tattoo", "tat")', documentNode)
@@ -333,6 +337,10 @@ describe('functions over strings', () => {
 	});
 
 	describe('upper-case()', () => {
+		it('accepts a string as context item', () => {
+			chai.assert.equal(evaluateXPathToString('upper-case(.)', 'hello', null, {}), 'HELLO');
+		});
+
 		it('If the value of $arg1 is the empty sequence, the zero length string is returned', () =>
 			chai.assert.equal(evaluateXPathToString('upper-case(())', documentNode), ''));
 
