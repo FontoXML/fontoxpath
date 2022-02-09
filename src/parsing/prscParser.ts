@@ -140,11 +140,11 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		return rhs.reduce((lh, rh) => [rh[0], ['firstOperand', lh], ['secondOperand', rh[1]]], lhs);
 	}
 
-	function binaryOperator<T>(
-		exp: Parser<IAST>,
+	function binaryOperator<T, S>(
+		exp: Parser<T>,
 		operator: Parser<string>,
-		constructionFn: (lhs: IAST, rhs: [string, IAST][]) => T
-	): Parser<T> {
+		constructionFn: (lhs: T, rhs: [string, T][]) => S
+	): Parser<S> {
 		return then(
 			exp,
 			star(then(surrounded(operator, whitespace), exp, (a, b) => [a, b])),
@@ -271,7 +271,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 	}
 
 	function accumulateDirContents(
-		parts: any | any[],
+		parts: (IAST | string)[],
 		expressionsOnly: boolean,
 		normalizeWhitespace: boolean
 	) {
@@ -280,8 +280,9 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		}
 		let result = [parts[0]];
 		for (let i = 1; i < parts.length; ++i) {
-			if (typeof result[result.length - 1] === 'string' && typeof parts[i] === 'string') {
-				result[result.length - 1] += parts[i];
+			const prevResult = result[result.length - 1];
+			if (typeof prevResult === 'string' && typeof parts[i] === 'string') {
+				result[result.length - 1] = prevResult + parts[i];
 				continue;
 			}
 			result.push(parts[i]);
@@ -325,13 +326,13 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		return result;
 	}
 
-	type QNameIAST = [string] | [{ prefix: string }, string];
+	type QNameAST = [{ prefix: string | null; URI: string | null }, string];
 
-	function getQName(qname: QNameIAST): string {
-		return qname.length === 1 ? qname[0] : qname[0].prefix + ':' + qname[1];
+	function getQName(qname: QNameAST): string {
+		return qname[0].prefix ? qname[0].prefix + ':' + qname[1] : qname[1];
 	}
 
-	function assertEqualQNames(a: QNameIAST, b: QNameIAST) {
+	function assertEqualQNames(a: QNameAST, b: QNameAST) {
 		const nameA = getQName(a);
 		const nameB = getQName(b);
 		if (nameA !== nameB) {
@@ -350,7 +351,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		let line = 1;
 		for (let i = 0; i < offset; i++) {
 			const c = input[i];
-			if (c === '\r\n' || c === '\r' || c === '\n') {
+			if (c === '\r' || c === '\n') {
 				line++;
 				col = 1;
 			} else {
@@ -371,6 +372,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				return result;
 			}
 
+			// TODO: calculate line and column numbers at the end of parsing
 			const [startCol, startLine] = getLineData(input, offset);
 			const [endCol, endLine] = getLineData(input, result.offset);
 
@@ -481,20 +483,20 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const localPart: Parser<string> = ncName;
 
-	const unprefixedName: Parser<IAST> = wrapArray(localPart);
+	const unprefixedName: Parser<QNameAST> = map(localPart, (x) => [
+		{ prefix: null, URI: null },
+		x,
+	]);
 
 	const xmlPrefix: Parser<string> = ncName;
 
-	const prefixedName: Parser<(string | ASTAttributes)[]> = then(
+	const prefixedName: Parser<QNameAST> = then(
 		xmlPrefix,
 		preceded(tokens.COLON, localPart),
-		(prefixPart, local) => [{ ['prefix']: prefixPart }, local]
+		(prefixPart, local) => [{ prefix: prefixPart, URI: null }, local]
 	);
 
-	const qName: Parser<IAST | (string | ASTAttributes)[]> = or([
-		prefixedName as Parser<IAST | (string | ASTAttributes)[]>,
-		unprefixedName,
-	]);
+	const qName: Parser<QNameAST> = or([prefixedName, unprefixedName]);
 
 	const bracedURILiteral: Parser<string> = followed(
 		precededMultiple(
@@ -504,27 +506,25 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		tokens.CURLY_BRACE_CLOSE
 	);
 
-	const uriQualifiedName: Parser<IAST> = then(bracedURILiteral, ncName, (uri, localName) => [
-		uri,
-		localName,
-	]);
+	const uriQualifiedName: Parser<[string, string]> = then(
+		bracedURILiteral,
+		ncName,
+		(uri, localName) => [uri, localName]
+	);
 
-	const eqName: Parser<IAST | [ASTAttributes, string]> = or([
-		map(
-			uriQualifiedName,
-			(x) => [{ ['prefix']: null, ['URI']: x[0] }, x[1]] as [ASTAttributes, string]
-		),
-		qName as Parser<IAST | [ASTAttributes, string]>,
+	const eqName: Parser<QNameAST> = or([
+		map(uriQualifiedName, (x) => [{ prefix: null, URI: x[0] }, x[1]]),
+		qName,
 	]);
 
 	const elementName = eqName;
 
 	const elementNameOrWildCard: Parser<IAST> = or([
-		map(elementName, (qname) => ['QName', ...qname]),
+		map(elementName, (qname) => ['QName', ...qname] as IAST),
 		map(tokens.ASTERIX, (_) => ['star']),
 	]);
 
-	const typeName: Parser<IAST | [ASTAttributes, string]> = eqName;
+	const typeName: Parser<QNameAST> = eqName;
 
 	const elementTest: Parser<IAST> = or([
 		map(
@@ -563,7 +563,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 	]);
 
 	const attribNameOrWildCard: Parser<IAST> = or([
-		map(elementName, (qname) => ['QName', ...qname]),
+		map(elementName, (qname) => ['QName', ...qname] as IAST),
 		map(tokens.ASTERIX, (_) => ['star']),
 	]);
 
@@ -603,7 +603,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		),
 	]);
 
-	const elementDeclaration: Parser<IAST | [ASTAttributes, string]> = elementName;
+	const elementDeclaration: Parser<QNameAST> = elementName;
 
 	const schemaElementTest: Parser<IAST> = map(
 		precededMultiple(
@@ -767,7 +767,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		map(stringLiteral, (x) => ['stringConstantExpr', ['value', parseCharacterReferences(x)]]),
 	]);
 
-	const varName: Parser<IAST | [ASTAttributes, string]> = eqName;
+	const varName: Parser<QNameAST> = eqName;
 
 	const varRef: Parser<IAST> = map(preceded(tokens.DOLLAR, varName), (x) => [
 		'varRef',
@@ -864,14 +864,14 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		tokens.PLUS,
 	]);
 
-	const sequenceType: Parser<any> = or([
+	const sequenceType: Parser<IAST[]> = or([
 		map(tokens.EMPTY_SEQUENCE_TEST, (_) => [['voidSequenceType']]),
 		then(
 			itemTypeIndirect,
 			optional(preceded(whitespace, occurrenceIndicator)),
 			(type, occurrence) => [
 				type,
-				...(occurrence !== null ? [['occurrenceIndicator', occurrence]] : []),
+				...(occurrence !== null ? ([['occurrenceIndicator', occurrence]] as IAST[]) : []),
 			]
 		),
 	]);
@@ -1178,7 +1178,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		commonContent,
 	]);
 
-	const dirAttributeValue: Parser<any[]> = map(
+	const dirAttributeValue: Parser<(IAST | string)[]> = map(
 		or([
 			surrounded(star(or([escapeQuot, quotAttrValueContent])), tokens.DOUBLE_QUOTE),
 			surrounded(star(or([escapeApos, aposAttrValueContent])), tokens.SINGLE_QUOTE),
@@ -1190,7 +1190,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		qName,
 		preceded(surrounded(tokens.EQUALS, optional(explicitWhitespace)), dirAttributeValue),
 		(attrName, value) => {
-			if (attrName.length === 1 && attrName[0] === 'xmlns') {
+			if (attrName[1] === 'xmlns') {
 				if (value.length && typeof value[0] !== 'string') {
 					throw new Error(
 						'XQST0022: A namespace declaration may not contain enclosed expressions'
@@ -1198,7 +1198,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				}
 				return ['namespaceDeclaration', value.length ? ['uri', value[0]] : ['uri']];
 			}
-			if ((attrName[0] as ASTAttributes).prefix === 'xmlns') {
+			if (attrName[0].prefix === 'xmlns') {
 				if (value.length && typeof value[0] !== 'string') {
 					throw new Error(
 						"XQST0022: The namespace declaration for 'xmlns:" +
@@ -1219,7 +1219,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 					? ['attributeValue']
 					: value.length === 1 && typeof value[0] === 'string'
 					? ['attributeValue', value[0]]
-					: ['attributeValueExpr'].concat(value),
+					: (['attributeValueExpr'] as IAST).concat(value),
 			] as IAST;
 		}
 	);
@@ -1251,7 +1251,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		(tagName, attList, contentsEndName) => {
 			let contents = contentsEndName;
 			if (contentsEndName && contentsEndName.length) {
-				assertEqualQNames(tagName as QNameIAST, contentsEndName[1]);
+				assertEqualQNames(tagName, contentsEndName[1]);
 				contents = contentsEndName[0];
 			}
 			return [
@@ -1347,14 +1347,14 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		precededMultiple(
 			[tokens.ELEMENT, whitespace],
 			or([
-				map(eqName, (x) => ['tagName', ...x]),
+				map(eqName, (x) => ['tagName', ...x] as IAST),
 				map(
 					delimited(
 						tokens.CURLY_BRACE_OPEN,
 						surrounded(expr, whitespace),
 						tokens.CURLY_BRACE_CLOSE
 					),
-					(x) => ['tagNameExpr', x]
+					(x) => ['tagNameExpr', x] as IAST
 				),
 			])
 		),
@@ -1366,10 +1366,10 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		preceded(
 			tokens.ATTRIBUTE,
 			or([
-				map(precededMultiple([assertAdjacentOpeningTerminal, whitespace], eqName), (x) => [
-					'tagName',
-					...x,
-				]),
+				map(
+					precededMultiple([assertAdjacentOpeningTerminal, whitespace], eqName),
+					(x) => ['tagName', ...x] as IAST
+				),
 				map(
 					preceded(
 						whitespace,
@@ -1379,7 +1379,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 							tokens.CURLY_BRACE_CLOSE
 						)
 					),
-					(x) => ['tagNameExpr', x]
+					(x) => ['tagNameExpr', x] as IAST
 				),
 			])
 		),
@@ -1497,7 +1497,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			])
 		),
 		(expression: IAST, postfixExpr: IAST[]) => {
-			let toWrap: any = expression;
+			let toWrap: IAST | IAST[] = expression;
 
 			const predicates: IAST[] = [];
 			const filters: IAST[] = [];
@@ -1517,14 +1517,14 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				flushPredicates();
 				if (filters.length !== 0) {
 					if (toWrap[0] === 'sequenceExpr' && toWrap.length > 2) {
-						toWrap = ['sequenceExpr', toWrap];
+						toWrap = ['sequenceExpr', toWrap as IAST];
 					}
-					toWrap = [['filterExpr', toWrap], ...filters];
+					toWrap = [['filterExpr', toWrap as IAST], ...filters];
 					filters.length = 0;
 				} else if (ensureFilter) {
-					toWrap = [['filterExpr', toWrap]];
+					toWrap = [['filterExpr', toWrap as IAST]];
 				} else {
-					toWrap = [toWrap];
+					toWrap = [toWrap as IAST];
 				}
 			}
 
@@ -1549,7 +1549,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 							...((postFix[1] as IAST).length
 								? [['arguments', ...(postFix[1] as IAST)]]
 								: []),
-						];
+						] as IAST;
 						break;
 					default:
 						throw new Error('unreachable');
@@ -2391,7 +2391,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 	}
 
 	function expr(input: string, offset: number): ParseResult<IAST> {
-		return binaryOperator<IAST>(exprSingle, tokens.COMMA, (lhs, rhs) => {
+		return binaryOperator<IAST, IAST>(exprSingle, tokens.COMMA, (lhs, rhs) => {
 			return rhs.length === 0 ? lhs : ['sequenceExpr', lhs, ...rhs.map((x) => x[1])];
 		})(input, offset);
 	}
