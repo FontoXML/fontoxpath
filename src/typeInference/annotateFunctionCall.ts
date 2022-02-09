@@ -24,32 +24,43 @@ export function annotateFunctionCall(
 	}
 
 	// Get qualified function name
-	const qName: QName = astHelper.getQName(astHelper.getFirstChild(ast, 'functionName'));
-	const localName = qName.localName;
+	const functionNameAstNode = astHelper.getFirstChild(ast, 'functionName');
+	const qName: QName = astHelper.getQName(functionNameAstNode);
+	let localName = qName.localName;
 	const prefix = qName.prefix;
+	let namespaceURI = qName.namespaceURI;
 
 	const functionArguments = astHelper.getChildren(astHelper.getFirstChild(ast, 'arguments'), '*');
 
-	// Lookup the namespace URI
-	const resolvedName = annotationContext.staticContext.resolveFunctionName(
-		{
-			localName,
-			prefix,
-		},
-		functionArguments.length
-	);
+	if (namespaceURI === null) {
+		// Lookup the namespace URI
+		const resolvedName = annotationContext.staticContext.resolveFunctionName(
+			{
+				localName,
+				prefix,
+			},
+			functionArguments.length
+		);
 
-	if (!resolvedName) {
-		return {
-			type: ValueType.ITEM,
-			mult: SequenceMultiplicity.ZERO_OR_MORE,
-		};
+		if (!resolvedName) {
+			return {
+				type: ValueType.ITEM,
+				mult: SequenceMultiplicity.ZERO_OR_MORE,
+			};
+		}
+
+		localName = resolvedName.localName;
+		namespaceURI = resolvedName.namespaceURI;
+
+		// Write the result of function resolveing to the AST
+		astHelper.insertAttribute(functionNameAstNode, 'URI', namespaceURI);
+		functionNameAstNode[2] = localName;
 	}
 
 	// Lookup the function properties (return type)
 	const functionProps = annotationContext.staticContext.lookupFunction(
-		resolvedName.namespaceURI,
-		resolvedName.localName,
+		namespaceURI,
+		localName,
 		functionArguments.length
 	);
 

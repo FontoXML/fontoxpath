@@ -94,18 +94,29 @@ class AttributeConstructor extends Expression {
 						name = this.name;
 					}
 
-					if (
-						name &&
-						(name.prefix === 'xmlns' ||
-							(!name.prefix && name.localName === 'xmlns') ||
-							name.namespaceURI === BUILT_IN_NAMESPACE_URIS.XMLNS_NAMESPACE_URI ||
-							(name.prefix === 'xml' &&
-								name.namespaceURI !== BUILT_IN_NAMESPACE_URIS.XML_NAMESPACE_URI) ||
-							(name.prefix &&
-								name.prefix !== 'xml' &&
-								name.namespaceURI === BUILT_IN_NAMESPACE_URIS.XML_NAMESPACE_URI))
-					) {
-						throw errXQDY0044(name);
+					if (name) {
+						if (name.prefix === 'xmlns') {
+							throw errXQDY0044(name);
+						}
+						if (name.prefix === '' && name.localName === 'xmlns') {
+							throw errXQDY0044(name);
+						}
+						if (name.namespaceURI === BUILT_IN_NAMESPACE_URIS.XMLNS_NAMESPACE_URI) {
+							throw errXQDY0044(name);
+						}
+						if (
+							name.prefix === 'xml' &&
+							name.namespaceURI !== BUILT_IN_NAMESPACE_URIS.XML_NAMESPACE_URI
+						) {
+							throw errXQDY0044(name);
+						}
+						if (
+							name.prefix !== '' &&
+							name.prefix !== 'xml' &&
+							name.namespaceURI === BUILT_IN_NAMESPACE_URIS.XML_NAMESPACE_URI
+						) {
+							throw errXQDY0044(name);
+						}
 					}
 				}
 

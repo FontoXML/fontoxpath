@@ -14,7 +14,6 @@ export default class ExecutionParameters {
 		public readonly currentContext: any,
 		public readonly rootPointerByRootNodeMap: Map<ConcreteNode | TinyNode, NodePointer>,
 		public readonly logger?: Logger,
-		public readonly xmlSerializer?: XMLSerializer,
-		public readonly annotateAst: boolean = true
+		public readonly xmlSerializer?: XMLSerializer
 	) {}
 }

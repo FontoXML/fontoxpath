@@ -58,7 +58,7 @@ class ElementConstructor extends Expression {
 						`XQST0071: The namespace declaration with the prefix ${namespaceDecl.prefix} has already been declared on the constructed element.`
 					);
 				}
-				namespacesInScope[namespaceDecl.prefix] = namespaceDecl.uri;
+				namespacesInScope[namespaceDecl.prefix || ''] = namespaceDecl.uri;
 				return namespacesInScope;
 			},
 			{}
@@ -240,8 +240,9 @@ class ElementConstructor extends Expression {
 			// We can not throw a static error for computed attribute constructor of which we do not yet know the name
 			if (attribute.name) {
 				const attributeNamespaceURI =
-					attribute.name.namespaceURI ||
-					staticContext.resolveNamespace(attribute.name.prefix);
+					attribute.name.namespaceURI === null
+						? staticContext.resolveNamespace(attribute.name.prefix)
+						: attribute.name.namespaceURI;
 				const uriQualifiedName = `Q{${attributeNamespaceURI}}${attribute.name.localName}`;
 				if (attributeNames.includes(uriQualifiedName)) {
 					throw errXQST0040(uriQualifiedName);
@@ -251,12 +252,12 @@ class ElementConstructor extends Expression {
 			return attributeNames;
 		}, []);
 
-		if (this._name) {
+		if (this._name && this._name.namespaceURI === null) {
 			const namespaceURI = staticContext.resolveNamespace(this._name.prefix);
 			if (namespaceURI === undefined && this._name.prefix) {
 				throw errXPST0081(this._name.prefix);
 			}
-			this._name.namespaceURI = namespaceURI || null;
+			this._name.namespaceURI = namespaceURI;
 		}
 
 		this._staticContext = staticContext.cloneContext();

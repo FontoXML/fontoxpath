@@ -82,14 +82,13 @@ function buildResultIterator(
 
 	const ast = createAstFromValue(queryValue, executionParameters.debug);
 
-	if (executionParameters.annotateAst) {
-		annotateAst(ast, new AnnotationContext(innerStaticContext));
-	}
-
 	const prolog = astHelper.followPath(ast, ['mainModule', 'prolog']);
 	if (prolog) {
 		processProlog(prolog, innerStaticContext);
 	}
+
+	annotateAst(ast, new AnnotationContext(innerStaticContext));
+
 	const queryBodyContents = astHelper.followPath(ast, ['mainModule', 'queryBody', '*']);
 
 	const selector = compileAstToExpression(queryBodyContents, {

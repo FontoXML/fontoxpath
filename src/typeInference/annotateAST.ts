@@ -249,7 +249,7 @@ const annotationFunctions = new Map<
 			const root = astHelper.getFirstChild(ast, 'rootExpr');
 			if (root && root[1]) annotate(root[1] as IAST, context);
 			astHelper.getChildren(ast, 'stepExpr').map((b) => annotate(b, context));
-			return annotatePathExpr(ast);
+			return annotatePathExpr(ast, context);
 		},
 
 		// Context Item

@@ -69,7 +69,6 @@ export default function buildEvaluationContext(
 	compilationOptions: {
 		allowUpdating: boolean;
 		allowXQuery: boolean;
-		annotateAst: boolean;
 		debug: boolean;
 		disableCache: boolean;
 	}
@@ -84,7 +83,6 @@ export default function buildEvaluationContext(
 	let internalOptions: Options;
 	if (externalOptions) {
 		internalOptions = {
-			annotateAst: compilationOptions.annotateAst,
 			// tslint:disable-next-line:no-console
 			logger: externalOptions['logger'] || { trace: console.log.bind(console) },
 			documentWriter: externalOptions['documentWriter'],
@@ -96,7 +94,6 @@ export default function buildEvaluationContext(
 		};
 	} else {
 		internalOptions = {
-			annotateAst: compilationOptions.annotateAst,
 			// tslint:disable-next-line:no-console
 			logger: { trace: console.log.bind(console) },
 			moduleImports: {},
@@ -116,8 +113,9 @@ export default function buildEvaluationContext(
 		internalOptions.namespaceResolver || createDefaultNamespaceResolver(contextItem);
 
 	const defaultFunctionNamespaceURI =
-		externalOptions['defaultFunctionNamespaceURI'] ||
-		BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI;
+		externalOptions['defaultFunctionNamespaceURI'] === undefined
+			? BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI
+			: externalOptions['defaultFunctionNamespaceURI'];
 
 	const functionNameResolver =
 		internalOptions.functionNameResolver ||
@@ -197,8 +195,7 @@ export default function buildEvaluationContext(
 		externalOptions['currentContext'],
 		new Map(),
 		internalOptions.logger,
-		xmlSerializer,
-		true
+		xmlSerializer
 	);
 
 	return {

@@ -22,7 +22,7 @@ class VarRef extends Expression {
 		});
 
 		this._variableName = variableName;
-		this._namespaceURI = namespaceURI || undefined;
+		this._namespaceURI = namespaceURI;
 		this._prefix = prefix;
 
 		this._variableBindingName = null;
@@ -44,12 +44,12 @@ class VarRef extends Expression {
 	}
 
 	public performStaticEvaluation(staticContext: StaticContext) {
-		if (this._prefix) {
+		if (this._namespaceURI === null && this._prefix) {
 			this._namespaceURI = staticContext.resolveNamespace(this._prefix);
 		}
 
 		this._variableBindingName = staticContext.lookupVariable(
-			this._namespaceURI || undefined,
+			this._namespaceURI || '',
 			this._variableName
 		);
 		if (!this._variableBindingName) {

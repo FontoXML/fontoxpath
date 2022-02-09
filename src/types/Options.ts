@@ -69,13 +69,6 @@ export type XMLSerializer = { serializeToString: (root: Node) => string };
  */
 export type Options = {
 	/**
-	 * Whether or not the AST should get annotated after parsing an expression. The annotation adds
-	 * additional type information to the AST.
-	 * @beta
-	 */
-	annotateAst?: boolean;
-
-	/**
 	 * The current context for a query. Will be passed whenever an extension function is called. Can be
 	 * used to implement the current function in XSLT.
 	 *

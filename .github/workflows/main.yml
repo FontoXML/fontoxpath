@@ -32,8 +32,6 @@ jobs:
               run: npm run test-jscodegen -- --dist --reporter dot;
             - name: QT3 tests against source
               run: npm run ci-qt3tests -- --reporter dot;
-            - name: QT3 tests against source using annotation
-              run: npm run ci-qt3tests -- --reporter dot --annotate;
             - name: Unit tests against bundle
               run: npm run integrationtests -- --dist --reporter dot;
             - name: QT3 tests against bundle

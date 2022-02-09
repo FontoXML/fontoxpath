@@ -49,7 +49,7 @@ export type UpdatingFunctionDefinition = GenericFunctionDefinition<
  * none.
  */
 export default class StaticContext implements IContext {
-	public parentContext: IContext;
+	public parentContext: IContext | null;
 	public registeredDefaultFunctionNamespaceURI: string;
 	registeredVariableBindingByHashKey: { [s: string]: string }[];
 	public registeredVariableDeclarationByHashKey: {
@@ -79,8 +79,9 @@ export default class StaticContext implements IContext {
 		this.registeredDefaultFunctionNamespaceURI = null;
 
 		this.registeredVariableDeclarationByHashKey =
-			parentContext.registeredVariableDeclarationByHashKey;
-		this.registeredVariableBindingByHashKey = parentContext.registeredVariableBindingByHashKey;
+			parentContext && parentContext.registeredVariableDeclarationByHashKey;
+		this.registeredVariableBindingByHashKey =
+			parentContext && parentContext.registeredVariableBindingByHashKey;
 	}
 
 	/**
@@ -166,7 +167,9 @@ export default class StaticContext implements IContext {
 		if (varNameInCurrentScope) {
 			return varNameInCurrentScope;
 		}
-		return this.parentContext.lookupVariable(namespaceURI, localName);
+		return this.parentContext === null
+			? null
+			: this.parentContext.lookupVariable(namespaceURI, localName);
 	}
 
 	public lookupVariableValue(namespaceURI: string, localName: string) {
@@ -234,15 +237,13 @@ export default class StaticContext implements IContext {
 	): ResolvedQualifiedName {
 		const { prefix, localName } = lexicalQName;
 		// First consider local definitions
-		if (!prefix && this.registeredDefaultFunctionNamespaceURI) {
+		if (prefix === '' && this.registeredDefaultFunctionNamespaceURI) {
 			return {
 				localName,
 				namespaceURI: this.registeredDefaultFunctionNamespaceURI,
 			};
 		} else if (prefix) {
-			// Try to resolve the NS. Note: do not go to the outside to resolve that
-			// namespace. There is special config for function name resolveing that should have its
-			// turn
+			// Try to resolve the NS.
 			const namespaceURI = this.resolveNamespace(prefix, false);
 			if (namespaceURI) {
 				return { localName, namespaceURI };
@@ -250,15 +251,17 @@ export default class StaticContext implements IContext {
 		}
 
 		// Then consider the parent context
-		return this.parentContext.resolveFunctionName(lexicalQName, arity);
+		return this.parentContext === null
+			? null
+			: this.parentContext.resolveFunctionName(lexicalQName, arity);
 	}
 
 	public resolveNamespace(prefix: string, useExternalResolver: boolean = true): string {
-		const uri = lookupInOverrides(this._registeredNamespaceURIByPrefix, prefix);
+		const uri = lookupInOverrides(this._registeredNamespaceURIByPrefix, prefix || '');
 		if (uri === undefined) {
 			return this.parentContext === null
 				? undefined
-				: this.parentContext.resolveNamespace(prefix, useExternalResolver);
+				: this.parentContext.resolveNamespace(prefix || '', useExternalResolver);
 		}
 		return uri;
 	}

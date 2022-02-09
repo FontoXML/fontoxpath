@@ -1,5 +1,7 @@
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
+import QName from '../expressions/dataTypes/valueTypes/QName';
 import astHelper, { IAST } from '../parsing/astHelper';
+import { AnnotationContext } from './AnnotationContext';
 
 /**
  * The type of the pathExpr is the type of the last step,
@@ -8,17 +10,18 @@ import astHelper, { IAST } from '../parsing/astHelper';
  * if this is a filterExpression we can return the type of the filterExpression
  * otherwise we can assume it is a lookup and just default to item()*
  *
- * @param ast the AST to be annotated.
+ * @param ast - the AST to be annotated.
+ * @param annotationContext - The annotation context at this point
  * @returns the inferred SequenceType
  */
-export function annotatePathExpr(ast: IAST): SequenceType {
+export function annotatePathExpr(ast: IAST, annotationContext: AnnotationContext): SequenceType {
 	const steps = astHelper.getChildren(ast, 'stepExpr');
 	if (!steps) {
 		return { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE };
 	}
 	let retType;
 	for (const step of steps) {
-		annotateStep(step);
+		annotateStep(step, annotationContext);
 		retType = astHelper.getAttribute(step, 'type');
 	}
 
@@ -59,21 +62,40 @@ function annotateXPathAxis(axis: string): SequenceType {
 	}
 }
 
-function annotateStep(step: IAST): SequenceType {
+function annotateStep(step: IAST, annotationContext: AnnotationContext): SequenceType {
 	let seqType;
 	const item = { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE };
 	if (!step) {
 		return item;
 	}
 	const children = astHelper.getChildren(step, '*');
+	let axisType = '';
 	for (const substep of children) {
 		switch (substep[0]) {
 			case 'filterExpr':
 				seqType = astHelper.getAttribute(astHelper.followPath(substep, ['*']), 'type');
 				break;
 			case 'xpathAxis':
-				seqType = annotateXPathAxis(substep[1] as string);
+				axisType = substep[1] as string;
+				seqType = annotateXPathAxis(axisType);
 				break;
+			case 'nameTest': {
+				// Nametest: resolve the namespace URI and save it
+				const qName: QName = astHelper.getQName(substep);
+				if (qName.namespaceURI !== null) {
+					// Already resolved, no need
+					break;
+				}
+				if (axisType === 'attribute' && !qName.prefix) {
+					// Attributes without prefixes are actually always in the null namespace
+					break;
+				}
+				const resolvedNamespaceURI = annotationContext.resolveNamespace(qName.prefix || '');
+				if (resolvedNamespaceURI !== undefined) {
+					astHelper.insertAttribute(substep, 'URI', resolvedNamespaceURI);
+				}
+				break;
+			}
 			case 'attributeTest':
 			case 'anyElementTest':
 			case 'piTest':
@@ -91,7 +113,6 @@ function annotateStep(step: IAST): SequenceType {
 			case 'parenthesizedItemType':
 			case 'typedMapTest':
 			case 'typedArrayTest':
-			case 'nameTest':
 			case 'Wildcard':
 			case 'predicate':
 			case 'predicates':

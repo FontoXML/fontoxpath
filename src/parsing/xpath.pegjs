@@ -1025,8 +1025,8 @@ DirAttributeList
 
 attribute
  = name:QName ExplicitWhitespace? "=" ExplicitWhitespace? value:DirAttributeValue
-   {
-     if (name.length === 1 && name[0] === "xmlns") {
+{
+     if (name[0].prefix === '' && name[1] === "xmlns") {
        if (value.length && typeof value[0] !== "string") {
          throwError("XQST0022", "A namespace declaration may not contain enclosed expressions");
        }
@@ -1505,9 +1505,9 @@ WhitespaceCharacter
  / Comment // Note: comments can occur anywhere where whitespace is allowed: https://www.w3.org/TR/xpath-3/#DefaultWhitespaceHandling
 
 // XML Types
-PrefixedName = prefix:XMLPrefix ":" local:LocalPart {return [{['prefix']: prefix}, local]}
+PrefixedName = prefix:XMLPrefix ":" local:LocalPart {return [{['prefix']: prefix, ['URI']: null}, local]}
 
-UnprefixedName = local:LocalPart {return [local]}
+UnprefixedName = local:LocalPart {return [{['prefix']: '', ['URI']: null}, local]}
 
 LocalPart = NCName
 

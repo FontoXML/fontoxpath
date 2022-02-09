@@ -12,7 +12,6 @@ import { slimdom, sync } from 'slimdom-sax-parser';
 function removeInsignificantWhitespace(root) {
 	const nonSignificantWhitespace = evaluateXPathToNodes<Text>('//*/text()', root, null, null, {
 		language: evaluateXPath.XQUERY_3_1_LANGUAGE,
-		annotateAst: false,
 	});
 	for (const node of nonSignificantWhitespace) {
 		node.data = node.data.trim();
@@ -40,7 +39,7 @@ export function buildTestCase(
 		try {
 			astElement = parseScript(
 				xQuery,
-				{ annotateAst: false, language: Language.XQUERY_UPDATE_3_1_LANGUAGE },
+				{ language: Language.XQUERY_UPDATE_3_1_LANGUAGE, annotateAst: false },
 				new slimdom.Document()
 			);
 		} catch (err) {
@@ -88,16 +87,10 @@ export function buildTestCase(
 		}
 
 		if (
-			!evaluateXPathToBoolean(
-				'deep-equal($expected, $actual)',
-				null,
-				null,
-				{
-					expected,
-					actual,
-				},
-				{ annotateAst: false }
-			)
+			!evaluateXPathToBoolean('deep-equal($expected, $actual)', null, null, {
+				expected,
+				actual,
+			})
 		) {
 			try {
 				chai.assert.equal(

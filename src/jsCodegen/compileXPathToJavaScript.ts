@@ -6,6 +6,7 @@ import {
 import ExecutionSpecificStaticContext from '../expressions/ExecutionSpecificStaticContext';
 import { BUILT_IN_NAMESPACE_URIS } from '../expressions/staticallyKnownNamespaces';
 import StaticContext from '../expressions/StaticContext';
+import astHelper from '../parsing/astHelper';
 import { ReturnType } from '../parsing/convertXDMReturnValue';
 import convertXmlToAst from '../parsing/convertXmlToAst';
 import normalizeEndOfLines from '../parsing/normalizeEndOfLines';
@@ -15,7 +16,7 @@ import { AnnotationContext } from '../typeInference/AnnotationContext';
 import { Language, Options } from '../types/Options';
 import { CodeGenContext } from './CodeGenContext';
 import compileAstToJavaScript from './compileAstToJavaScript';
-import { JavaScriptCompiledXPathResult } from './JavaScriptCompiledXPath';
+import { JavaScriptCompiledXPathResult, rejectAst } from './JavaScriptCompiledXPath';
 
 /**
  * Compile a given query to JavaScript code. For executing compiled code, see
@@ -54,6 +55,15 @@ function compileXPathToJavaScript(
 		ast = convertXmlToAst(selector);
 	}
 
+	const mainModule = astHelper.getFirstChild(ast, 'mainModule');
+	if (!mainModule) {
+		return rejectAst(`Unsupported: XQuery Library modules are not supported.`);
+	}
+	const prolog = astHelper.getFirstChild(mainModule, 'prolog');
+	if (prolog) {
+		return rejectAst(`Unsupported: XQuery Prologs are not supported.`);
+	}
+
 	const codegenContext: CodeGenContext = {
 		resolveNamespace: options['namespaceResolver'] || createDefaultNamespaceResolver(null),
 	};
@@ -65,11 +75,13 @@ function compileXPathToJavaScript(
 				new ExecutionSpecificStaticContext(
 					codegenContext.resolveNamespace,
 					{},
-					options['defaultFunctionNamespaceURI'] ||
-						BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
-					createDefaultFunctionNameResolver(
-						BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI
-					)
+					options['defaultFunctionNamespaceURI'] === undefined
+						? BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI
+						: options['defaultFunctionNamespaceURI'],
+					options['functionNameResolver'] ||
+						createDefaultFunctionNameResolver(
+							BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI
+						)
 				)
 			)
 		)

@@ -193,7 +193,7 @@ function getQName(ast: IAST): QName {
 	return {
 		localName: getTextContent(ast),
 		namespaceURI: getAttribute(ast, 'URI') as string,
-		prefix: (getAttribute(ast, 'prefix') as string) || '',
+		prefix: getAttribute(ast, 'prefix') as string,
 	};
 }
 

@@ -62,7 +62,9 @@ class NamedFunctionRef extends Expression {
 		let namespaceURI = this._functionReference.namespaceURI;
 		let localName = this._functionReference.localName;
 		const prefix = this._functionReference.prefix;
-		if (!namespaceURI) {
+		// If the namespace uri is alreay resolved this was either a functioncall using the
+		// BracedURILiteral syntax (Q{...}) or the URI was resolved by AST annotation
+		if (namespaceURI === null) {
 			const functionName = staticContext.resolveFunctionName(
 				{ localName, prefix },
 				this._arity

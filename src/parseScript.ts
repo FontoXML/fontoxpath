@@ -2,10 +2,14 @@ import domBackedDocumentWriter from './documentWriter/domBackedDocumentWriter';
 import IDocumentWriter from './documentWriter/IDocumentWriter';
 import ExternalDomFacade from './domFacade/ExternalDomFacade';
 import { sequenceTypeToString } from './expressions/dataTypes/Value';
+import ExecutionSpecificStaticContext from './expressions/ExecutionSpecificStaticContext';
 import { BUILT_IN_NAMESPACE_URIS } from './expressions/staticallyKnownNamespaces';
+import StaticContext from './expressions/StaticContext';
 import ISimpleNodesFactory from './nodesFactory/ISimpleNodesFactory';
+import astHelper from './parsing/astHelper';
 import normalizeEndOfLines from './parsing/normalizeEndOfLines';
 import parseExpression from './parsing/parseExpression';
+import processProlog from './parsing/processProlog';
 import annotateAst from './typeInference/annotateAST';
 import { AnnotationContext } from './typeInference/AnnotationContext';
 import { Language, Options } from './types/Options';
@@ -72,6 +76,8 @@ function getQName(name: string, parentUri: string): { localName: string; namespa
  * @param   documentWriter -  Used to place nodes in the DOM
  * @param   simpleNodesFactory   -  Used to construct nodes
  * @param   jsonml   -  The JsonML fragment to parse
+ * @param   parentUri
+ * @param   skipEmptyPrefixes - Whether to output empty prefixes. This is closed to the spec XQueryX examples, but breaks assumptions in AST annotation
  *
  * @return  The root node of the constructed DOM fragment
  */
@@ -79,7 +85,8 @@ function parseNode(
 	documentWriter: IDocumentWriter,
 	simpleNodesFactory: ISimpleNodesFactory,
 	jsonml: any[] | string,
-	parentUri: string | null
+	parentUri: string | null,
+	skipEmptyPrefixes: boolean
 ): Text | Element {
 	if (typeof jsonml === 'string') {
 		if (jsonml.length === 0) {
@@ -104,28 +111,37 @@ function parseNode(
 	const firstChild = jsonml[1];
 	let firstChildIndex = 1;
 	if (typeof firstChild === 'object' && !Array.isArray(firstChild)) {
-		for (const attributeName in firstChild) {
-			if (firstChild[attributeName] !== null) {
+		if (firstChild !== null) {
+			for (const attributeName of Object.keys(firstChild)) {
+				const attributeValue = firstChild[attributeName];
+				if (attributeValue === null) {
+					continue;
+				}
 				if (attributeName === 'type') {
 					// TODO: prevent writing undefined to variables at the first place
-					if (firstChild[attributeName] !== undefined) {
+					if (attributeValue !== undefined) {
 						documentWriter.setAttributeNS(
 							element,
 							namespaceUri,
 							'fontoxpath:' + attributeName,
-							sequenceTypeToString(firstChild[attributeName])
+							sequenceTypeToString(attributeValue)
 						);
 					}
-				} else {
-					documentWriter.setAttributeNS(
-						element,
-						namespaceUri,
-						PREFERRED_PREFIX_BY_NAMESPACEURI[namespaceUri] + ':' + attributeName,
-						firstChild[attributeName]
-					);
+					continue;
 				}
+
+				if (skipEmptyPrefixes && attributeName === 'prefix' && attributeValue === '') {
+					continue;
+				}
+				documentWriter.setAttributeNS(
+					element,
+					namespaceUri,
+					PREFERRED_PREFIX_BY_NAMESPACEURI[namespaceUri] + ':' + attributeName,
+					attributeValue
+				);
 			}
 		}
+
 		firstChildIndex = 2;
 	}
 	// Parse children
@@ -134,7 +150,8 @@ function parseNode(
 			documentWriter,
 			simpleNodesFactory,
 			jsonml[i] as any[] | string,
-			namespaceUri
+			namespaceUri,
+			skipEmptyPrefixes
 		);
 		if (node !== null) {
 			documentWriter.insertBefore(element, node, null);
@@ -190,7 +207,7 @@ function parseNode(
  */
 export default function parseScript<TElement extends Element>(
 	script: string,
-	options: Options,
+	options: Options & { annotateAst?: boolean },
 	simpleNodesFactory: ISimpleNodesFactory,
 	documentWriter: IDocumentWriter = domBackedDocumentWriter
 ): TElement {
@@ -202,12 +219,35 @@ export default function parseScript<TElement extends Element>(
 		debug: options.debug,
 	});
 
-	if (options.annotateAst) {
-		annotateAst(ast, new AnnotationContext(undefined));
+	// Let external options required for static evaluation flow in
+	const executionSpecificStaticContext = new ExecutionSpecificStaticContext(
+		options['namespaceResolver'] || ((_prefix: string) => null),
+		{},
+		options['defaultFunctionNamespaceURI'] === undefined
+			? BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI
+			: options['defaultFunctionNamespaceURI'],
+		options['functionNameResolver'] || (() => null)
+	);
+	const rootStaticContext = new StaticContext(executionSpecificStaticContext);
+	const prolog = astHelper.followPath(ast, ['mainModule', 'prolog']);
+
+	if (prolog) {
+		processProlog(prolog, rootStaticContext, false);
+	}
+
+	if (options['annotateAst'] !== false) {
+		const context = new AnnotationContext(rootStaticContext);
+		annotateAst(ast, context);
 	}
 
 	const domFacade = new ExternalDomFacade();
-	const astAsXML = parseNode(documentWriter, simpleNodesFactory, ast, null) as TElement;
+	const astAsXML = parseNode(
+		documentWriter,
+		simpleNodesFactory,
+		ast,
+		null,
+		options.annotateAst === false
+	) as TElement;
 	documentWriter.insertBefore(
 		astAsXML,
 		simpleNodesFactory.createComment(script),

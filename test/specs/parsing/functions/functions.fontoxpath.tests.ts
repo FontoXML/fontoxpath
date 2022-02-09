@@ -26,7 +26,7 @@ describe('extension functions', () => {
 		});
 	});
 	describe('fontoxpath:evaluate()', () => {
-		function identityNamespaceResolver(prefix) {
+		function identityNamespaceResolver(prefix: string) {
 			return prefix;
 		}
 

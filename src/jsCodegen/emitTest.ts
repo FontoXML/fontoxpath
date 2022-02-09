@@ -36,13 +36,19 @@ function emitTextTest(
 }
 
 function resolveNamespaceURI(qName: QName, staticContext: CodeGenContext) {
-	// Resolve prefix.
-	if (qName.namespaceURI === null && qName.prefix !== '*') {
-		qName.namespaceURI = staticContext.resolveNamespace(qName.prefix || '') || null;
-		if (!qName.namespaceURI && qName.prefix) {
-			throw new Error(`XPST0081: The prefix ${qName.prefix} could not be resolved.`);
-		}
+	if (qName.namespaceURI !== null) {
+		return;
 	}
+	if (qName.prefix === '*') {
+		return;
+	}
+	// Resolve prefix.
+	const namespaceURI = staticContext.resolveNamespace(qName.prefix || '') || null;
+
+	if (!namespaceURI && qName.prefix) {
+		throw new Error(`XPST0081: The prefix ${qName.prefix} could not be resolved.`);
+	}
+	qName.namespaceURI = namespaceURI;
 }
 
 function emitNameTestFromQName(
@@ -50,7 +56,6 @@ function emitNameTestFromQName(
 	qName: QName,
 	staticContext: CodeGenContext
 ): [PartialCompilationResult, Bucket | null] {
-	const namespaceURIWasResolved = qName.namespaceURI === null;
 	resolveNamespaceURI(qName, staticContext);
 	const { prefix, namespaceURI, localName } = qName;
 
@@ -87,18 +92,17 @@ function emitNameTestFromQName(
 			: '';
 
 	let resolveNamespaceURICode: string;
-	if (namespaceURIWasResolved && !prefix) {
-		// This prefix came from the name
-		// While the namespaceuri is also present, this should not be used for _attribute_ name tests
+	if (prefix === '') {
+		// The prefix was empty: attributes should always resolve the empty prefix to the null namespace
 		resolveNamespaceURICode = `${identifier}.nodeType
 && ${identifier}.nodeType === /*ELEMENT_NODE*/ ${
 			NODE_TYPES.ELEMENT_NODE
 		} ? ${escapeJavaScriptString(namespaceURI)} : null`;
 	} else {
-		// There was a prefix. This applies to elements and attributes
+		// There was a prefix, or the namespace was already resolved. This applies to elements and attributes
 		resolveNamespaceURICode = escapeJavaScriptString(namespaceURI);
 	}
-	const matchesNamespaceCode = `(${identifier}.namespaceURI || null) === (${resolveNamespaceURICode} || null)`;
+	const matchesNamespaceCode = `(${identifier}.namespaceURI || null) === ((${resolveNamespaceURICode}) || null)`;
 
 	return [
 		acceptAst(`${matchesLocalNameCode}${matchesNamespaceCode}`, {
@@ -155,7 +159,7 @@ function emitWildcard(
 	}
 
 	const uri = astHelper.getFirstChild(ast, 'uri');
-	if (uri) {
+	if (uri !== null) {
 		return emitNameTestFromQName(
 			identifier,
 			{

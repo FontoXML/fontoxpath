@@ -33,9 +33,6 @@ export default function parseExpression(
 				xquery: !!compilationOptions.allowXQuery,
 				outputDebugInfo: !!compilationOptions.debug,
 			});
-			if (!compilationOptions.debug) {
-				storeParseResultInCache(xPathString, language, ast);
-			}
 		}
 
 		return ast;

@@ -21,7 +21,7 @@ beforeEach(() => {
 describe('functions over nodes', () => {
 	describe('node-name()', () => {
 		it('returns an empty sequence if $arg is an empty sequence', () =>
-			chai.assert.deepEqual(evaluateXPathToStrings('node-name(())', documentNode), []));
+			chai.assert.isEmpty(evaluateXPathToStrings('node-name(())', documentNode)));
 
 		it('it defaults to the context item when the argument is omitted', () => {
 			jsonMlMapper.parse(['someElement', 'Some text.'], documentNode);
@@ -42,7 +42,7 @@ describe('functions over nodes', () => {
 
 	describe('local-name()', () => {
 		it('returns the empty string if $arg is an empty sequence', () =>
-			chai.assert.deepEqual(evaluateXPathToString('local-name(())', documentNode), ''));
+			chai.assert.equal(evaluateXPathToString('local-name(())', documentNode), ''));
 
 		it('it defaults to the context item when the argument is omitted', () => {
 			jsonMlMapper.parse(['someElement', 'Some text.'], documentNode);
@@ -71,7 +71,7 @@ describe('functions over nodes', () => {
 
 	describe('name()', () => {
 		it('returns an empty sequence if $arg is an empty sequence', () =>
-			chai.assert.deepEqual(evaluateXPathToStrings('name(())', documentNode), []));
+			chai.assert.isEmpty(evaluateXPathToStrings('name(())', documentNode)));
 
 		it('it defaults to the context item when the argument is omitted', () => {
 			jsonMlMapper.parse(['someElement'], documentNode);
@@ -155,7 +155,7 @@ return $node/root() = $element`,
 	describe('outermost()', () => {
 		it('returns the top level nodes if the set only contains nodes and their children', () => {
 			jsonMlMapper.parse(['root', ['child'], ['child', ['descendant']]], documentNode);
-			chai.assert.deepEqual(
+			chai.assert.sameMembers(
 				evaluateXPathToStrings('(/root//* => outermost())!name()', documentNode),
 				['child', 'child']
 			);
@@ -163,9 +163,9 @@ return $node/root() = $element`,
 
 		it('returns the top level nodes if the nodes are not direct children', () => {
 			jsonMlMapper.parse(['root', ['child'], ['child', ['descendant']]], documentNode);
-			chai.assert.deepEqual(
-				evaluateXPathToStrings('(//* => outermost())!name()', documentNode),
-				['root']
+			chai.assert.equal(
+				evaluateXPathToString('(//* => outermost())!name()', documentNode),
+				'root'
 			);
 		});
 
@@ -178,7 +178,7 @@ return $node/root() = $element`,
 				],
 				documentNode
 			);
-			chai.assert.deepEqual(
+			chai.assert.sameMembers(
 				evaluateXPathToStrings(
 					'(descendant::descendant => outermost())!@pos',
 					documentNode
@@ -189,7 +189,7 @@ return $node/root() = $element`,
 
 		it('sorts the passed sequence', () => {
 			jsonMlMapper.parse(['root', ['child1'], ['child2', ['descendant']]], documentNode);
-			chai.assert.deepEqual(
+			chai.assert.sameMembers(
 				evaluateXPathToStrings('outermost((//child2 | //child1))!name()', documentNode),
 				['child1', 'child2']
 			);
@@ -197,7 +197,7 @@ return $node/root() = $element`,
 
 		it('deduplicates the passed sequence', () => {
 			jsonMlMapper.parse(['root', ['child1'], ['child2', ['descendant']]], documentNode);
-			chai.assert.deepEqual(
+			chai.assert.sameMembers(
 				evaluateXPathToStrings('outermost((//child1 | //child1))!name()', documentNode),
 				['child1']
 			);
@@ -208,20 +208,20 @@ return $node/root() = $element`,
 				['root', ['child1', { attr: 'value' }], ['child2', ['descendant']]],
 				documentNode
 			);
-			chai.assert.deepEqual(
+			chai.assert.sameMembers(
 				evaluateXPathToStrings('outermost((//child2 | //@*))!name()', documentNode),
 				['attr', 'child2']
 			);
 		});
 
 		it('returns the empty sequence when passed the empty sequence', () =>
-			chai.assert.deepEqual(evaluateXPathToStrings('outermost(())', documentNode), []));
+			chai.assert.isEmpty(evaluateXPathToStrings('outermost(())', documentNode)));
 	});
 
 	describe('innermost()', () => {
 		it('returns the bottom level nodes if the set only contains nodes and their children', () => {
 			jsonMlMapper.parse(['root', ['child'], ['child', ['descendant']]], documentNode);
-			chai.assert.deepEqual(
+			chai.assert.sameOrderedMembers(
 				evaluateXPathToStrings('(/root//* => innermost())!name()', documentNode),
 				['child', 'descendant']
 			);
@@ -229,7 +229,7 @@ return $node/root() = $element`,
 
 		it('returns the bottom level nodes if the nodes are not direct children', () => {
 			jsonMlMapper.parse(['root', ['child'], ['child', ['descendant']]], documentNode);
-			chai.assert.deepEqual(
+			chai.assert.sameOrderedMembers(
 				evaluateXPathToStrings('(//* => innermost())!name()', documentNode),
 				['child', 'descendant']
 			);
@@ -240,7 +240,7 @@ return $node/root() = $element`,
 				['root', ['child', ['descendant']], ['child', ['descendant'], ['descendant']]],
 				documentNode
 			);
-			chai.assert.deepEqual(
+			chai.assert.sameOrderedMembers(
 				evaluateXPathToStrings('(//* => innermost())!name()', documentNode),
 				['descendant', 'descendant', 'descendant']
 			);
@@ -258,15 +258,15 @@ return $node/root() = $element`,
 				{ docA, docB }
 			);
 			try {
-				chai.assert.deepEqual(result, ['b', 'c', 'B', 'C']);
+				chai.assert.sameOrderedMembers(result, ['b', 'c', 'B', 'C']);
 			} catch (err) {
-				chai.assert.deepEqual(result, ['B', 'C', 'b', 'c']);
+				chai.assert.sameOrderedMembers(result, ['B', 'C', 'b', 'c']);
 			}
 		});
 
 		it('sorts the passed sequence', () => {
 			jsonMlMapper.parse(['root', ['child1'], ['child2', ['descendant']]], documentNode);
-			chai.assert.deepEqual(
+			chai.assert.sameOrderedMembers(
 				evaluateXPathToStrings('innermost((//child2 | //child1))!name()', documentNode),
 				['child1', 'child2']
 			);
@@ -274,7 +274,7 @@ return $node/root() = $element`,
 
 		it('deduplicates the passed sequence', () => {
 			jsonMlMapper.parse(['root', ['child1'], ['child2', ['descendant']]], documentNode);
-			chai.assert.deepEqual(
+			chai.assert.sameOrderedMembers(
 				evaluateXPathToStrings('innermost((//child1 | //child1))!name()', documentNode),
 				['child1']
 			);
@@ -285,7 +285,7 @@ return $node/root() = $element`,
 				['root', ['child1', { attr: 'value' }], ['child2', ['descendant']]],
 				documentNode
 			);
-			chai.assert.deepEqual(
+			chai.assert.sameOrderedMembers(
 				evaluateXPathToStrings(
 					'innermost((//child2 | //child1 | //@*))!name()',
 					documentNode
@@ -295,37 +295,34 @@ return $node/root() = $element`,
 		});
 
 		it('returns the empty sequence when passed the empty sequence', () =>
-			chai.assert.deepEqual(evaluateXPathToStrings('innermost(())', documentNode), []));
+			chai.assert.isEmpty(evaluateXPathToStrings('innermost(())', documentNode)));
 	});
 
 	describe('has-children()', () => {
 		it('returns true, when the node has one or more child', () => {
 			jsonMlMapper.parse(['root', ['child'], ['child', ['descendant']]], documentNode);
-			chai.assert.deepEqual(evaluateXPathToBoolean('has-children(root)', documentNode), true);
+			chai.assert.isTrue(evaluateXPathToBoolean('has-children(root)', documentNode));
 		});
 
 		it('returns false, when the node has no child', () => {
 			jsonMlMapper.parse(['root', ['child'], ['child', ['descendant']]], documentNode);
-			chai.assert.deepEqual(
-				evaluateXPathToBoolean('has-children(//descendant)', documentNode),
-				false
-			);
+			chai.assert.isFalse(evaluateXPathToBoolean('has-children(//descendant)', documentNode));
 		});
 
 		it('returns false, if the function is run with an empty sequence', () => {
 			jsonMlMapper.parse(['root', ['child'], ['child', ['descendant']]], documentNode);
-			chai.assert.deepEqual(evaluateXPathToBoolean('has-children(())', documentNode), false);
+			chai.assert.isFalse(evaluateXPathToBoolean('has-children(())', documentNode));
 		});
 
 		it('defaults to the context item (.) and returns true, if the argument is omitted.', () => {
 			jsonMlMapper.parse(['root', ['child'], ['child', ['descendant']]], documentNode);
-			chai.assert.deepEqual(evaluateXPathToBoolean('has-children()', documentNode), true);
+			chai.assert.isTrue(evaluateXPathToBoolean('has-children()', documentNode));
 		});
 	});
 
 	describe('path', () => {
 		it('returns "fn:root()" for the root of the document', () => {
-			chai.assert.deepEqual(
+			chai.assert.equal(
 				evaluateXPathToString(
 					`let $emp :=
 				<employee xml:id="ID21256">
@@ -345,7 +342,7 @@ return $node/root() = $element`,
 		});
 
 		it('returns "fn:root()/@Q{http://www.w3.org/XML/1998/namespace}id" for the id attribute of the root of the document', () => {
-			chai.assert.deepEqual(
+			chai.assert.equal(
 				evaluateXPathToString(
 					`let $emp :=
 				<employee xml:id="ID21256">
@@ -365,7 +362,7 @@ return $node/root() = $element`,
 		});
 
 		it('returns "fn:root()/Q{}empnr[1]" for the <empnr> element of the document', () => {
-			chai.assert.deepEqual(
+			chai.assert.equal(
 				evaluateXPathToString(
 					`let $emp :=
 				<employee xml:id="ID21256">
@@ -393,7 +390,7 @@ return $node/root() = $element`,
 				Himmlische, dein Heiligtum.</p>`
 			);
 
-			chai.assert.deepEqual(
+			chai.assert.equal(
 				evaluateXPathToString(`let $e := . return fn:path($e)`, documentNode, null, null, {
 					language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 				}),
@@ -410,7 +407,7 @@ return $node/root() = $element`,
 				Himmlische, dein Heiligtum.</p>`
 			);
 
-			chai.assert.deepEqual(
+			chai.assert.equal(
 				evaluateXPathToString(
 					`let $e := . return fn:path($e/*:p)`,
 					documentNode,
@@ -434,7 +431,7 @@ return $node/root() = $element`,
 				documentNode
 			);
 
-			chai.assert.deepEqual(
+			chai.assert.equal(
 				evaluateXPathToString(
 					`let $e := . return fn:path($e/*:p/@xml:lang)`,
 					documentNode,
@@ -458,7 +455,7 @@ return $node/root() = $element`,
 				documentNode
 			);
 
-			chai.assert.deepEqual(
+			chai.assert.equal(
 				evaluateXPathToString(
 					`let $e := . return fn:path($e/*:p/@author)`,
 					documentNode,
@@ -484,7 +481,7 @@ return $node/root() = $element`,
 				documentNode
 			);
 
-			chai.assert.deepEqual(
+			chai.assert.equal(
 				evaluateXPathToString(
 					`let $e := . return fn:path($e/*:p/*:br[2])`,
 					documentNode,
@@ -508,7 +505,7 @@ return $node/root() = $element`,
 				documentNode
 			);
 
-			chai.assert.deepEqual(
+			chai.assert.equal(
 				evaluateXPathToString(
 					`let $e := . return fn:path($e//text()[starts-with(normalize-space(), 'Tochter')])`,
 					documentNode,
@@ -523,16 +520,15 @@ return $node/root() = $element`,
 		});
 
 		it('returns "empty sequence" for no argument', () => {
-			chai.assert.deepEqual(
+			chai.assert.isEmpty(
 				evaluateXPathToStrings(`fn:path(())`, documentNode, null, null, {
 					language: evaluateXPath.XQUERY_3_1_LANGUAGE,
-				}),
-				[]
+				})
 			);
 		});
 
 		it('returns "fn:root()/Q{http://test2}a[1]" for the duplicate namespace URIs', () => {
-			chai.assert.deepEqual(
+			chai.assert.equal(
 				evaluateXPathToString(
 					`let $dom :=
 					<xml>
@@ -551,7 +547,7 @@ return $node/root() = $element`,
 		});
 
 		it('returns "fn:root()/Q{http://test}a[2]" for the duplicate namespace URIs', () => {
-			chai.assert.deepEqual(
+			chai.assert.equal(
 				evaluateXPathToString(
 					`let $dom :=
 					<xml>
@@ -579,7 +575,7 @@ return $node/root() = $element`,
 				</xml>`,
 				documentNode
 			);
-			chai.assert.deepEqual(
+			chai.assert.equal(
 				evaluateXPathToString(
 					`fn:path(//processing-instruction()[3])`,
 					documentNode,
@@ -603,7 +599,7 @@ return $node/root() = $element`,
 				</xml>`,
 				documentNode
 			);
-			chai.assert.deepEqual(
+			chai.assert.equal(
 				evaluateXPathToString(
 					`fn:path(//processing-instruction()[3])`,
 					documentNode,
