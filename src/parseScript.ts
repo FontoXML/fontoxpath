@@ -210,14 +210,16 @@ export default function parseScript<TElement extends Element>(
 	const executionSpecificStaticContext = new ExecutionSpecificStaticContext(
 		options['namespaceResolver'] || ((_prefix: string) => null),
 		{},
-		options['defaultFunctionNamespaceURI'],
+		options['defaultFunctionNamespaceURI'] === undefined
+			? BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI
+			: options['defaultFunctionNamespaceURI'],
 		options['functionNameResolver'] || (() => null)
 	);
 	const rootStaticContext = new StaticContext(executionSpecificStaticContext);
 	const prolog = astHelper.followPath(ast, ['mainModule', 'prolog']);
 
 	if (prolog) {
-		processProlog(prolog, rootStaticContext);
+		processProlog(prolog, rootStaticContext, false);
 	}
 
 	const context = new AnnotationContext(rootStaticContext);

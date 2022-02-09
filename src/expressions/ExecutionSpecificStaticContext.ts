@@ -140,6 +140,13 @@ export default class ExecutionSpecificStaticContext implements IContext {
 				arity,
 				resolvedQName,
 			});
+		} else if (lexicalQName.prefix === '') {
+			if (this.registeredDefaultFunctionNamespaceURI) {
+				return {
+					namespaceURI: this.registeredDefaultFunctionNamespaceURI,
+					localName: lexicalQName.localName,
+				};
+			}
 		} else {
 			// Maybe the namespaceResolver can shine some light:
 			const namespaceURI = this.resolveNamespace(lexicalQName.prefix, true);

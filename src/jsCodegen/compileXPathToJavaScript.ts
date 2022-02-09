@@ -1,4 +1,3 @@
-import astHelper from '../parsing/astHelper';
 import { EvaluableExpression } from '../evaluateXPath';
 import {
 	createDefaultFunctionNameResolver,
@@ -7,6 +6,7 @@ import {
 import ExecutionSpecificStaticContext from '../expressions/ExecutionSpecificStaticContext';
 import { BUILT_IN_NAMESPACE_URIS } from '../expressions/staticallyKnownNamespaces';
 import StaticContext from '../expressions/StaticContext';
+import astHelper from '../parsing/astHelper';
 import { ReturnType } from '../parsing/convertXDMReturnValue';
 import convertXmlToAst from '../parsing/convertXmlToAst';
 import normalizeEndOfLines from '../parsing/normalizeEndOfLines';

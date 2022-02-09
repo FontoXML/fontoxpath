@@ -54,7 +54,7 @@ type AsserterForExpression = (
 	xpath: string,
 	contextNode: Node,
 	variablesInScope: { [s: string]: unknown },
-	namespaceResolver: (prefix: string) => string,
+	namespaceResolver: (prefix: string) => string
 ) => void;
 
 function createAsserterForExpression(

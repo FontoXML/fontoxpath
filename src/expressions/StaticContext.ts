@@ -237,7 +237,6 @@ export default class StaticContext implements IContext {
 	): ResolvedQualifiedName {
 		const { prefix, localName } = lexicalQName;
 		// First consider local definitions
-		debugger;
 		if (prefix === '' && this.registeredDefaultFunctionNamespaceURI) {
 			return {
 				localName,
