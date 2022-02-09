@@ -58,18 +58,21 @@ function processFunctionDefinition(
 	createExpressions: boolean
 ) {
 	const functionName = astHelper.getFirstChild(declaration, 'functionName');
-	const declarationPrefix = astHelper.getAttribute(functionName, 'prefix') as string;
+	const declarationPrefix = (astHelper.getAttribute(functionName, 'prefix') || '') as string;
 	let declarationNamespaceURI = astHelper.getAttribute(functionName, 'URI') as string;
 	const declarationLocalName = astHelper.getTextContent(functionName);
 
 	if (declarationNamespaceURI === null) {
 		// Note: Never use the function namespace resolver to resolve the name of a function
 		// declaration.
-		declarationNamespaceURI =
-			declarationPrefix === ''
-				? staticContext.registeredDefaultFunctionNamespaceURI ||
-				  BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI
-				: staticContext.resolveNamespace(declarationPrefix);
+		if (declarationPrefix === '') {
+			declarationNamespaceURI =
+				staticContext.registeredDefaultFunctionNamespaceURI === undefined
+					? BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI
+					: staticContext.registeredDefaultFunctionNamespaceURI;
+		} else {
+			declarationNamespaceURI = staticContext.resolveNamespace(declarationPrefix);
+		}
 
 		if (!declarationNamespaceURI && declarationPrefix) {
 			throw errXPST0081(declarationPrefix);

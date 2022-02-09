@@ -113,33 +113,27 @@ function parseNode(
 			if (attributeValue === null) {
 				continue;
 			}
-			switch (attributeName) {
-				case 'type':
-					{
-						// TODO: prevent writing undefined to variables at the first place
-						if (attributeValue !== undefined) {
-							documentWriter.setAttributeNS(
-								element,
-								namespaceUri,
-								'fontoxpath:' + attributeName,
-								sequenceTypeToString(attributeValue)
-							);
-						}
-					}
-					break;
-				case 'prefix':
-				case 'URI':
-					if (attributeValue === '') {
-						break;
-					}
-				default:
+			if (attributeName === 'type') {
+				// TODO: prevent writing undefined to variables at the first place
+				if (attributeValue !== undefined) {
 					documentWriter.setAttributeNS(
 						element,
 						namespaceUri,
-						PREFERRED_PREFIX_BY_NAMESPACEURI[namespaceUri] + ':' + attributeName,
-						attributeValue
+						'fontoxpath:' + attributeName,
+						sequenceTypeToString(attributeValue)
 					);
+				}
 			}
+
+			if (attributeName === 'prefix' && attributeValue === '') {
+				continue;
+			}
+			documentWriter.setAttributeNS(
+				element,
+				namespaceUri,
+				PREFERRED_PREFIX_BY_NAMESPACEURI[namespaceUri] + ':' + attributeName,
+				attributeValue
+			);
 		}
 		firstChildIndex = 2;
 	}
