@@ -120,7 +120,7 @@ declare function fn () external; 1`,
 					null,
 					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
 				),
-			'XQST0060'
+			'XQST0045'
 		);
 	});
 });

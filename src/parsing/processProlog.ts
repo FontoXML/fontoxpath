@@ -67,7 +67,7 @@ function processFunctionDefinition(
 		// declaration.
 		if (declarationPrefix === '') {
 			declarationNamespaceURI =
-				staticContext.registeredDefaultFunctionNamespaceURI === undefined
+				staticContext.registeredDefaultFunctionNamespaceURI === null
 					? BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI
 					: staticContext.registeredDefaultFunctionNamespaceURI;
 		} else {

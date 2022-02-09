@@ -123,6 +123,7 @@ function parseNode(
 						sequenceTypeToString(attributeValue)
 					);
 				}
+				continue;
 			}
 
 			if (attributeName === 'prefix' && attributeValue === '') {
