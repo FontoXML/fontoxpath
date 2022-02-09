@@ -76,6 +76,8 @@ function getQName(name: string, parentUri: string): { localName: string; namespa
  * @param   documentWriter -  Used to place nodes in the DOM
  * @param   simpleNodesFactory   -  Used to construct nodes
  * @param   jsonml   -  The JsonML fragment to parse
+ * @param   parentUri
+ * @param   skipEmptyPrefixes - Whether to output empty prefixes. This is closed to the spec XQueryX examples, but breaks assumptions in AST annotation
  *
  * @return  The root node of the constructed DOM fragment
  */
@@ -83,7 +85,8 @@ function parseNode(
 	documentWriter: IDocumentWriter,
 	simpleNodesFactory: ISimpleNodesFactory,
 	jsonml: any[] | string,
-	parentUri: string | null
+	parentUri: string | null,
+	skipEmptyPrefixes: boolean
 ): Text | Element {
 	if (typeof jsonml === 'string') {
 		if (jsonml.length === 0) {
@@ -108,34 +111,37 @@ function parseNode(
 	const firstChild = jsonml[1];
 	let firstChildIndex = 1;
 	if (typeof firstChild === 'object' && !Array.isArray(firstChild)) {
-		for (const attributeName in firstChild) {
-			const attributeValue = firstChild[attributeName];
-			if (attributeValue === null) {
-				continue;
-			}
-			if (attributeName === 'type') {
-				// TODO: prevent writing undefined to variables at the first place
-				if (attributeValue !== undefined) {
-					documentWriter.setAttributeNS(
-						element,
-						namespaceUri,
-						'fontoxpath:' + attributeName,
-						sequenceTypeToString(attributeValue)
-					);
+		if (firstChild !== null) {
+			for (const attributeName of Object.keys(firstChild)) {
+				const attributeValue = firstChild[attributeName];
+				if (attributeValue === null) {
+					continue;
 				}
-				continue;
-			}
+				if (attributeName === 'type') {
+					// TODO: prevent writing undefined to variables at the first place
+					if (attributeValue !== undefined) {
+						documentWriter.setAttributeNS(
+							element,
+							namespaceUri,
+							'fontoxpath:' + attributeName,
+							sequenceTypeToString(attributeValue)
+						);
+					}
+					continue;
+				}
 
-			if (attributeName === 'prefix' && attributeValue === '') {
-				continue;
+				if (skipEmptyPrefixes && attributeName === 'prefix' && attributeValue === '') {
+					continue;
+				}
+				documentWriter.setAttributeNS(
+					element,
+					namespaceUri,
+					PREFERRED_PREFIX_BY_NAMESPACEURI[namespaceUri] + ':' + attributeName,
+					attributeValue
+				);
 			}
-			documentWriter.setAttributeNS(
-				element,
-				namespaceUri,
-				PREFERRED_PREFIX_BY_NAMESPACEURI[namespaceUri] + ':' + attributeName,
-				attributeValue
-			);
 		}
+
 		firstChildIndex = 2;
 	}
 	// Parse children
@@ -144,7 +150,8 @@ function parseNode(
 			documentWriter,
 			simpleNodesFactory,
 			jsonml[i] as any[] | string,
-			namespaceUri
+			namespaceUri,
+			skipEmptyPrefixes
 		);
 		if (node !== null) {
 			documentWriter.insertBefore(element, node, null);
@@ -234,7 +241,13 @@ export default function parseScript<TElement extends Element>(
 	}
 
 	const domFacade = new ExternalDomFacade();
-	const astAsXML = parseNode(documentWriter, simpleNodesFactory, ast, null) as TElement;
+	const astAsXML = parseNode(
+		documentWriter,
+		simpleNodesFactory,
+		ast,
+		null,
+		options.annotateAst === false
+	) as TElement;
 	documentWriter.insertBefore(
 		astAsXML,
 		simpleNodesFactory.createComment(script),

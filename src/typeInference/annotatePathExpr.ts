@@ -69,19 +69,25 @@ function annotateStep(step: IAST, annotationContext: AnnotationContext): Sequenc
 		return item;
 	}
 	const children = astHelper.getChildren(step, '*');
+	let axisType = '';
 	for (const substep of children) {
 		switch (substep[0]) {
 			case 'filterExpr':
 				seqType = astHelper.getAttribute(astHelper.followPath(substep, ['*']), 'type');
 				break;
 			case 'xpathAxis':
-				seqType = annotateXPathAxis(substep[1] as string);
+				axisType = substep[1] as string;
+				seqType = annotateXPathAxis(axisType);
 				break;
 			case 'nameTest': {
 				// Nametest: resolve the namespace URI and save it
 				const qName: QName = astHelper.getQName(substep);
 				if (qName.namespaceURI !== null) {
 					// Already resolved, no need
+					break;
+				}
+				if (axisType === 'attribute' && !qName.prefix) {
+					// Attributes without prefixes are actually always in the null namespace
 					break;
 				}
 				const resolvedNamespaceURI = annotationContext.resolveNamespace(qName.prefix || '');
