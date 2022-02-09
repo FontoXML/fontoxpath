@@ -61,10 +61,7 @@ describe('error functions', () => {
 
 		it('Throws the correct error when used in another operator with annotation', () => {
 			chai.assert.throws(
-				() =>
-					evaluateXPathToBoolean('fn:error() + 4', documentNode, domFacade, null, {
-						annotateAst: true,
-					}),
+				() => evaluateXPathToBoolean('fn:error() + 4', documentNode, domFacade, null, {}),
 				'FOER0000'
 			);
 		});

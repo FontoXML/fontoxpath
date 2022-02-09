@@ -32,7 +32,6 @@ type ExpressionArguments = [
 	any,
 	Object,
 	{
-		annotateAst?: boolean;
 		debug?: boolean;
 		returnType?: any;
 		language?: EvaluateXPath['XPATH_3_1_LANGUAGE'] | EvaluateXPath['XQUERY_3_1_LANGUAGE'];
@@ -76,7 +75,7 @@ function isUpdatingQuery(testName, query) {
 function parseQuery(query: string) {
 	return parseScript(
 		query,
-		{ language: evaluateXPath.XQUERY_3_1_LANGUAGE, annotateAst: false, debug: false },
+		{ language: evaluateXPath.XQUERY_3_1_LANGUAGE, debug: false },
 		new Document()
 	);
 }
@@ -272,7 +271,6 @@ function createArgs(query, variables): ExpressionArguments {
 		{
 			language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 			returnType: evaluateXPath.STRING_TYPE,
-			annotateAst: false,
 		},
 	];
 }

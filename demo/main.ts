@@ -4,7 +4,6 @@ const allowXQuery = document.getElementById('allowXQuery') as HTMLInputElement;
 const allowXQueryUpdateFacility = document.getElementById(
 	'allowXQueryUpdateFacility'
 ) as HTMLInputElement;
-const useAstAnnotation = document.getElementById('useAstAnnotation') as HTMLInputElement;
 const useJsCodegenBackend = document.getElementById('useJsCodegenBackend') as HTMLInputElement;
 const codegenReturnTypeChoice = document.getElementById(
 	'codegenReturnTypeChoice'
@@ -29,9 +28,9 @@ function setCookie() {
 
 	document.cookie = `xpath-editor-state=${allowXQuery.checked ? 1 : 0}${
 		allowXQueryUpdateFacility.checked ? 1 : 0
-	}${useAstAnnotation.checked ? 1 : 0}${useJsCodegenBackend.checked ? 1 : 0}${
-		source.length
-	}~${source}${xpath};max-age=${60 * 60 * 24 * 7}`;
+	}{useJsCodegenBackend.checked ? 1 : 0}${source.length}~${source}${xpath};max-age=${
+		60 * 60 * 24 * 7
+	}`;
 }
 
 function serializeAsJsonMl(node: Node): any[] | string {
@@ -166,7 +165,7 @@ function jsonXmlReplacer(_key: string, value: any): any {
 	return value;
 }
 
-async function runUpdatingXQuery(script: string, annotateAst: boolean) {
+async function runUpdatingXQuery(script: string) {
 	const result = await fontoxpath.evaluateUpdatingExpression(script, xmlDoc, null, null, {
 		debug: true,
 		disableCache: true,
@@ -176,7 +175,6 @@ async function runUpdatingXQuery(script: string, annotateAst: boolean) {
 				console.log(m);
 			},
 		},
-		annotateAst,
 	});
 
 	resultText.innerText = JSON.stringify(result, jsonXmlReplacer, '  ');
@@ -184,7 +182,7 @@ async function runUpdatingXQuery(script: string, annotateAst: boolean) {
 	updateResult.innerText = new XMLSerializer().serializeToString(xmlDoc);
 }
 
-async function runNormalXPath(script: string, asXQuery: boolean, annotateAst: boolean) {
+async function runNormalXPath(script: string, asXQuery: boolean) {
 	const raw = [];
 	const it = fontoxpath.evaluateXPathToAsyncIterator(script, xmlDoc, null, null, {
 		debug: true,
@@ -198,7 +196,6 @@ async function runNormalXPath(script: string, asXQuery: boolean, annotateAst: bo
 				console.log(m);
 			},
 		},
-		annotateAst,
 	});
 
 	for (let item = await it.next(); !item.done; item = await it.next()) {
@@ -221,7 +218,7 @@ function getReturnTypeFromChoice(returnTypeString: string): fontoxpath.ReturnTyp
 	return undefined;
 }
 
-async function runXPathWithJsCodegen(xpath: string, asXQuery: boolean, annotateAst: boolean) {
+async function runXPathWithJsCodegen(xpath: string, asXQuery: boolean) {
 	const compiledXPathResult = fontoxpath.compileXPathToJavaScript(
 		xpath,
 		getReturnTypeFromChoice(codegenReturnTypeChoice.value),
@@ -229,7 +226,6 @@ async function runXPathWithJsCodegen(xpath: string, asXQuery: boolean, annotateA
 			language: asXQuery
 				? fontoxpath.evaluateXPath.XQUERY_3_1_LANGUAGE
 				: fontoxpath.evaluateXPath.XPATH_3_1_LANGUAGE,
-			annotateAst,
 		}
 	);
 
@@ -261,11 +257,6 @@ async function rerunXPath() {
 	jsCodegenOutput.innerText = '';
 
 	const xpath = xpathField.innerText;
-
-	// Since the rest of the code uses caching, there is a small bug where the demo
-	// keep returning cached annotated queries even though the annotation flag gets turned of.
-	const annotateAst = useAstAnnotation.checked;
-
 	try {
 		// First try to get the AST as it has a higher change of succeeding
 		const document = new Document();
@@ -274,7 +265,6 @@ async function rerunXPath() {
 			{
 				language: fontoxpath.evaluateXPath.XQUERY_3_1_LANGUAGE,
 				debug: false,
-				annotateAst,
 			},
 			document
 		);
@@ -293,12 +283,12 @@ async function rerunXPath() {
 		(window as any).hljs.highlightBlock(astXml);
 
 		if (useJsCodegenBackend.checked) {
-			await runXPathWithJsCodegen(xpath, allowXQuery.checked, annotateAst);
+			await runXPathWithJsCodegen(xpath, allowXQuery.checked);
 		} else {
 			if (allowXQueryUpdateFacility.checked) {
-				await runUpdatingXQuery(xpath, annotateAst);
+				await runUpdatingXQuery(xpath);
 			} else {
-				await runNormalXPath(xpath, allowXQuery.checked, annotateAst);
+				await runNormalXPath(xpath, allowXQuery.checked);
 			}
 		}
 
@@ -340,8 +330,6 @@ useJsCodegenBackend.onclick = (evt) => {
 	xpathReload();
 };
 
-useAstAnnotation.onclick = (_evt) => xpathReload();
-
 codegenReturnTypeChoice.onchange = (_evt) => xpathReload();
 
 allowXQuery.onclick = (_evt) => xpathReload();
@@ -379,7 +367,6 @@ function loadFromCookie() {
 
 	allowXQueryUpdateFacility.checked = firstPart[1] === '1';
 
-	useAstAnnotation.checked = firstPart[2] === '1';
 	useJsCodegenBackend.checked = firstPart[3] === '1';
 	codegenReturnTypeChoice.disabled = !useJsCodegenBackend.checked;
 

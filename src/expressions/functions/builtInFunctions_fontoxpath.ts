@@ -87,9 +87,7 @@ function buildResultIterator(
 		processProlog(prolog, innerStaticContext);
 	}
 
-	if (executionParameters.annotateAst) {
-		annotateAst(ast, new AnnotationContext(innerStaticContext));
-	}
+	annotateAst(ast, new AnnotationContext(innerStaticContext));
 
 	const queryBodyContents = astHelper.followPath(ast, ['mainModule', 'queryBody', '*']);
 

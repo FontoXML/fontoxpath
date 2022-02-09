@@ -28,7 +28,6 @@ function createExpressionFromSource(
 	compilationOptions: {
 		allowUpdating: boolean | undefined;
 		allowXQuery: boolean | undefined;
-		annotateAst: boolean | undefined;
 		debug: boolean | undefined;
 		disableCache: boolean | undefined;
 	},
@@ -81,7 +80,6 @@ function buildExpressionFromAst(
 	compilationOptions: {
 		allowUpdating: boolean | undefined;
 		allowXQuery: boolean | undefined;
-		annotateAst: boolean | undefined;
 		debug: boolean | undefined;
 		disableCache: boolean | undefined;
 	},
@@ -117,7 +115,6 @@ export default function staticallyCompileXPath(
 	compilationOptions: {
 		allowUpdating: boolean | undefined;
 		allowXQuery: boolean | undefined;
-		annotateAst: boolean | undefined;
 		debug: boolean | undefined;
 		disableCache: boolean | undefined;
 	},

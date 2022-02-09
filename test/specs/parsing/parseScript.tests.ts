@@ -41,9 +41,7 @@ declare namespace xxx="http://www.example.com/";
 
 self::xxx:element
 `,
-			{
-				annotateAst: true,
-			},
+			{},
 			new Document()
 		);
 
@@ -65,9 +63,7 @@ declare namespace xxx="http://www.example.com/";
 
 $xxx:yyy
 `,
-			{
-				annotateAst: true,
-			},
+			{},
 			new Document()
 		);
 
@@ -89,9 +85,7 @@ declare namespace xxx="http://www.example.com/";
 
 xxx:some-function()
 `,
-			{
-				annotateAst: true,
-			},
+			{},
 			new Document()
 		);
 
@@ -113,9 +107,7 @@ declare namespace xxx="http://www.example.com/";
 
 xxx:some-function#0()
 `,
-			{
-				annotateAst: true,
-			},
+			{},
 			new Document()
 		);
 
@@ -137,9 +129,7 @@ declare default function namespace "http://www.example.com/";
 
 some-function#0()
 `,
-			{
-				annotateAst: true,
-			},
+			{},
 			new Document()
 		);
 

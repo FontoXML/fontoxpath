@@ -20,7 +20,6 @@ import { Language, Logger } from './types/Options';
  *
  * @public
  *
- * annotateAst				- If the AST should be annotated.
  * debug					- Sets the debug option for the evaluation context.
  * disableCache				- Sets if the cache should or should not be disabled.
  * documentWriter			- Sets the documentwriter object
@@ -31,7 +30,6 @@ import { Language, Logger } from './types/Options';
  * returnType				- The type that the evaluation function will return.
  */
 export type UpdatingOptions = {
-	annotateAst?: boolean;
 	debug?: boolean;
 	disableCache?: boolean;
 	documentWriter?: IDocumentWriter;
@@ -79,7 +77,6 @@ export default async function evaluateUpdatingExpression(
 				allowXQuery: true,
 				debug: !!options['debug'],
 				disableCache: !!options['disableCache'],
-				annotateAst: !!options['annotateAst'],
 			}
 		);
 		dynamicContext = context.dynamicContext;

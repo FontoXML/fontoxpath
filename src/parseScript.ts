@@ -109,25 +109,36 @@ function parseNode(
 	let firstChildIndex = 1;
 	if (typeof firstChild === 'object' && !Array.isArray(firstChild)) {
 		for (const attributeName in firstChild) {
-			if (firstChild[attributeName] !== null) {
-				if (attributeName === 'type') {
-					// TODO: prevent writing undefined to variables at the first place
-					if (firstChild[attributeName] !== undefined) {
-						documentWriter.setAttributeNS(
-							element,
-							namespaceUri,
-							'fontoxpath:' + attributeName,
-							sequenceTypeToString(firstChild[attributeName])
-						);
+			const attributeValue = firstChild[attributeName];
+			if (attributeValue === null) {
+				continue;
+			}
+			switch (attributeName) {
+				case 'type':
+					{
+						// TODO: prevent writing undefined to variables at the first place
+						if (attributeValue !== undefined) {
+							documentWriter.setAttributeNS(
+								element,
+								namespaceUri,
+								'fontoxpath:' + attributeName,
+								sequenceTypeToString(attributeValue)
+							);
+						}
 					}
-				} else {
+					break;
+				case 'prefix':
+				case 'URI':
+					if (attributeValue === '') {
+						break;
+					}
+				default:
 					documentWriter.setAttributeNS(
 						element,
 						namespaceUri,
 						PREFERRED_PREFIX_BY_NAMESPACEURI[namespaceUri] + ':' + attributeName,
-						firstChild[attributeName]
+						attributeValue
 					);
-				}
 			}
 		}
 		firstChildIndex = 2;
@@ -194,7 +205,7 @@ function parseNode(
  */
 export default function parseScript<TElement extends Element>(
 	script: string,
-	options: Options,
+	options: Options & { annotateAst?: boolean },
 	simpleNodesFactory: ISimpleNodesFactory,
 	documentWriter: IDocumentWriter = domBackedDocumentWriter
 ): TElement {
@@ -222,8 +233,10 @@ export default function parseScript<TElement extends Element>(
 		processProlog(prolog, rootStaticContext, false);
 	}
 
-	const context = new AnnotationContext(rootStaticContext);
-	annotateAst(ast, context);
+	if (options['annotateAst'] !== false) {
+		const context = new AnnotationContext(rootStaticContext);
+		annotateAst(ast, context);
+	}
 
 	const domFacade = new ExternalDomFacade();
 	const astAsXML = parseNode(documentWriter, simpleNodesFactory, ast, null) as TElement;
