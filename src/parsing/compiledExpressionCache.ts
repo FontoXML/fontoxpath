@@ -26,16 +26,26 @@ function generateLanguageKey(language: string, debug: boolean): string {
 
 export function getAnyStaticCompilationResultFromCache(
 	selectorExpression: EvaluableExpression,
-	language: string,
+	language: string | null,
 	debug: boolean
 ) {
-	const languageKey = generateLanguageKey(language, debug);
-
 	const cachesForExpression = compiledExpressionCache.get(selectorExpression);
 
 	if (!cachesForExpression) {
 		return null;
 	}
+
+	if (language === null) {
+		// Any language is ok
+		for (const lang of Object.keys(cachesForExpression)) {
+			if (cachesForExpression[lang] && cachesForExpression[lang].length) {
+				return cachesForExpression[lang][0].compiledExpression;
+			}
+		}
+		return null;
+	}
+
+	const languageKey = language && generateLanguageKey(language, debug);
 
 	const cachesForLanguage = cachesForExpression[languageKey];
 	if (!cachesForLanguage || cachesForLanguage.length === 0) {
