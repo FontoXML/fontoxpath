@@ -15,6 +15,7 @@ import evaluateXPathToNumbers from './evaluateXPathToNumbers';
 import evaluateXPathToString from './evaluateXPathToString';
 import evaluateXPathToStrings from './evaluateXPathToStrings';
 import executePendingUpdateList from './executePendingUpdateList';
+import Expression from './expressions/Expression';
 import { Bucket } from './expressions/util/Bucket';
 import { getBucketsForNode } from './getBuckets';
 import compileXPathToJavaScript from './jsCodegen/compileXPathToJavaScript';
@@ -70,14 +71,16 @@ import {
 	Text,
 } from './types/Types';
 
-function parseXPath(xpathExpression: EvaluableExpression) {
-	const cachedExpression = getAnyStaticCompilationResultFromCache(
-		xpathExpression,
-		'XPath',
-		false
-	);
+// Hold a simply cache for any XPaths that are parsed but never statically compiled
+const partiallyParsedXPathCache = new Map();
+function parseXPath(xpathExpression: EvaluableExpression): Expression {
+	const cachedExpression = getAnyStaticCompilationResultFromCache(xpathExpression, null, false);
 	if (cachedExpression) {
 		return cachedExpression;
+	}
+
+	if (partiallyParsedXPathCache.has(xpathExpression)) {
+		return partiallyParsedXPathCache.get(xpathExpression);
 	}
 
 	const ast =
@@ -85,8 +88,6 @@ function parseXPath(xpathExpression: EvaluableExpression) {
 			? parseExpression(xpathExpression, { allowXQuery: false })
 			: // AST is an element: convert to jsonml
 			  convertXmlToAst(xpathExpression);
-
-	annotateAst(ast, new AnnotationContext(undefined));
 
 	const queryBody = astHelper.followPath(ast, ['mainModule', 'queryBody', '*']);
 
@@ -98,6 +99,8 @@ function parseXPath(xpathExpression: EvaluableExpression) {
 		allowUpdating: false,
 		allowXQuery: false,
 	});
+
+	partiallyParsedXPathCache.set(xpathExpression, expression);
 
 	return expression;
 }
