@@ -166,7 +166,7 @@ function jsonXmlReplacer(_key: string, value: any): any {
 	return value;
 }
 
-async function runUpdatingXQuery(script: string) {
+async function runUpdatingXQuery(script: string, annotateAst: boolean) {
 	const result = await fontoxpath.evaluateUpdatingExpression(script, xmlDoc, null, null, {
 		debug: true,
 		disableCache: true,
@@ -176,6 +176,7 @@ async function runUpdatingXQuery(script: string) {
 				console.log(m);
 			},
 		},
+		annotateAst,
 	});
 
 	resultText.innerText = JSON.stringify(result, jsonXmlReplacer, '  ');
@@ -183,7 +184,7 @@ async function runUpdatingXQuery(script: string) {
 	updateResult.innerText = new XMLSerializer().serializeToString(xmlDoc);
 }
 
-async function runNormalXPath(script: string, asXQuery: boolean) {
+async function runNormalXPath(script: string, asXQuery: boolean, annotateAst: boolean) {
 	const raw = [];
 	const it = fontoxpath.evaluateXPathToAsyncIterator(script, xmlDoc, null, null, {
 		debug: true,
@@ -197,6 +198,7 @@ async function runNormalXPath(script: string, asXQuery: boolean) {
 				console.log(m);
 			},
 		},
+		annotateAst,
 	});
 
 	for (let item = await it.next(); !item.done; item = await it.next()) {
@@ -219,7 +221,7 @@ function getReturnTypeFromChoice(returnTypeString: string): fontoxpath.ReturnTyp
 	return undefined;
 }
 
-async function runXPathWithJsCodegen(xpath: string, asXQuery: boolean) {
+async function runXPathWithJsCodegen(xpath: string, asXQuery: boolean, annotateAst: boolean) {
 	const compiledXPathResult = fontoxpath.compileXPathToJavaScript(
 		xpath,
 		getReturnTypeFromChoice(codegenReturnTypeChoice.value),
@@ -227,6 +229,7 @@ async function runXPathWithJsCodegen(xpath: string, asXQuery: boolean) {
 			language: asXQuery
 				? fontoxpath.evaluateXPath.XQUERY_3_1_LANGUAGE
 				: fontoxpath.evaluateXPath.XPATH_3_1_LANGUAGE,
+			annotateAst,
 		}
 	);
 
@@ -285,12 +288,12 @@ async function rerunXPath() {
 		(window as any).hljs.highlightBlock(astXml);
 
 		if (useJsCodegenBackend.checked) {
-			await runXPathWithJsCodegen(xpath, allowXQuery.checked);
+			await runXPathWithJsCodegen(xpath, allowXQuery.checked, annotateAst);
 		} else {
 			if (allowXQueryUpdateFacility.checked) {
-				await runUpdatingXQuery(xpath);
+				await runUpdatingXQuery(xpath, annotateAst);
 			} else {
-				await runNormalXPath(xpath, allowXQuery.checked);
+				await runNormalXPath(xpath, allowXQuery.checked, annotateAst);
 			}
 		}
 
