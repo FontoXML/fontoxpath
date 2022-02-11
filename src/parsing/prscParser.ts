@@ -16,39 +16,38 @@ import {
 	then,
 } from 'prsc';
 import { Location } from '../expressions/debug/StackTraceGenerator';
-import { ASTAttributes, IAST } from './astHelper';
+import { IAST } from './astHelper';
 import {
 	anyKindTest,
 	aposAttrValueContentChar,
 	argumentPlaceholder,
 	assertAdjacentOpeningTerminal,
+	boundarySpaceDecl,
 	cdataSection,
 	charRef,
 	commentTest,
 	compatibilityAnnotation,
+	constructionDecl,
 	contextItemExpr,
+	copyNamespacesDecl,
 	decimalFormatPropertyName,
 	dirCommentConstructor,
 	dirPiConstructor,
 	elementContentChar,
+	emptyOrderDecl,
 	escapeApos,
 	escapeQuot,
-	explicitWhitespace,
 	forwardAxis,
 	generalCompare,
-	inheritMode,
 	integerLiteral,
 	locationPathAbbreviation,
 	namespaceNodeTest,
-	ncName,
 	nodeCompare,
 	numericLiteral,
 	occurrenceIndicator,
+	orderingModeDecl,
 	pragmaContents,
 	predefinedEntityRef,
-	prefix,
-	preserveMode,
-	qName,
 	QNameAST,
 	quotAttrValueContentChar,
 	reservedFunctionNames,
@@ -57,36 +56,49 @@ import {
 	textTest,
 	validationMode,
 	valueCompare,
-	whitespaceCharacter,
-} from './literals';
+} from './literalParser';
+import {
+	bracedURILiteral,
+	elementName,
+	elementNameOrWildCard,
+	eqName,
+	ncName,
+	prefix,
+	qName,
+	varName,
+	varRef,
+} from './nameParser';
 import {
 	alias,
-	regex,
 	cached,
+	precededMultiple,
+	regex,
 	surrounded,
-	wrapArray,
 	then3,
 	then4,
 	then5,
-	precededMultiple,
+	wrapArray,
 } from './parsingFunctions';
+import {
+	accumulateDirContents,
+	assertEqualQNames,
+	isAttributeTest,
+	parseCharacterReferences,
+	wrapInSequenceExprIfNeeded,
+} from './parsingUtils';
 import * as tokens from './tokens';
+import { atomicOrUnionType, singleType, typeName } from './typesParser';
+import {
+	explicitWhitespace,
+	whitespace,
+	whitespaceCache,
+	whitespacePlus,
+	whitespacePlusCache,
+} from './whitespaceParser';
 
-const whitespaceCache = new Map<number, ParseResult<string>>();
-const whitespacePlusCache = new Map<number, ParseResult<string>>();
 const pathExprCache = new Map<number, ParseResult<IAST>>();
 
 function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }): Parser<IAST> {
-	const whitespace: Parser<string> = cached(
-		map(star(whitespaceCharacter), (x) => x.join('')),
-		whitespaceCache
-	);
-
-	const whitespacePlus: Parser<string> = cached(
-		map(plus(whitespaceCharacter), (x) => x.join('')),
-		whitespacePlusCache
-	);
-
 	function defaultBinaryOperatorFn(lhs: IAST, rhs: [string, IAST][]): IAST {
 		return rhs.reduce((lh, rh) => [rh[0], ['firstOperand', lh], ['secondOperand', rh[1]]], lhs);
 	}
@@ -119,165 +131,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				return [rhs[0], [firstArgName, lhs], [secondArgName, rhs[1]]];
 			}
 		);
-	}
-
-	function isAttributeTest(test: IAST): boolean {
-		return test[0] === 'attributeTest' || test[0] === 'schemaAttributeTest';
-	}
-
-	function assertValidCodePoint(codePoint: number) {
-		if (
-			(codePoint >= 0x1 && codePoint <= 0xd7ff) ||
-			(codePoint >= 0xe000 && codePoint <= 0xfffd) ||
-			(codePoint >= 0x10000 && codePoint <= 0x10ffff)
-		) {
-			return;
-		}
-		throw new Error(
-			'XQST0090: The character reference ' +
-				codePoint +
-				' (' +
-				codePoint.toString(16) +
-				') does not reference a valid codePoint.'
-		);
-	}
-
-	function parseCharacterReferences(input: string): string {
-		if (!options.xquery) {
-			return input;
-		}
-
-		return input.replace(/(&[^;]+);/g, (match) => {
-			if (/^&#x/.test(match)) {
-				const codePoint = parseInt(match.slice(3, -1), 16);
-				assertValidCodePoint(codePoint);
-				return String.fromCodePoint(codePoint);
-			}
-
-			if (/^&#/.test(match)) {
-				const codePoint = parseInt(match.slice(2, -1), 10);
-				assertValidCodePoint(codePoint);
-				return String.fromCodePoint(codePoint);
-			}
-
-			switch (match) {
-				case '&lt;':
-					return '<';
-				case '&gt;':
-					return '>';
-				case '&amp;':
-					return '&';
-				case '&quot;':
-					return String.fromCharCode(34);
-				case '&apos;':
-					return String.fromCharCode(39);
-			}
-			throw new Error('XPST0003: Unknown character reference: "' + match + '"');
-		});
-	}
-
-	function wrapInSequenceExprIfNeeded(exp: IAST): IAST {
-		switch (exp[0]) {
-			// These expressions do not have to be wrapped (are allowed in a filterExpr)
-			case 'constantExpr':
-			case 'varRef':
-			case 'contextItemExpr':
-			case 'functionCallExpr':
-			case 'sequenceExpr':
-			case 'elementConstructor':
-			case 'computedElementConstructor':
-			case 'computedAttributeConstructor':
-			case 'computedDocumentConstructor':
-			case 'computedTextConstructor':
-			case 'computedCommentConstructor':
-			case 'computedNamespaceConstructor':
-			case 'computedPIConstructor':
-			case 'orderedExpr':
-			case 'unorderedExpr':
-			case 'namedFunctionRef':
-			case 'inlineFunctionExpr':
-			case 'dynamicFunctionInvocationExpr':
-			case 'mapConstructor':
-			case 'arrayConstructor':
-			case 'stringConstructor':
-			case 'unaryLookup':
-				return exp;
-		}
-		return ['sequenceExpr', exp];
-	}
-
-	function accumulateDirContents(
-		parts: (IAST | string)[],
-		expressionsOnly: boolean,
-		normalizeWhitespace: boolean
-	) {
-		if (!parts.length) {
-			return [];
-		}
-		let result = [parts[0]];
-		for (let i = 1; i < parts.length; ++i) {
-			const prevResult = result[result.length - 1];
-			if (typeof prevResult === 'string' && typeof parts[i] === 'string') {
-				result[result.length - 1] = prevResult + parts[i];
-				continue;
-			}
-			result.push(parts[i]);
-		}
-
-		if (typeof result[0] === 'string' && result.length === 0) {
-			return [];
-		}
-
-		result = result.reduce((filteredItems, item, i) => {
-			if (typeof item !== 'string') {
-				filteredItems.push(item);
-			} else if (!normalizeWhitespace || !/^\s*$/.test(item)) {
-				// Not only whitespace
-				filteredItems.push(parseCharacterReferences(item));
-			} else {
-				const next = result[i + 1];
-				if (next && next[0] === 'CDataSection') {
-					filteredItems.push(parseCharacterReferences(item));
-				} else {
-					const previous = result[i - 1];
-					if (previous && previous[0] === 'CDataSection') {
-						filteredItems.push(parseCharacterReferences(item));
-					}
-				}
-			}
-			return filteredItems;
-		}, []);
-
-		if (!result.length) {
-			return result;
-		}
-
-		if (result.length > 1 || expressionsOnly) {
-			for (let i = 0; i < result.length; i++) {
-				if (typeof result[i] === 'string') {
-					result[i] = ['stringConstantExpr', ['value', result[i]]];
-				}
-			}
-		}
-		return result;
-	}
-
-	function getQName(qname: QNameAST): string {
-		return qname[0].prefix ? qname[0].prefix + ':' + qname[1] : qname[1];
-	}
-
-	function assertEqualQNames(a: QNameAST, b: QNameAST) {
-		const nameA = getQName(a);
-		const nameB = getQName(b);
-		if (nameA !== nameB) {
-			throw new Error(
-				'XQST0118: The start and the end tag of an element constructor must be equal. "' +
-					nameA +
-					'" does not match "' +
-					nameB +
-					'"'
-			);
-		}
 	}
 
 	const stackTraceMap = new Map<number, Location>();
@@ -346,34 +199,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			  ]),
 		(x) => x.join('')
 	);
-
-	const bracedURILiteral: Parser<string> = followed(
-		precededMultiple(
-			[tokens.Q_UPPER, whitespace, tokens.CURLY_BRACE_OPEN],
-			map(star(regex(/[^{}]/)), (x) => x.join('').replace(/\s+/g, ' ').trim())
-		),
-		tokens.CURLY_BRACE_CLOSE
-	);
-
-	const uriQualifiedName: Parser<[string, string]> = then(
-		bracedURILiteral,
-		ncName,
-		(uri, localName) => [uri, localName]
-	);
-
-	const eqName: Parser<QNameAST> = or([
-		map(uriQualifiedName, (x) => [{ prefix: null, URI: x[0] }, x[1]]),
-		qName,
-	]);
-
-	const elementName = eqName;
-
-	const elementNameOrWildCard: Parser<IAST> = or([
-		map(elementName, (qname) => ['QName', ...qname] as IAST),
-		map(tokens.ASTERIX, (_) => ['star']),
-	]);
-
-	const typeName: Parser<QNameAST> = eqName;
 
 	const elementTest: Parser<IAST> = or([
 		map(
@@ -565,14 +390,10 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const literal: Parser<IAST> = or([
 		numericLiteral,
-		map(stringLiteral, (x) => ['stringConstantExpr', ['value', parseCharacterReferences(x)]]),
-	]);
-
-	const varName: Parser<QNameAST> = eqName;
-
-	const varRef: Parser<IAST> = map(preceded(tokens.DOLLAR, varName), (x) => [
-		'varRef',
-		['name', ...x],
+		map(stringLiteral, (x) => [
+			'stringConstantExpr',
+			['value', options.xquery ? parseCharacterReferences(x) : x],
+		]),
 	]);
 
 	const parenthesizedExpr: Parser<IAST> = or([
@@ -637,8 +458,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			]
 		),
 	]);
-
-	const atomicOrUnionType: Parser<IAST> = map(eqName, (x) => ['atomicType', ...x]);
 
 	const annotation: Parser<IAST> = then(
 		precededMultiple([tokens.PERCENT, whitespace], eqName),
@@ -1427,18 +1246,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				argExpr
 			)
 	);
-
-	const simpleTypeName: Parser<IAST | [ASTAttributes, string]> = typeName;
-
-	const singleType: Parser<IAST> = then(
-		simpleTypeName,
-		optional(tokens.QUESTION_MARK),
-		(type, opt) =>
-			opt !== null
-				? ['singleType', ['atomicType', ...type], ['optional']]
-				: ['singleType', ['atomicType', ...type]]
-	);
-
 	const castExpr: Parser<IAST> = then(
 		arrowExpr,
 		optional(
@@ -2192,14 +1999,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const importExpr: Parser<IAST> = or([schemaImport, moduleImport]);
 
-	const boundarySpaceDecl: Parser<IAST> = map(
-		precededMultiple(
-			[tokens.DECLARE, whitespacePlus, tokens.BOUNDARY_SPACE, whitespacePlus],
-			or([tokens.PRESERVE, tokens.STRIP])
-		),
-		(x) => ['boundarySpaceDecl', x]
-	);
-
 	const defaultCollationDecl: Parser<IAST> = map(
 		precededMultiple(
 			[
@@ -2221,52 +2020,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			uriLiteral
 		),
 		(x) => ['baseUriDecl', x]
-	);
-
-	const constructionDecl: Parser<IAST> = map(
-		precededMultiple(
-			[tokens.DECLARE, whitespacePlus, tokens.CONSTRUCTION, whitespacePlus],
-			or([tokens.PRESERVE, tokens.STRIP])
-		),
-		(x) => ['constructionDecl', x]
-	);
-
-	const orderingModeDecl: Parser<IAST> = map(
-		precededMultiple(
-			[tokens.DECLARE, whitespacePlus, tokens.ORDERING, whitespacePlus],
-			or([tokens.ORDERED, tokens.UNORDERED])
-		),
-		(x) => ['orderingModeDecl', x]
-	);
-
-	const emptyOrderDecl: Parser<IAST> = map(
-		precededMultiple(
-			[
-				tokens.DECLARE,
-				whitespacePlus,
-				tokens.DEFAULT,
-				whitespacePlus,
-				tokens.ORDER,
-				whitespacePlus,
-				tokens.EMPTY,
-				whitespacePlus,
-			],
-			or([tokens.GREATEST, tokens.LEAST])
-		),
-		(x) => ['emptyOrderDecl', x]
-	);
-
-	const copyNamespacesDecl: Parser<IAST> = then(
-		precededMultiple(
-			[tokens.DECLARE, whitespacePlus, tokens.COPY_NAMESPACES, whitespacePlus],
-			preserveMode
-		),
-		precededMultiple([whitespace, tokens.COMMA, whitespace], inheritMode),
-		(preserveModePart, inheritModePart) => [
-			'copyNamespacesDecl',
-			['preserveMode', preserveModePart],
-			['inheritMode', inheritModePart],
-		]
 	);
 
 	const decimalFormatDecl: Parser<IAST> = then(
@@ -2422,6 +2175,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 	);
 
 	const completeParser = complete(surrounded(module, whitespace));
+
 	return (xpath: string, offset: number) => {
 		stackTraceMap.clear();
 		const result = completeParser(xpath, offset);
@@ -2429,7 +2183,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		let col = 1;
 		let line = 1;
 
-		// + 1 because we need to look one character ahead
+		// +1 because we need to look one character ahead
 		for (let i = 0; i < xpath.length + 1; i++) {
 			if (stackTraceMap.has(i)) {
 				const stackTrace = stackTraceMap.get(i);

@@ -13,41 +13,19 @@ import {
 	then,
 } from 'prsc';
 import { IAST } from './astHelper';
+import { name } from './nameParser';
 import { alias, precededMultiple, regex, then3, wrapArray } from './parsingFunctions';
 import * as tokens from './tokens';
+import {
+	char,
+	explicitWhitespace,
+	whitespace,
+	whitespaceCharacter,
+	whitespacePlus,
+} from './whitespaceParser';
 
-export type QNameAST = [{ prefix: string | null; URI: string | null }, string];
-
-const char: Parser<string> = or([
-	regex(/[\t\n\r -\uD7FF\uE000\uFFFD]/),
-	regex(/[\uD800-\uDBFF][\uDC00-\uDFFF]/),
-]);
-
-export const commentContents: Parser<string> = preceded(
-	peek(
-		not(or([tokens.COMMENT_START, tokens.COMMENT_END]), [
-			'comment contents cannot contain "(:" or ":)"',
-		])
-	),
-	char
-);
-
-function commentIndirect(input: string, offset: number) {
-	return comment(input, offset);
-}
-
-export const comment: Parser<string> = map(
-	delimited(
-		tokens.COMMENT_START,
-		star(or([commentContents, commentIndirect])),
-		tokens.COMMENT_END
-	),
-	(x) => x.join('')
-);
-
-export const whitespaceCharacter: Parser<string> = or([tokens.WHITESPACE, comment]);
-
-export const explicitWhitespace: Parser<string> = map(plus(tokens.WHITESPACE), (x) => x.join(''));
+// Declare this type to prevent renames down the road
+export declare type QNameAST = [{ prefix: string | null; URI: string | null }, string];
 
 export const assertAdjacentOpeningTerminal: Parser<string> = peek(
 	or([tokens.BRACE_OPEN, tokens.DOUBLE_QUOTE, tokens.SINGLE_QUOTE, whitespaceCharacter])
@@ -76,50 +54,6 @@ export const reverseAxis: Parser<string> = map(
 	]),
 	(x: string) => x.substring(0, x.length - 2)
 );
-
-const ncNameStartChar: Parser<string> = or([
-	regex(
-		/[A-Z_a-z\xC0-\xD6\xD8-\xF6\xF8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD]/
-	),
-	then(regex(/[\uD800-\uDB7F]/), regex(/[\uDC00-\uDFFF]/), (a, b) => a + b),
-]);
-
-const ncNameChar: Parser<string> = or([
-	ncNameStartChar,
-	regex(/[\-\.0-9\xB7\u0300-\u036F\u203F\u2040]/),
-]);
-
-export const ncName: Parser<string> = then(
-	ncNameStartChar,
-	star(ncNameChar),
-	(a, b) => a + b.join('')
-);
-
-export const prefix: Parser<IAST> = map(ncName, (x) => ['prefix', x]);
-
-const nameStartChar: Parser<string> = or([ncNameStartChar, tokens.COLON]);
-
-const nameChar: Parser<string> = or([ncNameChar, tokens.COLON]);
-
-const name: Parser<string> = then(
-	nameStartChar,
-	star(nameChar),
-	(start, rest) => start + rest.join('')
-);
-
-const localPart: Parser<string> = ncName;
-
-const unprefixedName: Parser<QNameAST> = map(localPart, (x) => [{ prefix: '', URI: null }, x]);
-
-const xmlPrefix: Parser<string> = ncName;
-
-const prefixedName: Parser<QNameAST> = then(
-	xmlPrefix,
-	preceded(tokens.COLON, localPart),
-	(prefixPart, local) => [{ prefix: prefixPart, URI: null }, local]
-);
-
-export const qName: Parser<QNameAST> = or([prefixedName, unprefixedName]);
 
 export const predefinedEntityRef: Parser<string> = then3(
 	tokens.AMPERSAND,
@@ -343,9 +277,9 @@ export const compatibilityAnnotation: Parser<IAST> = map(tokens.UPDATING, (_) =>
 
 export const separator: Parser<string> = tokens.SEMICOLON;
 
-export const preserveMode: Parser<string> = or([tokens.PRESERVE, tokens.NO_PRESERVE]);
+const preserveMode: Parser<string> = or([tokens.PRESERVE, tokens.NO_PRESERVE]);
 
-export const inheritMode: Parser<string> = or([tokens.INHERIT, tokens.NO_INHERIT]);
+const inheritMode: Parser<string> = or([tokens.INHERIT, tokens.NO_INHERIT]);
 
 export const decimalFormatPropertyName: Parser<string> = or([
 	tokens.DECIMAL_SEPARATOR,
@@ -360,3 +294,57 @@ export const decimalFormatPropertyName: Parser<string> = or([
 	tokens.PATTERN_SEPARATOR,
 	tokens.EXPONENT_SEPARATOER,
 ]);
+
+export const boundarySpaceDecl: Parser<IAST> = map(
+	precededMultiple(
+		[tokens.DECLARE, whitespacePlus, tokens.BOUNDARY_SPACE, whitespacePlus],
+		or([tokens.PRESERVE, tokens.STRIP])
+	),
+	(x) => ['boundarySpaceDecl', x]
+);
+
+export const constructionDecl: Parser<IAST> = map(
+	precededMultiple(
+		[tokens.DECLARE, whitespacePlus, tokens.CONSTRUCTION, whitespacePlus],
+		or([tokens.PRESERVE, tokens.STRIP])
+	),
+	(x) => ['constructionDecl', x]
+);
+
+export const orderingModeDecl: Parser<IAST> = map(
+	precededMultiple(
+		[tokens.DECLARE, whitespacePlus, tokens.ORDERING, whitespacePlus],
+		or([tokens.ORDERED, tokens.UNORDERED])
+	),
+	(x) => ['orderingModeDecl', x]
+);
+
+export const emptyOrderDecl: Parser<IAST> = map(
+	precededMultiple(
+		[
+			tokens.DECLARE,
+			whitespacePlus,
+			tokens.DEFAULT,
+			whitespacePlus,
+			tokens.ORDER,
+			whitespacePlus,
+			tokens.EMPTY,
+			whitespacePlus,
+		],
+		or([tokens.GREATEST, tokens.LEAST])
+	),
+	(x) => ['emptyOrderDecl', x]
+);
+
+export const copyNamespacesDecl: Parser<IAST> = then(
+	precededMultiple(
+		[tokens.DECLARE, whitespacePlus, tokens.COPY_NAMESPACES, whitespacePlus],
+		preserveMode
+	),
+	precededMultiple([whitespace, tokens.COMMA, whitespace], inheritMode),
+	(preserveModePart, inheritModePart) => [
+		'copyNamespacesDecl',
+		['preserveMode', preserveModePart],
+		['inheritMode', inheritModePart],
+	]
+);
