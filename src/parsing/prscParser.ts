@@ -16,6 +16,7 @@ import {
 	star,
 	then,
 } from 'prsc';
+import { Location } from '../expressions/debug/StackTraceGenerator';
 import { ASTAttributes, IAST } from './astHelper';
 import * as tokens from './tokens';
 
@@ -353,20 +354,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		}
 	}
 
-	function getLineData(input: string, offset: number): [number, number] {
-		let col = 1;
-		let line = 1;
-		for (let i = 0; i < offset; i++) {
-			const c = input[i];
-			if (c === '\r' || c === '\n') {
-				line++;
-				col = 1;
-			} else {
-				col++;
-			}
-		}
-		return [col, line];
-	}
+	const stackTraceMap = new Map<number, Location>();
 
 	function wrapInStackTrace(parser: Parser<IAST>): Parser<IAST> {
 		if (!options.outputDebugInfo) {
@@ -379,23 +367,30 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				return result;
 			}
 
-			// TODO: calculate line and column numbers at the end of parsing
-			const [startCol, startLine] = getLineData(input, offset);
-			const [endCol, endLine] = getLineData(input, result.offset);
+			const start = stackTraceMap.has(offset)
+				? stackTraceMap.get(offset)
+				: {
+						offset,
+						line: -1,
+						column: -1,
+				  };
+
+			const end = stackTraceMap.has(result.offset)
+				? stackTraceMap.get(result.offset)
+				: {
+						offset: result.offset,
+						line: -1,
+						column: -1,
+				  };
+
+			stackTraceMap.set(offset, start);
+			stackTraceMap.set(result.offset, end);
 
 			return okWithValue(result.offset, [
 				'x:stackTrace',
 				{
-					start: {
-						offset,
-						line: startLine,
-						column: startCol,
-					},
-					end: {
-						offset: result.offset,
-						line: endLine,
-						column: endCol,
-					},
+					start,
+					end,
 				},
 				result.value,
 			] as unknown as IAST);
@@ -2822,7 +2817,33 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			['module', ...(versionDecl ? [versionDecl] : []), ...[modulePart]] as IAST
 	);
 
-	return complete(surrounded(module, whitespace));
+	const completeParser = complete(surrounded(module, whitespace));
+	return (xpath: string, offset: number) => {
+		stackTraceMap.clear();
+		const result = completeParser(xpath, offset);
+
+		let col = 1;
+		let line = 1;
+
+		// + 1 because we need to look one character ahead
+		for (let i = 0; i < xpath.length + 1; i++) {
+			if (stackTraceMap.has(i)) {
+				const stackTrace = stackTraceMap.get(i);
+				stackTrace.line = line;
+				stackTrace.column = col;
+			}
+
+			const c = xpath[i];
+			if (c === '\r' || c === '\n') {
+				line++;
+				col = 1;
+			} else {
+				col++;
+			}
+		}
+
+		return result;
+	};
 }
 
 const xpathParser = generateParser({ outputDebugInfo: false, xquery: false });
