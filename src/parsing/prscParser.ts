@@ -1,7 +1,6 @@
 import {
 	complete,
 	delimited,
-	error,
 	followed,
 	map,
 	not,
@@ -18,6 +17,59 @@ import {
 } from 'prsc';
 import { Location } from '../expressions/debug/StackTraceGenerator';
 import { ASTAttributes, IAST } from './astHelper';
+import {
+	anyKindTest,
+	aposAttrValueContentChar,
+	argumentPlaceholder,
+	assertAdjacentOpeningTerminal,
+	cdataSection,
+	charRef,
+	commentTest,
+	compatibilityAnnotation,
+	contextItemExpr,
+	decimalFormatPropertyName,
+	dirCommentConstructor,
+	dirPiConstructor,
+	elementContentChar,
+	escapeApos,
+	escapeQuot,
+	explicitWhitespace,
+	forwardAxis,
+	generalCompare,
+	inheritMode,
+	integerLiteral,
+	locationPathAbbreviation,
+	namespaceNodeTest,
+	ncName,
+	nodeCompare,
+	numericLiteral,
+	occurrenceIndicator,
+	pragmaContents,
+	predefinedEntityRef,
+	prefix,
+	preserveMode,
+	qName,
+	QNameAST,
+	quotAttrValueContentChar,
+	reservedFunctionNames,
+	reverseAxis,
+	separator,
+	textTest,
+	validationMode,
+	valueCompare,
+	whitespaceCharacter,
+} from './literals';
+import {
+	alias,
+	regex,
+	cached,
+	surrounded,
+	wrapArray,
+	then3,
+	then4,
+	then5,
+	precededMultiple,
+} from './parsingFunctions';
 import * as tokens from './tokens';
 
 const whitespaceCache = new Map<number, ParseResult<string>>();
@@ -25,49 +77,6 @@ const whitespacePlusCache = new Map<number, ParseResult<string>>();
 const pathExprCache = new Map<number, ParseResult<IAST>>();
 
 function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }): Parser<IAST> {
-	function cached<T>(parser: Parser<T>, cache: Map<number, ParseResult<T>>): Parser<T> {
-		return (input: string, offset: number): ParseResult<T> => {
-			if (cache.has(offset)) {
-				return cache.get(offset);
-			}
-
-			const result = parser(input, offset);
-			cache.set(offset, result);
-			return result;
-		};
-	}
-
-	const char: Parser<string> = or([
-		regex(/[\t\n\r -\uD7FF\uE000\uFFFD]/),
-		regex(/[\uD800-\uDBFF][\uDC00-\uDFFF]/),
-	]);
-
-	const commentContents: Parser<string> = preceded(
-		peek(
-			not(or([tokens.COMMENT_START, tokens.COMMENT_END]), [
-				'comment contents cannot contain "(:" or ":)"',
-			])
-		),
-		char
-	);
-
-	const comment: Parser<string> = map(
-		delimited(
-			tokens.COMMENT_START,
-			star(or([commentContents, commentIndirect])),
-			tokens.COMMENT_END
-		),
-		(x) => x.join('')
-	);
-
-	function commentIndirect(input: string, offset: number) {
-		return comment(input, offset);
-	}
-
-	const explicitWhitespace: Parser<string> = map(plus(tokens.WHITESPACE), (x) => x.join(''));
-
-	const whitespaceCharacter: Parser<string> = or([tokens.WHITESPACE, comment]);
-
 	const whitespace: Parser<string> = cached(
 		map(star(whitespaceCharacter), (x) => x.join('')),
 		whitespaceCache
@@ -77,72 +86,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		map(plus(whitespaceCharacter), (x) => x.join('')),
 		whitespacePlusCache
 	);
-
-	function surrounded<T, S>(parser: Parser<T>, around: Parser<S>): Parser<T> {
-		return delimited(around, parser, around);
-	}
-
-	function precededMultiple<T, S>(before: Parser<S>[], parser: Parser<T>): Parser<T> {
-		return before.reverse().reduce((prev, curr) => preceded(curr, prev), parser);
-	}
-
-	function then3<T, S, U, V>(
-		aParser: Parser<T>,
-		bParser: Parser<S>,
-		cParser: Parser<U>,
-		func: (aValue: T, bValue: S, cValue: U) => V
-	): Parser<V> {
-		return then(
-			then(aParser, bParser, (a, b): [T, S] => [a, b]),
-			cParser,
-			([a, b], c) => func(a, b, c)
-		);
-	}
-
-	function then4<T, S, U, V, P>(
-		aParser: Parser<T>,
-		bParser: Parser<S>,
-		cParser: Parser<U>,
-		dParser: Parser<V>,
-		func: (aValue: T, bValue: S, cValue: U, dValue: V) => P
-	): Parser<P> {
-		return then(
-			then(
-				then(aParser, bParser, (a, b) => [a, b]),
-				cParser,
-				([a, b], c) => [a, b, c]
-			),
-			dParser,
-			([a, b, c]: [T, S, U], d) => func(a, b, c, d)
-		);
-	}
-
-	function then5<T, S, U, V, W, P>(
-		aParser: Parser<T>,
-		bParser: Parser<S>,
-		cParser: Parser<U>,
-		dParser: Parser<V>,
-		eParser: Parser<W>,
-		func: (aValue: T, bValue: S, cValue: U, dValue: V, eValue: W) => P
-	): Parser<P> {
-		return then(
-			then(
-				then(
-					then(aParser, bParser, (a, b) => [a, b]),
-					cParser,
-					([a, b], c) => [a, b, c]
-				),
-				dParser,
-				([a, b, c]: [T, S, U], d) => [a, b, c, d]
-			),
-			eParser,
-			([a, b, c, d]: [T, S, U, V], e) => func(a, b, c, d, e)
-		);
-	}
-
-	function wrapArray<T>(parser: Parser<T>): Parser<[T]> {
-		return map(parser, (x) => [x]);
-	}
 
 	function defaultBinaryOperatorFn(lhs: IAST, rhs: [string, IAST][]): IAST {
 		return rhs.reduce((lh, rh) => [rh[0], ['firstOperand', lh], ['secondOperand', rh[1]]], lhs);
@@ -176,21 +119,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				return [rhs[0], [firstArgName, lhs], [secondArgName, rhs[1]]];
 			}
 		);
-	}
-
-	function alias(tokenNames: Parser<string>[], aliasedName: string): Parser<string> {
-		return map(or(tokenNames), (_) => aliasedName);
-	}
-
-	function regex(reg: RegExp): Parser<string> {
-		return (input: string, offset: number): ParseResult<string> => {
-			const match = reg.exec(input.substring(offset));
-			if (match && match.index === 0) {
-				return okWithValue(offset + match[0].length, match[0]);
-			} else {
-				return error(offset, [reg.source], false);
-			}
-		};
 	}
 
 	function isAttributeTest(test: IAST): boolean {
@@ -334,8 +262,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		return result;
 	}
 
-	type QNameAST = [{ prefix: string | null; URI: string | null }, string];
-
 	function getQName(qname: QNameAST): string {
 		return qname[0].prefix ? qname[0].prefix + ':' + qname[1] : qname[1];
 	}
@@ -397,72 +323,10 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		};
 	}
 
-	const assertAdjacentOpeningTerminal: Parser<string> = peek(
-		or([tokens.BRACE_OPEN, tokens.DOUBLE_QUOTE, tokens.SINGLE_QUOTE, whitespaceCharacter])
-	);
-
 	const predicate: Parser<IAST> = preceded(
 		tokens.BRACKET_OPEN,
 		followed(surrounded(expr, whitespace), tokens.BRACKET_CLOSE)
 	);
-
-	const forwardAxis: Parser<string> = map(
-		or([
-			tokens.CHILD_AXIS,
-			tokens.DESCENDANT_AXIS,
-			tokens.ATTRIBUTE_AXIS,
-			tokens.SELF_AXIS,
-			tokens.DESCENDANT_OR_SELF_AXIS,
-			tokens.FOLLOWING_SIBLING_AXIS,
-			tokens.FOLLOWING_AXIS,
-		]),
-		(x: string) => x.substring(0, x.length - 2)
-	);
-
-	const reverseAxis: Parser<string> = map(
-		or([
-			tokens.PARENT_AXIS,
-			tokens.ANCESTOR_AXIS,
-			tokens.PRECEDING_SIBLING_AXIS,
-			tokens.PRECEDING_AXIS,
-			tokens.ANCESTOR_OR_SELF_AXIS,
-		]),
-		(x: string) => x.substring(0, x.length - 2)
-	);
-
-	const ncNameStartChar: Parser<string> = or([
-		regex(
-			/[A-Z_a-z\xC0-\xD6\xD8-\xF6\xF8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD]/
-		),
-		then(regex(/[\uD800-\uDB7F]/), regex(/[\uDC00-\uDFFF]/), (a, b) => a + b),
-	]);
-
-	const ncNameChar: Parser<string> = or([
-		ncNameStartChar,
-		regex(/[\-\.0-9\xB7\u0300-\u036F\u203F\u2040]/),
-	]);
-
-	const ncName: Parser<string> = then(
-		ncNameStartChar,
-		star(ncNameChar),
-		(a, b) => a + b.join('')
-	);
-
-	const escapeQuot: Parser<string> = alias([tokens.DOUBLE_QUOTE_DOUBLE], '"');
-
-	const escapeApos: Parser<string> = alias([tokens.SINGLE_QUOTE_DOUBLE], "'");
-
-	const predefinedEntityRef: Parser<string> = then3(
-		tokens.AMPERSAND,
-		or([tokens.LT, tokens.GT, tokens.AMP, tokens.QUOT, tokens.APOS]),
-		tokens.SEMICOLON,
-		(a, b, c) => a + b + c
-	);
-
-	const charRef: Parser<string> = or([
-		then3(tokens.CHAR_REF_HEX, regex(/[0-9a-fA-F]+/), tokens.SEMICOLON, (a, b, c) => a + b + c),
-		then3(tokens.CHAR_REF, regex(/[0-9]+/), tokens.SEMICOLON, (a, b, c) => a + b + c),
-	]);
 
 	const stringLiteral: Parser<string> = map(
 		options.xquery
@@ -482,20 +346,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			  ]),
 		(x) => x.join('')
 	);
-
-	const localPart: Parser<string> = ncName;
-
-	const unprefixedName: Parser<QNameAST> = map(localPart, (x) => [{ prefix: '', URI: null }, x]);
-
-	const xmlPrefix: Parser<string> = ncName;
-
-	const prefixedName: Parser<QNameAST> = then(
-		xmlPrefix,
-		preceded(tokens.COLON, localPart),
-		(prefixPart, local) => [{ prefix: prefixPart, URI: null }, local]
-	);
-
-	const qName: Parser<QNameAST> = or([prefixedName, unprefixedName]);
 
 	const bracedURILiteral: Parser<string> = followed(
 		precededMultiple(
@@ -648,16 +498,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		wrapArray(alias([tokens.PROCESSING_INSTRUCTION_TEST], 'piTest')),
 	]);
 
-	const commentTest: Parser<IAST> = wrapArray(alias([tokens.COMMENT_TEST], 'commentTest'));
-
-	const textTest: Parser<IAST> = wrapArray(alias([tokens.TEXT_TEST], 'textTest'));
-
-	const namespaceNodeTest: Parser<IAST> = wrapArray(
-		alias([tokens.NAMESPACE_NODE_TEST], 'namespaceTest')
-	);
-
-	const anyKindTest: Parser<IAST> = wrapArray(alias([tokens.ANY_KIND_TEST], 'anyKindTest'));
-
 	const kindTest: Parser<IAST> = or([
 		documentTest,
 		elementTest,
@@ -723,44 +563,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		(a: IAST, b: IAST | undefined) => (b === undefined ? a : (a.concat([b]) as IAST))
 	);
 
-	const digits: Parser<string> = regex(/[0-9]+/);
-
-	const doubleLiteral: Parser<IAST> = then(
-		or([
-			then(tokens.DOT, digits, (dot, digitsParsed) => dot + digitsParsed),
-			then(
-				digits,
-				optional(preceded(tokens.DOT, regex(/[0-9]*/))),
-				(a, b) => a + (b !== null ? '.' + b : '')
-			),
-		]),
-		then3(
-			or([tokens.E_LOWER, tokens.E_UPPER]),
-			optional(or([tokens.PLUS, tokens.MINUS])),
-			digits,
-			(e, expSign, expDigits) => e + (expSign ? expSign : '') + expDigits
-		),
-		(base, exponent) => ['doubleConstantExpr', ['value', base + exponent]]
-	);
-
-	const decimalLiteral: Parser<IAST> = or([
-		map(preceded(tokens.DOT, digits), (x) => ['decimalConstantExpr', ['value', '.' + x]]),
-		then(followed(digits, tokens.DOT), optional(digits), (first, second) => [
-			'decimalConstantExpr',
-			['value', first + '.' + (second !== null ? second : '')],
-		]),
-	]);
-
-	const integerLiteral: Parser<IAST> = map(
-		digits,
-		(x) => ['integerConstantExpr', ['value', x]] as IAST
-	);
-
-	const numericLiteral: Parser<IAST> = followed(
-		or([doubleLiteral, decimalLiteral, integerLiteral]),
-		peek(not(regex(/[a-zA-Z]/), ['no alphabetical characters after numeric literal']))
-	);
-
 	const literal: Parser<IAST> = or([
 		numericLiteral,
 		map(stringLiteral, (x) => ['stringConstantExpr', ['value', parseCharacterReferences(x)]]),
@@ -777,39 +579,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		delimited(tokens.BRACE_OPEN, surrounded(expr, whitespace), tokens.BRACE_CLOSE),
 		map(delimited(tokens.BRACE_OPEN, whitespace, tokens.BRACE_CLOSE), (_) => ['sequenceExpr']),
 	]);
-
-	const contextItemExpr: Parser<IAST> = map(
-		followed(
-			tokens.DOT,
-			peek(not(tokens.DOT, ['context item should not be followed by another .']))
-		),
-		(_) => ['contextItemExpr']
-	);
-
-	const reservedFunctionNames = or([
-		tokens.ARRAY,
-		tokens.ATTRIBUTE,
-		tokens.COMMENT,
-		tokens.DOCUMENT_NODE,
-		tokens.ELEMENT,
-		tokens.EMPTY_SEQUENCE,
-		tokens.FUNCTION,
-		tokens.IF,
-		tokens.ITEM,
-		tokens.MAP,
-		tokens.NAMESPACE_NODE,
-		tokens.NODE,
-		tokens.PROCESSING_INSTRUCTION,
-		tokens.SCHEMA_ATTRIBUTE,
-		tokens.SCHEMA_ELEMENT,
-		tokens.SWITCH,
-		tokens.TEXT,
-		tokens.TYPESWITCH,
-	]);
-
-	const argumentPlaceholder: Parser<IAST> = wrapArray(
-		alias([tokens.QUESTION_MARK], 'argumentPlaceholder')
-	);
 
 	const argument: Parser<IAST> = or([exprSingle, argumentPlaceholder]);
 
@@ -856,12 +625,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 	);
 
 	const functionBody: Parser<IAST> = map(enclosedExpr, (x) => (x ? x : ['sequenceExpr']));
-
-	const occurrenceIndicator: Parser<string> = or([
-		tokens.QUESTION_MARK,
-		tokens.ASTERIX,
-		tokens.PLUS,
-	]);
 
 	const sequenceType: Parser<IAST[]> = or([
 		map(tokens.EMPTY_SEQUENCE_TEST, (_) => [['voidSequenceType']]),
@@ -1127,41 +890,12 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		map(enclosedExpr, (x) => x || ['sequenceExpr']),
 	]);
 
-	const elementContentChar = preceded(
-		peek(not(regex(/[{}<&]/), ['elementContentChar cannot be {, }, <, or &'])),
-		char
-	);
-
-	const cdataSection: Parser<IAST> = map(
-		delimited(
-			tokens.CDATA_OPEN,
-			star(
-				preceded(
-					peek(not(tokens.CDATA_CLOSE, ['CDataSection content may not contain "]]>"'])),
-					char
-				)
-			),
-			tokens.CDATA_CLOSE
-		),
-		(contents) => ['CDataSection', contents.join('')]
-	);
-
 	const dirElemContent: Parser<IAST | string> = or([
 		cdataSection,
 		directConstructorIndirect,
 		commonContent,
 		elementContentChar,
 	]);
-
-	const quotAttrValueContentChar: Parser<string> = preceded(
-		peek(not(regex(/[\"{}<&]/), ['quotAttrValueContentChar cannot be ", {, }, <, or &'])),
-		char
-	);
-
-	const aposAttrValueContentChar: Parser<string> = preceded(
-		peek(not(regex(/[\'{}<&]/), ["aposAttrValueContentChar cannot be ', {, }, <, or &"])),
-		char
-	);
 
 	const quotAttrValueContent: Parser<IAST | string> = or([
 		map(quotAttrValueContentChar, (x) => x.replace(/[\x20\x0D\x0A\x09]/g, ' ')) as Parser<
@@ -1262,67 +996,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		}
 	);
 
-	const dirCommentContents: Parser<string> = map(
-		star(
-			or([
-				preceded(peek(not(tokens.MINUS, [])), char),
-				map(
-					precededMultiple(
-						[tokens.MINUS, peek(not(tokens.MINUS, [])) as Parser<string>],
-						char
-					),
-					(x) => '-' + x
-				),
-			])
-		),
-		(x) => x.join('')
-	);
-
-	const dirCommentConstructor: Parser<IAST> = map(
-		delimited(tokens.DIR_COMMENT_OPEN, dirCommentContents, tokens.DIR_COMMENT_CLOSE),
-		(x) => ['computedCommentConstructor', ['argExpr', ['stringConstantExpr', ['value', x]]]]
-	);
-
-	const nameStartChar: Parser<string> = or([ncNameStartChar, tokens.COLON]);
-
-	const nameChar: Parser<string> = or([ncNameChar, tokens.COLON]);
-
-	const name: Parser<string> = then(
-		nameStartChar,
-		star(nameChar),
-		(start, rest) => start + rest.join('')
-	);
-
-	const piTarget: Parser<string> = preceded(
-		peek(
-			not(
-				then3(
-					or([tokens.X_UPPER, tokens.X_LOWER]),
-					or([tokens.M_UPPER, tokens.M_LOWER]),
-					or([tokens.L_UPPER, tokens.L_LOWER]),
-					(_a, _b, _c) => []
-				),
-				[]
-			)
-		),
-		name
-	);
-
-	const dirPiContents: Parser<string> = map(
-		star(preceded(peek(not(tokens.DIR_PI_CLOSE, [])), char)),
-		(x) => x.join('')
-	);
-
-	const dirPiConstructor: Parser<IAST> = then(
-		preceded(tokens.DIR_PI_OPEN, piTarget),
-		followed(optional(preceded(explicitWhitespace, dirPiContents)), tokens.DIR_PI_CLOSE),
-		(target, contents) => [
-			'computedPIConstructor',
-			['piTarget', target],
-			['piValueExpr', ['stringConstantExpr', ['value', contents]]],
-		]
-	);
-
 	const directConstructor: Parser<IAST> = or([
 		dirElemConstructor,
 		dirCommentConstructor,
@@ -1390,8 +1063,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				['valueExpr', valExpr ? valExpr : ['sequenceExpr']],
 			] as IAST
 	);
-
-	const prefix: Parser<IAST> = map(ncName, (x) => ['prefix', x]);
 
 	const enclosedPrefixExpr: Parser<IAST[]> = map(enclosedExpr, (x) =>
 		x ? [['prefixExpr', x]] : []
@@ -1479,12 +1150,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				? ['lookup', ['NCName', x]]
 				: ['lookup', x]
 	);
-
-	const locationPathAbbreviation: Parser<IAST> = map(tokens.DOUBLE_SLASH, (_) => [
-		'stepExpr',
-		['xpathAxis', 'descendant-or-self'],
-		['anyKindTest'],
-	]);
 
 	const postfixExprWithStep: Parser<IAST> = then(
 		map(primaryExpr, (x) => wrapInSequenceExprIfNeeded(x)),
@@ -1645,8 +1310,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		pathExprCache
 	);
 
-	const validationMode: Parser<string> = or([tokens.LAX, tokens.STRICT]);
-
 	const validateExpr: Parser<IAST> = preceded(
 		tokens.VALIDATE,
 		then(
@@ -1667,16 +1330,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			(modeOrType, argExpr) =>
 				['validateExpr', ...(modeOrType ? [modeOrType] : []), ['argExpr', argExpr]] as IAST
 		)
-	);
-
-	const pragmaContents: Parser<string> = map(
-		star(
-			followed(
-				char,
-				peek(not(tokens.PRAGMA_END, ["Pragma contents should not contain '#)'"]))
-			)
-		),
-		(x) => x.join('')
 	);
 
 	const pragma: Parser<IAST> = delimited(
@@ -1907,29 +1560,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		alias([tokens.VERTICAL_BAR_DOUBLE], 'stringConcatenateOp'),
 		defaultBinaryOperatorFn
 	);
-
-	const valueCompare: Parser<string> = map(
-		followed(
-			or([tokens.EQ, tokens.NE, tokens.LT, tokens.LE, tokens.GT, tokens.GE]),
-			assertAdjacentOpeningTerminal
-		),
-		(x) => x + 'Op'
-	);
-
-	const nodeCompare: Parser<string> = or([
-		followed(alias([tokens.IS], 'isOp'), assertAdjacentOpeningTerminal),
-		alias([tokens.LESS_THAN_DOUBLE], 'nodeBeforeOp'),
-		alias([tokens.GREATER_THAN_DOUBLE], 'nodeAfterOp'),
-	]);
-
-	const generalCompare: Parser<string> = or([
-		alias([tokens.EQUALS], 'equalOp'),
-		alias([tokens.NOT_EQUALS], 'notEqualOp'),
-		alias([tokens.LESS_THAN_EQUALS], 'lessThanOrEqualOp'),
-		alias([tokens.LESS_THAN], 'lessThanOp'),
-		alias([tokens.GREATER_THAN_EQUALS], 'greaterThanOrEqualOp'),
-		alias([tokens.GREATER_THAN], 'greaterThanOp'),
-	]);
 
 	const comparisonExpr: Parser<IAST> = nonRepeatableBinaryOperator(
 		stringConcatExpr,
@@ -2413,7 +2043,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const varDefaultValue: Parser<IAST> = exprSingle;
 
-	// TOOD: replace with then3
 	const varDecl: Parser<IAST> = then(
 		precededMultiple(
 			[tokens.VARIABLE, whitespacePlus, tokens.DOLLAR, whitespace],
@@ -2474,11 +2103,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			] as IAST
 	);
 
-	const compatibilityAnnotation: Parser<IAST> = map(tokens.UPDATING, (_) => [
-		'annotation',
-		['annotationName', 'updating'],
-	]);
-
 	const annotatedDecl: Parser<IAST> = precededMultiple(
 		[tokens.DECLARE, whitespacePlus],
 		then(
@@ -2500,8 +2124,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			['uri', uri],
 		]
 	);
-
-	const separator: Parser<string> = tokens.SEMICOLON;
 
 	const schemaPrefix: Parser<IAST> = or([
 		map(
@@ -2634,10 +2256,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		(x) => ['emptyOrderDecl', x]
 	);
 
-	const preserveMode: Parser<string> = or([tokens.PRESERVE, tokens.NO_PRESERVE]);
-
-	const inheritMode: Parser<string> = or([tokens.INHERIT, tokens.NO_INHERIT]);
-
 	const copyNamespacesDecl: Parser<IAST> = then(
 		precededMultiple(
 			[tokens.DECLARE, whitespacePlus, tokens.COPY_NAMESPACES, whitespacePlus],
@@ -2650,20 +2268,6 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			['inheritMode', inheritModePart],
 		]
 	);
-
-	const decimalFormatPropertyName: Parser<string> = or([
-		tokens.DECIMAL_SEPARATOR,
-		tokens.GROUPING_SEPARATOR,
-		tokens.INFINITY,
-		tokens.MINUS_SIGN,
-		tokens.NAN,
-		tokens.PERCENT,
-		tokens.PER_MILLE,
-		tokens.ZERO_DIGIT,
-		tokens.DIGIT,
-		tokens.PATTERN_SEPARATOR,
-		tokens.EXPONENT_SEPARATOER,
-	]);
 
 	const decimalFormatDecl: Parser<IAST> = then(
 		precededMultiple(
