@@ -4,6 +4,7 @@
 		"start": "concurrently -k -p \"[{name}]\" -n \"tsc,server\" \"ttsc --watch\" servor --reload"
 	},
 	"dependencies": {
+		"prsc": "^2.0.1",
 		"xspattern": "^1.2.1"
 	},
 	"devDependencies": {

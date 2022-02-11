@@ -21,7 +21,7 @@ import * as tokens from './tokens';
 
 const whitespaceCache = new Map<number, ParseResult<string>>();
 const whitespacePlusCache = new Map<number, ParseResult<string>>();
-const pathExprCache = new Map<number, ParseResult<string>>();
+const pathExprCache = new Map<number, ParseResult<IAST>>();
 
 function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }): Parser<IAST> {
 	function cached<T>(parser: Parser<T>, cache: Map<number, ParseResult<T>>): Parser<T> {
@@ -490,10 +490,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const localPart: Parser<string> = ncName;
 
-	const unprefixedName: Parser<QNameAST> = map(localPart, (x) => [
-		{ prefix: null, URI: null },
-		x,
-	]);
+	const unprefixedName: Parser<QNameAST> = map(localPart, (x) => [{ prefix: '', URI: null }, x]);
 
 	const xmlPrefix: Parser<string> = ncName;
 
@@ -1197,7 +1194,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		qName,
 		preceded(surrounded(tokens.EQUALS, optional(explicitWhitespace)), dirAttributeValue),
 		(attrName, value) => {
-			if (attrName[1] === 'xmlns') {
+			if (attrName[0].prefix === '' && attrName[1] === 'xmlns') {
 				if (value.length && typeof value[0] !== 'string') {
 					throw new Error(
 						'XQST0022: A namespace declaration may not contain enclosed expressions'
