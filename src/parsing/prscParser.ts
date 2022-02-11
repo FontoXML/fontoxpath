@@ -19,16 +19,19 @@ import {
 import { ASTAttributes, IAST } from './astHelper';
 import * as tokens from './tokens';
 
+const whitespaceCache = new Map<number, ParseResult<string>>();
+const whitespacePlusCache = new Map<number, ParseResult<string>>();
+const pathExprCache = new Map<number, ParseResult<string>>();
+
 function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }): Parser<IAST> {
-	function cached<T>(parser: Parser<T>): Parser<T> {
-		const cache: { [key: number]: ParseResult<T> } = {};
+	function cached<T>(parser: Parser<T>, cache: Map<number, ParseResult<T>>): Parser<T> {
 		return (input: string, offset: number): ParseResult<T> => {
-			if (cache[offset]) {
-				return cache[offset];
+			if (cache.has(offset)) {
+				return cache.get(offset);
 			}
 
 			const result = parser(input, offset);
-			cache[offset] = result;
+			cache.set(offset, result);
 			return result;
 		};
 	}
@@ -64,10 +67,14 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const whitespaceCharacter: Parser<string> = or([tokens.WHITESPACE, comment]);
 
-	const whitespace: Parser<string> = cached(map(star(whitespaceCharacter), (x) => x.join('')));
+	const whitespace: Parser<string> = cached(
+		map(star(whitespaceCharacter), (x) => x.join('')),
+		whitespaceCache
+	);
 
 	const whitespacePlus: Parser<string> = cached(
-		map(plus(whitespaceCharacter), (x) => x.join(''))
+		map(plus(whitespaceCharacter), (x) => x.join('')),
+		whitespacePlusCache
 	);
 
 	function surrounded<T, S>(parser: Parser<T>, around: Parser<S>): Parser<T> {
@@ -1641,7 +1648,10 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		),
 	]);
 
-	const pathExpr: Parser<IAST> = cached(or([relativePathExpr, absoluteLocationPath]));
+	const pathExpr: Parser<IAST> = cached(
+		or([relativePathExpr, absoluteLocationPath]),
+		pathExprCache
+	);
 
 	const validationMode: Parser<string> = or([tokens.LAX, tokens.STRICT]);
 
@@ -2818,9 +2828,28 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 	return complete(surrounded(module, whitespace));
 }
 
+const xpathParser = generateParser({ outputDebugInfo: false, xquery: false });
+const xpathDebugParser = generateParser({ outputDebugInfo: true, xquery: false });
+const xqueryParser = generateParser({ outputDebugInfo: false, xquery: true });
+const xqueryDebugParser = generateParser({ outputDebugInfo: true, xquery: true });
+
 export function parseUsingPrsc(
 	xpath: string,
 	options: { outputDebugInfo: boolean; xquery: boolean }
 ): ParseResult<IAST> {
-	return generateParser(options)(xpath, 0);
+	whitespaceCache.clear();
+	whitespacePlusCache.clear();
+	pathExprCache.clear();
+
+	if (options.xquery) {
+		if (options.outputDebugInfo) {
+			return xqueryDebugParser(xpath, 0);
+		}
+		return xqueryParser(xpath, 0);
+	}
+
+	if (options.outputDebugInfo) {
+		return xpathDebugParser(xpath, 0);
+	}
+	return xpathParser(xpath, 0);
 }
