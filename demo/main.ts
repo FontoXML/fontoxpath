@@ -4,6 +4,7 @@ const allowXQuery = document.getElementById('allowXQuery') as HTMLInputElement;
 const allowXQueryUpdateFacility = document.getElementById(
 	'allowXQueryUpdateFacility'
 ) as HTMLInputElement;
+const useAstAnnotation = document.getElementById('useAstAnnotation') as HTMLInputElement;
 const useJsCodegenBackend = document.getElementById('useJsCodegenBackend') as HTMLInputElement;
 const codegenReturnTypeChoice = document.getElementById(
 	'codegenReturnTypeChoice'
@@ -28,7 +29,7 @@ function setCookie() {
 
 	document.cookie = `xpath-editor-state=${allowXQuery.checked ? 1 : 0}${
 		allowXQueryUpdateFacility.checked ? 1 : 0
-	}{useJsCodegenBackend.checked ? 1 : 0}${source.length}~${source}${xpath};max-age=${
+	}${1}${useJsCodegenBackend.checked ? 1 : 0}${source.length}~${source}${xpath};max-age=${
 		60 * 60 * 24 * 7
 	}`;
 }
@@ -257,6 +258,7 @@ async function rerunXPath() {
 	jsCodegenOutput.innerText = '';
 
 	const xpath = xpathField.innerText;
+
 	try {
 		// First try to get the AST as it has a higher change of succeeding
 		const document = new Document();
