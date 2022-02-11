@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Catalog005,Was generated to an old version
 Catalog006,Was generated to an old version
 Catalog014,Was generated to an old version
@@ -22,6 +23,11 @@ Constr-compelem-parent-1,Contains unneeded sequenceExpr wrappers
 Catalog002,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 itunes,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 raytracer,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.xqsharp.com/raytracer
+=======
+Catalog005,result was not equal
+Catalog006,result was not equal
+Catalog014,result was not equal
+>>>>>>> 02aad706 (Get rid of pegjs!)
 functx-fn-root-all,result was not equal
 functx-functx-all-whitespace-1,result was not equal
 functx-functx-all-whitespace-2,result was not equal
@@ -76,8 +82,14 @@ UseCaseR31-032,Parse error
 d1e13048,result was not equal
 d1e41590,Parse error
 d1e42207,Parse error
+<<<<<<< HEAD
 d1e42362,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
+=======
+d1e42362,Parse error
+>>>>>>> 02aad706 (Get rid of pegjs!)
 d1e78807b,XQuery script could not be found
+XMark-All,result was not equal
+XMark-Q19,result was not equal
 array-filter-001,XQuery script could not be found
 array-filter-002,XQuery script could not be found
 array-filter-003,XQuery script could not be found
@@ -467,10 +479,14 @@ numberformat901err,Parse error
 fn-function-lookup-402,result was not equal
 fn-function-lookup-404,result was not equal
 fn-function-lookup-609,result was not equal
+<<<<<<< HEAD
 generate-id-014,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/QT3/copy
 generate-id-015,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/QT3/copy
 generate-id-016,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/QT3/copy
 generate-id-017,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/QT3/copy
+=======
+fn-function-lookup-766a,result was not equal
+>>>>>>> 02aad706 (Get rid of pegjs!)
 fn-has-children-008,result was not equal
 fn-has-children-014,result was not equal
 fn-has-children-015,result was not equal
@@ -740,7 +756,6 @@ fn-reverseusht1args-3,XQuery script could not be found
 reverse-001,XQuery script could not be found
 reverse-002,XQuery script could not be found
 reverse-003,XQuery script could not be found
-serialize-json-003,Parse error
 serialize-xml-013,result was not equal
 fn-sort-1,XQuery script could not be found
 fn-sort-10,XQuery script could not be found
@@ -1201,6 +1216,7 @@ math-tan-008,XQuery script could not be found
 math-tan-009,XQuery script could not be found
 math-tan-010,XQuery script could not be found
 math-tan-011,XQuery script could not be found
+<<<<<<< HEAD
 FORG0002,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 FOTY0012,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K-CombinedErrorCodes-1,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
@@ -1209,6 +1225,13 @@ K-CombinedErrorCodes-3,Parse error
 K-CombinedErrorCodes-4,Parse error
 K-CombinedErrorCodes-5,Parse error
 K-CombinedErrorCodes-6,Parse error
+=======
+K-CombinedErrorCodes-2,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
+K-CombinedErrorCodes-3,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
+K-CombinedErrorCodes-4,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
+K-CombinedErrorCodes-5,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
+K-CombinedErrorCodes-6,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
+>>>>>>> 02aad706 (Get rid of pegjs!)
 XPTY0004_06,result was not equal
 XPTY0004_30,result was not equal
 XPTY0004_33,result was not equal
@@ -1220,6 +1243,7 @@ XQDY0027,Parser related error, Error: Not implemented: only module imports, name
 XQDY0084,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 XQST0022_1,Parser related error, Error: XQST0022: A namespace declaration may not contain enclosed expressions
 XQST0022_2,Parser related error, Error: XQST0022: The namespace declaration for 'xmlns:prefix' may not contain enclosed expressions
+<<<<<<< HEAD
 XQST0032,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 XQST0038_1,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 XQST0038_3,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
@@ -1265,6 +1289,22 @@ combined-errors-1,Parser related error, Error: XQST0051: No modules found with t
 combined-errors-2,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 combined-errors-3,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 function-item-15,result was not equal
+=======
+XQST0046_02,result was not equal
+XQST0046_09,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
+XQST0046_10,result was not equal
+XQST0046_11,result was not equal
+XQST0047,result was not equal
+XQST0057,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
+XQST0059_1,result was not equal
+XQST0059_2,result was not equal
+XQST0059_6,result was not equal
+XQST0068,Expected XML could not be parsed
+XQST0069,result was not equal
+XQST0079,Parse error
+XQST0088_2,result was not equal
+function-item-15,Parser related error, TypeError: paramTypeList is not iterable
+>>>>>>> 02aad706 (Get rid of pegjs!)
 function-item-16,result was not equal
 hof-003,Parser related error, Error: XQST0051: No modules found with the namespace uri http://example.com/hof-003
 hof-009,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
@@ -1276,15 +1316,15 @@ hof-036,result was not equal
 hof-037,result was not equal
 hof-038,result was not equal
 hof-039,Parse error
-hof-046,result was not equal
-hof-047,result was not equal
+hof-046,Parser related error, TypeError: paramTypeList is not iterable
+hof-047,Parser related error, TypeError: paramTypeList is not iterable
 hof-048,result was not equal
-hof-049,result was not equal
+hof-049,Parser related error, TypeError: paramTypeList is not iterable
 hof-053,Parse error
 hof-911,result was not equal
 inline-function-6,result was not equal
 inline-function-7,result was not equal
-inline-function-9,result was not equal
+inline-function-9,Parser related error, TypeError: paramTypeList is not iterable
 xqhof1,Parse error
 xqhof12,result was not equal
 xqhof16,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
@@ -1426,12 +1466,15 @@ UnionType-equal-01,Parser related error, Error: Not implemented: only module imp
 UnionType-equal-02,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K2-SeqExcept-23,result was not equal
 K2-SeqIntersect-23,result was not equal
+<<<<<<< HEAD
 K2-SeqIntersect-43,result was not equal
 K2-SeqIntersect-44,result was not equal
 op-numeric-add-13,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 op-numeric-add-14,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 op-numeric-add-15,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 op-numeric-add-16,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
+=======
+>>>>>>> 02aad706 (Get rid of pegjs!)
 K-NumericUnaryMinus-14,result was not equal
 same-key-002,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 same-key-023,result was not equal
@@ -1791,8 +1834,18 @@ cbcl-castable-restricted-union-018,Parser related error, Error: Not implemented:
 cbcl-castable-restricted-union-019,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 cbcl-castable-restricted-union-020,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 XQueryComment014,Parse error
+<<<<<<< HEAD
 K2-ComputeConAttr-42,Parser related error, Error: XQST0070: The prefixes xml and xmlns may not be used in a namespace declaration or be bound to another namespaceURI.
 K2-ComputeConAttr-43,Parser related error, Error: XQST0070: The prefixes xml and xmlns may not be used in a namespace declaration or be bound to another namespaceURI.
+=======
+Constr-compattr-enclexpr-2,result was not equal
+Constr-compattr-parent-1,result was not equal
+K2-ComputeConAttr-10,result was not equal
+K2-ComputeConAttr-35,result was not equal
+K2-ComputeConAttr-36,result was not equal
+K2-ComputeConAttr-5,result was not equal
+K2-ComputeConAttr-6,result was not equal
+>>>>>>> 02aad706 (Get rid of pegjs!)
 Constr-compcomment-enclexpr-2,result was not equal
 Constr-compcomment-parent-1,result was not equal
 K2-ComputeConComment-4a,result was not equal
@@ -1805,12 +1858,21 @@ Constr-docnode-constrmod-3,Parser related error, Error: Not implemented: only mo
 Constr-docnode-constrmod-4,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 Constr-docnode-parent-1,result was not equal
 K2-ConDocNode-17,result was not equal
+<<<<<<< HEAD
 Constr-compelem-baseuri-3,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 Constr-compelem-constrmod-3,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 Constr-compelem-constrmod-4,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 Constr-compelem-constrmod-8,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K2-ComputeConElem-10,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K2-ComputeConElem-12,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
+=======
+Constr-compelem-adjtext-1,result was not equal
+Constr-compelem-adjtext-2,result was not equal
+Constr-compelem-adjtext-3,result was not equal
+Constr-compelem-baseuri-2,result was not equal
+Constr-compelem-constrmod-7,result was not equal
+Constr-compelem-parent-1,result was not equal
+>>>>>>> 02aad706 (Get rid of pegjs!)
 nscons-001,result was not equal
 nscons-004,result was not equal
 nscons-005,result was not equal
@@ -1857,6 +1919,7 @@ K2-ConText-5a,result was not equal
 K2-ConText-7,result was not equal
 K2-ConText-8,result was not equal
 K2-ConText-9,result was not equal
+<<<<<<< HEAD
 K-ConstructionProlog-1,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K-ConstructionProlog-3,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K-ConstructionProlog-4,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
@@ -1900,15 +1963,42 @@ contextDecl-030,Parser related error, Error: Not implemented: only module import
 contextDecl-031,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 contextDecl-032,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 contextDecl-033,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
+=======
+Constr-compelem-constrmod-1,result was not equal
+Constr-compelem-constrmod-2,result was not equal
+Constr-compelem-constrmod-5,result was not equal
+Constr-compelem-constrmod-6,result was not equal
+contextDecl-014,Parse error
+contextDecl-015,Parse error
+contextDecl-016,Parse error
+contextDecl-017,Parse error
+contextDecl-018,Parse error
+contextDecl-019,Parse error
+contextDecl-020,Parse error
+contextDecl-021,Parse error
+contextDecl-022,Parse error
+contextDecl-028,Parse error
+contextDecl-029,Parse error
+contextDecl-030,Parse error
+contextDecl-031,Parse error
+contextDecl-032,Parse error
+contextDecl-033,Parse error
+>>>>>>> 02aad706 (Get rid of pegjs!)
 contextDecl-034,Parse error
 contextDecl-035,Parse error
 contextDecl-036,Parse error
 contextDecl-037,Parse error
 contextDecl-038,Parse error
 contextDecl-039,Parse error
+<<<<<<< HEAD
 contextDecl-040,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 contextDecl-041,Parse error
 contextDecl-042,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
+=======
+contextDecl-040,Parse error
+contextDecl-041,Parse error
+contextDecl-042,Parse error
+>>>>>>> 02aad706 (Get rid of pegjs!)
 contextDecl-043,Parse error
 contextDecl-044,Parse error
 contextDecl-045,Parse error
@@ -1918,6 +2008,7 @@ contextDecl-048,Parser related error, Error: XQST0051: No modules found with the
 contextDecl-049,Parse error
 contextDecl-050,Parse error
 contextDecl-051,Parse error
+<<<<<<< HEAD
 contextDecl-052,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/libmodule3
 contextDecl-053,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 contextDecl-054,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/libmodule2
@@ -1928,6 +2019,13 @@ K-CopyNamespacesProlog-3,Parser related error, Error: Not implemented: only modu
 K2-CopyNamespacesProlog-1,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K2-CopyNamespacesProlog-4,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K2-CopyNamespacesProlog-5,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
+=======
+contextDecl-053,Parse error
+contextDecl-055,Parse error
+K2-CopyNamespacesProlog-1,result was not equal
+K2-CopyNamespacesProlog-4,result was not equal
+K2-CopyNamespacesProlog-5,result was not equal
+>>>>>>> 02aad706 (Get rid of pegjs!)
 K2-CopyNamespacesProlog-6,result was not equal
 K2-CopyNamespacesProlog-7,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K2-CopyNamespacesProlog-8,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
@@ -2164,9 +2262,14 @@ K2-DirectConOther-29,Parse error
 K2-DirectConOther-50,result was not equal
 K2-DirectConOther-51,result was not equal
 eqname-001,result was not equal
+<<<<<<< HEAD
 eqname-004,Parser related error, Error: XPST0081: Invalid prefix for input :integer
 eqname-005,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 eqname-006,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
+=======
+eqname-005,Parse error
+eqname-006,Parse error
+>>>>>>> 02aad706 (Get rid of pegjs!)
 eqname-007,Parse error
 eqname-008,result was not equal
 eqname-009,result was not equal
@@ -2174,15 +2277,10 @@ eqname-010,result was not equal
 eqname-011,result was not equal
 eqname-012,result was not equal
 eqname-013,result was not equal
-eqname-020,result was not equal
-eqname-021,result was not equal
 eqname-022,result was not equal
-eqname-024,result was not equal
-eqname-025,result was not equal
-eqname-026,result was not equal
-eqname-027,result was not equal
 eqname-028,result was not equal
 eqname-029,result was not equal
+<<<<<<< HEAD
 eqname-032,result was not equal
 eqname-033,result was not equal
 eqname-909,result was not equal
@@ -2228,13 +2326,60 @@ K-ExtensionExpression-6,Parser related error, InvalidCharacterError: InvalidChar
 K-ExtensionExpression-7,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
 K-ExtensionExpression-8,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
 K2-ExtensionExpression-1,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
+=======
+eqname-909,result was not equal
+K-EmptyOrderProlog-1,result was not equal
+K-EmptyOrderProlog-2,result was not equal
+K-EmptyOrderProlog-3,result was not equal
+emptyorderdecl-1,result was not equal
+emptyorderdecl-10,result was not equal
+emptyorderdecl-11,result was not equal
+emptyorderdecl-12,result was not equal
+emptyorderdecl-13,result was not equal
+emptyorderdecl-14,result was not equal
+emptyorderdecl-15,result was not equal
+emptyorderdecl-16,result was not equal
+emptyorderdecl-17,result was not equal
+emptyorderdecl-18,result was not equal
+emptyorderdecl-19,result was not equal
+emptyorderdecl-2,result was not equal
+emptyorderdecl-20,result was not equal
+emptyorderdecl-21,result was not equal
+emptyorderdecl-22,result was not equal
+emptyorderdecl-23,result was not equal
+emptyorderdecl-24,result was not equal
+emptyorderdecl-25,result was not equal
+emptyorderdecl-26,result was not equal
+emptyorderdecl-27,result was not equal
+emptyorderdecl-28,result was not equal
+emptyorderdecl-29,result was not equal
+emptyorderdecl-3,result was not equal
+emptyorderdecl-4,result was not equal
+emptyorderdecl-5,result was not equal
+emptyorderdecl-6,result was not equal
+emptyorderdecl-7,result was not equal
+emptyorderdecl-8,result was not equal
+emptyorderdecl-9,result was not equal
+K-ExtensionExpression-3,Parse error
+K-ExtensionExpression-4,Parse error
+K-ExtensionExpression-4a,Parse error
+K-ExtensionExpression-5,Parse error
+K-ExtensionExpression-6,Parse error
+K-ExtensionExpression-7,Parse error
+K-ExtensionExpression-8,Parse error
+K2-ExtensionExpression-1,Parse error
+>>>>>>> 02aad706 (Get rid of pegjs!)
 K2-ExtensionExpression-11,Parse error
 K2-ExtensionExpression-12,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
 K2-ExtensionExpression-17,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
 K2-ExtensionExpression-2,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
 K2-ExtensionExpression-3,Parse error
 K2-ExtensionExpression-4,Parse error
+<<<<<<< HEAD
 K2-ExtensionExpression-5,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
+=======
+K2-ExtensionExpression-5,Parse error
+>>>>>>> 02aad706 (Get rid of pegjs!)
 extexpr-1,Parse error
 extexpr-10,Parse error
 extexpr-11,Parse error
@@ -2253,10 +2398,17 @@ extexpr-22,Parse error
 extexpr-23,Parse error
 extexpr-24,Parse error
 extexpr-25,Parse error
+<<<<<<< HEAD
 extexpr-26,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
 extexpr-3,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
 extexpr-4,Parse error
 extexpr-5,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
+=======
+extexpr-26,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
+extexpr-3,Parse error
+extexpr-4,Parse error
+extexpr-5,Parse error
+>>>>>>> 02aad706 (Get rid of pegjs!)
 extexpr-6,Parse error
 extexpr-7,Parse error
 extexpr-8,Parse error
@@ -2264,6 +2416,7 @@ extexpr-9,Parse error
 pragma-no-namespace-001,Parse error
 pragma-no-namespace-002,Parse error
 pragma-no-namespace-003,Parse error
+<<<<<<< HEAD
 pragma-no-namespace-004,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
 pragma-no-namespace-005,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
 ForExprType010,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
@@ -2287,6 +2440,31 @@ ForExprType053,Parser related error, Error: Not implemented: only module imports
 step-expr-si-1,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 step-expr-si-2,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 step-expr-si-3,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
+=======
+pragma-no-namespace-004,Parse error
+pragma-no-namespace-005,Parse error
+ForExprType010,result was not equal
+ForExprType025,result was not equal
+ForExprType026,Parse error
+ForExprType027,Parse error
+ForExprType037,result was not equal
+ForExprType038,result was not equal
+ForExprType039,result was not equal
+ForExprType040,Parse error
+ForExprType041,Parse error
+ForExprType042,result was not equal
+ForExprType043,result was not equal
+ForExprType044,result was not equal
+ForExprType048,result was not equal
+ForExprType049,result was not equal
+ForExprType050,result was not equal
+ForExprType051,result was not equal
+ForExprType052,result was not equal
+ForExprType053,result was not equal
+step-expr-si-1,result was not equal
+step-expr-si-2,result was not equal
+step-expr-si-3,result was not equal
+>>>>>>> 02aad706 (Get rid of pegjs!)
 ForExprType001,result was not equal
 ForExprType002,result was not equal
 ForExprType003,result was not equal
@@ -2339,6 +2517,7 @@ ForExprType071,result was not equal
 ForExprType072,result was not equal
 ForExprType073,result was not equal
 K2-ForExprWith-1,result was not equal
+K2-ForExprWithout-10,result was not equal
 K2-ForExprWithout-8,result was not equal
 FunctionCall-003,result was not equal
 FunctionCall-005,result was not equal
@@ -2516,6 +2695,7 @@ K2-NodeTest-38,result was not equal
 K2-NodeTest-39,result was not equal
 K2-NodeTest-40,result was not equal
 NodeTest013-2,result was not equal
+<<<<<<< HEAD
 K-OptionDeclarationProlog-1b,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K-OptionDeclarationProlog-2,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K-OptionDeclarationProlog-3,Parse error
@@ -2582,6 +2762,58 @@ orderDecl-12,Parser related error, Error: Not implemented: only module imports, 
 orderDecl-13,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 orderDecl-15,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 orderDecl-16,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
+=======
+K-OptionDeclarationProlog-1b,Parse error
+K-OptionDeclarationProlog-2,Parse error
+K-OptionDeclarationProlog-3,Parse error
+K-OptionDeclarationProlog-4,Parse error
+K-OptionDeclarationProlog-5,Parse error
+optiondeclprolog-1,Parse error
+optiondeclprolog-2,Parse error
+Serialization-001,Parse error
+Serialization-002,Parse error
+Serialization-004,Parse error
+Serialization-005,Parse error
+Serialization-006,Parse error
+Serialization-007,Parse error
+Serialization-008,Parse error
+Serialization-009,Parse error
+Serialization-010,Parse error
+Serialization-011,Parse error
+Serialization-012,Parse error
+Serialization-013,Parse error
+Serialization-014,Parse error
+Serialization-015,Parse error
+Serialization-016,Parse error
+Serialization-017,Parse error
+Serialization-018,Parse error
+Serialization-019,Parse error
+Serialization-020,Parse error
+Serialization-021,Parse error
+Serialization-022,Parse error
+Serialization-023,Parse error
+Serialization-024,Parse error
+Serialization-025,Parse error
+Serialization-026,Parse error
+Serialization-026a,Parse error
+Serialization-027,Parse error
+Serialization-027a,Parse error
+Serialization-028,Parse error
+Serialization-029,Parse error
+Serialization-030,Parse error
+Serialization-031,Parse error
+Serialization-032,Parse error
+Serialization-033,Parse error
+Serialization-034,Parse error
+Serialization-035,Parse error
+Serialization-036,Parse error
+Serialization-037,Parse error
+K2-OrderbyExprWithout-46,result was not equal
+K2-OrderbyExprWithout-47,result was not equal
+K2-OrderbyExprWithout-48,result was not equal
+K2-OrderbyExprWithout-49,result was not equal
+orderBy66,Parse error
+>>>>>>> 02aad706 (Get rid of pegjs!)
 orderDecl-17,Parse error
 orderDecl-18,Parse error
 orderDecl-2,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
@@ -2610,6 +2842,7 @@ cbcl-first-in-sequence-008,result was not equal
 filter-limits-001,result was not equal
 filter-limits-002,result was not equal
 filter-limits-003,result was not equal
+<<<<<<< HEAD
 cbcl-default-attribute-1,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 cbcl-default-attribute-2,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 cbcl-fixed-attribute-1,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
@@ -2745,6 +2978,45 @@ substitution-025,Parser related error, Error: Not implemented: only module impor
 substitution-030,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 substitution-031,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 substitution-032,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
+=======
+qischema002,result was not equal
+qischema003,result was not equal
+qischema004,result was not equal
+qischema005,result was not equal
+qischema006,result was not equal
+qischema007,result was not equal
+qischema009,result was not equal
+qischema010,result was not equal
+qischema011,result was not equal
+qischema012,result was not equal
+qischema016,result was not equal
+qischema030,result was not equal
+qischema031,result was not equal
+qischema032a,result was not equal
+qischema032b,Parse error
+qischema032c,Parse error
+qischema040,result was not equal
+qischema040a,result was not equal
+qischema041,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
+qischema042,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
+qischema043,result was not equal
+qischema044,result was not equal
+qischema062,result was not equal
+qischema063,result was not equal
+qischema065,result was not equal
+qischema080,result was not equal
+qischema083,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
+qischema90031-err,result was not equal
+qischema90041-err,result was not equal
+qischema90611-err,result was not equal
+qischema90612-err,result was not equal
+qischema90613-err,result was not equal
+qischema90614-err,result was not equal
+qischema90701-err,result was not equal
+qischema90702-err,result was not equal
+qischema90703-err,result was not equal
+schema-import-1,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
+>>>>>>> 02aad706 (Get rid of pegjs!)
 K2-Steps-10,result was not equal
 K2-Steps-18,result was not equal
 K2-Steps-19,result was not equal
@@ -3089,6 +3361,7 @@ K2-ExternalVariablesWith-8,Parse error
 K2-ExternalVariablesWithout-20,result was not equal
 K2-ExternalVariablesWithout-3,Parser related error, Error: XQST0060: Functions declared in a module or as an external function must reside in a namespace.
 K2-ExternalVariablesWithout-8,Parse error
+<<<<<<< HEAD
 extvardef-015,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 extvardef-016a,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 extvardef-016b,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
@@ -3105,6 +3378,19 @@ prolog-version-6-v31,Parser related error, Error: Not implemented: only module i
 prolog-version-7-v3,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 prolog-version-7-v31,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 version_declaration-005,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
+=======
+extvardef-015,Parse error
+extvardef-016a,Parse error
+extvardef-016b,Parse error
+K-VersionProlog-5-v3,Parse error
+K2-VersionProlog-3-v4,result was not equal
+K2-VersionProlog-6,result was not equal
+prolog-version-6-v3,result was not equal
+prolog-version-6-v31,result was not equal
+prolog-version-7-v3,result was not equal
+prolog-version-7-v31,result was not equal
+version_declaration-005,Parse error
+>>>>>>> 02aad706 (Get rid of pegjs!)
 version_declaration-021,result was not equal
 version_declaration-023-v3,result was not equal
 WhereExpr023,Parse error

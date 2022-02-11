@@ -1,69 +1,12 @@
-const peg = require('peggy');
 const fs = require('fs-extra');
 
 const ts = require('typescript');
-const prsc = require('prsc');
 
 const { Extractor, ExtractorConfig } = require('@microsoft/api-extractor');
 
-const skipParserBuild = process.env.npm_config_skip_parser;
 const skipClosureBuild = process.env.npm_config_skip_closure;
 
 const tscc = require('@tscc/tscc').default;
-function doPegJsBuild() {
-	return (
-		new Promise((resolve, reject) =>
-			fs.readFile('./src/parsing/xpath.pegjs', 'utf8', (err, file) =>
-				err ? reject(err) : resolve(file)
-			)
-		)
-			.then((pegJsString) =>
-				peg.generate(pegJsString, {
-					cache: true,
-					output: 'source',
-					format: 'globals',
-					exportVar: 'xPathParser',
-				})
-			)
-			// Note the ts-nocheck, the output of pegJs is not valid TypeScript. The tslint-disable disables
-			// linter errors. Also, don't measure code coverage on this file. It is generated.
-			.then(
-				(parserString) => `// @ts-nocheck
-/* tslint:disable */
-/* istanbul ignore file */
-
-// HACK: PegJS uses a single object with keys that are later indexed using strings,
-//  this is incompatible with the closure compiler.
-// Annotate this object with the following interface to prevent renaming.
-declare interface pegjs_internal {
-	literal: unknown,
-	class: unknown,
-	any: unknown,
-	end: unknown,
-	other: unknown,
-}
-
-export default function(globalThis) {
-(function() {
-${parserString.replace(
-	'var DESCRIBE_EXPECTATION_FNS = ',
-	'var DESCRIBE_EXPECTATION_FNS: pegjs_internal = '
-)}
-}).call(globalThis);
-};`
-			)
-			.then((parserString) =>
-				Promise.all([
-					new Promise((resolve, reject) =>
-						fs.writeFile('./src/parsing/xPathParser_raw.ts', parserString, (err) =>
-							err ? reject(err) : resolve()
-						)
-					),
-				])
-			)
-			.then(() => console.info('Parser generator done'))
-	);
-}
 
 function outputDeclarations() {
 	console.log('Starting generation of typings');
@@ -164,9 +107,6 @@ export default fontoxpath;
 }
 
 let chain = Promise.resolve();
-if (!skipParserBuild) {
-	chain = chain.then(doPegJsBuild);
-}
 
 if (!skipClosureBuild) {
 	chain = chain.then(outputDeclarations);

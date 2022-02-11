@@ -1,6 +1,5 @@
 import { IAST } from './astHelper';
 import { parseUsingPrsc } from './prscParser';
-import { parse, SyntaxError } from './xPathParser';
 
 const astParseResultCache = Object.create(null);
 
@@ -25,52 +24,31 @@ export default function parseExpression(
 	const language = compilationOptions.allowXQuery ? 'XQuery' : 'XPath';
 	const cached = compilationOptions.debug ? null : getParseResultFromCache(xPathString, language);
 
-	try {
-		let ast: IAST;
-		if (cached) {
-			ast = cached;
+	let ast: IAST;
+	if (cached) {
+		ast = cached;
+	} else {
+		const options = {
+			xquery: !!compilationOptions.allowXQuery,
+			outputDebugInfo: !!compilationOptions.debug,
+		};
+
+		const parseResult = parseUsingPrsc(xPathString, options);
+		if (parseResult.success === true) {
+			ast = parseResult.value;
 		} else {
-			const options = {
-				xquery: !!compilationOptions.allowXQuery,
-				outputDebugInfo: !!compilationOptions.debug,
-			};
-			ast = parse(xPathString, options);
-
-			const parseResult = parseUsingPrsc(xPathString, options);
-			if (parseResult.success === true) {
-				const prscAst = parseResult.value;
-				if (JSON.stringify(ast) !== JSON.stringify(prscAst)) {
-					throw new Error(
-						`Result differ!\nPRSC: ${JSON.stringify(
-							prscAst,
-							null,
-							4
-						)}\n\nOLD: ${JSON.stringify(ast, null, 4)}`
-					);
-				}
-				ast = parseResult.value;
-			} else {
-				throw new Error(
-					`Failed to parse '${xPathString}' expected: ${parseResult.expected}`
-				);
-			}
-
-			if (!compilationOptions.debug) {
-				storeParseResultInCache(xPathString, language, ast);
-			}
-		}
-
-		return ast;
-	} catch (error) {
-		if (error instanceof SyntaxError) {
 			throw new Error(
-				`XPST0003: Unable to parse: "${xPathString}".\n${error.message}\n${
-					xPathString.slice(0, error.location.start.offset) +
-					'[Error is around here]' +
-					xPathString.slice(error.location.start.offset)
+				`XPST0003: Failed to parse '${xPathString}' expected: ${parseResult.expected}\n${xPathString.slice(0, parseResult.offset) +
+				'[Error is around here]' +
+				xPathString.slice(parseResult.offset)
 				}`
 			);
 		}
-		throw error;
+
+		if (!compilationOptions.debug) {
+			storeParseResultInCache(xPathString, language, ast);
+		}
 	}
+
+	return ast;
 }
