@@ -18,6 +18,7 @@ RexParser,Loads missing files...
 cbcl-matches-004,Extremely large quantifier
 cbcl-matches-038,Extremely large quantifier
 XMark-Q11,Sometimes errors out on CI
+sudoku,Sometimes times out on CI
 =====================TESTS ABOVE HAVE BEEN MARKED MANUALLY=====================
 fn-absintg1args-1,Error: FOCA0003: can not cast -999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-absintg1args-2,Error: FOCA0003: can not cast 830993497117024304 to xs:integer, it is out of bounds for JavaScript numbers.
