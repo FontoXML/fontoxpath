@@ -244,6 +244,22 @@ some-function#0()
 		chai.assert.equal(document.documentElement.outerHTML, '<baz><foo>bar</foo></baz>');
 	});
 
+	it('can parse an XQuery module', () => {
+		const document = new Document();
+		const ast = parseScript(
+			`module namespace prefix = "http://www.example.com/";
+
+declare %public function prefix:ok() as xs:string {
+	"ok"
+};
+`,
+			{},
+			document
+		);
+
+		chai.assert.isOk(ast);
+	});
+
 	it('can execute a map function within an AST', () => {
 		const ast = parseScript('map:put($week, "1", "Monday")', {}, new Document());
 		const result = evaluateXPathToMap(ast, null, null, {
