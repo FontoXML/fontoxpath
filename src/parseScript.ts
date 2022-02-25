@@ -229,7 +229,17 @@ export default function parseScript<TElement extends Element>(
 		options['functionNameResolver'] || (() => null)
 	);
 	const rootStaticContext = new StaticContext(executionSpecificStaticContext);
-	const prolog = astHelper.followPath(ast, ['mainModule', 'prolog']);
+	const anyModuleDecl = astHelper.getFirstChild(ast, ['mainModule', 'libraryModule']);
+	// Spike the static context if we are actually a library module
+	const moduleDecl = astHelper.getFirstChild(anyModuleDecl, 'moduleDecl');
+	if (moduleDecl) {
+		const prefix = astHelper.getTextContent(astHelper.getFirstChild(moduleDecl, 'prefix'));
+		const uri = astHelper.getTextContent(astHelper.getFirstChild(moduleDecl, 'uri'));
+
+		rootStaticContext.registerNamespace(prefix, uri);
+	}
+
+	const prolog = astHelper.getFirstChild(anyModuleDecl, 'prolog');
 
 	if (prolog) {
 		processProlog(prolog, rootStaticContext, false);
