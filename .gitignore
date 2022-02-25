@@ -8,7 +8,6 @@
 /built
 /demo/built
 /dist
-/src/parsing/xPathParser_raw.ts
 /.nyc_output
 /tmp
 /.tscc_temp

@@ -1,68 +1,12 @@
-const peg = require('peggy');
 const fs = require('fs-extra');
 
 const ts = require('typescript');
 
 const { Extractor, ExtractorConfig } = require('@microsoft/api-extractor');
 
-const skipParserBuild = process.env.npm_config_skip_parser;
 const skipClosureBuild = process.env.npm_config_skip_closure;
 
 const tscc = require('@tscc/tscc').default;
-function doPegJsBuild() {
-	return (
-		new Promise((resolve, reject) =>
-			fs.readFile('./src/parsing/xpath.pegjs', 'utf8', (err, file) =>
-				err ? reject(err) : resolve(file)
-			)
-		)
-			.then((pegJsString) =>
-				peg.generate(pegJsString, {
-					cache: true,
-					output: 'source',
-					format: 'globals',
-					exportVar: 'xPathParser',
-				})
-			)
-			// Note the ts-nocheck, the output of pegJs is not valid TypeScript. The tslint-disable disables
-			// linter errors. Also, don't measure code coverage on this file. It is generated.
-			.then(
-				(parserString) => `// @ts-nocheck
-/* tslint:disable */
-/* istanbul ignore file */
-
-// HACK: PegJS uses a single object with keys that are later indexed using strings,
-//  this is incompatible with the closure compiler.
-// Annotate this object with the following interface to prevent renaming.
-declare interface pegjs_internal {
-	literal: unknown,
-	class: unknown,
-	any: unknown,
-	end: unknown,
-	other: unknown,
-}
-
-export default function(globalThis) {
-(function() {
-${parserString.replace(
-	'var DESCRIBE_EXPECTATION_FNS = ',
-	'var DESCRIBE_EXPECTATION_FNS: pegjs_internal = '
-)}
-}).call(globalThis);
-};`
-			)
-			.then((parserString) =>
-				Promise.all([
-					new Promise((resolve, reject) =>
-						fs.writeFile('./src/parsing/xPathParser_raw.ts', parserString, (err) =>
-							err ? reject(err) : resolve()
-						)
-					),
-				])
-			)
-			.then(() => console.info('Parser generator done'))
-	);
-}
 
 function outputDeclarations() {
 	console.log('Starting generation of typings');
@@ -99,7 +43,7 @@ function doTSCCBuild() {
 				debug: false,
 				assume_function_wrapper: true,
 				compilation_level: 'ADVANCED',
-				output_wrapper: `function (xspattern) {
+				output_wrapper: `function (xspattern, prsc) {
 const VERSION='${require('./package.json').version}';
 const fontoxpathGlobal = {};
 %output%
@@ -107,7 +51,7 @@ return fontoxpathGlobal;
 }
 `,
 			},
-			external: { xspattern: 'xspattern' },
+			external: { xspattern: 'xspattern', prsc: 'prsc' },
 		},
 		'./tsconfig.json',
 		{
@@ -134,8 +78,9 @@ function doModuleBuild() {
 
 	const fontoxpathFunction = fs.readFileSync('./dist/fontoxpath-raw.js', 'utf8');
 	const fullModule = `import * as xspattern from 'xspattern';
+import * as prsc from 'prsc';
 const fontoxpath = (${fontoxpathFunction})
-	.call(typeof window === 'undefined' ? undefined : window, xspattern);
+	.call(typeof window === 'undefined' ? undefined : window, xspattern, prsc);
 ${exports.join('\n')}
 export default fontoxpath;
 `;
@@ -143,17 +88,17 @@ export default fontoxpath;
 	const umdModule = `(function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD
-		define(['xspattern'], factory);
+		define(['xspattern', 'prsc'], factory);
 	} else if (typeof exports === 'object') {
 		// Node, CommonJS-like
-		module.exports = factory(require('xspattern'));
+		module.exports = factory(require('xspattern'), require('prsc'));
 	} else {
 		// Browser globals (root is window)
 		// Maybe it is in scope:
-		root.fontoxpath = factory(root.xspattern);
+		root.fontoxpath = factory(root.xspattern, root.prsc);
 	}
-})(this, function (xspattern) {
-	return (${fontoxpathFunction})(xspattern);
+})(this, function (xspattern, prsc) {
+	return (${fontoxpathFunction})(xspattern, prsc);
 });
 `;
 
@@ -162,9 +107,6 @@ export default fontoxpath;
 }
 
 let chain = Promise.resolve();
-if (!skipParserBuild) {
-	chain = chain.then(doPegJsBuild);
-}
 
 if (!skipClosureBuild) {
 	chain = chain.then(outputDeclarations);

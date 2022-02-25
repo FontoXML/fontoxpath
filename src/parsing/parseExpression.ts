@@ -1,15 +1,5 @@
 import { IAST } from './astHelper';
-import { parse, SyntaxError } from './xPathParser';
-
-const astParseResultCache = Object.create(null);
-
-function storeParseResultInCache(input: string, language: string, ast: any) {
-	astParseResultCache[`${language}~${input}`] = ast;
-}
-
-function getParseResultFromCache(input: string, language: string) {
-	return astParseResultCache[`${language}~${input}`] || null;
-}
+import { parseUsingPrsc } from './prscParser';
 
 /**
  * Parse an XPath string to a selector.
@@ -21,31 +11,21 @@ export default function parseExpression(
 	xPathString: string,
 	compilationOptions: { allowXQuery?: boolean; debug?: boolean }
 ): IAST {
-	const language = compilationOptions.allowXQuery ? 'XQuery' : 'XPath';
-	const cached = compilationOptions.debug ? null : getParseResultFromCache(xPathString, language);
+	const options = {
+		xquery: !!compilationOptions.allowXQuery,
+		outputDebugInfo: !!compilationOptions.debug,
+	};
 
-	try {
-		let ast: IAST;
-		if (cached) {
-			ast = cached;
-		} else {
-			ast = parse(xPathString, {
-				xquery: !!compilationOptions.allowXQuery,
-				outputDebugInfo: !!compilationOptions.debug,
-			});
-		}
-
-		return ast;
-	} catch (error) {
-		if (error instanceof SyntaxError) {
-			throw new Error(
-				`XPST0003: Unable to parse: "${xPathString}".\n${error.message}\n${
-					xPathString.slice(0, error.location.start.offset) +
-					'[Error is around here]' +
-					xPathString.slice(error.location.start.offset)
-				}`
-			);
-		}
-		throw error;
+	const parseResult = parseUsingPrsc(xPathString, options);
+	if (parseResult.success === true) {
+		return parseResult.value;
 	}
+
+	throw new Error(
+		`XPST0003: Failed to parse '${xPathString}' expected: ${parseResult.expected}\n${
+			xPathString.slice(0, parseResult.offset) +
+			'[Error is around here]' +
+			xPathString.slice(parseResult.offset)
+		}`
+	);
 }

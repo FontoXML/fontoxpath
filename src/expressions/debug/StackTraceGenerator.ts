@@ -68,7 +68,7 @@ export default class StackTraceGenerator extends PossiblyUpdatingExpression {
 	}
 }
 
-type Location = {
+export type Location = {
 	column: number;
 	line: number;
 	offset: number;

@@ -740,7 +740,6 @@ fn-reverseusht1args-3,XQuery script could not be found
 reverse-001,XQuery script could not be found
 reverse-002,XQuery script could not be found
 reverse-003,XQuery script could not be found
-serialize-json-003,Parse error
 serialize-xml-013,result was not equal
 fn-sort-1,XQuery script could not be found
 fn-sort-10,XQuery script could not be found
@@ -1205,10 +1204,10 @@ FORG0002,Parser related error, Error: Not implemented: only module imports, name
 FOTY0012,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K-CombinedErrorCodes-1,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K-CombinedErrorCodes-2,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-K-CombinedErrorCodes-3,Parse error
-K-CombinedErrorCodes-4,Parse error
-K-CombinedErrorCodes-5,Parse error
-K-CombinedErrorCodes-6,Parse error
+K-CombinedErrorCodes-3,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
+K-CombinedErrorCodes-4,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
+K-CombinedErrorCodes-5,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
+K-CombinedErrorCodes-6,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 XPTY0004_06,result was not equal
 XPTY0004_30,result was not equal
 XPTY0004_33,result was not equal
@@ -1233,7 +1232,6 @@ XQST0046_07,Parser related error, Error: Not implemented: only module imports, n
 XQST0046_09,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 XQST0046_10,Parser related error, Error: XQST0051: No modules found with the namespace uri %gg
 XQST0046_11,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/
-XQST0046_12,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
 XQST0047,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.example.org/foo
 XQST0048,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.example.org/foo
 XQST0055,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
@@ -1256,7 +1254,6 @@ XQST0070_1,Parser related error, Error: Not implemented: only module imports, na
 XQST0070_2,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.example.org/
 XQST0070_3,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.example.org/
 XQST0070_4,Parser related error, Error: XQST0070: The prefixes xml and xmlns may not be used in a namespace declaration or be bound to another namespaceURI.
-XQST0076,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
 XQST0079,Parse error
 XQST0088_1,Parser related error, Error: XQST0051: No modules found with the namespace uri 
 XQST0088_2,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.example.org/test
@@ -1426,8 +1423,6 @@ UnionType-equal-01,Parser related error, Error: Not implemented: only module imp
 UnionType-equal-02,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K2-SeqExcept-23,result was not equal
 K2-SeqIntersect-23,result was not equal
-K2-SeqIntersect-43,result was not equal
-K2-SeqIntersect-44,result was not equal
 op-numeric-add-13,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 op-numeric-add-14,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 op-numeric-add-15,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
@@ -2166,7 +2161,7 @@ K2-DirectConOther-51,result was not equal
 eqname-001,result was not equal
 eqname-004,Parser related error, Error: XPST0081: Invalid prefix for input :integer
 eqname-005,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-eqname-006,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
+eqname-006,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
 eqname-007,Parse error
 eqname-008,result was not equal
 eqname-009,result was not equal
@@ -2183,7 +2178,6 @@ eqname-026,result was not equal
 eqname-027,result was not equal
 eqname-028,result was not equal
 eqname-029,result was not equal
-eqname-032,result was not equal
 eqname-033,result was not equal
 eqname-909,result was not equal
 eqname-910,result was not equal
@@ -2220,21 +2214,21 @@ emptyorderdecl-6,Parser related error, Error: Not implemented: only module impor
 emptyorderdecl-7,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 emptyorderdecl-8,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 emptyorderdecl-9,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-K-ExtensionExpression-3,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
-K-ExtensionExpression-4,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
-K-ExtensionExpression-4a,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
+K-ExtensionExpression-3,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
+K-ExtensionExpression-4,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
+K-ExtensionExpression-4a,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
 K-ExtensionExpression-5,Parse error
-K-ExtensionExpression-6,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
-K-ExtensionExpression-7,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
-K-ExtensionExpression-8,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
-K2-ExtensionExpression-1,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
+K-ExtensionExpression-6,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
+K-ExtensionExpression-7,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
+K-ExtensionExpression-8,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
+K2-ExtensionExpression-1,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
 K2-ExtensionExpression-11,Parse error
-K2-ExtensionExpression-12,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
-K2-ExtensionExpression-17,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
-K2-ExtensionExpression-2,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
+K2-ExtensionExpression-12,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
+K2-ExtensionExpression-17,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
+K2-ExtensionExpression-2,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
 K2-ExtensionExpression-3,Parse error
 K2-ExtensionExpression-4,Parse error
-K2-ExtensionExpression-5,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
+K2-ExtensionExpression-5,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
 extexpr-1,Parse error
 extexpr-10,Parse error
 extexpr-11,Parse error
@@ -2253,10 +2247,10 @@ extexpr-22,Parse error
 extexpr-23,Parse error
 extexpr-24,Parse error
 extexpr-25,Parse error
-extexpr-26,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
-extexpr-3,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
+extexpr-26,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
+extexpr-3,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
 extexpr-4,Parse error
-extexpr-5,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
+extexpr-5,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
 extexpr-6,Parse error
 extexpr-7,Parse error
 extexpr-8,Parse error
@@ -2264,8 +2258,8 @@ extexpr-9,Parse error
 pragma-no-namespace-001,Parse error
 pragma-no-namespace-002,Parse error
 pragma-no-namespace-003,Parse error
-pragma-no-namespace-004,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
-pragma-no-namespace-005,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
+pragma-no-namespace-004,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
+pragma-no-namespace-005,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
 ForExprType010,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 ForExprType025,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 ForExprType026,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
@@ -2496,7 +2490,6 @@ modules-two-import-ok,Parser related error, Error: XQST0051: No modules found wi
 modules-two-import,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/test1
 K2-NameTest-14,result was not equal
 K2-NameTest-60,result was not equal
-nametest-20,result was not equal
 function-literal-402,result was not equal
 function-literal-404,result was not equal
 K2-NamespaceProlog-15,Parser related error, Error: XQST0070: The prefixes xml and xmlns may not be used in a namespace declaration or be bound to another namespaceURI.
@@ -2566,12 +2559,7 @@ K2-OrderbyExprWithout-1,Parser related error, Error: Not implemented: only modul
 K2-OrderbyExprWithout-2,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K2-OrderbyExprWithout-3,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 orderBy60,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-orderBy61,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
-orderBy62,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
-orderBy64,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
-orderBy65,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
 orderBy66,Parse error
-orderbylocal-60,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
 K-DefaultOrderingProlog-1,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K-DefaultOrderingProlog-2,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K-DefaultOrderingProlog-3,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
@@ -2651,8 +2639,8 @@ qischema032b,Parser related error, Error: Not implemented: only module imports, 
 qischema032c,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 qischema040,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 qischema040a,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-qischema041,Parse error
-qischema042,Parse error
+qischema041,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
+qischema042,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 qischema043,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.fpml.org/2005/FpML-4-2
 qischema044,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/XQueryTest/hats
 qischema061,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules

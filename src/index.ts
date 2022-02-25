@@ -40,8 +40,6 @@ import { Profiler, profiler, XPathPerformanceMeasurement } from './performance';
 import precompileXPath from './precompileXPath';
 import registerCustomXPathFunction from './registerCustomXPathFunction';
 import registerXQueryModule from './registerXQueryModule';
-import annotateAst from './typeInference/annotateAST';
-import { AnnotationContext } from './typeInference/AnnotationContext';
 // We do want to deviate from the actual name which is used internally as we do not want to expose
 // the types which it uses in the public API
 // tslint:disable-next-line: match-default-export-name
