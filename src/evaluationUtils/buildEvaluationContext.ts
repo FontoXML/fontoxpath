@@ -189,6 +189,7 @@ export default function buildEvaluationContext(
 
 	const executionParameters = new ExecutionParameters(
 		compilationOptions.debug,
+		compilationOptions.disableCache,
 		wrappedDomFacade,
 		nodesFactory,
 		documentWriter,

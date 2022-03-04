@@ -60,8 +60,7 @@ function buildResultIterator(
 				allowUpdating: false,
 				allowXQuery: true,
 				debug: executionParameters.debug,
-				// TODO: should we inherit this from the outer evaluation somehow?
-				disableCache: false,
+				disableCache: executionParameters.disableCache,
 			},
 			(prefix) => staticContext.resolveNamespace(prefix),
 			// Set up temporary bindings for the given variables
