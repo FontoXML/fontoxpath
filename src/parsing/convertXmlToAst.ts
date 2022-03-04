@@ -2,6 +2,7 @@ import { NODE_TYPES } from '../domFacade/ConcreteNode';
 import ExternalDomFacade from '../domFacade/ExternalDomFacade';
 import { stringToSequenceType } from '../expressions/dataTypes/Value';
 import { BUILT_IN_NAMESPACE_URIS } from '../expressions/staticallyKnownNamespaces';
+import { errXPTY0004 } from '../expressions/XPathErrors';
 import { Element } from '../types/Types';
 import { ASTAttributes, IAST } from './astHelper';
 
@@ -14,7 +15,7 @@ export default function convertXmlToAst(element: Element): IAST {
 		element.namespaceURI !== BUILT_IN_NAMESPACE_URIS.FONTOXPATH_NAMESPACE_URI &&
 		element.namespaceURI !== BUILT_IN_NAMESPACE_URIS.XQUERYX_UPDATING_NAMESPACE_URI
 	) {
-		throw new Error('AST should only contain XQUERYX elements');
+		throw errXPTY0004('The XML structure passed as an XQueryX program was not valid XQueryX');
 	}
 	const ast: IAST = [element.localName === 'stackTrace' ? 'x:stackTrace' : element.localName];
 

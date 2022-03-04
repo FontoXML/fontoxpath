@@ -1,12 +1,6 @@
-import { ElementNodePointer } from '../../domClone/Pointer';
+import { EvaluableExpression } from '../..';
 import { printAndRethrowError } from '../../evaluationUtils/printAndRethrowError';
-import astHelper, { IAST } from '../../parsing/astHelper';
-import compileAstToExpression from '../../parsing/compileAstToExpression';
-import convertXmlToAst from '../../parsing/convertXmlToAst';
-import parseExpression from '../../parsing/parseExpression';
-import processProlog from '../../parsing/processProlog';
-import annotateAst from '../../typeInference/annotateAST';
-import { AnnotationContext } from '../../typeInference/AnnotationContext';
+import staticallyCompileXPath from '../../parsing/staticallyCompileXPath';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
@@ -15,7 +9,6 @@ import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value, { SequenceMultiplicity, ValueType, valueTypeToString } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
-import ExecutionSpecificStaticContext from '../ExecutionSpecificStaticContext';
 import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
 import StaticContext from '../StaticContext';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
@@ -24,24 +17,15 @@ import { errXPTY0004 } from '../XPathErrors';
 import { BuiltinDeclarationType } from './builtInFunctions';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
-function createAstFromValue(queryValue: Value, debug: boolean): IAST {
+function getEvaluableExpressionFromValue(queryValue: Value): EvaluableExpression {
 	if (isSubtypeOf(queryValue.type, ValueType.XSSTRING)) {
-		return parseExpression(queryValue.value as string, {
-			allowXQuery: false,
-			debug,
-		});
+		// Value is XPath or XQuery source text
+		return queryValue.value;
 	}
 
 	if (isSubtypeOf(queryValue.type, ValueType.ELEMENT)) {
-		const nodePointer: ElementNodePointer = queryValue.value;
-
-		try {
-			return convertXmlToAst(nodePointer.node);
-		} catch (error) {
-			throw errXPTY0004(
-				'The XML structure passed as an XQueryX program was not valid XQueryX'
-			);
-		}
+		// Value is an XQueryX AST
+		return queryValue.value.node;
 	}
 
 	throw errXPTY0004(
@@ -69,64 +53,41 @@ function buildResultIterator(
 	const contextItemSequence = variables['.'] ? variables['.']() : sequenceFactory.empty();
 	delete variables['.'];
 
-	const executionSpecificStaticContext = new ExecutionSpecificStaticContext(
-		(prefix) => staticContext.resolveNamespace(prefix),
-		Object.keys(variables).reduce((vars: { [s: string]: string }, varName) => {
-			vars[varName] = varName;
-			return vars;
-		}, {}),
-		BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
-		(lexicalName, arity) => staticContext.resolveFunctionName(lexicalName, arity)
-	);
-	const innerStaticContext = new StaticContext(executionSpecificStaticContext);
-
-	const ast = createAstFromValue(queryValue, executionParameters.debug);
-
-	const prolog = astHelper.followPath(ast, ['mainModule', 'prolog']);
-	if (prolog) {
-		processProlog(prolog, innerStaticContext);
-	}
-
-	annotateAst(ast, new AnnotationContext(innerStaticContext));
-
-	const queryBodyContents = astHelper.followPath(ast, ['mainModule', 'queryBody', '*']);
-
-	const selector = compileAstToExpression(queryBodyContents, {
-		allowUpdating: false,
-		allowXQuery: true,
-	});
-
 	try {
-		selector.performStaticEvaluation(innerStaticContext);
-	} catch (error) {
-		printAndRethrowError(queryValue.value, error);
-	}
+		const { expression, staticContext: innerStaticContext } = staticallyCompileXPath(
+			getEvaluableExpressionFromValue(queryValue),
+			{
+				allowUpdating: false,
+				allowXQuery: true,
+				debug: executionParameters.debug,
+				// TODO: should we inherit this from the outer evaluation somehow?
+				disableCache: false,
+			},
+			(prefix) => staticContext.resolveNamespace(prefix),
+			// Set up temporary bindings for the given variables
+			Object.keys(variables).reduce((vars: { [s: string]: string }, varName) => {
+				vars[varName] = varName;
+				return vars;
+			}, {}),
+			{},
+			BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
+			(lexicalName, arity) => staticContext.resolveFunctionName(lexicalName, arity)
+		);
 
-	const variableBindings = Object.keys(variables).reduce((variablesByBindingKey, varName) => {
-		variablesByBindingKey[executionSpecificStaticContext.lookupVariable(null, varName)] =
-			variables[varName];
-		return variablesByBindingKey;
-	}, Object.create(null));
+		const hasContextItem = !contextItemSequence.isEmpty();
+		const innerDynamicContext = new DynamicContext({
+			contextItem: hasContextItem ? contextItemSequence.first() : null,
+			contextItemIndex: hasContextItem ? 0 : -1,
+			contextSequence: contextItemSequence,
+			variableBindings: Object.keys(variables).reduce((variableByBindingKey, varName) => {
+				variableByBindingKey[innerStaticContext.lookupVariable(null, varName)] =
+					variables[varName];
+				return variableByBindingKey;
+			}, Object.create(null)),
+		});
 
-	const context = contextItemSequence.isEmpty()
-		? {
-				contextItem: null,
-				contextItemIndex: -1,
-				contextSequence: contextItemSequence,
-				variableBindings,
-		  }
-		: {
-				contextItem: contextItemSequence.first(),
-				contextItemIndex: 0,
-				contextSequence: contextItemSequence,
-				variableBindings,
-		  };
-
-	const innerDynamicContext = new DynamicContext(context);
-
-	try {
 		return {
-			resultIterator: selector.evaluate(innerDynamicContext, executionParameters).value,
+			resultIterator: expression.evaluate(innerDynamicContext, executionParameters).value,
 			queryValue,
 		};
 	} catch (error) {
