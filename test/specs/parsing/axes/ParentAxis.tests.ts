@@ -84,11 +84,14 @@ describe('parent', () => {
 
 		chai.assert.deepEqual(
 			evaluateXPathToNodes('/parentElement/childElement/parent::z', documentNode, {
+				getChildNodes(node: Node, _bucket?: string | null): Node[] {
+					return node.childNodes;
+				},
 				getParentNode(node: Node, _bucket?: string | null): Node | null {
 					return node.parentNode;
 				},
-				getChildNodes(node: Node, _bucket?: string | null): Node[] {
-					return node.childNodes;
+				getFirstChild(node, bucket: string | null): Node | null {
+					return null;
 				},
 			} as unknown as IDomFacade),
 			[]

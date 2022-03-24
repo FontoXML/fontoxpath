@@ -66,9 +66,16 @@ describe('child', () => {
 		const expectedBucket = getBucketForSelector('self::childElement');
 
 		const testDomFacade: IDomFacade = {
-			getChildNodes: (node, bucket: string | null) => {
-				chai.assert.equal(expectedBucket, bucket);
-				return [];
+			getChildNodes(node, bucket: string | null): Node[] {
+				return [parent.firstChild];
+			},
+			getFirstChild: (node, bucket: string | null) => {
+				chai.assert.equal(bucket, expectedBucket);
+				return parent.firstChild;
+			},
+			getNextSibling: (node, bucket: string | null) => {
+				chai.assert.equal(bucket, expectedBucket);
+				return null;
 			},
 		} as any;
 
@@ -82,9 +89,16 @@ describe('child', () => {
 		const expectedBucket = getBucketForSelector('self::childElement');
 
 		const testDomFacade: IDomFacade = {
-			getChildNodes: (node, bucket: string | null) => {
-				chai.assert.equal(expectedBucket, bucket);
-				return [];
+			getChildNodes(node, bucket: string | null): Node[] {
+				return [parent.firstChild];
+			},
+			getFirstChild: (node, bucket: string | null) => {
+				chai.assert.equal(bucket, expectedBucket);
+				return parent.firstChild;
+			},
+			getNextSibling: (node, bucket: string | null) => {
+				chai.assert.equal(bucket, expectedBucket);
+				return null;
 			},
 		} as any;
 

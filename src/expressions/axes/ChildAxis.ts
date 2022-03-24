@@ -1,4 +1,4 @@
-import { ParentNodePointer } from '../../domClone/Pointer';
+import { ChildNodePointer, ParentNodePointer } from '../../domClone/Pointer';
 import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import createPointerValue from '../dataTypes/createPointerValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
@@ -8,6 +8,7 @@ import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 import { Bucket, intersectBuckets } from '../util/Bucket';
+import { DONE_TOKEN, ready } from '../util/iterators';
 import validateContextNode from './validateContextNode';
 
 class ChildAxis extends Expression {
@@ -29,22 +30,45 @@ class ChildAxis extends Expression {
 		const domFacade = executionParameters.domFacade;
 		const contextNode = validateContextNode(dynamicContext.contextItem);
 		const nodeType = domFacade.getNodeType(contextNode);
-		const nodeValues: Value[] = [];
-		if (nodeType === NODE_TYPES.ELEMENT_NODE || nodeType === NODE_TYPES.DOCUMENT_NODE) {
-			domFacade
-				.getChildNodePointers(contextNode as ParentNodePointer, this._filterBucket)
-				.forEach((node) =>
-					nodeValues.push(createPointerValue(node, executionParameters.domFacade))
-				);
+		if (nodeType !== NODE_TYPES.ELEMENT_NODE && nodeType !== NODE_TYPES.DOCUMENT_NODE) {
+			return sequenceFactory.empty();
 		}
-		const childContextSequence = sequenceFactory.create(nodeValues);
-		return childContextSequence.filter((item) => {
-			return this._childExpression.evaluateToBoolean(
-				dynamicContext,
-				item,
-				executionParameters
-			);
-		});
+
+		let node: ChildNodePointer = null;
+		let isDone = false;
+		return sequenceFactory
+			.create({
+				next: () => {
+					while (!isDone) {
+						if (!node) {
+							// Initial run
+							node = domFacade.getFirstChildPointer(
+								contextNode as ParentNodePointer,
+								this._filterBucket
+							);
+							if (!node) {
+								isDone = true;
+								continue;
+							}
+							return ready(createPointerValue(node, domFacade));
+						}
+						node = domFacade.getNextSiblingPointer(node, this._filterBucket);
+						if (!node) {
+							isDone = true;
+							continue;
+						}
+						return ready(createPointerValue(node, domFacade));
+					}
+					return DONE_TOKEN;
+				},
+			})
+			.filter((item) => {
+				return this._childExpression.evaluateToBoolean(
+					dynamicContext,
+					item,
+					executionParameters
+				);
+			});
 	}
 }
 export default ChildAxis;
