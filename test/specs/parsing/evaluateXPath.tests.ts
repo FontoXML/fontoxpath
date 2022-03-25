@@ -95,17 +95,17 @@ describe('evaluateXPath', () => {
 
 	describe('ALL_RESULTS: the better ANY', () => {
 		it('Keeps booleans booleans', () =>
-			chai.assert.deepEqual(
+			chai.assert.sameMembers(
 				evaluateXPath('true()', documentNode, domFacade, {}, ReturnType.ALL_RESULTS),
 				[true]
 			));
 		it('Keeps numbers numbers', () =>
-			chai.assert.deepEqual(
+			chai.assert.sameMembers(
 				evaluateXPath('1', documentNode, domFacade, {}, ReturnType.ALL_RESULTS),
 				[1]
 			));
 		it('Keeps mixed sequences mixed', () =>
-			chai.assert.deepEqual(
+			chai.assert.sameMembers(
 				evaluateXPath(
 					'1,true(),"test",.',
 					documentNode,
@@ -116,19 +116,19 @@ describe('evaluateXPath', () => {
 				[1, true, 'test', documentNode]
 			));
 		it('Keeps strings strings', () =>
-			chai.assert.deepEqual(
+			chai.assert.sameMembers(
 				evaluateXPath('"string"', documentNode, domFacade, {}, ReturnType.ALL_RESULTS),
 				['string']
 			));
 		it('Keeps nodes nodes', () =>
-			chai.assert.deepEqual(
+			chai.assert.sameMembers(
 				evaluateXPath('.', documentNode, domFacade, {}, ReturnType.ALL_RESULTS),
 				[documentNode]
 			));
 		it('Keeps attributes attributes', () => {
 			const tmp = documentNode.createElement('tmp');
 			tmp.setAttribute('class', 'value');
-			chai.assert.deepEqual(
+			chai.assert.sameMembers(
 				evaluateXPath('@class', tmp, domFacade, {}, ReturnType.ALL_RESULTS),
 				[tmp.getAttributeNode('class')]
 			);

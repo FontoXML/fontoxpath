@@ -30,7 +30,7 @@ export enum ReturnType {
 	 *
 	 * If the result is the empty sequence, an empty array is returned
 	 *
-	 * If the result is multiple items, an array with those items is returned. Nodes are rutned as-is, but attribute nodes are atomized.
+	 * If the result is multiple items, an array with those items is returned. Nodes are returned as-is, but attribute nodes are atomized.
 	 *
 	 * Note that this is usually _not_ what you'd expect, and may cause bugs to show up when you
 	 * don't expect. Use ALL_RESULTS to get all results, always as an array, without special
