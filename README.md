@@ -36,12 +36,13 @@ evaluateXPathToStrings(xpathExpression, contextNode, domFacade, variables, optio
     be used for querying the DOM. Defaults to an implementation which uses properties and methods on
     the `contextNode` as described in the [DOM spec](https://dom.spec.whatwg.org/).
 -   `variables` `<Object>` The properties of `variables` are available variables within the
-    `xpathExpression`. Defaults to an empty `Object`. Can only be used to set variables in the global namespace.
+    `xpathExpression`. Defaults to an empty `Object`. Can only be used to set variables in the
+    global namespace.
 -   `returnType` `<number>` Determines the type of the result. Defaults to
     `evaluateXPath.ANY_TYPE`. Possible values:
-    -   `evaluateXPath.ANY_TYPE` Returns the result of the query, can be anything depending on the
-        query. Note that the return type is determined dynamically, not statically: XPaths returning
-        empty sequences will return empty arrays and not null, like one might expect.
+    -   `evaluateXPath.ALL_RESULTS_TYPE` Returns the result of the query, can be anything depending
+        on the query. This will always be an array, and the result can be mixed: contain both nodes
+        and strings for example.
     -   `evaluateXPath.NUMBER_TYPE` Resolve to a `number`, like count((1,2,3)) resolves to 3.
     -   `evaluateXPath.STRING_TYPE` Resolve to a `string`, like //someElement[1] resolves to the text
         content of the first someElement.
@@ -57,6 +58,10 @@ evaluateXPathToStrings(xpathExpression, contextNode, domFacade, variables, optio
     -   `evaluateXPath.ARRAY_TYPE` Resolve to an array `[]`.
     -   `evaluateXPath.ASYNC_ITERATOR_TYPE`
     -   `evaluateXPath.NUMBERS_TYPE` Resolve to an array of numbers `number[]`.
+    -   `evaluateXPath.ANY_TYPE` Returns the result of the query, can be anything depending on the
+        query. Note that the return type is determined dynamically, not statically: XPaths returning
+        empty sequences will return empty arrays and not null, like one might expect.
+		This is deprecated, use `evaluateXPath.ALL_RESULTS_TYPE` instead, since that is more predictable.
 -   `options` `<Object>` Options used to modify the behavior. The following options are available:
     -   `namespaceResolver` `<function(string):string?>` By default, the namespaces in scope of the
         context item (if it is a node) are used. This is fine for most queries if you can assume how

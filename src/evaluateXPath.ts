@@ -46,10 +46,19 @@ export type EvaluateXPath = {
 	): IReturnTypes<TNode>[TReturnType];
 
 	/**
+	 * Resolve to all results, adapted to JavaScript values
+	 */
+	ALL_RESULTS_TYPE: ReturnType.ALL_RESULTS;
+
+	/**
 	 * Returns the result of the query, can be anything depending on the
 	 * query. Note that the return type is determined dynamically, not
 	 * statically: XPaths returning empty sequences will return empty
 	 * arrays and not null, like one might expect.
+	 *
+	 * @deprecated
+	 *
+	 * For predictable results, use the ALL_RESULTS return type
 	 */
 	ANY_TYPE: ReturnType.ANY;
 
@@ -220,38 +229,40 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 };
 
 Object.assign(evaluateXPath, {
+	ALL_RESULTS_TYPE: ReturnType.ALL_RESULTS,
 	ANY_TYPE: ReturnType.ANY,
-	NUMBER_TYPE: ReturnType.NUMBER,
-	STRING_TYPE: ReturnType.STRING,
-	BOOLEAN_TYPE: ReturnType.BOOLEAN,
-	NODES_TYPE: ReturnType.NODES,
-	FIRST_NODE_TYPE: ReturnType.FIRST_NODE,
-	STRINGS_TYPE: ReturnType.STRINGS,
-	MAP_TYPE: ReturnType.MAP,
 	ARRAY_TYPE: ReturnType.ARRAY,
 	ASYNC_ITERATOR_TYPE: ReturnType.ASYNC_ITERATOR,
+	BOOLEAN_TYPE: ReturnType.BOOLEAN,
+	FIRST_NODE_TYPE: ReturnType.FIRST_NODE,
+	MAP_TYPE: ReturnType.MAP,
+	NODES_TYPE: ReturnType.NODES,
 	NUMBERS_TYPE: ReturnType.NUMBERS,
-	XQUERY_UPDATE_3_1_LANGUAGE: Language.XQUERY_UPDATE_3_1_LANGUAGE,
-	XQUERY_3_1_LANGUAGE: Language.XQUERY_3_1_LANGUAGE,
+	NUMBER_TYPE: ReturnType.NUMBER,
+	STRINGS_TYPE: ReturnType.STRINGS,
+	STRING_TYPE: ReturnType.STRING,
 	XPATH_3_1_LANGUAGE: Language.XPATH_3_1_LANGUAGE,
+	XQUERY_3_1_LANGUAGE: Language.XQUERY_3_1_LANGUAGE,
+	XQUERY_UPDATE_3_1_LANGUAGE: Language.XQUERY_UPDATE_3_1_LANGUAGE,
 });
 
 // Set all of the properties a second time to prevent closure renames
 Object.assign(evaluateXPath, {
+	['ALL_RESULTS_TYPE']: ReturnType.ALL_RESULTS,
 	['ANY_TYPE']: ReturnType.ANY,
-	['NUMBER_TYPE']: ReturnType.NUMBER,
-	['STRING_TYPE']: ReturnType.STRING,
-	['BOOLEAN_TYPE']: ReturnType.BOOLEAN,
-	['NODES_TYPE']: ReturnType.NODES,
-	['FIRST_NODE_TYPE']: ReturnType.FIRST_NODE,
-	['STRINGS_TYPE']: ReturnType.STRINGS,
-	['MAP_TYPE']: ReturnType.MAP,
 	['ARRAY_TYPE']: ReturnType.ARRAY,
 	['ASYNC_ITERATOR_TYPE']: ReturnType.ASYNC_ITERATOR,
+	['BOOLEAN_TYPE']: ReturnType.BOOLEAN,
+	['FIRST_NODE_TYPE']: ReturnType.FIRST_NODE,
+	['MAP_TYPE']: ReturnType.MAP,
+	['NODES_TYPE']: ReturnType.NODES,
 	['NUMBERS_TYPE']: ReturnType.NUMBERS,
-	['XQUERY_UPDATE_3_1_LANGUAGE']: Language.XQUERY_UPDATE_3_1_LANGUAGE,
-	['XQUERY_3_1_LANGUAGE']: Language.XQUERY_3_1_LANGUAGE,
+	['NUMBER_TYPE']: ReturnType.NUMBER,
+	['STRINGS_TYPE']: ReturnType.STRINGS,
+	['STRING_TYPE']: ReturnType.STRING,
 	['XPATH_3_1_LANGUAGE']: Language.XPATH_3_1_LANGUAGE,
+	['XQUERY_3_1_LANGUAGE']: Language.XQUERY_3_1_LANGUAGE,
+	['XQUERY_UPDATE_3_1_LANGUAGE']: Language.XQUERY_UPDATE_3_1_LANGUAGE,
 });
 
 export default evaluateXPath as EvaluateXPath;
