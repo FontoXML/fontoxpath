@@ -13,7 +13,7 @@ import {
 import jsonMlMapper from '../test/helpers/jsonMlMapper';
 import loadFile from './utils/loadFile';
 
-const testDocumentFilename = 'test/assets/QT3TS/app/XMark/XMarkAuction.xml';
+const testDocumentFilename = 'test/assets/qt3tests/app/XMark/XMarkAuction.xml';
 
 let document: Document;
 

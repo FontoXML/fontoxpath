@@ -14,7 +14,7 @@ import loadFile from './utils/loadFile';
 // Comparisons between the js-codegen and expression backend.
 
 let document: Document;
-const testDocumentFilename = 'test/assets/QT3TS/app/XMark/XMarkAuction.xml';
+const testDocumentFilename = 'test/assets/qt3tests/app/XMark/XMarkAuction.xml';
 
 const selfPQuery = 'self::p';
 benchmarkRunner.compareBenchmarks(
