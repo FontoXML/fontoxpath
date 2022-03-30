@@ -99,7 +99,7 @@ function getFile(fileName: string): Document | DocumentFragment | string {
 		return instantiatedDocumentByAbsolutePath[fileName];
 	}
 
-	let content = testFs.readFileSync(`QT3TS/${fileName}`).replace(/\r\n/g, '\n');
+	let content = testFs.readFileSync(`qt3tests/${fileName}`).replace(/\r\n/g, '\n');
 	if (fileName.endsWith('.out')) {
 		if (content.endsWith('\n')) {
 			content = content.slice(0, -1);

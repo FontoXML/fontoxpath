@@ -68,11 +68,10 @@ Compiler](https://github.com/google/closure-compiler) for an optimized
 build.
 
 Running the XML Query Test suite (QT3) requires a recent version of
-the QT3 test set to be installed at `./test/assets/QT3TS`. The QT3
-test set is mirrored
-[here](https://github.com/LeoWoerteler/QT3TS/). Running the tests for
-XQuery Update Facility requires a recent version of the XQUTS test set
-to be installed at `./test/assets/XQUTS`. There exists a mirror
+the QT3 test set to be installed at `./test/assets/qt3tests`. It is a
+submodule that should be cloned. Running the tests for XQuery Update
+Facility requires a recent version of the XQUTS test set to be installed
+at `./test/assets/XQUTS`. There exists a mirror
 [here](https://github.com/LeoWoerteler/XQUTS).
 
 FontoXPath uses XQueryX as a parser format, this can be tested using
