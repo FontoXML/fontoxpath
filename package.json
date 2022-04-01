@@ -91,7 +91,7 @@
 		"node-static": "^0.7.11",
 		"nyc": "^15.1.0",
 		"prettier": "^2.4.1",
-		"sinon": "^12.0.1",
+		"sinon": "^13.0.1",
 		"sinon-chai": "^3.7.0",
 		"slimdom": "^3.0.1",
 		"slimdom-sax-parser": "^1.5.1",
