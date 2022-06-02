@@ -171,9 +171,13 @@ function adaptJavaScriptValueToXPath(
 			return createPointerValue(pointer, domFacade);
 		case ValueType.ITEM:
 			return adaptSingleJavaScriptValue(value, domFacade);
+		case ValueType.MAP:
+			return adaptSingleJavaScriptValue(value, domFacade);
 		default:
 			throw new Error(
-				`Values of the type "${type}" can not be adapted to equivalent XPath values.`
+				`Values of the type "${valueTypeToString(
+					type
+				)}" can not be adapted from JavaScript to equivalent XPath values.`
 			);
 	}
 }

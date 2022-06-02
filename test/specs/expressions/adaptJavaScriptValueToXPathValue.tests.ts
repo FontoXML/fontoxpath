@@ -268,6 +268,16 @@ describe('adaptJavaScriptValueToSequence', () => {
 			chai.assert(xpathSequence.first().type === ValueType.MAP, 'is a map');
 		});
 
+		it('can automatically convert objects when they are typed as a map', () => {
+			const xpathSequence = adaptJavaScriptValueToSequence(
+				null,
+				{},
+				{ type: ValueType.MAP, mult: SequenceMultiplicity.EXACTLY_ONE }
+			);
+			chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
+			chai.assert(xpathSequence.first().type === ValueType.MAP, 'is a map');
+		});
+
 		it('can automatically convert null to the empty sequence', () => {
 			const xpathSequence = adaptJavaScriptValueToSequence(null, null);
 			chai.assert(xpathSequence.isEmpty(), 'is the empty sequence');
