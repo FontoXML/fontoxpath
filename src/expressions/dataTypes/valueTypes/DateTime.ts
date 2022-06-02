@@ -46,7 +46,6 @@ function timezoneToString(timezone: DayTimeDuration): string {
 }
 
 class DateTime {
-	public static fromString: (str: any) => DateTime;
 	public secondFraction: number;
 	public type: ValueType;
 	protected _days: number;
@@ -77,6 +76,93 @@ class DateTime {
 		this._timezone = timezone;
 
 		this.type = type;
+	}
+
+	// dateTime    | (-)yyyy-mm-ddThh:mm:ss.ss(Z|[+-]hh:mm)
+	// time        |               hh:mm:ss.ss(Z|[+-]hh:mm)
+	// date        | (-)yyyy-mm-dd            (Z|[+-]hh:mm)
+	// gYearMonth  | (-)yyyy-mm               (Z|[+-]hh:mm)
+	// gYear       | (-)yyyy                  (Z|[+-]hh:mm)
+	// gMonthDay   |       --mm-dd            (Z|[+-]hh:mm)
+	// gDay        |         ---dd            (Z|[+-]hh:mm)
+	// gMonth      |       --mm               (Z|[+-]hh:mm)
+	public static fromString(dateString: string): DateTime {
+		const regex =
+			/^(?:(-?\d{4,}))?(?:--?(\d\d))?(?:-{1,3}(\d\d))?(T)?(?:(\d\d):(\d\d):(\d\d))?(\.\d+)?(Z|(?:[+-]\d\d:\d\d))?$/;
+		const match = regex.exec(dateString);
+
+		const years = match[1] ? parseInt(match[1], 10) : null;
+		const months = parseMatch(match[2]);
+		const days = parseMatch(match[3]);
+		const t = match[4];
+		const hours = parseMatch(match[5]);
+		const minutes = parseMatch(match[6]);
+		const seconds = parseMatch(match[7]);
+		const secondFraction = match[8] ? parseFloat(match[8]) : 0;
+		const timezone = match[9] ? DayTimeDuration.fromTimezoneString(match[9]) : null;
+
+		if (years && (years < -271821 || years > 273860)) {
+			// These are the JavaScript bounds for date (https://tc39.github.io/ecma262/#sec-time-values-and-time-range)
+			throw new Error('FODT0001: Datetime year is out of bounds');
+		}
+
+		if (t) {
+			// There is a T separating the date and time components -> dateTime
+			return new DateTime(
+				years,
+				months,
+				days,
+				hours,
+				minutes,
+				seconds,
+				secondFraction,
+				timezone,
+				ValueType.XSDATETIME
+			);
+		}
+
+		if (hours !== null && minutes !== null && seconds !== null) {
+			// There is no T separator, but there is a time component -> time
+			return new DateTime(
+				1972,
+				12,
+				31,
+				hours,
+				minutes,
+				seconds,
+				secondFraction,
+				timezone,
+				ValueType.XSTIME
+			);
+		}
+
+		if (years !== null && months !== null && days !== null) {
+			// There is no T separator, but there is a complete date component -> date
+			return new DateTime(years, months, days, 0, 0, 0, 0, timezone, ValueType.XSDATE);
+		}
+
+		if (years !== null && months !== null) {
+			// There is no complete date component, but there is a year and a month -> gYearMonth
+			return new DateTime(years, months, 1, 0, 0, 0, 0, timezone, ValueType.XSGYEARMONTH);
+		}
+
+		if (months !== null && days !== null) {
+			// There is no complete date component, but there is a month and a day -> gMonthDay
+			return new DateTime(1972, months, days, 0, 0, 0, 0, timezone, ValueType.XSGMONTHDAY);
+		}
+
+		if (years !== null) {
+			// There is only a year -> gYear
+			return new DateTime(years, 1, 1, 0, 0, 0, 0, timezone, ValueType.XSGYEAR);
+		}
+
+		if (months !== null) {
+			// There is only a month -> gMonth
+			return new DateTime(1972, months, 1, 0, 0, 0, 0, timezone, ValueType.XSGMONTH);
+		}
+
+		// There is only one option left -> gDay
+		return new DateTime(1972, 12, days, 0, 0, 0, 0, timezone, ValueType.XSGDAY);
 	}
 
 	public convertToType(type: ValueType) {
@@ -239,7 +325,8 @@ class DateTime {
 				this._days,
 				this._hours - timezoneToUse.getHours(),
 				this._minutes - timezoneToUse.getMinutes(),
-				this._seconds + this.secondFraction
+				this._seconds,
+				this.secondFraction * 1000
 			)
 		);
 	}
@@ -315,93 +402,6 @@ class DateTime {
 		throw new Error('Unexpected subType');
 	}
 }
-
-// dateTime    | (-)yyyy-mm-ddThh:mm:ss.ss(Z|[+-]hh:mm)
-// time        |               hh:mm:ss.ss(Z|[+-]hh:mm)
-// date        | (-)yyyy-mm-dd            (Z|[+-]hh:mm)
-// gYearMonth  | (-)yyyy-mm               (Z|[+-]hh:mm)
-// gYear       | (-)yyyy                  (Z|[+-]hh:mm)
-// gMonthDay   |       --mm-dd            (Z|[+-]hh:mm)
-// gDay        |         ---dd            (Z|[+-]hh:mm)
-// gMonth      |       --mm               (Z|[+-]hh:mm)
-DateTime.fromString = (dateString: string): DateTime => {
-	const regex =
-		/^(?:(-?\d{4,}))?(?:--?(\d\d))?(?:-{1,3}(\d\d))?(T)?(?:(\d\d):(\d\d):(\d\d))?(\.\d+)?(Z|(?:[+-]\d\d:\d\d))?$/;
-	const match = regex.exec(dateString);
-
-	const years = match[1] ? parseInt(match[1], 10) : null;
-	const months = parseMatch(match[2]);
-	const days = parseMatch(match[3]);
-	const t = match[4];
-	const hours = parseMatch(match[5]);
-	const minutes = parseMatch(match[6]);
-	const seconds = parseMatch(match[7]);
-	const secondFraction = match[8] ? parseFloat(match[8]) : 0;
-	const timezone = match[9] ? DayTimeDuration.fromTimezoneString(match[9]) : null;
-
-	if (years && (years < -271821 || years > 273860)) {
-		// These are the JavaScript bounds for date (https://tc39.github.io/ecma262/#sec-time-values-and-time-range)
-		throw new Error('FODT0001: Datetime year is out of bounds');
-	}
-
-	if (t) {
-		// There is a T separating the date and time components -> dateTime
-		return new DateTime(
-			years,
-			months,
-			days,
-			hours,
-			minutes,
-			seconds,
-			secondFraction,
-			timezone,
-			ValueType.XSDATETIME
-		);
-	}
-
-	if (hours !== null && minutes !== null && seconds !== null) {
-		// There is no T separator, but there is a time component -> time
-		return new DateTime(
-			1972,
-			12,
-			31,
-			hours,
-			minutes,
-			seconds,
-			secondFraction,
-			timezone,
-			ValueType.XSTIME
-		);
-	}
-
-	if (years !== null && months !== null && days !== null) {
-		// There is no T separator, but there is a complete date component -> date
-		return new DateTime(years, months, days, 0, 0, 0, 0, timezone, ValueType.XSDATE);
-	}
-
-	if (years !== null && months !== null) {
-		// There is no complete date component, but there is a year and a month -> gYearMonth
-		return new DateTime(years, months, 1, 0, 0, 0, 0, timezone, ValueType.XSGYEARMONTH);
-	}
-
-	if (months !== null && days !== null) {
-		// There is no complete date component, but there is a month and a day -> gMonthDay
-		return new DateTime(1972, months, days, 0, 0, 0, 0, timezone, ValueType.XSGMONTHDAY);
-	}
-
-	if (years !== null) {
-		// There is only a year -> gYear
-		return new DateTime(years, 1, 1, 0, 0, 0, 0, timezone, ValueType.XSGYEAR);
-	}
-
-	if (months !== null) {
-		// There is only a month -> gMonth
-		return new DateTime(1972, months, 1, 0, 0, 0, 0, timezone, ValueType.XSGMONTH);
-	}
-
-	// There is only one option left -> gDay
-	return new DateTime(1972, 12, days, 0, 0, 0, 0, timezone, ValueType.XSGDAY);
-};
 
 export function compare(
 	dateTime1: DateTime,

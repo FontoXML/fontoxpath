@@ -1,6 +1,7 @@
 import * as chai from 'chai';
 import DomFacade from 'fontoxpath/domFacade/DomFacade';
 import { adaptJavaScriptValueToSequence } from 'fontoxpath/expressions/adaptJavaScriptValueToXPathValue';
+import MapValue from 'fontoxpath/expressions/dataTypes/MapValue';
 import { SequenceMultiplicity, ValueType } from 'fontoxpath/expressions/dataTypes/Value';
 import DateTime from 'fontoxpath/expressions/dataTypes/valueTypes/DateTime';
 import * as slimdom from 'slimdom';
@@ -276,6 +277,27 @@ describe('adaptJavaScriptValueToSequence', () => {
 			);
 			chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 			chai.assert(xpathSequence.first().type === ValueType.MAP, 'is a map');
+		});
+
+		it('can automatically convert objects containing dates when they are typed as a map', () => {
+			const then = new Date();
+			const xpathSequence = adaptJavaScriptValueToSequence(
+				null,
+				{ date: then },
+				{ type: ValueType.MAP, mult: SequenceMultiplicity.EXACTLY_ONE }
+			);
+			chai.assert.isTrue(xpathSequence.isSingleton(), 'is a singleton sequence');
+
+			chai.assert.equal(xpathSequence.first().type, ValueType.MAP, 'is a map');
+
+			const map = xpathSequence.first() as MapValue;
+			chai.assert.equal(map.keyValuePairs.length, 1, 'One key');
+			chai.assert.equal(map.keyValuePairs[0].key.value, 'date', 'Key is "date"');
+			const valuesForDate = map.keyValuePairs[0].value().getAllValues();
+			chai.assert.equal(valuesForDate.length, 1, 'Should be one value');
+			chai.assert.equal(valuesForDate[0].type, ValueType.XSDATETIME, 'Value is a date');
+			const value = valuesForDate[0].value as DateTime;
+			chai.assert.equal(value.toJavaScriptDate().getTime(), then.getTime());
 		});
 
 		it('can automatically convert null to the empty sequence', () => {

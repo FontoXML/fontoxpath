@@ -59,6 +59,10 @@ export function adaptSingleJavaScriptValue(value: ValidValue, domFacade: DomFaca
 					})
 				);
 			}
+			if (value instanceof Date) {
+				const date = DateTime.fromString(value.toISOString());
+				return createAtomicValue(date, date.type);
+			}
 			// Make it a map
 			const mapValue = value as { [s: string]: ValidValue };
 			return new MapValue(
