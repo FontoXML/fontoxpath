@@ -187,19 +187,27 @@ const fnNumber: FunctionDefinitionType = (
 	});
 };
 
-const returnRandomItemFromSequence: FunctionDefinitionType = (
+const permute: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
 ) => {
-	if (sequence.isEmpty()) {
+	if (sequence.isEmpty() || sequence.isSingleton()) {
 		return sequence;
 	}
 
-	const sequenceValue = sequence.getAllValues();
-	const index = Math.floor(Math.random() * sequenceValue.length);
-	return sequenceFactory.singleton(sequenceValue[index]);
+	const a = sequence.getAllValues();
+
+	// Use Durstenfeld shuffle to randomize the list
+	for (let i = a.length - 1; i > 1; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		const t = a[j];
+		a[j] = a[i];
+		a[i] = t;
+	}
+
+	return sequenceFactory.create(a);
 };
 
 const fnRandomNumberGenerator: FunctionDefinitionType = (
@@ -239,7 +247,7 @@ const fnRandomNumberGenerator: FunctionDefinitionType = (
 				value: () =>
 					sequenceFactory.singleton(
 						new FunctionValue({
-							value: returnRandomItemFromSequence,
+							value: permute,
 							isAnonymous: true,
 							localName: '',
 							namespaceURI: '',
