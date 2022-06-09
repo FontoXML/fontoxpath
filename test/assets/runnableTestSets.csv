@@ -146,7 +146,7 @@ fn-parse-xml-fragment,false
 fn-path,true
 fn-position,true
 fn-prefix-from-QName,true
-fn-random-number-generator,false,
+fn-random-number-generator,true
 fn-remove,true
 fn-replace,true
 fn-resolve-QName,false

@@ -175,27 +175,37 @@ describe('numeric functions', () => {
 	});
 
 	describe('fn:random-number-generator', () => {
-		it('returns any random number', () =>
-			chai.assert.isOk(
-				evaluateXPathToBoolean('random-number-generator()("number")', documentNode)
-			));
+		for (let i = 0; i < 100; ++i) {
+			describe(`given the random nature of randomness, run the tests multiple times! This is run ${i}`, () => {
+				it('returns any random number', () =>
+					chai.assert.closeTo(
+						evaluateXPathToNumber('random-number-generator()?number', documentNode),
+						0.5,
+						0.5,
+						'number should return something in the range 0 to 10'
+					));
 
-		it('returns any random number via next function', () =>
-			chai.assert.isOk(
-				evaluateXPathToBoolean(
-					'random-number-generator()("next")()("number")',
-					documentNode
-				)
-			));
+				it('returns any random number via next function', () =>
+					chai.assert.closeTo(
+						evaluateXPathToNumber(
+							'random-number-generator()?next()?number',
+							documentNode
+						),
+						0.5,
+						0.5,
+						'number should return something in the range 0 to 10'
+					));
 
-		it('returns any random item from a given sequence', () =>
-			chai.assert.isOk(
-				evaluateXPathToBoolean(
-					'random-number-generator()("permute")((1, 2, 3, 4))',
-					documentNode
-				)
-			));
-
+				it('permute should permute the sequence', () =>
+					chai.assert.sameMembers(
+						evaluateXPathToNumbers(
+							'random-number-generator()?permute((1, 2, 3, 4))',
+							documentNode
+						),
+						[1, 2, 3, 4]
+					));
+			});
+		}
 		it('throws when given a seed', () =>
 			chai.assert.throws(() => evaluateXPathToBoolean('random-number-generator(123)')));
 	});
