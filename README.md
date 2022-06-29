@@ -444,7 +444,9 @@ Note that this engine assumes [XPath 1.0 compatibility
 mode](https://www.w3.org/TR/xpath-31/#id-backwards-compatibility) turned off.
 
 Not all [XPath 3.1 functions](https://www.w3.org/TR/xpath-functions-31/) are implemented yet. We
-accept pull requests for missing features.
+accept pull requests for missing features. A full list of supported queries can be found on [the
+playground](https://xpath.playground.fontoxml.com/). Select the 'Report on which functions are
+implemented' example to get a full dynamic report!
 
 The following features are unavailable at this moment, but will be implemented at some point in time
 ([and even sooner if you can help!](./CONTRIBUTING.md)):
