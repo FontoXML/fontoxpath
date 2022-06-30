@@ -970,7 +970,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				: ['lookup', x]
 	);
 
-	const postfixExprWithStep: Parser<IAST> = then(
+	const postfixExprWithStep: Parser<IAST[]> = then(
 		map(primaryExpr, (x) => wrapInSequenceExprIfNeeded(x)),
 		star(
 			or([
@@ -980,7 +980,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			])
 		),
 		(expression: IAST, postfixExpr: IAST[]) => {
-			let toWrap: IAST | IAST[] = expression;
+			let toWrap = [expression];
 
 			const predicates: IAST[] = [];
 			const filters: IAST[] = [];
@@ -999,15 +999,13 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			function flushFilters(ensureFilter: boolean) {
 				flushPredicates();
 				if (filters.length !== 0) {
-					if (toWrap[0] === 'sequenceExpr' && toWrap.length > 2) {
-						toWrap = ['sequenceExpr', toWrap as IAST];
+					if (toWrap[0][0] === 'sequenceExpr' && toWrap[0].length > 2) {
+						toWrap = [['sequenceExpr', ...toWrap] as IAST];
 					}
-					toWrap = [['filterExpr', toWrap as IAST], ...filters];
+					toWrap = [['filterExpr', ...toWrap] as IAST, ...filters];
 					filters.length = 0;
 				} else if (ensureFilter) {
-					toWrap = [['filterExpr', toWrap as IAST]];
-				} else {
-					toWrap = [toWrap as IAST];
+					toWrap = [['filterExpr', ...toWrap] as IAST];
 				}
 			}
 
@@ -1024,15 +1022,19 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 					case 'argumentList':
 						flushFilters(false);
 						if (toWrap.length > 1) {
-							toWrap = [['sequenceExpr', ['pathExpr', ['stepExpr', ...toWrap]]]];
+							toWrap = [
+								['sequenceExpr', ['pathExpr', ['stepExpr', ...toWrap]]] as IAST,
+							];
 						}
 						toWrap = [
-							'dynamicFunctionInvocationExpr',
-							['functionItem', ...toWrap],
-							...((postFix[1] as IAST).length
-								? [['arguments', ...(postFix[1] as IAST)]]
-								: []),
-						] as IAST;
+							[
+								'dynamicFunctionInvocationExpr',
+								['functionItem', ...toWrap],
+								...((postFix[1] as IAST).length
+									? [['arguments', ...(postFix[1] as IAST)]]
+									: []),
+							] as IAST,
+						];
 						break;
 					default:
 						throw new Error('unreachable');
