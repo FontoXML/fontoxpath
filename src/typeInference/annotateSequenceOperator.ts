@@ -23,6 +23,8 @@ export function annotateSequenceOperator(
 			type: ValueType.NODE,
 			mult: SequenceMultiplicity.ZERO_OR_MORE,
 		};
+	} else if (length === 1) {
+		seqType = types[0];
 	} else {
 		const contatinsUndefinedOrNull = types.includes(undefined) || types.includes(null);
 		if (contatinsUndefinedOrNull) {
