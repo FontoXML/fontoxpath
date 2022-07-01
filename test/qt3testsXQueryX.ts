@@ -1,6 +1,6 @@
 import { evaluateXPathToMap } from 'fontoxpath';
 import * as path from 'path';
-import { sync } from 'slimdom-sax-parser';
+import { parseXmlDocument } from 'slimdom';
 import { getSkippedTests } from 'test-helpers/getSkippedTests';
 import testFs from 'test-helpers/testFs';
 import { buildTestCase } from './xQueryXUtils';
@@ -22,7 +22,7 @@ function run() {
 			return null;
 		}
 
-		const xml = sync(await testFs.readFile(testFilePath));
+		const xml = parseXmlDocument(await testFs.readFile(testFilePath));
 		const xqueries = evaluateXPathToMap(
 			'(/descendant::test-case/map:entry(@name, (test/@file/string(), test/string())[1])) => map:merge()',
 			xml

@@ -16,8 +16,7 @@ import {
 	ReturnType,
 } from 'fontoxpath';
 import { acceptAst, IAstRejected, rejectAst } from 'fontoxpath/jsCodegen/JavaScriptCompiledXPath';
-import { Element, Node, XMLSerializer as SlimdomXMLSerializer } from 'slimdom';
-import { slimdom } from 'slimdom-sax-parser';
+import { Document, Element, Node, XMLSerializer } from 'slimdom';
 import {
 	ALL_TESTS_QUERY,
 	getAllTestSets,
@@ -59,16 +58,16 @@ type AsserterForExpression = (
 
 function createAsserterForExpression(
 	baseUrl: string,
-	assertNode,
-	language,
-	xmlSerializer: SlimdomXMLSerializer
+	assertNode: Element,
+	language: Language,
+	xmlSerializer: XMLSerializer
 ): AsserterForExpression {
 	const nodesFactory = createNodesFactory(assertNode);
 
 	switch (assertNode.localName) {
 		case 'all-of': {
 			const asserts = evaluateXPathToNodes('*', assertNode, undefined, {}).map(
-				(innerAssertNode) =>
+				(innerAssertNode: Element) =>
 					createAsserterForExpression(baseUrl, innerAssertNode, language, xmlSerializer)
 			);
 			return (xpath: string, contextNode, variablesInScope, namespaceResolver) =>
@@ -76,7 +75,7 @@ function createAsserterForExpression(
 		}
 		case 'any-of': {
 			const asserts = evaluateXPathToNodes('*', assertNode, undefined, {}).map(
-				(innerAssertNode) =>
+				(innerAssertNode: Element) =>
 					createAsserterForExpression(baseUrl, innerAssertNode, language, xmlSerializer)
 			);
 			return (xpath, contextNode, variablesInScope, namespaceResolver) => {
@@ -418,7 +417,7 @@ function createAsserterForExpression(
 			};
 		}
 		case 'assert-xml': {
-			let parsedFragment;
+			let parsedFragment: Node;
 			if (
 				evaluateXPathToBoolean('@file', assertNode, undefined, {
 					xmlSerializer,
@@ -429,7 +428,7 @@ function createAsserterForExpression(
 						baseUrl,
 						xmlSerializer,
 					})
-				);
+				) as Document;
 			} else {
 				parsedFragment = parser.parseFromString(
 					`<xml>${evaluateXPathToString('.', assertNode, undefined, {
@@ -459,13 +458,13 @@ function createAsserterForExpression(
 						}
 					),
 					`Expected XPath ${xpath} to resolve to the given XML. Expected ${results
-						.map((result) => new SlimdomXMLSerializer().serializeToString(result))
+						.map((result) => new XMLSerializer().serializeToString(result))
 						.join(' ')} to equal ${
 						parsedFragment.nodeType === parsedFragment.DOCUMENT_FRAGMENT_NODE
 							? parsedFragment.childNodes
-									.map((n) => new slimdom.XMLSerializer().serializeToString(n))
+									.map((n: Node) => new XMLSerializer().serializeToString(n))
 									.join(' ')
-							: parsedFragment.innerHTML
+							: (parsedFragment as Element).innerHTML
 					}`
 				);
 
@@ -493,13 +492,13 @@ function createAsserterForExpression(
 						{}
 					),
 					`Expected preparsed XPath ${xpath} to resolve to the given XML. Expected ${resultsWithPreparsedQuery
-						.map((result) => new SlimdomXMLSerializer().serializeToString(result))
+						.map((result) => new XMLSerializer().serializeToString(result))
 						.join(' ')} to equal ${
 						parsedFragment.nodeType === parsedFragment.DOCUMENT_FRAGMENT_NODE
 							? parsedFragment.childNodes
-									.map((n) => new slimdom.XMLSerializer().serializeToString(n))
+									.map((n: Node) => new XMLSerializer().serializeToString(n))
 									.join(' ')
-							: parsedFragment.innerHTML
+							: (parsedFragment as Element).innerHTML
 					}`
 				);
 			};
@@ -680,9 +679,8 @@ function createAsserterForJsCodegen(
 			return (
 				xpath,
 				contextNode,
-				variablesInScope,
-				namespaceResolver,
-				that
+				_variablesInScope,
+				namespaceResolver
 			): JavaScriptCompiledXPathResult => {
 				const compiled = compileXPathToJavaScript(xpath, ReturnType.BOOLEAN, {
 					namespaceResolver,
@@ -705,9 +703,8 @@ function createAsserterForJsCodegen(
 			return (
 				xpath,
 				contextNode,
-				variablesInScope,
-				namespaceResolver,
-				that
+				_variablesInScope,
+				namespaceResolver
 			): JavaScriptCompiledXPathResult => {
 				const compiled = compileXPathToJavaScript(xpath, ReturnType.BOOLEAN, {
 					namespaceResolver,
@@ -733,7 +730,7 @@ function createAsserterForJsCodegen(
 			return (
 				xpath,
 				contextNode,
-				variablesInScope,
+				_variablesInScope,
 				namespaceResolver,
 				that
 			): JavaScriptCompiledXPathResult => {
@@ -779,8 +776,7 @@ function createAsserterForJsCodegen(
 				xpath,
 				contextNode,
 				variablesInScope,
-				namespaceResolver,
-				that
+				namespaceResolver
 			): JavaScriptCompiledXPathResult => {
 				const compiled = compileXPathToJavaScript(xpath, ReturnType.NODES, {
 					namespaceResolver,
@@ -809,9 +805,8 @@ function createAsserterForJsCodegen(
 			return (
 				xpath,
 				contextNode,
-				variablesInScope,
-				namespaceResolver,
-				that
+				_variablesInScope,
+				namespaceResolver
 			): JavaScriptCompiledXPathResult => {
 				const compiled = compileXPathToJavaScript(xpath, ReturnType.NODES, {
 					namespaceResolver,
@@ -835,9 +830,8 @@ function createAsserterForJsCodegen(
 			return (
 				xpath,
 				contextNode,
-				variablesInScope,
-				namespaceResolver,
-				that
+				_variablesInScope,
+				namespaceResolver
 			): JavaScriptCompiledXPathResult => {
 				const compiled = compileXPathToJavaScript(xpath, ReturnType.BOOLEAN, {
 					namespaceResolver,
@@ -863,9 +857,8 @@ function createAsserterForJsCodegen(
 			return (
 				xpath,
 				contextNode,
-				variablesInScope,
-				namespaceResolver,
-				that
+				_variablesInScope,
+				namespaceResolver
 			): JavaScriptCompiledXPathResult => {
 				const compiled = compileXPathToJavaScript(xpath, ReturnType.NODES, {
 					namespaceResolver,
@@ -893,11 +886,10 @@ function createAsserterForJsCodegen(
 			return (
 				xpath,
 				contextNode,
-				variablesInScope,
-				namespaceResolver,
-				that
+				_variablesInScope,
+				namespaceResolver
 			): JavaScriptCompiledXPathResult => {
-				const compiled = compileXPathToJavaScript(xpath, ReturnType.ANY, {
+				const compiled = compileXPathToJavaScript(xpath, ReturnType.ALL_RESULTS, {
 					namespaceResolver,
 					language,
 				});
@@ -905,7 +897,7 @@ function createAsserterForJsCodegen(
 					// tslint:disable-next-line
 					const fn = new Function(compiled.code) as CompiledXPathFunction<
 						Node,
-						ReturnType.ANY
+						ReturnType.ALL_RESULTS
 					>;
 					chai.assert.equal(
 						typeof executeJavaScriptCompiledXPath(fn, contextNode),
@@ -917,7 +909,7 @@ function createAsserterForJsCodegen(
 			};
 		}
 		case 'assert-xml': {
-			let parsedFragment;
+			let parsedFragment: Node;
 			if (
 				evaluateXPathToBoolean('@file', assertNode, undefined, {
 					language,
@@ -928,7 +920,7 @@ function createAsserterForJsCodegen(
 						baseUrl,
 						language,
 					})
-				);
+				) as Document;
 			} else {
 				parsedFragment = parser.parseFromString(
 					`<xml>${evaluateXPathToString('.', assertNode, undefined, {
@@ -939,9 +931,8 @@ function createAsserterForJsCodegen(
 			return (
 				xpath,
 				contextNode,
-				variablesInScope,
-				namespaceResolver,
-				that
+				_variablesInScope,
+				namespaceResolver
 			): JavaScriptCompiledXPathResult => {
 				const compiled = compileXPathToJavaScript(xpath, ReturnType.NODES, {
 					namespaceResolver,
@@ -968,15 +959,13 @@ function createAsserterForJsCodegen(
 							}
 						),
 						`Expected XPath ${xpath} to resolve to the given XML. Expected ${results
-							.map((result) => new SlimdomXMLSerializer().serializeToString(result))
+							.map((result) => new XMLSerializer().serializeToString(result))
 							.join(' ')} to equal ${
 							parsedFragment.nodeType === parsedFragment.DOCUMENT_FRAGMENT_NODE
 								? parsedFragment.childNodes
-										.map((n) =>
-											new slimdom.XMLSerializer().serializeToString(n)
-										)
+										.map((n: Node) => new XMLSerializer().serializeToString(n))
 										.join(' ')
-								: parsedFragment.innerHTML
+								: (parsedFragment as Element).innerHTML
 						}`
 					);
 				}
@@ -990,9 +979,8 @@ function createAsserterForJsCodegen(
 			return (
 				xpath,
 				contextNode,
-				variablesInScope,
-				namespaceResolver,
-				that
+				_variablesInScope,
+				namespaceResolver
 			): JavaScriptCompiledXPathResult => {
 				const compiled = compileXPathToJavaScript(xpath, ReturnType.STRING, {
 					namespaceResolver,
@@ -1024,7 +1012,7 @@ function getExpressionBackendAsserterForTest(
 	baseUrl: string,
 	testCase: Element,
 	language: Language,
-	xmlSerializer?: SlimdomXMLSerializer
+	xmlSerializer?: XMLSerializer
 ) {
 	const assertNode = evaluateXPathToFirstNode<Element>('./result/*', testCase, undefined);
 	return createAsserterForExpression(baseUrl, assertNode, language, xmlSerializer);
@@ -1139,7 +1127,7 @@ describe('qt3 test set', () => {
 									baseUrl,
 									testCase,
 									language,
-									new slimdom.XMLSerializer()
+									new XMLSerializer()
 								);
 
 								asserter(
@@ -1162,8 +1150,7 @@ describe('qt3 test set', () => {
 							}
 						};
 
-						assertFn.toString = () =>
-							new slimdom.XMLSerializer().serializeToString(testCase);
+						assertFn.toString = () => new XMLSerializer().serializeToString(testCase);
 
 						it(`${description}`, assertFn).timeout(60000);
 					} catch (e) {
@@ -1241,8 +1228,7 @@ describe('qt3 test set', () => {
 						}
 					};
 
-					assertFn.toString = () =>
-						new slimdom.XMLSerializer().serializeToString(testCase);
+					assertFn.toString = () => new XMLSerializer().serializeToString(testCase);
 
 					it(description, assertFn).timeout(60000);
 				} catch (e) {

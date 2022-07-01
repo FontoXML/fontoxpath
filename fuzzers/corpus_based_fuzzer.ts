@@ -1,4 +1,4 @@
-import { sync } from 'slimdom-sax-parser';
+import { parseXmlDocument } from 'slimdom';
 import { FuzzCase, IFuzzer } from './fuzzer';
 import {
 	mutateCharactersInPlace,
@@ -30,7 +30,7 @@ export default class CorpusBasedFuzzer implements IFuzzer {
 
 	globalInit(): void {
 		this.corpus = this.loader.get();
-		this.documentNode = sync(
+		this.documentNode = parseXmlDocument(
 			'<xml> \
 			<title>xpath.playground.fontoxml.com</title> \
 			<summary>This is a learning tool for XML, XPath and XQuery.</summary> \

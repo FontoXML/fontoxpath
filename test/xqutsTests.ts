@@ -13,8 +13,7 @@ import {
 	parseScript,
 } from 'fontoxpath';
 import * as path from 'path';
-import { Document, Element, Node } from 'slimdom';
-import { slimdom, sync } from 'slimdom-sax-parser';
+import { Document, Element, Node, parseXmlDocument } from 'slimdom';
 import { getSkippedTests } from 'test-helpers/getSkippedTests';
 import testFs from 'test-helpers/testFs';
 
@@ -41,7 +40,7 @@ type ExpressionArguments = [
 const parser = {
 	parseFromString: (xmlString) => {
 		try {
-			return sync(xmlString.trim());
+			return parseXmlDocument(xmlString.trim());
 		} catch (e) {
 			console.log(`Error parsing the string ${xmlString}.`, e);
 			throw e;
@@ -247,7 +246,7 @@ async function runAssertions(
 			}
 			case 'Text': {
 				const actual = runQuery(evaluateXPath.STRING_TYPE) as string;
-				const actualNodes = [new slimdom.Document().createTextNode(actual)];
+				const actualNodes = [new Document().createTextNode(actual)];
 
 				catchAssertion(() => assertFragment(actualNodes, expectedString));
 				break;

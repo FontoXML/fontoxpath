@@ -5,11 +5,10 @@ import {
 	getBucketForSelector,
 	IDomFacade,
 } from 'fontoxpath';
-import { Document, Node } from 'slimdom';
-import { sync } from 'slimdom-sax-parser';
+import { Document, Node, parseXmlDocument } from 'slimdom';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
-let documentNode;
+let documentNode: Document;
 beforeEach(() => {
 	documentNode = new Document();
 });
@@ -38,7 +37,7 @@ describe('parent', () => {
 	});
 
 	it('returns nothing for absent parent node encore', () => {
-		const xml = sync('<root><element /></root>');
+		const xml = parseXmlDocument('<root><element /></root>');
 		const parentNode = evaluateXPathToFirstNode('parent::element()', xml);
 		chai.assert.isNull(parentNode);
 	});
@@ -90,7 +89,7 @@ describe('parent', () => {
 				getParentNode(node: Node, _bucket?: string | null): Node | null {
 					return node.parentNode;
 				},
-				getFirstChild(node, bucket: string | null): Node | null {
+				getFirstChild(_node: Node, _bucket: string | null): Node | null {
 					return null;
 				},
 			} as unknown as IDomFacade),

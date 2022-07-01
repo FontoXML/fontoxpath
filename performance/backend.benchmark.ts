@@ -1,6 +1,5 @@
 import benchmarkRunner from '@fontoxml/fonto-benchmark-runner';
-import { Document, Node } from 'slimdom';
-import * as slimdomSaxParser from 'slimdom-sax-parser';
+import { Document, Node, parseXmlDocument } from 'slimdom';
 import {
 	evaluateXPathToBoolean,
 	evaluateXPathToNodes,
@@ -45,7 +44,7 @@ benchmarkRunner.compareBenchmarks(
 	`evaluateXPathToBoolean (true) => ${childElementsQuery}`,
 	async () => {
 		const content = await loadFile(testDocumentFilename);
-		document = slimdomSaxParser.sync(content);
+		document = parseXmlDocument(content);
 	},
 	undefined,
 	{
@@ -67,7 +66,7 @@ benchmarkRunner.compareBenchmarks(
 	`evaluateXPathToBoolean (false) => ${childElementsQueryWithoutResults}`,
 	async () => {
 		const content = await loadFile(testDocumentFilename);
-		document = slimdomSaxParser.sync(content);
+		document = parseXmlDocument(content);
 	},
 	undefined,
 	{
@@ -93,7 +92,7 @@ benchmarkRunner.compareBenchmarks(
 	`evaluateXPathToNodes => ${childElementsQuery}`,
 	async () => {
 		const content = await loadFile(testDocumentFilename);
-		document = slimdomSaxParser.sync(content);
+		document = parseXmlDocument(content);
 	},
 	undefined,
 	{

@@ -73,9 +73,9 @@
 		"@types/mocha": "^9.1.0",
 		"@types/node": "^17.0.13",
 		"@types/node-static": "^0.7.7",
+		"@types/sinon": "^10.0.9",
 		"blns": "^2.0.4",
 		"bundlemon": "^1.3.0",
-		"@types/sinon": "^10.0.9",
 		"chai": "^4.3.6",
 		"concurrently": "^7.0.0",
 		"coveralls": "^3.1.1",
@@ -93,8 +93,7 @@
 		"prettier": "^2.4.1",
 		"sinon": "^13.0.2",
 		"sinon-chai": "^3.7.0",
-		"slimdom": "^3.0.1",
-		"slimdom-sax-parser": "^1.5.1",
+		"slimdom": "^4.0.1",
 		"source-map-support": "^0.5.21",
 		"ts-mocha": "^9.0.2",
 		"ts-node": "^10.4.0",
@@ -107,7 +106,7 @@
 		"typescript": "^4.5.5"
 	},
 	"dependencies": {
-		"xspattern": "^2.0.0",
-		"prsc": "3.1.0"
+		"prsc": "3.1.0",
+		"xspattern": "^2.0.0"
 	}
 }

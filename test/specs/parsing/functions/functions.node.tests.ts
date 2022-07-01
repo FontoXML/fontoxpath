@@ -7,13 +7,10 @@ import {
 	evaluateXPathToStrings,
 } from 'fontoxpath';
 
-import { sync } from 'slimdom-sax-parser';
-
 import * as slimdom from 'slimdom';
-import evaluateXPathToAsyncSingleton from 'test-helpers/evaluateXPathToAsyncSingleton';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
-let documentNode;
+let documentNode: slimdom.Document;
 beforeEach(() => {
 	documentNode = new slimdom.Document();
 });
@@ -382,7 +379,7 @@ return $node/root() = $element`,
 		});
 
 		it('returns "/" for the document node', () => {
-			documentNode = sync(
+			documentNode = slimdom.parseXmlDocument(
 				`<p xmlns="http://example.com/one" xml:lang="de" author="Friedrich von Schiller">
 				Freude, schöner Götterfunken,<br/>
 				Tochter aus Elysium,<br/>
@@ -399,7 +396,7 @@ return $node/root() = $element`,
 		});
 
 		it('returns "/Q{http://example.com/one}p[1]" for the <p> element of the document', () => {
-			documentNode = sync(
+			documentNode = slimdom.parseXmlDocument(
 				`<p xmlns="http://example.com/one" xml:lang="de" author="Friedrich von Schiller">
 				Freude, schöner Götterfunken,<br/>
 				Tochter aus Elysium,<br/>
@@ -422,13 +419,12 @@ return $node/root() = $element`,
 		});
 
 		it('returns "Q{http://example.com/one}p[1]/@Q{http://www.w3.org/XML/1998/namespace}lang" for the lang attribute of <p> element of the document', () => {
-			documentNode = sync(
+			documentNode = slimdom.parseXmlDocument(
 				`<p xmlns="http://example.com/one" xml:lang="de" author="Friedrich von Schiller">
 				Freude, schöner Götterfunken,<br/>
 				Tochter aus Elysium,<br/>
 				Wir betreten feuertrunken,<br/>
-				Himmlische, dein Heiligtum.</p>`,
-				documentNode
+				Himmlische, dein Heiligtum.</p>`
 			);
 
 			chai.assert.equal(
@@ -446,13 +442,12 @@ return $node/root() = $element`,
 		});
 
 		it('returns "Q{http://example.com/one}p[1]/@author" for the author attribute of <p> element of the document', () => {
-			documentNode = sync(
+			documentNode = slimdom.parseXmlDocument(
 				`<p xmlns="http://example.com/one" xml:lang="de" author="Friedrich von Schiller">
 				Freude, schöner Götterfunken,<br/>
 				Tochter aus Elysium,<br/>
 				Wir betreten feuertrunken,<br/>
-				Himmlische, dein Heiligtum.</p>`,
-				documentNode
+				Himmlische, dein Heiligtum.</p>`
 			);
 
 			chai.assert.equal(
@@ -470,15 +465,14 @@ return $node/root() = $element`,
 		});
 
 		it('returns "/Q{http://example.com/one}p[1]/Q{http://example.com/one}br[2]" for the <br> element of the document', () => {
-			documentNode = sync(
+			documentNode = slimdom.parseXmlDocument(
 				`<p xmlns="http://example.com/one" xml:lang="de" author="Friedrich von Schiller">
 				Freude, schöner Götterfunken,<br/>
 				<said></said>
 				Tochter aus Elysium,<br/> <said>
 				blablabla </said>
 				Wir betreten feuertrunken,<br/>
-				Himmlische, dein Heiligtum.</p>`,
-				documentNode
+				Himmlische, dein Heiligtum.</p>`
 			);
 
 			chai.assert.equal(
@@ -496,13 +490,12 @@ return $node/root() = $element`,
 		});
 
 		it('returns "/Q{http://example.com/one}p[1]/text()[2]" for the text node starting with "Tochter"', () => {
-			documentNode = sync(
+			documentNode = slimdom.parseXmlDocument(
 				`<p xmlns="http://example.com/one" xml:lang="de" author="Friedrich von Schiller">
 				Freude, schöner Götterfunken,<br/>
 				Tochter aus Elysium,<br/> <s/>
 				Wir betreten feuertrunken,<br/>
-				Himmlische, dein Heiligtum.</p>`,
-				documentNode
+				Himmlische, dein Heiligtum.</p>`
 			);
 
 			chai.assert.equal(
@@ -566,14 +559,13 @@ return $node/root() = $element`,
 		});
 
 		it('returns "fn:root()/processing-instruction(stylesheet)[1]" for the processing instruction', () => {
-			documentNode = sync(
+			documentNode = slimdom.parseXmlDocument(
 				`<xml>
 				<?TARGET DATA?>
 				<?ANOTHER_TARGET  MORE DATA?>
 				<?canAlsoBeLowerCaps data may contain spaces?>
 				<?etc etc, etc?>
-				</xml>`,
-				documentNode
+				</xml>`
 			);
 			chai.assert.equal(
 				evaluateXPathToString(
@@ -590,14 +582,13 @@ return $node/root() = $element`,
 		});
 
 		it('returns "fn:root()/processing-instruction(stylesheet)[1]" for the processing instruction', () => {
-			documentNode = sync(
+			documentNode = slimdom.parseXmlDocument(
 				`<xml>
 				<?TARGET DATA?>
 				<?TARGET MORE DATA?>
 				<?TARGET data may contain spaces?>
 				<?TARGET etc, etc?>
-				</xml>`,
-				documentNode
+				</xml>`
 			);
 			chai.assert.equal(
 				evaluateXPathToString(
