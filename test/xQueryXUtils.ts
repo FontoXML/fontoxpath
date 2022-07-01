@@ -6,10 +6,9 @@ import {
 	Language,
 	parseScript,
 } from 'fontoxpath';
-import { Element, Text } from 'slimdom';
-import { slimdom, sync } from 'slimdom-sax-parser';
+import { Document, Element, Text, parseXmlDocument, XMLSerializer } from 'slimdom';
 
-function removeInsignificantWhitespace(root) {
+function removeInsignificantWhitespace(root: Document) {
 	const nonSignificantWhitespace = evaluateXPathToNodes<Text>('//*/text()', root, null, null, {
 		language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 	});
@@ -40,7 +39,7 @@ export function buildTestCase(
 			astElement = parseScript(
 				xQuery,
 				{ language: Language.XQUERY_UPDATE_3_1_LANGUAGE, annotateAst: false },
-				new slimdom.Document()
+				new Document()
 			);
 		} catch (err) {
 			if (err.message.includes('XPST0003')) {
@@ -50,18 +49,17 @@ export function buildTestCase(
 				skippableTests.push(`${testCase},Parser related error, ${err}`);
 				throw err;
 			}
-			this.skip();
 		}
 
-		const actual = new slimdom.Document();
+		const actual = new Document();
 		actual.appendChild(astElement);
 		actual.normalize();
 		onActualParsed(actual);
 
-		let expected;
+		let expected: Document;
 		try {
 			const rawFile = (await loadXQueryX()).replace(/\r/g, '');
-			expected = sync(rawFile);
+			expected = parseXmlDocument(rawFile);
 			expected.normalize();
 		} catch (e) {
 			skippableTests.push(`${testCase},Expected XML could not be parsed`);
@@ -76,10 +74,10 @@ export function buildTestCase(
 
 		const regex = / xqx:type="(.*?)"/gi;
 
-		const actualInnerHtml = new slimdom.XMLSerializer()
+		const actualInnerHtml = new XMLSerializer()
 			.serializeToString(actual.documentElement.firstElementChild)
 			.replace(regex, '');
-		const expectedInnerHtml = new slimdom.XMLSerializer().serializeToString(
+		const expectedInnerHtml = new XMLSerializer().serializeToString(
 			expected.documentElement.firstElementChild
 		);
 		if (actualInnerHtml.replace(/></g, '><') === expectedInnerHtml.replace(/></g, '><')) {
@@ -94,10 +92,10 @@ export function buildTestCase(
 		) {
 			try {
 				chai.assert.equal(
-					new slimdom.XMLSerializer()
+					new XMLSerializer()
 						.serializeToString(actual.documentElement)
 						.replace(/></g, '>\n<'),
-					new slimdom.XMLSerializer()
+					new XMLSerializer()
 						.serializeToString(expected.documentElement)
 						.replace(/></g, '>\n<'),
 					'Expected the XML to be deep-equal'

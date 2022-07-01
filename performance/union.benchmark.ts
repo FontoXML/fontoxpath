@@ -1,12 +1,11 @@
 import benchmarkRunner from '@fontoxml/fonto-benchmark-runner';
-import { Document } from 'slimdom';
-import { sync } from 'slimdom-sax-parser';
+import { Document, parseXmlDocument } from 'slimdom';
 import { domFacade, evaluateXPath } from '../src/index';
 
 let document: Document;
 
 function setup() {
-	document = sync(`
+	document = parseXmlDocument(`
     <xml>
         <title>xpath.playground.fontoxml.com</title>
         <summary>This is a learning tool for XML, XPath and XQuery.</summary>

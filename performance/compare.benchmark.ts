@@ -1,6 +1,5 @@
 import benchmarkRunner from '@fontoxml/fonto-benchmark-runner';
-import { Document, Node } from 'slimdom';
-import * as slimdomSaxParser from 'slimdom-sax-parser';
+import { Document, Node, parseXmlDocument } from 'slimdom';
 
 import {
 	domFacade,
@@ -48,7 +47,7 @@ benchmarkRunner.compareBenchmarks(
 	'count 3190 text elements',
 	async () => {
 		const content = await loadFile(testDocumentFilename);
-		document = slimdomSaxParser.sync(content);
+		document = parseXmlDocument(content);
 	},
 	undefined,
 	{

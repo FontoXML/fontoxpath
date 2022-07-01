@@ -1,10 +1,10 @@
 import * as chai from 'chai';
 import { evaluateXPath, ReturnType } from 'fontoxpath';
-import { sync } from 'slimdom-sax-parser';
+import { parseXmlDocument } from 'slimdom';
 import evaluateXPathWithJsCodegen from './evaluateXPathWithJsCodegen';
 
 describe('compare attributes tests', () => {
-	const xml = sync(`<xml>
+	const xml = parseXmlDocument(`<xml>
     <title>xpath.playground.fontoxml.com</title>
     <summary>This is a learning tool for XML, XPath and XQuery.</summary>
     <tips>

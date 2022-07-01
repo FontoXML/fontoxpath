@@ -11,8 +11,7 @@ import {
 import { getSkippedTests } from './getSkippedTests';
 import testFs from './testFs';
 
-import { Document, DocumentFragment, Node } from 'slimdom';
-import { sync } from 'slimdom-sax-parser';
+import { Document, DocumentFragment, Node, parseXmlDocument } from 'slimdom';
 
 const ALL_TESTS_QUERY = `
 /test-set/test-case[
@@ -52,7 +51,7 @@ const ALL_TESTS_QUERY = `
 const parser = {
 	parseFromString: (xmlString: string): Document => {
 		try {
-			return sync(xmlString);
+			return parseXmlDocument(xmlString);
 		} catch (e) {
 			// tslint:disable-next-line: no-console
 			console.log(`Error parsing the string ${xmlString}.`, e);

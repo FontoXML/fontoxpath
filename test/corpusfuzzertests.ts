@@ -1,7 +1,6 @@
 import * as chai from 'chai';
 import { evaluateXPath } from 'fontoxpath';
 import * as slimdom from 'slimdom';
-import { sync } from 'slimdom-sax-parser';
 import CorpusBasedFuzzer from '../fuzzers/corpus_based_fuzzer';
 import { FuzzCase } from '../fuzzers/fuzzer';
 import ISO_CORPUS from '../fuzzers/iso_corpus';
@@ -22,7 +21,7 @@ describe('Corpus Fuzzer tests', () => {
 
 	let documentNode: slimdom.Document;
 	beforeEach(() => {
-		documentNode = sync(
+		documentNode = slimdom.parseXmlDocument(
 			'<xml> \
 			<title>xpath.playground.fontoxml.com</title> \
 			<summary>This is a learning tool for XML, XPath and XQuery.</summary> \

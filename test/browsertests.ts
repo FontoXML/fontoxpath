@@ -1,13 +1,13 @@
 import * as chai from 'chai';
 import { evaluateXPathToString, registerCustomXPathFunction } from 'fontoxpath';
-import { slimdom, sync } from 'slimdom-sax-parser';
+import { parseXmlDocument } from 'slimdom';
 
 describe('Browser tests', function () {
 	describe('Custom functions union result order', function () {
 		it('Returns the results in the same order across browsers', function () {
-			const firstDocument = sync('<xml>1st Document</xml>');
-			const secondDocument = sync('<xml>2nd Document</xml>');
-			const thirdDocument = sync('<xml>3rd Document</xml>');
+			const firstDocument = parseXmlDocument('<xml>1st Document</xml>');
+			const secondDocument = parseXmlDocument('<xml>2nd Document</xml>');
+			const thirdDocument = parseXmlDocument('<xml>3rd Document</xml>');
 
 			registerCustomXPathFunction('cf:firstDocument', [], 'item()', () => {
 				return firstDocument.documentElement;
