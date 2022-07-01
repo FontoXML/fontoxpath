@@ -711,11 +711,17 @@ const fnSerialize: FunctionDefinitionType = (
 	}
 	return sequenceFactory.singleton(
 		createAtomicValue(
-			allResults.map((nodeValue) => {
-				return executionParameters.xmlSerializer.serializeToString(
-					realizeDom(nodeValue.value as NodePointer, executionParameters, false) as Node
-				);
-			}),
+			allResults
+				.map((nodeValue) => {
+					return executionParameters.xmlSerializer.serializeToString(
+						realizeDom(
+							nodeValue.value as NodePointer,
+							executionParameters,
+							false
+						) as Node
+					);
+				})
+				.join(''),
 			ValueType.XSSTRING
 		)
 	);

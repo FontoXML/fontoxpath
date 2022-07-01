@@ -958,6 +958,45 @@ describe('Functions and operators on sequences', () => {
 		});
 
 		describe('fn:serialize', () => {
+			it('can evaluate the result of serialize', () => {
+				const elem = new slimdom.Document();
+
+				const res = evaluateXPathToString(
+					'serialize(fontoxpath:evaluate(serialize(<foo>A piece of text</foo>), map{".": .}))',
+					elem,
+					null,
+					null,
+					{
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
+						xmlSerializer: new slimdom.XMLSerializer(),
+					}
+				);
+				chai.assert.equal(res, '<foo>A piece of text</foo>');
+			});
+
+			it('Uses namespaces during serialization', () => {
+				const URI_BY_PREFIX = { '': 'http://fontoxml.com/fontoxpath' };
+
+				const elem = new slimdom.Document();
+
+				const res = evaluateXPathToString(
+					'serialize(<foo>A piece of text</foo>)',
+					elem,
+					null,
+					null,
+					{
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
+						namespaceResolver: (prefix: string) => URI_BY_PREFIX[prefix],
+						xmlSerializer: new slimdom.XMLSerializer(),
+						debug: true,
+					}
+				);
+				chai.assert.equal(
+					res,
+					'<foo xmlns="http://fontoxml.com/fontoxpath">A piece of text</foo>'
+				);
+			});
+
 			it('can serialize a single element', () =>
 				chai.assert.equal(
 					evaluateXPathToString(
@@ -968,6 +1007,18 @@ describe('Functions and operators on sequences', () => {
 						{ xmlSerializer: new slimdom.XMLSerializer() }
 					),
 					'<ele/>'
+				));
+
+			it('can serialize multiple elements', () =>
+				chai.assert.equal(
+					evaluateXPathToString(
+						'serialize((.,.,.))',
+						documentNode.createElement('ele'),
+						null,
+						null,
+						{ xmlSerializer: new slimdom.XMLSerializer() }
+					),
+					'<ele/><ele/><ele/>'
 				));
 
 			it('can serialize a text node', () =>
