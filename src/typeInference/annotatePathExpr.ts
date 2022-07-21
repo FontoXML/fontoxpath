@@ -63,7 +63,7 @@ function annotateXPathAxis(axis: string): SequenceType {
 }
 
 function annotateStep(step: IAST, annotationContext: AnnotationContext): SequenceType {
-	let seqType;
+	let seqType: SequenceType = null;
 	const item = { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE };
 	if (!step) {
 		return item;
@@ -96,6 +96,10 @@ function annotateStep(step: IAST, annotationContext: AnnotationContext): Sequenc
 				}
 				break;
 			}
+			case 'lookup':
+				// Lookups change the return type
+				seqType = { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE };
+				break;
 			case 'attributeTest':
 			case 'anyElementTest':
 			case 'piTest':
@@ -116,7 +120,6 @@ function annotateStep(step: IAST, annotationContext: AnnotationContext): Sequenc
 			case 'Wildcard':
 			case 'predicate':
 			case 'predicates':
-			case 'lookup':
 		}
 	}
 

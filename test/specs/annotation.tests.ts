@@ -2,7 +2,9 @@ import * as chai from 'chai';
 import {
 	SequenceMultiplicity,
 	SequenceType,
-	ValueType,
+    sequenceTypeToString,
+    ValueType,
+    valueTypeToString,
 } from 'fontoxpath/expressions/dataTypes/Value';
 import astHelper from 'fontoxpath/parsing/astHelper';
 import parseExpression from 'fontoxpath/parsing/parseExpression';
@@ -32,11 +34,8 @@ function assertValueType(
 		followSpecificPath ? followSpecificPath : ['mainModule', 'queryBody', '*']
 	);
 	const resultType = astHelper.getAttribute(upperNode, 'type') as SequenceType;
-	if (!resultType) {
-		chai.assert.isTrue(expectedType === null || expectedType === undefined);
-	} else {
-		chai.assert.deepEqual(resultType.type, expectedType);
-	}
+
+	chai.assert.equal(resultType && resultType.type, expectedType, `Expected ${resultType ? sequenceTypeToString(resultType) : '"untyped type"'} to equal ${valueTypeToString(expectedType)}`);
 }
 
 describe('Annotating constants', () => {
@@ -92,8 +91,17 @@ describe('Path expression test', () => {
 	it('Path expression test annotate as nodes with test', () => {
 		assertValueType('//*[@someAttribute]', ValueType.NODE, undefined);
 	});
-	it('Path expression test annotate as items with predicate', () => {
-		assertValueType('(array {1,2,3,4,5,6,7})?*[. mod 2 = 1]', ValueType.ARRAY, undefined);
+	it('Path expression test annotate as items with predicate: array with wildcard', () => {
+		assertValueType('(array {1,2,3,4,5,6,7})?*[. mod 2 = 1]', undefined, undefined);
+	});
+	it('Path expression test annotate as items with predicate: array with lookup', () => {
+		assertValueType('(array{1,2,3,4,5,6,7})?1', undefined, undefined);
+	});
+	it('Path expression test annotate as items with predicate: map with wildcard', () => {
+		assertValueType('(map {"a": "b"})?*', undefined, undefined);
+	});
+	it('Path expression test annotate as items with predicate: map with lookup', () => {
+		assertValueType('(map {"a": "b"})?a', undefined, undefined);
 	});
 });
 
