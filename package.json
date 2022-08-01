@@ -95,7 +95,7 @@
 		"sinon-chai": "^3.7.0",
 		"slimdom": "^4.0.1",
 		"source-map-support": "^0.5.21",
-		"ts-mocha": "^9.0.2",
+		"ts-mocha": "^10.0.0",
 		"ts-node": "^10.4.0",
 		"ts-transform-import-path-rewrite": "^0.3.0",
 		"tsconfig-paths": "^3.12.0",
