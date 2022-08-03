@@ -113,7 +113,7 @@ function parseNode(
 	if (typeof firstChild === 'object' && !Array.isArray(firstChild)) {
 		if (firstChild !== null) {
 			for (const attributeName of Object.keys(firstChild)) {
-				const attributeValue = firstChild[attributeName];
+				let attributeValue = firstChild[attributeName];
 				if (attributeValue === null) {
 					continue;
 				}
@@ -129,7 +129,12 @@ function parseNode(
 					}
 					continue;
 				}
-
+				if (
+					(attributeName === 'start' || attributeName === 'end') &&
+					name === 'stackTrace'
+				) {
+					attributeValue = JSON.stringify(attributeValue);
+				}
 				if (skipEmptyPrefixes && attributeName === 'prefix' && attributeValue === '') {
 					continue;
 				}

@@ -2,11 +2,15 @@ import * as chai from 'chai';
 import {
 	evaluateUpdatingExpression,
 	evaluateXPath,
+	evaluateXPathToBoolean,
 	evaluateXPathToString,
+	Language,
+	parseScript,
 	registerCustomXPathFunction,
 	registerXQueryModule,
 } from 'fontoxpath';
 import * as sinon from 'sinon';
+import { Document } from 'slimdom';
 
 function a() {
 	throw new Error('Test error');
@@ -92,7 +96,7 @@ else
 3: else
 4:   (1, 2, 3)
 
-Error: FORG0006: A wrong argument type was specified in a function call.
+Error: FORG0006: Cannot determine the effective boolean value of a value with the type array(*)
   at <andOp>:2:3 - 2:11
   at <ifThenElseExpr>:1:1 - 4:12`
 		);
@@ -255,13 +259,13 @@ Test error
 			// filename, and line number. We only check these as the full error message is machine
 			// specific (may contain user name in the full file paths)
 			chai.assert.include(errorMessageLines[5], '    at a (');
-			chai.assert.include(errorMessageLines[5], 'stackTrace.tests.ts:12:8)');
+			chai.assert.include(errorMessageLines[5], 'stackTrace.tests.ts:16:8)');
 
 			chai.assert.include(errorMessageLines[6], '    at b (');
-			chai.assert.include(errorMessageLines[6], 'stackTrace.tests.ts:15:2)');
+			chai.assert.include(errorMessageLines[6], 'stackTrace.tests.ts:19:2)');
 
 			chai.assert.include(errorMessageLines[7], '    at c (');
-			chai.assert.include(errorMessageLines[7], 'stackTrace.tests.ts:18:2)');
+			chai.assert.include(errorMessageLines[7], 'stackTrace.tests.ts:22:2)');
 
 			chai.assert.equal(errorMessageLines[15], '  at <functionCallExpr>:1:1 - 1:18');
 		}
@@ -290,23 +294,23 @@ Test error
 			// filename, and line number. We only check these as the full error message is machine
 			// specific (may contain user name in the full file paths)
 			chai.assert.include(error.message, '    at a (');
-			chai.assert.include(error.message, 'stackTrace.tests.ts:12:8)');
+			chai.assert.include(error.message, 'stackTrace.tests.ts:16:8)');
 
 			chai.assert.include(error.message, '    at b (');
-			chai.assert.include(error.message, 'stackTrace.tests.ts:15:2)');
+			chai.assert.include(error.message, 'stackTrace.tests.ts:19:2)');
 
 			chai.assert.include(error.message, '    at c (');
-			chai.assert.include(error.message, 'stackTrace.tests.ts:18:2)');
+			chai.assert.include(error.message, 'stackTrace.tests.ts:22:2)');
 
 			chai.assert.include(error.message, '  at <functionCallExpr>:1:15 - 1:32');
 			chai.assert.include(error.message, '  at <andOp>:1:4 - 1:32');
 			chai.assert.include(error.message, '  at <ifThenElseExpr>:1:1 - 1:57');
 
 			chai.assert.include(error.message, '    at e (');
-			chai.assert.include(error.message, 'stackTrace.tests.ts:34:2)');
+			chai.assert.include(error.message, 'stackTrace.tests.ts:38:2)');
 
 			chai.assert.include(error.message, '    at f (');
-			chai.assert.include(error.message, 'stackTrace.tests.ts:38:2)');
+			chai.assert.include(error.message, 'stackTrace.tests.ts:42:2)');
 
 			chai.assert.include(error.message, '  at <functionCallExpr>:1:1 - 1:18');
 		}
@@ -324,6 +328,30 @@ Test error
 
 Error: XPST0008, The variable map is not in scope.
   at <pathExpr>:1:1 - 1:12`
+		);
+	});
+
+	it('Shows a nice stacktrace for a separate module', () => {
+		const queryAst = parseScript(
+			'fn:boolean((1,2,3))',
+			{
+				language: Language.XQUERY_3_1_LANGUAGE,
+				debug: true,
+			},
+			new Document()
+		);
+
+		chai.assert.throws(
+			() =>
+				evaluateXPathToBoolean(queryAst, null, null, null, {
+					debug: true,
+					disableCache: true,
+				}),
+			`1: fn:boolean((1,2,3))
+   ^^^^^^^^^^^^^^^^^^^
+
+Error: FORG0006: Cannot determine the effective boolean value of a sequence with a length higher than one.
+  at <functionCallExpr>:1:1 - 1:20`
 		);
 	});
 });

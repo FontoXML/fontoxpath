@@ -1,6 +1,6 @@
 import { errFORG0006 } from '../../functions/FunctionOperationErrors';
 import isSubtypeOf from '../isSubtypeOf';
-import Value, { ValueType } from '../Value';
+import Value, { ValueType, valueTypeToString } from '../Value';
 
 export default function getEffectiveBooleanValue(value: Value): boolean {
 	const jsValue = value.value;
@@ -30,5 +30,9 @@ export default function getEffectiveBooleanValue(value: Value): boolean {
 	}
 
 	// In all other cases, fn:boolean raises a type error [err:FORG0006]FO31.
-	throw errFORG0006();
+	throw errFORG0006(
+		`Cannot determine the effective boolean value of a value with the type ${valueTypeToString(
+			value.type
+		)}`
+	);
 }

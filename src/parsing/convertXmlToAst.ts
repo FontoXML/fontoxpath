@@ -23,8 +23,16 @@ export default function convertXmlToAst(element: Element): IAST {
 	if (attributes && attributes.length > 0) {
 		ast.push(
 			Array.from(attributes).reduce<ASTAttributes>((attrs, attr) => {
-				attrs[attr.localName] =
-					attr.localName === 'type' ? stringToSequenceType(attr.value) : attr.value;
+				if (
+					attr.localName === 'start' ||
+					(attr.localName === 'end' && element.localName === 'stackTrace')
+				) {
+					attrs[attr.localName] = JSON.parse(attr.value);
+				} else if (attr.localName === 'type') {
+					attrs[attr.localName] = stringToSequenceType(attr.value);
+				} else {
+					attrs[attr.localName] = attr.value;
+				}
 				return attrs;
 			}, {})
 		);

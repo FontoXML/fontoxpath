@@ -59,7 +59,9 @@ export default class ArrayBackedSequence implements ISequence {
 			return true;
 		}
 		// We always have a length > 1, or we'd be a singletonSequence
-		throw errFORG0006();
+		throw errFORG0006(
+			`Cannot determine the effective boolean value of a sequence with a length higher than one.`
+		);
 	}
 
 	public getLength(): number {
