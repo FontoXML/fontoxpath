@@ -127,7 +127,9 @@ export default class IteratorBackedSequence implements ISequence {
 
 		const secondValue = iterator.next(IterationHint.NONE);
 		if (!secondValue.done) {
-			throw errFORG0006();
+			throw errFORG0006(
+				`Cannot determine the effective boolean value of a sequence with a length higher than one.`
+			);
 		}
 
 		this.reset(oldPosition);
