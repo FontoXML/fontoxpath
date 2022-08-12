@@ -4136,3 +4136,75 @@ fo-test-array-subarray-006,Error: FOAY0001: subarray start out of bounds.
 fo-test-array-subarray-007,Error: FOAY0001: subarray start out of bounds.
 fo-test-array-fold-right-003,AssertionError: Expected XPath          array:fold-right([1,2,3], [], function($x, $y){[$x, $y]})        to (deep equally) resolve to [1, [2, [3, []]]]: expected false to be true
 fo-test-array-sort-002,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions/array}sort with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}sort (array(*))", "Q{http://www.w3.org/2001/XMLSchema}short (xs:anyAtomicType?)" or "Q{http://www.w3.org/2005/xpath-functions/math}sqrt (xs:double?)"?
+format-integer-001,Error: Picture: 1 is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-002,Error: Picture: 001 is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-003,Error: Picture: 00001 is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-004,Error: Picture: 9 is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-005,Error: Picture: 999 is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-006,Error: Picture: 99999 is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-007,Error: Picture: 0 is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-008,Error: Picture: 000 is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-009,Error: Picture: 00000 is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-014,Error: Picture: ١ is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-015,Error: Picture: ٩ is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-016,Error: Picture: Ww is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-017,Error: Picture: W is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-018,Error: Picture: w is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-020,AssertionError: expected [Function] to throw error matching /FODF1310/ but got 'Picture:  is not supported by fn:form…'
+format-integer-021,Error: Picture: 0,000 is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-022,Error: Picture: #,###,000 is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-023,AssertionError: expected [Function] to throw error matching /FODF1310/ but got 'Picture: 0,000, is not supported by f…'
+format-integer-024,AssertionError: expected [Function] to throw error matching /FODF1310/ but got 'Picture: 11#0,000 is not supported by…'
+format-integer-025,Error: Picture: # is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-026,Error: Picture: #a is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-027,AssertionError: expected [Function] to throw error matching /FODF1310/ but got 'Picture: ,123 is not supported by fn:…'
+format-integer-028,AssertionError: expected [Function] to throw error matching /FODF1310/ but got 'Picture: 0,00,,000 is not supported b…'
+format-integer-029,Error: Picture: ###𐄀0,00 is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-030,Error: Picture: #(000)000-000 is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-031,Error: Picture: W;o is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-032,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-integer with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}format-integer (xs:integer?, xs:string)"?
+format-integer-032-fr,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-integer with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}format-integer (xs:integer?, xs:string)"?
+format-integer-032-it,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-integer with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}format-integer (xs:integer?, xs:string)"?
+format-integer-033,Error: Picture: 1;o(-en) is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-034,AssertionError: expected [Function] to throw error matching /FODF1310/ but got 'Picture: 1;o(-er)z is not supported b…'
+format-integer-035,Error: Picture: Ww;t is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-036,Error: Picture: Ww is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-037,AssertionError: expected [Function] to throw error matching /FODF1310/ but got 'Picture: Ww;o()( is not supported by …'
+format-integer-038,Error: Picture: ()Ww;o is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-039,Error: Picture:   is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-040,AssertionError: expected [Function] to throw error matching /FODF1310/ but got 'Picture: 123١ is not supported by fn:…'
+format-integer-041,Error: Picture: #,𐒠𐒠𐒠 is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-042,Error: Picture: ﯴ is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-043,Error: Picture: 1;o is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-044,Error: Picture: Ww;o is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-045,Error: Picture: Ww is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-046,Error: Picture: ① is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-047,Error: Picture: ⑴ is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-048,Error: Picture: ⒈ is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-049,Error: Picture: Α is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-050,Error: Picture: α is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-051,Error: Picture: # 000 is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-052,Error: Picture: 一 is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-053,Error: Picture: #0 is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-054,AssertionError: expected [Function] to throw error matching /FODF1310/ but got 'Picture: 0# is not supported by fn:fo…'
+format-integer-055,Error: Picture: b;o is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-056,Error: Picture: o;o is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-057,Error: Picture: bo;o is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-058,Error: Picture: bb is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-059,Error: Picture: 001; is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-060,Error: Picture: #;##1; is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-061,AssertionError: expected [Function] to throw error matching /FODF1310/ but got 'Picture: ; is not supported by fn:for…'
+format-integer-062,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-integer with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}format-integer (xs:integer?, xs:string)"?
+format-integer-063,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-integer with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}format-integer (xs:integer?, xs:string)"?
+format-integer-064,AssertionError: expected [Function] to throw error matching /FODF1310/ but got 'Picture: 1o is not supported by fn:fo…'
+format-integer-065,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-integer with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}format-integer (xs:integer?, xs:string)"?
+format-integer-066,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-integer with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}format-integer (xs:integer?, xs:string)"?
+format-integer-067,AssertionError: expected [Function] to throw error matching /FODF1310/ but got 'Picture: Ww;o( is not supported by fn…'
+format-integer-068,Error: Picture: w;o is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-069,Error: Picture: w;o is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-070,Error: Picture: 0,0,00,0 is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-071,Error: Picture: 00,00,00 is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-072,Error: Picture: 000,00,00 is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-073,Error: Picture: ##֊000 is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-074,Error: Picture: #,##1;o is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".
+format-integer-075,Error: Picture: A;o is not supported by fn:format-integer. The current 				supported pictures are "A", "a", "I", and "i".

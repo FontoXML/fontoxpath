@@ -1,7 +1,12 @@
 import * as chai from 'chai';
 import * as slimdom from 'slimdom';
 
-import { evaluateXPathToBoolean, evaluateXPathToNumber, evaluateXPathToNumbers } from 'fontoxpath';
+import {
+	evaluateXPathToBoolean,
+	evaluateXPathToNumber,
+	evaluateXPathToNumbers,
+	evaluateXPathToString,
+} from 'fontoxpath';
 
 let documentNode;
 beforeEach(() => {
@@ -208,5 +213,37 @@ describe('numeric functions', () => {
 		}
 		it('throws when given a seed', () =>
 			chai.assert.throws(() => evaluateXPathToBoolean('random-number-generator(123)')));
+	});
+
+	describe.only('fn:format-integer', () => {
+		it('returns LVII for 57', () => {
+			chai.assert.equal(evaluateXPathToString('format-integer(57, "I")'), 'LVII');
+		});
+
+		it('returns lvii for 57', () => {
+			chai.assert.equal(evaluateXPathToString('format-integer(57, "i")'), 'lvii');
+		});
+
+		it('returns G for 7', () => {
+			chai.assert.equal(evaluateXPathToString('format-integer(7, "A")'), 'G');
+		});
+
+		it('returns g for 7', () => {
+			chai.assert.equal(evaluateXPathToString('format-integer(7, "a")'), 'g');
+		});
+
+		it('returns AB for 28', () => {
+			chai.assert.equal(evaluateXPathToString('format-integer(28, "A")'), 'AB');
+		});
+
+		it('returns ab for 28', () => {
+			chai.assert.equal(evaluateXPathToString('format-integer(28, "a")'), 'ab');
+		});
+
+		it('throws for unknown pictures', () => {
+			chai.assert.throw(() => {
+				evaluateXPathToString('format-integer(57, "x")');
+			});
+		});
 	});
 });

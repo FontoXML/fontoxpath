@@ -3,19 +3,19 @@ import tryCastToType from '../dataTypes/casting/tryCastToType';
 import castToType from '../dataTypes/castToType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import FunctionValue from '../dataTypes/FunctionValue';
-import ISequence from '../dataTypes/ISequence';
+import type ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
-import DynamicContext from '../DynamicContext';
-import ExecutionParameters from '../ExecutionParameters';
+import type DynamicContext from '../DynamicContext';
+import type ExecutionParameters from '../ExecutionParameters';
 import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
-import StaticContext from '../StaticContext';
+import type StaticContext from '../StaticContext';
 import { DONE_TOKEN, ready } from '../util/iterators';
 import { performFunctionConversion } from './argumentHelper';
-import { BuiltinDeclarationType } from './builtInFunctions';
-import FunctionDefinitionType from './FunctionDefinitionType';
+import type { BuiltinDeclarationType } from './builtInFunctions';
+import type FunctionDefinitionType from './FunctionDefinitionType';
 
 function createValidNumericType(type: ValueType, transformedValue: number) {
 	if (isSubtypeOf(type, ValueType.XSINTEGER)) {
@@ -40,6 +40,95 @@ const fnAbs: FunctionDefinitionType = (
 	return sequence.map((onlyValue) =>
 		createValidNumericType(onlyValue.type, Math.abs(onlyValue.value))
 	);
+};
+
+const convertIntegerToRoman = (integer: string, isLowerCase?: boolean) => {
+	const romanNumbers = [
+		{ symbol: 'M', decimal: 1000 },
+		{ symbol: 'CM', decimal: 900 },
+		{ symbol: 'D', decimal: 500 },
+		{ symbol: 'CD', decimal: 400 },
+		{ symbol: 'C', decimal: 100 },
+		{ symbol: 'XC', decimal: 90 },
+		{ symbol: 'L', decimal: 50 },
+		{ symbol: 'XL', decimal: 40 },
+		{ symbol: 'X', decimal: 10 },
+		{ symbol: 'IX', decimal: 9 },
+		{ symbol: 'V', decimal: 5 },
+		{ symbol: 'IV', decimal: 4 },
+		{ symbol: 'I', decimal: 1 },
+	];
+
+	let int = parseInt(integer);
+	let romanString = romanNumbers.reduce((str, roman) => {
+		const q = Math.floor(int / roman.decimal);
+		int -= q * roman.decimal;
+		return str + roman.symbol.repeat(q);
+	}, '');
+
+	if (isLowerCase) {
+		romanString = romanString.toLowerCase();
+	}
+
+	return romanString;
+};
+
+const convertIntegerToAlphabet = (integer: string, isLowerCase?: boolean) => {
+	const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+
+	let int = parseInt(integer);
+
+	if (!int) {
+		return '-';
+	}
+	let output = '';
+	let digit;
+
+	while (int > 0) {
+		digit = (int - 1) % ALPHABET.length;
+		output = ALPHABET[digit] + output;
+		int = ((int - digit) / ALPHABET.length) | 0;
+	}
+
+	if (isLowerCase) {
+		output = output.toLowerCase();
+	}
+
+	return output;
+};
+
+const fnFormatInteger: FunctionDefinitionType = (
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	sequence,
+	pictureSequence
+) => {
+	const sequenceValue = sequence.first();
+	const pictureValue = pictureSequence.first();
+	switch (pictureValue.value) {
+		case 'I': {
+			const romanString = convertIntegerToRoman(sequenceValue.value);
+			return sequenceFactory.singleton(createAtomicValue(romanString, ValueType.XSSTRING));
+		}
+		case 'i': {
+			const romanString = convertIntegerToRoman(sequenceValue.value, true);
+			return sequenceFactory.singleton(createAtomicValue(romanString, ValueType.XSSTRING));
+		}
+		case 'A': {
+			const alphabetString = convertIntegerToAlphabet(sequenceValue.value);
+			return sequenceFactory.singleton(createAtomicValue(alphabetString, ValueType.XSSTRING));
+		}
+		case 'a': {
+			const alphabetString = convertIntegerToAlphabet(sequenceValue.value, true);
+			return sequenceFactory.singleton(createAtomicValue(alphabetString, ValueType.XSSTRING));
+		}
+		default:
+			throw new Error(
+				`Picture: ${pictureValue.value} is not supported by fn:format-integer. The current
+				supported pictures are "A", "a", "I", and "i".`
+			);
+	}
 };
 
 const fnCeiling: FunctionDefinitionType = (
@@ -73,7 +162,7 @@ function getNumberOfDecimalDigits(value: number) {
 		return 0;
 	}
 
-	const result = /\d+(?:\.(\d*))?(?:[Ee](-)?(\d+))*/.exec(value + '');
+	const result = /\d+(?:\.(\d*))?(?:[Ee](-)?(\d+))*/.exec(`${value}`);
 	const decimals = result[1] ? result[1].length : 0;
 
 	if (result[3]) {
@@ -276,6 +365,17 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [{ type: ValueType.XSNUMERIC, mult: SequenceMultiplicity.ZERO_OR_ONE }],
 		returnType: { type: ValueType.XSNUMERIC, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: fnAbs,
+	},
+
+	{
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
+		localName: 'format-integer',
+		argumentTypes: [
+			{ type: ValueType.XSINTEGER, mult: SequenceMultiplicity.ZERO_OR_ONE },
+			{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
+		],
+		returnType: { type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
+		callFunction: fnFormatInteger,
 	},
 
 	{
