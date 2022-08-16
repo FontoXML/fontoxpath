@@ -68,11 +68,7 @@ describe('lookup operator', () => {
 
 		it('Annotatest correctly', () => {
 			// This caused a bug because the lookup was type-found to a map.
-			chai.assert.isTrue(
-				evaluateXPathToBoolean(
-					'map { "first" : 2}?first * 10 = 20'
-				)
-			);
+			chai.assert.isTrue(evaluateXPathToBoolean('map { "first" : 2}?first * 10 = 20'));
 		});
 
 		it('can lookup in an array', () => {

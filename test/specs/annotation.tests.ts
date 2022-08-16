@@ -2,9 +2,9 @@ import * as chai from 'chai';
 import {
 	SequenceMultiplicity,
 	SequenceType,
-    sequenceTypeToString,
-    ValueType,
-    valueTypeToString,
+	sequenceTypeToString,
+	ValueType,
+	valueTypeToString,
 } from 'fontoxpath/expressions/dataTypes/Value';
 import astHelper from 'fontoxpath/parsing/astHelper';
 import parseExpression from 'fontoxpath/parsing/parseExpression';
@@ -35,7 +35,13 @@ function assertValueType(
 	);
 	const resultType = astHelper.getAttribute(upperNode, 'type') as SequenceType;
 
-	chai.assert.equal(resultType && resultType.type, expectedType, `Expected ${resultType ? sequenceTypeToString(resultType) : '"untyped type"'} to equal ${valueTypeToString(expectedType)}`);
+	chai.assert.equal(
+		resultType && resultType.type,
+		expectedType,
+		`Expected ${
+			resultType ? sequenceTypeToString(resultType) : '"untyped type"'
+		} to equal ${valueTypeToString(expectedType)}`
+	);
 }
 
 describe('Annotating constants', () => {

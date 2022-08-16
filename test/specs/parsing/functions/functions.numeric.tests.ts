@@ -215,7 +215,7 @@ describe('numeric functions', () => {
 			chai.assert.throws(() => evaluateXPathToBoolean('random-number-generator(123)')));
 	});
 
-	describe.only('fn:format-integer', () => {
+	describe('fn:format-integer', () => {
 		it('returns LVII for 57', () => {
 			chai.assert.equal(evaluateXPathToString('format-integer(57, "I")'), 'LVII');
 		});
