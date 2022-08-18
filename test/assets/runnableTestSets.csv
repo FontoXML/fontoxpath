@@ -89,7 +89,7 @@ fn-for-each,true
 fn-for-each-pair,false
 fn-format-date,false
 fn-format-dateTime,false
-fn-format-integer,false
+fn-format-integer,true
 fn-format-number,false
 fn-format-time,false
 fn-function-arity,false
