@@ -57,7 +57,7 @@ export type FunctionNameResolver = (
 export type NamespaceResolver = (prefix: string) => string | null;
 
 /**
- * An XML serializer that can serialzie nodes. Used when the `fn:serialize` function is called with
+ * An XML serializer that can serialize nodes. Used when the `fn:serialize` function is called with
  * a node
  *
  * @public

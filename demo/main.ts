@@ -176,6 +176,7 @@ async function runUpdatingXQuery(script: string) {
 				console.log(m);
 			},
 		},
+		xmlSerializer: new XMLSerializer(),
 	});
 
 	resultText.innerText = JSON.stringify(result, jsonXmlReplacer, '  ');
@@ -197,6 +198,7 @@ async function runNormalXPath(script: string, asXQuery: boolean) {
 				console.log(m);
 			},
 		},
+		xmlSerializer: new XMLSerializer(),
 	});
 
 	for (let item = await it.next(); !item.done; item = await it.next()) {

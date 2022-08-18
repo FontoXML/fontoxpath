@@ -13,7 +13,7 @@ import UpdatingExpressionResult from './expressions/UpdatingExpressionResult';
 import { IterationHint, IterationResult } from './expressions/util/iterators';
 import INodesFactory from './nodesFactory/INodesFactory';
 import { ReturnType } from './parsing/convertXDMReturnValue';
-import { Language, Logger } from './types/Options';
+import { Language, Logger, XMLSerializer } from './types/Options';
 
 /**
  * Type that contains a collection of options for the updating expression exaluation.
@@ -28,6 +28,7 @@ import { Language, Logger } from './types/Options';
  * namespaceResolver		- Callback to do namespace resolving.
  * nodesFactory				- Reference to a nodes factory object.
  * returnType				- The type that the evaluation function will return.
+ * xmlSerializer			- An XML serializer that can serialize nodes. Used when the `fn:serialize` function is called with a node.
  */
 export type UpdatingOptions = {
 	debug?: boolean;
@@ -38,6 +39,7 @@ export type UpdatingOptions = {
 	namespaceResolver?: (s: string) => string | null;
 	nodesFactory?: INodesFactory;
 	returnType?: ReturnType;
+	xmlSerializer?: XMLSerializer;
 };
 
 /**
