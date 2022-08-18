@@ -31,18 +31,7 @@ function createValidNumericType(type: ValueType, transformedValue: number) {
 	return createAtomicValue(transformedValue, ValueType.XSDECIMAL);
 }
 
-const fnAbs: FunctionDefinitionType = (
-	_dynamicContext,
-	_executionParameters,
-	_staticContext,
-	sequence
-) => {
-	return sequence.map((onlyValue) =>
-		createValidNumericType(onlyValue.type, Math.abs(onlyValue.value))
-	);
-};
-
-const convertIntegerToRoman = (integer: string, isLowerCase?: boolean) => {
+function convertIntegerToRoman(integer: string, isLowerCase?: boolean) {
 	const romanNumbers = [
 		{ symbol: 'M', decimal: 1000 },
 		{ symbol: 'CM', decimal: 900 },
@@ -59,7 +48,7 @@ const convertIntegerToRoman = (integer: string, isLowerCase?: boolean) => {
 		{ symbol: 'I', decimal: 1 },
 	];
 
-	let int = parseInt(integer);
+	let int = parseInt(integer, 10);
 	let romanString = romanNumbers.reduce((str, roman) => {
 		const q = Math.floor(int / roman.decimal);
 		int -= q * roman.decimal;
@@ -73,10 +62,10 @@ const convertIntegerToRoman = (integer: string, isLowerCase?: boolean) => {
 	return romanString;
 };
 
-const convertIntegerToAlphabet = (integer: string, isLowerCase?: boolean) => {
+function convertIntegerToAlphabet(integer: string, isLowerCase?: boolean) {
 	const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
-	let int = parseInt(integer);
+	let int = parseInt(integer, 10);
 
 	if (!int) {
 		return '-';
@@ -95,6 +84,17 @@ const convertIntegerToAlphabet = (integer: string, isLowerCase?: boolean) => {
 	}
 
 	return output;
+};
+
+const fnAbs: FunctionDefinitionType = (
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	sequence
+) => {
+	return sequence.map((onlyValue) =>
+		createValidNumericType(onlyValue.type, Math.abs(onlyValue.value))
+	);
 };
 
 const fnFormatInteger: FunctionDefinitionType = (
@@ -124,10 +124,7 @@ const fnFormatInteger: FunctionDefinitionType = (
 			return sequenceFactory.singleton(createAtomicValue(alphabetString, ValueType.XSSTRING));
 		}
 		default:
-			throw new Error(
-				`Picture: ${pictureValue.value} is not supported by fn:format-integer. The current
-				supported pictures are "A", "a", "I", and "i".`
-			);
+			throw new Error(`Picture: ${pictureValue.value} is not implemented yet...`);
 	}
 };
 
