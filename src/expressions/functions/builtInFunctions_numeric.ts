@@ -31,25 +31,25 @@ function createValidNumericType(type: ValueType, transformedValue: number) {
 	return createAtomicValue(transformedValue, ValueType.XSDECIMAL);
 }
 
-function convertIntegerToRoman(integer: string, isLowerCase?: boolean) {
-	const romanNumbers = [
-		{ symbol: 'M', decimal: 1000 },
-		{ symbol: 'CM', decimal: 900 },
-		{ symbol: 'D', decimal: 500 },
-		{ symbol: 'CD', decimal: 400 },
-		{ symbol: 'C', decimal: 100 },
-		{ symbol: 'XC', decimal: 90 },
-		{ symbol: 'L', decimal: 50 },
-		{ symbol: 'XL', decimal: 40 },
-		{ symbol: 'X', decimal: 10 },
-		{ symbol: 'IX', decimal: 9 },
-		{ symbol: 'V', decimal: 5 },
-		{ symbol: 'IV', decimal: 4 },
-		{ symbol: 'I', decimal: 1 },
-	];
+const ROMAN_NUMBERS = [
+	{ symbol: 'M', decimal: 1000 },
+	{ symbol: 'CM', decimal: 900 },
+	{ symbol: 'D', decimal: 500 },
+	{ symbol: 'CD', decimal: 400 },
+	{ symbol: 'C', decimal: 100 },
+	{ symbol: 'XC', decimal: 90 },
+	{ symbol: 'L', decimal: 50 },
+	{ symbol: 'XL', decimal: 40 },
+	{ symbol: 'X', decimal: 10 },
+	{ symbol: 'IX', decimal: 9 },
+	{ symbol: 'V', decimal: 5 },
+	{ symbol: 'IV', decimal: 4 },
+	{ symbol: 'I', decimal: 1 },
+];
 
+function convertIntegerToRoman(integer: string, isLowerCase?: boolean) {
 	let int = parseInt(integer, 10);
-	let romanString = romanNumbers.reduce((str, roman) => {
+	let romanString = ROMAN_NUMBERS.reduce((str, roman) => {
 		const q = Math.floor(int / roman.decimal);
 		int -= q * roman.decimal;
 		return str + roman.symbol.repeat(q);
@@ -60,11 +60,11 @@ function convertIntegerToRoman(integer: string, isLowerCase?: boolean) {
 	}
 
 	return romanString;
-};
+}
+
+const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
 function convertIntegerToAlphabet(integer: string, isLowerCase?: boolean) {
-	const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-
 	let int = parseInt(integer, 10);
 
 	if (!int) {
@@ -84,7 +84,7 @@ function convertIntegerToAlphabet(integer: string, isLowerCase?: boolean) {
 	}
 
 	return output;
-};
+}
 
 const fnAbs: FunctionDefinitionType = (
 	_dynamicContext,
@@ -124,7 +124,9 @@ const fnFormatInteger: FunctionDefinitionType = (
 			return sequenceFactory.singleton(createAtomicValue(alphabetString, ValueType.XSSTRING));
 		}
 		default:
-			throw new Error(`Picture: ${pictureValue.value} is not implemented yet...`);
+			throw new Error(
+				`Picture: ${pictureValue.value} is not implemented yet. The supported picture strings are "A", "a", "I", and "i"`
+			);
 	}
 };
 
