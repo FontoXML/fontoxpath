@@ -107,6 +107,6 @@
 	},
 	"dependencies": {
 		"prsc": "3.1.0",
-		"xspattern": "^2.0.0"
+		"xspattern": "^3.0.0"
 	}
 }
