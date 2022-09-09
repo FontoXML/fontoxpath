@@ -25,28 +25,29 @@ describe('descendant', () => {
 
 		const testDomFacade: IDomFacade = {
 			getFirstChild: (node: slimdom.Node, bucket: string | null) => {
-				console.log(node.nodeName);
-				chai.assert.equal(expectedBucket, bucket);
+				chai.assert.equal(bucket, expectedBucket);
 				return node.firstChild;
 			},
 			getChildNodes: (node: slimdom.Node, bucket: string | null) => {
-				console.log(node.nodeName);
-				chai.assert.equal(expectedBucket, bucket);
+				chai.assert.equal(bucket, expectedBucket);
 				return node.childNodes;
 			},
 			getNextSibling: (node: slimdom.Node, bucket: string | null) => {
-				console.log(node.nodeName);
-				chai.assert.equal(expectedBucket, bucket);
+				chai.assert.equal(bucket, expectedBucket);
 				return node.nextSibling;
 			},
 			getParentNode: (node: slimdom.Node, bucket: string | null) => {
-				console.log(node.nodeName);
-				chai.assert.equal(expectedBucket, bucket);
+				chai.assert.equal(bucket, expectedBucket);
 				return node.parentNode;
 			},
 		} as any;
 
 		evaluateXPathToNodes('descendant::childElement', documentNode.firstChild, testDomFacade);
+
+		// Same for `*`
+		evaluateXPathToNodes('descendant::*', documentNode.firstChild, testDomFacade);
+		// Same for `element()`
+		evaluateXPathToNodes('descendant::element()', documentNode.firstChild, testDomFacade);
 	});
 });
 
