@@ -76,9 +76,11 @@ class DescendantAxis extends Expression {
 		// instructions). Specifying this allows an external system to minimize the dependencies of
 		// an expression with the form 'descendant:ele' to only be invalidated by element
 		// insertions/deletions, not by textnode insertions/deletions.
+		// Similarly, `type-1-or-type-2` can only include elements: attributes are not reachable with the descendant axis
 		const testBucket = this._descendantExpression.getBucket();
 		const onlyElementDescendants =
-			testBucket && (testBucket.startsWith('name-') || testBucket === 'type-1');
+			(testBucket && (testBucket.startsWith('name-') || testBucket === 'type-1')) ||
+			testBucket === 'type-1-or-type-2';
 		this._descendantBucket = onlyElementDescendants ? 'type-1' : null;
 	}
 

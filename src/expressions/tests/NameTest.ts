@@ -10,10 +10,10 @@ import { Bucket } from '../util/Bucket';
 import TestAbstractExpression from './TestAbstractExpression';
 
 class NameTest extends TestAbstractExpression {
-	public _kind: number;
-	public _localName: string;
-	public _namespaceURI: string;
-	public _prefix: string;
+	private _kind: number;
+	private _localName: string;
+	private _namespaceURI: string;
+	private _prefix: string;
 
 	constructor(
 		name: { localName: string; namespaceURI: string | null; prefix: string },
