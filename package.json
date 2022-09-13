@@ -1,6 +1,6 @@
 {
 	"name": "fontoxpath",
-	"version": "3.27.0",
+	"version": "3.27.1",
 	"description": "A minimalistic XPath 3.1 engine in JavaScript",
 	"main": "dist/fontoxpath.js",
 	"module": "dist/fontoxpath.esm.js",
@@ -71,7 +71,7 @@
 		"@tscc/tscc": "^0.7.4",
 		"@types/chai": "^4.3.0",
 		"@types/mocha": "^9.1.0",
-		"@types/node": "^17.0.13",
+		"@types/node": "^18.7.17",
 		"@types/node-static": "^0.7.7",
 		"@types/sinon": "^10.0.9",
 		"blns": "^2.0.4",
