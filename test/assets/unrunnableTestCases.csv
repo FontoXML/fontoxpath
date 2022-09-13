@@ -513,7 +513,6 @@ format-integer-032-it,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-f
 format-integer-033,Error: Picture: 1;o(-en) is not implemented yet. The supported picture strings are "A", "a", "I", and "i"
 format-integer-034,AssertionError: expected [Function] to throw error matching /FODF1310/ but got 'Picture: 1;o(-er)z is not implemented…'
 format-integer-035,Error: Picture: Ww;t is not implemented yet. The supported picture strings are "A", "a", "I", and "i"
-format-integer-036,Error: Picture: Ww is not implemented yet. The supported picture strings are "A", "a", "I", and "i"
 format-integer-037,AssertionError: expected [Function] to throw error matching /FODF1310/ but got 'Picture: Ww;o()( is not implemented y…'
 format-integer-038,Error: Picture: ()Ww;o is not implemented yet. The supported picture strings are "A", "a", "I", and "i"
 format-integer-039,Error: Picture:   is not implemented yet. The supported picture strings are "A", "a", "I", and "i"

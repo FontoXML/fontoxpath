@@ -224,6 +224,10 @@ describe('numeric functions', () => {
 			chai.assert.equal(evaluateXPathToString('format-integer(57, "i")'), 'lvii');
 		});
 
+		it('returns -lvii for -57', () => {
+			chai.assert.equal(evaluateXPathToString('format-integer(-57, "i")'), '-lvii');
+		});
+
 		it('returns G for 7', () => {
 			chai.assert.equal(evaluateXPathToString('format-integer(7, "A")'), 'G');
 		});
@@ -232,12 +236,34 @@ describe('numeric functions', () => {
 			chai.assert.equal(evaluateXPathToString('format-integer(7, "a")'), 'g');
 		});
 
+		it('returns -g for -7', () => {
+			chai.assert.equal(evaluateXPathToString('format-integer(-7, "a")'), '-g');
+		});
+
 		it('returns AB for 28', () => {
 			chai.assert.equal(evaluateXPathToString('format-integer(28, "A")'), 'AB');
 		});
 
 		it('returns ab for 28', () => {
 			chai.assert.equal(evaluateXPathToString('format-integer(28, "a")'), 'ab');
+		});
+
+		it('returns -ab for -28', () => {
+			chai.assert.equal(evaluateXPathToString('format-integer(-28, "a")'), '-ab');
+		});
+
+		it('returns - for 0', () => {
+			chai.assert.equal(evaluateXPathToString('format-integer(0, "a")'), '-');
+			chai.assert.equal(evaluateXPathToString('format-integer(0, "A")'), '-');
+			chai.assert.equal(evaluateXPathToString('format-integer(0, "i")'), '-');
+			chai.assert.equal(evaluateXPathToString('format-integer(0, "I")'), '-');
+		});
+
+		it('returns "" for ()', () => {
+			chai.assert.equal(evaluateXPathToString('format-integer((), "a")'), '');
+			chai.assert.equal(evaluateXPathToString('format-integer((), "A")'), '');
+			chai.assert.equal(evaluateXPathToString('format-integer((), "i")'), '');
+			chai.assert.equal(evaluateXPathToString('format-integer((), "I")'), '');
 		});
 
 		it('throws for unknown pictures', () => {
