@@ -48,10 +48,6 @@ const ROMAN_NUMBERS = [
 ];
 
 function convertIntegerToRoman(integer: string, isLowerCase?: boolean) {
-	if (integer === null) {
-		return '';
-	}
-
 	let int = parseInt(integer, 10);
 
 	const isNegative = int < 0;
@@ -82,10 +78,6 @@ function convertIntegerToRoman(integer: string, isLowerCase?: boolean) {
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
 function convertIntegerToAlphabet(integer: string, isLowerCase?: boolean) {
-	if (integer === null) {
-		return '';
-	}
-
 	let int = parseInt(integer, 10);
 
 	const isNegative = int < 0;
@@ -137,21 +129,25 @@ const fnFormatInteger: FunctionDefinitionType = (
 	const sequenceValue = sequence.first();
 	const pictureValue = pictureSequence.first();
 
+	if (sequence.isEmpty()) {
+		return sequenceFactory.singleton(createAtomicValue('', ValueType.XSSTRING));
+	}
+
 	switch (pictureValue.value) {
 		case 'I': {
-			const romanString = convertIntegerToRoman(sequenceValue?.value ?? null);
+			const romanString = convertIntegerToRoman(sequenceValue.value);
 			return sequenceFactory.singleton(createAtomicValue(romanString, ValueType.XSSTRING));
 		}
 		case 'i': {
-			const romanString = convertIntegerToRoman(sequenceValue?.value ?? null, true);
+			const romanString = convertIntegerToRoman(sequenceValue.value, true);
 			return sequenceFactory.singleton(createAtomicValue(romanString, ValueType.XSSTRING));
 		}
 		case 'A': {
-			const alphabetString = convertIntegerToAlphabet(sequenceValue?.value ?? null);
+			const alphabetString = convertIntegerToAlphabet(sequenceValue.value);
 			return sequenceFactory.singleton(createAtomicValue(alphabetString, ValueType.XSSTRING));
 		}
 		case 'a': {
-			const alphabetString = convertIntegerToAlphabet(sequenceValue?.value ?? null, true);
+			const alphabetString = convertIntegerToAlphabet(sequenceValue.value, true);
 			return sequenceFactory.singleton(createAtomicValue(alphabetString, ValueType.XSSTRING));
 		}
 		default:
