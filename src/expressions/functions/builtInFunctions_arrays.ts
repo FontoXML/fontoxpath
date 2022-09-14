@@ -460,17 +460,16 @@ const arraySort: FunctionDefinitionType = (
 	});
 };
 
-function flattenItem(flatteneditems: ISequence, item: Value): ISequence {
+function flattenItem(item: Value): ISequence {
 	if (isSubtypeOf(item.type, ValueType.ARRAY)) {
-		return (item as ArrayValue).members.reduce(
-			(flatteneditemsOfMember, member) =>
-				member().mapAll((allValues) =>
-					allValues.reduce(flattenItem, flatteneditemsOfMember)
-				),
-			flatteneditems
+		const arrayItem = item as ArrayValue;
+		return concatSequences(
+			arrayItem.members.map((member) =>
+				member().mapAll((subItems) => concatSequences(subItems.map(flattenItem)))
+			)
 		);
 	}
-	return concatSequences([flatteneditems, sequenceFactory.singleton(item)]);
+	return sequenceFactory.singleton(item);
 }
 const arrayFlatten: FunctionDefinitionType = (
 	_dynamicContext,
@@ -478,7 +477,7 @@ const arrayFlatten: FunctionDefinitionType = (
 	_staticContext,
 	itemSequence
 ) => {
-	return itemSequence.mapAll((items) => items.reduce(flattenItem, sequenceFactory.empty()));
+	return itemSequence.mapAll((items) => concatSequences(items.map(flattenItem)));
 };
 
 const declarations: BuiltinDeclarationType[] = [

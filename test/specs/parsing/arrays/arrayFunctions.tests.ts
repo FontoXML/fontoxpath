@@ -3,6 +3,7 @@ import {
 	evaluateXPath,
 	evaluateXPathToArray,
 	evaluateXPathToBoolean,
+	evaluateXPathToNumber,
 	evaluateXPathToNumbers,
 	evaluateXPathToString,
 	evaluateXPathToStrings,
@@ -432,6 +433,21 @@ describe('functions over arrays', () => {
 			chai.assert.deepEqual(
 				evaluateXPathToStrings('array:flatten(["a", ["b", "c"], "d"])', documentNode),
 				['a', 'b', 'c', 'd']
+			));
+
+		it('can flatten long arrays', () =>
+			chai.assert.equal(
+				evaluateXPathToNumber('array:flatten(array{1 to 200000}) => count()', documentNode),
+				200000
+			));
+
+		it('can flatten deep arrays', () =>
+			chai.assert.equal(
+				evaluateXPathToNumber(
+					'(1 to 2000) => fold-left([1], function ($accum, $item) {[$accum, $item]}) => count()',
+					documentNode
+				),
+				1
 			));
 	});
 
