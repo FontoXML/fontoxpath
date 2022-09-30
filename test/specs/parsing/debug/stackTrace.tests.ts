@@ -354,4 +354,28 @@ Error: FORG0006: Cannot determine the effective boolean value of a sequence with
   at <functionCallExpr>:1:1 - 1:20`
 		);
 	});
+
+	it('preserves alignment when indenting the error squiggle', () => {
+		// Error must include the highlighted line
+		chai.assert.throws(
+			() =>
+				evaluateXPathToBoolean(
+					`/[
+						fn:error()
+					]`,
+					new Document(),
+					null,
+					null,
+					{ debug: true }
+				),
+			`1: /[
+2: \t\t\t\t\t\tfn:error()
+   \t\t\t\t\t\t^^^^^^^^^^
+3: \t\t\t\t\t]
+
+Error: FOER0000
+  at <functionCallExpr>:2:7 - 2:17
+  at <pathExpr>:1:1 - 3:7`
+		);
+	});
 });
