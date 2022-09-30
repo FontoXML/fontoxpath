@@ -50,12 +50,14 @@ export function printAndRethrowError(
 				lineNumber > errorLocation.start.line
 					? prefix.length
 					: errorLocation.start.column - 1 + prefix.length;
-			markedLines.push(
-				Array(prefix.length + line.length)
-					.fill(' ', 0, startColumn)
-					.fill('^', startColumn, endColumn)
-					.join('')
-			);
+			const mark =
+				' '.repeat(prefix.length) +
+				// To preserve alignment, mirror any tabs in line in the indentation of the mark
+				Array.from(line.substring(0, startColumn - prefix.length), (c) =>
+					c === '\t' ? '\t' : ' '
+				).join('') +
+				'^'.repeat(endColumn - startColumn);
+			markedLines.push(mark);
 		}
 		return markedLines;
 	}, []);
