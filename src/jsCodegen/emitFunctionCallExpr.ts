@@ -8,6 +8,7 @@ import {
 	PartialCompilationResult,
 	rejectAst,
 } from './JavaScriptCompiledXPath';
+import { determinePredicateTruthValue } from './runtimeLib';
 
 const supportedFunctions: Record<
 	string,
@@ -19,6 +20,7 @@ const supportedFunctions: Record<
 > = {
 	'local-name': emitLocalNameFunction,
 	name: emitNameFunction,
+	not: emitNotFunction,
 };
 
 function emitArgument(
@@ -130,4 +132,35 @@ function emitLocalNameFunction(
 		createLocalNameGetter,
 		'local-name()'
 	);
+}
+
+function emitNotFunction(
+	ast: IAST,
+	identifier: FunctionIdentifier,
+	staticContext: CodeGenContext
+): PartialCompilationResult {
+	const argument = astHelper.getFirstChild(astHelper.getFirstChild(ast, 'arguments'), '*');
+	const argExprIdentifier = identifier + 'Arg';
+	const [argExpr, _] = staticContext.emitBaseExpr(argument, argExprIdentifier, staticContext);
+	if (!argExpr.isAstAccepted) {
+		return argExpr;
+	}
+	const argAsBool = determinePredicateTruthValue(
+		argExprIdentifier,
+		argExpr.code,
+		argExpr.generatedCodeType
+	);
+	if (!argAsBool.isAstAccepted) {
+		return argAsBool;
+	}
+	const code = `
+	function ${identifier}(contextItem) {
+		${argAsBool.variables.join('\n')}
+		return !(${argAsBool.code});
+	}
+	`;
+	return acceptAst(code, {
+		type: GeneratedCodeBaseType.Function,
+		returnType: { type: GeneratedCodeBaseType.Value },
+	});
 }
