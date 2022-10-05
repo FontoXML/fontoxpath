@@ -1,6 +1,6 @@
 import { NODE_TYPES } from '../domFacade/ConcreteNode';
 import QName from '../expressions/dataTypes/valueTypes/QName';
-import { Bucket } from '../expressions/util/Bucket';
+import { Bucket, intersectBuckets } from '../expressions/util/Bucket';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { CodeGenContext } from './CodeGenContext';
 import escapeJavaScriptString from './escapeJavaScriptString';
@@ -31,7 +31,7 @@ function emitTextTest(
 		acceptAst(`${identifier}.nodeType === /*TEXT_NODE*/ ${NODE_TYPES.TEXT_NODE}`, {
 			type: GeneratedCodeBaseType.Value,
 		}),
-		null,
+		'type-3',
 	];
 }
 
@@ -54,7 +54,8 @@ function resolveNamespaceURI(qName: QName, staticContext: CodeGenContext) {
 function emitNameTestFromQName(
 	identifier: ContextItemIdentifier,
 	qName: QName,
-	staticContext: CodeGenContext
+	staticContext: CodeGenContext,
+	bucket: Bucket = null
 ): [PartialCompilationResult, Bucket | null] {
 	resolveNamespaceURI(qName, staticContext);
 	const { prefix, namespaceURI, localName } = qName;
@@ -68,7 +69,7 @@ function emitNameTestFromQName(
 		if (localName === '*') {
 			return [
 				acceptAst(isElementOrAttributeCode, { type: GeneratedCodeBaseType.Value }),
-				null,
+				intersectBuckets('type-1-or-type-2', bucket),
 			];
 		}
 		return [
@@ -124,12 +125,12 @@ function emitElementTest(
 	const isElementCode = `${identifier}.nodeType === /*ELEMENT_NODE*/ ${NODE_TYPES.ELEMENT_NODE}`;
 
 	if (elementName === null || star) {
-		return [acceptAst(isElementCode, { type: GeneratedCodeBaseType.Value }), null];
+		return [acceptAst(isElementCode, { type: GeneratedCodeBaseType.Value }), 'type-1'];
 	}
 
 	const qName = astHelper.getQName(astHelper.getFirstChild(elementName, 'QName'));
 
-	return emitNameTestFromQName(identifier, qName, staticContext);
+	return emitNameTestFromQName(identifier, qName, staticContext, 'type-1');
 }
 
 // A node test that consists only of an EQName or a Wildcard is called a name test.
