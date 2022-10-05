@@ -44,6 +44,8 @@ export function emitFunctionCallExpr(
 ): PartialCompilationResult {
 	const functionName = astHelper.getTextContent(astHelper.getFirstChild(ast, 'functionName'));
 
+	// TODO: check namespace and arity
+
 	if (supportedFunctions[functionName] !== undefined) {
 		return supportedFunctions[functionName](ast, identifier, staticContext);
 	}

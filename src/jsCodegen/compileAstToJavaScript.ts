@@ -27,16 +27,7 @@ function emitEvaluationToNodes(
 		return rejectAst('Return type was not an iterator');
 	}
 
-	return acceptAst(
-		`
-	const nodes = [];
-	for (const node of ${valueCode}) {
-		nodes.push(node);
-	}
-	return nodes;
-	`,
-		{ type: GeneratedCodeBaseType.Statement }
-	);
+	return acceptAst(`return Array.from(${valueCode});`, { type: GeneratedCodeBaseType.Statement });
 }
 
 // Get effective boolean value.

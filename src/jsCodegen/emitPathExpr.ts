@@ -93,19 +93,7 @@ function emitSteps(
 	staticContext: CodeGenContext
 ): [PartialCompilationResult, Bucket] {
 	if (stepsAst.length === 0) {
-		return [
-			acceptAst(
-				`
-			if (!hasReturned) {
-				hasReturned = true;
-				return ready(contextItem);
-			}
-			`,
-				{ type: GeneratedCodeBaseType.Statement },
-				['let hasReturned = false;']
-			),
-			null,
-		];
+		return [acceptAst(`yield contextItem;`, { type: GeneratedCodeBaseType.Statement }), null];
 	}
 
 	let emittedCode = '';
@@ -135,11 +123,7 @@ function emitSteps(
 
 			// Only the innermost nested step returns a value.
 			const nestedCode =
-				i === stepsAst.length - 1
-					? `i${nestLevel}++;
-					   return ready(contextItem${nestLevel});`
-					: `${emittedStepsCode}
-					   i${nestLevel}++;`;
+				i === stepsAst.length - 1 ? `yield contextItem${nestLevel};` : emittedStepsCode;
 
 			const [emittedTest, testBucket] = emitTest(
 				testAst,
@@ -169,7 +153,10 @@ function emitSteps(
 				intersectingBucket = stepBucket;
 			}
 
-			emittedVariables.push(...emittedStep.variables, ...emittedPredicates.variables);
+			emittedVariables.push(
+				...(emittedStep.variables || []),
+				...(emittedPredicates.variables || [])
+			);
 			emittedCode = emittedStep.code;
 		} else {
 			return [rejectAst('Unsupported: filter expressions.'), null];
@@ -228,17 +215,10 @@ export function emitPathExpr(
 	}
 
 	const pathExprCode = `
-	function ${identifier}(contextItem) {
+	function* ${identifier}(contextItem) {
 		${absoluteCode}
-		${emittedSteps.variables.join('\n')}
-		const next = () => {
-			${emittedSteps.code}
-			return DONE_TOKEN;
-		};
-		return {
-			next,
-			[Symbol.iterator]() { return this; }
-		};
+		${emittedSteps.variables ? emittedSteps.variables.join('\n') : ''}
+		${emittedSteps.code}
 	}
 	`;
 
