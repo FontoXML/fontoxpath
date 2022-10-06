@@ -1,6 +1,6 @@
 import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
-import getEffectiveBooleanValue from '../expressions/dataTypes/Sequences/getEffectiveBooleanValue';
 import { DONE_TOKEN, ready } from '../expressions/util/iterators';
+import { XPDY0002 } from '../expressions/XPathErrors';
 import {
 	acceptAst,
 	GeneratedCodeBaseType,
@@ -51,14 +51,14 @@ export function determinePredicateTruthValue(
 // Make sure Closure Compiler does not change property names.
 declare interface IRuntimeLib {
 	DONE_TOKEN: typeof DONE_TOKEN;
-	getEffectiveBooleanValue: typeof getEffectiveBooleanValue;
+	XPDY0002: typeof XPDY0002;
 	isSubtypeOf: typeof isSubtypeOf;
 	ready: typeof ready;
 }
 
 const runtimeLib: IRuntimeLib = {
 	DONE_TOKEN,
-	getEffectiveBooleanValue,
+	XPDY0002,
 	isSubtypeOf,
 	ready,
 };

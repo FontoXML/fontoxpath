@@ -110,12 +110,9 @@ function wrapCompiledCode(code: string, shouldUseContextItem: boolean): string {
 	return (contextItem, domFacade, runtimeLib) => {
 		const {
 			DONE_TOKEN,
-			ValueType,
 			XPDY0002,
-			determinePredicateTruthValue,
 			isSubtypeOf,
 			ready,
-			atomize,
 		} = runtimeLib;`;
 
 	if (shouldUseContextItem) {
