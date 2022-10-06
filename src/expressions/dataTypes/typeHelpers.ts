@@ -1,5 +1,5 @@
 import builtinDataTypesByType, { TypeModel } from './builtins/builtinDataTypesByType';
-import { ValueType } from './Value';
+import { SequenceMultiplicity, SequenceType, ValueType } from './Value';
 import { Variety } from './Variety';
 
 export function getPrimitiveTypeName(typeName: ValueType): ValueType | null {
@@ -88,4 +88,26 @@ export function validateRestrictions(value: string, valueType: ValueType): boole
 		type = type.parent;
 	}
 	return true;
+}
+
+export function doesTypeAllowEmpty(type: SequenceType | null): boolean {
+	if (!type) {
+		// Unknown types can be anything
+		return true;
+	}
+	return (
+		type.mult === SequenceMultiplicity.ZERO_OR_MORE ||
+		type.mult === SequenceMultiplicity.ZERO_OR_ONE
+	);
+}
+
+export function doesTypeAllowMultiple(type: SequenceType | null): boolean {
+	if (!type) {
+		// Unknown types can be anything
+		return true;
+	}
+	return (
+		type.mult === SequenceMultiplicity.ZERO_OR_MORE ||
+		type.mult === SequenceMultiplicity.ONE_OR_MORE
+	);
 }

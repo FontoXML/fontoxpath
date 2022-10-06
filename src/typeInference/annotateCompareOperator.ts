@@ -1,3 +1,4 @@
+import { doesTypeAllowEmpty } from '../expressions/dataTypes/typeHelpers';
 import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
 
@@ -29,9 +30,21 @@ export function annotateGeneralCompare(ast: IAST): SequenceType {
  * of the input, that's what a comparison will return.
  */
 export function annotateValueCompare(ast: IAST): SequenceType {
+	// A value comparison only returns an empty sequence if either of its arguments is empty
+	const firstOperandType = astHelper.getAttribute(
+		astHelper.followPath(ast, ['firstOperand', '*']),
+		'type'
+	);
+	const secondOperandType = astHelper.getAttribute(
+		astHelper.followPath(ast, ['secondOperand', '*']),
+		'type'
+	);
 	const seqType = {
 		type: ValueType.XSBOOLEAN,
-		mult: SequenceMultiplicity.EXACTLY_ONE,
+		mult:
+			doesTypeAllowEmpty(firstOperandType) || doesTypeAllowEmpty(secondOperandType)
+				? SequenceMultiplicity.ZERO_OR_ONE
+				: SequenceMultiplicity.EXACTLY_ONE,
 	};
 
 	astHelper.insertAttribute(ast, 'type', seqType);
@@ -48,9 +61,21 @@ export function annotateValueCompare(ast: IAST): SequenceType {
  * of the input, that's what a comparison will return.
  */
 export function annotateNodeCompare(ast: IAST): SequenceType {
+	// A node comparison only returns an empty sequence if either of its arguments is empty
+	const firstOperandType = astHelper.getAttribute(
+		astHelper.followPath(ast, ['firstOperand', '*']),
+		'type'
+	);
+	const secondOperandType = astHelper.getAttribute(
+		astHelper.followPath(ast, ['secondOperand', '*']),
+		'type'
+	);
 	const seqType = {
 		type: ValueType.XSBOOLEAN,
-		mult: SequenceMultiplicity.EXACTLY_ONE,
+		mult:
+			doesTypeAllowEmpty(firstOperandType) || doesTypeAllowEmpty(secondOperandType)
+				? SequenceMultiplicity.ZERO_OR_ONE
+				: SequenceMultiplicity.EXACTLY_ONE,
 	};
 
 	astHelper.insertAttribute(ast, 'type', seqType);
