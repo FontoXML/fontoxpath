@@ -10,4 +10,5 @@ export type CodeGenContext = {
 		staticContext: CodeGenContext
 	) => [PartialCompilationResult, Bucket];
 	resolveNamespace: NamespaceResolver;
+	defaultFunctionNamespaceUri: string;
 };

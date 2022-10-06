@@ -64,8 +64,14 @@ function compileXPathToJavaScript(
 		return rejectAst(`Unsupported: XQuery Prologs are not supported.`);
 	}
 
+	const defaultFunctionNamespaceUri =
+		options['defaultFunctionNamespaceURI'] === undefined
+			? BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI
+			: options['defaultFunctionNamespaceURI'];
+
 	const codegenContext: CodeGenContext = {
 		resolveNamespace: options['namespaceResolver'] || createDefaultNamespaceResolver(null),
+		defaultFunctionNamespaceUri,
 	};
 
 	annotateAst(
@@ -75,9 +81,7 @@ function compileXPathToJavaScript(
 				new ExecutionSpecificStaticContext(
 					codegenContext.resolveNamespace,
 					{},
-					options['defaultFunctionNamespaceURI'] === undefined
-						? BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI
-						: options['defaultFunctionNamespaceURI'],
+					defaultFunctionNamespaceUri,
 					options['functionNameResolver'] ||
 						createDefaultFunctionNameResolver(
 							BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI

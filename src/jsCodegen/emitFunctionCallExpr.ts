@@ -18,9 +18,11 @@ const supportedFunctions: Record<
 		staticContext: CodeGenContext
 	) => PartialCompilationResult
 > = {
-	'local-name': emitLocalNameFunction,
-	name: emitNameFunction,
-	not: emitNotFunction,
+	'local-name/0': emitLocalNameFunction,
+	'local-name/1': emitLocalNameFunction,
+	'name/0': emitNameFunction,
+	'name/1': emitNameFunction,
+	'not/1': emitNotFunction,
 };
 
 function emitArgument(
@@ -42,15 +44,22 @@ export function emitFunctionCallExpr(
 	identifier: FunctionIdentifier,
 	staticContext: CodeGenContext
 ): PartialCompilationResult {
-	const functionName = astHelper.getTextContent(astHelper.getFirstChild(ast, 'functionName'));
+	const { localName, namespaceURI } = astHelper.getQName(
+		astHelper.getFirstChild(ast, 'functionName')
+	);
 
-	// TODO: check namespace and arity
-
-	if (supportedFunctions[functionName] !== undefined) {
-		return supportedFunctions[functionName](ast, identifier, staticContext);
+	if (namespaceURI !== staticContext.defaultFunctionNamespaceUri) {
+		return rejectAst(`Unsupported function: ${localName}`);
 	}
 
-	return rejectAst(`Unsupported function: ${functionName}`);
+	const args = astHelper.getFirstChild(ast, 'arguments');
+	const functionNameAndArity = `${localName}/${args.length - 1}`;
+
+	if (supportedFunctions[functionNameAndArity] !== undefined) {
+		return supportedFunctions[functionNameAndArity](ast, identifier, staticContext);
+	}
+
+	return rejectAst(`Unsupported function/arity: ${functionNameAndArity}`);
 }
 
 const contextItemCheck = `if (contextItem === undefined || contextItem === null) {
@@ -96,11 +105,12 @@ function emitSpecificNameFunction(
 				return emittedArg;
 			}
 
+			// TODO: this (and any other function call) should check multiplicity of the actual argument
 			code = `function ${identifier}(contextItem) {
 				${emittedArg.variables}
 				const value = ${getCompiledValueCode(emittedArg.code, emittedArg.generatedCodeType)[0]};
-				const childElement = value.next().value;
-				return (value.done ? "" : ${nameGetterFunction('childElement')});
+				const { value: childElement, done } = value.next();
+				return (done ? "" : ${nameGetterFunction('childElement')});
 			}`;
 		}
 	} else {
