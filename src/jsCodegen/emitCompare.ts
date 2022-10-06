@@ -56,11 +56,11 @@ export function emitValueCompare(
 	_staticContext: CodeGenContext
 ): PartialCompilationResult {
 	const leftType = astHelper.getAttribute(
-		astHelper.getFirstChild(ast, 'firstOperand')[1] as IAST,
+		astHelper.followPath(ast, ['firstOperand', '*']),
 		'type'
 	);
 	const rightType = astHelper.getAttribute(
-		astHelper.getFirstChild(ast, 'secondOperand')[1] as IAST,
+		astHelper.followPath(ast, ['secondOperand', '*']),
 		'type'
 	);
 
@@ -85,11 +85,6 @@ export function emitValueCompare(
 	}
 	if (!secondExpr.isAstAccepted) {
 		return secondExpr;
-	}
-
-	// Make sure both child expression got annotated
-	if (!leftType || !rightType) {
-		return rejectAst("Operands in compare weren't annotated");
 	}
 
 	const compareOperators = new Map<string, string>([
@@ -148,8 +143,14 @@ export function emitGeneralCompare(
 	identifier: string,
 	staticContext: CodeGenContext
 ): PartialCompilationResult {
-	const firstType: SequenceType = astHelper.getAttribute(ast, 'type');
-	const secondType: SequenceType = astHelper.getAttribute(ast, 'type');
+	const firstType: SequenceType = astHelper.getAttribute(
+		astHelper.followPath(ast, ['firstOperand', '*']),
+		'type'
+	);
+	const secondType: SequenceType = astHelper.getAttribute(
+		astHelper.followPath(ast, ['secondOperand', '*']),
+		'type'
+	);
 	if (!firstType || !secondType) {
 		return rejectAst('types of compare are not known');
 	}
