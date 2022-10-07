@@ -1,5 +1,6 @@
 import astHelper, { IAST } from '../parsing/astHelper';
 import { CodeGenContext } from './CodeGenContext';
+import { emitBaseExpr } from './emitBaseExpression';
 import {
 	acceptAst,
 	FunctionIdentifier,
@@ -30,7 +31,7 @@ function emitArgument(
 	staticContext: CodeGenContext,
 	identifier: FunctionIdentifier
 ): PartialCompilationResult {
-	const [baseExpr, _bucket] = staticContext.emitBaseExpr(ast, identifier, staticContext);
+	const [baseExpr, _bucket] = emitBaseExpr(ast, identifier, staticContext);
 
 	if (!baseExpr.isAstAccepted) {
 		return baseExpr;
@@ -153,7 +154,7 @@ function emitNotFunction(
 ): PartialCompilationResult {
 	const argument = astHelper.getFirstChild(astHelper.getFirstChild(ast, 'arguments'), '*');
 	const argExprIdentifier = identifier + 'Arg';
-	const [argExpr, _] = staticContext.emitBaseExpr(argument, argExprIdentifier, staticContext);
+	const [argExpr, _] = emitBaseExpr(argument, argExprIdentifier, staticContext);
 	if (!argExpr.isAstAccepted) {
 		return argExpr;
 	}

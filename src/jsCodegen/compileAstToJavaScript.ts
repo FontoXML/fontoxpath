@@ -151,8 +151,6 @@ function compileAstToJavaScript(
 
 	const queryBodyContents = astHelper.followPath(mainModule, ['queryBody', '*']);
 
-	staticContext.emitBaseExpr = emitBaseExpr;
-
 	const [compiledBaseExpr, _bucket] = emitBaseExpr(
 		queryBodyContents,
 		compiledXPathIdentifier,

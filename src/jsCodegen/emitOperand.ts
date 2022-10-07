@@ -2,6 +2,7 @@ import { ValueType } from '../expressions/dataTypes/Value';
 import { Bucket } from '../expressions/util/Bucket';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { CodeGenContext } from './CodeGenContext';
+import { emitBaseExpr } from './emitBaseExpression';
 import {
 	acceptAst,
 	FunctionIdentifier,
@@ -60,11 +61,7 @@ export function emitOperand(
 
 	const baseExprIdentifier = identifier + operandKind;
 
-	const [baseExpr, bucket] = staticContext.emitBaseExpr(
-		exprAst,
-		baseExprIdentifier,
-		staticContext
-	);
+	const [baseExpr, bucket] = emitBaseExpr(exprAst, baseExprIdentifier, staticContext);
 	if (!baseExpr.isAstAccepted) {
 		return [baseExpr, null];
 	}

@@ -2,6 +2,7 @@ import { NODE_TYPES } from '../domFacade/ConcreteNode';
 import { Bucket, intersectBuckets } from '../expressions/util/Bucket';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { CodeGenContext } from './CodeGenContext';
+import { emitBaseExpr } from './emitBaseExpression';
 import emitStep from './emitStep';
 import emitTest, { tests } from './emitTest';
 import {
@@ -39,7 +40,7 @@ function emitPredicates(
 		const predicate = children[i];
 		const predicateFunctionIdentifier = `step${nestLevel}_predicate${i}`;
 
-		const [compiledPredicate, bucket] = staticContext.emitBaseExpr(
+		const [compiledPredicate, bucket] = emitBaseExpr(
 			predicate,
 			predicateFunctionIdentifier,
 			staticContext
