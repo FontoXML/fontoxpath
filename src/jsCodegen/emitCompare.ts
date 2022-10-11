@@ -32,38 +32,19 @@ const OPERATOR_TRANSLATION: { [s: string]: string } = {
 	['greaterThanOp']: 'gtOp',
 };
 
-export function getDataFromOperandCode(
-	identifier: string,
-	generatedType: GeneratedCodeBaseType,
-	valueType: ValueType
-): string {
-	let code = identifier;
-	// If the generated code returns an iterator, get the first value
-	if (generatedType === GeneratedCodeBaseType.Generator) {
-		code = `${code}.next().value`;
-	}
-
-	// If the type is an attribute, get the value. Though: if the attribute is absent, return null
-	// instead.
-	if (valueType === ValueType.ATTRIBUTE) {
-		code = `(function () { const attr = ${code}; return attr ? domFacade.getData(attr) : null})()`;
-	}
-
-	return code;
-}
+const OPERATOR_SWAP_TABLE: { [s: string]: string } = {
+	['eqOp']: 'eqOp',
+	['neOp']: 'neOp',
+	['leOp']: 'geOp',
+	['ltOp']: 'gtOp',
+	['geOp']: 'leOp',
+	['gtOp']: 'ltOp',
+};
 
 /**
  * Generates javascript code for a value compare expression.
- *
- * @param ast The ast of the value compare expression
- * @param compareType The type of comparison we're executing
- * @param firstExpr The generated code of the first expression
- * @param secondExpr The generated code of the second expression
- * @param identifier The identifier of the result
- * @param staticContext The code generation context
- * @returns Generated code of the value compare
  */
-export function emitValueCompare(
+function emitValueCompare(
 	ast: IAST,
 	compareType: string,
 	contextItemExpr: PartialCompilationResult,
@@ -79,7 +60,7 @@ export function emitValueCompare(
 	);
 	// If we don't have the types of both operands, we cannot generate the correct code
 	if (!firstType || !secondType) {
-		return rejectAst('Can not generate code for compare without both types');
+		return rejectAst('Can not generate code for value compare without both types');
 	}
 
 	// Check if both operands are supported
@@ -129,15 +110,111 @@ export function emitValueCompare(
 					if (doesTypeAllowEmpty(secondType)) {
 						nullChecks.push(`${secondAtomized.code} === null`);
 					}
-					// TODO: this was wrapped in function(contextItem) { ... }
-					// (together with vars in function body!)
-					// We'll probably need that for predicates...
 					return acceptAst(
 						`(${nullChecks.length ? `${nullChecks.join(' || ')} ? null : ` : ''}${
 							firstAtomized.code
 						} ${operator} ${secondAtomized.code})`,
 						{ type: GeneratedCodeBaseType.Value },
 						[...firstAtomized.variables, ...secondAtomized.variables]
+					);
+				}
+			);
+		}
+	);
+}
+
+function emitSimplifiedGeneralCompare(
+	ast: IAST,
+	singleItemOperandName: 'firstOperand' | 'secondOperand',
+	multipleItemOperandName: 'firstOperand' | 'secondOperand',
+	compareType: string,
+	contextItemExpr: PartialCompilationResult,
+	context: CodeGenContext
+): PartialCompilationResult {
+	const singleType = astHelper.getAttribute(
+		astHelper.followPath(ast, [singleItemOperandName, '*']),
+		'type'
+	);
+	const multipleType = astHelper.getAttribute(
+		astHelper.followPath(ast, [multipleItemOperandName, '*']),
+		'type'
+	);
+	// If we don't have the types of both operands, we cannot generate the correct code
+	if (!singleType || !multipleType) {
+		return rejectAst('Can not generate code for general compare without both types');
+	}
+
+	// Check if both operands are supported
+	const supportedTypes = [ValueType.ATTRIBUTE, ValueType.XSSTRING];
+	if (!supportedTypes.includes(singleType.type) || !supportedTypes.includes(multipleType.type)) {
+		return rejectAst(
+			`Unsupported types in compare: [${valueTypeToString(
+				singleType.type
+			)}, ${valueTypeToString(multipleType.type)}]`
+		);
+	}
+
+	// Make sure we support the comparison type
+	const compareOperators = new Map<string, string>([
+		['eqOp', '==='],
+		['neOp', '!=='],
+	]);
+	if (!compareOperators.has(compareType)) {
+		return rejectAst(compareType + ' not yet implemented');
+	}
+	// Get the correct operator
+	const operator = compareOperators.get(compareType);
+
+	// Evaluate our single-value side
+	// TODO: error if more than one item in the sequence
+	const [singleExpr, _singleBucket] = emitOperand(
+		ast,
+		singleItemOperandName,
+		contextItemExpr,
+		context
+	);
+	const singleAsValue = emitConversionToValue(singleExpr, contextItemExpr, context);
+	const singleAtomized = emitAtomizedValue(singleAsValue, singleType, context);
+	return mapPartialCompilationResult(
+		context.getIdentifierFor(singleAtomized, 'single'),
+		(singleAtomized) => {
+			const [multipleExpr, _multipleBucket] = emitOperand(
+				ast,
+				multipleItemOperandName,
+				contextItemExpr,
+				context
+			);
+			return mapPartialCompilationResult(
+				context.getIdentifierFor(multipleExpr, 'multiple'),
+				(multipleExpr) => {
+					if (multipleExpr.generatedCodeType.type !== GeneratedCodeBaseType.Generator) {
+						return rejectAst(
+							'can only generate general compare for a single value and a generator'
+						);
+					}
+					const loopVar = context.getNewIdentifier('n');
+					const atomizedLoopVar = emitAtomizedValue(loopVar, multipleType, context);
+					return mapPartialCompilationResult(contextItemExpr, (contextItemExpr) =>
+						mapPartialCompilationResult(atomizedLoopVar, (atomizedLoopVar) =>
+							acceptAst(
+								`(function () {
+									for (const ${loopVar.code} of ${multipleExpr.code}(${contextItemExpr.code})) {
+										${atomizedLoopVar.variables.join('\n')}
+										if (${atomizedLoopVar.code} ${operator} ${singleAtomized.code}) {
+											return true;
+										}
+									}
+									return false;
+								})()`,
+								{ type: GeneratedCodeBaseType.Value },
+								[
+									...singleAtomized.variables,
+									...loopVar.variables,
+									...contextItemExpr.variables,
+									...multipleExpr.variables,
+								]
+							)
+						)
 					);
 				}
 			);
@@ -156,7 +233,7 @@ export function emitValueCompare(
  * @param staticContext The code generation context
  * @returns Generated code of the general compare
  */
-export function emitGeneralCompare(
+function emitGeneralCompare(
 	ast: IAST,
 	compareType: string,
 	contextItemExpr: PartialCompilationResult,
@@ -178,9 +255,29 @@ export function emitGeneralCompare(
 		secondType.mult === SequenceMultiplicity.EXACTLY_ONE
 	) {
 		return emitValueCompare(ast, OPERATOR_TRANSLATION[compareType], contextItemExpr, context);
-	} else {
-		return rejectAst('General comparison for sequences is not implemented');
 	}
+	if (firstType.mult === SequenceMultiplicity.EXACTLY_ONE) {
+		return emitSimplifiedGeneralCompare(
+			ast,
+			'firstOperand',
+			'secondOperand',
+			OPERATOR_TRANSLATION[compareType],
+			contextItemExpr,
+			context
+		);
+	}
+	if (secondType.mult === SequenceMultiplicity.EXACTLY_ONE) {
+		return emitSimplifiedGeneralCompare(
+			ast,
+			'secondOperand',
+			'firstOperand',
+			OPERATOR_SWAP_TABLE[OPERATOR_TRANSLATION[compareType]],
+			contextItemExpr,
+			context
+		);
+	}
+
+	return rejectAst('General comparison for sequences is not implemented');
 }
 
 /**
