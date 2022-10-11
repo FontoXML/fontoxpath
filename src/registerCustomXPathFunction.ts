@@ -62,7 +62,7 @@ class CustomXPathFunctionError extends Error {
 	}
 }
 
-function adaptXPathValueToJavascriptValue(
+export function adaptXPathValueToJavascriptValue(
 	valueSequence: ISequence,
 	sequenceType: SequenceType,
 	executionParameters: ExecutionParameters

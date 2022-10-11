@@ -145,7 +145,7 @@ describe("rejecting unsupported AST's (js-codegen)", () => {
 					null,
 					ReturnType.BOOLEAN
 				),
-			'Unsupported'
+			'Not supported'
 		);
 	});
 
