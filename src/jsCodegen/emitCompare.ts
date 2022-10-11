@@ -103,7 +103,7 @@ function emitValueCompare(
 			return mapPartialCompilationResult(
 				context.getIdentifierFor(secondAtomized, 'second'),
 				(secondAtomized) => {
-					let nullChecks: string[] = [];
+					const nullChecks: string[] = [];
 					if (doesTypeAllowEmpty(firstType)) {
 						nullChecks.push(`${firstAtomized.code} === null`);
 					}

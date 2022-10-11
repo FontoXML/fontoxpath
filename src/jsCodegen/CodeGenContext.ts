@@ -9,13 +9,13 @@ import {
 } from './JavaScriptCompiledXPath';
 
 export class CodeGenContext {
-	public resolveNamespace: NamespaceResolver;
-
 	public defaultFunctionNamespaceUri: string;
 
-	// Need to create indirection through context for emitBaseExpr to avoid a cyclic dependency
-	// that the Closure compiler can't handle...
+	// We need to create indirection through context for emitBaseExpr to avoid a cyclic dependency
+	// that the Closure compiler can't handle
 	public emitBaseExpr: typeof emitBaseExpr;
+
+	public resolveNamespace: NamespaceResolver;
 
 	private _identifierExprByExpr = new Map<
 		PartiallyCompiledAstAccepted,
@@ -28,12 +28,6 @@ export class CodeGenContext {
 		this.resolveNamespace = resolveNamespace;
 		this.defaultFunctionNamespaceUri = defaultFunctionNamespaceUri;
 		this.emitBaseExpr = emitBaseExpr;
-	}
-
-	private _getNewIdentifier(prefix = 'v'): string {
-		const next = this._nextByPrefix.get(prefix) ?? 0;
-		this._nextByPrefix.set(prefix, next + 1);
-		return `${prefix}${next}`;
 	}
 
 	public getIdentifierFor(
@@ -55,13 +49,19 @@ export class CodeGenContext {
 		});
 	}
 
+	public getNewIdentifier(prefix = 'v'): PartiallyCompiledAstAccepted {
+		return this.getVarInScope(this._getNewIdentifier(prefix));
+	}
+
 	public getVarInScope(identifier: string): PartiallyCompiledAstAccepted {
 		const expr = acceptAst(identifier, { type: GeneratedCodeBaseType.Value }, []);
 		this._identifierExprByExpr.set(expr, expr);
 		return expr;
 	}
 
-	public getNewIdentifier(prefix = 'v'): PartiallyCompiledAstAccepted {
-		return this.getVarInScope(this._getNewIdentifier(prefix));
+	private _getNewIdentifier(prefix = 'v'): string {
+		const next = this._nextByPrefix.get(prefix) || 0;
+		this._nextByPrefix.set(prefix, next + 1);
+		return `${prefix}${next}`;
 	}
 }
