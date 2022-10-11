@@ -1,7 +1,6 @@
 import { Bucket } from '../expressions/util/Bucket';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { CodeGenContext } from './CodeGenContext';
-import { emitBaseExpr } from './emitBaseExpr';
 import { PartialCompilationResult, rejectAst } from './JavaScriptCompiledXPath';
 
 /**
@@ -25,5 +24,5 @@ export function emitOperand(
 		return [rejectAst(`${operandKind} expression not found`), null];
 	}
 
-	return emitBaseExpr(exprAst, contextItemExpr, context);
+	return context.emitBaseExpr(exprAst, contextItemExpr, context);
 }

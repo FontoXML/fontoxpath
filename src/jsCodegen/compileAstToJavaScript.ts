@@ -2,7 +2,6 @@ import { SequenceType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { ReturnType } from '../parsing/convertXDMReturnValue';
 import { CodeGenContext } from './CodeGenContext';
-import { emitBaseExpr } from './emitBaseExpr';
 import {
 	emitAtomizedValue,
 	emitConversionToValue,
@@ -148,7 +147,11 @@ function compileAstToJavaScript(
 	const queryBodyContents = astHelper.followPath(mainModule, ['queryBody', '*']);
 
 	const contextItemExpr = context.getVarInScope('contextItem');
-	const [compiledBaseExpr, _bucket] = emitBaseExpr(queryBodyContents, contextItemExpr, context);
+	const [compiledBaseExpr, _bucket] = context.emitBaseExpr(
+		queryBodyContents,
+		contextItemExpr,
+		context
+	);
 
 	const queryType = astHelper.getAttribute(queryBodyContents, 'type');
 	const compiledReturnValue = emitReturnTypeConversion(

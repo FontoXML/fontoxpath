@@ -2,7 +2,6 @@ import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
 import { ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { CodeGenContext } from './CodeGenContext';
-import { emitBaseExpr } from './emitBaseExpr';
 import {
 	emitConversionToValue,
 	emitEffectiveBooleanValue,
@@ -73,8 +72,7 @@ function emitSpecificNameFunction(
 	ast: IAST,
 	contextItemExpr: PartialCompilationResult,
 	context: CodeGenContext,
-	nameGetterFunction: (itemName: string) => string,
-	functionName: string
+	nameGetterFunction: (itemName: string) => string
 ): PartialCompilationResult {
 	const argumentAst = astHelper.followPath(ast, ['arguments', '*']);
 	let argExpr: PartialCompilationResult;
@@ -89,7 +87,7 @@ function emitSpecificNameFunction(
 			return rejectAst('name function only implemented if arg is a node');
 		}
 
-		const [expr, _] = emitBaseExpr(argumentAst, contextItemExpr, context);
+		const [expr, _] = context.emitBaseExpr(argumentAst, contextItemExpr, context);
 		argExpr = expr;
 	}
 
@@ -115,8 +113,7 @@ function emitNameFunction(
 		context,
 		(identifier) =>
 			`(((${identifier}.prefix || '').length !== 0 ? ${identifier}.prefix + ':' : '')
-		+ (${identifier}.localName || ${identifier}.target || ''))`,
-		'name()'
+		+ (${identifier}.localName || ${identifier}.target || ''))`
 	);
 }
 
@@ -129,8 +126,7 @@ function emitLocalNameFunction(
 		ast,
 		contextItemExpr,
 		context,
-		(identifier) => `(${identifier}.localName || ${identifier}.target || '')`,
-		'local-name()'
+		(identifier) => `(${identifier}.localName || ${identifier}.target || '')`
 	);
 }
 
@@ -141,7 +137,7 @@ function emitNotFunction(
 ): PartialCompilationResult {
 	const argumentAst = astHelper.followPath(ast, ['arguments', '*']);
 	const argType = astHelper.getAttribute(argumentAst, 'type');
-	const [argExpr, _] = emitBaseExpr(argumentAst, contextItemExpr, context);
+	const [argExpr, _] = context.emitBaseExpr(argumentAst, contextItemExpr, context);
 	const argAsBool = emitEffectiveBooleanValue(argExpr, argType, contextItemExpr, context);
 	return mapPartialCompilationResult(argAsBool, (argAsBool) =>
 		acceptAst(`!${argAsBool.code}`, { type: GeneratedCodeBaseType.Value }, argAsBool.variables)

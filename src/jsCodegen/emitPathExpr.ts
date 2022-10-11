@@ -3,7 +3,6 @@ import { Bucket, intersectBuckets } from '../expressions/util/Bucket';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { CodeGenContext } from './CodeGenContext';
 import emitAxis from './emitAxis';
-import { emitBaseExpr } from './emitBaseExpr';
 import {
 	emitAnd,
 	emitEffectiveBooleanValue,
@@ -23,7 +22,7 @@ function emitPredicate(
 	contextItemExpr: PartialCompilationResult,
 	context: CodeGenContext
 ): [PartialCompilationResult, Bucket] {
-	const [expr, bucket] = emitBaseExpr(predicateAst, contextItemExpr, context);
+	const [expr, bucket] = context.emitBaseExpr(predicateAst, contextItemExpr, context);
 	const type = astHelper.getAttribute(predicateAst, 'type');
 	const asBool = emitEffectiveBooleanValue(expr, type, contextItemExpr, context);
 	return [asBool, bucket];

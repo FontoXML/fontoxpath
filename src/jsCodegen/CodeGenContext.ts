@@ -1,4 +1,5 @@
 import { NamespaceResolver } from '../types/Options';
+import { emitBaseExpr } from './emitBaseExpr';
 import { mapPartialCompilationResult } from './emitHelpers';
 import {
 	acceptAst,
@@ -12,6 +13,10 @@ export class CodeGenContext {
 
 	public defaultFunctionNamespaceUri: string;
 
+	// Need to create indirection through context for emitBaseExpr to avoid a cyclic dependency
+	// that the Closure compiler can't handle...
+	public emitBaseExpr: typeof emitBaseExpr;
+
 	private _identifierExprByExpr = new Map<
 		PartiallyCompiledAstAccepted,
 		PartiallyCompiledAstAccepted
@@ -22,6 +27,7 @@ export class CodeGenContext {
 	public constructor(resolveNamespace: NamespaceResolver, defaultFunctionNamespaceUri: string) {
 		this.resolveNamespace = resolveNamespace;
 		this.defaultFunctionNamespaceUri = defaultFunctionNamespaceUri;
+		this.emitBaseExpr = emitBaseExpr;
 	}
 
 	private _getNewIdentifier(prefix = 'v'): string {
