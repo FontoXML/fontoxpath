@@ -1,22 +1,26 @@
+import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
+import { ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { CodeGenContext } from './CodeGenContext';
-import { emitBaseExpr } from './emitBaseExpression';
+import { emitBaseExpr } from './emitBaseExpr';
+import {
+	emitConversionToValue,
+	emitEffectiveBooleanValue,
+	mapPartialCompilationResult,
+} from './emitHelpers';
 import {
 	acceptAst,
-	FunctionIdentifier,
 	GeneratedCodeBaseType,
-	getCompiledValueCode,
 	PartialCompilationResult,
 	rejectAst,
 } from './JavaScriptCompiledXPath';
-import { determinePredicateTruthValue } from './runtimeLib';
 
 const supportedFunctions: Record<
 	string,
 	(
 		ast: IAST,
-		identifier: FunctionIdentifier,
-		staticContext: CodeGenContext
+		contextItemExpr: PartialCompilationResult,
+		context: CodeGenContext
 	) => PartialCompilationResult
 > = {
 	'local-name/0': emitLocalNameFunction,
@@ -26,30 +30,16 @@ const supportedFunctions: Record<
 	'not/1': emitNotFunction,
 };
 
-function emitArgument(
-	ast: IAST,
-	staticContext: CodeGenContext,
-	identifier: FunctionIdentifier
-): PartialCompilationResult {
-	const [baseExpr, _bucket] = emitBaseExpr(ast, identifier, staticContext);
-
-	if (!baseExpr.isAstAccepted) {
-		return baseExpr;
-	}
-
-	return acceptAst(`${identifier}`, baseExpr.generatedCodeType, [baseExpr.code]);
-}
-
 export function emitFunctionCallExpr(
 	ast: IAST,
-	identifier: FunctionIdentifier,
-	staticContext: CodeGenContext
+	contextItemExpr: PartialCompilationResult,
+	context: CodeGenContext
 ): PartialCompilationResult {
 	const { localName, namespaceURI } = astHelper.getQName(
 		astHelper.getFirstChild(ast, 'functionName')
 	);
 
-	if (namespaceURI !== staticContext.defaultFunctionNamespaceUri) {
+	if (namespaceURI !== context.defaultFunctionNamespaceUri) {
 		return rejectAst(`Unsupported function: ${localName}`);
 	}
 
@@ -57,123 +47,103 @@ export function emitFunctionCallExpr(
 	const functionNameAndArity = `${localName}/${args.length - 1}`;
 
 	if (supportedFunctions[functionNameAndArity] !== undefined) {
-		return supportedFunctions[functionNameAndArity](ast, identifier, staticContext);
+		return supportedFunctions[functionNameAndArity](ast, contextItemExpr, context);
 	}
 
 	return rejectAst(`Unsupported function/arity: ${functionNameAndArity}`);
 }
 
-const contextItemCheck = `if (contextItem === undefined || contextItem === null) {
-	throw new Error('XPDY0002: The function which was called depends on dynamic context, which is absent.');
-}`;
-
-function createLocalNameGetter(itemName: string) {
-	return `(${itemName}.localName || ${itemName}.target || '')`;
-}
-
-function createNameGetter(itemName: string) {
-	return `(((${itemName}.prefix || '').length !== 0 ? ${itemName}.prefix + ':' : '')
-		+ (${itemName}.localName || ${itemName}.target || ''))`;
+function emitContextItemCheck(
+	contextItemExpr: PartialCompilationResult,
+	context: CodeGenContext
+): PartialCompilationResult {
+	return mapPartialCompilationResult(
+		context.getIdentifierFor(contextItemExpr, 'contextItem'),
+		(contextItemExpr) =>
+			acceptAst(contextItemExpr.code, { type: GeneratedCodeBaseType.Value }, [
+				...contextItemExpr.variables,
+				`if (${contextItemExpr.code} === undefined || ${contextItemExpr.code} === null) {
+					throw new Error('XPDY0002: The function which was called depends on dynamic context, which is absent.');
+				}`,
+			])
+	);
 }
 
 function emitSpecificNameFunction(
 	ast: IAST,
-	identifier: FunctionIdentifier,
-	staticContext: CodeGenContext,
+	contextItemExpr: PartialCompilationResult,
+	context: CodeGenContext,
 	nameGetterFunction: (itemName: string) => string,
 	functionName: string
 ): PartialCompilationResult {
-	const argsAst = astHelper.getFirstChild(ast, 'arguments');
-	let code = '';
-	if (argsAst.length === 1) {
-		// No args
-		code = `function ${identifier}(contextItem) {
-			${contextItemCheck}
-			return ${nameGetterFunction('contextItem')};
-		}`;
-	} else if (argsAst.length === 2) {
-		// One arg
-		const innerAst = argsAst[1] as IAST;
-		const emittedArg = emitArgument(innerAst, staticContext, 'arg');
-		// Special handling if context item is passed in
-		if (innerAst[0] === 'contextItemExpr') {
-			code = `function ${identifier}(contextItem) {
-				${contextItemCheck}
-				return ${nameGetterFunction('contextItem')};
-			}`;
-		} else {
-			if (!emittedArg.isAstAccepted) {
-				return emittedArg;
-			}
-
-			// TODO: this (and any other function call) should check multiplicity of the actual argument
-			code = `function ${identifier}(contextItem) {
-				${emittedArg.variables}
-				const value = ${getCompiledValueCode(emittedArg.code, emittedArg.generatedCodeType)[0]};
-				const { value: childElement, done } = value.next();
-				return (done ? "" : ${nameGetterFunction('childElement')});
-			}`;
-		}
+	const argumentAst = astHelper.followPath(ast, ['arguments', '*']);
+	let argExpr: PartialCompilationResult;
+	// Handle explicit context item arg as the no-arguments version
+	if (!argumentAst || argumentAst[0] === 'contextItemExpr') {
+		// No args or '.' as arg - use the context item
+		argExpr = emitContextItemCheck(contextItemExpr, context);
 	} else {
-		// Two or more args
-		return rejectAst(`Incorrect arg count for ${functionName} function`);
+		// One arg, should be a node
+		const argType = astHelper.getAttribute(argumentAst, 'type');
+		if (!argType || !isSubtypeOf(argType.type, ValueType.NODE)) {
+			return rejectAst('name function only implemented if arg is a node');
+		}
+
+		const [expr, _] = emitBaseExpr(argumentAst, contextItemExpr, context);
+		argExpr = expr;
 	}
 
-	return acceptAst(code, {
-		type: GeneratedCodeBaseType.Function,
-		returnType: { type: GeneratedCodeBaseType.Value },
-	});
+	// TODO: this (and any other function call) should check multiplicity of the actual argument
+	const argAsValue = emitConversionToValue(argExpr, contextItemExpr, context);
+	return mapPartialCompilationResult(context.getIdentifierFor(argAsValue, 'arg'), (argAsValue) =>
+		acceptAst(
+			`(${argAsValue.code} ? ${nameGetterFunction(argAsValue.code)} : '')`,
+			{ type: GeneratedCodeBaseType.Value },
+			argAsValue.variables
+		)
+	);
 }
 
 function emitNameFunction(
 	ast: IAST,
-	identifier: FunctionIdentifier,
-	staticContext: CodeGenContext
+	contextItemExpr: PartialCompilationResult,
+	context: CodeGenContext
 ): PartialCompilationResult {
-	return emitSpecificNameFunction(ast, identifier, staticContext, createNameGetter, 'name()');
+	return emitSpecificNameFunction(
+		ast,
+		contextItemExpr,
+		context,
+		(identifier) =>
+			`(((${identifier}.prefix || '').length !== 0 ? ${identifier}.prefix + ':' : '')
+		+ (${identifier}.localName || ${identifier}.target || ''))`,
+		'name()'
+	);
 }
 
 function emitLocalNameFunction(
 	ast: IAST,
-	identifier: FunctionIdentifier,
-	staticContext: CodeGenContext
+	contextItemExpr: PartialCompilationResult,
+	context: CodeGenContext
 ): PartialCompilationResult {
 	return emitSpecificNameFunction(
 		ast,
-		identifier,
-		staticContext,
-		createLocalNameGetter,
+		contextItemExpr,
+		context,
+		(identifier) => `(${identifier}.localName || ${identifier}.target || '')`,
 		'local-name()'
 	);
 }
 
 function emitNotFunction(
 	ast: IAST,
-	identifier: FunctionIdentifier,
-	staticContext: CodeGenContext
+	contextItemExpr: PartialCompilationResult,
+	context: CodeGenContext
 ): PartialCompilationResult {
-	const argument = astHelper.getFirstChild(astHelper.getFirstChild(ast, 'arguments'), '*');
-	const argExprIdentifier = identifier + 'Arg';
-	const [argExpr, _] = emitBaseExpr(argument, argExprIdentifier, staticContext);
-	if (!argExpr.isAstAccepted) {
-		return argExpr;
-	}
-	const argAsBool = determinePredicateTruthValue(
-		argExprIdentifier,
-		argExpr.code,
-		argExpr.generatedCodeType
+	const argumentAst = astHelper.followPath(ast, ['arguments', '*']);
+	const argType = astHelper.getAttribute(argumentAst, 'type');
+	const [argExpr, _] = emitBaseExpr(argumentAst, contextItemExpr, context);
+	const argAsBool = emitEffectiveBooleanValue(argExpr, argType, contextItemExpr, context);
+	return mapPartialCompilationResult(argAsBool, (argAsBool) =>
+		acceptAst(`!${argAsBool.code}`, { type: GeneratedCodeBaseType.Value }, argAsBool.variables)
 	);
-	if (!argAsBool.isAstAccepted) {
-		return argAsBool;
-	}
-	const code = `
-	function ${identifier}(contextItem) {
-		${argAsBool.variables.join('\n')}
-		return !(${argAsBool.code});
-	}
-	`;
-	return acceptAst(code, {
-		type: GeneratedCodeBaseType.Function,
-		returnType: { type: GeneratedCodeBaseType.Value },
-	});
 }

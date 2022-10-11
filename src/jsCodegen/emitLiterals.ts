@@ -3,7 +3,6 @@ import astHelper, { IAST } from '../parsing/astHelper';
 import escapeJavaScriptString from './escapeJavaScriptString';
 import {
 	acceptAst,
-	FunctionIdentifier,
 	GeneratedCodeBaseType,
 	PartialCompilationResult,
 } from './JavaScriptCompiledXPath';
@@ -17,15 +16,9 @@ import {
  * @param identifier The function wrapper identifier
  * @returns Wrapped string literal function
  */
-export function emitStringLiteralExpression(
-	ast: IAST,
-	identifier: FunctionIdentifier
-): [PartialCompilationResult, Bucket] {
+export function emitStringConstantExpr(ast: IAST): [PartialCompilationResult, Bucket] {
 	// Note: default the value to the emptyy string. The XQueryX roundtrip may omit them
 	let text = (astHelper.getFirstChild(ast, 'value')[1] as string) || '';
 	text = escapeJavaScriptString(text);
-	return [
-		acceptAst(`const ${identifier} = ${text};`, { type: GeneratedCodeBaseType.Variable }),
-		null,
-	];
+	return [acceptAst(text, { type: GeneratedCodeBaseType.Value }, []), null];
 }

@@ -1,3 +1,4 @@
+import { doesTypeAllowEmpty } from '../expressions/dataTypes/typeHelpers';
 import {
 	SequenceMultiplicity,
 	SequenceType,
@@ -6,15 +7,30 @@ import {
 } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { CodeGenContext } from './CodeGenContext';
+import {
+	emitAtomizedValue,
+	emitConversionToValue,
+	mapPartialCompilationResult,
+} from './emitHelpers';
 import { emitOperand } from './emitOperand';
 import {
 	acceptAst,
-	FunctionIdentifier,
 	GeneratedCodeBaseType,
-	getCompiledValueCode,
 	PartialCompilationResult,
 	rejectAst,
 } from './JavaScriptCompiledXPath';
+
+/**
+ *  A map to translate from general compare to value compare
+ */
+const OPERATOR_TRANSLATION: { [s: string]: string } = {
+	['equalOp']: 'eqOp',
+	['notEqualOp']: 'neOp',
+	['lessThanOrEqualOp']: 'leOp',
+	['lessThanOp']: 'ltOp',
+	['greaterThanOrEqualOp']: 'geOp',
+	['greaterThanOp']: 'gtOp',
+};
 
 export function getDataFromOperandCode(
 	identifier: string,
@@ -23,7 +39,7 @@ export function getDataFromOperandCode(
 ): string {
 	let code = identifier;
 	// If the generated code returns an iterator, get the first value
-	if (generatedType === GeneratedCodeBaseType.Iterator) {
+	if (generatedType === GeneratedCodeBaseType.Generator) {
 		code = `${code}.next().value`;
 	}
 
@@ -50,76 +66,81 @@ export function getDataFromOperandCode(
 export function emitValueCompare(
 	ast: IAST,
 	compareType: string,
-	firstExpr: PartialCompilationResult,
-	secondExpr: PartialCompilationResult,
-	identifier: string,
-	_staticContext: CodeGenContext
+	contextItemExpr: PartialCompilationResult,
+	context: CodeGenContext
 ): PartialCompilationResult {
-	const leftType = astHelper.getAttribute(
+	const firstType = astHelper.getAttribute(
 		astHelper.followPath(ast, ['firstOperand', '*']),
 		'type'
 	);
-	const rightType = astHelper.getAttribute(
+	const secondType = astHelper.getAttribute(
 		astHelper.followPath(ast, ['secondOperand', '*']),
 		'type'
 	);
-
 	// If we don't have the types of both operands, we cannot generate the correct code
-	if (!leftType || !rightType) {
-		return rejectAst('Left or right type of compare are not found, annotation failed.');
+	if (!firstType || !secondType) {
+		return rejectAst('Can not generate code for compare without both types');
 	}
 
 	// Check if both operands are supported
 	const supportedTypes = [ValueType.ATTRIBUTE, ValueType.XSSTRING];
-	if (!supportedTypes.includes(leftType.type) || !supportedTypes.includes(rightType.type)) {
+	if (!supportedTypes.includes(firstType.type) || !supportedTypes.includes(secondType.type)) {
 		return rejectAst(
 			`Unsupported types in compare: [${valueTypeToString(
-				leftType.type
-			)}, ${valueTypeToString(rightType.type)}]`
+				firstType.type
+			)}, ${valueTypeToString(secondType.type)}]`
 		);
 	}
 
-	// If one of the expressions didn't get accepted, return
-	if (!firstExpr.isAstAccepted) {
-		return firstExpr;
-	}
-	if (!secondExpr.isAstAccepted) {
-		return secondExpr;
-	}
-
+	// Make sure we support the comparison type
 	const compareOperators = new Map<string, string>([
 		['eqOp', '==='],
 		['neOp', '!=='],
 	]);
-
-	// Make sure we support the comparison type
 	if (!compareOperators.has(compareType)) {
 		return rejectAst(compareType + ' not yet implemented');
 	}
-
 	// Get the correct operator
 	const operator = compareOperators.get(compareType);
 
-	// Generate the code to get the value from both operands
-	const leftGenerated = getCompiledValueCode(firstExpr.code, firstExpr.generatedCodeType);
-	const rightGenerated = getCompiledValueCode(secondExpr.code, secondExpr.generatedCodeType);
-
-	const leftCode = getDataFromOperandCode(leftGenerated[0], leftGenerated[1].type, leftType.type);
-	const rightCode = getDataFromOperandCode(
-		rightGenerated[0],
-		rightGenerated[1].type,
-		rightType.type
-	);
-
-	return acceptAst(
-		`function ${identifier}(contextItem) {
-				${firstExpr.variables.join('\n')}
-			 	${secondExpr.variables.join('\n')}
-	 	     	return ${leftCode} ${operator} ${rightCode};
-		}`,
-		{
-			type: GeneratedCodeBaseType.Function,
-			returnType: { type: GeneratedCodeBaseType.Value },
+	// Evaluate both sides to values and atomize the result
+	// TODO: error if more than one item in each sequence
+	const [firstExpr, _firstBucket] = emitOperand(ast, 'firstOperand', contextItemExpr, context);
+	const firstAsValue = emitConversionToValue(firstExpr, contextItemExpr, context);
+	const firstAtomized = emitAtomizedValue(firstAsValue, firstType, context);
+	return mapPartialCompilationResult(
+		context.getIdentifierFor(firstAtomized, 'first'),
+		(firstAtomized) => {
+			const [secondExpr, _secondBucket] = emitOperand(
+				ast,
+				'secondOperand',
+				contextItemExpr,
+				context
+			);
+			const secondAsValue = emitConversionToValue(secondExpr, contextItemExpr, context);
+			const secondAtomized = emitAtomizedValue(secondAsValue, secondType, context);
+			return mapPartialCompilationResult(
+				context.getIdentifierFor(secondAtomized, 'second'),
+				(secondAtomized) => {
+					let nullChecks: string[] = [];
+					if (doesTypeAllowEmpty(firstType)) {
+						nullChecks.push(`${firstAtomized.code} === null`);
+					}
+					if (doesTypeAllowEmpty(secondType)) {
+						nullChecks.push(`${secondAtomized.code} === null`);
+					}
+					// TODO: this was wrapped in function(contextItem) { ... }
+					// (together with vars in function body!)
+					// We'll probably need that for predicates...
+					return acceptAst(
+						`(${nullChecks.length ? `${nullChecks.join(' || ')} ? null : ` : ''}${
+							firstAtomized.code
+						} ${operator} ${secondAtomized.code})`,
+						{ type: GeneratedCodeBaseType.Value },
+						[...firstAtomized.variables, ...secondAtomized.variables]
+					);
+				}
+			);
 		}
 	);
 }
@@ -138,10 +159,8 @@ export function emitValueCompare(
 export function emitGeneralCompare(
 	ast: IAST,
 	compareType: string,
-	firstExpr: PartialCompilationResult,
-	secondExpr: PartialCompilationResult,
-	identifier: string,
-	staticContext: CodeGenContext
+	contextItemExpr: PartialCompilationResult,
+	context: CodeGenContext
 ): PartialCompilationResult {
 	const firstType: SequenceType = astHelper.getAttribute(
 		astHelper.followPath(ast, ['firstOperand', '*']),
@@ -158,16 +177,9 @@ export function emitGeneralCompare(
 		firstType.mult === SequenceMultiplicity.EXACTLY_ONE &&
 		secondType.mult === SequenceMultiplicity.EXACTLY_ONE
 	) {
-		return emitValueCompare(
-			ast,
-			OPERATOR_TRANSLATION[compareType],
-			firstExpr,
-			secondExpr,
-			identifier,
-			staticContext
-		);
+		return emitValueCompare(ast, OPERATOR_TRANSLATION[compareType], contextItemExpr, context);
 	} else {
-		return rejectAst('generalCompare with sequences is still in development');
+		return rejectAst('General comparison for sequences is not implemented');
 	}
 }
 
@@ -183,25 +195,10 @@ export function emitGeneralCompare(
  */
 export function emitCompareExpr(
 	ast: IAST,
-	identifier: FunctionIdentifier,
-	staticContext: CodeGenContext,
-	compareType: string
+	compareType: string,
+	contextItemExpr: PartialCompilationResult,
+	context: CodeGenContext
 ): PartialCompilationResult {
-	const [firstExpr, _firstBucket] = emitOperand(ast, identifier, 'firstOperand', staticContext);
-	if (!firstExpr.isAstAccepted) {
-		return firstExpr;
-	}
-
-	const [secondExpr, _secondBucket] = emitOperand(
-		ast,
-		identifier,
-		'secondOperand',
-		staticContext
-	);
-	if (!secondExpr.isAstAccepted) {
-		return secondExpr;
-	}
-
 	switch (compareType) {
 		// valueCompare
 		case 'eqOp':
@@ -211,14 +208,7 @@ export function emitCompareExpr(
 		case 'gtOp':
 		case 'geOp':
 		case 'isOp':
-			return emitValueCompare(
-				ast,
-				compareType,
-				firstExpr,
-				secondExpr,
-				identifier,
-				staticContext
-			);
+			return emitValueCompare(ast, compareType, contextItemExpr, context);
 		// generalCompare
 		case 'equalOp':
 		case 'notEqualOp':
@@ -226,30 +216,11 @@ export function emitCompareExpr(
 		case 'lessThanOp':
 		case 'greaterThanOrEqualOp':
 		case 'greaterThanOp':
-			return emitGeneralCompare(
-				ast,
-				compareType,
-				firstExpr,
-				secondExpr,
-				identifier,
-				staticContext
-			);
+			return emitGeneralCompare(ast, compareType, contextItemExpr, context);
 		// nodeCompare
 		case 'nodeBeforeOp':
 		case 'nodeAfterOp':
 		default:
-			return rejectAst('Unsupported compare type');
+			return rejectAst(`Unsupported compare type: ${compareType}`);
 	}
 }
-
-/**
- *  A map to translate from general compare to value compare
- */
-const OPERATOR_TRANSLATION: { [s: string]: string } = {
-	['equalOp']: 'eqOp',
-	['notEqualOp']: 'neOp',
-	['lessThanOrEqualOp']: 'leOp',
-	['lessThanOp']: 'ltOp',
-	['greaterThanOrEqualOp']: 'geOp',
-	['greaterThanOp']: 'gtOp',
-};

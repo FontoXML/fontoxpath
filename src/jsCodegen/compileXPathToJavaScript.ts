@@ -69,10 +69,10 @@ function compileXPathToJavaScript(
 			? BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI
 			: options['defaultFunctionNamespaceURI'];
 
-	const codegenContext: CodeGenContext = {
-		resolveNamespace: options['namespaceResolver'] || createDefaultNamespaceResolver(null),
-		defaultFunctionNamespaceUri,
-	};
+	const codegenContext = new CodeGenContext(
+		options['namespaceResolver'] || createDefaultNamespaceResolver(null),
+		defaultFunctionNamespaceUri
+	);
 
 	annotateAst(
 		ast,

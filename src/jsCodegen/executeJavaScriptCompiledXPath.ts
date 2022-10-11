@@ -47,13 +47,6 @@ const executeJavaScriptCompiledXPath = <TNode extends Node, TReturnType extends 
 ): IReturnTypes<TNode>[TReturnType] => {
 	domFacade = !domFacade ? new ExternalDomFacade() : domFacade;
 
-	// if (!contextItem) {
-	// 	throw XPDY0002('Context is needed to evaluate the given path expression.');
-	// }
-	// if (!contextItem.nodeType) {
-	// 	throw new Error('Context item must be subtype of node().');
-	// }
-
 	return compiledXPathFunction()(contextItem, domFacade, runtimeLib);
 };
 

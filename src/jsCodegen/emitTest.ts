@@ -1,12 +1,16 @@
 import { NODE_TYPES } from '../domFacade/ConcreteNode';
 import QName from '../expressions/dataTypes/valueTypes/QName';
-import { Bucket, intersectBuckets } from '../expressions/util/Bucket';
+import { Bucket } from '../expressions/util/Bucket';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { CodeGenContext } from './CodeGenContext';
+import {
+	emitAnd,
+	mapPartialCompilationResult,
+	mapPartialCompilationResultAndBucket,
+} from './emitHelpers';
 import escapeJavaScriptString from './escapeJavaScriptString';
 import {
 	acceptAst,
-	ContextItemIdentifier,
 	GeneratedCodeBaseType,
 	PartialCompilationResult,
 	rejectAst,
@@ -17,6 +21,7 @@ const testAstNodes = {
 	ELEMENT_TEST: 'elementTest',
 	NAME_TEST: 'nameTest',
 	WILDCARD: 'Wildcard',
+	ANY_KIND_TEST: 'anyKindTest',
 };
 
 export const tests = Object.values(testAstNodes);
@@ -25,12 +30,19 @@ export const tests = Object.values(testAstNodes);
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-TextTest
 function emitTextTest(
 	_ast: IAST,
-	identifier: ContextItemIdentifier
+	contextItemExpr: PartialCompilationResult,
+	_context: CodeGenContext
 ): [PartialCompilationResult, Bucket | null] {
 	return [
-		acceptAst(`${identifier}.nodeType === /*TEXT_NODE*/ ${NODE_TYPES.TEXT_NODE}`, {
-			type: GeneratedCodeBaseType.Value,
-		}),
+		mapPartialCompilationResult(contextItemExpr, (contextItemExpr) =>
+			acceptAst(
+				`${contextItemExpr.code}.nodeType === /*TEXT_NODE*/ ${NODE_TYPES.TEXT_NODE}`,
+				{
+					type: GeneratedCodeBaseType.Value,
+				},
+				[]
+			)
+		),
 		'type-3',
 	];
 }
@@ -52,91 +64,134 @@ function resolveNamespaceURI(qName: QName, staticContext: CodeGenContext) {
 }
 
 function emitNameTestFromQName(
-	identifier: ContextItemIdentifier,
 	qName: QName,
-	staticContext: CodeGenContext,
-	bucket: Bucket = null
+	canBeAttribute: boolean,
+	contextItemExpr: PartialCompilationResult,
+	context: CodeGenContext
 ): [PartialCompilationResult, Bucket | null] {
-	resolveNamespaceURI(qName, staticContext);
+	resolveNamespaceURI(qName, context);
 	const { prefix, namespaceURI, localName } = qName;
 
-	const isElementOrAttributeCode = `${identifier}.nodeType
-		&& (${identifier}.nodeType === /*ELEMENT_NODE*/ ${NODE_TYPES.ELEMENT_NODE}
-		|| ${identifier}.nodeType === /*ATTRIBUTE_NODE*/ ${NODE_TYPES.ATTRIBUTE_NODE})`;
+	return mapPartialCompilationResultAndBucket(contextItemExpr, (contextItemExpr) => {
+		const isCorrectNodeTypeExpr = canBeAttribute
+			? acceptAst(
+					`${contextItemExpr.code}.nodeType
+						&& (${contextItemExpr.code}.nodeType === /*ELEMENT_NODE*/ ${NODE_TYPES.ELEMENT_NODE}
+						|| ${contextItemExpr.code}.nodeType === /*ATTRIBUTE_NODE*/ ${NODE_TYPES.ATTRIBUTE_NODE})`,
+					{ type: GeneratedCodeBaseType.Value },
+					[]
+			  )
+			: acceptAst(
+					`${contextItemExpr.code}.nodeType
+						&& ${contextItemExpr.code}.nodeType === /*ELEMENT_NODE*/ ${NODE_TYPES.ELEMENT_NODE}`,
+					{ type: GeneratedCodeBaseType.Value },
+					[]
+			  );
 
-	// Simple cases.
-	if (prefix === '*') {
-		if (localName === '*') {
+		// TODO: restrict bucket AND test above based on canBeAttribute
+
+		// Simple cases.
+		if (prefix === '*') {
+			if (localName === '*') {
+				return [isCorrectNodeTypeExpr, canBeAttribute ? 'type-1-or-type-2' : 'type-1'];
+			}
 			return [
-				acceptAst(isElementOrAttributeCode, { type: GeneratedCodeBaseType.Value }),
-				intersectBuckets('type-1-or-type-2', bucket),
+				emitAnd(
+					isCorrectNodeTypeExpr,
+					acceptAst(
+						`${contextItemExpr.code}.localName === ${escapeJavaScriptString(
+							localName
+						)}`,
+						{ type: GeneratedCodeBaseType.Value },
+						[]
+					)
+				),
+				`name-${localName}`,
 			];
 		}
-		return [
-			acceptAst(
-				`${isElementOrAttributeCode} && ${identifier}.localName === ${escapeJavaScriptString(
-					localName
-				)}`,
-				{ type: GeneratedCodeBaseType.Value }
-			),
-			`name-${localName}`,
-		];
-	}
 
-	// Return condition comparing localName and namespaceURI against the context
-	// item.
-	const matchesLocalNameCode =
-		localName !== '*'
-			? `${isElementOrAttributeCode} && ${identifier}.localName === ${escapeJavaScriptString(
-					localName
-			  )} && `
-			: '';
+		// Return condition comparing localName and namespaceURI against the context item.
+		const matchesLocalNameExpr =
+			localName === '*'
+				? isCorrectNodeTypeExpr
+				: emitAnd(
+						isCorrectNodeTypeExpr,
+						acceptAst(
+							`${contextItemExpr.code}.localName === ${escapeJavaScriptString(
+								localName
+							)}`,
+							{ type: GeneratedCodeBaseType.Value },
+							[]
+						)
+				  );
 
-	let resolveNamespaceURICode: string;
-	if (prefix === '') {
-		// The prefix was empty: attributes should always resolve the empty prefix to the null namespace
-		resolveNamespaceURICode = `${identifier}.nodeType
-&& ${identifier}.nodeType === /*ELEMENT_NODE*/ ${
-			NODE_TYPES.ELEMENT_NODE
-		} ? ${escapeJavaScriptString(namespaceURI)} : null`;
-	} else {
-		// There was a prefix, or the namespace was already resolved. This applies to elements and attributes
-		resolveNamespaceURICode = escapeJavaScriptString(namespaceURI);
-	}
-	const matchesNamespaceCode = `(${identifier}.namespaceURI || null) === ((${resolveNamespaceURICode}) || null)`;
+		const namespaceUriExpr = acceptAst(
+			escapeJavaScriptString(namespaceURI),
+			{ type: GeneratedCodeBaseType.Value },
+			[]
+		);
+		const nodeNamespaceExpr =
+			prefix === '' && canBeAttribute
+				? // The prefix was empty: attributes should always resolve the empty prefix to the null namespace
+				  mapPartialCompilationResult(namespaceUriExpr, (namespaceUriExpr) =>
+						acceptAst(
+							`${contextItemExpr.code}.nodeType === /*ELEMENT_NODE*/ ${NODE_TYPES.ELEMENT_NODE} ? ${namespaceUriExpr.code} : null`,
+							{ type: GeneratedCodeBaseType.Value },
+							namespaceUriExpr.variables
+						)
+				  )
+				: namespaceUriExpr;
+		const matchesNamespaceExpr = mapPartialCompilationResult(
+			nodeNamespaceExpr,
+			(nodeNamespaceExpr) =>
+				acceptAst(
+					`(${contextItemExpr.code}.namespaceURI || null) === ((${nodeNamespaceExpr.code}) || null)`,
+					{ type: GeneratedCodeBaseType.Value },
+					nodeNamespaceExpr.variables
+				)
+		);
 
-	return [
-		acceptAst(`${matchesLocalNameCode}${matchesNamespaceCode}`, {
-			type: GeneratedCodeBaseType.Value,
-		}),
-		`name-${localName}`,
-	];
+		return [emitAnd(matchesLocalNameExpr, matchesNamespaceExpr), `name-${localName}`];
+	});
 }
 
 // element() and element(*) match any single element node, regardless of its name or type annotation.
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-ElementTest
 function emitElementTest(
 	ast: IAST,
-	identifier: ContextItemIdentifier,
-	staticContext: CodeGenContext
+	contextItemExpr: PartialCompilationResult,
+	context: CodeGenContext
 ): [PartialCompilationResult, Bucket | null] {
 	const elementName = astHelper.getFirstChild(ast, 'elementName');
 	const star = elementName && astHelper.getFirstChild(elementName, 'star');
-	const isElementCode = `${identifier}.nodeType === /*ELEMENT_NODE*/ ${NODE_TYPES.ELEMENT_NODE}`;
 
 	if (elementName === null || star) {
-		return [acceptAst(isElementCode, { type: GeneratedCodeBaseType.Value }), 'type-1'];
+		return [
+			mapPartialCompilationResult(contextItemExpr, (contextItemExpr) =>
+				acceptAst(
+					`${contextItemExpr.code}.nodeType === /*ELEMENT_NODE*/ ${NODE_TYPES.ELEMENT_NODE}`,
+					{ type: GeneratedCodeBaseType.Value },
+					[]
+				)
+			),
+			'type-1',
+		];
 	}
 
 	const qName = astHelper.getQName(astHelper.getFirstChild(elementName, 'QName'));
 
-	return emitNameTestFromQName(identifier, qName, staticContext, 'type-1');
+	return emitNameTestFromQName(qName, false, contextItemExpr, context);
 }
 
 // A node test that consists only of an EQName or a Wildcard is called a name test.
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-NameTest
-function emitNameTest(ast: IAST, identifier: ContextItemIdentifier, staticContext: CodeGenContext) {
-	return emitNameTestFromQName(identifier, astHelper.getQName(ast), staticContext);
+function emitNameTest(
+	ast: IAST,
+	canBeAttribute: boolean,
+	contextItemExpr: PartialCompilationResult,
+	context: CodeGenContext
+) {
+	return emitNameTestFromQName(astHelper.getQName(ast), canBeAttribute, contextItemExpr, context);
 }
 
 // select all element children of the context node
@@ -144,31 +199,34 @@ function emitNameTest(ast: IAST, identifier: ContextItemIdentifier, staticContex
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-Wildcard
 function emitWildcard(
 	ast: IAST,
-	identifier: ContextItemIdentifier,
-	staticContext: CodeGenContext
+	canBeAttribute: boolean,
+	contextItemExpr: PartialCompilationResult,
+	context: CodeGenContext
 ): [PartialCompilationResult, Bucket | null] {
 	if (!astHelper.getFirstChild(ast, 'star')) {
 		return emitNameTestFromQName(
-			identifier,
 			{
 				localName: '*',
 				namespaceURI: null,
 				prefix: '*',
 			},
-			staticContext
+			canBeAttribute,
+			contextItemExpr,
+			context
 		);
 	}
 
 	const uri = astHelper.getFirstChild(ast, 'uri');
 	if (uri !== null) {
 		return emitNameTestFromQName(
-			identifier,
 			{
 				localName: '*',
 				namespaceURI: astHelper.getTextContent(uri),
 				prefix: '',
 			},
-			staticContext
+			canBeAttribute,
+			contextItemExpr,
+			context
 		);
 	}
 
@@ -177,47 +235,71 @@ function emitWildcard(
 	if (astHelper.getFirstChild(ast, '*')[0] === 'star') {
 		// The prefix is 'starred'
 		return emitNameTestFromQName(
-			identifier,
 			{
 				localName: astHelper.getTextContent(ncName),
 				namespaceURI: null,
 				prefix: '*',
 			},
-			staticContext
+			canBeAttribute,
+			contextItemExpr,
+			context
 		);
 	}
 
 	// The localName is 'starred'
 	return emitNameTestFromQName(
-		identifier,
 		{
 			localName: '*',
 			namespaceURI: null,
 			prefix: astHelper.getTextContent(ncName),
 		},
-		staticContext
+		canBeAttribute,
+		contextItemExpr,
+		context
 	);
+}
+
+// node() matches any node.
+// https://www.w3.org/TR/xpath-31/#doc-xpath31-AnyKindTest
+function emitAnyKindTest(
+	_ast: IAST,
+	contextItemExpr: PartialCompilationResult,
+	_context: CodeGenContext
+): [PartialCompilationResult, Bucket | null] {
+	return [
+		mapPartialCompilationResult(contextItemExpr, (contextItemExpr) =>
+			acceptAst(
+				`!!${contextItemExpr.code}.nodeType`,
+				{
+					type: GeneratedCodeBaseType.Value,
+				},
+				[]
+			)
+		),
+		null,
+	];
 }
 
 export default function emitTest(
 	ast: IAST,
-	identifier: ContextItemIdentifier,
-	staticContext: CodeGenContext
+	canBeAttribute: boolean,
+	contextItemExpr: PartialCompilationResult,
+	context: CodeGenContext
 ): [PartialCompilationResult, Bucket | null] {
-	// emitTest returns a tuple of the generated code and an optional bucket.
-
 	const test = ast[0];
 
 	switch (test) {
 		case testAstNodes.ELEMENT_TEST:
-			return emitElementTest(ast, identifier, staticContext);
+			return emitElementTest(ast, contextItemExpr, context);
 		case testAstNodes.TEXT_TEST:
-			return emitTextTest(ast, identifier);
+			return emitTextTest(ast, contextItemExpr, context);
 		case testAstNodes.NAME_TEST:
-			return emitNameTest(ast, identifier, staticContext);
+			return emitNameTest(ast, canBeAttribute, contextItemExpr, context);
 		case testAstNodes.WILDCARD:
-			return emitWildcard(ast, identifier, staticContext);
+			return emitWildcard(ast, canBeAttribute, contextItemExpr, context);
+		case testAstNodes.ANY_KIND_TEST:
+			return emitAnyKindTest(ast, contextItemExpr, context);
 		default:
-			return [rejectAst(`Unsupported: the test '${test}'.`), null];
+			return [rejectAst(`Test not implemented: '${test}`), null];
 	}
 }

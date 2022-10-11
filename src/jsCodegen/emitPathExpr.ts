@@ -2,17 +2,32 @@ import { NODE_TYPES } from '../domFacade/ConcreteNode';
 import { Bucket, intersectBuckets } from '../expressions/util/Bucket';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { CodeGenContext } from './CodeGenContext';
-import { emitBaseExpr } from './emitBaseExpression';
-import emitStep from './emitStep';
+import emitAxis from './emitAxis';
+import { emitBaseExpr } from './emitBaseExpr';
+import {
+	emitAnd,
+	emitEffectiveBooleanValue,
+	mapPartialCompilationResult,
+	mapPartialCompilationResultAndBucket,
+} from './emitHelpers';
 import emitTest, { tests } from './emitTest';
 import {
 	acceptAst,
-	FunctionIdentifier,
 	GeneratedCodeBaseType,
 	PartialCompilationResult,
 	rejectAst,
 } from './JavaScriptCompiledXPath';
-import { determinePredicateTruthValue } from './runtimeLib';
+
+function emitPredicate(
+	predicateAst: IAST,
+	contextItemExpr: PartialCompilationResult,
+	context: CodeGenContext
+): [PartialCompilationResult, Bucket] {
+	const [expr, bucket] = emitBaseExpr(predicateAst, contextItemExpr, context);
+	const type = astHelper.getAttribute(predicateAst, 'type');
+	const asBool = emitEffectiveBooleanValue(expr, type, contextItemExpr, context);
+	return [asBool, bucket];
+}
 
 /**
  * Determines for every path step if it should emit a node or not.
@@ -23,158 +38,148 @@ import { determinePredicateTruthValue } from './runtimeLib';
  * @returns JavaScript code of the steps predicates.
  */
 function emitPredicates(
-	predicatesAst: IAST,
-	nestLevel: number,
-	staticContext: CodeGenContext
-): [PartialCompilationResult, Bucket] {
-	let evaluatePredicateConditionCode = '';
-	const functionDeclarations: string[] = [];
-
-	if (!predicatesAst) {
-		return [acceptAst(``, { type: GeneratedCodeBaseType.None }, functionDeclarations), null];
-	}
-
-	const children = astHelper.getChildren(predicatesAst, '*');
-	let intersectingPredicateBucket = null;
-	for (let i = 0; i < children.length; i++) {
-		const predicate = children[i];
-		const predicateFunctionIdentifier = `step${nestLevel}_predicate${i}`;
-
-		const [compiledPredicate, bucket] = emitBaseExpr(
-			predicate,
-			predicateFunctionIdentifier,
-			staticContext
-		);
-
-		if (!compiledPredicate.isAstAccepted) {
-			return [compiledPredicate, null];
-		}
-		intersectingPredicateBucket = intersectBuckets(intersectingPredicateBucket, bucket);
-
-		// Prepare condition used to determine if an axis should
-		// return a node.
-		const predicateFunctionCall = determinePredicateTruthValue(
-			predicateFunctionIdentifier,
-			'',
-			compiledPredicate.generatedCodeType,
-			`contextItem${nestLevel}`
-		);
-
-		if (!predicateFunctionCall.isAstAccepted) {
-			return [predicateFunctionCall, null];
-		}
-
-		if (i === 0) {
-			evaluatePredicateConditionCode += predicateFunctionCall.code;
-		} else {
-			evaluatePredicateConditionCode = `${evaluatePredicateConditionCode} && ${predicateFunctionCall.code}`;
-		}
-
-		functionDeclarations.push(compiledPredicate.code);
-	}
-	return [
-		acceptAst(
-			evaluatePredicateConditionCode,
-			{ type: GeneratedCodeBaseType.Value },
-			functionDeclarations
-		),
-		intersectingPredicateBucket,
-	];
+	predicatesAst: IAST | null,
+	contextItemExpr: PartialCompilationResult,
+	context: CodeGenContext
+): [PartialCompilationResult | null, Bucket] {
+	const predicateAsts = predicatesAst ? astHelper.getChildren(predicatesAst, '*') : [];
+	return predicateAsts.reduce<[PartialCompilationResult | null, Bucket]>(
+		([previousExpr, previousBucket], predicateAst) => {
+			if (!previousExpr) {
+				return emitPredicate(predicateAst, contextItemExpr, context);
+			}
+			let combinedBucket = previousBucket;
+			return mapPartialCompilationResultAndBucket(previousExpr, (previousExpr) => {
+				const [predicateExpr, bucket] = emitPredicate(
+					predicateAst,
+					contextItemExpr,
+					context
+				);
+				combinedBucket = intersectBuckets(previousBucket, bucket);
+				return [
+					mapPartialCompilationResult(predicateExpr, (predicateExpr) =>
+						acceptAst(
+							`${previousExpr.code} && ${predicateExpr.code}`,
+							{ type: GeneratedCodeBaseType.Value },
+							[...previousExpr.variables, ...predicateExpr.variables]
+						)
+					),
+					combinedBucket,
+				];
+			});
+		},
+		[null, null]
+	);
 }
 
 /**
  * Takes the step AST's of a path expression and turns it into runnable JavaScript code.
- *
- * @param stepsAst AST nodes of the path expression steps
- * @param staticContext Static context parameter to retrieve context-dependent information.
- * @returns JavaScript code of the path expression steps.
  */
 function emitSteps(
 	stepsAst: IAST[],
-	staticContext: CodeGenContext
+	contextItemCanBeAttribute: boolean,
+	contextItemExpr: PartialCompilationResult,
+	context: CodeGenContext
 ): [PartialCompilationResult, Bucket] {
 	if (stepsAst.length === 0) {
-		return [acceptAst(`yield contextItem;`, { type: GeneratedCodeBaseType.Statement }), null];
+		return [
+			mapPartialCompilationResult(contextItemExpr, (contextItemExpr) =>
+				acceptAst(
+					`yield ${contextItemExpr.code};`,
+					{ type: GeneratedCodeBaseType.Statement },
+					contextItemExpr.variables
+				)
+			),
+			null,
+		];
 	}
 
-	let emittedCode = '';
-	const emittedVariables: string[] = [];
-	let intersectingBucket: Bucket = null;
-	for (let i = stepsAst.length - 1; i >= 0; i--) {
-		const step = stepsAst[i];
-		const nestLevel = i + 1;
+	// A step is constructed as follows:
+	// for (stepContextItemExpr of axis) {
+	//     test code for step, continue if no match
+	//     predicates for step, continue if no match
+	//     nested steps
+	// }
+	// This recurses over steps to build that nested structure. Once there are no more nested steps
+	// this hits the case above which outputs the single yield statement.
 
-		const predicatesAst = astHelper.getFirstChild(step, 'predicates');
-		const [emittedPredicates, predicateBucket] = emitPredicates(
-			predicatesAst,
-			nestLevel,
-			staticContext
-		);
-		if (!emittedPredicates.isAstAccepted) {
-			return [emittedPredicates, null];
-		}
+	const [stepAst, ...restStepsAst] = stepsAst;
 
-		const axisAst = astHelper.getFirstChild(step, 'xpathAxis');
-		if (axisAst) {
-			const emittedStepsCode = emittedCode;
-			const testAst = astHelper.getFirstChild(step, tests);
-			if (!testAst) {
-				return [rejectAst(`Unsupported: the test in the '${step}' step.`), null];
-			}
-
-			// Only the innermost nested step returns a value.
-			const nestedCode =
-				i === stepsAst.length - 1 ? `yield contextItem${nestLevel};` : emittedStepsCode;
-
-			const [emittedTest, testBucket] = emitTest(
-				testAst,
-				`contextItem${nestLevel}`,
-				staticContext
-			);
-			if (!emittedTest.isAstAccepted) {
-				return [emittedTest, null];
-			}
-
-			const intersectingBucketForStep = intersectBuckets(testBucket, predicateBucket);
-
-			const [emittedStep, stepBucket] = emitStep(
-				axisAst,
-				emittedTest.code,
-				emittedPredicates.code,
-				nestLevel,
-				nestedCode,
-				intersectingBucketForStep
-			);
-			if (!emittedStep.isAstAccepted) {
-				return [emittedStep, null];
-			}
-
-			if (i === 0) {
-				// For the first iteration, the bucket of the steps is actually the bucket for the whole thing
-				intersectingBucket = stepBucket;
-			}
-
-			emittedVariables.push(
-				...(emittedStep.variables || []),
-				...(emittedPredicates.variables || [])
-			);
-			emittedCode = emittedStep.code;
-		} else {
-			return [rejectAst('Unsupported: filter expressions.'), null];
-		}
-
-		const lookups = astHelper.getChildren(step, 'lookup');
-		if (lookups.length > 0) {
-			return [rejectAst('Unsupported: lookups.'), null];
-		}
+	const lookupAsts = astHelper.getChildren(stepAst, 'lookup');
+	if (lookupAsts.length > 0) {
+		return [rejectAst('Unsupported: lookups'), null];
 	}
-	const contextDeclaration = 'const contextItem0 = contextItem;';
-	emittedCode = contextDeclaration + emittedCode;
+	const axisAst = astHelper.getFirstChild(stepAst, 'xpathAxis');
+	if (!axisAst) {
+		return [rejectAst('Unsupported: filter expressions'), null];
+	}
+	const testAst = astHelper.getFirstChild(stepAst, tests);
+	if (!testAst) {
+		return [rejectAst('Unsupported test in step'), null];
+	}
+	const predicatesAst = astHelper.getFirstChild(stepAst, 'predicates');
 
-	return [
-		acceptAst(emittedCode, { type: GeneratedCodeBaseType.Statement }, emittedVariables),
-		intersectingBucket,
-	];
+	const stepContextItemExpr = context.getNewIdentifier('contextItem');
+
+	// TODO: may be better to annotate steps instead to narrow down types?
+	const axisType = astHelper.getTextContent(axisAst);
+	const stepContextItemCanBeAttribute =
+		axisType === 'attribute' || (axisType === 'self' && contextItemCanBeAttribute);
+	const [testExpr, testBucket] = emitTest(
+		testAst,
+		stepContextItemCanBeAttribute,
+		stepContextItemExpr,
+		context
+	);
+
+	const [predicatesExpr, predicatesBucket] = emitPredicates(
+		predicatesAst,
+		stepContextItemExpr,
+		context
+	);
+
+	const combinedConditionExpr =
+		predicatesExpr === null ? testExpr : emitAnd(testExpr, predicatesExpr);
+
+	const combinedConditionBucket = intersectBuckets(testBucket, predicatesBucket);
+
+	const [nestedStepsCode, _] = emitSteps(
+		restStepsAst,
+		stepContextItemCanBeAttribute,
+		stepContextItemExpr,
+		context
+	);
+
+	return emitAxis(
+		axisAst,
+		combinedConditionExpr,
+		combinedConditionBucket,
+		nestedStepsCode,
+		stepContextItemExpr,
+		contextItemExpr
+	);
+}
+
+function emitRootExpr(
+	contextItemExpr: PartialCompilationResult,
+	_context: CodeGenContext
+): PartialCompilationResult {
+	return mapPartialCompilationResult(contextItemExpr, (contextItemExpr) =>
+		acceptAst(
+			`(function () {
+				let n = ${contextItemExpr.code};
+				while (n.nodeType !== /*DOCUMENT_NODE*/${NODE_TYPES.DOCUMENT_NODE}) {
+					n = domFacade.getParentNode(n);
+					if (n === null) {
+						throw new Error('XPDY0050: the root node of the context node is not a document node.');
+					}
+				}
+				return n;
+			})()`,
+			{ type: GeneratedCodeBaseType.Value },
+			contextItemExpr.variables
+		)
+	);
 }
 
 /**
@@ -183,51 +188,32 @@ function emitSteps(
  * consist of a series of one or more steps.
  *
  * https://www.w3.org/TR/xpath-31/#doc-xpath31-PathExpr
- *
- * @param ast AST node of the path expression
- * @param identifier Function identifier for the emitted code.
- * @param staticContext Static context parameter to retrieve context-dependent information.
- * @returns JavaScript code of the path expression AST node.
  */
 export function emitPathExpr(
 	ast: IAST,
-	identifier: FunctionIdentifier,
-	staticContext: CodeGenContext
+	context: CodeGenContext
 ): [PartialCompilationResult, Bucket] {
+	const contextItemExpr = context.getNewIdentifier('contextItem');
 	// Find the root node from the context.
 	const isAbsolute = astHelper.getFirstChild(ast, 'rootExpr');
-	let absoluteCode = '';
-	if (isAbsolute) {
-		absoluteCode = `
-		let documentNode = contextItem;
-		while (documentNode.nodeType !== /*DOCUMENT_NODE*/${NODE_TYPES.DOCUMENT_NODE}) {
-			documentNode = domFacade.getParentNode(documentNode);
-			if (documentNode === null) {
-				throw new Error('XPDY0050: the root node of the context node is not a document node.');
-			}
-		}
-		contextItem = documentNode;
-		`;
-	}
-
-	const [emittedSteps, bucket] = emitSteps(astHelper.getChildren(ast, 'stepExpr'), staticContext);
-	if (!emittedSteps.isAstAccepted) {
-		return [emittedSteps, null];
-	}
-
-	const pathExprCode = `
-	function* ${identifier}(contextItem) {
-		${absoluteCode}
-		${emittedSteps.variables ? emittedSteps.variables.join('\n') : ''}
-		${emittedSteps.code}
-	}
-	`;
-
-	return [
-		acceptAst(pathExprCode, {
-			type: GeneratedCodeBaseType.Function,
-			returnType: { type: GeneratedCodeBaseType.Iterator },
-		}),
-		bucket,
-	];
+	const rootExpr = isAbsolute
+		? context.getIdentifierFor(emitRootExpr(contextItemExpr, context), 'root')
+		: contextItemExpr;
+	const [stepsCode, bucket] = emitSteps(
+		astHelper.getChildren(ast, 'stepExpr'),
+		!isAbsolute,
+		rootExpr,
+		context
+	);
+	const generatorExpr = mapPartialCompilationResult(stepsCode, (stepsCode) =>
+		acceptAst(
+			`(function* (${contextItemExpr.code}) {
+			${stepsCode.variables.join('\n')}
+			${stepsCode.code}
+		})`,
+			{ type: GeneratedCodeBaseType.Generator },
+			[]
+		)
+	);
+	return [generatorExpr, bucket];
 }
