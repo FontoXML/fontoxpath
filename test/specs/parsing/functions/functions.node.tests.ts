@@ -67,8 +67,8 @@ describe('functions over nodes', () => {
 	});
 
 	describe('name()', () => {
-		it('returns an empty sequence if $arg is an empty sequence', () =>
-			chai.assert.isEmpty(evaluateXPathToStrings('name(())', documentNode)));
+		it('returns an empty string if $arg is an empty sequence', () =>
+			chai.assert.deepEqual(evaluateXPathToStrings('name(())', documentNode), ['']));
 
 		it('it defaults to the context item when the argument is omitted', () => {
 			jsonMlMapper.parse(['someElement'], documentNode);

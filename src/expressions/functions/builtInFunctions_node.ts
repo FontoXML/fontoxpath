@@ -108,7 +108,7 @@ const fnName: FunctionDefinitionType = (
 				staticContext,
 				fnNodeName(dynamicContext, executionParameters, staticContext, sequence)
 			),
-		empty: () => sequenceFactory.empty(),
+		empty: () => sequenceFactory.singleton(createAtomicValue('', ValueType.XSSTRING)),
 	});
 };
 
@@ -403,7 +403,7 @@ const declarations: BuiltinDeclarationType[] = [
 		callFunction: fnName,
 		localName: 'name',
 		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
-		returnType: { type: ValueType.XSSTRING, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		returnType: { type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
 	},
 
 	{
