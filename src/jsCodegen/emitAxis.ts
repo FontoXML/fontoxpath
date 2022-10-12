@@ -147,13 +147,7 @@ function emitSingleNodeAxis(
 	conditionExpr: PartialCompilationResult,
 	nestedCode: PartialCompilationResult
 ): PartialCompilationResult {
-	const nullCheck = mapPartialCompilationResult(stepContextItemExpr, (stepContextItemExpr) =>
-		acceptAst(
-			`${stepContextItemExpr.code}`,
-			{ type: GeneratedCodeBaseType.Value },
-			stepContextItemExpr.variables
-		)
-	);
+	const nullCheck = stepContextItemExpr;
 	const conditionsWithNullCheck = emitAnd(nullCheck, conditionExpr);
 	return mapPartialCompilationResult(stepContextItemExpr, (stepContextItemExpr) =>
 		mapPartialCompilationResult(contextItemExpr, (contextItemExpr) =>
@@ -161,16 +155,13 @@ function emitSingleNodeAxis(
 				mapPartialCompilationResult(nestedCode, (nestedCode) =>
 					acceptAst(
 						`const ${stepContextItemExpr.code} = ${contextItemExpr.code};
+						${conditionsWithNullCheck.variables.join('\n')}
 						if (${conditionsWithNullCheck.code}) {
 							${nestedCode.variables.join('\n')}
 							${nestedCode.code}
 						}`,
 						{ type: GeneratedCodeBaseType.Statement },
-						[
-							...stepContextItemExpr.variables,
-							...contextItemExpr.variables,
-							...conditionsWithNullCheck.variables,
-						]
+						[...stepContextItemExpr.variables, ...contextItemExpr.variables]
 					)
 				)
 			)
