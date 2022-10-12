@@ -75,12 +75,12 @@ function emitPredicates(
  * Takes the step AST's of a path expression and turns it into runnable JavaScript code.
  */
 function emitSteps(
-	stepsAst: IAST[],
+	stepAsts: IAST[],
 	contextItemCanBeAttribute: boolean,
 	contextItemExpr: PartialCompilationResult,
 	context: CodeGenContext
 ): [PartialCompilationResult, Bucket] {
-	if (stepsAst.length === 0) {
+	if (stepAsts.length === 0) {
 		return [
 			mapPartialCompilationResult(contextItemExpr, (contextItemExpr) =>
 				acceptAst(
@@ -102,61 +102,121 @@ function emitSteps(
 	// This recurses over steps to build that nested structure. Once there are no more nested steps
 	// this hits the case above which outputs the single yield statement.
 
-	const [stepAst, ...restStepsAst] = stepsAst;
+	const [stepAst, ...restStepAsts] = stepAsts;
 
 	const lookupAsts = astHelper.getChildren(stepAst, 'lookup');
 	if (lookupAsts.length > 0) {
 		return [rejectAst('Unsupported: lookups'), null];
 	}
-	const axisAst = astHelper.getFirstChild(stepAst, 'xpathAxis');
-	if (!axisAst) {
-		return [rejectAst('Unsupported: filter expressions'), null];
-	}
-	const testAst = astHelper.getFirstChild(stepAst, tests);
-	if (!testAst) {
-		return [rejectAst('Unsupported test in step'), null];
-	}
-	const predicatesAst = astHelper.getFirstChild(stepAst, 'predicates');
 
+	// Every step introduces a context item for its test and predicates
 	const stepContextItemExpr = context.getNewIdentifier('contextItem');
 
-	// TODO: may be better to annotate steps instead to narrow down types?
-	const axisType = astHelper.getTextContent(axisAst);
-	const stepContextItemCanBeAttribute =
-		axisType === 'attribute' || (axisType === 'self' && contextItemCanBeAttribute);
-	const [testExpr, testBucket] = emitTest(
-		testAst,
-		stepContextItemCanBeAttribute,
-		stepContextItemExpr,
-		context
-	);
-
+	const predicatesAst = astHelper.getFirstChild(stepAst, 'predicates');
 	const [predicatesExpr, predicatesBucket] = emitPredicates(
 		predicatesAst,
 		stepContextItemExpr,
 		context
 	);
 
-	const combinedConditionExpr =
-		predicatesExpr === null ? testExpr : emitAnd(testExpr, predicatesExpr);
+	const axisAst = astHelper.getFirstChild(stepAst, 'xpathAxis');
+	if (axisAst) {
+		const testAst = astHelper.getFirstChild(stepAst, tests);
+		if (!testAst) {
+			return [rejectAst('Unsupported test in step'), null];
+		}
 
-	const combinedConditionBucket = intersectBuckets(testBucket, predicatesBucket);
+		// TODO: may be better to annotate steps instead to narrow down types?
+		const axisType = astHelper.getTextContent(axisAst);
+		const stepContextItemCanBeAttribute =
+			axisType === 'attribute' || (axisType === 'self' && contextItemCanBeAttribute);
+		const [testExpr, testBucket] = emitTest(
+			testAst,
+			stepContextItemCanBeAttribute,
+			stepContextItemExpr,
+			context
+		);
 
-	const [nestedStepsCode, _] = emitSteps(
-		restStepsAst,
-		stepContextItemCanBeAttribute,
-		stepContextItemExpr,
+		const combinedConditionExpr =
+			predicatesExpr === null ? testExpr : emitAnd(testExpr, predicatesExpr);
+
+		const combinedConditionBucket = intersectBuckets(testBucket, predicatesBucket);
+
+		const [nestedStepsCode, _] = emitSteps(
+			restStepAsts,
+			stepContextItemCanBeAttribute,
+			stepContextItemExpr,
+			context
+		);
+
+		return emitAxis(
+			axisAst,
+			combinedConditionExpr,
+			combinedConditionBucket,
+			nestedStepsCode,
+			stepContextItemExpr,
+			contextItemExpr
+		);
+	}
+
+	// step may contain a filterExpr instead
+	const filterExprAst = astHelper.followPath(stepAst, ['filterExpr', '*']);
+	if (!filterExprAst) {
+		return [rejectAst('Unsupported: unknown step type'), null];
+	}
+
+	// Compile the expression
+	const [filterExpr, filterBucket] = context.emitBaseExpr(
+		filterExprAst,
+		contextItemExpr,
 		context
 	);
-
-	return emitAxis(
-		axisAst,
-		combinedConditionExpr,
-		combinedConditionBucket,
-		nestedStepsCode,
-		stepContextItemExpr,
-		contextItemExpr
+	// Assign it to the stepContextItem variable
+	const filterExprAsStepContextItemExpr = mapPartialCompilationResult(filterExpr, (filterExpr) =>
+		acceptAst(
+			`const ${stepContextItemExpr.code} = ${filterExpr.code};`,
+			{ type: GeneratedCodeBaseType.Statement },
+			[...stepContextItemExpr.variables, ...filterExpr.variables, ,]
+		)
 	);
+
+	// If there are following steps, the result of the expression must be a node
+	const filterExprWithCheck =
+		restStepAsts.length === 0
+			? filterExprAsStepContextItemExpr
+			: mapPartialCompilationResult(
+					filterExprAsStepContextItemExpr,
+					(filterExprAsStepContextItemExpr) =>
+						acceptAst(
+							`${filterExprAsStepContextItemExpr.code}
+							if (${stepContextItemExpr.code} && !${stepContextItemExpr.code}.nodeType) {
+								throw new Error('XPTY0019: The result of E1 in a path expression E1/E2 should evaluate to a sequence of nodes.');
+							}`,
+							{ type: GeneratedCodeBaseType.Statement },
+							filterExprAsStepContextItemExpr.variables
+						)
+			  );
+
+	return mapPartialCompilationResultAndBucket(filterExprWithCheck, (filterExprWithCheck) => {
+		// Compile nested steps
+		const [nestedStepsCode, _] = emitSteps(restStepAsts, true, stepContextItemExpr, context);
+
+		// Combine
+		return [
+			mapPartialCompilationResult(nestedStepsCode, (nestedStepsCode) =>
+				acceptAst(
+					`${filterExprWithCheck.code}
+					${nestedStepsCode.variables.join('\n')}
+					${nestedStepsCode.code}`,
+					{ type: GeneratedCodeBaseType.Statement },
+					filterExprWithCheck.variables
+				)
+			),
+			filterBucket,
+		];
+	});
+
+	// TODO: combine
 }
 
 function emitRootExpr(
