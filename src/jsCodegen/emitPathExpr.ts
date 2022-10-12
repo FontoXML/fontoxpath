@@ -176,7 +176,7 @@ function emitSteps(
 		acceptAst(
 			`const ${stepContextItemExpr.code} = ${filterExpr.code};`,
 			{ type: GeneratedCodeBaseType.Statement },
-			[...stepContextItemExpr.variables, ...filterExpr.variables, ,]
+			[...stepContextItemExpr.variables, ...filterExpr.variables]
 		)
 	);
 
@@ -189,7 +189,7 @@ function emitSteps(
 					(filterExprAsStepContextItemExpr) =>
 						acceptAst(
 							`${filterExprAsStepContextItemExpr.code}
-							if (${stepContextItemExpr.code} && !${stepContextItemExpr.code}.nodeType) {
+							if (${stepContextItemExpr.code} !== null && !${stepContextItemExpr.code}.nodeType) {
 								throw new Error('XPTY0019: The result of E1 in a path expression E1/E2 should evaluate to a sequence of nodes.');
 							}`,
 							{ type: GeneratedCodeBaseType.Statement },
@@ -201,13 +201,29 @@ function emitSteps(
 		// Compile nested steps
 		const [nestedStepsCode, _] = emitSteps(restStepAsts, true, stepContextItemExpr, context);
 
+		const nestedCode =
+			predicatesExpr === null
+				? nestedStepsCode
+				: mapPartialCompilationResult(predicatesExpr, (predicatesExpr) =>
+						mapPartialCompilationResult(nestedStepsCode, (nestedStepsCode) =>
+							acceptAst(
+								`if (${predicatesExpr.code}) {
+									${nestedStepsCode.variables.join('\n')}
+									${nestedStepsCode.code}
+								}`,
+								{ type: GeneratedCodeBaseType.Statement },
+								predicatesExpr.variables
+							)
+						)
+				  );
+
 		// Combine
 		return [
-			mapPartialCompilationResult(nestedStepsCode, (nestedStepsCode) =>
+			mapPartialCompilationResult(nestedCode, (nestedCode) =>
 				acceptAst(
 					`${filterExprWithCheck.code}
-					${nestedStepsCode.variables.join('\n')}
-					${nestedStepsCode.code}`,
+					${nestedCode.variables.join('\n')}
+					${nestedCode.code}`,
 					{ type: GeneratedCodeBaseType.Statement },
 					filterExprWithCheck.variables
 				)

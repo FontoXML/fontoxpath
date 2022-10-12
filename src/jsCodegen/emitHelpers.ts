@@ -141,14 +141,33 @@ export function emitConversionToString(
 	);
 }
 
-function isNodesExpr(expr: PartialCompilationResult, astType: SequenceType | null): boolean {
-	// Accept generators (currently always nodes)
-	if (expr.isAstAccepted && expr.generatedCodeType.type === GeneratedCodeBaseType.Generator) {
-		return true;
-	}
+function emitNodeCheck(
+	expr: PartialCompilationResult,
+	astType: SequenceType | null,
+	context: CodeGenContext
+): PartialCompilationResult {
+	return mapPartialCompilationResult(context.getIdentifierFor(expr, 'node'), (expr) => {
+		// Accept generators as-is (these currently always yield nodes)
+		if (expr.generatedCodeType.type === GeneratedCodeBaseType.Generator) {
+			return expr;
+		}
 
-	// Otherwise require type to be annotated as node
-	return !!astType && isSubtypeOf(astType.type, ValueType.NODE);
+		if (astType && !isSubtypeOf(astType.type, ValueType.NODE)) {
+			return rejectAst('Can not evaluate to node if expression does not result in nodes');
+		}
+
+		// Emit a type check
+		return acceptAst(
+			`(function () {
+				if (${expr.code} !== null && !${expr.code}.nodeType) {
+					throw new Error('XPDY0050: The result of the expression was not a node');
+				}
+				return ${expr.code};
+			})()`,
+			{ type: GeneratedCodeBaseType.Value },
+			expr.variables
+		);
+	});
 }
 
 export function emitConversionToFirstNode(
@@ -157,10 +176,8 @@ export function emitConversionToFirstNode(
 	contextItemExpr: PartialCompilationResult,
 	context: CodeGenContext
 ): PartialCompilationResult {
-	if (!isNodesExpr(expr, astType)) {
-		return rejectAst('Can not evaluate to node if expression does not result in nodes');
-	}
-	return emitConversionToValue(expr, contextItemExpr, context);
+	const exprAsValue = emitConversionToValue(expr, contextItemExpr, context);
+	return emitNodeCheck(exprAsValue, astType, context);
 }
 
 export function emitConversionToNodes(
@@ -169,9 +186,6 @@ export function emitConversionToNodes(
 	contextItemExpr: PartialCompilationResult,
 	context: CodeGenContext
 ): PartialCompilationResult {
-	if (!isNodesExpr(expr, astType)) {
-		return rejectAst('Can not evaluate to nodes if expression does not result in nodes');
-	}
 	return mapPartialCompilationResult(expr, (expr) => {
 		switch (expr.generatedCodeType.type) {
 			case GeneratedCodeBaseType.Generator:
@@ -189,10 +203,12 @@ export function emitConversionToNodes(
 						)
 				);
 			case GeneratedCodeBaseType.Value:
-				return acceptAst(
-					`[${expr.code}]`,
-					{ type: GeneratedCodeBaseType.Value },
-					expr.variables
+				return mapPartialCompilationResult(emitNodeCheck(expr, astType, context), (expr) =>
+					acceptAst(
+						`[${expr.code}]`,
+						{ type: GeneratedCodeBaseType.Value },
+						expr.variables
+					)
 				);
 			default:
 				return rejectAst('Unsupported code type to evaluate to nodes');

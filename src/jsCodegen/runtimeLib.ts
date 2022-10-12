@@ -13,7 +13,6 @@ import { Options } from '../types/Options';
 
 // Make sure Closure Compiler does not change property names.
 declare interface IRuntimeLib {
-	XPDY0002: typeof XPDY0002;
 	callFunction: (
 		domFacade: IDomFacade,
 		namespaceURI: string,
@@ -21,10 +20,10 @@ declare interface IRuntimeLib {
 		args: UntypedExternalValue[],
 		options: Options | null
 	) => unknown;
+	XPDY0002: typeof XPDY0002;
 }
 
 const runtimeLib: IRuntimeLib = {
-	XPDY0002,
 	callFunction(domFacade, namespaceURI, localName, args, options): unknown {
 		const functionProperties = getFunctionByArity(namespaceURI, localName, args.length);
 		if (!functionProperties) {
@@ -72,6 +71,7 @@ const runtimeLib: IRuntimeLib = {
 			executionParameters
 		);
 	},
+	XPDY0002,
 };
 
 export default runtimeLib;

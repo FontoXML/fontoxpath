@@ -50,7 +50,7 @@ const executeJavaScriptCompiledXPath = <TNode extends Node, TReturnType extends 
 ): IReturnTypes<TNode>[TReturnType] => {
 	domFacade = !domFacade ? new ExternalDomFacade() : domFacade;
 
-	return compiledXPathFunction()(contextItem, domFacade, runtimeLib, options);
+	return compiledXPathFunction()(contextItem ?? null, domFacade, runtimeLib, options);
 };
 
 export default executeJavaScriptCompiledXPath;

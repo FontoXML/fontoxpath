@@ -8,13 +8,6 @@ import { emitAndExpr, emitOrExpr } from './emitLogicalExpr';
 import { emitPathExpr } from './emitPathExpr';
 import { PartialCompilationResult, rejectAst } from './JavaScriptCompiledXPath';
 
-const baseExprAstNodes = {
-	PATH_EXPR: 'pathExpr',
-	AND_OP: 'andOp',
-	OR_OP: 'orOp',
-	STRING_LIT_EXPR: 'stringConstantExpr',
-};
-
 /**
  * Compile AST to base expression wrapped in a function named as the given identifier.
  *
@@ -32,6 +25,8 @@ export function emitBaseExpr(
 	const name = ast[0];
 
 	switch (name) {
+		case 'contextItemExpr':
+			return [contextItemExpr, null];
 		case 'pathExpr':
 			return emitPathExpr(ast, context);
 		case 'andOp':
