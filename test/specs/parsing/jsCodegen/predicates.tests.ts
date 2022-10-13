@@ -81,4 +81,12 @@ describe('predicates', () => {
 		);
 		chai.assert.equal(results.length, 2);
 	});
+
+	it('can apply predicates to a filterExpr', () => {
+		const results = evaluateXPathWithJsCodegen('.[xml]', documentNode, null, ReturnType.NODES);
+		chai.assert.equal(results.length, 1);
+
+		const results2 = evaluateXPathWithJsCodegen('.[bla]', documentNode, null, ReturnType.NODES);
+		chai.assert.equal(results2.length, 0);
+	});
 });
