@@ -22,8 +22,6 @@ export type PartiallyCompiledAstAccepted = {
 export enum GeneratedCodeBaseType {
 	// A normal value: 5, "test", true, ...
 	Value,
-	// A function representing a lazy value
-	Function,
 	// A generator function representing a lazy sequence
 	Generator,
 	// Statements, used to build the generator body - doesn't have a value
