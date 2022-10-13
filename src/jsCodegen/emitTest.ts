@@ -88,8 +88,6 @@ function emitNameTestFromQName(
 					[]
 			  );
 
-		// TODO: restrict bucket AND test above based on canBeAttribute
-
 		// Simple cases.
 		if (prefix === '*') {
 			if (localName === '*') {

@@ -231,8 +231,6 @@ function emitSteps(
 			filterBucket,
 		];
 	});
-
-	// TODO: combine
 }
 
 function emitRootExpr(
