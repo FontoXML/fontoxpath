@@ -1,31 +1,34 @@
 import DynamicContext from '../expressions/DynamicContext';
 import ExecutionParameters from '../expressions/ExecutionParameters';
 import StaticContext, { FunctionDefinition } from '../expressions/StaticContext';
-import { FunctionDeclaration, VariableDeclaration } from './processProlog';
+import { FunctionDeclaration, ModuleDeclaration, VariableDeclaration } from './processProlog';
 
-const loadedModulesByNamespaceURI = Object.create(null);
+const loadedModulesByNamespaceURI: {[uri: string]: ModuleDeclaration} = Object.create(null);
 
 export const loadModuleFile = (
 	uri: string,
-	moduleContents: {
-		functionDeclarations: FunctionDeclaration[];
-		variableDeclarations: VariableDeclaration[];
-	}
+	moduleContents: ModuleDeclaration
 ) => {
 	let loadedModuleContents = loadedModulesByNamespaceURI[uri];
 	if (!loadedModuleContents) {
 		loadedModuleContents = loadedModulesByNamespaceURI[uri] = {
 			functionDeclarations: [],
 			variableDeclarations: [],
+			performStaticAnalysis: () => {}
 		};
 	}
 
+	const staticallyAnalyseEarlierModules = loadedModuleContents.performStaticAnalysis;
 	loadedModuleContents.functionDeclarations = loadedModuleContents.functionDeclarations.concat(
 		moduleContents.functionDeclarations
 	);
 	loadedModuleContents.variableDeclarations = loadedModuleContents.variableDeclarations.concat(
 		moduleContents.variableDeclarations
 	);
+	loadedModuleContents.performStaticAnalysis = () => {
+		staticallyAnalyseEarlierModules();
+		moduleContents.performStaticAnalysis();
+	};
 };
 
 export const enhanceStaticContextWithModule = (staticContext: StaticContext, uri: string) => {
@@ -34,6 +37,11 @@ export const enhanceStaticContextWithModule = (staticContext: StaticContext, uri
 	if (!moduleContents) {
 		throw new Error(`XQST0051: No modules found with the namespace uri ${uri}`);
 	}
+
+	if (moduleContents.performStaticAnalysis) {
+		moduleContents.performStaticAnalysis(moduleContents);
+	}
+	moduleContents.performStaticAnalysis = null;
 
 	moduleContents.functionDeclarations.forEach((functionDeclaration: FunctionDeclaration) =>
 		staticContext.registerFunctionDefinition(

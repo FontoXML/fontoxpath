@@ -24,6 +24,12 @@ import astHelper, { IAST } from './astHelper';
 import compileAstToExpression from './compileAstToExpression';
 import { enhanceStaticContextWithModule } from './globalModuleCache';
 
+export type ModuleDeclaration = {
+	functionDeclarations: FunctionDeclaration[];
+	variableDeclarations: VariableDeclaration[];
+	performStaticAnalysis(): void
+};
+
 const RESERVED_FUNCTION_NAMESPACE_URIS = [
 	'http://www.w3.org/XML/1998/namespace',
 	'http://www.w3.org/2001/XMLSchema',
@@ -306,7 +312,7 @@ export default function processProlog(
 	prolog: IAST,
 	staticContext: StaticContext,
 	createExpressions = true
-): { functionDeclarations: FunctionDeclaration[]; variableDeclarations: VariableDeclaration[] } {
+): ModuleDeclaration {
 	const staticallyCompilableExpressions: {
 		expression: Expression;
 		staticContextLeaf: StaticContext;
@@ -509,10 +515,6 @@ export default function processProlog(
 		}
 	});
 
-	staticallyCompilableExpressions.forEach(({ expression, staticContextLeaf }) => {
-		expression.performStaticEvaluation(staticContextLeaf);
-	});
-
 	compiledFunctionDeclarations.forEach((compiledFunctionDeclaration) => {
 		if (
 			!compiledFunctionDeclaration.functionDefinition.isUpdating &&
@@ -527,5 +529,11 @@ export default function processProlog(
 	return {
 		functionDeclarations: compiledFunctionDeclarations,
 		variableDeclarations: registeredVariables,
+		performStaticAnalysis: () => {
+staticallyCompilableExpressions.forEach(({ expression, staticContextLeaf }) => {
+		expression.performStaticEvaluation(staticContextLeaf);
+	});
+
+		}
 	};
 }
