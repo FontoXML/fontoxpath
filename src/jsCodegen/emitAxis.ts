@@ -9,7 +9,7 @@ import {
 	rejectAst,
 } from './JavaScriptCompiledXPath';
 
-const axisAstNodes = {
+export const axisAstNodes = {
 	ATTRIBUTE: 'attribute',
 	CHILD: 'child',
 	PARENT: 'parent',

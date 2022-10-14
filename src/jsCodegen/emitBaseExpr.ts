@@ -28,7 +28,7 @@ export function emitBaseExpr(
 		case 'contextItemExpr':
 			return [contextItemExpr, null];
 		case 'pathExpr':
-			return emitPathExpr(ast, context);
+			return emitPathExpr(ast, contextItemExpr, context);
 		case 'andOp':
 			return emitAndExpr(ast, contextItemExpr, context);
 		case 'orOp':

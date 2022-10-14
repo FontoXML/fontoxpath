@@ -2,7 +2,7 @@ import { NODE_TYPES } from '../domFacade/ConcreteNode';
 import { Bucket, intersectBuckets } from '../expressions/util/Bucket';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { CodeGenContext } from './CodeGenContext';
-import emitAxis from './emitAxis';
+import emitAxis, { axisAstNodes } from './emitAxis';
 import {
 	emitAnd,
 	emitEffectiveBooleanValue,
@@ -30,11 +30,6 @@ function emitPredicate(
 
 /**
  * Determines for every path step if it should emit a node or not.
- *
- * @param predicatesAst AST node for the predicate.
- * @param nestLevel The nest level within the path expression.
- * @param staticContext Static context parameter to retrieve context-dependent information.
- * @returns JavaScript code of the steps predicates.
  */
 function emitPredicates(
 	predicatesAst: IAST | null,
@@ -42,7 +37,9 @@ function emitPredicates(
 	context: CodeGenContext
 ): [PartialCompilationResult | null, Bucket] {
 	const predicateAsts = predicatesAst ? astHelper.getChildren(predicatesAst, '*') : [];
-	return predicateAsts.reduce<[PartialCompilationResult | null, Bucket]>(
+	const [combinedPredicatesExpr, bucket] = predicateAsts.reduce<
+		[PartialCompilationResult | null, Bucket]
+	>(
 		([previousExpr, previousBucket], predicateAst) => {
 			if (!previousExpr) {
 				return emitPredicate(predicateAst, contextItemExpr, context);
@@ -69,6 +66,23 @@ function emitPredicates(
 		},
 		[null, null]
 	);
+
+	return [
+		// Make predicate variables evaluate lazily so the test is always checked first
+		combinedPredicatesExpr
+			? mapPartialCompilationResult(combinedPredicatesExpr, (combinedPredicatesExpr) =>
+					acceptAst(
+						`(function () {
+							${combinedPredicatesExpr.variables.join('\n')}
+							return ${combinedPredicatesExpr.code};
+						})()`,
+						{ type: GeneratedCodeBaseType.Value },
+						[]
+					)
+			  )
+			: null,
+		bucket,
+	];
 }
 
 /**
@@ -255,6 +269,44 @@ function emitRootExpr(
 	);
 }
 
+function emitSingleSelfPathExpr(
+	stepAst: IAST,
+	contextItemExpr: PartialCompilationResult,
+	context: CodeGenContext
+): [PartialCompilationResult, Bucket] {
+	return mapPartialCompilationResultAndBucket(contextItemExpr, (contextItemExpr) => {
+		const lookupAsts = astHelper.getChildren(stepAst, 'lookup');
+		if (lookupAsts.length > 0) {
+			return [rejectAst('Unsupported: lookups'), null];
+		}
+		const predicatesAst = astHelper.getFirstChild(stepAst, 'predicates');
+		const [predicatesExpr, predicatesBucket] = emitPredicates(
+			predicatesAst,
+			contextItemExpr,
+			context
+		);
+		const testAst = astHelper.getFirstChild(stepAst, tests);
+		if (!testAst) {
+			return [rejectAst('Unsupported test in step'), null];
+		}
+		const [testExpr, testBucket] = emitTest(testAst, true, contextItemExpr, context);
+		const combinedConditionExpr =
+			predicatesExpr === null ? testExpr : emitAnd(testExpr, predicatesExpr);
+		const combinedConditionBucket = intersectBuckets(testBucket, predicatesBucket);
+
+		return [
+			mapPartialCompilationResult(combinedConditionExpr, (combinedConditionExpr) =>
+				acceptAst(
+					`((${combinedConditionExpr.code}) ? ${contextItemExpr.code} : null)`,
+					{ type: GeneratedCodeBaseType.Value },
+					[...contextItemExpr.variables, ...combinedConditionExpr.variables]
+				)
+			),
+			combinedConditionBucket,
+		];
+	});
+}
+
 /**
  * Takes a path expression AST node and turns it into a javascript function.
  * Path expression can be used to locate nodes within trees and they
@@ -264,23 +316,30 @@ function emitRootExpr(
  */
 export function emitPathExpr(
 	ast: IAST,
+	contextItemExpr: PartialCompilationResult,
 	context: CodeGenContext
 ): [PartialCompilationResult, Bucket] {
-	const contextItemExpr = context.getNewIdentifier('contextItem');
+	// Optimized code for single-self-axis paths, which are used a lot in selectors and don't need
+	// a generator as they only test the context node
+	const stepAsts = astHelper.getChildren(ast, 'stepExpr');
+	if (stepAsts.length === 1) {
+		const axisAst = astHelper.getFirstChild(stepAsts[0], 'xpathAxis');
+		if (axisAst && astHelper.getTextContent(axisAst) === axisAstNodes.SELF) {
+			return emitSingleSelfPathExpr(stepAsts[0], contextItemExpr, context);
+		}
+	}
+
+	// Other paths compile into a generator which is parameterized over contextItemExpr
+	const contextItemArgExpr = context.getNewIdentifier('contextItem');
 	// Find the root node from the context.
 	const isAbsolute = astHelper.getFirstChild(ast, 'rootExpr');
 	const rootExpr = isAbsolute
-		? context.getIdentifierFor(emitRootExpr(contextItemExpr, context), 'root')
-		: contextItemExpr;
-	const [stepsCode, bucket] = emitSteps(
-		astHelper.getChildren(ast, 'stepExpr'),
-		!isAbsolute,
-		rootExpr,
-		context
-	);
+		? context.getIdentifierFor(emitRootExpr(contextItemArgExpr, context), 'root')
+		: contextItemArgExpr;
+	const [stepsCode, bucket] = emitSteps(stepAsts, !isAbsolute, rootExpr, context);
 	const generatorExpr = mapPartialCompilationResult(stepsCode, (stepsCode) =>
 		acceptAst(
-			`(function* (${contextItemExpr.code}) {
+			`(function* (${contextItemArgExpr.code}) {
 			${stepsCode.variables.join('\n')}
 			${stepsCode.code}
 		})`,
