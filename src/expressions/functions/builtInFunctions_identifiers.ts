@@ -6,7 +6,7 @@ import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
 import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
-import { errXPTY0004, XPDY0002 } from '../XPathErrors';
+import { errXPTY0004, errXPDY0002 } from '../XPathErrors';
 import { BuiltinDeclarationType } from './builtInFunctions';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
@@ -44,7 +44,7 @@ const fnId: FunctionDefinitionType = (
 ) => {
 	const targetNodeValue = targetNodeSequence.first();
 	if (!targetNodeValue) {
-		throw XPDY0002('The context is absent, it needs to be present to use id function.');
+		throw errXPDY0002('The context is absent, it needs to be present to use id function.');
 	}
 	if (!isSubtypeOf(targetNodeValue.type, ValueType.NODE)) {
 		throw errXPTY0004(
@@ -102,7 +102,7 @@ const fnIdref: FunctionDefinitionType = (
 ) => {
 	const targetNodeValue = targetNodeSequence.first();
 	if (!targetNodeValue) {
-		throw XPDY0002('The context is absent, it needs to be present to use idref function.');
+		throw errXPDY0002('The context is absent, it needs to be present to use idref function.');
 	}
 	if (!isSubtypeOf(targetNodeValue.type, ValueType.NODE)) {
 		throw errXPTY0004(

@@ -6,7 +6,7 @@ import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/da
 import DynamicContext from '../expressions/DynamicContext';
 import ExecutionParameters from '../expressions/ExecutionParameters';
 import { getFunctionByArity } from '../expressions/functions/functionRegistry';
-import { XPDY0002 } from '../expressions/XPathErrors';
+import { errXPDY0002 } from '../expressions/XPathErrors';
 import { adaptXPathValueToJavascriptValue } from '../registerCustomXPathFunction';
 import { UntypedExternalValue } from '../types/createTypedValueFactory';
 import { Options } from '../types/Options';
@@ -20,7 +20,7 @@ declare interface IRuntimeLib {
 		args: UntypedExternalValue[],
 		options: Options | null
 	) => unknown;
-	XPDY0002: typeof XPDY0002;
+	errXPDY0002: typeof errXPDY0002;
 }
 
 const runtimeLib: IRuntimeLib = {
@@ -71,7 +71,7 @@ const runtimeLib: IRuntimeLib = {
 			executionParameters
 		);
 	},
-	XPDY0002,
+	errXPDY0002,
 };
 
 export default runtimeLib;

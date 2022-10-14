@@ -34,11 +34,11 @@ const supportedFunctions: Record<
 		context: CodeGenContext
 	) => PartialCompilationResult
 > = {
-	'local-name/0': emitLocalNameFunction,
-	'local-name/1': emitLocalNameFunction,
-	'name/0': emitNameFunction,
-	'name/1': emitNameFunction,
-	'not/1': emitNotFunction,
+	'local-name#0': emitLocalNameFunction,
+	'local-name#1': emitLocalNameFunction,
+	'name#0': emitNameFunction,
+	'name#1': emitNameFunction,
+	'not#1': emitNotFunction,
 };
 
 // Built-in function allow list
@@ -46,8 +46,8 @@ const supportedFunctions: Record<
 // they require (no static / dynamic context) and should be safe if their return and argument types
 // are supported.
 const supportedBuiltinFunctions: Record<string, string[]> = {
-	[BUILT_IN_NAMESPACE_URIS.FONTOXPATH_NAMESPACE_URI]: ['version/0'],
-	['']: ['true/0', 'false/0', 'root/1', 'path/1'],
+	[BUILT_IN_NAMESPACE_URIS.FONTOXPATH_NAMESPACE_URI]: ['version#0'],
+	['']: ['true#0', 'false#0', 'root#1', 'path#1'],
 };
 
 function emitFunctionArgumentConversion(
@@ -170,7 +170,7 @@ export function emitFunctionCallExpr(
 
 	const argAsts = astHelper.getChildren(astHelper.getFirstChild(ast, 'arguments'), '*');
 	const arity = argAsts.length;
-	const functionNameAndArity = `${localName}/${arity}`;
+	const functionNameAndArity = `${localName}#${arity}`;
 
 	// First check if we have a codegen-specific implementation
 	const isDefaultFunctionNamespace = namespaceURI === context.defaultFunctionNamespaceUri;
@@ -195,7 +195,7 @@ export function emitFunctionCallExpr(
 	// Then check registered functions
 	const functionProperties = getFunctionByArity(namespaceURI, localName, arity);
 	if (!functionProperties) {
-		return rejectAst(`Unknown function/arity: ${functionNameAndArity}`);
+		return rejectAst(`Unknown function / arity: ${functionNameAndArity}`);
 	}
 
 	// Should never happen, but let's check anyway
@@ -232,7 +232,7 @@ function emitContextItemCheck(
 			acceptAst(contextItemExpr.code, { type: GeneratedCodeBaseType.Value }, [
 				...contextItemExpr.variables,
 				`if (${contextItemExpr.code} === undefined || ${contextItemExpr.code} === null) {
-					throw new Error('XPDY0002: The function which was called depends on dynamic context, which is absent.');
+					throw errXPDY0002('The function which was called depends on dynamic context, which is absent.');
 				}`,
 			])
 	);

@@ -46,7 +46,7 @@ function wrapCompiledCode(code: string, shouldUseContextItem: boolean): string {
 	if (shouldUseContextItem) {
 		finalCode += `
 		if (!contextItem) {
-			throw XPDY0002("Context is needed to evaluate the given path expression.");
+			throw errXPDY0002("Context is needed to evaluate the given path expression.");
 		}
 
 		if (!contextItem.nodeType) {
