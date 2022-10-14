@@ -203,12 +203,14 @@ export function emitConversionToNodes(
 						)
 				);
 			case GeneratedCodeBaseType.Value:
-				return mapPartialCompilationResult(emitNodeCheck(expr, astType, context), (expr) =>
-					acceptAst(
-						`[${expr.code}]`,
-						{ type: GeneratedCodeBaseType.Value },
-						expr.variables
-					)
+				return mapPartialCompilationResult(
+					context.getIdentifierFor(emitNodeCheck(expr, astType, context), 'node'),
+					(expr) =>
+						acceptAst(
+							`(${expr.code} === null ? [] : [${expr.code}])`,
+							{ type: GeneratedCodeBaseType.Value },
+							expr.variables
+						)
 				);
 			default:
 				return rejectAst('Unsupported code type to evaluate to nodes');
