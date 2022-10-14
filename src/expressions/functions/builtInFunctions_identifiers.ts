@@ -6,7 +6,7 @@ import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
 import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
-import { errXPTY0004, errXPDY0002 } from '../XPathErrors';
+import { errXPDY0002, errXPTY0004 } from '../XPathErrors';
 import { BuiltinDeclarationType } from './builtInFunctions';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
