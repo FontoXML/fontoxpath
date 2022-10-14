@@ -3,14 +3,13 @@ import sequenceFactory from '../dataTypes/sequenceFactory';
 import { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
 import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
 import { DONE_TOKEN, ready } from '../util/iterators';
+import { errXPDY0002 } from '../XPathErrors';
 import { BuiltinDeclarationType } from './builtInFunctions';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
 const fnLast: FunctionDefinitionType = (dynamicContext) => {
 	if (dynamicContext.contextItem === null) {
-		throw new Error(
-			'XPDY0002: The fn:last() function depends on dynamic context, which is absent.'
-		);
+		throw errXPDY0002('The fn:last() function depends on dynamic context, which is absent.');
 	}
 
 	let done = false;
@@ -31,8 +30,8 @@ const fnLast: FunctionDefinitionType = (dynamicContext) => {
 
 const fnPosition: FunctionDefinitionType = (dynamicContext) => {
 	if (dynamicContext.contextItem === null) {
-		throw new Error(
-			'XPDY0002: The fn:position() function depends on dynamic context, which is absent.'
+		throw errXPDY0002(
+			'The fn:position() function depends on dynamic context, which is absent.'
 		);
 	}
 	// Note: +1 because XPath is one-based

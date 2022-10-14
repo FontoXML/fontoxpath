@@ -4,6 +4,7 @@ import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
+import { errXPDY0002 } from '../XPathErrors';
 
 class ContextItemExpression extends Expression {
 	constructor(type: SequenceType) {
@@ -20,9 +21,7 @@ class ContextItemExpression extends Expression {
 
 	public evaluate(dynamicContext: DynamicContext, _executionParameters: ExecutionParameters) {
 		if (dynamicContext.contextItem === null) {
-			throw new Error(
-				'XPDY0002: context is absent, it needs to be present to use the "." operator'
-			);
+			throw errXPDY0002('context is absent, it needs to be present to use the "." operator');
 		}
 		return sequenceFactory.singleton(dynamicContext.contextItem);
 	}

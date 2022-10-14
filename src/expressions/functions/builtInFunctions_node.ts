@@ -26,6 +26,7 @@ import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
 import StaticContext from '../StaticContext';
 import { IterationHint } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
+import { errXPDY0002 } from '../XPathErrors';
 import { BuiltinDeclarationType } from './builtInFunctions';
 import builtinStringFunctions from './builtInFunctions_string';
 import FunctionDefinitionType from './FunctionDefinitionType';
@@ -33,14 +34,15 @@ import FunctionDefinitionType from './FunctionDefinitionType';
 const fnString = builtinStringFunctions.functions.string;
 
 function contextItemAsFirstArgument(
+	functionName: string,
 	fn: FunctionDefinitionType,
 	dynamicContext: DynamicContext,
 	executionParameters: ExecutionParameters,
 	staticContext: StaticContext
 ) {
 	if (dynamicContext.contextItem === null) {
-		throw new Error(
-			'XPDY0002: The function which was called depends on dynamic context, which is absent.'
+		throw errXPDY0002(
+			`The function ${functionName} depends on dynamic context, which is absent.`
 		);
 	}
 	return fn(
@@ -408,7 +410,7 @@ const declarations: BuiltinDeclarationType[] = [
 
 	{
 		argumentTypes: [],
-		callFunction: contextItemAsFirstArgument.bind(null, fnName),
+		callFunction: contextItemAsFirstArgument.bind(null, 'name', fnName),
 		localName: 'name',
 		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
@@ -424,7 +426,7 @@ const declarations: BuiltinDeclarationType[] = [
 
 	{
 		argumentTypes: [],
-		callFunction: contextItemAsFirstArgument.bind(null, fnNamespaceURI),
+		callFunction: contextItemAsFirstArgument.bind(null, 'namespace-uri', fnNamespaceURI),
 		localName: 'namespace-uri',
 		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSANYURI, mult: SequenceMultiplicity.EXACTLY_ONE },
@@ -459,7 +461,7 @@ const declarations: BuiltinDeclarationType[] = [
 
 	{
 		argumentTypes: [],
-		callFunction: contextItemAsFirstArgument.bind(null, fnHasChildren),
+		callFunction: contextItemAsFirstArgument.bind(null, 'has-children', fnHasChildren),
 		localName: 'has-children',
 		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE },
@@ -475,7 +477,7 @@ const declarations: BuiltinDeclarationType[] = [
 
 	{
 		argumentTypes: [],
-		callFunction: contextItemAsFirstArgument.bind(null, fnPath),
+		callFunction: contextItemAsFirstArgument.bind(null, 'path', fnPath),
 		localName: 'path',
 		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSSTRING, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -491,7 +493,7 @@ const declarations: BuiltinDeclarationType[] = [
 
 	{
 		argumentTypes: [],
-		callFunction: contextItemAsFirstArgument.bind(null, fnNodeName),
+		callFunction: contextItemAsFirstArgument.bind(null, 'node-name', fnNodeName),
 		localName: 'node-name',
 		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSQNAME, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -507,7 +509,7 @@ const declarations: BuiltinDeclarationType[] = [
 
 	{
 		argumentTypes: [],
-		callFunction: contextItemAsFirstArgument.bind(null, fnLocalName),
+		callFunction: contextItemAsFirstArgument.bind(null, 'local-name', fnLocalName),
 		localName: 'local-name',
 		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
@@ -523,7 +525,7 @@ const declarations: BuiltinDeclarationType[] = [
 
 	{
 		argumentTypes: [],
-		callFunction: contextItemAsFirstArgument.bind(null, fnRoot),
+		callFunction: contextItemAsFirstArgument.bind(null, 'root', fnRoot),
 		localName: 'root',
 		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.NODE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -531,7 +533,7 @@ const declarations: BuiltinDeclarationType[] = [
 
 	{
 		argumentTypes: [],
-		callFunction: contextItemAsFirstArgument.bind(null, fnData),
+		callFunction: contextItemAsFirstArgument.bind(null, 'data', fnData),
 		localName: 'data',
 		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_MORE },

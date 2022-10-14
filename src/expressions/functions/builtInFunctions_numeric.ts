@@ -13,6 +13,7 @@ import type ExecutionParameters from '../ExecutionParameters';
 import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
 import type StaticContext from '../StaticContext';
 import { DONE_TOKEN, ready } from '../util/iterators';
+import { errXPDY0002 } from '../XPathErrors';
 import { performFunctionConversion } from './argumentHelper';
 import type { BuiltinDeclarationType } from './builtInFunctions';
 import type FunctionDefinitionType from './FunctionDefinitionType';
@@ -484,7 +485,7 @@ const declarations: BuiltinDeclarationType[] = [
 					false
 				);
 			if (!atomizedContextItem) {
-				throw new Error('XPDY0002: fn:number needs an atomizable context item.');
+				throw errXPDY0002('fn:number needs an atomizable context item.');
 			}
 			return fnNumber(
 				dynamicContext,
