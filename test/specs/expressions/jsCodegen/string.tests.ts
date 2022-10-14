@@ -8,9 +8,9 @@ import {
 	parseScript,
 	ReturnType,
 } from 'fontoxpath';
+import escapeJavaScriptString from 'fontoxpath/jsCodegen/escapeJavaScriptString';
 import * as slimdom from 'slimdom';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
-import escapeJavaScriptString from 'fontoxpath/jsCodegen/escapeJavaScriptString';
 import evaluateXPathWithJsCodegen from '../../parsing/jsCodegen/evaluateXPathWithJsCodegen';
 
 describe('string tests', () => {

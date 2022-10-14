@@ -6,7 +6,7 @@ import {
 	Language,
 	parseScript,
 } from 'fontoxpath';
-import { Document, Element, Text, parseXmlDocument, XMLSerializer } from 'slimdom';
+import { Document, Element, parseXmlDocument, Text, XMLSerializer } from 'slimdom';
 
 function removeInsignificantWhitespace(root: Document) {
 	const nonSignificantWhitespace = evaluateXPathToNodes<Text>('//*/text()', root, null, null, {

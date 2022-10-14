@@ -460,7 +460,7 @@ describe('annotating varRef', () => {
  * @param context the context in which the variables are inserted
  * @param variables
  */
-function insertVariables(context: AnnotationContext, variables: Array<[string, SequenceType]>) {
+function insertVariables(context: AnnotationContext, variables: [string, SequenceType][]) {
 	variables.forEach((element) => {
 		context.insertVariable(element[0], element[1]);
 	});
@@ -473,6 +473,6 @@ function insertVariables(context: AnnotationContext, variables: Array<[string, S
 // describe('Annotating ', () => {
 // 	it('',
 // 		() => {
-//			// assertValueType('', ValueType. , undefined)
+// 			// assertValueType('', ValueType. , undefined)
 // 		});
 // });
