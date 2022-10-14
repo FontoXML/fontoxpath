@@ -13,11 +13,11 @@ describe('compare tests', () => {
 
 	it('does not generate compare function for nodes', () => {
 		const node = documentNode.documentElement;
-		const query = '@attr = true()';
+		const query = '@attr << @attr';
 
 		chai.assert.throws(
 			() => evaluateXPathWithJsCodegen(query, node, null, ReturnType.BOOLEAN),
-			'Unsupported function: true'
+			'Unsupported compare type'
 		);
 
 		chai.assert.equal(evaluateXPathToBoolean(query, node), true);

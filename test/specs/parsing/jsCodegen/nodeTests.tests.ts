@@ -10,7 +10,16 @@ describe('node tests', () => {
 	let documentNode: slimdom.Document;
 	beforeEach(() => {
 		documentNode = new slimdom.Document();
-		jsonMlMapper.parse(['xml', 'Hello'], documentNode);
+		jsonMlMapper.parse(['xml', 'Hello', ['!', 'comment']], documentNode);
+	});
+
+	it('selects any nodes', () => {
+		const textNode = documentNode.documentElement.firstChild;
+		const comment = documentNode.documentElement.lastChild;
+		chai.assert.sameOrderedMembers(
+			evaluateXPathWithJsCodegen('/xml/node()', documentNode, null, ReturnType.NODES),
+			[textNode, comment]
+		);
 	});
 
 	it('selects text nodes', () => {

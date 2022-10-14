@@ -2,9 +2,9 @@ import benchmarkRunner from '@fontoxml/fonto-benchmark-runner';
 import { Document, Node, parseXmlDocument } from 'slimdom';
 import {
 	evaluateXPathToBoolean,
+	evaluateXPathToFirstNode,
 	evaluateXPathToNodes,
 	ReturnType,
-	evaluateXPathToFirstNode,
 } from '../src/index';
 import jsonMlMapper from '../test/helpers/jsonMlMapper';
 import evaluateXPathWithJsCodegen from '../test/specs/parsing/jsCodegen/evaluateXPathWithJsCodegen';

@@ -1,66 +1,77 @@
-import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
-import getEffectiveBooleanValue from '../expressions/dataTypes/Sequences/getEffectiveBooleanValue';
-import { DONE_TOKEN, ready } from '../expressions/util/iterators';
-import {
-	acceptAst,
-	GeneratedCodeBaseType,
-	GeneratedCodeType,
-	PartialCompilationResult,
-} from './JavaScriptCompiledXPath';
-
-export function determinePredicateTruthValue(
-	identifier: string,
-	code: string,
-	type: GeneratedCodeType,
-	contextItem: string = 'contextItem'
-): PartialCompilationResult {
-	switch (type.type) {
-		case GeneratedCodeBaseType.Value:
-		case GeneratedCodeBaseType.Variable:
-			return acceptAst(`!!${identifier}`, { type: GeneratedCodeBaseType.Value }, [code]);
-		case GeneratedCodeBaseType.Function: {
-			const result = determinePredicateTruthValue(
-				`${identifier}(${contextItem})`,
-				'',
-				type.returnType,
-				contextItem
-			);
-			if (!result.isAstAccepted) {
-				return result;
-			}
-			return acceptAst(`!!${result.code}`, result.generatedCodeType, [code]);
-		}
-		case GeneratedCodeBaseType.Iterator: {
-			return acceptAst(
-				`(() => {
-					const result = ${identifier}.next();
-					return result.done ? false : !!result.value;
-				})()`,
-				{ type: GeneratedCodeBaseType.Value }
-			);
-		}
-		case GeneratedCodeBaseType.None:
-			throw new Error('Trying to get value of generated code with type None');
-		default:
-			throw new Error(
-				'Unreachable! Trying to get compiled value of unsupported GeneratedCodeType.'
-			);
-	}
-}
+import DomFacade from '../domFacade/DomFacade';
+import IDomFacade from '../domFacade/IDomFacade';
+import { adaptJavaScriptValueToSequence } from '../expressions/adaptJavaScriptValueToXPathValue';
+import sequenceFactory from '../expressions/dataTypes/sequenceFactory';
+import { SequenceMultiplicity, SequenceType, ValueType } from '../expressions/dataTypes/Value';
+import DynamicContext from '../expressions/DynamicContext';
+import ExecutionParameters from '../expressions/ExecutionParameters';
+import { getFunctionByArity } from '../expressions/functions/functionRegistry';
+import { errXPDY0002 } from '../expressions/XPathErrors';
+import { adaptXPathValueToJavascriptValue } from '../registerCustomXPathFunction';
+import { UntypedExternalValue } from '../types/createTypedValueFactory';
+import { Options } from '../types/Options';
 
 // Make sure Closure Compiler does not change property names.
 declare interface IRuntimeLib {
-	DONE_TOKEN: typeof DONE_TOKEN;
-	getEffectiveBooleanValue: typeof getEffectiveBooleanValue;
-	isSubtypeOf: typeof isSubtypeOf;
-	ready: typeof ready;
+	callFunction: (
+		domFacade: IDomFacade,
+		namespaceURI: string,
+		localName: string,
+		args: UntypedExternalValue[],
+		options: Options | null
+	) => unknown;
+	errXPDY0002: typeof errXPDY0002;
 }
 
 const runtimeLib: IRuntimeLib = {
-	DONE_TOKEN,
-	getEffectiveBooleanValue,
-	isSubtypeOf,
-	ready,
+	callFunction(domFacade, namespaceURI, localName, args, options): unknown {
+		const functionProperties = getFunctionByArity(namespaceURI, localName, args.length);
+		if (!functionProperties) {
+			throw new Error('function not found for codegen function call');
+		}
+		// TODO: pass context item if the function uses it - can we annotate them?
+		// (custom functions and functions on allow list don't currently use this)
+		const dynamicContext = new DynamicContext({
+			contextItem: null,
+			contextItemIndex: 0,
+			contextSequence: sequenceFactory.empty(),
+			variableBindings: {},
+		});
+		const wrappedDomFacade = new DomFacade(domFacade);
+		const currentContext = options ? options['currentContext'] : null;
+		const executionParameters = new ExecutionParameters(
+			false,
+			false,
+			wrappedDomFacade,
+			null,
+			null,
+			currentContext,
+			null
+		);
+		const ret = functionProperties.callFunction(
+			dynamicContext,
+			executionParameters,
+			null,
+			// Assume types are pre-checked and converted by the calling codegen code - any type
+			// checking should happen during codegen. Sequences > 1 are not supported.
+			...args.map((v, i) =>
+				adaptJavaScriptValueToSequence(
+					wrappedDomFacade,
+					v,
+					functionProperties.argumentTypes[i] as SequenceType
+				)
+			)
+		);
+		return adaptXPathValueToJavascriptValue(
+			ret,
+			{
+				type: ValueType.ITEM,
+				mult: SequenceMultiplicity.ZERO_OR_ONE,
+			},
+			executionParameters
+		);
+	},
+	errXPDY0002,
 };
 
 export default runtimeLib;

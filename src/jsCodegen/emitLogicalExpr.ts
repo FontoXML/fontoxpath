@@ -1,11 +1,10 @@
-import { ValueType } from '../expressions/dataTypes/Value';
 import { Bucket, intersectBuckets } from '../expressions/util/Bucket';
-import { IAST } from '../parsing/astHelper';
+import astHelper, { IAST } from '../parsing/astHelper';
 import { CodeGenContext } from './CodeGenContext';
+import { emitEffectiveBooleanValue, mapPartialCompilationResult } from './emitHelpers';
 import { emitOperand } from './emitOperand';
 import {
 	acceptAst,
-	FunctionIdentifier,
 	GeneratedCodeBaseType,
 	PartialCompilationResult,
 } from './JavaScriptCompiledXPath';
@@ -14,36 +13,26 @@ import {
  * Helper function to compile an and expressions to a JavaScript function.
  *
  * https://www.w3.org/TR/xpath-31/#doc-xpath31-AndExpr
- *
- * @param ast Logical expression AST node.
- * @param identifier Function identifier for the emitted function
- * @param staticContext Static context parameter to retrieve context-dependent information.
- * @returns Wrapped and expression.
  */
 export function emitAndExpr(
 	ast: IAST,
-	identifier: FunctionIdentifier,
-	staticContext: CodeGenContext
+	contextItemExpr: PartialCompilationResult,
+	context: CodeGenContext
 ): [PartialCompilationResult, Bucket] {
-	return emitLogicalExpr(ast, identifier, staticContext, '&&');
+	return emitLogicalExpr(ast, '&&', contextItemExpr, context);
 }
 
 /**
  * Helper function to compile an or expressions to a JavaScript function.
  *
  * https://www.w3.org/TR/xpath-31/#doc-xpath31-OrExpr
- *
- * @param ast Logical expression AST node.
- * @param identifier Function identifier for the emitted function
- * @param staticContext Static context parameter to retrieve context-dependent information.
- * @returns Wrapped or expression.
  */
 export function emitOrExpr(
 	ast: IAST,
-	identifier: FunctionIdentifier,
-	staticContext: CodeGenContext
+	contextItemExpr: PartialCompilationResult,
+	context: CodeGenContext
 ): [PartialCompilationResult, Bucket] {
-	return emitLogicalExpr(ast, identifier, staticContext, '||');
+	return emitLogicalExpr(ast, '||', contextItemExpr, context);
 }
 
 /**
@@ -59,46 +48,43 @@ export function emitOrExpr(
  */
 function emitLogicalExpr(
 	ast: IAST,
-	identifier: FunctionIdentifier,
-	staticContext: CodeGenContext,
-	logicalExprOperator: '&&' | '||'
+	logicalExprOperator: '&&' | '||',
+	contextItemExpr: PartialCompilationResult,
+	context: CodeGenContext
 ): [PartialCompilationResult, Bucket] {
-	const [firstExpr, firstBucket] = emitOperand(
-		ast,
-		identifier,
-		'firstOperand',
-		staticContext,
-		ValueType.XSBOOLEAN
+	const [firstExpr, firstBucket] = emitOperand(ast, 'firstOperand', contextItemExpr, context);
+	const firstType = astHelper.getAttribute(
+		astHelper.followPath(ast, ['firstOperand', '*']),
+		'type'
 	);
-	if (!firstExpr.isAstAccepted) {
-		return [firstExpr, null];
-	}
+	const firstAsBool = emitEffectiveBooleanValue(firstExpr, firstType, contextItemExpr, context);
+	const [secondExpr, secondBucket] = emitOperand(ast, 'secondOperand', contextItemExpr, context);
+	const logicalOpExpr = mapPartialCompilationResult(firstAsBool, (firstAsBool) => {
+		const secondType = astHelper.getAttribute(
+			astHelper.followPath(ast, ['firstOperand', '*']),
+			'type'
+		);
+		const secondAsBool = emitEffectiveBooleanValue(
+			secondExpr,
+			secondType,
+			contextItemExpr,
+			context
+		);
+		return mapPartialCompilationResult(secondAsBool, (secondAsBool) =>
+			acceptAst(
+				`(${firstAsBool.code} ${logicalExprOperator} ${secondAsBool.code})`,
+				{ type: GeneratedCodeBaseType.Value },
+				[...firstAsBool.variables, ...secondAsBool.variables]
+			)
+		);
+	});
 
-	const [secondExpr, secondBucket] = emitOperand(
-		ast,
-		identifier,
-		'secondOperand',
-		staticContext,
-		ValueType.XSBOOLEAN
-	);
-	if (!secondExpr.isAstAccepted) {
-		return [secondExpr, null];
-	}
-
-	const logicalOpCode = `
-	function ${identifier}(contextItem) {
-		${firstExpr.variables.join('\n')}
-		${secondExpr.variables.join('\n')}
-		return ${firstExpr.code} ${logicalExprOperator} ${secondExpr.code};
-	}
-	`;
-	return [
-		acceptAst(logicalOpCode, {
-			type: GeneratedCodeBaseType.Function,
-			returnType: { type: GeneratedCodeBaseType.Value },
-		}),
+	const bucket =
 		logicalExprOperator === '&&'
 			? intersectBuckets(firstBucket, secondBucket)
-			: firstBucket || secondBucket,
-	];
+			: firstBucket === secondBucket
+			? firstBucket
+			: null;
+
+	return [logicalOpExpr, bucket];
 }

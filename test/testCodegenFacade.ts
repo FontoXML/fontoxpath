@@ -88,7 +88,7 @@ const evaluateXPathWithJsCodegen = <
 		const evalFunction = new Function(compiledXPathResult.code) as CompiledXPathFunction;
 
 		codegenCases++;
-		return executeJavaScriptCompiledXPath(evalFunction, contextItem, localDomFacade);
+		return executeJavaScriptCompiledXPath(evalFunction, contextItem, localDomFacade, options);
 	} else {
 		// The query AST was not eligible to be converted to Javascript
 		return evaluateXPath(query, contextItem, localDomFacade, null, returnType, options);

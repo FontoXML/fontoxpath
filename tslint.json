@@ -16,6 +16,7 @@
 			}
 		],
 		"no-bitwise": false,
+		"no-shadowed-variable": false,
 		"no-string-literal": false,
 		"no-unnecessary-qualifier": true,
 		"no-unnecessary-type-assertion": true,

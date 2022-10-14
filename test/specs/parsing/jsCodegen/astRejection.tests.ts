@@ -136,7 +136,7 @@ describe("rejecting unsupported AST's (js-codegen)", () => {
 		);
 	});
 
-	it('rejects unsupported base expression (functionCallExpr)', () => {
+	it('rejects unsupported function (boolean)', () => {
 		chai.assert.throws(
 			() =>
 				evaluateXPathWithJsCodegen(
@@ -145,7 +145,7 @@ describe("rejecting unsupported AST's (js-codegen)", () => {
 					null,
 					ReturnType.BOOLEAN
 				),
-			'Unsupported'
+			'Not supported'
 		);
 	});
 

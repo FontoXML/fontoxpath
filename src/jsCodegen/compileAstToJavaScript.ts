@@ -1,114 +1,36 @@
-import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
-import { ValueType } from '../expressions/dataTypes/Value';
+import { SequenceType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { ReturnType } from '../parsing/convertXDMReturnValue';
 import { CodeGenContext } from './CodeGenContext';
-import { emitBaseExpr } from './emitBaseExpression';
-import { getDataFromOperandCode } from './emitCompare';
 import {
-	acceptAst,
+	emitConversionToFirstNode,
+	emitConversionToNodes,
+	emitConversionToString,
+	emitEffectiveBooleanValue,
+} from './emitHelpers';
+import {
 	acceptFullyCompiledAst,
-	GeneratedCodeBaseType,
-	GeneratedCodeType,
-	getCompiledValueCode,
 	JavaScriptCompiledXPathResult,
 	PartialCompilationResult,
 	rejectAst,
 } from './JavaScriptCompiledXPath';
-import { determinePredicateTruthValue } from './runtimeLib';
-
-// Return all matching nodes.
-function emitEvaluationToNodes(
-	identifier: string,
-	generatedCodeType: GeneratedCodeType
-): PartialCompilationResult {
-	const [valueCode, valueCodeType] = getCompiledValueCode(identifier, generatedCodeType);
-	if (valueCodeType.type !== GeneratedCodeBaseType.Iterator) {
-		return rejectAst('Return type was not an iterator');
-	}
-
-	return acceptAst(
-		`
-	const nodes = [];
-	for (const node of ${valueCode}) {
-		nodes.push(node);
-	}
-	return nodes;
-	`,
-		{ type: GeneratedCodeBaseType.Statement }
-	);
-}
-
-// Get effective boolean value.
-function emitEvaluationToBoolean(
-	identifier: string,
-	generatedCodeType: GeneratedCodeType
-): PartialCompilationResult {
-	const generated = determinePredicateTruthValue(identifier, '', generatedCodeType);
-	if (!generated.isAstAccepted) {
-		return generated;
-	}
-	return acceptAst(`return ${generated.code};`, { type: GeneratedCodeBaseType.Statement });
-}
-
-// Strings can just be returned as is so lets do that
-function emitEvaluationToString(
-	identifier: string,
-	generatedCodeType: GeneratedCodeType,
-	astType: ValueType
-): PartialCompilationResult {
-	if (astType === undefined) {
-		return rejectAst("Full AST wasn't annotated so we cannot correctly emit a string return");
-	}
-	if (!isSubtypeOf(astType, ValueType.XSSTRING) && !isSubtypeOf(astType, ValueType.ATTRIBUTE)) {
-		return rejectAst(
-			'Not implemented: returning anything but strings and attributes from codegen'
-		);
-	}
-
-	const [valueCode, valueCodeType] = getCompiledValueCode(identifier, generatedCodeType);
-
-	const valueDataCode = getDataFromOperandCode(valueCode, valueCodeType.type, astType);
-	// Note that `getDataFromOperandCode` can return null for empty strings. Stringify these cases
-	return acceptAst(`return ${valueDataCode} || '';`, { type: GeneratedCodeBaseType.Statement });
-}
-
-function emitEvaluationToFirstNode(
-	identifier: string,
-	generatedCodeType: GeneratedCodeType
-): PartialCompilationResult {
-	const [valueCode, valueCodeType] = getCompiledValueCode(identifier, generatedCodeType);
-	if (valueCodeType.type !== GeneratedCodeBaseType.Iterator) {
-		throw new Error('Trying access generated code as an iterator while this is not the case.');
-	}
-
-	return acceptAst(
-		`
-	const firstResult = ${valueCode}.next();
-	if (!firstResult.done) {
-		return firstResult.value
-	}
-	return null;
-	`,
-		{ type: GeneratedCodeBaseType.Statement }
-	);
-}
 
 function emitReturnTypeConversion(
-	identifier: string,
+	expr: PartialCompilationResult,
 	returnType: ReturnType,
-	generatedCodeType: GeneratedCodeType,
-	astType: ValueType
+	astType: SequenceType,
+	contextItemExpr: PartialCompilationResult,
+	context: CodeGenContext
 ): PartialCompilationResult {
 	switch (returnType) {
 		case ReturnType.FIRST_NODE:
-			return emitEvaluationToFirstNode(identifier, generatedCodeType);
+			return emitConversionToFirstNode(expr, astType, contextItemExpr, context);
 		case ReturnType.NODES:
-			return emitEvaluationToNodes(identifier, generatedCodeType);
+			return emitConversionToNodes(expr, astType, contextItemExpr, context);
 		case ReturnType.BOOLEAN:
-			return emitEvaluationToBoolean(identifier, generatedCodeType);
+			return emitEffectiveBooleanValue(expr, astType, contextItemExpr, context);
 		case ReturnType.STRING:
-			return emitEvaluationToString(identifier, generatedCodeType, astType);
+			return emitConversionToString(expr, astType, contextItemExpr, context);
 		default:
 			return rejectAst(`Unsupported: the return type '${returnType}'.`);
 	}
@@ -116,21 +38,15 @@ function emitReturnTypeConversion(
 
 function wrapCompiledCode(code: string, shouldUseContextItem: boolean): string {
 	let finalCode = `
-	return (contextItem, domFacade, runtimeLib) => {
+	return (contextItem, domFacade, runtimeLib, options) => {
 		const {
-			DONE_TOKEN,
-			ValueType,
 			XPDY0002,
-			determinePredicateTruthValue,
-			isSubtypeOf,
-			ready,
-			atomize,
 		} = runtimeLib;`;
 
 	if (shouldUseContextItem) {
 		finalCode += `
 		if (!contextItem) {
-			throw XPDY0002("Context is needed to evaluate the given path expression.");
+			throw errXPDY0002("Context is needed to evaluate the given path expression.");
 		}
 
 		if (!contextItem.nodeType) {
@@ -149,7 +65,7 @@ const compiledXPathIdentifier = 'compiledXPathExpression';
 function compileAstToJavaScript(
 	xPathAst: IAST,
 	returnType: ReturnType,
-	staticContext: CodeGenContext
+	context: CodeGenContext
 ): JavaScriptCompiledXPathResult {
 	const mainModule = astHelper.getFirstChild(xPathAst, 'mainModule');
 	if (!mainModule) {
@@ -163,38 +79,30 @@ function compileAstToJavaScript(
 
 	const queryBodyContents = astHelper.followPath(mainModule, ['queryBody', '*']);
 
-	staticContext.emitBaseExpr = emitBaseExpr;
-
-	const [compiledBaseExpr, _bucket] = emitBaseExpr(
+	const contextItemExpr = context.getVarInScope('contextItem');
+	const [compiledBaseExpr, _bucket] = context.emitBaseExpr(
 		queryBodyContents,
-		compiledXPathIdentifier,
-		staticContext
+		contextItemExpr,
+		context
 	);
-	if (compiledBaseExpr.isAstAccepted === false) {
-		return compiledBaseExpr;
-	}
-
-	const emittedVariables = compiledBaseExpr.variables
-		? compiledBaseExpr.variables.join('\n')
-		: '';
 
 	const queryType = astHelper.getAttribute(queryBodyContents, 'type');
-
-	const returnTypeConversionCode = emitReturnTypeConversion(
-		compiledXPathIdentifier,
+	const compiledReturnValue = emitReturnTypeConversion(
+		compiledBaseExpr,
 		returnType,
-		compiledBaseExpr.generatedCodeType,
-		queryType ? queryType.type : undefined
+		queryType,
+		contextItemExpr,
+		context
 	);
 
-	if (returnTypeConversionCode.isAstAccepted === false) {
-		return returnTypeConversionCode;
+	// Convert partial compilation into a fully-compiled expression
+	if (!compiledReturnValue.isAstAccepted) {
+		return compiledReturnValue;
 	}
-
-	const code = emittedVariables + compiledBaseExpr.code + returnTypeConversionCode.code;
-
+	const code = `
+		${compiledReturnValue.variables.join('\n')}
+		return ${compiledReturnValue.code};`;
 	const requiresContext = checkForContextItemInExpression(xPathAst);
-
 	const wrappedCode = wrapCompiledCode(code, requiresContext);
 
 	return acceptFullyCompiledAst(wrappedCode);
