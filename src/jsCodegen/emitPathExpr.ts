@@ -186,65 +186,88 @@ function emitSteps(
 		context
 	);
 	// Assign it to the stepContextItem variable
-	const filterExprAsStepContextItemExpr = mapPartialCompilationResult(filterExpr, (filterExpr) =>
-		acceptAst(
-			`const ${stepContextItemExpr.code} = ${filterExpr.code};`,
-			{ type: GeneratedCodeBaseType.Statement },
-			[...stepContextItemExpr.variables, ...filterExpr.variables]
-		)
-	);
-
-	// If there are following steps, the result of the expression must be a node
-	const filterExprWithCheck =
-		restStepAsts.length === 0
-			? filterExprAsStepContextItemExpr
-			: mapPartialCompilationResult(
-					filterExprAsStepContextItemExpr,
-					(filterExprAsStepContextItemExpr) =>
-						acceptAst(
-							`${filterExprAsStepContextItemExpr.code}
-							if (${stepContextItemExpr.code} !== null && !${stepContextItemExpr.code}.nodeType) {
-								throw new Error('XPTY0019: The result of E1 in a path expression E1/E2 should evaluate to a sequence of nodes.');
-							}`,
+	// If the filterExpr is a path, the result could be another generator we should loop over
+	return [
+		mapPartialCompilationResult(filterExpr, (filterExpr) => {
+			// If there are following steps, the result of the expression must be a node
+			const pathTypeCheck =
+				restStepAsts.length === 0
+					? acceptAst(``, { type: GeneratedCodeBaseType.Statement }, [])
+					: acceptAst(
+							`if (${stepContextItemExpr.code} !== null && !${stepContextItemExpr.code}.nodeType) {
+									throw new Error('XPTY0019: The result of E1 in a path expression E1/E2 should evaluate to a sequence of nodes.');
+								}`,
 							{ type: GeneratedCodeBaseType.Statement },
-							filterExprAsStepContextItemExpr.variables
-						)
-			  );
+							[]
+					  );
 
-	return mapPartialCompilationResultAndBucket(filterExprWithCheck, (filterExprWithCheck) => {
-		// Compile nested steps
-		const [nestedStepsCode, _] = emitSteps(restStepAsts, true, stepContextItemExpr, context);
+			// Compile nested steps
+			const [nestedStepsCode, _] = emitSteps(
+				restStepAsts,
+				true,
+				stepContextItemExpr,
+				context
+			);
 
-		const nestedCode =
-			predicatesExpr === null
-				? nestedStepsCode
-				: mapPartialCompilationResult(predicatesExpr, (predicatesExpr) =>
-						mapPartialCompilationResult(nestedStepsCode, (nestedStepsCode) =>
-							acceptAst(
-								`if (${predicatesExpr.code}) {
+			const nestedCode =
+				predicatesExpr === null
+					? nestedStepsCode
+					: mapPartialCompilationResult(predicatesExpr, (predicatesExpr) =>
+							mapPartialCompilationResult(nestedStepsCode, (nestedStepsCode) =>
+								acceptAst(
+									`if (${predicatesExpr.code}) {
 									${nestedStepsCode.variables.join('\n')}
 									${nestedStepsCode.code}
 								}`,
-								{ type: GeneratedCodeBaseType.Statement },
-								predicatesExpr.variables
+									{ type: GeneratedCodeBaseType.Statement },
+									predicatesExpr.variables
+								)
 							)
-						)
-				  );
+					  );
 
-		// Combine
-		return [
-			mapPartialCompilationResult(nestedCode, (nestedCode) =>
-				acceptAst(
-					`${filterExprWithCheck.code}
-					${nestedCode.variables.join('\n')}
-					${nestedCode.code}`,
-					{ type: GeneratedCodeBaseType.Statement },
-					filterExprWithCheck.variables
-				)
-			),
-			filterBucket,
-		];
-	});
+			// Combine
+			return mapPartialCompilationResult(nestedCode, (nestedCode) => {
+				switch (filterExpr.generatedCodeType.type) {
+					case GeneratedCodeBaseType.Generator:
+						return mapPartialCompilationResult(contextItemExpr, (contextItemExpr) =>
+							acceptAst(
+								`for (const ${stepContextItemExpr.code} of ${filterExpr.code}(${
+									contextItemExpr.code
+								})) {
+									${nestedCode.variables.join('\n')}
+									${nestedCode.code}
+								}`,
+								{ type: GeneratedCodeBaseType.Statement },
+								[
+									...stepContextItemExpr.variables,
+									...filterExpr.variables,
+									...pathTypeCheck.variables,
+								]
+							)
+						);
+
+					case GeneratedCodeBaseType.Value:
+						return acceptAst(
+							`const ${stepContextItemExpr.code} = ${filterExpr.code};
+							${pathTypeCheck.code}
+							if (${stepContextItemExpr.code} !== null) {
+								${nestedCode.variables.join('\n')}
+								${nestedCode.code}
+							}`,
+							{ type: GeneratedCodeBaseType.Statement },
+							[
+								...stepContextItemExpr.variables,
+								...filterExpr.variables,
+								...pathTypeCheck.variables,
+							]
+						);
+					default:
+						return rejectAst('Unsupported generated code type for filterExpr');
+				}
+			});
+		}),
+		filterBucket,
+	];
 }
 
 function emitRootExpr(

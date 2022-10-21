@@ -1,6 +1,7 @@
 import {
 	CompiledXPathFunction,
 	compileXPathToJavaScript,
+	EvaluableExpression,
 	executeJavaScriptCompiledXPath,
 	IDomFacade,
 	IReturnTypes,
@@ -8,17 +9,33 @@ import {
 	ReturnType,
 } from '../../../../src/index';
 
-function generateKey(query: string, returnType: ReturnType) {
-	return `${query} ${returnType}`;
+const compiledXPathCache = new Map<EvaluableExpression, Map<ReturnType, CompiledXPathFunction>>();
+
+function getFromCache(
+	query: EvaluableExpression,
+	returnType: ReturnType
+): CompiledXPathFunction | undefined {
+	return compiledXPathCache.get(query)?.get(returnType);
 }
 
-const compiledXPathCache = new Map();
+function addToCache(
+	query: EvaluableExpression,
+	returnType: ReturnType,
+	fn: CompiledXPathFunction
+): void {
+	let byReturnType = compiledXPathCache.get(query);
+	if (byReturnType === undefined) {
+		byReturnType = new Map();
+		compiledXPathCache.set(query, byReturnType);
+	}
+	byReturnType.set(returnType, fn);
+}
 
 const evaluateXPathWithJsCodegen = <
 	TNode extends Node,
 	TReturnType extends keyof IReturnTypes<TNode>
 >(
-	query: string,
+	query: EvaluableExpression,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
 	returnType?: ReturnType,
@@ -26,16 +43,14 @@ const evaluateXPathWithJsCodegen = <
 ): IReturnTypes<TNode>[TReturnType] => {
 	returnType = returnType || (ReturnType.ANY as any);
 
-	const cacheKey = generateKey(query, returnType);
-	const cachedCompiledXPath = compiledXPathCache.get(cacheKey);
-
+	const cachedCompiledXPath = getFromCache(query, returnType);
 	if (!cachedCompiledXPath) {
 		const compiledXPathResult = compileXPathToJavaScript(query, returnType, options);
 		if (compiledXPathResult.isAstAccepted === true) {
 			// tslint:disable-next-line
 			const evalFunction = new Function(compiledXPathResult.code) as CompiledXPathFunction;
 
-			compiledXPathCache.set(cacheKey, evalFunction);
+			addToCache(query, returnType, evalFunction);
 
 			return executeJavaScriptCompiledXPath(evalFunction, contextItem, domFacade);
 		} else {
