@@ -40,7 +40,7 @@ function wrapCompiledCode(code: string, shouldUseContextItem: boolean): string {
 	let finalCode = `
 	return (contextItem, domFacade, runtimeLib, options) => {
 		const {
-			XPDY0002,
+			errXPDY0002,
 		} = runtimeLib;`;
 
 	if (shouldUseContextItem) {
