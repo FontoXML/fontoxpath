@@ -44,6 +44,14 @@ describe('return values', () => {
 				ReturnType.BOOLEAN
 			)
 		);
+		chai.assert.isTrue(
+			evaluateXPathWithJsCodegen(
+				`false() or self::xml`,
+				documentNode.documentElement,
+				null,
+				ReturnType.BOOLEAN
+			)
+		);
 	});
 
 	it('evaluates to nodes', () => {

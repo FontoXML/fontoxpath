@@ -61,7 +61,7 @@ function emitLogicalExpr(
 	const [secondExpr, secondBucket] = emitOperand(ast, 'secondOperand', contextItemExpr, context);
 	const logicalOpExpr = mapPartialCompilationResult(firstAsBool, (firstAsBool) => {
 		const secondType = astHelper.getAttribute(
-			astHelper.followPath(ast, ['firstOperand', '*']),
+			astHelper.followPath(ast, ['secondOperand', '*']),
 			'type'
 		);
 		const secondAsBool = emitEffectiveBooleanValue(
