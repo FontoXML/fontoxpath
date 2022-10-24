@@ -32,7 +32,7 @@ export class CodeGenContext {
 
 	public getIdentifierFor(
 		expr: PartialCompilationResult,
-		prefix = 'v'
+		prefix: string
 	): PartialCompilationResult {
 		return mapPartialCompilationResult(expr, (expr) => {
 			let identifierExpr = this._identifierExprByExpr.get(expr);
@@ -49,7 +49,7 @@ export class CodeGenContext {
 		});
 	}
 
-	public getNewIdentifier(prefix = 'v'): PartiallyCompiledAstAccepted {
+	public getNewIdentifier(prefix: string): PartiallyCompiledAstAccepted {
 		return this.getVarInScope(this._getNewIdentifier(prefix));
 	}
 
