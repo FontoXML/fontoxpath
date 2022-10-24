@@ -34,11 +34,13 @@ const supportedFunctions: Record<
 		context: CodeGenContext
 	) => PartialCompilationResult
 > = {
+	'false#0': emitFalseFunction,
 	'local-name#0': emitLocalNameFunction,
 	'local-name#1': emitLocalNameFunction,
 	'name#0': emitNameFunction,
 	'name#1': emitNameFunction,
 	'not#1': emitNotFunction,
+	'true#0': emitTrueFunction,
 };
 
 // Built-in function allow list
@@ -47,7 +49,7 @@ const supportedFunctions: Record<
 // are supported.
 const supportedBuiltinFunctions: Record<string, string[]> = {
 	[BUILT_IN_NAMESPACE_URIS.FONTOXPATH_NAMESPACE_URI]: ['version#0'],
-	['']: ['true#0', 'false#0', 'root#1', 'path#1'],
+	['']: ['root#1', 'path#1'],
 };
 
 function emitFunctionArgumentConversion(
@@ -308,4 +310,20 @@ function emitNotFunction(
 	return mapPartialCompilationResult(argAsBool, (argAsBool) =>
 		acceptAst(`!${argAsBool.code}`, { type: GeneratedCodeBaseType.Value }, argAsBool.variables)
 	);
+}
+
+function emitFalseFunction(
+	_ast: IAST,
+	_contextItemExpr: PartialCompilationResult,
+	_context: CodeGenContext
+): PartialCompilationResult {
+	return acceptAst('false', { type: GeneratedCodeBaseType.Value }, []);
+}
+
+function emitTrueFunction(
+	_ast: IAST,
+	_contextItemExpr: PartialCompilationResult,
+	_context: CodeGenContext
+): PartialCompilationResult {
+	return acceptAst('true', { type: GeneratedCodeBaseType.Value }, []);
 }
