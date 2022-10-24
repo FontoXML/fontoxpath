@@ -137,26 +137,22 @@ function emitFunctionArgumentsConversion(
 
 function emitFunctionReturnTypeConversion(
 	callFunctionExpr: PartialCompilationResult,
-	returnType: SequenceType,
-	context: CodeGenContext
+	returnType: SequenceType
 ) {
-	return mapPartialCompilationResult(
-		context.getIdentifierFor(callFunctionExpr),
-		(callFunctionExpr) => {
-			// We support (zero or) one string, node or boolean
-			if (
-				!doesTypeAllowMultiple(returnType) &&
-				([ValueType.XSBOOLEAN, ValueType.XSSTRING].includes(returnType.type) ||
-					isSubtypeOf(returnType.type, ValueType.NODE))
-			) {
-				// Singleton string or empty sequence, handled by runtimeLib
-				return callFunctionExpr;
-			}
-			return rejectAst(
-				`Function return type ${valueTypeToString(returnType.type)} not supported`
-			);
+	return mapPartialCompilationResult(callFunctionExpr, (callFunctionExpr) => {
+		// We support (zero or) one string, node or boolean
+		if (
+			!doesTypeAllowMultiple(returnType) &&
+			([ValueType.XSBOOLEAN, ValueType.XSSTRING].includes(returnType.type) ||
+				isSubtypeOf(returnType.type, ValueType.NODE))
+		) {
+			// Singleton string or empty sequence, handled by runtimeLib
+			return callFunctionExpr;
 		}
-	);
+		return rejectAst(
+			`Function return type ${valueTypeToString(returnType.type)} not supported`
+		);
+	});
 }
 
 export function emitFunctionCallExpr(
@@ -219,7 +215,7 @@ export function emitFunctionCallExpr(
 			argsExpr.variables
 		)
 	);
-	return emitFunctionReturnTypeConversion(callFunction, functionProperties.returnType, context);
+	return emitFunctionReturnTypeConversion(callFunction, functionProperties.returnType);
 }
 
 function emitContextItemCheck(
