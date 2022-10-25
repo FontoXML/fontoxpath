@@ -12,6 +12,7 @@ import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
 import StaticContext from '../StaticContext';
 import { DONE_TOKEN, ready } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
+import { errXPDY0002 } from '../XPathErrors';
 import { BuiltinDeclarationType } from './builtInFunctions';
 import builtInNumericFunctions from './builtInFunctions_numeric';
 import FunctionDefinitionType from './FunctionDefinitionType';
@@ -29,8 +30,8 @@ function contextItemAsFirstArgument(
 	staticContext: StaticContext
 ) {
 	if (dynamicContext.contextItem === null) {
-		throw new Error(
-			'XPDY0002: The function which was called depends on dynamic context, which is absent.'
+		throw errXPDY0002(
+			'The function which was called depends on dynamic context, which is absent.'
 		);
 	}
 	return fn(

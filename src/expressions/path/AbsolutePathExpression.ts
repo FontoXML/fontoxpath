@@ -5,6 +5,7 @@ import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
+import { errXPDY0002 } from '../XPathErrors';
 
 class AbsolutePathExpression extends Expression {
 	private _relativePathExpression: Expression;
@@ -25,7 +26,7 @@ class AbsolutePathExpression extends Expression {
 
 	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
 		if (dynamicContext.contextItem === null) {
-			throw new Error('XPDY0002: context is absent, it needs to be present to use paths.');
+			throw errXPDY0002('context is absent, it needs to be present to use paths.');
 		}
 		const node = dynamicContext.contextItem.value;
 		const domFacade = executionParameters.domFacade;
