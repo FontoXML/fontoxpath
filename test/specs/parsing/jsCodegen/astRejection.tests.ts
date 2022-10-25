@@ -3,11 +3,32 @@ import * as slimdom from 'slimdom';
 
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
-import { ReturnType } from 'fontoxpath';
+import { registerCustomXPathFunction, ReturnType } from 'fontoxpath';
 import evaluateXPathWithJsCodegen from './evaluateXPathWithJsCodegen';
 
 describe("rejecting unsupported AST's (js-codegen)", () => {
 	let documentNode: slimdom.Document;
+
+	before(() => {
+		registerCustomXPathFunction(
+			{ localName: 'customFunctionAcceptsMultiple', namespaceURI: 'test' },
+			['item()*'],
+			'xs:boolean',
+			(_dynamicContext, _items) => true
+		);
+		registerCustomXPathFunction(
+			{ localName: 'customFunctionAcceptsDate', namespaceURI: 'test' },
+			['xs:date?'],
+			'xs:boolean',
+			(_dynamicContext, _date) => true
+		);
+		registerCustomXPathFunction(
+			{ localName: 'customFunctionReturnsDate', namespaceURI: 'test' },
+			[],
+			'xs:date?',
+			(_dynamicContext, date) => null
+		);
+	});
 
 	beforeEach(() => {
 		documentNode = new slimdom.Document();
@@ -145,7 +166,43 @@ describe("rejecting unsupported AST's (js-codegen)", () => {
 					null,
 					ReturnType.BOOLEAN
 				),
-			'Not supported'
+			'Not supported: built-in function not on allow list: boolean#1'
+		);
+	});
+
+	it('rejects function calls with unsupported arguments', () => {
+		// Sequences that allow more than one item not supported as arguments
+		chai.assert.throws(
+			() =>
+				evaluateXPathWithJsCodegen(
+					'Q{test}customFunctionAcceptsMultiple(/xml/*)',
+					documentNode,
+					null,
+					ReturnType.BOOLEAN
+				),
+			'Not supported: sequence arguments with multiple items'
+		);
+		// Types not supported by codegen not supported as arguments
+		chai.assert.throws(
+			() =>
+				evaluateXPathWithJsCodegen(
+					'Q{test}customFunctionAcceptsDate("bla")',
+					null,
+					null,
+					ReturnType.BOOLEAN
+				),
+			'Argument types not supported: xs:string -> xs:date'
+		);
+		// Types not supported by codegen not supported as return type
+		chai.assert.throws(
+			() =>
+				evaluateXPathWithJsCodegen(
+					'Q{test}customFunctionReturnsDate()',
+					null,
+					null,
+					ReturnType.BOOLEAN
+				),
+			'Function return type xs:date not supported'
 		);
 	});
 
