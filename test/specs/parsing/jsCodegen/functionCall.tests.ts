@@ -16,6 +16,12 @@ describe('function calls', () => {
 			'node()?',
 			({ domFacade }, str, bool, node) => (bool ? domFacade.getFirstChild(node) : null)
 		);
+		registerCustomXPathFunction(
+			{ localName: 'functionCallWithItem', namespaceURI: 'test' },
+			['item()?'],
+			'xs:boolean',
+			(_dynamicContext, item) => !!item
+		);
 	});
 
 	beforeEach(() => {
@@ -73,6 +79,45 @@ describe('function calls', () => {
 				ReturnType.FIRST_NODE
 			),
 			null
+		);
+	});
+
+	it('can call functions with item() arguments, which accept all supported types', () => {
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen(
+				'Q{test}functionCallWithItem(true())',
+				null,
+				null,
+				ReturnType.BOOLEAN
+			),
+			true
+		);
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen(
+				'Q{test}functionCallWithItem("a")',
+				null,
+				null,
+				ReturnType.BOOLEAN
+			),
+			true
+		);
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen(
+				'Q{test}functionCallWithItem(/xml)',
+				documentNode,
+				null,
+				ReturnType.BOOLEAN
+			),
+			true
+		);
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen(
+				'Q{test}functionCallWithItem(/nope)',
+				documentNode,
+				null,
+				ReturnType.BOOLEAN
+			),
+			false
 		);
 	});
 
