@@ -164,8 +164,7 @@ fn-ceiling-float-8-dyn,Error: XPST0003: Failed to parse '(declare variable $NaN-
 fn-codepoint-equal-22,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}normalize-unicode with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}normalize-space (xs:string?)", "Q{http://www.w3.org/2005/xpath-functions}normalize-space ()" or "Q{http://www.w3.org/2001/XMLSchema}normalizedString (xs:anyAtomicType?)"?
 cbcl-codepoints-to-string-015,AssertionError: Expected XPath deep-equal( fn:string-to-codepoints(fn:codepoints-to-string(65536 to 66000)), 65536 to 66000 ) to resolve to true: expected false to be true
 cbcl-codepoints-to-string-016,AssertionError: Expected XPath deep-equal( fn:string-to-codepoints(fn:codepoints-to-string(65536 to 100000)), 65536 to 100000 ) to resolve to true: expected false to be true
-cbcl-codepoints-to-string-027,AssertionError: Expected XPath for $x in (13), $y in (13,9,10) return codepoints-to-string($x to $y) to (deep equally) resolve to "
-", "", "": expected false to be true
+cbcl-codepoints-to-string-027,AssertionError: Expected XPath for $x in (13), $y in (13,9,10) return codepoints-to-string($x to $y) to (deep equally) resolve to "", "", "": expected false to be true
 fn-concatintg2args-1,Error: FOCA0003: can not cast -999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-concatintg2args-2,Error: FOCA0003: can not cast 830993497117024304 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-concatintg2args-3,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
@@ -1294,7 +1293,7 @@ fn-round-half-to-even-15,AssertionError: Expected XPath round-half-to-even(xs:fl
 K-SecondsFromDurationFunc-5,AssertionError: Expected XPath seconds-from-duration(xs:dayTimeDuration("P3DT8H2M1.03S")) eq 1.03 to resolve to true: expected false to be true
 K-SecondsFromDurationFunc-6,AssertionError: Expected XPath seconds-from-duration(xs:dayTimeDuration("-P3DT8H2M1.03S")) eq -1.03 to resolve to true: expected false to be true
 K-SecondsFromDurationFunc-7,AssertionError: Expected XPath seconds-from-duration(xs:duration("-P3Y4M8DT1H23M2.34S")) eq -2.34 to resolve to true: expected false to be true
-serialize-xml-001,AssertionError: serialize(.): expected false to be true
+serialize-xml-001,Error: serialize() called but no xmlSerializer set in execution parameters.
 serialize-xml-002,AssertionError: expected [Function] to throw an error
 serialize-xml-003,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
 serialize-xml-003b,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
@@ -2510,8 +2509,8 @@ cbcl-cast-gYearMonth-003,AssertionError: expected [Function] to throw an error
 XQueryComment014,Error: XPST0003: Failed to parse '(: Name: XQueryComment014 :) (: Description: Comments inside a cast expression :)   "10" cast as (: type comment :) xs:integer ?   = 10' expected: end of input (: Name: XQueryComment014 :) (: Description: Comments inside a cast expression :)   "10" cast as (: type comment :) xs:integer [Error is around here]?   = 10
 Constr-compattr-compname-20,Error: XQDY0074: The value "Q{http://example.com/x}y" of a name expressions cannot be converted to an expanded QName.
 Constr-compattr-compname-21,Error: XQDY0074: The value " Q{}y " of a name expressions cannot be converted to an expanded QName.
-Constr-compattr-compname-22,Error: XQDY0074: The value " Q{http://example.com/x}y2022" of a name expressions cannot be converted to an expanded QName.
-Constr-compattr-compname-23,Error: XQDY0074: The value "Q{}y2022" of a name expressions cannot be converted to an expanded QName.
+Constr-compattr-compname-22,Error: XQDY0074: The value " Q{http://example.com/x}y2023" of a name expressions cannot be converted to an expanded QName.
+Constr-compattr-compname-23,Error: XQDY0074: The value "Q{}y2023" of a name expressions cannot be converted to an expanded QName.
 Constr-compattr-id-2,AssertionError: Expected executing the XPath "element elem {attribute xml:id {" ab c d "}}" to resolve to one of the expected results, but got AssertionError: Expected XPath element elem {attribute xml:id {" ab c d "}} to resolve to the given XML. Expected <elem xml:id=" ab c d "/> to equal <elem xml:id="ab c d"/>, AssertionError: expected [Function] to throw an error.
 K2-ComputeConAttr-34,AssertionError: Expected XPath <e> { attribute name {xs:hexBinary("ff")}, attribute name2 {"content"} } </e> to resolve to the given XML. Expected <e name="ff" name2="content"/> to equal <e name="FF" name2="content"/>
 K2-ComputeConAttr-48,AssertionError: Expected executing the XPath "string(attribute xml:id {" ab c d "})" to resolve to one of the expected results, but got AssertionError: string(attribute xml:id {" ab c d "}): expected ' ab c d ' to equal 'ab c d', AssertionError: expected [Function] to throw an error.
@@ -2597,8 +2596,8 @@ cbcl-constr-compcomment-001,AssertionError: expected [Function] to throw an erro
 cbcl-constr-compcomment-002,AssertionError: expected [Function] to throw an error
 Constr-compelem-name-20,Error: XQDY0074: The value "Q{http://example.com/x}x" of a name expressions cannot be converted to an expanded QName.
 Constr-compelem-name-21,Error: XQDY0074: The value "Q{}x" of a name expressions cannot be converted to an expanded QName.
-Constr-compelem-name-22,Error: XQDY0074: The value " Q{http://example.com/x}x2022" of a name expressions cannot be converted to an expanded QName.
-Constr-compelem-name-23,Error: XQDY0074: The value " Q{}x2022 " of a name expressions cannot be converted to an expanded QName.
+Constr-compelem-name-22,Error: XQDY0074: The value " Q{http://example.com/x}x2023" of a name expressions cannot be converted to an expanded QName.
+Constr-compelem-name-23,Error: XQDY0074: The value " Q{}x2023 " of a name expressions cannot be converted to an expanded QName.
 Constr-compelem-name-24,AssertionError: element {" x" || year-from-date(current-date()) || " "} {}: expected false to be true
 Constr-compelem-constrmod-3,AssertionError: expected [Function] to throw error matching /FORG0001/ but got 'Not implemented: only module imports,…'
 Constr-compelem-constrmod-4,AssertionError: Expected executing the XPath "declare construction preserve; (element elem {xs:decimal((//decimal[1]))}) cast as xs:integer" to resolve to one of the expected results, but got Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules, AssertionError: expected [Function] to throw error matching /FORG0001/ but got 'Not implemented: only module imports,…'.
@@ -2663,8 +2662,7 @@ nscons-042,AssertionError: expected [Function] to throw error matching /XQDY0102
 nscons-043,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'No selector counterpart for: computed…'
 nscons-044,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'No selector counterpart for: computed…'
 Constr-comppi-space-1,AssertionError: Expected XPath processing-instruction pi {' text'} to resolve to the given XML. Expected <?pi  text?> to equal <?pi text?>
-Constr-comppi-space-2,AssertionError: Expected XPath processing-instruction pi {'&#x20;&#x0A;&#x0D;&#x09;text'} to resolve to the given XML. Expected <?pi   
-	text?> to equal <?pi text?>
+Constr-comppi-space-2,AssertionError: Expected XPath processing-instruction pi {'&#x20;&#x0A;&#x0D;&#x09;text'} to resolve to the given XML. Expected <?pi   	text?> to equal <?pi text?>
 Constr-comppi-space-3,AssertionError: string-to-codepoints(processing-instruction pi {' text'}): expected '32 116 101 120 116' to equal '116 101 120 116'
 Constr-comppi-space-4,AssertionError: string-to-codepoints(processing-instruction pi {'&#x20;&#x0A;&#x0D;&#x09;text'}): expected '32 10 13 9 116 101 120 116' to equal '116 101 120 116'
 K2-ComputeConPI-3,AssertionError: expected [Function] to throw an error
@@ -3688,7 +3686,6 @@ XQST0038_3,AssertionError: expected [Function] to throw error matching /XQST0038
 XQST0039,AssertionError: expected [Function] to throw an error
 XQST0045-4,AssertionError: expected [Function] to throw error matching /XQST0045/ but got 'XPST0081: The prefix "xsi" could not …'
 XQST0046_01,AssertionError: Expected executing the XPath "base-uri(<a xml:base="%gg" />)" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error matching /XQST0046/ but got 'XPST0017: Function Q{http://www.w3.or…', AssertionError: expected [Function] to throw error matching /FORG0001/ but got 'XPST0017: Function Q{http://www.w3.or…', Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}base-uri with arity of 1 not registered. No similar functions found., Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}base-uri with arity of 1 not registered. No similar functions found., Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}base-uri with arity of 1 not registered. No similar functions found..
-XQST0046_02,AssertionError: Expected executing the XPath "import module "http://www.example.org/test"; true()" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error matching /XQST0046/ but got 'XQST0051: No modules found with the n…', AssertionError: expected [Function] to throw error matching /XQST0059/ but got 'XQST0051: No modules found with the n…'.
 XQST0046_06,AssertionError: Expected executing the XPath "declare default collation "%gg"; fn:true()" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error matching /XQST0046/ but got 'Not implemented: only module imports,…', AssertionError: expected [Function] to throw error matching /XQST0038/ but got 'Not implemented: only module imports,…', Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules.
 XQST0046_07,AssertionError: Expected executing the XPath "declare base-uri "%gg"; true()" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error matching /XQST0046/ but got 'Not implemented: only module imports,…', Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules.
 XQST0046_09,AssertionError: Expected executing the XPath "import schema "http://www.w3.org/" at "%gg"; 1" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error matching /XQST0046/ but got 'Not implemented: only module imports,…', AssertionError: expected [Function] to throw error matching /XQST0059/ but got 'Not implemented: only module imports,…'.

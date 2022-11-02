@@ -6,13 +6,40 @@ import StaticContext from './expressions/StaticContext';
 import astHelper from './parsing/astHelper';
 import { loadModuleFile } from './parsing/globalModuleCache';
 import parseExpression from './parsing/parseExpression';
-import processProlog, { FunctionDeclaration, VariableDeclaration } from './parsing/processProlog';
+import processProlog, { ModuleDeclaration } from './parsing/processProlog';
 import annotateAst from './typeInference/annotateAST';
 import { AnnotationContext } from './typeInference/AnnotationContext';
 import { NamespaceResolver } from './types/Options';
 
 /**
  * Register an XQuery module
+ *
+ * Static analysis of this module will only happen during the first time an XPath is executed, or
+ * when {@link finalizeModuleRegistration} is called.
+ *
+ * XQuery modules can depend on other XQuery modules. All public functions and variables declared in
+ * a dependency module are available in a registered module. All public functions and variables
+ * declared in the same namespace as a registered module, but registered in a different
+ * `registerXQueryModule` call are also available.
+ *
+ * @example
+ *
+ * ```
+ *
+ * registerXQueryModule(`module namespace example = "http://www.example.com";
+ * declare %public function example:hello () as xs:string { "hello world" \};
+ * `);
+ *
+ * // Optionally invoke static analysis manually before executing,
+ * // otherwise this is called automatically when the first expression is evaluated,
+ * // possibly causing a confusing error callstack
+ * finalizeModuleRegistration();
+ *
+ * evaluateXPathToString(`import module namespace example = "http://www.example.com";
+ *  example:hello()
+ * `); // outputs "hello world"
+ * ```
+ *
  * @public
  * @param   moduleString - The string contents of the module
  * @param   options - Additional compilation options
@@ -53,12 +80,9 @@ export default function registerXQueryModule(
 
 	const prolog = astHelper.getFirstChild(libraryModule, 'prolog');
 	if (prolog !== null) {
-		let moduleDeclaration: {
-			functionDeclarations: FunctionDeclaration[];
-			variableDeclarations: VariableDeclaration[];
-		};
+		let moduleDeclaration: ModuleDeclaration;
 		try {
-			moduleDeclaration = processProlog(prolog, staticContext);
+			moduleDeclaration = processProlog(prolog, staticContext, true, moduleString);
 		} catch (error) {
 			printAndRethrowError(moduleString, error);
 		}
@@ -75,6 +99,9 @@ export default function registerXQueryModule(
 		loadModuleFile(moduleTargetNamespaceURI, {
 			functionDeclarations: [],
 			variableDeclarations: [],
+			// No static analysis needed: there is no prolog
+			performStaticAnalysis: null,
+			source: moduleString,
 		});
 	}
 

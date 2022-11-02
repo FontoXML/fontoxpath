@@ -83,7 +83,8 @@ function buildExpressionFromAst(
 		debug: boolean | undefined;
 		disableCache: boolean | undefined;
 	},
-	rootStaticContext: StaticContext
+	rootStaticContext: StaticContext,
+	source: EvaluableExpression
 ) {
 	const mainModule = astHelper.getFirstChild(ast, 'mainModule');
 	if (!mainModule) {
@@ -99,7 +100,10 @@ function buildExpressionFromAst(
 				'XPST0003: Use of XQuery functionality is not allowed in XPath context'
 			);
 		}
-		processProlog(prolog, rootStaticContext);
+
+		const moduleDeclaration = processProlog(prolog, rootStaticContext, true, source);
+		// Immediately perform static compilation as well
+		moduleDeclaration.performStaticAnalysis(moduleDeclaration);
 	}
 
 	const context = new AnnotationContext(rootStaticContext);
@@ -180,7 +184,8 @@ export default function staticallyCompileXPath(
 			const expressionFromAst = buildExpressionFromAst(
 				result.ast,
 				compilationOptions,
-				rootStaticContext
+				rootStaticContext,
+				selector
 			);
 			expressionFromAst.performStaticEvaluation(rootStaticContext);
 

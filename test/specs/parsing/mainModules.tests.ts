@@ -1,5 +1,5 @@
 import * as chai from 'chai';
-import { evaluateXPath, registerXQueryModule } from 'fontoxpath';
+import { evaluateXPath, finalizeModuleRegistration, registerXQueryModule } from 'fontoxpath';
 
 describe('Main modules', () => {
 	it('Can import from a mainmodule', () => {
@@ -124,12 +124,12 @@ declare function fn () external; 1`,
 		);
 	});
 
-	it.only('Can do circular imports', () => {
+	it('Can do circular imports', () => {
 		registerXQueryModule(`
 module namespace test = "http://www.example.org/mainmodules.tests#3";
 
 declare %public function test:AAA($a as xs:integer) as xs:string {
-   if ($a < 0) then "" else "Hello " || test:BBB($a-1)
+   if ($a < 0) then "" else "Hello " || test:BBB($a - 1)
 };
 `);
 
@@ -137,11 +137,11 @@ declare %public function test:AAA($a as xs:integer) as xs:string {
 module namespace test = "http://www.example.org/mainmodules.tests#3";
 
 declare %public function test:BBB($a as xs:integer) as xs:string  {
-   if ($a < 0) then "" else test:AAA($a-1) || " World"
+   if ($a < 0) then "" else test:AAA($a - 1) || " World"
 };
 `);
 
-		// finalizeModuleRegistration()
+		finalizeModuleRegistration();
 
 		const result = evaluateXPath(
 			`
@@ -156,7 +156,26 @@ test:AAA(5)
 			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
 		);
 
-		chai.assert.equal(result, 'Hello Hello Hello World World');
+		chai.assert.equal(result, 'Hello Hello Hello  World World World');
 	});
 
+	it('Hides private declarations in the same namespace', () => {
+		registerXQueryModule(`
+module namespace test = "http://www.example.org/mainmodules.tests#4";
+
+declare %private function test:AAA($a as xs:integer) as xs:string {
+   if ($a < 0) then "" else "Hello " || test:BBB($a - 1)
+};
+`);
+
+		registerXQueryModule(`
+module namespace test = "http://www.example.org/mainmodules.tests#4";
+
+declare %public function test:BBB($a as xs:integer) as xs:string  {
+   if ($a < 0) then "" else test:AAA($a - 1) || " World"
+};
+`);
+
+		chai.assert.throws(() => finalizeModuleRegistration(), 'XPST0017');
+	});
 });

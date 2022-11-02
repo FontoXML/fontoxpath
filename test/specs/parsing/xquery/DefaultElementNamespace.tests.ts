@@ -10,7 +10,6 @@ beforeEach(() => {
 
 describe('DefaultElementNamespace', () => {
 	it('Can create a default element namespace', () => {
-		debugger;
 		chai.assert.isTrue(
 			evaluateXPathToBoolean(
 				`declare default element namespace "http://example.com";

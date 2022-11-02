@@ -11,6 +11,7 @@ import PossiblyUpdatingExpression from './expressions/PossiblyUpdatingExpression
 import UpdatingExpressionResult from './expressions/UpdatingExpressionResult';
 import { IterationHint, IterationResult } from './expressions/util/iterators';
 import { IReturnTypes, ReturnType } from './parsing/convertXDMReturnValue';
+import { performStaticCompilationOnModules } from './parsing/globalModuleCache';
 import { Node } from './types/Types';
 
 /**
@@ -38,6 +39,8 @@ export default function evaluateUpdatingExpressionSync<
 	options?: UpdatingOptions | null
 ): { pendingUpdateList: object[]; xdmValue: IReturnTypes<TNode>[TReturnType] } {
 	options = options || {};
+
+	performStaticCompilationOnModules();
 
 	let dynamicContext: DynamicContext;
 	let executionParameters: ExecutionParameters;

@@ -49,6 +49,7 @@ import {
 	ValidValue,
 	ValidValueSequence,
 	XPathPerformanceMeasurement,
+	finalizeModuleRegistration,
 } from '../src/index';
 
 let totalCases = 0;
@@ -315,4 +316,5 @@ export {
 	registerCustomXPathFunction,
 	registerXQueryModule,
 	createTypedValueFactory,
+	finalizeModuleRegistration,
 };
