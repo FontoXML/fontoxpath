@@ -3,6 +3,7 @@ import Value from './dataTypes/Value';
 import DateTime from './dataTypes/valueTypes/DateTime';
 import DayTimeDuration from './dataTypes/valueTypes/DayTimeDuration';
 import { DONE_TOKEN, IIterator, IterationHint, ready } from './util/iterators';
+import Random from './util/Random';
 
 type TemporalContext = {
 	currentDateTime: DateTime | null;
@@ -15,7 +16,8 @@ class DynamicContext {
 	public contextItemIndex: number;
 	public contextSequence: ISequence;
 	public variableBindings: { [s: string]: () => ISequence };
-	private _temporalContext: TemporalContext;
+	private readonly _random: Random;
+	private readonly _temporalContext: TemporalContext;
 
 	constructor(
 		context: {
@@ -28,7 +30,8 @@ class DynamicContext {
 			currentDateTime: null,
 			implicitTimezone: null,
 			isInitialized: false,
-		}
+		},
+		random = new Random()
 	) {
 		this._temporalContext = temporalContext;
 
@@ -47,6 +50,8 @@ class DynamicContext {
 		this.contextItem = context.contextItem;
 
 		this.variableBindings = context.variableBindings || Object.create(null);
+
+		this._random = random;
 	}
 
 	public createSequenceIterator(contextSequence: ISequence): IIterator<DynamicContext> {
@@ -83,6 +88,16 @@ class DynamicContext {
 		return this._temporalContext.implicitTimezone;
 	}
 
+	/**
+	 * Returns a pseudo-random integer and a decimal based on the passed seed
+	 */
+	public getRandomNumber(seed: number | null = null): {
+		currentDecimal: number;
+		currentInt: number;
+	} {
+		return this._random.getRandomNumber(seed);
+	}
+
 	public scopeWithFocus(
 		contextItemIndex: number,
 		contextItem: Value | null,
@@ -95,7 +110,8 @@ class DynamicContext {
 				contextSequence: contextSequence || this.contextSequence,
 				variableBindings: this.variableBindings,
 			},
-			this._temporalContext
+			this._temporalContext,
+			this._random
 		);
 	}
 
@@ -113,7 +129,8 @@ class DynamicContext {
 					variableBindings
 				),
 			},
-			this._temporalContext
+			this._temporalContext,
+			this._random
 		);
 	}
 }
