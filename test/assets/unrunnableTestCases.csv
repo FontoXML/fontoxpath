@@ -721,7 +721,7 @@ fn-function-lookup-751,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-
 fn-function-lookup-754,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'collation-key'), 1)) to resolve to true: expected false to be true
 fn-function-lookup-755,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}collation-key with arity of 1 not registered. No similar functions found.
 fn-function-lookup-757,Error: No selector counterpart for: typedMapTest.
-fn-function-lookup-758,Error: Not implemented: Specifying a seed is not supported
+fn-function-lookup-758,Error: No selector counterpart for: typedMapTest.
 fn-function-lookup-759,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'load-xquery-module'), 1)) to resolve to true: expected false to be true
 fn-function-lookup-760,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-761,AssertionError: expected [Function] to throw error matching /FOQM0006/ but got 'XPTY0004: Expected base expression of…'
@@ -1021,8 +1021,6 @@ cbcl-min-008,AssertionError: expected [Function] to throw an error
 cbcl-min-016,AssertionError: expected [Function] to throw an error
 cbcl-min-017,AssertionError: expected [Function] to throw an error
 fn-month-from-dateTime-3,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}adjust-dateTime-to-timezone with arity of 2 not registered. No similar functions found.
-fn-name-16,AssertionError: Expected executing the XPath "for $h in (./works/employee[2]) return fn:count(fn:name($h/self::div))" to resolve to one of the expected results, but got AssertionError: for $h in (./works/employee[2]) return fn:count(fn:name($h/self::div)): expected '0' to equal '1', AssertionError: expected [Function] to throw an error.
-K-NameFunc-3,AssertionError: Expected XPath name(()) eq "" to resolve to true: expected false to be true
 NamespaceURIFromQNameFunc015a,AssertionError: expected [Function] to throw error matching /XPTY0117/ but got 'Casting to xs:QName is not implemente…'
 K2-NamespaceURIFromQNameFunc-1,Error: Casting to xs:QName is not implemented.
 fn-node-name-14,Error: No selector counterpart for: computedDocumentConstructor.
@@ -1183,35 +1181,21 @@ K-ContextPositionFunc-23,Error: No selector counterpart for: treatExpr.
 fn-prefix-from-qname-20,Error: FONS0004: The value foo:bar can not be cast to a QName. Did you mean to use fn:QName?
 fn-random-number-generator-1,Error: No selector counterpart for: typedMapTest.
 fn-random-number-generator-6,Error: No selector counterpart for: typedMapTest.
-fn-random-number-generator-10,Error: Not implemented: Specifying a seed is not supported
-fn-random-number-generator-11,Error: Not implemented: Specifying a seed is not supported
-fn-random-number-generator-12,Error: Not implemented: Specifying a seed is not supported
-fn-random-number-generator-13,Error: Not implemented: Specifying a seed is not supported
-fn-random-number-generator-14,Error: Not implemented: Specifying a seed is not supported
+fn-random-number-generator-10,Error: No selector counterpart for: typedMapTest.
+fn-random-number-generator-14,Error: No selector counterpart for: typedMapTest.
 fn-random-number-generator-17,AssertionError: Skipped test, it was a assert-permutation
 fn-random-number-generator-18,AssertionError: Skipped test, it was a assert-permutation
 fn-random-number-generator-21,Error: XPST0003: Failed to parse '(             declare namespace r="http://example.com/random/";             declare %public function r:random-sequence($length as xs:integer) as xs:double* {   r:random-sequence($length, fn:random-number-generator()) }; declare %private function r:random-sequence($length as xs:integer, $G as map(xs:string, item())) {   if ($length eq 0)   then ()   else ($G?number, r:random-sequence($length - 1, $G?next())) }; r:random-sequence(200)) instance of xs:double*' expected: (,(,(,( (             declare [Error is around here]namespace r="http://example.com/random/";             declare %public function r:random-sequence($length as xs:integer) as xs:double* {   r:random-sequence($length, fn:random-number-generator()) }; declare %private function r:random-sequence($length as xs:integer, $G as map(xs:string, item())) {   if ($length eq 0)   then ()   else ($G?number, r:random-sequence($length - 1, $G?next())) }; r:random-sequence(200)) instance of xs:double*
 fn-random-number-generator-22,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}sort with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}sort (array(*))", "Q{http://www.w3.org/2001/XMLSchema}short (xs:anyAtomicType?)" or "Q{http://www.w3.org/2005/xpath-functions/math}sqrt (xs:double?)"?
-fn-random-number-generator-23,Error: Not implemented: Specifying a seed is not supported
-fn-random-number-generator-24,Error: Not implemented: Specifying a seed is not supported
-fn-random-number-generator-25,AssertionError: Expected XPath deep-equal(fn:random-number-generator()?permute(1 to 100), fn:random-number-generator()?permute(1 to 100)) to resolve to true: expected false to be true
-fn-random-number-generator-26,Error: Not implemented: Specifying a seed is not supported
-fn-random-number-generator-27,Error: Not implemented: Specifying a seed is not supported
-fn-random-number-generator-28,Error: Not implemented: Specifying a seed is not supported
-fn-random-number-generator-29,Error: Not implemented: Specifying a seed is not supported
 fn-random-number-generator-30,Error: XPST0017: Function fn:apply with arity of 2 not registered. No similar functions found.
-fn-random-number-generator-32,Error: Not implemented: Specifying a seed is not supported
-fn-random-number-generator-33,Error: Not implemented: Specifying a seed is not supported
-fn-random-number-generator-34,Error: Not implemented: Specifying a seed is not supported
+fn-random-number-generator-32,Error: No selector counterpart for: typedMapTest.
 fn-random-number-generator-35,Error: No selector counterpart for: anyFunctionTest.
 fn-random-number-generator-36,Error: No selector counterpart for: anyFunctionTest.
 fn-random-number-generator-37,Error: No selector counterpart for: anyFunctionTest.
-fn-random-number-generator-38,Error: Not implemented: Specifying a seed is not supported
-fn-random-number-generator-39,Error: Not implemented: Specifying a seed is not supported
+fn-random-number-generator-38,Error: No selector counterpart for: typedMapTest.
 fn-random-number-generator-40,Error: No selector counterpart for: anyFunctionTest.
 fn-random-number-generator-41,Error: No selector counterpart for: anyFunctionTest.
 fn-random-number-generator-42,Error: No selector counterpart for: anyFunctionTest.
-fn-random-number-generator-43,Error: Not implemented: Specifying a seed is not supported
 K-SeqRemoveFunc-17,AssertionError: expected [Function] to throw an error
 K-SeqRemoveFunc-18,AssertionError: expected [Function] to throw an error
 fn-replaceErr-1,AssertionError: expected [Function] to throw error matching /FORX0001/ but got 'Not implemented: Using flags in repla…'
@@ -3021,9 +3005,9 @@ FunctionCall-013,Error: XPST0003: Failed to parse '(         declare function lo
 FunctionCall-022,Error: XPST0003: Failed to parse 'deep-equal((          declare function local:unique($in as xs:integer*) as xs:boolean { count($in) = count(distinct-values($in)) };          (local:unique([1,2,3,4,5]), local:unique([1,2,3,4,4]))), (true(), false()))' expected: end of input deep-equal[Error is around here]((          declare function local:unique($in as xs:integer*) as xs:boolean { count($in) = count(distinct-values($in)) };          (local:unique([1,2,3,4,5]), local:unique([1,2,3,4,4]))), (true(), false()))
 FunctionCall-027,AssertionError: expected [Function] to throw an error
 K-FunctionCallExpr-5,AssertionError: expected [Function] to throw error matching /XPST0081/ but got 'XPST0017: The function prefix-does-no…'
-K-FunctionCallExpr-15a,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-number with arity of 2 not registered. No similar functions found.
-K-FunctionCallExpr-16a,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-time with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-time ()"?
-K-FunctionCallExpr-17a,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-time with arity of 5 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-time ()"?
+K-FunctionCallExpr-15a,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-number with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}format-integer (xs:integer?, xs:string)"?
+K-FunctionCallExpr-16a,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-time with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-time ()" or "Q{http://www.w3.org/2005/xpath-functions}format-integer (xs:integer?, xs:string)"?
+K-FunctionCallExpr-17a,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-time with arity of 5 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-time ()" or "Q{http://www.w3.org/2005/xpath-functions}format-integer (xs:integer?, xs:string)"?
 K-FunctionCallExpr-25a,Error: XPST0017: Function generate-id with arity of 1 not registered. No similar functions found.
 function-call-reserved-function-names-034,AssertionError: expected [Function] to throw error matching /XPST0017/ but got 'XPST0003: Failed to parse \'\n\tnames…'
 function-declaration-017,Error: XPST0008, The variable v is not in scope.
@@ -3184,18 +3168,18 @@ function-literal-233,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-fu
 function-literal-234,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}adjust-time-to-timezone with arity of 1 not registered. No similar functions found.
 function-literal-235,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}adjust-time-to-timezone with arity of 2 not registered. No similar functions found.
 function-literal-236,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}adjust-time-to-timezone with arity of 2 not registered. No similar functions found.
-function-literal-237,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-dateTime with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-dateTime ()", "Q{http://www.w3.org/2001/XMLSchema}dateTime (xs:anyAtomicType?)" or "Q{http://www.w3.org/2005/xpath-functions}dateTime (xs:date?, xs:time?)"?
-function-literal-238,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-dateTime with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-dateTime ()", "Q{http://www.w3.org/2001/XMLSchema}dateTime (xs:anyAtomicType?)" or "Q{http://www.w3.org/2005/xpath-functions}dateTime (xs:date?, xs:time?)"?
-function-literal-239,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-dateTime with arity of 5 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-dateTime ()", "Q{http://www.w3.org/2001/XMLSchema}dateTime (xs:anyAtomicType?)" or "Q{http://www.w3.org/2005/xpath-functions}dateTime (xs:date?, xs:time?)"?
-function-literal-240,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-dateTime with arity of 5 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-dateTime ()", "Q{http://www.w3.org/2001/XMLSchema}dateTime (xs:anyAtomicType?)" or "Q{http://www.w3.org/2005/xpath-functions}dateTime (xs:date?, xs:time?)"?
-function-literal-241,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-date with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-date ()"?
-function-literal-242,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-date with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-date ()"?
-function-literal-243,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-date with arity of 5 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-date ()"?
-function-literal-244,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-date with arity of 5 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-date ()"?
-function-literal-245,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-time with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-time ()"?
-function-literal-246,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-time with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-time ()"?
-function-literal-247,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-time with arity of 5 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-time ()"?
-function-literal-248,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-time with arity of 5 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-time ()"?
+function-literal-237,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-dateTime with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-dateTime ()", "Q{http://www.w3.org/2005/xpath-functions}format-integer (xs:integer?, xs:string)", "Q{http://www.w3.org/2001/XMLSchema}dateTime (xs:anyAtomicType?)" or "Q{http://www.w3.org/2005/xpath-functions}dateTime (xs:date?, xs:time?)"?
+function-literal-238,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-dateTime with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-dateTime ()", "Q{http://www.w3.org/2005/xpath-functions}format-integer (xs:integer?, xs:string)", "Q{http://www.w3.org/2001/XMLSchema}dateTime (xs:anyAtomicType?)" or "Q{http://www.w3.org/2005/xpath-functions}dateTime (xs:date?, xs:time?)"?
+function-literal-239,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-dateTime with arity of 5 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-dateTime ()", "Q{http://www.w3.org/2005/xpath-functions}format-integer (xs:integer?, xs:string)", "Q{http://www.w3.org/2001/XMLSchema}dateTime (xs:anyAtomicType?)" or "Q{http://www.w3.org/2005/xpath-functions}dateTime (xs:date?, xs:time?)"?
+function-literal-240,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-dateTime with arity of 5 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-dateTime ()", "Q{http://www.w3.org/2005/xpath-functions}format-integer (xs:integer?, xs:string)", "Q{http://www.w3.org/2001/XMLSchema}dateTime (xs:anyAtomicType?)" or "Q{http://www.w3.org/2005/xpath-functions}dateTime (xs:date?, xs:time?)"?
+function-literal-241,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-date with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-date ()" or "Q{http://www.w3.org/2005/xpath-functions}format-integer (xs:integer?, xs:string)"?
+function-literal-242,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-date with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-date ()" or "Q{http://www.w3.org/2005/xpath-functions}format-integer (xs:integer?, xs:string)"?
+function-literal-243,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-date with arity of 5 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-date ()" or "Q{http://www.w3.org/2005/xpath-functions}format-integer (xs:integer?, xs:string)"?
+function-literal-244,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-date with arity of 5 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-date ()" or "Q{http://www.w3.org/2005/xpath-functions}format-integer (xs:integer?, xs:string)"?
+function-literal-245,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-time with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-time ()" or "Q{http://www.w3.org/2005/xpath-functions}format-integer (xs:integer?, xs:string)"?
+function-literal-246,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-time with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-time ()" or "Q{http://www.w3.org/2005/xpath-functions}format-integer (xs:integer?, xs:string)"?
+function-literal-247,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-time with arity of 5 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-time ()" or "Q{http://www.w3.org/2005/xpath-functions}format-integer (xs:integer?, xs:string)"?
+function-literal-248,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-time with arity of 5 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-time ()" or "Q{http://www.w3.org/2005/xpath-functions}format-integer (xs:integer?, xs:string)"?
 function-literal-249,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}resolve-QName with arity of 2 not registered. No similar functions found.
 function-literal-250,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}resolve-QName with arity of 2 not registered. No similar functions found.
 function-literal-259,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}namespace-uri-for-prefix with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}namespace-uri-from-QName (xs:QName?)", "Q{http://www.w3.org/2005/xpath-functions}namespace-uri (node())" or "Q{http://www.w3.org/2005/xpath-functions}namespace-uri ()"?
@@ -3780,8 +3764,7 @@ surrogates14a,Error: FORX0002: SyntaxError: Invalid regular expression: /[𝅐-�
 surrogates15a,AssertionError: replace("abc𝅗def", "[^a-f]", "###"): expected 'abc######def' to equal 'abc###def'
 XML10-4ed-Excluded-char-1,AssertionError: expected [Function] to throw an error
 XML11-1ed-Included-char-1,AssertionError: expected [Function] to throw an error
-line-ending-P002,AssertionError: Expected XPath deep-equal(string-to-codepoints('
- '), (13, 10)) to resolve to true: expected false to be true
+line-ending-P002,AssertionError: Expected XPath deep-equal(string-to-codepoints(' '), (13, 10)) to resolve to true: expected false to be true
 Catalog001,Error: XPST0003: Failed to parse '(         declare namespace fots = "http://www.w3.org/2010/09/qt-fots-catalog";         let $testsets := //fots:test-set/@file/doc(resolve-uri(., base-uri(..))),             $tests := $testsets//fots-test-case,             $environments := (//fots:environment | $testsets//fots:environment)[@name],             $refs := $testsets//fots:environment[@ref]             return $refs[not(@ref = $environments/@name)]       ) => empty()' expected: (,(,(,( (         declare [Error is around here]namespace fots = "http://www.w3.org/2010/09/qt-fots-catalog";         let $testsets := //fots:test-set/@file/doc(resolve-uri(., base-uri(..))),             $tests := $testsets//fots-test-case,             $environments := (//fots:environment | $testsets//fots:environment)[@name],             $refs := $testsets//fots:environment[@ref]             return $refs[not(@ref = $environments/@name)]       ) => empty()
 Catalog003,Error: XPST0003: Failed to parse '(         declare namespace fots = "http://www.w3.org/2010/09/qt-fots-catalog";         let $testsets := //fots:test-set/@file/doc(resolve-uri(., base-uri(..)))         for $test in $testsets//fots:test-case[contains(test, "import schema")]         where empty($test/(fots:dependency | ../fots:dependency)[@type='feature' and @value="schemaImport"])          return $test       ) => empty()' expected: (,(,(,( (         declare [Error is around here]namespace fots = "http://www.w3.org/2010/09/qt-fots-catalog";         let $testsets := //fots:test-set/@file/doc(resolve-uri(., base-uri(..)))         for $test in $testsets//fots:test-case[contains(test, "import schema")]         where empty($test/(fots:dependency | ../fots:dependency)[@type='feature' and @value="schemaImport"])          return $test       ) => empty()
 Catalog004,Error: XPST0003: Failed to parse '(         declare namespace fots = "http://www.w3.org/2010/09/qt-fots-catalog";         let $testsets := //fots:test-set/@file/doc(resolve-uri(., base-uri(..)))         for $schema in (.|$testsets)//fots:environment/fots:schema         let $targetNamespace := doc(resolve-uri($schema/@file, base-uri($schema)))/*/@targetNamespace         where not($schema/@uri eq $targetNamespace or (empty($targetNamespace) and string(@uri)=''))         return ($schema, <file>{base-uri($schema)}</file>)       ) => empty()' expected: (,(,(,( (         declare [Error is around here]namespace fots = "http://www.w3.org/2010/09/qt-fots-catalog";         let $testsets := //fots:test-set/@file/doc(resolve-uri(., base-uri(..)))         for $schema in (.|$testsets)//fots:environment/fots:schema         let $targetNamespace := doc(resolve-uri($schema/@file, base-uri($schema)))/*/@targetNamespace         where not($schema/@uri eq $targetNamespace or (empty($targetNamespace) and string(@uri)=''))         return ($schema, <file>{base-uri($schema)}</file>)       ) => empty()
@@ -4039,8 +4022,6 @@ d1e69534,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}pars
 d1e69545,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}parse-ietf-date with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-date ()"?
 d1e69556,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}parse-ietf-date with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-date ()"?
 d1e69567,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}parse-ietf-date with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-date ()"?
-d1e71262,AssertionError:   for $seq in 1 to 100 return random-number-generator()?number: expected false to be true
-d1e71270,Error: Not implemented: Specifying a seed is not supported
 d1e71288,Error: XPST0003: Failed to parse '(  declare function local:random-sequence($length as xs:integer,                                        $rng as map(xs:string, item())) {   if ($length eq 0)   then ()   else ($rng?number, local:random-sequence($length - 1, $rng?next())) }; local:random-sequence(5, random-number-generator())) instance of xs:double+' expected: (,(,(,( (  declare [Error is around here]function local:random-sequence($length as xs:integer,                                        $rng as map(xs:string, item())) {   if ($length eq 0)   then ()   else ($rng?number, local:random-sequence($length - 1, $rng?next())) }; local:random-sequence(5, random-number-generator())) instance of xs:double+
 d1e71531,Error: XPST0003: Failed to parse 'deep-equal((declare variable $array1 := ["abc","def","ghi","jkl"];  array:remove($array1,2)), (["abc","ghi","jkl"]))' expected: end of input deep-equal[Error is around here]((declare variable $array1 := ["abc","def","ghi","jkl"];  array:remove($array1,2)), (["abc","ghi","jkl"]))
 d1e71542,Error: XPST0003: Failed to parse 'deep-equal((declare variable $array1 := ["abc","def","ghi","jkl"];  array:remove(["abc"],1)), ([ ]))' expected: end of input deep-equal[Error is around here]((declare variable $array1 := ["abc","def","ghi","jkl"];  array:remove(["abc"],1)), ([ ]))

@@ -303,86 +303,118 @@ const fnNumber: FunctionDefinitionType = (
 	});
 };
 
-const permute: FunctionDefinitionType = (
-	_dynamicContext,
-	_executionParameters,
-	_staticContext,
-	sequence
-) => {
-	if (sequence.isEmpty() || sequence.isSingleton()) {
-		return sequence;
+// This is the djb2 algorithm, taken from http://www.cse.yorku.ca/~oz/hash.html
+function createSeedFromString(seed: string): number {
+	let hash = 5381;
+	for (let i = 0; i < seed.length; ++i) {
+		const c = seed.charCodeAt(i);
+		hash = hash * 33 + c;
+		// Make sure we overflow gracefully
+		hash = hash % Number.MAX_SAFE_INTEGER;
 	}
-
-	const a = sequence.getAllValues();
-
-	// Use Durstenfeld shuffle to randomize the list
-	for (let i = a.length - 1; i > 1; i--) {
-		const j = Math.floor(Math.random() * (i + 1));
-		const t = a[j];
-		a[j] = a[i];
-		a[i] = t;
-	}
-
-	return sequenceFactory.create(a);
-};
+	return hash;
+}
 
 const fnRandomNumberGenerator: FunctionDefinitionType = (
-	_dynamicContext,
+	dynamicContext: DynamicContext,
 	_executionParameters,
 	_staticContext,
-	_sequence
+	sequence = sequenceFactory.empty()
 ) => {
-	// Ignore the optional seed, as Math.random does not support a seed
-	return sequenceFactory.singleton(
-		new MapValue([
-			{
-				key: createAtomicValue('number', ValueType.XSSTRING),
-				value: () =>
-					sequenceFactory.singleton(createAtomicValue(Math.random(), ValueType.XSDOUBLE)),
-			},
-			{
-				key: createAtomicValue('next', ValueType.XSSTRING),
-				value: () =>
-					sequenceFactory.singleton(
-						new FunctionValue({
-							value: fnRandomNumberGenerator,
-							isAnonymous: true,
-							localName: '',
-							namespaceURI: '',
-							argumentTypes: [],
-							arity: 0,
-							returnType: {
-								type: ValueType.MAP,
-								mult: SequenceMultiplicity.EXACTLY_ONE,
-							},
-						})
-					),
-			},
-			{
-				key: createAtomicValue('permute', ValueType.XSSTRING),
-				value: () =>
-					sequenceFactory.singleton(
-						new FunctionValue({
-							value: permute,
-							isAnonymous: true,
-							localName: '',
-							namespaceURI: '',
-							argumentTypes: [
-								{
+	const iseed = sequence.isEmpty()
+		? dynamicContext.getRandomNumber()
+		: dynamicContext.getRandomNumber(
+				createSeedFromString(castToType(sequence.first(), ValueType.XSSTRING).value)
+		  );
+
+	/**
+	 * Create the random-number-generator object. The seed _must_ be an integer
+	 */
+	function fnRandomImplementation(iseed: number): ISequence {
+		const permute: FunctionDefinitionType = (
+			_dynamicContext,
+			_executionParameters,
+			_staticContext,
+			sequence
+		) => {
+			if (sequence.isEmpty() || sequence.isSingleton()) {
+				return sequence;
+			}
+
+			const allValues = sequence.getAllValues();
+			let permuteCurrent = iseed;
+			// Use Durstenfeld shuffle to randomize the list
+			for (let i = allValues.length - 1; i > 1; i--) {
+				permuteCurrent = dynamicContext.getRandomNumber(permuteCurrent).currentInt;
+				const j = permuteCurrent % i;
+				const t = allValues[j];
+				allValues[j] = allValues[i];
+				allValues[i] = t;
+			}
+
+			return sequenceFactory.create(allValues);
+		};
+
+		return sequenceFactory.singleton(
+			new MapValue([
+				{
+					key: createAtomicValue('number', ValueType.XSSTRING),
+					value: () =>
+						sequenceFactory.singleton(
+							createAtomicValue(
+								dynamicContext.getRandomNumber(iseed).currentDecimal,
+								ValueType.XSDOUBLE
+							)
+						),
+				},
+				{
+					key: createAtomicValue('next', ValueType.XSSTRING),
+					value: () =>
+						sequenceFactory.singleton(
+							new FunctionValue({
+								value: () =>
+									fnRandomImplementation(
+										dynamicContext.getRandomNumber(iseed).currentInt
+									),
+								isAnonymous: true,
+								localName: '',
+								namespaceURI: '',
+								argumentTypes: [],
+								arity: 0,
+								returnType: {
+									type: ValueType.MAP,
+									mult: SequenceMultiplicity.EXACTLY_ONE,
+								},
+							})
+						),
+				},
+				{
+					key: createAtomicValue('permute', ValueType.XSSTRING),
+					value: () =>
+						sequenceFactory.singleton(
+							new FunctionValue({
+								value: permute,
+								isAnonymous: true,
+								localName: '',
+								namespaceURI: '',
+								argumentTypes: [
+									{
+										type: ValueType.ITEM,
+										mult: SequenceMultiplicity.ZERO_OR_MORE,
+									},
+								],
+								arity: 1,
+								returnType: {
 									type: ValueType.ITEM,
 									mult: SequenceMultiplicity.ZERO_OR_MORE,
 								},
-							],
-							arity: 1,
-							returnType: {
-								type: ValueType.ITEM,
-								mult: SequenceMultiplicity.ZERO_OR_MORE,
-							},
-						})
-					),
-			},
-		])
-	);
+							})
+						),
+				},
+			])
+		);
+	}
+	return fnRandomImplementation(iseed.currentInt);
 };
 
 const declarations: BuiltinDeclarationType[] = [
@@ -514,9 +546,7 @@ const declarations: BuiltinDeclarationType[] = [
 			},
 		],
 		returnType: { type: ValueType.MAP, mult: SequenceMultiplicity.EXACTLY_ONE },
-		callFunction: () => {
-			throw new Error('Not implemented: Specifying a seed is not supported');
-		},
+		callFunction: fnRandomNumberGenerator,
 	},
 ];
 
