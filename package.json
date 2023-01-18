@@ -66,7 +66,7 @@
 	"license": "MIT",
 	"homepage": "https://github.com/FontoXML/fontoxpath",
 	"devDependencies": {
-		"@fontoxml/fonto-benchmark-runner": "0.1.0",
+		"@fontoxml/fonto-benchmark-runner": "^0.0.5",
 		"@microsoft/api-extractor": "^7.19.4",
 		"@tscc/tscc": "^0.7.4",
 		"@types/chai": "^4.3.0",
@@ -88,7 +88,6 @@
 		"karma-mocha": "^2.0.1",
 		"karma-typescript": "^5.5.3",
 		"mocha": "^10.0.0",
-		"node-static": "^0.7.11",
 		"nyc": "^15.1.0",
 		"prettier": "^2.4.1",
 		"sinon": "^13.0.2",
