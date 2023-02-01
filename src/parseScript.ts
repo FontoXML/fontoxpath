@@ -1,12 +1,13 @@
 import domBackedDocumentWriter from './documentWriter/domBackedDocumentWriter';
 import IDocumentWriter from './documentWriter/IDocumentWriter';
 import ExternalDomFacade from './domFacade/ExternalDomFacade';
+import { printAndRethrowError } from './evaluationUtils/printAndRethrowError';
 import { sequenceTypeToString } from './expressions/dataTypes/Value';
 import ExecutionSpecificStaticContext from './expressions/ExecutionSpecificStaticContext';
 import { BUILT_IN_NAMESPACE_URIS } from './expressions/staticallyKnownNamespaces';
 import StaticContext from './expressions/StaticContext';
 import ISimpleNodesFactory from './nodesFactory/ISimpleNodesFactory';
-import astHelper from './parsing/astHelper';
+import astHelper, { IAST } from './parsing/astHelper';
 import normalizeEndOfLines from './parsing/normalizeEndOfLines';
 import parseExpression from './parsing/parseExpression';
 import processProlog from './parsing/processProlog';
@@ -217,12 +218,17 @@ export default function parseScript<TElement extends Element>(
 	documentWriter: IDocumentWriter = domBackedDocumentWriter
 ): TElement {
 	script = normalizeEndOfLines(script);
-	const ast = parseExpression(script, {
-		allowXQuery:
-			options['language'] === Language.XQUERY_3_1_LANGUAGE ||
-			options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE,
-		debug: options.debug,
-	});
+	let ast: IAST;
+	try {
+		ast = parseExpression(script, {
+			allowXQuery:
+				options['language'] === Language.XQUERY_3_1_LANGUAGE ||
+				options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE,
+			debug: options.debug,
+		});
+	} catch (error) {
+		printAndRethrowError(script, error);
+	}
 
 	// Let external options required for static evaluation flow in
 	const executionSpecificStaticContext = new ExecutionSpecificStaticContext(

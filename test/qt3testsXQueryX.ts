@@ -9,7 +9,7 @@ function run() {
 	const skippableTests = getSkippedTests('failingXQueryXTestNames.csv');
 	const skippableTestNames = skippableTests.map((result) => result.split(',')[0]);
 
-	const baseDir = 'QT3TS';
+	const baseDir = 'qt3tests';
 
 	function normalizeEndOfLines(xpathString) {
 		// Replace all character sequences of 0xD followed by 0xA and all 0xD not followed by 0xA with 0xA.

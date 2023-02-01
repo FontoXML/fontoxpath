@@ -1,3 +1,4 @@
+import { StackTraceEntry } from '../expressions/debug/StackTraceEntry';
 import { IAST } from './astHelper';
 import { parseUsingPrsc } from './prscParser';
 
@@ -20,12 +21,18 @@ export default function parseExpression(
 	if (parseResult.success === true) {
 		return parseResult.value;
 	}
+	const lines = xPathString.substring(0, parseResult.offset).split('\n');
+	const line = lines[lines.length - 1];
+	// The offset is the last known position where the parser was OK, so the error is one over
+	const column = line.length + 1;
 
-	throw new Error(
-		`XPST0003: Failed to parse '${xPathString}' expected: ${parseResult.expected}\n${
-			xPathString.slice(0, parseResult.offset) +
-			'[Error is around here]' +
-			xPathString.slice(parseResult.offset)
-		}`
+	const positionS = { offset: parseResult.offset, line: lines.length, column };
+	const positionE = { offset: parseResult.offset + 1, line: lines.length, column: column + 1 };
+	throw new StackTraceEntry(
+		{ start: positionS, end: positionE },
+		'',
+		new Error(
+			`XPST0003: Failed to parse script. Expected ${[...new Set(parseResult.expected)]}`
+		)
 	);
 }

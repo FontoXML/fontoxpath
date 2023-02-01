@@ -1,4 +1,4 @@
-import { or, token } from 'prsc';
+import { followed, not, or, peek, token } from 'prsc';
 
 export const WHITESPACE = or([token('\u0020'), token('\u0009'), token('\u000D'), token('\u000A')]);
 
@@ -50,10 +50,10 @@ export const DOLLAR = token('$');
 export const HASHTAG = token('#');
 export const PERCENT = token('%');
 export const QUESTION_MARK = token('?');
-export const EXCLAMATION_MARK = token('!');
-export const VERTICAL_BAR = token('|');
-export const VERTICAL_BAR_DOUBLE = token('||');
 export const EQUALS = token('=');
+export const EXCLAMATION_MARK = followed(token('!'), not(peek(EQUALS), []));
+export const VERTICAL_BAR = followed(token('|'), not(peek(token('|')), []));
+export const VERTICAL_BAR_DOUBLE = token('||');
 export const NOT_EQUALS = token('!=');
 export const LESS_THAN = token('<');
 export const LESS_THAN_DOUBLE = token('<<');

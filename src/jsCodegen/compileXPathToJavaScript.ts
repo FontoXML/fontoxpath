@@ -3,6 +3,7 @@ import {
 	createDefaultFunctionNameResolver,
 	createDefaultNamespaceResolver,
 } from '../evaluationUtils/buildEvaluationContext';
+import { printAndRethrowError } from '../evaluationUtils/printAndRethrowError';
 import ExecutionSpecificStaticContext from '../expressions/ExecutionSpecificStaticContext';
 import { BUILT_IN_NAMESPACE_URIS } from '../expressions/staticallyKnownNamespaces';
 import StaticContext from '../expressions/StaticContext';
@@ -13,7 +14,7 @@ import normalizeEndOfLines from '../parsing/normalizeEndOfLines';
 import parseExpression from '../parsing/parseExpression';
 import annotateAst from '../typeInference/annotateAST';
 import { AnnotationContext } from '../typeInference/AnnotationContext';
-import { Language, Options } from '../types/Options';
+import { Language, Options, } from '../types/Options';
 import { CodeGenContext } from './CodeGenContext';
 import compileAstToJavaScript from './compileAstToJavaScript';
 import { JavaScriptCompiledXPathResult, rejectAst } from './JavaScriptCompiledXPath';
@@ -49,8 +50,11 @@ function compileXPathToJavaScript(
 			// yet by the js-codegen backend.
 			debug: false,
 		};
-
-		ast = parseExpression(expressionString, parserOptions);
+		try {
+			ast = parseExpression(expressionString, parserOptions);
+		} catch (error) {
+			printAndRethrowError(expressionString, error);
+		}
 	} else {
 		ast = convertXmlToAst(selector);
 	}

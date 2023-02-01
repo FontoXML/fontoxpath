@@ -48,6 +48,7 @@ export function acceptAst(
 
 /**
  * Result for failing to compile XPath to JavaScript.
+ *
  * @beta
  */
 export declare interface IAstRejected {
@@ -63,6 +64,7 @@ export type PartialCompilationResult = PartiallyCompiledAstAccepted | IAstReject
 
 /**
  * Successfully JavaScript compiled XPath.
+ *
  * @beta
  */
 export declare interface IAstAccepted {
@@ -76,6 +78,7 @@ export function acceptFullyCompiledAst(code: string): IAstAccepted {
 
 /**
  * Result for compiling XPath to JavaScript
+ *
  * @beta
  */
 export type JavaScriptCompiledXPathResult = IAstAccepted | IAstRejected;

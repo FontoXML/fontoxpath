@@ -11,9 +11,9 @@ describe('Big List of Naughty Strings tests for JSCodegen', () => {
 		jsonMlMapper.parse(['xml', 'Hello'], documentNode);
 	});
 
-	it('BLNS equality', () => {
-		const blns = require('blns');
-		for (const badString of blns) {
+	const blns = require('blns');
+	for (const badString of blns) {
+		it(`BLNS equality: ${badString}`, () => {
 			const literalQuery = '"' + badString + '"';
 
 			try {
@@ -51,6 +51,6 @@ describe('Big List of Naughty Strings tests for JSCodegen', () => {
 					chai.assert.equal(errEval.toString(), errJs.toString());
 				}
 			}
-		}
-	});
+		});
+	}
 });

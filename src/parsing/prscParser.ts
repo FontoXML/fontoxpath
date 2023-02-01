@@ -1,5 +1,6 @@
 import {
 	complete,
+	cut,
 	delimited,
 	followed,
 	map,
@@ -110,7 +111,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 	): Parser<S> {
 		return then(
 			exp,
-			star(then(surrounded(operator, whitespace), exp, (a, b) => [a, b])),
+			star(then(surrounded(operator, whitespace), cut(exp), (a, b) => [a, b])),
 			constructionFn
 		);
 	}
@@ -123,7 +124,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 	): Parser<IAST> {
 		return then(
 			exp,
-			optional(then(surrounded(operator, whitespace), exp, (a, b) => [a, b])),
+			optional(then(surrounded(operator, whitespace), cut(exp), (a, b) => [a, b])),
 			(lhs: IAST, rhs: [string, IAST] | null) => {
 				if (rhs === null) {
 					return lhs;
@@ -1425,11 +1426,11 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 	);
 
 	const forBinding: Parser<IAST> = then5(
-		preceded(tokens.DOLLAR, varName),
-		preceded(whitespace, optional(typeDeclaration)),
-		preceded(whitespace, optional(allowingEmpty)),
-		preceded(whitespace, optional(positionalVar)),
-		preceded(surrounded(tokens.IN, whitespace), exprSingle),
+		preceded(tokens.DOLLAR, cut(varName)),
+		cut(preceded(whitespace, optional(typeDeclaration))),
+		cut(preceded(whitespace, optional(allowingEmpty))),
+		cut(preceded(whitespace, optional(positionalVar))),
+		cut(preceded(surrounded(tokens.IN, whitespace), exprSingle)),
 		(variableName, typeDecl, empty, pos, forExpr) =>
 			[
 				'forClauseItem',
@@ -1591,8 +1592,8 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const flworExpr: Parser<IAST> = then3(
 		initialClause,
-		star(preceded(whitespace, intermediateClause)),
-		preceded(whitespace, returnClause),
+		cut(star(preceded(whitespace, intermediateClause))),
+		cut(preceded(whitespace, returnClause)),
 		(initial, intermediate, ret) => ['flworExpr', initial, ...intermediate, ret] as IAST
 	);
 
@@ -1841,10 +1842,12 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const namespaceDecl: Parser<IAST> = precededMultiple(
 		[tokens.DECLARE, whitespacePlus, tokens.NAMESPACE, whitespacePlus],
-		then(
-			ncName,
-			preceded(surrounded(tokens.EQUALS, whitespace), uriLiteral),
-			(prefixPart, uri) => ['namespaceDecl', ['prefix', prefixPart], ['uri', uri]]
+		cut(
+			then(
+				ncName,
+				preceded(surrounded(tokens.EQUALS, whitespace), uriLiteral),
+				(prefixPart, uri) => ['namespaceDecl', ['prefix', prefixPart], ['uri', uri]]
+			)
 		)
 	);
 
@@ -1860,21 +1863,26 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				t,
 			])
 		),
-		or([
-			map(
-				precededMultiple([whitespace, tokens.WALRUS, whitespace], varValue),
-				(x) => ['varValue', x] as IAST
-			),
-			map(
-				precededMultiple(
-					[whitespacePlus, tokens.EXTERNAL],
-					optional(
-						precededMultiple([whitespace, tokens.WALRUS, whitespace], varDefaultValue)
-					)
+		cut(
+			or([
+				map(
+					precededMultiple([whitespace, tokens.WALRUS, whitespace], varValue),
+					(x) => ['varValue', x] as IAST
 				),
-				(x) => ['external', ...(x ? [['varValue', x]] : [])] as IAST
-			),
-		]),
+				map(
+					precededMultiple(
+						[whitespacePlus, tokens.EXTERNAL],
+						optional(
+							precededMultiple(
+								[whitespace, tokens.WALRUS, whitespace],
+								varDefaultValue
+							)
+						)
+					),
+					(x) => ['external', ...(x ? [['varValue', x]] : [])] as IAST
+				),
+			])
+		),
 		([namePart, t], value) =>
 			['varDecl', ['varName', ...namePart], ...(t !== null ? [t] : []), ...[value]] as IAST
 	);
@@ -1890,17 +1898,23 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			],
 			eqName
 		),
-		precededMultiple([whitespace, tokens.BRACE_OPEN, whitespace], optional(paramList)),
-		precededMultiple(
-			[whitespace, tokens.BRACE_CLOSE],
-			optional(precededMultiple([whitespacePlus, tokens.AS, whitespacePlus], sequenceType))
+		cut(precededMultiple([whitespace, tokens.BRACE_OPEN, whitespace], optional(paramList))),
+		cut(
+			precededMultiple(
+				[whitespace, tokens.BRACE_CLOSE],
+				optional(
+					precededMultiple([whitespacePlus, tokens.AS, whitespacePlus], sequenceType)
+				)
+			)
 		),
-		preceded(
-			whitespace,
-			or([
-				map(functionBody, (x) => ['functionBody', x]),
-				map(tokens.EXTERNAL, (_) => ['externalDefinition']),
-			])
+		cut(
+			preceded(
+				whitespace,
+				or([
+					map(functionBody, (x) => ['functionBody', x]),
+					map(tokens.EXTERNAL, (_) => ['externalDefinition']),
+				])
+			)
 		),
 		(namePart, paramListPart, typeDeclarations, body) =>
 			[
@@ -2101,13 +2115,13 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		star(
 			followed(
 				or([defaultNamespaceDecl, setter, namespaceDecl, importExpr]),
-				surrounded(separator, whitespace)
+				cut(surrounded(separator, whitespace))
 			)
 		),
 		star(
 			followed(
 				or([contextItemDecl, annotatedDecl, optionDecl]),
-				surrounded(separator, whitespace)
+				cut(surrounded(separator, whitespace))
 			)
 		),
 		(moduleSettings, declarations) =>
