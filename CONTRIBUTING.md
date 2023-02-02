@@ -38,8 +38,6 @@ are here to help in any possible way.
 
 ### Setting up a development environment
 
-### Setting up a development environment
-
 To set up the tests on UNIX:
 
 ```sh
