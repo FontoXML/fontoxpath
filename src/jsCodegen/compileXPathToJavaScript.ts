@@ -14,7 +14,7 @@ import normalizeEndOfLines from '../parsing/normalizeEndOfLines';
 import parseExpression from '../parsing/parseExpression';
 import annotateAst from '../typeInference/annotateAST';
 import { AnnotationContext } from '../typeInference/AnnotationContext';
-import { Language, Options, } from '../types/Options';
+import { Language, Options } from '../types/Options';
 import { CodeGenContext } from './CodeGenContext';
 import compileAstToJavaScript from './compileAstToJavaScript';
 import { JavaScriptCompiledXPathResult, rejectAst } from './JavaScriptCompiledXPath';

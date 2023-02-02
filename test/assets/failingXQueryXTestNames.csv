@@ -71,6 +71,7 @@ UseCaseJSON-010,result was not equal
 UseCaseJSON-011,Parse error
 UseCaseNLP-005,Parse error
 UseCaseR31-016,Parse error
+UseCaseR31-023,result was not equal
 UseCaseR31-031,result was not equal
 UseCaseR31-032,Parse error
 d1e13048,result was not equal
@@ -464,6 +465,9 @@ numberformat126,Parse error
 numberformat154,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 numberformat155,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 numberformat901err,Parse error
+fn-function-lookup-018,result was not equal
+fn-function-lookup-020,result was not equal
+fn-function-lookup-022,result was not equal
 fn-function-lookup-402,result was not equal
 fn-function-lookup-404,result was not equal
 fn-function-lookup-609,result was not equal
@@ -582,6 +586,7 @@ fn-insert-before-mix-args-020,XQuery script could not be found
 json-to-xml-017b,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 json-to-xml-037b,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 json-to-xml-038b,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
+json-to-xml-039,result was not equal
 json-to-xml-044,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 json-to-xml-045,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 json-to-xml-046,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
@@ -618,6 +623,8 @@ fn-nilled-49,Parse error
 fn-nilled-52,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 fn-nilled-53,Parse error
 fn-node-name-30,result was not equal
+parse-xml-fragment-011,result was not equal
+parse-xml-fragment-012,result was not equal
 path014,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/QT3/copy
 fn-random-number-generator-30,result was not equal
 K-SeqRemoveFunc-1,XQuery script could not be found
@@ -739,6 +746,7 @@ fn-reverseusht1args-3,XQuery script could not be found
 reverse-001,XQuery script could not be found
 reverse-002,XQuery script could not be found
 reverse-003,XQuery script could not be found
+K-NodeRootFunc-2,result was not equal
 serialize-xml-013,result was not equal
 fn-sort-1,XQuery script could not be found
 fn-sort-10,XQuery script could not be found
@@ -807,6 +815,7 @@ fn-transform-11,result was not equal
 fn-transform-12,result was not equal
 fn-transform-13,result was not equal
 fn-transform-13a,result was not equal
+fn-transform-14,result was not equal
 fn-transform-15,result was not equal
 fn-transform-16,result was not equal
 fn-transform-18,result was not equal
@@ -1213,7 +1222,7 @@ XPTY0004_33,result was not equal
 XPTY0018,result was not equal
 XPTY0019_1,result was not equal
 XPTY0019_3,result was not equal
-XPTY0020,result was not equal
+XPTY0020,XQuery script could not be found
 XQDY0027,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 XQDY0084,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 XQST0022_1,Parser related error, Error: XQST0022: A namespace declaration may not contain enclosed expressions
@@ -1571,6 +1580,7 @@ CastAsNamespaceSensitiveType-6,Parser related error, Error: Not implemented: onl
 CastAsNamespaceSensitiveType-7,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 CastAsNamespaceSensitiveType-8,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 CastAsNamespaceSensitiveType-9,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
+cbcl-cast-dayTimeDuration-002,result was not equal
 cbcl-cast-derived-001,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 CastAs-ListType-1,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 CastAs-ListType-2,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
@@ -2151,7 +2161,6 @@ K2-DirectConElemWhitespace-5,Parser related error, Error: Not implemented: only 
 K2-DirectConElemWhitespace-6,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K2-DirectConElemWhitespace-7,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K2-DirectConElemWhitespace-8,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-K2-DirectConOther-29,Parse error
 K2-DirectConOther-50,result was not equal
 K2-DirectConOther-51,result was not equal
 eqname-001,result was not equal
@@ -2592,6 +2601,8 @@ cbcl-first-in-sequence-008,result was not equal
 filter-limits-001,result was not equal
 filter-limits-002,result was not equal
 filter-limits-003,result was not equal
+K-QuantExprWith-10,result was not equal
+K-QuantExprWith-9,result was not equal
 cbcl-default-attribute-1,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 cbcl-default-attribute-2,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 cbcl-fixed-attribute-1,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
@@ -2941,6 +2952,7 @@ typeswitch-113,Parser related error, Error: Not implemented: only module imports
 typeswitch-114,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 typeswitch-115,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 typeswitch-116,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
+typeswitch-118,result was not equal
 typeswitch-union-branch-1-dup,result was not equal
 typeswitch-union-branch-1,result was not equal
 typeswitch-union-branch-2-dup,result was not equal

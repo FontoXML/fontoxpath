@@ -209,11 +209,11 @@ export const dirCommentConstructor: Parser<IAST> = map(
 
 // Note: we deviate from the spec here. Processing instruction targets must _always_ be a NCName
 const piTarget: Parser<string> = filter(
-		ncName,
-		(target: string) => {
-			return target.toLowerCase() !== 'xml';
-		},
-		['A processing instruction target cannot be "xml"']
+	ncName,
+	(target: string) => {
+		return target.toLowerCase() !== 'xml';
+	},
+	['A processing instruction target cannot be "xml"']
 );
 
 const dirPiContents: Parser<string> = map(
