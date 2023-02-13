@@ -319,4 +319,30 @@ declare function bar:baz() {
 			'hello world'
 		);
 	});
+
+	it('disallows accessing private functions in other namespacs', () => {
+		const foo = 'https://example.com/foo.dtd';
+		const bar = 'https://example.com/bar.dtd';
+
+		registerXQueryModule(`module namespace foo = "${foo}";
+declare %private function foo:fn(){'Hello world!'};`);
+
+		registerXQueryModule(`module namespace bar = "${bar}";
+import module namespace foo = "${foo}";
+declare function bar:baz() {
+  foo:fn()
+};`);
+
+		const URI_BY_PREFIX: { [key: string]: string } = { foo, bar };
+		const xQueryOptions = {
+			namespaceResolver: (prefix: string) => URI_BY_PREFIX[prefix],
+			language: evaluateXPath.XQUERY_3_1_LANGUAGE,
+			moduleImports: URI_BY_PREFIX,
+		};
+
+		chai.assert.throws(
+			() => evaluateXPathToString(`bar:baz()`, null, null, null, xQueryOptions),
+			'XPST0017'
+		);
+	});
 });

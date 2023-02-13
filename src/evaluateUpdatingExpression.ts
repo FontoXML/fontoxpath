@@ -13,6 +13,7 @@ import UpdatingExpressionResult from './expressions/UpdatingExpressionResult';
 import { IterationHint, IterationResult } from './expressions/util/iterators';
 import INodesFactory from './nodesFactory/INodesFactory';
 import { ReturnType } from './parsing/convertXDMReturnValue';
+import { performStaticCompilationOnModules } from './parsing/globalModuleCache';
 import { Language, Logger, XMLSerializer } from './types/Options';
 
 /**
@@ -63,6 +64,8 @@ export default async function evaluateUpdatingExpression(
 	options?: UpdatingOptions | null
 ): Promise<{ pendingUpdateList: object[]; xdmValue: any[] }> {
 	options = options || {};
+
+	performStaticCompilationOnModules();
 
 	let dynamicContext: DynamicContext;
 	let executionParameters: ExecutionParameters;

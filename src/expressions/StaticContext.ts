@@ -29,6 +29,7 @@ export type GenericFunctionDefinition<isUpdating, callFunctionType> = {
 	arity: number;
 	callFunction: callFunctionType;
 	isExternal: boolean;
+	isPublic: boolean;
 	isUpdating: isUpdating;
 	localName: string;
 	namespaceURI: string;

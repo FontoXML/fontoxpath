@@ -1,13 +1,18 @@
+import type { EvaluableExpression } from '../evaluateXPath';
 import ISequence from '../expressions/dataTypes/ISequence';
 import sequenceFactory from '../expressions/dataTypes/sequenceFactory';
-import { SequenceType, ValueType } from '../expressions/dataTypes/Value';
+import type { SequenceType } from '../expressions/dataTypes/Value';
 import DynamicContext from '../expressions/DynamicContext';
 import ExecutionParameters from '../expressions/ExecutionParameters';
 import Expression from '../expressions/Expression';
 import FunctionDefinitionType from '../expressions/functions/FunctionDefinitionType';
 import { getAlternativesAsStringFor } from '../expressions/functions/functionRegistry';
 import { BUILT_IN_NAMESPACE_URIS } from '../expressions/staticallyKnownNamespaces';
-import StaticContext, { GenericFunctionDefinition } from '../expressions/StaticContext';
+import StaticContext, {
+	FunctionDefinition,
+	GenericFunctionDefinition,
+	UpdatingFunctionDefinition,
+} from '../expressions/StaticContext';
 import createDoublyIterableSequence from '../expressions/util/createDoublyIterableSequence';
 import UpdatingExpression from '../expressions/xquery-update/UpdatingExpression';
 import UpdatingFunctionDefinitionType from '../expressions/xquery-update/UpdatingFunctionDefinitionType';
@@ -23,6 +28,17 @@ import {
 import astHelper, { IAST } from './astHelper';
 import compileAstToExpression from './compileAstToExpression';
 import { enhanceStaticContextWithModule } from './globalModuleCache';
+
+export type ModuleDeclaration = {
+	functionDeclarations: (FunctionDefinition | UpdatingFunctionDefinition)[];
+	source: EvaluableExpression;
+	variableDeclarations: VariableDeclaration[];
+	/**
+	 * Perform static analysis on the module. the whole module is passed, with all additional
+	 * functions that are registered for this namespace
+	 */
+	performStaticAnalysis(moduleContents: ModuleDeclaration): void;
+};
 
 const RESERVED_FUNCTION_NAMESPACE_URIS = [
 	'http://www.w3.org/XML/1998/namespace',
@@ -41,6 +57,7 @@ export type FunctionDeclaration = {
 		boolean,
 		FunctionDefinitionType | UpdatingFunctionDefinitionType
 	>;
+	isPublic: boolean;
 	localName: string;
 	namespaceURI: string;
 };
@@ -175,6 +192,7 @@ function processFunctionDefinition(
 				callFunction: executeFunction,
 				isExternal: false,
 				isUpdating: true,
+				isPublic: isPublicDeclaration,
 				localName: declarationLocalName,
 				namespaceURI: declarationNamespaceURI,
 				returnType,
@@ -206,6 +224,7 @@ function processFunctionDefinition(
 				callFunction: executeFunction,
 				isExternal: false,
 				isUpdating: false,
+				isPublic: isPublicDeclaration,
 				localName: declarationLocalName,
 				namespaceURI: declarationNamespaceURI,
 				returnType,
@@ -217,16 +236,15 @@ function processFunctionDefinition(
 			staticContextLeaf,
 		});
 
-		if (isPublicDeclaration) {
-			// Only mark the registration as the public API for the module if it's public
-			compiledFunctionDeclarations.push({
-				arity: paramNames.length,
-				expression: compiledFunctionBody,
-				functionDefinition,
-				localName: declarationLocalName,
-				namespaceURI: declarationNamespaceURI,
-			});
-		}
+		// Only mark the registration as the public API for the module if it's public
+		compiledFunctionDeclarations.push({
+			arity: paramNames.length,
+			expression: compiledFunctionBody,
+			functionDefinition,
+			localName: declarationLocalName,
+			namespaceURI: declarationNamespaceURI,
+			isPublic: isPublicDeclaration,
+		});
 	} else {
 		if (isUpdatingFunction) {
 			throw new Error('Updating external function declarations are not supported');
@@ -283,6 +301,7 @@ function processFunctionDefinition(
 			isUpdating: false,
 			localName: declarationLocalName,
 			namespaceURI: declarationNamespaceURI,
+			isPublic: isPublicDeclaration,
 			returnType,
 		};
 	}
@@ -301,12 +320,14 @@ function processFunctionDefinition(
  * @param  prolog            - The AST to process
  * @param  staticContext     - The static context to extend
  * @param  createExpressions - Whether to compile the prolog as well. If we are just parsing there is no need to create expressions already
+ * @param  moduleString      - The string of the module. Used for error reporting if a compilation failed
  */
 export default function processProlog(
 	prolog: IAST,
 	staticContext: StaticContext,
-	createExpressions = true
-): { functionDeclarations: FunctionDeclaration[]; variableDeclarations: VariableDeclaration[] } {
+	createExpressions: boolean,
+	moduleString: EvaluableExpression
+): ModuleDeclaration {
 	const staticallyCompilableExpressions: {
 		expression: Expression;
 		staticContextLeaf: StaticContext;
@@ -509,10 +530,6 @@ export default function processProlog(
 		}
 	});
 
-	staticallyCompilableExpressions.forEach(({ expression, staticContextLeaf }) => {
-		expression.performStaticEvaluation(staticContextLeaf);
-	});
-
 	compiledFunctionDeclarations.forEach((compiledFunctionDeclaration) => {
 		if (
 			!compiledFunctionDeclaration.functionDefinition.isUpdating &&
@@ -525,7 +542,49 @@ export default function processProlog(
 	});
 
 	return {
-		functionDeclarations: compiledFunctionDeclarations,
+		functionDeclarations: compiledFunctionDeclarations.map(
+			(declaration) =>
+				declaration.functionDefinition as UpdatingFunctionDefinition | FunctionDefinition
+		),
 		variableDeclarations: registeredVariables,
+		source: moduleString,
+		performStaticAnalysis: (moduleContents: ModuleDeclaration) => {
+			staticallyCompilableExpressions.forEach(({ expression, staticContextLeaf }) => {
+				importedModuleNamespaces.forEach((namespaceURI) => {
+					enhanceStaticContextWithModule(staticContextLeaf, namespaceURI);
+				});
+				moduleContents.functionDeclarations.forEach((funDecl) => {
+					if (
+						staticContextLeaf.lookupFunction(
+							funDecl.namespaceURI,
+							funDecl.localName,
+							funDecl.arity,
+							true
+						)
+					) {
+						// The function is defined in this module already. We do not have to
+						// regrester it.
+						return;
+					}
+					if (funDecl.isPublic) {
+						// Only register public functions
+						staticContextLeaf.registerFunctionDefinition(
+							funDecl.namespaceURI,
+							funDecl.localName,
+							funDecl.arity,
+							funDecl
+						);
+					}
+				});
+				moduleContents.variableDeclarations.forEach((varDecl) => {
+					if (staticContextLeaf.lookupVariable(varDecl.namespaceURI, varDecl.localName)) {
+						return;
+					}
+					staticContextLeaf.registerVariable(varDecl.namespaceURI, varDecl.localName);
+				});
+
+				expression.performStaticEvaluation(staticContextLeaf);
+			});
+		},
 	};
 }

@@ -35,6 +35,7 @@ import compileAstToExpression from './parsing/compileAstToExpression';
 import { getAnyStaticCompilationResultFromCache } from './parsing/compiledExpressionCache';
 import { IReturnTypes, ReturnType } from './parsing/convertXDMReturnValue';
 import convertXmlToAst from './parsing/convertXmlToAst';
+import { performStaticCompilationOnModules } from './parsing/globalModuleCache';
 import parseExpression from './parsing/parseExpression';
 import { Profiler, profiler, XPathPerformanceMeasurement } from './performance';
 import precompileXPath from './precompileXPath';
@@ -69,7 +70,7 @@ import {
 	Text,
 } from './types/Types';
 
-// Hold a simply cache for any XPaths that are parsed but never statically compiled
+// Hold a simple cache for any XPaths that are parsed but never statically compiled
 const partiallyParsedXPathCache = new Map();
 function parseXPath(xpathExpression: EvaluableExpression): Expression {
 	const cachedExpression = getAnyStaticCompilationResultFromCache(xpathExpression, null, false);
@@ -174,6 +175,7 @@ if (typeof fontoxpathGlobal !== 'undefined') {
 	fontoxpathGlobal['parseScript'] = parseScript;
 	fontoxpathGlobal['profiler'] = profiler;
 	fontoxpathGlobal['createTypedValueFactory'] = internalCreateTypedValueFactory;
+	fontoxpathGlobal['finalizeModuleRegistration'] = performStaticCompilationOnModules;
 
 	// The two enums
 	fontoxpathGlobal['Language'] = Language;
@@ -199,6 +201,7 @@ type ExternalTypedValueFactory = (
 export const createTypedValueFactory = internalCreateTypedValueFactory as ExternalTypedValueFactory;
 
 export {
+	performStaticCompilationOnModules as finalizeModuleRegistration,
 	Attr,
 	Bucket,
 	CDATASection,

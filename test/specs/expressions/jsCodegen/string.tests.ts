@@ -97,7 +97,6 @@ describe('string tests', () => {
 	});
 
 	it('test empty string codegen with xqueryx', () => {
-		debugger;
 		const xqueryx = parseScript('""', {}, documentNode);
 		const script = compileXPathToJavaScript(xqueryx, ReturnType.STRING);
 		chai.assert.isTrue(script.isAstAccepted);

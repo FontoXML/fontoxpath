@@ -6,6 +6,7 @@ import ExecutionParameters from './expressions/ExecutionParameters';
 import Expression from './expressions/Expression';
 import { getBucketsForNode } from './getBuckets';
 import convertXDMReturnValue, { IReturnTypes, ReturnType } from './parsing/convertXDMReturnValue';
+import { performStaticCompilationOnModules } from './parsing/globalModuleCache';
 import { markXPathEnd, markXPathStart } from './performance';
 import { TypedExternalValue, UntypedExternalValue } from './types/createTypedValueFactory';
 import { Language, Options } from './types/Options';
@@ -159,6 +160,8 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 			"Failed to execute 'evaluateXPath': xpathExpression must be a string or an element depicting an XQueryX DOM tree."
 		);
 	}
+
+	performStaticCompilationOnModules();
 
 	options = options || {};
 

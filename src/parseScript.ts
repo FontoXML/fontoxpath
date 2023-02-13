@@ -247,7 +247,7 @@ export default function parseScript<TElement extends Element>(
 	const prolog = astHelper.getFirstChild(anyModuleDecl, 'prolog');
 
 	if (prolog) {
-		processProlog(prolog, rootStaticContext, false);
+		processProlog(prolog, rootStaticContext, false, script);
 	}
 
 	if (options['annotateAst'] !== false) {
