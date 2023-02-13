@@ -1,16 +1,4 @@
-import {
-	delimited,
-	error,
-	map,
-	okWithValue,
-	optional,
-	or,
-	Parser,
-	ParseResult,
-	preceded,
-	star,
-	then,
-} from 'prsc';
+import { delimited, error, map, okWithValue, or, Parser, ParseResult, preceded, then } from 'prsc';
 
 export function cached<T>(parser: Parser<T>, cache: Map<number, ParseResult<T>>): Parser<T> {
 	return (input: string, offset: number): ParseResult<T> => {

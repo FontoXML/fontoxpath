@@ -163,15 +163,14 @@ export const elementContentChar = preceded(
 export const cdataSection: Parser<IAST> = map(
 	delimited(
 		tokens.CDATA_OPEN,
-		cut(
-			star(
-				preceded(
-					peek(not(tokens.CDATA_CLOSE, ['CDataSection content may not contain "]]>"'])),
-					char
-				)
+		star(
+			preceded(
+				peek(not(tokens.CDATA_CLOSE, ['CDataSection content may not contain "]]>"'])),
+				char
 			)
 		),
-		tokens.CDATA_CLOSE
+		tokens.CDATA_CLOSE,
+		true
 	),
 	(contents) => ['CDataSection', contents.join('')]
 );
@@ -203,11 +202,12 @@ export const dirCommentContents: Parser<string> = map(
 );
 
 export const dirCommentConstructor: Parser<IAST> = map(
-	delimited(tokens.DIR_COMMENT_OPEN, cut(dirCommentContents), tokens.DIR_COMMENT_CLOSE),
+	delimited(tokens.DIR_COMMENT_OPEN, dirCommentContents, tokens.DIR_COMMENT_CLOSE, true),
 	(x) => ['computedCommentConstructor', ['argExpr', ['stringConstantExpr', ['value', x]]]]
 );
 
-// Note: we deviate from the spec here. Processing instruction targets must _always_ be a NCName
+// Note: we deviate from the grammar in the XQuery spec here. Processing instruction targets must
+// _always_ be a NCName
 const piTarget: Parser<string> = filter(
 	ncName,
 	(target: string) => {

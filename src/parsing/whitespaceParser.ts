@@ -27,7 +27,8 @@ export const comment: Parser<string> = map(
 	delimited(
 		tokens.COMMENT_START,
 		star(or([commentContents, commentIndirect])),
-		tokens.COMMENT_END
+		tokens.COMMENT_END,
+		true
 	),
 	(x) => x.join('')
 );

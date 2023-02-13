@@ -12,7 +12,10 @@ import {
 	storeStaticCompilationResultInCache,
 } from './compiledExpressionCache';
 import convertXmlToAst from './convertXmlToAst';
-import { enhanceStaticContextWithModule, performStaticCompilationOnModules } from './globalModuleCache';
+import {
+	enhanceStaticContextWithModule,
+	performStaticCompilationOnModules,
+} from './globalModuleCache';
 import normalizeEndOfLines from './normalizeEndOfLines';
 import parseExpression from './parseExpression';
 import processProlog from './processProlog';
