@@ -12,7 +12,7 @@ import {
 	storeStaticCompilationResultInCache,
 } from './compiledExpressionCache';
 import convertXmlToAst from './convertXmlToAst';
-import { enhanceStaticContextWithModule } from './globalModuleCache';
+import { enhanceStaticContextWithModule, performStaticCompilationOnModules } from './globalModuleCache';
 import normalizeEndOfLines from './normalizeEndOfLines';
 import parseExpression from './parseExpression';
 import processProlog from './processProlog';
@@ -101,6 +101,10 @@ function buildExpressionFromAst(
 			);
 		}
 
+		// XPath with a prolog: we're going to need to statically analyze modules if that didn't
+		// happen yet:
+		performStaticCompilationOnModules();
+
 		const moduleDeclaration = processProlog(prolog, rootStaticContext, true, source);
 		// Immediately perform static compilation as well
 		moduleDeclaration.performStaticAnalysis(moduleDeclaration);
@@ -135,6 +139,13 @@ export default function staticallyCompileXPath(
 		functionNameResolver
 	);
 	const rootStaticContext = new StaticContext(executionSpecificStaticContext);
+
+	if (Object.keys(moduleImports).length > 0) {
+		// XPath with imports: we're going to need to statically analyze modules if that didn't
+		// happen yet:
+		performStaticCompilationOnModules();
+	}
+
 	Object.keys(moduleImports).forEach((modulePrefix) => {
 		const moduleURI = moduleImports[modulePrefix];
 		enhanceStaticContextWithModule(rootStaticContext, moduleURI);

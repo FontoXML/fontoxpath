@@ -159,6 +159,32 @@ test:AAA(5)
 		chai.assert.equal(result, 'Hello Hello Hello  World World World');
 	});
 
+	it('Can do circular imports without manually finalizing module registration', () => {
+		registerXQueryModule(`
+module namespace test = "http://www.example.org/mainmodules.tests#4";
+
+declare %public function test:hello() as xs:string  {
+   "Hello world!"
+};
+`);
+
+		const result = evaluateXPath(
+			`
+import module namespace test = "http://www.example.org/mainmodules.tests#4";
+
+test:hello()
+`,
+			null,
+			null,
+			null,
+			null,
+			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+		);
+
+		chai.assert.equal(result, 'Hello world!');
+	});
+
+
 	it('Hides private declarations in the same namespace', () => {
 		registerXQueryModule(`
 module namespace test = "http://www.example.org/mainmodules.tests#4";

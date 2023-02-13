@@ -365,7 +365,6 @@ export default function processProlog(
 		importedModuleNamespaces.add(moduleImportNamespaceURI);
 
 		staticContext.registerNamespace(moduleImportPrefix, moduleImportNamespaceURI);
-		enhanceStaticContextWithModule(staticContext, moduleImportNamespaceURI);
 	});
 
 	astHelper.getChildren(prolog, 'namespaceDecl').forEach((namespaceDecl) => {
@@ -549,6 +548,10 @@ export default function processProlog(
 		variableDeclarations: registeredVariables,
 		source: moduleString,
 		performStaticAnalysis: (moduleContents: ModuleDeclaration) => {
+			importedModuleNamespaces.forEach((namespaceURI) => {
+				enhanceStaticContextWithModule(staticContext, namespaceURI);
+			});
+
 			staticallyCompilableExpressions.forEach(({ expression, staticContextLeaf }) => {
 				importedModuleNamespaces.forEach((namespaceURI) => {
 					enhanceStaticContextWithModule(staticContextLeaf, namespaceURI);

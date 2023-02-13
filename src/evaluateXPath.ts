@@ -161,8 +161,6 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 		);
 	}
 
-	performStaticCompilationOnModules();
-
 	options = options || {};
 
 	let dynamicContext: DynamicContext;
