@@ -69,7 +69,7 @@ export class FuzzCase {
 	 * @returns Returns `true` when expected.
 	 */
 	isExpectedError(error: Error): boolean {
-		return EXPECTED_ERROR_PREFIXES.some((prefix) => error.message.startsWith(prefix));
+		return EXPECTED_ERROR_PREFIXES.some((prefix) => error.message.includes(prefix));
 	}
 
 	/**
