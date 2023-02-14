@@ -6,4 +6,3 @@ Expand-Archive ./test/assets/XQUTS.zip -DestinationPath ./test/assets/XQUTS-extr
 Move-Item ./test/assets/XQUTS-extracted/XQUTS-master ./test/assets/XQUTS
 Remove-Item ./test/assets/XQUTS.zip
 Remove-Item ./test/assets/qt3tests/xqueryx-extracted
-Remove-Item ./test/assets/XQUTS-extracted

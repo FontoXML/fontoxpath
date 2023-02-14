@@ -3,6 +3,7 @@ import {
 	createDefaultFunctionNameResolver,
 	createDefaultNamespaceResolver,
 } from '../evaluationUtils/buildEvaluationContext';
+import { printAndRethrowError } from '../evaluationUtils/printAndRethrowError';
 import ExecutionSpecificStaticContext from '../expressions/ExecutionSpecificStaticContext';
 import { BUILT_IN_NAMESPACE_URIS } from '../expressions/staticallyKnownNamespaces';
 import StaticContext from '../expressions/StaticContext';
@@ -49,8 +50,11 @@ function compileXPathToJavaScript(
 			// yet by the js-codegen backend.
 			debug: false,
 		};
-
-		ast = parseExpression(expressionString, parserOptions);
+		try {
+			ast = parseExpression(expressionString, parserOptions);
+		} catch (error) {
+			printAndRethrowError(expressionString, error);
+		}
 	} else {
 		ast = convertXmlToAst(selector);
 	}

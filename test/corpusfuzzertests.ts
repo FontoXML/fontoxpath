@@ -34,38 +34,43 @@ describe('Corpus Fuzzer tests', () => {
 		);
 	});
 
-	it('Manually create random base ISO corpus fuzz cases and run them', () => {
+	describe('Manually create random base ISO corpus fuzz cases and run them', () => {
 		for (const selector of corpus.get()) {
 			const language = randomLanguage();
 			const backend = randomBackend();
-			const fuzzCase = new FuzzCase(selector, language, backend, documentNode);
+			it(`Can run a fuzzer test for ${selector}, ${language}, ${backend}`, () => {
+				const fuzzCase = new FuzzCase(selector, language, backend, documentNode);
 
-			try {
-				fuzzCase.run();
-			} catch (error) {
-				if (!fuzzCase.isExpectedError(error)) {
-					chai.assert.fail(
-						`Fuzz case was not expecting an error for selector \"${selector}\", but it failed nonetheless.`
-					);
+				try {
+					fuzzCase.run();
+				} catch (error) {
+					if (!fuzzCase.isExpectedError(error)) {
+						chai.assert.fail(
+							`Fuzz case was not expecting an error for selector \"${selector}\", but it failed nonetheless.`
+						);
+					}
 				}
-			}
+			});
 		}
 	});
 
 	languages.forEach((language) => {
 		backends.forEach((backend) => {
-			it(`All ISO corpus fuzz cases with language: ${language} and backend: ${backend}`, () => {
+			describe(`All ISO corpus fuzz cases with language: ${language} and backend: ${backend}`, () => {
 				for (const selector of corpus.get()) {
-					const fuzzCase = new FuzzCase(selector, language, backend, documentNode);
-					try {
-						fuzzCase.run();
-					} catch (error) {
-						if (!fuzzCase.isExpectedError(error)) {
-							chai.assert.fail(
-								`Fuzz case was not expecting an error for selector \"${fuzzCase.selector}\", but it failed nonetheless.`
-							);
+					it(`can run fuzz case ${selector}`, () => {
+						const fuzzCase = new FuzzCase(selector, language, backend, documentNode);
+						try {
+							fuzzCase.run();
+						} catch (error) {
+							if (!fuzzCase.isExpectedError(error)) {
+								throw error;
+								chai.assert.fail(
+									`Fuzz case was not expecting an error for selector \"${fuzzCase.selector}\", but it failed nonetheless.`
+								);
+							}
 						}
-					}
+					});
 				}
 			});
 		});

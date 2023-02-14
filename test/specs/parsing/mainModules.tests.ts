@@ -184,7 +184,6 @@ test:hello()
 		chai.assert.equal(result, 'Hello world!');
 	});
 
-
 	it('Hides private declarations in the same namespace', () => {
 		registerXQueryModule(`
 module namespace test = "http://www.example.org/mainmodules.tests#4";

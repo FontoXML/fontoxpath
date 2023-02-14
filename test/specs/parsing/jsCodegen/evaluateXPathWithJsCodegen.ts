@@ -1,3 +1,4 @@
+import { printAndRethrowError } from 'fontoxpath/evaluationUtils/printAndRethrowError';
 import {
 	CompiledXPathFunction,
 	compileXPathToJavaScript,
@@ -5,6 +6,7 @@ import {
 	executeJavaScriptCompiledXPath,
 	IDomFacade,
 	IReturnTypes,
+	JavaScriptCompiledXPathResult,
 	Options,
 	ReturnType,
 } from '../../../../src/index';
@@ -45,7 +47,12 @@ const evaluateXPathWithJsCodegen = <
 
 	const cachedCompiledXPath = getFromCache(query, returnType);
 	if (!cachedCompiledXPath) {
-		const compiledXPathResult = compileXPathToJavaScript(query, returnType, options);
+		let compiledXPathResult: JavaScriptCompiledXPathResult;
+		try {
+			compiledXPathResult = compileXPathToJavaScript(query, returnType, options);
+		} catch (error) {
+			printAndRethrowError(query, error);
+		}
 		if (compiledXPathResult.isAstAccepted === true) {
 			// tslint:disable-next-line
 			const evalFunction = new Function(compiledXPathResult.code) as CompiledXPathFunction;

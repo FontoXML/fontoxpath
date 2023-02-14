@@ -1,5 +1,7 @@
 import {
+	cut,
 	delimited,
+	filter,
 	followed,
 	map,
 	not,
@@ -7,13 +9,12 @@ import {
 	or,
 	Parser,
 	peek,
-	plus,
 	preceded,
 	star,
 	then,
 } from 'prsc';
 import { IAST } from './astHelper';
-import { name } from './nameParser';
+import { ncName } from './nameParser';
 import { alias, precededMultiple, regex, then3, wrapArray } from './parsingFunctions';
 import * as tokens from './tokens';
 import {
@@ -168,7 +169,8 @@ export const cdataSection: Parser<IAST> = map(
 				char
 			)
 		),
-		tokens.CDATA_CLOSE
+		tokens.CDATA_CLOSE,
+		true
 	),
 	(contents) => ['CDataSection', contents.join('')]
 );
@@ -200,23 +202,18 @@ export const dirCommentContents: Parser<string> = map(
 );
 
 export const dirCommentConstructor: Parser<IAST> = map(
-	delimited(tokens.DIR_COMMENT_OPEN, dirCommentContents, tokens.DIR_COMMENT_CLOSE),
+	delimited(tokens.DIR_COMMENT_OPEN, dirCommentContents, tokens.DIR_COMMENT_CLOSE, true),
 	(x) => ['computedCommentConstructor', ['argExpr', ['stringConstantExpr', ['value', x]]]]
 );
 
-const piTarget: Parser<string> = preceded(
-	peek(
-		not(
-			then3(
-				or([tokens.X_UPPER, tokens.X_LOWER]),
-				or([tokens.M_UPPER, tokens.M_LOWER]),
-				or([tokens.L_UPPER, tokens.L_LOWER]),
-				(_a, _b, _c) => []
-			),
-			[]
-		)
-	),
-	name
+// Note: we deviate from the grammar in the XQuery spec here. Processing instruction targets must
+// _always_ be a NCName
+const piTarget: Parser<string> = filter(
+	ncName,
+	(target: string) => {
+		return target.toLowerCase() !== 'xml';
+	},
+	['A processing instruction target cannot be "xml"']
 );
 
 const dirPiContents: Parser<string> = map(
@@ -225,8 +222,8 @@ const dirPiContents: Parser<string> = map(
 );
 
 export const dirPiConstructor: Parser<IAST> = then(
-	preceded(tokens.DIR_PI_OPEN, piTarget),
-	followed(optional(preceded(explicitWhitespace, dirPiContents)), tokens.DIR_PI_CLOSE),
+	preceded(tokens.DIR_PI_OPEN, cut(piTarget)),
+	cut(followed(optional(preceded(explicitWhitespace, dirPiContents)), tokens.DIR_PI_CLOSE)),
 	(target, contents) => [
 		'computedPIConstructor',
 		['piTarget', target],
