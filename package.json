@@ -28,8 +28,8 @@
 		"xqutstests": "ts-mocha --paths --project test/tsconfig.json test/xqutsTests.ts",
 		"xqutstestsxqueryx": "ts-mocha --paths --project test/tsconfig.json test/xqutsTestsXQueryX.ts",
 		"browsertests": "karma start",
-		"lint": "eslint \"./src/**/*.ts\" \"./src/**/*.ts\"",
-		"lint-fix": "eslint \"./src/**/*.ts\" \"./src/**/*.ts\" --fix",
+		"lint": "eslint \"./src/**/*.ts\" \"./test/**/*.ts\"",
+		"lint-fix": "eslint \"./src/**/*.ts\" \"./test/**/*.ts\" --fix",
 		"fuzzer": "ts-node -P fuzzers/tsconfig.json -r tsconfig-paths/register fuzzers/index.ts",
 		"fuzzertest": "ts-mocha --paths --project test/tsconfig.json test/corpusfuzzertests.ts"
 	},

@@ -1,8 +1,8 @@
 // Import the Performance interface locally to this file
 /// <reference lib="dom" />
 
-import { EvaluableExpression } from '.';
 import evaluableExpressionToString from './parsing/evaluableExpressionToString';
+import { EvaluableExpression } from '.';
 
 let profilingEnabled = false;
 

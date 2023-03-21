@@ -1,5 +1,5 @@
-import { evaluateXPathToMap } from 'fontoxpath';
 import * as path from 'path';
+import { evaluateXPathToMap } from 'fontoxpath';
 import { parseXmlDocument } from 'slimdom';
 import { getSkippedTests } from 'test-helpers/getSkippedTests';
 import testFs from 'test-helpers/testFs';
