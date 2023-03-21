@@ -1,4 +1,3 @@
-import * as path from 'path';
 import * as chai from 'chai';
 import {
 	EvaluableExpression,
@@ -13,6 +12,7 @@ import {
 	executePendingUpdateList,
 	parseScript,
 } from 'fontoxpath';
+import * as path from 'path';
 import { Document, Element, Node, parseXmlDocument } from 'slimdom';
 import { getSkippedTests } from 'test-helpers/getSkippedTests';
 import testFs from 'test-helpers/testFs';

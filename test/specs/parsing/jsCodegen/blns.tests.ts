@@ -1,8 +1,8 @@
+import * as blns from 'blns';
 import * as chai from 'chai';
 import { evaluateXPath, ReturnType } from 'fontoxpath';
 import * as slimdom from 'slimdom';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
-import * as blns from 'blns';
 import evaluateXPathWithJsCodegen from './evaluateXPathWithJsCodegen';
 
 describe('Big List of Naughty Strings tests for JSCodegen', () => {
