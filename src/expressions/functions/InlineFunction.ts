@@ -45,8 +45,8 @@ class InlineFunction extends Expression {
 
 	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
 		/**
-		 * @param  _unboundDynamicContext  The dynamic context at the moment of the function call. This will not be used because the context of a function is the context at the moment of declaration.
-		 *                                                                  This shall not be used
+		 * @param  _unboundDynamicContext  The dynamic context at the moment of the function call.
+		 * This will not be used because the context of a function is the context at the moment of declaration.
 		 * @param  parameters              The parameters of the function
 		 * @return The result of the function call
 		 */

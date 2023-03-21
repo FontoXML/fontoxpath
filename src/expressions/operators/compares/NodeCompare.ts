@@ -76,8 +76,7 @@ function isOpHandler(
 	secondSequence: ISequence,
 	dynamicContext: DynamicContext
 ) => boolean {
-	if (
-		first === second &&
+	return first === second &&
 		(first === ValueType.ATTRIBUTE ||
 			first === ValueType.NODE ||
 			first === ValueType.ELEMENT ||
@@ -85,20 +84,17 @@ function isOpHandler(
 			first === ValueType.TEXT ||
 			first === ValueType.PROCESSINGINSTRUCTION ||
 			first === ValueType.COMMENT)
-	) {
-		return (
-			firstSequenceParam: ISequence,
-			secondSequenceParam: ISequence,
-			_context: DynamicContext
-		) => {
-			return arePointersEqual(
-				firstSequenceParam.first().value,
-				secondSequenceParam.first().value
-			);
-		};
-	} else {
-		return (firstSequenceParam: ISequence, secondSequenceParam: ISequence) => false;
-	}
+		? (
+				firstSequenceParam: ISequence,
+				secondSequenceParam: ISequence,
+				_context: DynamicContext
+		  ) => {
+				return arePointersEqual(
+					firstSequenceParam.first().value,
+					secondSequenceParam.first().value
+				);
+		  }
+		: (firstSequenceParam: ISequence, secondSequenceParam: ISequence) => false;
 }
 
 export default class NodeCompare extends Expression {

@@ -31,13 +31,6 @@ abstract class FlworExpression extends Expression {
 		this.isUpdating = this._returnExpression.isUpdating;
 	}
 
-	public abstract doFlworExpression(
-		dynamicContext: DynamicContext,
-		dynamicContextIterator: IIterator<DynamicContext>,
-		executionParameters: ExecutionParameters,
-		createReturnSequence: (dynamicContextIterator: IIterator<DynamicContext>) => ISequence
-	): ISequence;
-
 	public doFlworExpressionUpdating(
 		outerDynamicContext: DynamicContext,
 		outerDynamicContextIterator: IIterator<DynamicContext>,
@@ -237,6 +230,13 @@ abstract class FlworExpression extends Expression {
 			}
 		);
 	}
+
+	public abstract doFlworExpression(
+		dynamicContext: DynamicContext,
+		dynamicContextIterator: IIterator<DynamicContext>,
+		executionParameters: ExecutionParameters,
+		createReturnSequence: (dynamicContextIterator: IIterator<DynamicContext>) => ISequence
+	): ISequence;
 }
 
 export default FlworExpression;

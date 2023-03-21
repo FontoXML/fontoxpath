@@ -1184,29 +1184,30 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const simpleMapExpr: Parser<IAST> = wrapInStackTrace(
 		binaryOperator(pathExpr, tokens.EXCLAMATION_MARK, (lhs: IAST, rhs: [string, IAST][]) => {
-			if (rhs.length === 0) {
-				return lhs;
-			} else {
-				return [
-					'simpleMapExpr',
-					lhs[0] === 'pathExpr'
-						? lhs
-						: [
-								'pathExpr',
-								['stepExpr', ['filterExpr', wrapInSequenceExprIfNeeded(lhs)]],
-						  ],
-				].concat(
-					rhs.map((value) => {
-						const item: IAST = value[1];
-						return item[0] === 'pathExpr'
-							? item
+			return rhs.length === 0
+				? lhs
+				: ([
+						'simpleMapExpr',
+						lhs[0] === 'pathExpr'
+							? lhs
 							: [
 									'pathExpr',
-									['stepExpr', ['filterExpr', wrapInSequenceExprIfNeeded(item)]],
-							  ];
-					})
-				) as IAST;
-			}
+									['stepExpr', ['filterExpr', wrapInSequenceExprIfNeeded(lhs)]],
+							  ],
+				  ].concat(
+						rhs.map((value) => {
+							const item: IAST = value[1];
+							return item[0] === 'pathExpr'
+								? item
+								: [
+										'pathExpr',
+										[
+											'stepExpr',
+											['filterExpr', wrapInSequenceExprIfNeeded(item)],
+										],
+								  ];
+						})
+				  ) as IAST);
 		})
 	);
 
@@ -1534,16 +1535,14 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			optional(precededMultiple([tokens.COLLATION, whitespace], uriLiteral))
 		),
 		(kind, empty, collation) => {
-			if (!kind && !empty && !collation) {
-				return null;
-			} else {
-				return [
-					'orderModifier',
-					...(kind ? [['orderingKind', kind]] : []),
-					...(empty ? [['emptyOrderingMode', empty]] : []),
-					...(collation ? [['collation', collation]] : []),
-				] as IAST;
-			}
+			return !kind && !empty && !collation
+				? null
+				: ([
+						'orderModifier',
+						...(kind ? [['orderingKind', kind]] : []),
+						...(empty ? [['emptyOrderingMode', empty]] : []),
+						...(collation ? [['collation', collation]] : []),
+				  ] as IAST);
 		}
 	);
 

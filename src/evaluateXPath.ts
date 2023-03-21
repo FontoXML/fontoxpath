@@ -6,7 +6,6 @@ import ExecutionParameters from './expressions/ExecutionParameters';
 import Expression from './expressions/Expression';
 import { getBucketsForNode } from './getBuckets';
 import convertXDMReturnValue, { IReturnTypes, ReturnType } from './parsing/convertXDMReturnValue';
-import { performStaticCompilationOnModules } from './parsing/globalModuleCache';
 import { markXPathEnd, markXPathStart } from './performance';
 import { TypedExternalValue, UntypedExternalValue } from './types/createTypedValueFactory';
 import { Language, Options } from './types/Options';
@@ -20,11 +19,12 @@ export type EvaluateXPath = {
 	 * Evaluates an XPath on the given contextItem.
 	 *
 	 * If the return type is ANY_TYPE, the returned value depends on the result of the XPath:
-	 *  * If the XPath evaluates to the empty sequence, an empty array is returned.
-	 *  * If the XPath evaluates to a singleton node, that node is returned.
-	 *  * If the XPath evaluates to a singleton value, that value is atomized and returned.
-	 *  * If the XPath evaluates to a sequence of nodes, those nodes are returned.
-	 *  * Else, the sequence is atomized and returned.
+	 *
+	 * * If the XPath evaluates to the empty sequence, an empty array is returned.
+	 * * If the XPath evaluates to a singleton node, that node is returned.
+	 * * If the XPath evaluates to a singleton value, that value is atomized and returned.
+	 * * If the XPath evaluates to a sequence of nodes, those nodes are returned.
+	 * * Else, the sequence is atomized and returned.
 	 *
 	 * @public
 	 *

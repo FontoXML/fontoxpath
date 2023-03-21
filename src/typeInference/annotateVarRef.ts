@@ -4,6 +4,7 @@ import { AnnotationContext } from './AnnotationContext';
 
 /**
  * The method to annotate the varRef node
+ *
  * @param ast the ast containing the varRef
  * @param annotationContext the context in which its being annotated
  * @returns the type of the variable as SequenceType if it is contained in the context

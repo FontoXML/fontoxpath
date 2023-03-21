@@ -20,6 +20,7 @@ const OPERATOR_TRANSLATION: { [s: string]: string } = {
 
 /**
  * A method to find the targetTypes of the operands of the generalCompare.
+ *
  * @param firstType the type of the first operand
  * @param secondType the type of the second operand
  * @returns a tuple of the targetTypes, at least one of them is undefined

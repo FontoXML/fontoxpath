@@ -80,29 +80,27 @@ export default function buildEvaluationContext(
 	if (variables === null || variables === undefined) {
 		variables = variables || {};
 	}
-	let internalOptions: Options;
-	if (externalOptions) {
-		internalOptions = {
-			// tslint:disable-next-line:no-console
-			logger: externalOptions['logger'] || { trace: console.log.bind(console) },
-			documentWriter: externalOptions['documentWriter'],
-			moduleImports: externalOptions['moduleImports'],
-			namespaceResolver: externalOptions['namespaceResolver'],
-			functionNameResolver: externalOptions['functionNameResolver'],
-			nodesFactory: externalOptions['nodesFactory'],
-			xmlSerializer: externalOptions['xmlSerializer'],
-		};
-	} else {
-		internalOptions = {
-			// tslint:disable-next-line:no-console
-			logger: { trace: console.log.bind(console) },
-			moduleImports: {},
-			namespaceResolver: null,
-			nodesFactory: null,
-			documentWriter: null,
-			xmlSerializer: null,
-		};
-	}
+	const internalOptions: Options = externalOptions
+		? {
+				// eslint-disable-next-line no-console
+				logger: externalOptions['logger'] || { trace: console.log.bind(console) },
+				documentWriter: externalOptions['documentWriter'],
+				moduleImports: externalOptions['moduleImports'],
+				namespaceResolver: externalOptions['namespaceResolver'],
+				functionNameResolver: externalOptions['functionNameResolver'],
+				nodesFactory: externalOptions['nodesFactory'],
+				xmlSerializer: externalOptions['xmlSerializer'],
+		  }
+		: {
+				// eslint-disable-next-line no-console
+				logger: { trace: console.log.bind(console) },
+				moduleImports: {},
+				namespaceResolver: null,
+				nodesFactory: null,
+				documentWriter: null,
+				xmlSerializer: null,
+		  };
+
 	const wrappedDomFacade: DomFacade = new DomFacade(
 		domFacade === null ? new ExternalDomFacade() : domFacade
 	);
@@ -151,7 +149,7 @@ export default function buildEvaluationContext(
 			const variable = variables[variableName];
 			if (variable && typeof variable === 'object' && IS_XPATH_VALUE_SYMBOL in variable) {
 				// If this symbol is present, the value has already undergone type conversion.
-				const castedObject = variable as TypedExternalValue;
+				const castedObject = variable as unknown as TypedExternalValue;
 				typedVariableByName[generateGlobalVariableBindingName(variableName)] = () => {
 					return sequenceFactory.create(castedObject.convertedValue);
 				};
@@ -169,6 +167,8 @@ export default function buildEvaluationContext(
 		Object.create(null) as { [s: string]: () => ISequence }
 	);
 
+	// This is written to later, but must already be available.
+	// eslint-disable-next-line prefer-const
 	let dynamicContext: DynamicContext;
 	for (const binding of expressionAndStaticContext.staticContext.getVariableBindings()) {
 		if (!variableBindings[binding]) {

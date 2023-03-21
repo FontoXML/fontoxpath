@@ -1106,7 +1106,7 @@ export default {
 		normalizeSpace: fnNormalizeSpace,
 		replace: fnReplace,
 		startsWith: fnStartsWith,
-		string: fnString,
+		['string']: fnString,
 		stringJoin: fnStringJoin,
 		stringLength: fnStringLength,
 		tokenize: fnTokenize,

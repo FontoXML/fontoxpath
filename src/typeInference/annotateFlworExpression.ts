@@ -4,6 +4,7 @@ import { AnnotationContext } from './AnnotationContext';
 
 /**
  * A method to annotate the FLWORExpression.
+ *
  * @param ast The ast containing the FLWORExpression
  * @param annotationContext THe context in which it gets annotated
  * @param annotate the annotationFunction as a callback
@@ -87,6 +88,7 @@ export function annotateFlworExpression(
 /**
  * This method annotates the LetClause of the FLWORExpression,
  * the letClause does not return anything but only introduces new variables.
+ *
  * @param ast The ast containing the letClause
  * @param annotationContext The context in which it gets annotated and in which new variables will be introduced
  * @param annotate the annotate function as a callback to annotate the children
@@ -110,6 +112,7 @@ function annotateLetClause(
 
 /**
  * A method to annotate the ForClause.
+ *
  * @param ast the ast containing the forClause
  * @param annotationContext the context in which its being annotated
  * @param annotate the annotate function as a callback to annotate the children
@@ -150,6 +153,7 @@ function annotateForClause(
 
 /**
  * Annotate the where clause.
+ *
  * @param ast the ast containing the whereClause
  * @param annotationContext the context in which its being annotated
  * @param annotate the annotate function as a callback to annotate the children
@@ -178,7 +182,8 @@ function annotateOrderByClause(ast: IAST, annotationContext: AnnotationContext):
 
 /**
  * A method to filter a SequenceTypeArray to only have unique items,
- *  by filtering the items whose first index is not equal to its own.
+ * by filtering the items whose first index is not equal to its own.
+ *
  * @param array the array to be filtered
  * @returns the filtered array
  */

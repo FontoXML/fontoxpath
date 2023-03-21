@@ -62,11 +62,6 @@ abstract class Expression {
 		this.type = type;
 	}
 
-	public abstract evaluate(
-		_dynamicContext?: DynamicContext,
-		_executionParameters?: ExecutionParameters
-	): ISequence;
-
 	public evaluateMaybeStatically(
 		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters
@@ -116,6 +111,11 @@ abstract class Expression {
 		}
 		return this._eagerlyEvaluatedValue();
 	}
+
+	public abstract evaluate(
+		_dynamicContext?: DynamicContext,
+		_executionParameters?: ExecutionParameters
+	): ISequence;
 }
 
 export default Expression;

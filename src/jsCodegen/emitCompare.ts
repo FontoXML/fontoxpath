@@ -21,7 +21,7 @@ import {
 } from './JavaScriptCompiledXPath';
 
 /**
- *  A map to translate from general compare to value compare
+ * A map to translate from general compare to value compare
  */
 const OPERATOR_TRANSLATION: { [s: string]: string } = {
 	['equalOp']: 'eqOp',

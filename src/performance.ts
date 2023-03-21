@@ -1,8 +1,8 @@
 // Import the Performance interface locally to this file
 /// <reference lib="dom" />
 
-import { EvaluableExpression } from '.';
 import evaluableExpressionToString from './parsing/evaluableExpressionToString';
+import { EvaluableExpression } from '.';
 
 let profilingEnabled = false;
 
@@ -12,6 +12,7 @@ let performance: Performance = null;
  * Describes the performance of a single XPath across multiple evaluations.
  *
  * See {@link profiler}.
+ *
  * @public
  */
 export declare type XPathPerformanceMeasurement = {
