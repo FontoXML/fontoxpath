@@ -1891,8 +1891,12 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			[
 				tokens.FUNCTION,
 				whitespacePlus,
-				peek(
-					not(reservedFunctionNames, ['Cannot use reserved function name'])
+				cut(
+					peek(
+						not(followed(reservedFunctionNames, not(tokens.COLON, [''])), [
+							'Cannot use reserved function name',
+						])
+					)
 				) as Parser<string>,
 			],
 			eqName
