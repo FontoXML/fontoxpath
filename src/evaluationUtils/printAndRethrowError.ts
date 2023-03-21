@@ -22,7 +22,7 @@ export function printAndRethrowError(
 	// This must be a StackTraceEntry 'error'
 	const stackEntry = error;
 	const errorLocation = stackEntry.getErrorLocation();
-	const rawLines = selector.replace('\r', '').split('\n');
+	const rawLines = selector.replace(/\r/g, '').split('\n');
 
 	const lineNumberStringLength = getNumberStringLength(
 		Math.min(errorLocation.end.line + 2, rawLines.length)

@@ -80,7 +80,7 @@ export function buildTestCase(
 		const expectedInnerHtml = new XMLSerializer().serializeToString(
 			expected.documentElement.firstElementChild
 		);
-		if (actualInnerHtml.replace(/></g, '><') === expectedInnerHtml.replace(/></g, '><')) {
+		if (actualInnerHtml === expectedInnerHtml) {
 			return;
 		}
 

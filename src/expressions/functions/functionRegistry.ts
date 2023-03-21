@@ -20,11 +20,11 @@ export type FunctionProperties = {
 const registeredFunctionsByName: { [s: string]: FunctionProperties[] } = Object.create(null);
 
 function computeLevenshteinDistance(a: string, b: string) {
-	const computedDistances = [];
+	const computedDistances = new Map<number, Map<number, number>>();
 	for (let i = 0; i < a.length + 1; ++i) {
-		computedDistances[i] = [];
+		computedDistances.set(i, new Map());
 	}
-	return (function computeStep(aLen, bLen) {
+	return (function computeStep(aLen: number, bLen: number) {
 		if (aLen === 0) {
 			// At the end of the a string, need to add / delete b characters
 			return bLen;
@@ -34,8 +34,8 @@ function computeLevenshteinDistance(a: string, b: string) {
 			return aLen;
 		}
 
-		if (computedDistances[aLen][bLen] !== undefined) {
-			return computedDistances[aLen][bLen];
+		if (computedDistances.get(aLen).has(bLen)) {
+			return computedDistances.get(aLen).get(bLen);
 		}
 
 		let cost = 0;
@@ -51,7 +51,7 @@ function computeLevenshteinDistance(a: string, b: string) {
 			computeStep(aLen - 1, bLen - 1) + cost
 		);
 
-		computedDistances[aLen][bLen] = distance;
+		computedDistances.get(aLen).set(bLen, distance);
 		return distance;
 	})(a.length, b.length);
 }
