@@ -126,9 +126,7 @@ const fontoxpathEvaluate: FunctionDefinitionType = (
 declare const VERSION: string | undefined;
 
 const fontoxpathVersion: FunctionDefinitionType = () => {
-	let version: string;
-	// TODO: Refactor when https://github.com/google/closure-compiler/issues/1601 is fixed
-	version = typeof VERSION === 'undefined' ? 'devbuild' : VERSION;
+	const version: string = typeof VERSION === 'undefined' ? 'devbuild' : VERSION;
 	return sequenceFactory.singleton(createAtomicValue(version, ValueType.XSSTRING));
 };
 

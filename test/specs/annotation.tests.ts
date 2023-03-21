@@ -33,7 +33,7 @@ function assertValueType(
 		ast,
 		followSpecificPath ? followSpecificPath : ['mainModule', 'queryBody', '*']
 	);
-	const resultType = astHelper.getAttribute(upperNode, 'type') as SequenceType;
+	const resultType = astHelper.getAttribute(upperNode, 'type');
 
 	chai.assert.equal(
 		resultType && resultType.type,
@@ -457,6 +457,7 @@ describe('annotating varRef', () => {
 
 /**
  * An easy way to add multiple variables in a context
+ *
  * @param context the context in which the variables are inserted
  * @param variables
  */

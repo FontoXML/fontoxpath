@@ -7,6 +7,7 @@ export default class Value {
 
 /**
  * The value types. Every value in XPath is of one of these types
+ *
  * @private
  */
 export const enum ValueType {
@@ -81,6 +82,7 @@ export const enum ValueType {
  * Zero or one matches to '?';
  * One or more matches to '+';
  * Zero or more matches to '*'
+ *
  * @private
  */
 export const enum SequenceMultiplicity {
@@ -92,6 +94,7 @@ export const enum SequenceMultiplicity {
 
 /**
  * A seperate enum for the ellipsis function parameter
+ *
  * @private
  */
 export const enum EllipsisType {
@@ -100,12 +103,14 @@ export const enum EllipsisType {
 
 /**
  * The combined parameter type which is either a value type or an ellipsis type.
+ *
  * @private
  */
 export type ParameterType = SequenceType | EllipsisType;
 
 /**
  * The type of a sequence, it contains the ValueType and the multiplicity of the sequence.
+ *
  * @private
  */
 export type SequenceType = {
@@ -249,6 +254,7 @@ const stringToValueTypeMap: { [key: string]: ValueType } = {
 /**
  * Creates a string value from a base type, generally follows the 'xs:type' notation, where
  * xs stands for XML Schema
+ *
  * @param input The base type to get the string of
  * @returns A string corresponding to that base type.
  */

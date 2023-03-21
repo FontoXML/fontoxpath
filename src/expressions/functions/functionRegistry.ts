@@ -20,11 +20,11 @@ export type FunctionProperties = {
 const registeredFunctionsByName: { [s: string]: FunctionProperties[] } = Object.create(null);
 
 function computeLevenshteinDistance(a: string, b: string) {
-	const computedDistances = [];
+	const computedDistances = new Map<number, Map<number, number>>();
 	for (let i = 0; i < a.length + 1; ++i) {
-		computedDistances[i] = [];
+		computedDistances.set(i, new Map());
 	}
-	return (function computeStep(aLen, bLen) {
+	return (function computeStep(aLen: number, bLen: number) {
 		if (aLen === 0) {
 			// At the end of the a string, need to add / delete b characters
 			return bLen;
@@ -34,8 +34,8 @@ function computeLevenshteinDistance(a: string, b: string) {
 			return aLen;
 		}
 
-		if (computedDistances[aLen][bLen] !== undefined) {
-			return computedDistances[aLen][bLen];
+		if (computedDistances.get(aLen).has(bLen)) {
+			return computedDistances.get(aLen).get(bLen);
 		}
 
 		let cost = 0;
@@ -51,42 +51,41 @@ function computeLevenshteinDistance(a: string, b: string) {
 			computeStep(aLen - 1, bLen - 1) + cost
 		);
 
-		computedDistances[aLen][bLen] = distance;
+		computedDistances.get(aLen).set(bLen, distance);
 		return distance;
 	})(a.length, b.length);
 }
 
 export function getAlternativesAsStringFor(functionName: string): string {
-	let alternativeFunctions: FunctionProperties[];
-	if (!registeredFunctionsByName[functionName]) {
-		// Get closest functions by levenstein distance
-		alternativeFunctions = Object.keys(registeredFunctionsByName)
-			.map((alternativeName) => {
-				// Remove the namespace uri part of the cache key
-				return {
-					name: alternativeName,
-					distance: computeLevenshteinDistance(
-						functionName,
-						alternativeName.slice(alternativeName.lastIndexOf(':') + 1)
-					),
-				};
-			})
-			.sort((a, b) => a.distance - b.distance)
-			.slice(0, 5)
-			// If we need to change more than half the string, it cannot be a match
-			.filter(
-				(alternativeNameWithScore) =>
-					alternativeNameWithScore.distance < functionName.length / 2
-			)
-			.reduce(
-				(alternatives, alternativeNameWithScore) =>
-					alternatives.concat(registeredFunctionsByName[alternativeNameWithScore.name]),
-				[]
-			)
-			.slice(0, 5);
-	} else {
-		alternativeFunctions = registeredFunctionsByName[functionName];
-	}
+	const alternativeFunctions: FunctionProperties[] = !registeredFunctionsByName[functionName]
+		? // Get closest functions by levenstein distance
+		  Object.keys(registeredFunctionsByName)
+				.map((alternativeName) => {
+					// Remove the namespace uri part of the cache key
+					return {
+						name: alternativeName,
+						distance: computeLevenshteinDistance(
+							functionName,
+							alternativeName.slice(alternativeName.lastIndexOf(':') + 1)
+						),
+					};
+				})
+				.sort((a, b) => a.distance - b.distance)
+				.slice(0, 5)
+				// If we need to change more than half the string, it cannot be a match
+				.filter(
+					(alternativeNameWithScore) =>
+						alternativeNameWithScore.distance < functionName.length / 2
+				)
+				.reduce(
+					(alternatives, alternativeNameWithScore) =>
+						alternatives.concat(
+							registeredFunctionsByName[alternativeNameWithScore.name]
+						),
+					[]
+				)
+				.slice(0, 5)
+		: registeredFunctionsByName[functionName];
 
 	if (!alternativeFunctions.length) {
 		return 'No similar functions found.';

@@ -27,11 +27,6 @@ abstract class UpdatingExpression extends Expression {
 		throw errXUST0001();
 	}
 
-	public abstract evaluateWithUpdateList(
-		_dynamicContext: DynamicContext | null,
-		_executionParameters: ExecutionParameters
-	): IIterator<UpdatingExpressionResult>;
-
 	protected ensureUpdateListWrapper(
 		expression: Expression
 	): (
@@ -57,6 +52,11 @@ abstract class UpdatingExpression extends Expression {
 			};
 		};
 	}
+
+	public abstract evaluateWithUpdateList(
+		_dynamicContext: DynamicContext | null,
+		_executionParameters: ExecutionParameters
+	): IIterator<UpdatingExpressionResult>;
 }
 
 export default UpdatingExpression;

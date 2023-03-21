@@ -1,4 +1,5 @@
-import { NodePointer } from '../domClone/Pointer';
+import { ConcreteNode } from '../domFacade/ConcreteNode';
+import { NodePointer, TinyNode } from '../domClone/Pointer';
 import DomFacade from '../domFacade/DomFacade';
 import { UntypedExternalValue, ValidValue } from '../types/createTypedValueFactory';
 import ArrayValue from './dataTypes/ArrayValue';
@@ -40,7 +41,10 @@ export function adaptSingleJavaScriptValue(value: ValidValue, domFacade: DomFaca
 		case 'object':
 			// Test if it is a node
 			if ('nodeType' in value) {
-				const pointer: NodePointer = { node: value, graftAncestor: null };
+				const pointer: NodePointer = {
+					node: value as ConcreteNode | TinyNode,
+					graftAncestor: null,
+				};
 				return createPointerValue(pointer, domFacade);
 			}
 			if (Array.isArray(value)) {
@@ -171,7 +175,10 @@ function adaptJavaScriptValueToXPath(
 					)}.`
 				);
 			}
-			const pointer: NodePointer = { node: value, graftAncestor: null };
+			const pointer: NodePointer = {
+				node: value as ConcreteNode | TinyNode,
+				graftAncestor: null,
+			};
 			return createPointerValue(pointer, domFacade);
 		case ValueType.ITEM:
 			return adaptSingleJavaScriptValue(value, domFacade);
@@ -228,8 +235,7 @@ export function adaptJavaScriptValueToArrayOfXPathValues(
  *
  * @param  domFacade     The DomFacade to use when creating a NodeValue
  * @param  value         The value to convert. This can be null when the type is zero-or-one (?).
- *                       Can be a single value when the value is exactly one, must be an array
- *                       otherwise.
+ * Can be a single value when the value is exactly one, must be an array otherwise.
  * @param  expectedType  The type to convert to
  * @return A sequence containing the converted value(s)
  */

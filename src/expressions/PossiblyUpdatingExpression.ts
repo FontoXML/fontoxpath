@@ -29,10 +29,9 @@ export function separateXDMValueFromUpdatingExpressionResult(
 	updatingExpressionResultIterator: IIterator<UpdatingExpressionResult>,
 	outputPUL: (updates: IPendingUpdate[]) => void
 ): ISequence {
-	let allValues: Value[];
 	const itResult = updatingExpressionResultIterator.next(IterationHint.NONE);
 	outputPUL(itResult.value.pendingUpdateList);
-	allValues = itResult.value.xdmValue;
+	const allValues = itResult.value.xdmValue;
 	return sequenceFactory.create(allValues);
 }
 
@@ -108,18 +107,6 @@ export default abstract class PossiblyUpdatingExpression extends UpdatingExpress
 		};
 	}
 
-	/**
-	 *
-	 * @param _dynamicContext       The context at this point, containing the context item and variable bindings
-	 * @param _executionParameters
-	 * @param _sequenceCallbacks    Callbacks to the Expression#evaluate methods of the childExpressions. The order is the same as the childExpressions passed in the constructor of this class
-	 */
-	public abstract performFunctionalEvaluation(
-		_dynamicContext: DynamicContext,
-		_executionParameters: ExecutionParameters,
-		_sequenceCallbacks: SequenceCallbacks
-	): ISequence;
-
 	public performStaticEvaluation(staticContext: StaticContext): void {
 		super.performStaticEvaluation(staticContext);
 		this.determineUpdatingness();
@@ -134,4 +121,16 @@ export default abstract class PossiblyUpdatingExpression extends UpdatingExpress
 			this.isUpdating = true;
 		}
 	}
+
+	/**
+	 *
+	 * @param _dynamicContext       The context at this point, containing the context item and variable bindings
+	 * @param _executionParameters
+	 * @param _sequenceCallbacks    Callbacks to the Expression#evaluate methods of the childExpressions. The order is the same as the childExpressions passed in the constructor of this class
+	 */
+	public abstract performFunctionalEvaluation(
+		_dynamicContext: DynamicContext,
+		_executionParameters: ExecutionParameters,
+		_sequenceCallbacks: SequenceCallbacks
+	): ISequence;
 }

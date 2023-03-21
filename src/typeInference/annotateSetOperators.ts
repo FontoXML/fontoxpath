@@ -3,6 +3,7 @@ import astHelper, { IAST } from '../parsing/astHelper';
 
 /**
  * Annotates the union, intersect and except operators with a sequence of nodes.
+ *
  * @param ast the AST to be annotated.
  * @returns a SequenceType of type NODE and of multiplicity EXACTLY_ONE
  */

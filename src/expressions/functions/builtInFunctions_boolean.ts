@@ -71,7 +71,7 @@ const declarations: BuiltinDeclarationType[] = [
 export default {
 	declarations,
 	functions: {
-		boolean: fnBoolean,
+		['boolean']: fnBoolean,
 		true: fnTrue,
 		false: fnFalse,
 		not: fnNot,

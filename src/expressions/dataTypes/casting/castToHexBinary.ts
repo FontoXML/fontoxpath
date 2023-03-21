@@ -15,7 +15,7 @@ function stringToHex(s: string) {
 }
 
 // This declaration is needed, as we don't depend anymore on lib.dom.
-declare var atob: (s: string) => string;
+declare let atob: (s: string) => string;
 
 export default function castToHexBinary(
 	instanceOf: (typeName: ValueType) => boolean

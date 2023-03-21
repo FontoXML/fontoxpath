@@ -3,6 +3,7 @@ import astHelper, { IAST } from '../parsing/astHelper';
 
 /**
  * Inserts an integer sequence into the AST for the rangeSequenceExpr node.
+ *
  * @param ast the AST to be annotated.
  * @returns an integer sequence.
  */

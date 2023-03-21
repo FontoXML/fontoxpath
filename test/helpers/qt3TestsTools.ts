@@ -8,10 +8,9 @@ import {
 	Language,
 } from 'fontoxpath';
 
+import { Document, DocumentFragment, Node, parseXmlDocument } from 'slimdom';
 import { getSkippedTests } from './getSkippedTests';
 import testFs from './testFs';
-
-import { Document, DocumentFragment, Node, parseXmlDocument } from 'slimdom';
 
 const ALL_TESTS_QUERY = `
 /test-set/test-case[
@@ -189,16 +188,13 @@ function getArguments(
 } {
 	const baseUrl = testSetFileName.substr(0, testSetFileName.lastIndexOf('/'));
 
-	let testQuery;
-	if (evaluateXPathToBoolean('./test/@file', testCase)) {
-		testQuery = getFile(
-			evaluateXPathToString('$baseUrl || "/" || test/@file', testCase, null, {
-				baseUrl,
-			})
-		);
-	} else {
-		testQuery = evaluateXPathToString('./test', testCase);
-	}
+	const testQuery = evaluateXPathToBoolean('./test/@file', testCase)
+		? getFile(
+				evaluateXPathToString('$baseUrl || "/" || test/@file', testCase, null, {
+					baseUrl,
+				})
+		  )
+		: evaluateXPathToString('./test', testCase);
 	const language = evaluateXPathToString(
 		`if (((dependency)[@type = "spec"]/@value)!tokenize(.) = ("XQ10+", "XQ30+", "XQ31+", "XQ31"))
 							then "XQuery3.1" else if (((dependency)[@type = "spec"]/@value)!tokenize(.) = ("XP20", "XP20+", "XP30", "XP30+"))
@@ -215,7 +211,6 @@ function getArguments(
 		? (prefix) => namespaces[prefix]
 		: null;
 	let namespaceResolver = localNamespaceResolver;
-	let variablesInScope;
 	const environmentNode = evaluateXPathToFirstNode(
 		'let $ref := ./environment/@ref return if ($ref) then /test-set/environment[@name = $ref] else ./environment',
 		testCase,
@@ -234,7 +229,7 @@ function getArguments(
 					: prefix === ''
 					? null
 					: undefined;
-	variablesInScope = env.variables;
+	const variablesInScope = env.variables;
 
 	return {
 		baseUrl,

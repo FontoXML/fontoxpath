@@ -1,10 +1,10 @@
 import * as chai from 'chai';
 import * as slimdom from 'slimdom';
 
-import { evaluateUpdatingExpression, evaluateUpdatingExpressionSync } from 'fontoxpath';
+import { evaluateUpdatingExpressionSync } from 'fontoxpath';
 import assertUpdateList from './assertUpdateList';
 
-let documentNode;
+let documentNode: slimdom.Document;
 beforeEach(() => {
 	documentNode = new slimdom.Document();
 });

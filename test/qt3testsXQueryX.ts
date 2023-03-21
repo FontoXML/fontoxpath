@@ -1,5 +1,5 @@
-import { evaluateXPathToMap } from 'fontoxpath';
 import * as path from 'path';
+import { evaluateXPathToMap } from 'fontoxpath';
 import { parseXmlDocument } from 'slimdom';
 import { getSkippedTests } from 'test-helpers/getSkippedTests';
 import testFs from 'test-helpers/testFs';
@@ -33,11 +33,9 @@ function run() {
 
 			if (value.substring(value.length - 3) === '.xq') {
 				const xQueryPath = path.join(testDirectory, value);
-				if (testFs.existsSync(xQueryPath)) {
-					xqueries[key] = normalizeEndOfLines(await testFs.readFile(xQueryPath));
-				} else {
-					xqueries[key] = null;
-				}
+				xqueries[key] = testFs.existsSync(xQueryPath)
+					? normalizeEndOfLines(await testFs.readFile(xQueryPath))
+					: null;
 			} else {
 				xqueries[key] = normalizeEndOfLines(value);
 			}

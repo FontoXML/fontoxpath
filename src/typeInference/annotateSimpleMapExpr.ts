@@ -5,6 +5,7 @@ import { AnnotationContext } from './AnnotationContext';
 /**
  * A simpleMapExpr is a .map() function, so it checks the type of the input,
  * and with the scope and the further annotations, then inferres the type.
+ *
  * @param ast the AST to be annotated.
  * @returns the inferred SequenceType
  */

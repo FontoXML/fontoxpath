@@ -112,6 +112,7 @@ export function generateBinaryOperatorFunction(
 
 /**
  * Generate the return type of the function.
+ *
  * @param operator The binary operator
  * @param typeA the left part of the operation
  * @param typeB the right part of the operation
@@ -188,6 +189,7 @@ export function generateBinaryOperatorType(
 
 /**
  * The integerDivision needs some seperate more ellaborate checks so is moved into a seperate function.
+ *
  * @param applyCastFunctions The casting function
  * @param fun The function retrieved from the map
  * @returns A tuple of a function that needs to be applied to the operands and the returnType of the integerDivision.
@@ -227,6 +229,7 @@ const operatorsByTypingKey: Record<string, BinaryEvaluationFunction> = Object.cr
 
 /**
  * retrieve the function used to evaluate a binary operator.
+ *
  * @param leftType the left part of the operation
  * @param rightType the right part of the operation
  * @param operator the kind of operation
@@ -291,6 +294,7 @@ class BinaryOperator extends Expression {
 
 	/**
 	 * A method to evaluate the BinaryOperation.
+	 *
 	 * @param dynamicContext The context in which it will be evaluated
 	 * @param executionParameters options
 	 * @returns The value to which the operation evaluates.

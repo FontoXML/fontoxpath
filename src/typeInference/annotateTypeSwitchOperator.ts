@@ -10,6 +10,7 @@ import astHelper, { IAST } from '../parsing/astHelper';
 /**
  * Checks the type from the argument against all the different cases and if one matches, the return type of that case is returned.
  * If no types match, the default type is returned.
+ *
  * @param ast the AST to be annotated.
  * @param argumentType the type of the input.
  * @param caseClausesReturns the different return types from the cases.
@@ -80,6 +81,7 @@ export function annotateTypeSwitchOperator(
 
 /**
  * Check if the type of the argument matches the type of the condition.
+ *
  * @param condition the condition we check against.
  * @param argumentType the argument type we compare with the condition.
  * @param returnType the type that is returned if the condition matches with the argumentType.

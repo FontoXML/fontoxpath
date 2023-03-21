@@ -66,15 +66,12 @@ class PathExpression extends Expression {
 		let sequenceHasPeerProperty = true;
 		const result = this._stepExpressions.reduce<ISequence>(
 			(intermediateResultNodesSequence, selector, index) => {
-				let childContextIterator: IIterator<DynamicContext>;
-				if (intermediateResultNodesSequence === null) {
-					// first call, we should use the current dynamic context
-					childContextIterator = createSingleValueIterator(dynamicContext);
-				} else {
-					childContextIterator = dynamicContext.createSequenceIterator(
-						intermediateResultNodesSequence
-					);
-				}
+				const childContextIterator: IIterator<DynamicContext> =
+					intermediateResultNodesSequence === null
+						? // first call, we should use the current dynamic context
+						  createSingleValueIterator(dynamicContext)
+						: dynamicContext.createSequenceIterator(intermediateResultNodesSequence);
+
 				let resultValuesInOrderOfEvaluation: IIterator<ISequence> = {
 					next: (hint: IterationHint) => {
 						const childContext = childContextIterator.next(hint);

@@ -34,6 +34,7 @@ class Unary extends Expression {
 
 	/**
 	 * Positivese or negativise a value: +1 = 1, -1 = 0 - 1, -1 + 2 = 1, --1 = 1, etc
+	 *
 	 * @param  kind       Either + or -
 	 * @param  valueExpr  The selector evaluating to the value to process
 	 */

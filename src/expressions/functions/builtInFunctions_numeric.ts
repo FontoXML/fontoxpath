@@ -553,7 +553,7 @@ const declarations: BuiltinDeclarationType[] = [
 export default {
 	declarations,
 	functions: {
-		number: fnNumber,
+		['number']: fnNumber,
 		round: fnRound,
 	},
 };

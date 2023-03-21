@@ -25,6 +25,7 @@ const SHIFT_THIRD_ARGUMENT_OF_HASH_BY = 8;
 
 /**
  * A hash function that is used to create the keys for the ruleMap.
+ *
  * @param left the ValueType of the left part of the operator
  * @param right the ValueType of the right part of the operator
  * @param op the operator

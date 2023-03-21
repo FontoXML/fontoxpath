@@ -1,3 +1,4 @@
+import * as path from 'path';
 import * as chai from 'chai';
 import {
 	EvaluableExpression,
@@ -12,7 +13,6 @@ import {
 	executePendingUpdateList,
 	parseScript,
 } from 'fontoxpath';
-import * as path from 'path';
 import { Document, Element, Node, parseXmlDocument } from 'slimdom';
 import { getSkippedTests } from 'test-helpers/getSkippedTests';
 import testFs from 'test-helpers/testFs';
@@ -372,7 +372,7 @@ async function runTestCase(testName: string, testCase: Node, shouldPreparseTheQu
 }
 
 function buildTestCases(testGroup) {
-	(evaluateXPathToNodes('test-group | test-case', testGroup) as Element[]).forEach((test) => {
+	evaluateXPathToNodes<Element>('test-group | test-case', testGroup).forEach((test) => {
 		switch (test.localName) {
 			case 'test-group': {
 				const groupName = evaluateXPathToString(

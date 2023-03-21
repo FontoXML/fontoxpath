@@ -1,3 +1,4 @@
+import * as blns from 'blns';
 import * as chai from 'chai';
 import { evaluateXPath, ReturnType } from 'fontoxpath';
 import * as slimdom from 'slimdom';
@@ -11,7 +12,6 @@ describe('Big List of Naughty Strings tests for JSCodegen', () => {
 		jsonMlMapper.parse(['xml', 'Hello'], documentNode);
 	});
 
-	const blns = require('blns');
 	for (const badString of blns) {
 		it(`BLNS equality: ${badString}`, () => {
 			const literalQuery = '"' + badString + '"';

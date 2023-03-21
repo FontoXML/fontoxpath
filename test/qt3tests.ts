@@ -417,32 +417,27 @@ function createAsserterForExpression(
 			};
 		}
 		case 'assert-xml': {
-			let parsedFragment: Node;
-			if (
-				evaluateXPathToBoolean('@file', assertNode, undefined, {
-					xmlSerializer,
-				})
-			) {
-				parsedFragment = getFile(
-					evaluateXPathToString('$baseUrl || "/" || @file', assertNode, null, {
-						baseUrl,
-						xmlSerializer,
-					})
-				) as Document;
-			} else {
-				parsedFragment = parser.parseFromString(
-					`<xml>${evaluateXPathToString('.', assertNode, undefined, {
-						xmlSerializer,
-					})}</xml>`
-				).documentElement;
-			}
+			const parsedFragment: Node = evaluateXPathToBoolean('@file', assertNode, undefined, {
+				xmlSerializer,
+			})
+				? (getFile(
+						evaluateXPathToString('$baseUrl || "/" || @file', assertNode, null, {
+							baseUrl,
+							xmlSerializer,
+						})
+				  ) as Document)
+				: parser.parseFromString(
+						`<xml>${evaluateXPathToString('.', assertNode, undefined, {
+							xmlSerializer,
+						})}</xml>`
+				  ).documentElement;
 			return (xpath, contextNode, variablesInScope, namespaceResolver) => {
 				const results = evaluateXPathToNodes(xpath, contextNode, null, variablesInScope, {
 					namespaceResolver,
 					nodesFactory,
 					language,
 					xmlSerializer,
-				}) as Node[];
+				});
 
 				chai.assert(
 					evaluateXPathToBoolean(
@@ -478,7 +473,7 @@ function createAsserterForExpression(
 						nodesFactory,
 						language,
 					}
-				) as Node[];
+				);
 
 				chai.assert(
 					evaluateXPathToBoolean(
@@ -574,11 +569,9 @@ function createAsserterForJsCodegen(
 						isAstAccepted = false;
 					}
 				});
-				if (isAstAccepted) {
-					return acceptAst(undefined, undefined);
-				} else {
-					return rejectAst((isTestAstAccepted as IAstRejected).reason);
-				}
+				return isAstAccepted
+					? acceptAst(undefined, undefined)
+					: rejectAst((isTestAstAccepted as IAstRejected).reason);
 			};
 		}
 		case 'any-of': {
@@ -623,11 +616,9 @@ function createAsserterForJsCodegen(
 						', '
 					)}.`
 				);
-				if (isAstAccepted) {
-					return acceptAst(undefined, undefined);
-				} else {
-					return rejectAst('one of the testcases causes it to fail');
-				}
+				return isAstAccepted
+					? acceptAst(undefined, undefined)
+					: rejectAst('one of the testcases causes it to fail');
 			};
 		}
 		case 'error': {
@@ -909,25 +900,20 @@ function createAsserterForJsCodegen(
 			};
 		}
 		case 'assert-xml': {
-			let parsedFragment: Node;
-			if (
-				evaluateXPathToBoolean('@file', assertNode, undefined, {
-					language,
-				})
-			) {
-				parsedFragment = getFile(
-					evaluateXPathToString('$baseUrl || "/" || @file', assertNode, null, {
-						baseUrl,
-						language,
-					})
-				) as Document;
-			} else {
-				parsedFragment = parser.parseFromString(
-					`<xml>${evaluateXPathToString('.', assertNode, undefined, {
-						language,
-					})}</xml>`
-				).documentElement;
-			}
+			const parsedFragment: Node = evaluateXPathToBoolean('@file', assertNode, undefined, {
+				language,
+			})
+				? (getFile(
+						evaluateXPathToString('$baseUrl || "/" || @file', assertNode, null, {
+							baseUrl,
+							language,
+						})
+				  ) as Document)
+				: parser.parseFromString(
+						`<xml>${evaluateXPathToString('.', assertNode, undefined, {
+							language,
+						})}</xml>`
+				  ).documentElement;
 			return (
 				xpath,
 				contextNode,

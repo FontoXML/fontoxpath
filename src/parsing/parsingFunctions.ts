@@ -85,10 +85,8 @@ export function alias(tokenNames: Parser<string>[], aliasedName: string): Parser
 export function regex(reg: RegExp): Parser<string> {
 	return (input: string, offset: number): ParseResult<string> => {
 		const match = reg.exec(input.substring(offset));
-		if (match && match.index === 0) {
-			return okWithValue(offset + match[0].length, match[0]);
-		} else {
-			return error(offset, [reg.source], false);
-		}
+		return match && match.index === 0
+			? okWithValue(offset + match[0].length, match[0])
+			: error(offset, [reg.source], false);
 	};
 }
