@@ -16,6 +16,21 @@ import { Attr, Document, Element } from '../../types/Types';
 import QName from '../dataTypes/valueTypes/QName';
 import { errXUDY0021 } from './XQueryUpdateFacilityErrors';
 
+function hasAttribute(
+	target: ElementNodePointer,
+	localName: string,
+	namespace: string,
+	domFacade: DomFacade
+): boolean {
+	return domFacade
+		.getAllAttributePointers(target, `name-${localName}`)
+		.some(
+			(attr) =>
+				domFacade.getLocalName(attr) === localName &&
+				domFacade.getNamespaceURI(attr) === namespace
+		);
+}
+
 /**
  * Deletes $target.
  *
@@ -35,7 +50,7 @@ export const deletePu = (
 			documentWriter.removeAttributeNS(
 				parent as Element,
 				domFacade.getNamespaceURI(target as AttributeNodePointer),
-				domFacade.getNodeName(target as AttributeNodePointer)
+				domFacade.getLocalName(target as AttributeNodePointer)
 			);
 		} else {
 			documentWriter.removeChild(parent as Document | Element, target.node);
@@ -157,14 +172,19 @@ export const insertAttributes = (
 	documentWriter: (IDocumentWriter | null) | undefined
 ) => {
 	content.forEach((attributeNodePointer) => {
-		const attrName = domFacade.getNodeName(attributeNodePointer);
-		if (domFacade.getAttribute(target as any, attrName)) {
-			throw errXUDY0021(`An attribute ${attrName} already exists.`);
+		const attrLocalName = domFacade.getLocalName(attributeNodePointer);
+		const attrNamespace = domFacade.getNamespaceURI(attributeNodePointer);
+		if (hasAttribute(target, attrLocalName, attrNamespace, domFacade)) {
+			throw errXUDY0021(
+				`An attribute ${
+					attrNamespace ? `Q{${attrNamespace}}${attrLocalName}` : attrLocalName
+				} already exists.`
+			);
 		}
 		documentWriter.setAttributeNS(
 			target.node,
-			domFacade.getNamespaceURI(attributeNodePointer),
-			attrName,
+			attrNamespace,
+			attrLocalName,
 			domFacade.getDataFromPointer(attributeNodePointer)
 		);
 	});
@@ -305,17 +325,24 @@ export const replaceNode = (
 		documentWriter.removeAttributeNS(
 			element,
 			domFacade.getNamespaceURI(attrTarget),
-			domFacade.getNodeName(attrTarget)
+			domFacade.getLocalName(attrTarget)
 		);
 		replacement.forEach((attr: AttributeNodePointer) => {
-			const name = domFacade.getNodeName(attr);
-			if (domFacade.getAttribute(parent as ElementNodePointer, name)) {
-				throw errXUDY0021(`An attribute ${name} already exists.`);
+			const attrLocalName = domFacade.getLocalName(attr);
+			const attrNamespace = domFacade.getNamespaceURI(attr);
+			if (
+				hasAttribute(parent as ElementNodePointer, attrLocalName, attrNamespace, domFacade)
+			) {
+				throw errXUDY0021(
+					`An attribute ${
+						attrNamespace ? `Q{${attrNamespace}}${attrLocalName}` : attrLocalName
+					} already exists.`
+				);
 			}
 			documentWriter.setAttributeNS(
 				element,
-				domFacade.getNamespaceURI(attr),
-				name,
+				attrNamespace,
+				attrLocalName,
 				domFacade.getDataFromPointer(attr)
 			);
 		});
@@ -356,7 +383,7 @@ export const replaceValue = (
 			documentWriter.setAttributeNS(
 				element.node,
 				domFacade.getNamespaceURI(target),
-				domFacade.getNodeName(target),
+				domFacade.getLocalName(target),
 				stringValue
 			);
 		} else {
