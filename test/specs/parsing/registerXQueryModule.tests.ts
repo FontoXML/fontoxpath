@@ -235,7 +235,7 @@ declare function x:fn () external;`);
 				};`
 			)
 		).to.throw(
-			'XQST0049: The function Q{http://www.example.com}duplicate-fn#0 has already been declared.'
+			'XQST0049: The function or variable "Q{http://www.example.com}duplicate-fn" is declared more than once.'
 		);
 	});
 

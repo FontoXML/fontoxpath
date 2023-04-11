@@ -21,6 +21,7 @@ import {
 	errXPST0081,
 	errXQST0045,
 	errXQST0047,
+    errXQST0049,
 	errXQST0060,
 	errXQST0066,
 	errXQST0070,
@@ -137,9 +138,7 @@ function processFunctionDefinition(
 				paramTypes.length
 			)
 		) {
-			throw new Error(
-				`XQST0049: The function Q{${declarationNamespaceURI}}${declarationLocalName}#${paramTypes.length} has already been declared.`
-			);
+			throw errXQST0049(declarationNamespaceURI, declarationLocalName);
 		}
 
 		if (!createExpressions) {
@@ -518,7 +517,7 @@ export default function processProlog(
 			);
 			staticallyCompilableExpressions.push({
 				expression: compiledVariableAsExpression,
-				staticContextLeaf: staticContext,
+				staticContextLeaf: new StaticContext(staticContext),
 			});
 
 			registeredVariables.push({
