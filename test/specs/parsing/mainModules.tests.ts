@@ -126,18 +126,31 @@ declare function fn () external; 1`,
 
 	it('Can do circular imports', () => {
 		registerXQueryModule(`
+module namespace test = "http://www.example.org/mainmodules.shared#3";
+
+declare %public function test:hello(){"Hello"};
+`);
+
+		registerXQueryModule(`
 module namespace test = "http://www.example.org/mainmodules.tests#3";
+import module namespace shared="http://www.example.org/mainmodules.shared#3";
+
+declare variable $test:space := " ";
 
 declare %public function test:AAA($a as xs:integer) as xs:string {
-   if ($a < 0) then "" else "Hello " || test:BBB($a - 1)
+   if ($a < 0) then "" else shared:hello() || $test:space || test:BBB($a - 1)
 };
 `);
 
 		registerXQueryModule(`
 module namespace test = "http://www.example.org/mainmodules.tests#3";
 
+import module namespace shared="http://www.example.org/mainmodules.shared#3";
+
+declare variable $test:world := "World";
+
 declare %public function test:BBB($a as xs:integer) as xs:string  {
-   if ($a < 0) then "" else test:AAA($a - 1) || " World"
+   if ($a < 0) then "" else test:AAA($a - 1) || $test:space || $test:world
 };
 `);
 
