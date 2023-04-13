@@ -22,5 +22,3 @@ jobs:
 
             - name: Run BundleMon
               run: npx bundlemon
-              env:
-                  BUNDLEMON_PROJECT_ID: '609024effb87a20009a6b096'
