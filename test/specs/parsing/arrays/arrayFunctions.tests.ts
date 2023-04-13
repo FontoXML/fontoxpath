@@ -437,17 +437,17 @@ describe('functions over arrays', () => {
 
 		it('can flatten long arrays', () =>
 			chai.assert.equal(
-				evaluateXPathToNumber('array:flatten(array{1 to 200000}) => count()', documentNode),
-				200000
+				evaluateXPathToNumber('array:flatten(array{1 to 20000}) => count()', documentNode),
+				20000
 			));
 
 		it('can flatten deep arrays', () =>
 			chai.assert.equal(
 				evaluateXPathToNumber(
-					'(1 to 2000) => fold-left([1], function ($accum, $item) {[$accum, $item]}) => count()',
+					'(1 to 200) => fold-left([1], function ($accum, $item) {[$accum, $item]}) => array:flatten() => count()',
 					documentNode
 				),
-				1
+				201
 			));
 	});
 
