@@ -21,7 +21,6 @@ Constr-compelem-parent-1,Contains unneeded sequenceExpr wrappers
 =====================TESTS ABOVE HAVE BEEN MARKED MANUALLY=====================
 Catalog002,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 itunes,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-raytracer,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.xqsharp.com/raytracer
 functx-fn-root-all,result was not equal
 functx-functx-all-whitespace-1,result was not equal
 functx-functx-all-whitespace-2,result was not equal
@@ -471,10 +470,6 @@ fn-function-lookup-022,result was not equal
 fn-function-lookup-402,result was not equal
 fn-function-lookup-404,result was not equal
 fn-function-lookup-609,result was not equal
-generate-id-014,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/QT3/copy
-generate-id-015,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/QT3/copy
-generate-id-016,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/QT3/copy
-generate-id-017,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/QT3/copy
 fn-has-children-008,result was not equal
 fn-has-children-014,result was not equal
 fn-has-children-015,result was not equal
@@ -486,10 +481,6 @@ head-005,XQuery script could not be found
 head-006,XQuery script could not be found
 head-007,XQuery script could not be found
 head-008,XQuery script could not be found
-K2-SeqIDFunc-4,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/QT3/copy
-K2-SeqIDFunc-5,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/QT3/copy
-K2-SeqIDFunc-6,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/QT3/copy
-K2-SeqIDFunc-7,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/QT3/copy
 fn-id-10,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 fn-id-11,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 fn-id-12,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
@@ -503,7 +494,6 @@ fn-id-19,Parser related error, Error: Not implemented: only module imports, name
 fn-id-20,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 fn-id-21,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 fn-id-23,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-fn-id-4,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/QT3/copy
 fn-id-5,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 fn-id-6,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 fn-id-7,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
@@ -528,7 +518,6 @@ fn-idref-31,Parser related error, Error: Not implemented: only module imports, n
 fn-idref-32,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 fn-idref-33,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 fn-idref-34,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-fn-idref-4,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/QT3/copy
 fn-idref-5,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 fn-idref-6,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 fn-idref-7,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
@@ -598,8 +587,7 @@ fn-load-xquery-module-008,result was not equal
 fn-load-xquery-module-009,result was not equal
 fn-load-xquery-module-010,result was not equal
 fn-load-xquery-module-012,result was not equal
-fn-load-xquery-module-032,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/fots/fn/load-xquery-module/external-vars/module
-fn-load-xquery-module-038,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/fots/fn/load-xquery-module/load-self/module
+fn-load-xquery-module-038,result was not equal
 fn-load-xquery-module-043,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 fn-load-xquery-module-044,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 fn-load-xquery-module-054,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
@@ -625,7 +613,6 @@ fn-nilled-53,Parse error
 fn-node-name-30,result was not equal
 parse-xml-fragment-011,result was not equal
 parse-xml-fragment-012,result was not equal
-path014,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/QT3/copy
 fn-random-number-generator-30,result was not equal
 K-SeqRemoveFunc-1,XQuery script could not be found
 K-SeqRemoveFunc-10,XQuery script could not be found
@@ -1234,22 +1221,19 @@ XQST0045-1,Parser related error, Error: XQST0045: Functions and variables may no
 XQST0045-2,Parser related error, Error: XQST0045: Functions and variables may not be declared in one of the reserved namespace URIs.
 XQST0045-3,Parser related error, Error: XQST0045: Functions and variables may not be declared in one of the reserved namespace URIs.
 XQST0045-4,Parser related error, Error: XPST0081: The prefix "xsi" could not be resolved
-XQST0046_02,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.example.org/test
+XQST0046_02,result was not equal
 XQST0046_06,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 XQST0046_07,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 XQST0046_09,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 XQST0046_10,result was not equal
-XQST0046_11,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/
-XQST0047,Parser related error, Error: XQST0049: The function or variable "Q{http://www.example.org/foo}bar" is declared more than once.
-XQST0048,Parser related error, Error: XQST0049: The function or variable "Q{http://www.example.org/foo}bar" is declared more than once.
+XQST0046_11,result was not equal
+XQST0047,Parser related error, Error: XQST0047: The namespace "http://www.example.org/foo" is imported more than once.
 XQST0055,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 XQST0057,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 XQST0058,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 XQST0059_1,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-XQST0059_2,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/
+XQST0059_2,result was not equal
 XQST0059_3,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-XQST0059_4,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/
-XQST0059_5,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.example.org/
 XQST0059_6,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 XQST0060,Parser related error, Error: XQST0060: Functions declared in a module or as an external function must reside in a namespace.
 XQST0065,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
@@ -1259,14 +1243,9 @@ XQST0067,Parser related error, Error: Not implemented: only module imports, name
 XQST0068,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 XQST0069,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 XQST0070_1,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-XQST0070_2,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.example.org/
-XQST0070_3,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.example.org/
 XQST0070_4,Parser related error, Error: XQST0070: The prefixes xml and xmlns may not be used in a namespace declaration or be bound to another namespaceURI.
 XQST0079,Parse error
-XQST0088_1,Parser related error, Error: XQST0051: No modules found with the namespace uri 
-XQST0088_2,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.example.org/test
-XQST0093a,Parser related error, Error: XQST0049: The function or variable "Q{http://www.example.org/foo}bar" is declared more than once.
-combined-errors-1,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/defs
+XQST0088_2,result was not equal
 combined-errors-2,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 combined-errors-3,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 function-item-15,result was not equal
@@ -1289,12 +1268,10 @@ hof-911,result was not equal
 inline-function-6,result was not equal
 inline-function-7,result was not equal
 inline-function-9,result was not equal
-xqhof1,Parse error
+xqhof1,result was not equal
 xqhof12,result was not equal
 xqhof16,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-xqhof17,Parser related error, Error: XQST0051: No modules found with the namespace uri lib
 xqhof18,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-xqhof19,Parser related error, Error: XQST0051: No modules found with the namespace uri lib
 xqhof6,result was not equal
 XML10-3ed-Mixed-content,result was not equal
 XML11-c0-001,Expected XML could not be parsed
@@ -1830,8 +1807,6 @@ nscons-023,result was not equal
 nscons-024,result was not equal
 nscons-025,result was not equal
 nscons-026,result was not equal
-nscons-027,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/cnc-module
-nscons-028,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/cnc-module
 nscons-029,result was not equal
 nscons-030,result was not equal
 nscons-031,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
@@ -1914,14 +1889,10 @@ contextDecl-043,Parse error
 contextDecl-044,Parse error
 contextDecl-045,Parse error
 contextDecl-046,Parse error
-contextDecl-047,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/libmodule2
-contextDecl-048,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/libmodule1
 contextDecl-049,Parse error
 contextDecl-050,Parse error
 contextDecl-051,Parse error
-contextDecl-052,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/libmodule3
 contextDecl-053,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-contextDecl-054,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/libmodule2
 contextDecl-055,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K-CopyNamespacesProlog-1,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K-CopyNamespacesProlog-2,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
@@ -2233,7 +2204,7 @@ K2-ExtensionExpression-17,Parser related error, InvalidCharacterError: InvalidCh
 K2-ExtensionExpression-2,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
 K2-ExtensionExpression-3,Parse error
 K2-ExtensionExpression-4,Parse error
-K2-ExtensionExpression-5,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid QName
+K2-ExtensionExpression-5,Parse error
 extexpr-1,Parse error
 extexpr-10,Parse error
 extexpr-11,Parse error
@@ -2408,89 +2379,17 @@ Lookup-023,result was not equal
 Lookup-120,result was not equal
 Lookup-149,result was not equal
 MapConstructor-035,Parse error
-K-ModuleImport-1,Parser related error, Error: XQST0051: No modules found with the namespace uri 
-K-ModuleImport-2,Parser related error, Error: XQST0051: No modules found with the namespace uri 
+K-ModuleImport-1,result was not equal
+K-ModuleImport-2,result was not equal
 cbcl-module-001,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 cbcl-module-002,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-cbcl-module-003,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.xqsharp.com/test/variabledeclaration
-cbcl-module-004,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.xqsharp.com/test/context
 errata6-003,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-errata8-001a,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/errata8_1a
-errata8-002a,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/errata8_2a
-errata8-003,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/errata8_3a
-module-URIs-1,Parser related error, Error: XQST0051: No modules found with the namespace uri   http://www.w3.org/TestModules/test 
-module-URIs-10,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/..TestModules/test
-module-URIs-11,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/&#xd0a4;/test
-module-URIs-12,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/&#x3c;&#x3d;&#x3e;&#x40;/test
-module-URIs-13,Parser related error, Error: XQST0051: No modules found with the namespace uri urn:example:animal:ferret:nose
-module-URIs-14,Parser related error, Error: XQST0051: No modules found with the namespace uri ftp://www.w3.org/TestModules/test;type=A
-module-URIs-15,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/test?hello=world
-module-URIs-16,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/test#world
-module-URIs-17,Parser related error, Error: XQST0051: No modules found with the namespace uri ftp://www.w3.org/TestModules/test;type=A?hello=world&amp;q#world
-module-URIs-18,Parser related error, Error: XQST0051: No modules found with the namespace uri #1
-module-URIs-19,Parser related error, Error: XQST0051: No modules found with the namespace uri http:test
-module-URIs-2,Parser related error, Error: XQST0051: No modules found with the namespace uri &#x20;&#x9;&#xA;&#xD;http://www.w3.org/TestModules/test&#x20;&#x9;&#xA;&#xD;
-module-URIs-20,Parser related error, Error: XQST0051: No modules found with the namespace uri ftp://user@www.w3.org/TestModules/test
-module-URIs-21,Parser related error, Error: XQST0051: No modules found with the namespace uri http://[2001:0db8:85a3:0000:0000:8a2e:0370:7334]/TestModules/test
-module-URIs-22,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org:7334/TestModules/test
-module-URIs-23,Parser related error, Error: XQST0051: No modules found with the namespace uri mailto:jane.doe@w3c.org
-module-URIs-24,Parser related error, Error: XQST0051: No modules found with the namespace uri fax:+1-234-567-890
-module-URIs-25,Parser related error, Error: XQST0051: No modules found with the namespace uri ldap://[2001:db8::7]/c=GB?objectClass?one
-module-URIs-3,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/Test&#x20;&#x20;&#x20;&#x20;Modules/test
-module-URIs-4,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/test/../../TestModules/./test
-module-URIs-7,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules./test
-module-URIs-8,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/.TestModules/test
-module-URIs-9,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules../test
-modules-1,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/defs
-modules-10,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/test1
-modules-11,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/test1
-modules-12,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/test1
-modules-13,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/test1
-modules-14,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/test1
-modules-15,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/test2
-modules-16,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/test1
-modules-17,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/diffns
-modules-18,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/module1
-modules-2,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/defs
-modules-21,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/module3
-modules-24,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/module3
-modules-28a,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/defs1
-modules-29,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/test
-modules-3,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/defs
-modules-4,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/defs
-modules-5,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/defs
-modules-6,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/test1
-modules-7,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/test1
-modules-8,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/test1
-modules-9,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/test1
-modules-bad-ns,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/test2
-modules-circular,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/test1
-modules-collide-fn-001,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/test1
-modules-collide-fn-002,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/test1
-modules-collide-var-001,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/test1
-modules-collide-var-002,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/test1
-modules-emptyns,Parser related error, Error: XQST0051: No modules found with the namespace uri 
-modules-pub-priv-1,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/module-pub-priv
-modules-pub-priv-13,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/module-pub-priv
-modules-pub-priv-14,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/module-pub-priv
-modules-pub-priv-15,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/module-pub-priv
-modules-pub-priv-16,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/module-pub-priv
-modules-pub-priv-2,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/module-pub-priv
-modules-pub-priv-21,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/module-pub-priv
-modules-pub-priv-22,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/module-pub-priv
-modules-pub-priv-23,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/module-pub-priv
-modules-pub-priv-24,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/module-pub-priv
-modules-pub-priv-25,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/module-pub-priv
-modules-pub-priv-26,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/module-pub-priv
-modules-pub-priv-27,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/module-pub-priv3
-modules-pub-priv-28,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/module-pub-priv2
-modules-pub-priv-3,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/module-pub-priv
-modules-pub-priv-37,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/module-pub-priv
-modules-pub-priv-38,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/module-pub-priv
-modules-pub-priv-4,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/module-pub-priv
-modules-simple,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/test1
-modules-two-import-ok,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/test1
-modules-two-import,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/test1
+module-URIs-11,result was not equal
+module-URIs-12,result was not equal
+module-URIs-17,result was not equal
+module-URIs-2,result was not equal
+module-URIs-3,result was not equal
+modules-two-import,Parser related error, Error: XQST0047: The namespace "http://www.w3.org/TestModules/test1" is imported more than once.
 K2-NameTest-14,result was not equal
 K2-NameTest-60,result was not equal
 function-literal-402,result was not equal
@@ -2521,7 +2420,6 @@ optiondeclprolog-1,Parser related error, Error: Not implemented: only module imp
 optiondeclprolog-2,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 Serialization-001,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 Serialization-002,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-Serialization-003,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/test
 Serialization-004,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 Serialization-005,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 Serialization-006,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
@@ -2622,7 +2520,6 @@ cbcl-validated-schema-element-1,Parser related error, Error: Not implemented: on
 cbcl-validated-schema-element-2,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 cbcl-validated-schema-element-3,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 cbcl-validated-schema-element-4,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-modules-schema-context,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/TestModules/context
 qischema001,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 qischema002,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 qischema003,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
@@ -2646,8 +2543,8 @@ qischema040,Parser related error, Error: Not implemented: only module imports, n
 qischema040a,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 qischema041,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 qischema042,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-qischema043,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.fpml.org/2005/FpML-4-2
-qischema044,Parser related error, Error: XQST0051: No modules found with the namespace uri http://www.w3.org/XQueryTest/hats
+qischema043,result was not equal
+qischema044,result was not equal
 qischema061,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 qischema062,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 qischema063,Parser related error, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
