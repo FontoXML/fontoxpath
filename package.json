@@ -71,7 +71,7 @@
 		"@tscc/tscc": "^0.9.4",
 		"@types/chai": "^4.3.4",
 		"@types/mocha": "^10.0.1",
-		"@types/node": "^18.15.5",
+		"@types/node": "^20.2.5",
 		"@types/node-static": "^0.7.7",
 		"@types/sinon": "^10.0.13",
 		"@typescript-eslint/eslint-plugin": "^5.56.0",
