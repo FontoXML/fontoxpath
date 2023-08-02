@@ -26,6 +26,13 @@ describe('node tests', () => {
 		chai.assert.isTrue(
 			evaluateXPathWithJsCodegen('/xml/text()', documentNode, null, ReturnType.BOOLEAN)
 		);
+		// text() should also match CDATA sections
+		const cdata = documentNode.createCDATASection('hello');
+		documentNode.documentElement.replaceChildren(cdata);
+		chai.assert.equal(
+			evaluateXPathWithJsCodegen('/xml/text()', documentNode, null, ReturnType.FIRST_NODE),
+			cdata
+		);
 	});
 
 	it('does not select non-text nodes', () => {
