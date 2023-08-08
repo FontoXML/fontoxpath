@@ -115,5 +115,8 @@
 	"dependencies": {
 		"prsc": "4.0.0",
 		"xspattern": "^3.1.0"
+	},
+	"overrides": {
+		"google-closure-compiler-osx": "^20230206.0.0"
 	}
 }
