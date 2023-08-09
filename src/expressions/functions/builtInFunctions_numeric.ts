@@ -76,6 +76,14 @@ function convertIntegerToRoman(integer: string, isLowerCase?: boolean) {
 	return romanString;
 }
 
+function convertIntegerToLowerRoman(integer: string) {
+	return convertIntegerToRoman(integer, true);
+}
+
+function convertIntegerToUpperRoman(integer: string) {
+	return convertIntegerToRoman(integer, false);
+}
+
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
 function convertIntegerToAlphabet(integer: string, isLowerCase?: boolean) {
@@ -109,6 +117,372 @@ function convertIntegerToAlphabet(integer: string, isLowerCase?: boolean) {
 	return output;
 }
 
+function convertIntegerToLowerAlphabet(integer: string) {
+	return convertIntegerToAlphabet(integer, true);
+}
+
+function convertIntegerToUpperAlphabet(integer: string) {
+	return convertIntegerToAlphabet(integer, false);
+}
+
+function getUnicodeSubset(
+	firstCharacterCharCode: number,
+	numberOfCharacters: number,
+	charactersToSkip: number[] = []
+): number[] {
+	return Array.from({ length: numberOfCharacters }, (_, i) => i + firstCharacterCharCode).filter(
+		(charCode) => {
+			return !charactersToSkip.includes(charCode);
+		}
+	);
+}
+
+const HEBREW_ALPHABET_UNICODE = getUnicodeSubset(
+	0x05d0,
+	27,
+	[0x05da, 0x05dd, 0x05df, 0x05e3, 0x05e5]
+);
+
+// The Unicode standard follows the modern Arabic Alif-Ba-Ta alphabetical order
+const ARABIC_ALPHABET_UNICODE = getUnicodeSubset(
+	0x0627,
+	36,
+	[0x0629, 0x063b, 0x063c, 0x063d, 0x063e, 0x063f, 0x0640, 0x0649]
+);
+
+const ARABIC_ABJADI_ALPHABET = [
+	'أ',
+	'ب',
+	'ج',
+	'د',
+	'ه',
+	'و',
+	'ز',
+	'ح',
+	'ط',
+	'ي',
+	'ك',
+	'ل',
+	'م',
+	'ن',
+	'س',
+	'ع',
+	'ف',
+	'ص',
+	'ق',
+	'ر',
+	'ش',
+	'ت',
+	'ث',
+	'خ',
+	'ذ',
+	'ض',
+	'ظ',
+	'غ',
+];
+
+// The value is the numerical value of the corresponding character in the Abjad numbering system.
+const DECIMAL_TO_ARABIC_ABJAD_NUMBER_TABLE: [number, string][] = [
+	[1000, 'غ'],
+	[900, 'ظ'],
+	[800, 'ض'],
+	[700, 'ذ'],
+	[600, 'خ'],
+	[500, 'ث'],
+	[400, 'ت'],
+	[300, 'ش'],
+	[200, 'ر'],
+	[100, 'ق'],
+	[90, 'ص'],
+	[80, 'ف'],
+	[70, 'ع'],
+	[60, 'س'],
+	[50, 'ن'],
+	[40, 'م'],
+	[30, 'ل'],
+	[20, 'ك'],
+	[10, 'ي'],
+	[9, 'ط'],
+	[8, 'ح'],
+	[7, 'ز'],
+	[6, 'و'],
+	[5, 'ه'],
+	[4, 'د'],
+	[3, 'ج'],
+	[2, 'ب'],
+	[1, 'أ'],
+];
+
+const DECIMAL_TO_HEBREW_ALEFBET_NUMBER_TABLE: [number, string][] = [
+	[400, 'ת'],
+	[300, 'ש'],
+	[200, 'ר'],
+	[100, 'ק'],
+	[90, 'צ'],
+	[80, 'פ'],
+	[70, 'ע'],
+	[60, 'ס'],
+	[50, 'נ'],
+	[40, 'מ'],
+	[30, 'ל'],
+	[20, 'כ'],
+	[10, 'י'],
+	[9, 'ט'],
+	[8, 'ח'],
+	[7, 'ז'],
+	[6, 'ו'],
+	[5, 'ה'],
+	[4, 'ד'],
+	[3, 'ג'],
+	[2, 'ב'],
+	[1, 'א'],
+];
+
+function createUnicodeRangeBasedNumberFormatter(
+	firstCharacterCharCode: number,
+	numberOfCharacters: number,
+	charactersToSkip: number[] = []
+): (integer: string) => string {
+	charactersToSkip.sort((a, b) => a - b);
+	numberOfCharacters = numberOfCharacters - charactersToSkip.length;
+
+	return function formatAsNumberInUnicodeRange(integer: string) {
+		let int = parseInt(integer, 10);
+
+		const isNegative = int < 0;
+
+		int = Math.abs(int);
+
+		if (!int) {
+			return '-';
+		}
+
+		const formattedNumberParts = [];
+		while (int > 0) {
+			const digit = (int - 1) % numberOfCharacters;
+			let charCode = firstCharacterCharCode + digit;
+
+			// We should skip all skippable characters, because they are in order, we can loop over them and increment our pointer until we have a character we can use.
+			charactersToSkip.forEach((char) => {
+				if (charCode >= char) {
+					charCode++;
+				}
+			});
+
+			formattedNumberParts.unshift(String.fromCodePoint(charCode));
+			int = Math.floor((int - 1) / numberOfCharacters);
+		}
+		let output = formattedNumberParts.join('');
+		if (isNegative) {
+			output = `-${output}`;
+		}
+
+		return output;
+	};
+}
+
+const convertIntegerToLowerGreek = createUnicodeRangeBasedNumberFormatter(0x03b1, 25, [0x03c2]);
+
+const convertIntegerToUpperGreek = createUnicodeRangeBasedNumberFormatter(0x0391, 25, [0x03a2]);
+
+// Format as a letter in alphabetical order, using the Hebrew alphabetical order
+function convertIntegerToHebrewAlefBet(integer: string): string {
+	let int = parseInt(integer, 10);
+
+	const isNegative = int < 0;
+
+	int = Math.abs(int);
+
+	if (!int) {
+		return '-';
+	}
+
+	const multiples = Math.floor((int - 1) / HEBREW_ALPHABET_UNICODE.length);
+	// When list runs out of individual characters, repeat the last character in the alphabet
+	const repeatChar = String.fromCodePoint(0x05ea);
+	const formattedNumberParts = Array(multiples).fill(repeatChar);
+
+	const digit = (int - 1) % HEBREW_ALPHABET_UNICODE.length;
+	const charCode = HEBREW_ALPHABET_UNICODE[digit];
+	formattedNumberParts.push(String.fromCodePoint(charCode));
+
+	let output = formattedNumberParts.join('');
+
+	if (isNegative) {
+		output = `-${output}`;
+	}
+
+	return output;
+}
+
+// Format as a letter in alphabetical order, using the Arabic AlifBaTa alphabetical order
+function convertIntegerToArabicAlifBaTa(integer: string): string {
+	let int = parseInt(integer, 10);
+
+	const isNegative = int < 0;
+
+	int = Math.abs(int);
+
+	if (!int) {
+		return '-';
+	}
+
+	const multiples = Math.floor((int - 1) / ARABIC_ALPHABET_UNICODE.length) + 1;
+	const digit = (int - 1) % ARABIC_ALPHABET_UNICODE.length;
+	const charCode = ARABIC_ALPHABET_UNICODE[digit];
+
+	// When list runs out of individual characters, double each character, then triple, etc.
+	const formattedNumberParts = Array(multiples).fill(String.fromCodePoint(charCode));
+
+	// Add non-joiner separator between characters to prevent ligatures
+	let output = formattedNumberParts.join(String.fromCodePoint(0x200c));
+
+	if (isNegative) {
+		output = `-${output}`;
+	}
+
+	return output;
+}
+
+// Format as a letter in alphabetical order, using the Arabic Abjadi alphabetical order
+function convertIntegerToArabicAbjadi(integer: string): string {
+	let int = parseInt(integer, 10);
+
+	const isNegative = int < 0;
+
+	int = Math.abs(int);
+
+	if (!int) {
+		return '-';
+	}
+
+	const multiples = Math.floor((int - 1) / ARABIC_ABJADI_ALPHABET.length) + 1;
+	const digit = (int - 1) % ARABIC_ABJADI_ALPHABET.length;
+
+	// When list runs out of individual characters, double each character, then triple, etc.
+	const formattedNumberParts = Array(multiples).fill(ARABIC_ABJADI_ALPHABET[digit]);
+
+	// Add non-joiner separator between characters to prevent ligatures
+	let output = formattedNumberParts.join(String.fromCodePoint(0x200c));
+
+	if (isNegative) {
+		output = `-${output}`;
+	}
+
+	return output;
+}
+
+function convertIntegerToAbjadNumeral(integer: string): string {
+	let int = parseInt(integer, 10);
+
+	const isNegative = int < 0;
+
+	int = Math.abs(int);
+
+	if (!int) {
+		return '-';
+	}
+
+	const arabicAbjadNumberParts = [];
+	let thousands = Math.floor(int / 1000);
+	let remainder = int - thousands * 1000;
+
+	if (thousands === 1) {
+		// Push the 1000 numeral
+		arabicAbjadNumberParts.push(DECIMAL_TO_ARABIC_ABJAD_NUMBER_TABLE[0][1]);
+	} else if (thousands > 1) {
+		// Push the multiplicative thousands place
+		for (const [val, char] of DECIMAL_TO_ARABIC_ABJAD_NUMBER_TABLE) {
+			while (thousands >= val) {
+				arabicAbjadNumberParts.push(char);
+				thousands -= val;
+			}
+		}
+		// Then push the 1000 numeral
+		arabicAbjadNumberParts.push(DECIMAL_TO_ARABIC_ABJAD_NUMBER_TABLE[0][1]);
+	}
+
+	// Then append all numbers lower than 999
+	for (const [val, char] of DECIMAL_TO_ARABIC_ABJAD_NUMBER_TABLE) {
+		while (remainder >= val) {
+			remainder -= val;
+			arabicAbjadNumberParts.push(char);
+		}
+	}
+	let output = arabicAbjadNumberParts.join('');
+
+	if (isNegative) {
+		output = `-${output}`;
+	}
+
+	return output;
+}
+
+function convertIntegerToHebrewNumeral(integer: string): string {
+	let int = parseInt(integer, 10);
+
+	const isNegative = int < 0;
+
+	int = Math.abs(int);
+
+	if (!int) {
+		return '-';
+	}
+
+	const hebrewNumberParts = [];
+
+	// In the number system, 400 is the largest numeral and is repeated when numbers grow larger than 799
+	const fourHundreds = Math.floor(int / 400);
+	let remainder = int - fourHundreds * 400;
+
+	// Push a 'ת' character for each additional multiple of 400
+	for (let i = 0; i < fourHundreds; i++) {
+		hebrewNumberParts.push('ת');
+	}
+	// Then add the numbers smaller than 400
+	for (const [val, char] of DECIMAL_TO_HEBREW_ALEFBET_NUMBER_TABLE) {
+		while (remainder >= val) {
+			remainder -= val;
+			hebrewNumberParts.push(char);
+		}
+	}
+
+	// If the last two digits are 15 or 16, substitute these characters because they are an exception in the Hebrew number system
+	// For 15, substitute (10+5) with (9+6)
+	const lastTwoChars = hebrewNumberParts.slice(-2).join('');
+	if (lastTwoChars === 'יה') {
+		hebrewNumberParts.splice(-2, 2, 'ט', 'ו');
+	}
+	// For 16, substitute (10+5) with (9+7)
+	if (lastTwoChars === 'יו') {
+		hebrewNumberParts.splice(-2, 2, 'ט', 'ז');
+	}
+
+	let output = hebrewNumberParts.join('');
+
+	if (isNegative) {
+		output = `-${output}`;
+	}
+
+	return output;
+}
+
+function convertIntegerToArabicIndicNumeral(integer: string): string {
+	return new Intl.NumberFormat([], {
+		// @ts-ignore TS does not recognize this NumberFormatOption because it is still an experimental part of the spec. However it is supported by all major browsers.
+		numberingSystem: 'arab',
+		useGrouping: false,
+	}).format(parseInt(integer, 10));
+}
+
+function convertIntegerToPersianNumeral(integer: string): string {
+	return new Intl.NumberFormat([], {
+		// @ts-ignore TS does not recognize this NumberFormatOption because it is still an experimental part of the spec. However it is supported by all major browsers.
+		numberingSystem: 'arabext',
+		useGrouping: false,
+	}).format(parseInt(integer, 10));
+}
+
 const fnAbs: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
@@ -119,6 +493,42 @@ const fnAbs: FunctionDefinitionType = (
 		createValidNumericType(onlyValue.type, Math.abs(onlyValue.value))
 	);
 };
+
+const integerConverters = new Map([
+	['A', convertIntegerToUpperAlphabet],
+	['a', convertIntegerToLowerAlphabet],
+	['I', convertIntegerToUpperRoman],
+	['i', convertIntegerToLowerRoman],
+	['lowerGreek', convertIntegerToLowerGreek],
+	['&#x03b1;', convertIntegerToLowerGreek],
+	['upperGreek', convertIntegerToUpperGreek],
+	['&#x0391;', convertIntegerToUpperGreek],
+	['arabicAbjadi', convertIntegerToArabicAbjadi],
+	['arabicAbjadNumeral', convertIntegerToAbjadNumeral],
+	['arabicAlifBaTa', convertIntegerToArabicAlifBaTa],
+	['hebrewAlefBet', convertIntegerToHebrewAlefBet],
+	['hebrewNumeral', convertIntegerToHebrewNumeral],
+	['arabicIndicNumeral', convertIntegerToArabicIndicNumeral],
+	['&#x661;', convertIntegerToArabicIndicNumeral],
+	['&#x662;', convertIntegerToArabicIndicNumeral],
+	['&#x663;', convertIntegerToArabicIndicNumeral],
+	['&#x664;', convertIntegerToArabicIndicNumeral],
+	['&#x665;', convertIntegerToArabicIndicNumeral],
+	['&#x666;', convertIntegerToArabicIndicNumeral],
+	['&#x667;', convertIntegerToArabicIndicNumeral],
+	['&#x668;', convertIntegerToArabicIndicNumeral],
+	['&#x669;', convertIntegerToArabicIndicNumeral],
+	['persianNumeral', convertIntegerToPersianNumeral],
+	['&#x6f1;', convertIntegerToPersianNumeral],
+	['&#x6f2;', convertIntegerToPersianNumeral],
+	['&#x6f3;', convertIntegerToPersianNumeral],
+	['&#x6f4;', convertIntegerToPersianNumeral],
+	['&#x6f5;', convertIntegerToPersianNumeral],
+	['&#x6f6;', convertIntegerToPersianNumeral],
+	['&#x6f7;', convertIntegerToPersianNumeral],
+	['&#x6f8;', convertIntegerToPersianNumeral],
+	['&#x6f9;', convertIntegerToPersianNumeral],
+]);
 
 const fnFormatInteger: FunctionDefinitionType = (
 	_dynamicContext,
@@ -134,27 +544,25 @@ const fnFormatInteger: FunctionDefinitionType = (
 		return sequenceFactory.singleton(createAtomicValue('', ValueType.XSSTRING));
 	}
 
-	switch (pictureValue.value) {
-		case 'I': {
-			const romanString = convertIntegerToRoman(sequenceValue.value);
-			return sequenceFactory.singleton(createAtomicValue(romanString, ValueType.XSSTRING));
-		}
-		case 'i': {
-			const romanString = convertIntegerToRoman(sequenceValue.value, true);
-			return sequenceFactory.singleton(createAtomicValue(romanString, ValueType.XSSTRING));
-		}
-		case 'A': {
-			const alphabetString = convertIntegerToAlphabet(sequenceValue.value);
-			return sequenceFactory.singleton(createAtomicValue(alphabetString, ValueType.XSSTRING));
-		}
-		case 'a': {
-			const alphabetString = convertIntegerToAlphabet(sequenceValue.value, true);
-			return sequenceFactory.singleton(createAtomicValue(alphabetString, ValueType.XSSTRING));
-		}
-		default:
-			throw new Error(
-				`Picture: ${pictureValue.value} is not implemented yet. The supported picture strings are "A", "a", "I", and "i"`
-			);
+	const integerConverter = integerConverters.get(pictureValue.value);
+
+	if (integerConverter) {
+		const convertedString = integerConverter(sequenceValue.value);
+		return sequenceFactory.singleton(createAtomicValue(convertedString, ValueType.XSSTRING));
+	} else {
+		const validPictureStrings = Array.from(
+			integerConverters,
+			([pictureString, _]) => pictureString
+		);
+		throw new Error(
+			`Picture: ${
+				pictureValue.value
+			} is not implemented yet. The supported picture strings are ${
+				validPictureStrings.slice(0, -1).join(', ') +
+				' and ' +
+				validPictureStrings.slice(-1)
+			}.`
+		);
 	}
 };
 
