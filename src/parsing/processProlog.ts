@@ -1,3 +1,4 @@
+import StackTraceGenerator from 'src/expressions/debug/StackTraceGenerator';
 import type { EvaluableExpression } from '../evaluateXPath';
 import ISequence from '../expressions/dataTypes/ISequence';
 import sequenceFactory from '../expressions/dataTypes/sequenceFactory';
@@ -147,10 +148,25 @@ function processFunctionDefinition(
 
 		// functionBody usually has a single expression
 		const body = functionBody[1];
-		const compiledFunctionBody = compileAstToExpression(body as IAST, {
-			allowUpdating: false,
-			allowXQuery: true,
-		});
+		const compiledFunctionBody = new StackTraceGenerator(
+			{
+				start: {
+					column: -1,
+					offset: -1,
+					line: -1,
+				},
+				end: {
+					column: -1,
+					offset: -1,
+					line: -1,
+				},
+			},
+			`call to function Q{${declarationNamespaceURI}}${declarationLocalName}#${paramTypes.length}`,
+			compileAstToExpression(body as IAST, {
+				allowUpdating: false,
+				allowXQuery: true,
+			})
+		);
 
 		const staticContextLeaf = new StaticContext(staticContext);
 		const parameterBindingNames = paramNames.map((param) => {
