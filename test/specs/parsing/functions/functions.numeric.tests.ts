@@ -237,11 +237,11 @@ describe('numeric functions', () => {
 		});
 
 		it('returns Η (eta) for 7', () => {
-			chai.assert.equal(evaluateXPathToString('format-integer(7, "&#x0391;")'), 'Η');
+			chai.assert.equal(evaluateXPathToString('format-integer(7, "Α")'), 'Η');
 		});
 
 		it('returns η (eta) for 7', () => {
-			chai.assert.equal(evaluateXPathToString('format-integer(7, "&#x03b1;")'), 'η');
+			chai.assert.equal(evaluateXPathToString('format-integer(7, "α")'), 'η');
 		});
 
 		it('returns -g for -7', () => {
@@ -249,7 +249,7 @@ describe('numeric functions', () => {
 		});
 
 		it('returns -η (eta) for -7', () => {
-			chai.assert.equal(evaluateXPathToString('format-integer(-7, "&#x03b1;")'), '-η');
+			chai.assert.equal(evaluateXPathToString('format-integer(-7, "α")'), '-η');
 		});
 
 		it('returns AB for 28', () => {
@@ -261,11 +261,11 @@ describe('numeric functions', () => {
 		});
 
 		it('returns ΑΔ for 28', () => {
-			chai.assert.equal(evaluateXPathToString('format-integer(28, "&#x0391;")'), 'ΑΔ');
+			chai.assert.equal(evaluateXPathToString('format-integer(28, "Α")'), 'ΑΔ');
 		});
 
 		it('returns αδ for 28', () => {
-			chai.assert.equal(evaluateXPathToString('format-integer(28, "&#x03b1;")'), 'αδ');
+			chai.assert.equal(evaluateXPathToString('format-integer(28, "α")'), 'αδ');
 		});
 
 		it('returns -ab for -28', () => {
@@ -273,7 +273,7 @@ describe('numeric functions', () => {
 		});
 
 		it('returns -αδ for -28', () => {
-			chai.assert.equal(evaluateXPathToString('format-integer(28, "&#x03b1;")'), 'αδ');
+			chai.assert.equal(evaluateXPathToString('format-integer(28, "α")'), 'αδ');
 		});
 
 		it('returns - for 0', () => {
@@ -281,8 +281,8 @@ describe('numeric functions', () => {
 			chai.assert.equal(evaluateXPathToString('format-integer(0, "A")'), '-');
 			chai.assert.equal(evaluateXPathToString('format-integer(0, "i")'), '-');
 			chai.assert.equal(evaluateXPathToString('format-integer(0, "I")'), '-');
-			chai.assert.equal(evaluateXPathToString('format-integer(0, "&#x03b1;")'), '-');
-			chai.assert.equal(evaluateXPathToString('format-integer(0, "&#x0391;")'), '-');
+			chai.assert.equal(evaluateXPathToString('format-integer(0, "α")'), '-');
+			chai.assert.equal(evaluateXPathToString('format-integer(0, "Α")'), '-');
 		});
 
 		it('returns "" for ()', () => {
@@ -290,18 +290,18 @@ describe('numeric functions', () => {
 			chai.assert.equal(evaluateXPathToString('format-integer((), "A")'), '');
 			chai.assert.equal(evaluateXPathToString('format-integer((), "i")'), '');
 			chai.assert.equal(evaluateXPathToString('format-integer((), "I")'), '');
-			chai.assert.equal(evaluateXPathToString('format-integer((), "&#x03b1;")'), '');
-			chai.assert.equal(evaluateXPathToString('format-integer((), "&#x0391;")'), '');
+			chai.assert.equal(evaluateXPathToString('format-integer((), "α")'), '');
+			chai.assert.equal(evaluateXPathToString('format-integer((), "Α")'), '');
 			chai.assert.equal(evaluateXPathToString('format-integer((), "arabicAbjadi")'), '');
 			chai.assert.equal(
 				evaluateXPathToString('format-integer((), "arabicAbjadNumeral")'),
 				''
 			);
 			chai.assert.equal(evaluateXPathToString('format-integer((), "arabicAlifBaTa")'), '');
-			chai.assert.equal(evaluateXPathToString('format-integer((), "&#x661;")'), '');
+			chai.assert.equal(evaluateXPathToString('format-integer((), "١")'), '');
 			chai.assert.equal(evaluateXPathToString('format-integer((), "hebrewAlefBet")'), '');
 			chai.assert.equal(evaluateXPathToString('format-integer((), "hebrewNumeral")'), '');
-			chai.assert.equal(evaluateXPathToString('format-integer((), "&#x6f1;")'), '');
+			chai.assert.equal(evaluateXPathToString('format-integer((), "۱")'), '');
 		});
 
 		it('throws for unknown pictures', () => {
@@ -309,7 +309,8 @@ describe('numeric functions', () => {
 				evaluateXPathToString('format-integer(57, "x")');
 			});
 		});
-
+	});
+	describe('fn:format-integer(int, "arabicAbjadi")', () => {
 		const arabicAbjadi: [number, string][] = [
 			[1, 'أ'],
 			[2, 'ب'],
@@ -361,7 +362,9 @@ describe('numeric functions', () => {
 				);
 			});
 		}
+	});
 
+	describe('fn:format-integer(int, "arabicAbjadNumerals")', () => {
 		const abjadNumerals: [number, string][] = [
 			[1000, 'غ'],
 			[900, 'ظ'],
@@ -425,7 +428,9 @@ describe('numeric functions', () => {
 				);
 			});
 		}
+	});
 
+	describe('fn:format-integer(int, "arabicAlifBaTa")', () => {
 		const arabicAlifBaTa: [number, string][] = [
 			[1, 'ا'],
 			[2, 'ب'],
@@ -478,7 +483,9 @@ describe('numeric functions', () => {
 				);
 			});
 		}
+	});
 
+	describe('fn:format-integer(int, "hebrewAlefBet")', () => {
 		const hebrewAlefBet: [number, string][] = [
 			[1, 'א'],
 			[2, 'ב'],
@@ -527,7 +534,9 @@ describe('numeric functions', () => {
 				);
 			});
 		}
+	});
 
+	describe('fn:format-integer(int, "hebrewNumerals")', () => {
 		const hebrewNumerals: [number, string][] = [
 			[1, 'א'],
 			[2, 'ב'],
@@ -588,52 +597,56 @@ describe('numeric functions', () => {
 				);
 			});
 		}
+	});
 
-		const arabicAndPersianNumerals: [int: number, arabicNum: string, persianNum: string][] = [
-			[-15, '؜-١٥', '‎-‎۱۵'],
-			[0, '٠', '۰'],
-			[1, '١', '۱'],
-			[2, '٢', '۲'],
-			[3, '٣', '۳'],
-			[4, '٤', '۴'],
-			[5, '٥', '۵'],
-			[6, '٦', '۶'],
-			[7, '٧', '۷'],
-			[8, '٨', '۸'],
-			[9, '٩', '۹'],
-			[15, '١٥', '۱۵'],
-			[2895, '٢٨٩٥', '۲۸۹۵'],
-			[58973, '٥٨٩٧٣', '۵۸۹۷۳'],
-			[5e4, '٥٠٠٠٠', '۵۰۰۰۰'],
-		];
+	const arabicAndPersianNumerals: [int: number, arabicNum: string, persianNum: string][] = [
+		[-15, '؜-١٥', '‎-‎۱۵'],
+		[0, '٠', '۰'],
+		[1, '١', '۱'],
+		[2, '٢', '۲'],
+		[3, '٣', '۳'],
+		[4, '٤', '۴'],
+		[5, '٥', '۵'],
+		[6, '٦', '۶'],
+		[7, '٧', '۷'],
+		[8, '٨', '۸'],
+		[9, '٩', '۹'],
+		[15, '١٥', '۱۵'],
+		[2895, '٢٨٩٥', '۲۸۹۵'],
+		[58973, '٥٨٩٧٣', '۵۸۹۷۳'],
+		[5e4, '٥٠٠٠٠', '۵۰۰۰۰'],
+	];
 
+	describe('fn:format-integer(int, "arabicIndicNumeral")', () => {
 		for (const [int, expectedArabicNum, _] of arabicAndPersianNumerals) {
 			it(`should format ${int} as an Arabic-Indic numeral using arabic-indic numeral 1 as the format string`, () => {
 				chai.assert.equal(
-					evaluateXPathToString(`format-integer(${int}, "&#x661;")`),
+					evaluateXPathToString(`format-integer(${int}, "١")`),
 					expectedArabicNum
 				);
 			});
 
 			it(`should format ${int} as an Arabic-Indic numeral using arabic-indic numeral 4 as the format string`, () => {
 				chai.assert.equal(
-					evaluateXPathToString(`format-integer(${int}, "&#x664;")`),
+					evaluateXPathToString(`format-integer(${int}, "٤")`),
 					expectedArabicNum
 				);
 			});
 		}
+	});
 
+	describe('fn:format-integer(int, "persianNumeral")', () => {
 		for (const [int, _, expectedPersianNum] of arabicAndPersianNumerals) {
 			it(`should format ${int} as a Persian numeral using persian numeral 1 as the format string`, () => {
 				chai.assert.equal(
-					evaluateXPathToString(`format-integer(${int}, "&#x6f1;")`),
+					evaluateXPathToString(`format-integer(${int}, "۱")`),
 					expectedPersianNum
 				);
 			});
 
 			it(`should format ${int} as a Persian numeral using persian numeral 4 as the format string`, () => {
 				chai.assert.equal(
-					evaluateXPathToString(`format-integer(${int}, "&#x6f4;")`),
+					evaluateXPathToString(`format-integer(${int}, "۴")`),
 					expectedPersianNum
 				);
 			});
