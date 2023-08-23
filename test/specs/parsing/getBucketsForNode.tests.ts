@@ -12,5 +12,8 @@ describe('getBucketsForNode', () => {
 	});
 	it('returns the correct buckets for text nodes', () => {
 		chai.assert.deepEqual(getBucketsForNode(doc.createTextNode('A piece of text')), ['type-3']);
+		chai.assert.deepEqual(getBucketsForNode(doc.createCDATASection('A piece of cdata')), [
+			'type-3',
+		]);
 	});
 });

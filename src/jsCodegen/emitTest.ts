@@ -36,7 +36,8 @@ function emitTextTest(
 	return [
 		mapPartialCompilationResult(contextItemExpr, (contextItemExpr) =>
 			acceptAst(
-				`${contextItemExpr.code}.nodeType === /*TEXT_NODE*/ ${NODE_TYPES.TEXT_NODE}`,
+				`(${contextItemExpr.code}.nodeType === /*TEXT_NODE*/ ${NODE_TYPES.TEXT_NODE} ||
+				${contextItemExpr.code}.nodeType === /* CDATA_SECTION_NODE */ ${NODE_TYPES.CDATA_SECTION_NODE})`,
 				{
 					type: GeneratedCodeBaseType.Value,
 				},

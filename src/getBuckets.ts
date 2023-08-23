@@ -42,7 +42,11 @@ export function getBucketsForPointer(pointer: NodePointer, domFacade: DomFacade)
  * @param node - The node which buckets should be retrieved
  */
 export function getBucketsForNode(node: Node): Bucket[] {
-	const nodeType = node.nodeType;
+	let nodeType = node.nodeType;
+	// Put CDataSection nodes in the Text bucket
+	if (nodeType === NODE_TYPES.CDATA_SECTION_NODE) {
+		nodeType = NODE_TYPES.TEXT_NODE;
+	}
 	let localName;
 
 	if (nodeType === NODE_TYPES.ATTRIBUTE_NODE || nodeType === NODE_TYPES.ELEMENT_NODE) {
