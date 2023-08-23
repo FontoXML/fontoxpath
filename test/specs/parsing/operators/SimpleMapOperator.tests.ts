@@ -2,6 +2,7 @@ import * as chai from 'chai';
 import {
 	evaluateXPath,
 	evaluateXPathToNodes,
+	evaluateXPathToNumber,
 	evaluateXPathToString,
 	evaluateXPathToStrings,
 } from 'fontoxpath';
@@ -95,4 +96,6 @@ describe('Simple map operator', () => {
 		));
 	it('throws the correct error when mapping numbers to a ancestor path expresion', () =>
 		chai.assert.throws(() => evaluateXPathToNodes('0!ancestor::a', documentNode), 'XPTY0020'));
+	it('does not crash when mapping numbers to numbers', () =>
+		chai.assert.equal(evaluateXPathToNumber('0!1', documentNode), 1));
 });

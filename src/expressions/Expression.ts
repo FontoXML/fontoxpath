@@ -4,6 +4,7 @@ import DynamicContext from './DynamicContext';
 import ExecutionParameters from './ExecutionParameters';
 import Specificity from './Specificity';
 import StaticContext from './StaticContext';
+import UnfocusableDynamicContext from './UnfocusableDynamicContext';
 import { Bucket } from './util/Bucket';
 import createDoublyIterableSequence from './util/createDoublyIterableSequence';
 import { errXUST0001 } from './xquery-update/XQueryUpdateFacilityErrors';
@@ -101,12 +102,17 @@ abstract class Expression {
 	}
 
 	protected evaluateWithoutFocus(
-		_contextlessDynamicContext: DynamicContext | null,
+		_contextlessDynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters
 	): ISequence {
 		if (this._eagerlyEvaluatedValue === null) {
 			this._eagerlyEvaluatedValue = createDoublyIterableSequence(
-				this.evaluate(null, executionParameters).expandSequence()
+				this.evaluate(
+					new UnfocusableDynamicContext({
+						variableBindings: {},
+					}),
+					executionParameters
+				).expandSequence()
 			);
 		}
 		return this._eagerlyEvaluatedValue();
