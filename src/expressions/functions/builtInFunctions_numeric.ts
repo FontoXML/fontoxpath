@@ -16,7 +16,6 @@ import { DONE_TOKEN, ready } from '../util/iterators';
 import { errXPDY0002 } from '../XPathErrors';
 import { performFunctionConversion } from './argumentHelper';
 import type { BuiltinDeclarationType } from './builtInFunctions';
-import builtinStringFunctions from './builtInFunctions_string';
 import type FunctionDefinitionType from './FunctionDefinitionType';
 
 function createValidNumericType(type: ValueType, transformedValue: number) {
@@ -537,8 +536,7 @@ const fnFormatInteger: FunctionDefinitionType = (
 		return sequenceFactory.singleton(createAtomicValue(convertedString, ValueType.XSSTRING));
 	} else {
 		// If picture string is not found, return the input as a string
-		const fnString = builtinStringFunctions.functions.string;
-		return fnString(_dynamicContext, _executionParameters, _staticContext, sequence);
+		return sequenceFactory.singleton(createAtomicValue(integer.toString(), ValueType.XSSTRING));
 	}
 };
 
