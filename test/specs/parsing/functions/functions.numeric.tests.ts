@@ -304,10 +304,15 @@ describe('numeric functions', () => {
 			chai.assert.equal(evaluateXPathToString('format-integer((), "۱")'), '');
 		});
 
-		it('throws for unknown pictures', () => {
-			chai.assert.throw(() => {
-				evaluateXPathToString('format-integer(57, "x")');
-			});
+		it('fn-format-integer returns the input for unknown pictures', () => {
+			chai.assert.equal(evaluateXPathToString('format-integer(1234, "ﯴ")'), '1234');
+		});
+
+		it('fn-format-integer returns the input for unknown pictures (boolean check)', () => {
+			chai.assert.isTrue(evaluateXPathToBoolean('format-integer(1234, "ﯴ") = "1234"'));
+			chai.assert.isTrue(
+				evaluateXPathToBoolean('format-integer(1234, "ﯴ") instance of xs:string')
+			);
 		});
 	});
 	describe('fn:format-integer(int, "arabicAbjadi")', () => {

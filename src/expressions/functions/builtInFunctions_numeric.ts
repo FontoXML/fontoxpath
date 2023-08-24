@@ -16,6 +16,7 @@ import { DONE_TOKEN, ready } from '../util/iterators';
 import { errXPDY0002 } from '../XPathErrors';
 import { performFunctionConversion } from './argumentHelper';
 import type { BuiltinDeclarationType } from './builtInFunctions';
+import builtinStringFunctions from './builtInFunctions_string';
 import type FunctionDefinitionType from './FunctionDefinitionType';
 
 function createValidNumericType(type: ValueType, transformedValue: number) {
@@ -529,25 +530,15 @@ const fnFormatInteger: FunctionDefinitionType = (
 	}
 
 	const integerConverter = integerConverters.get(pictureValue.value);
+	const integer = sequenceValue.value as number;
 
 	if (integerConverter) {
-		const integer = sequenceValue.value as number;
 		const convertedString = integerConverter(integer);
 		return sequenceFactory.singleton(createAtomicValue(convertedString, ValueType.XSSTRING));
 	} else {
-		const validPictureStrings = Array.from(
-			integerConverters,
-			([pictureString, _]) => pictureString
-		);
-		throw new Error(
-			`Picture: ${
-				pictureValue.value
-			} is not implemented yet. The supported picture strings are ${
-				validPictureStrings.slice(0, -1).join(', ') +
-				' and ' +
-				validPictureStrings.slice(-1)
-			}.`
-		);
+		// If picture string is not found, return the input as a string
+		const fnString = builtinStringFunctions.functions.string;
+		return fnString(_dynamicContext, _executionParameters, _staticContext, sequence);
 	}
 };
 
