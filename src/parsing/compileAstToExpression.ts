@@ -818,6 +818,7 @@ function pathExpr(ast: IAST, compilationOptions: CompilationOptions) {
 		const children = astHelper.getChildren(step, '*');
 		const postFixExpressions: (['lookup', '*' | Expression] | ['predicate', Expression])[] = [];
 		let intersectingBucket: Bucket = null;
+		let hasSeenNullBucket = false;
 		for (const child of children) {
 			switch (child[0]) {
 				case 'lookup':
@@ -830,10 +831,21 @@ function pathExpr(ast: IAST, compilationOptions: CompilationOptions) {
 							childPredicate,
 							disallowUpdating(compilationOptions)
 						);
-						intersectingBucket = intersectBuckets(
-							intersectingBucket,
-							predicateExpression.getBucket()
-						);
+						if (!hasSeenNullBucket) {
+							const predicateBucket = predicateExpression.getBucket();
+							if (predicateBucket === null) {
+								// If we see a null bucket, we cannot use any future buckets
+								// anymore. This filter may have been position-aware For example:
+								// `following-sibling::node()[1][self::xxx]` is not the same as
+								// `following-sibling::node()[self::xxx][1]`.
+								hasSeenNullBucket = true;
+							} else {
+								intersectingBucket = intersectBuckets(
+									intersectingBucket,
+									predicateBucket
+								);
+							}
+						}
 						postFixExpressions.push(['predicate', predicateExpression]);
 					}
 					break;

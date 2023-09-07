@@ -55,4 +55,10 @@ describe('getBucketForSelector', () => {
 	it('returns the correct bucket for text expressions', () => {
 		assertBucketForSelector('self::text()', 'type-3');
 	});
+	it('returns the correct bucket if a filter is position-aware', () => {
+		// Note the axis does not make sense here. But this should work for following-sibling as well
+		assertBucketForSelector('self::node()[1][self::xxx]', null);
+		// The order is changed: this makes it not position-aware
+		assertBucketForSelector('self::node()[self::xxx][1]', 'name-xxx');
+	});
 });
