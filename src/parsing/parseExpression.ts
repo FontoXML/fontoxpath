@@ -1,4 +1,4 @@
-import { Location } from 'src/expressions/debug/StackTraceGenerator';
+import { Location } from '../expressions/debug/StackTraceGenerator';
 import { StackTraceEntry } from '../expressions/debug/StackTraceEntry';
 import { IAST } from './astHelper';
 import { parseUsingPrsc } from './prscParser';

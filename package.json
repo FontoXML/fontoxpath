@@ -15,7 +15,7 @@
 		"ci-qt3testsxqueryx": "cross-env TS_NODE_PROJECT=test/tsconfig.json nyc --no-clean --require ts-node/register --require tsconfig-paths/register mocha --paths --project test/qt3testsXQueryX.ts",
 		"ci-test": "cross-env TS_NODE_PROJECT=test/tsconfig.json nyc --no-clean --require ts-node/register --require tsconfig-paths/register mocha \"test/specs/**/*.ts\" --parallel",
 		"ci-test-jscodegen": "cross-env TS_NODE_PROJECT=test/tsconfig.json nyc --no-clean --require ts-node/register --require tsconfig-paths/register mocha \"test/specs/**/*.ts\" --parallel  -- --jscodegen",
-		"ci-xqutstests": "cross-env TS_NODE_PROJECT=test/tsconfig.json nyc --no-clean --require ts-node/register --require tsconfig-paths/register mocha --paths --parallel test/xqutsTests.ts",
+		"ci-xqutstests": "cross-env TS_NODE_PROJECT=test/tsconfig.json nyc --no-clean --require ts-node/register --require tsconfig-paths/register mocha test/xqutsTests.ts",
 		"ci-xqutstestsxqueryx": "cross-env TS_NODE_PROJECT=test/tsconfig.json nyc --no-clean --require ts-node/register --require tsconfig-paths/register mocha --paths --parallel test/xqutsTestsXQueryX.ts",
 		"coverage": "nyc report --reporter=text-lcov",
 		"integrationtests": "ts-mocha --require test/testhook.js \"test/specs/parsing/**/*.ts\" --parallel",

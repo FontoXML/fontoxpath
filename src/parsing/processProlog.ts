@@ -1,4 +1,3 @@
-import StackTraceGenerator from 'src/expressions/debug/StackTraceGenerator';
 import type { EvaluableExpression } from '../evaluateXPath';
 import ISequence from '../expressions/dataTypes/ISequence';
 import sequenceFactory from '../expressions/dataTypes/sequenceFactory';
