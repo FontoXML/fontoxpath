@@ -1,6 +1,7 @@
 import { PositionedError } from '../../evaluationUtils/PositionedError';
 import { SourceRange } from './StackTraceGenerator';
 export class StackTraceEntry {
+	public comment: string;
 	public innerExpressionType: string;
 	public innerTrace: Error | PositionedError | StackTraceEntry;
 	public location: SourceRange;
@@ -8,10 +9,12 @@ export class StackTraceEntry {
 	constructor(
 		location: SourceRange,
 		innerExpressionType: string,
+		comment: string,
 		innerTrace: Error | StackTraceEntry
 	) {
 		this.location = location;
 		this.innerExpressionType = innerExpressionType;
+		this.comment = comment;
 		this.innerTrace = innerTrace;
 	}
 
@@ -32,7 +35,9 @@ export class StackTraceEntry {
 			innerStackTrace = this.innerTrace.makeStackTrace();
 		}
 		innerStackTrace.push(
-			`  at <${this.innerExpressionType}>:${this.location.start.line}:${this.location.start.column} - ${this.location.end.line}:${this.location.end.column}`
+			`  at <${this.innerExpressionType}${this.comment ? ` (${this.comment})` : ''}>:${
+				this.location.start.line
+			}:${this.location.start.column} - ${this.location.end.line}:${this.location.end.column}`
 		);
 		return innerStackTrace;
 	}

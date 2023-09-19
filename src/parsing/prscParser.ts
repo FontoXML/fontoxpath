@@ -16,7 +16,7 @@ import {
 	star,
 	then,
 } from 'prsc';
-import { Location } from '../expressions/debug/StackTraceGenerator';
+import { Location, SourceRange } from '../expressions/debug/StackTraceGenerator';
 import { IAST } from './astHelper';
 import {
 	anyKindTest,
@@ -136,7 +136,13 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const stackTraceMap = new Map<number, Location>();
 
-	function wrapInStackTrace(parser: Parser<IAST>): Parser<IAST> {
+	function wrapInStackTrace(
+		parser: Parser<
+			IAST & {
+				comment?: string;
+			}
+		>
+	): Parser<IAST> {
 		if (!options.outputDebugInfo) {
 			return parser;
 		}
@@ -166,14 +172,17 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			stackTraceMap.set(offset, start);
 			stackTraceMap.set(result.offset, end);
 
+			const comment = result.value.comment;
+
 			return okWithValue(result.offset, [
 				'x:stackTrace',
 				{
 					start,
 					end,
-				},
+					...(comment ? { comment } : {}),
+				} as SourceRange,
 				result.value,
-			] as unknown as IAST);
+			] as IAST);
 		};
 	}
 
@@ -422,16 +431,36 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		(x) => (x !== null ? x : [])
 	);
 
+	function qnameToString(functionName: QNameAST): string {
+		const prefix = functionName[0].prefix;
+		const uri = functionName[0]['URI'];
+		const localPart = functionName[1];
+
+		if (prefix) {
+			return `${prefix}:${localPart}`;
+		}
+		if (uri) {
+			return `Q{${uri}}${localPart}`;
+		}
+		return localPart;
+	}
+
 	const functionCall: Parser<IAST> = preceded(
 		not(
 			then3(reservedFunctionNames, whitespace, tokens.BRACE_OPEN, (_a, _b, _c) => undefined),
-			['cannot use reseved keyword for function names']
+			['cannot use reserved keyword for function names']
 		),
-		then(eqName, preceded(whitespace, argumentList), (functionName, args) => [
-			'functionCallExpr',
-			['functionName', ...functionName],
-			args !== null ? ['arguments', ...args] : ['arguments'],
-		])
+		wrapInStackTrace(
+			then(eqName, preceded(whitespace, argumentList), (functionName, args) => {
+				const result: IAST & { comment?: string } = [
+					'functionCallExpr',
+					['functionName', ...functionName],
+					args !== null ? ['arguments', ...args] : ['arguments'],
+				];
+				result.comment = qnameToString(functionName);
+				return result;
+			})
+		)
 	);
 
 	const namedFunctionRef: Parser<IAST> = then(
@@ -1389,9 +1418,13 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		defaultBinaryOperatorFn
 	);
 
+	const ifClause: Parser<IAST> = wrapInStackTrace(map(expr, (x) => ['ifClause', x]));
+	const thenClause: Parser<IAST> = wrapInStackTrace(map(exprSingle, (x) => ['thenClause', x]));
+	const elseClause: Parser<IAST> = wrapInStackTrace(map(exprSingle, (x) => ['elseClause', x]));
+
 	const ifExpr: Parser<IAST> = then(
 		then(
-			precededMultiple([tokens.IF, whitespace, tokens.BRACE_OPEN, whitespace], expr),
+			precededMultiple([tokens.IF, whitespace, tokens.BRACE_OPEN, whitespace], ifClause),
 			precededMultiple(
 				[
 					whitespace,
@@ -1401,21 +1434,16 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 					assertAdjacentOpeningTerminal,
 					whitespace,
 				],
-				exprSingle
+				thenClause
 			),
 			(ifClause, thenClause) => [ifClause, thenClause]
 		),
 		precededMultiple(
 			[whitespace, tokens.ELSE, assertAdjacentOpeningTerminal, whitespace],
-			exprSingle
+			elseClause
 		),
 		(ifthen, elseClause) => {
-			return [
-				'ifThenElseExpr',
-				['ifClause', ifthen[0]],
-				['thenClause', ifthen[1]],
-				['elseClause', elseClause],
-			];
+			return ['ifThenElseExpr', ifthen[0], ifthen[1], elseClause];
 		}
 	);
 
@@ -2211,7 +2239,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			}
 
 			const c = xpath[i];
-			if (c === '\r' || c === '\n') {
+			if (c === '\n') {
 				line++;
 				col = 1;
 			} else {

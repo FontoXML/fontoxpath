@@ -1,3 +1,4 @@
+import { Location } from 'src/expressions/debug/StackTraceGenerator';
 import { StackTraceEntry } from '../expressions/debug/StackTraceEntry';
 import { IAST } from './astHelper';
 import { parseUsingPrsc } from './prscParser';
@@ -26,10 +27,15 @@ export default function parseExpression(
 	// The offset is the last known position where the parser was OK, so the error is one over
 	const column = line.length + 1;
 
-	const positionS = { offset: parseResult.offset, line: lines.length, column };
-	const positionE = { offset: parseResult.offset + 1, line: lines.length, column: column + 1 };
+	const positionS: Location = { offset: parseResult.offset, line: lines.length, column };
+	const positionE: Location = {
+		offset: parseResult.offset + 1,
+		line: lines.length,
+		column: column + 1,
+	};
 	throw new StackTraceEntry(
 		{ start: positionS, end: positionE },
+		'',
 		'',
 		new Error(
 			`XPST0003: Failed to parse script. Expected ${[...new Set(parseResult.expected)]}`

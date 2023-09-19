@@ -131,7 +131,9 @@ function parseNode(
 					continue;
 				}
 				if (
-					(attributeName === 'start' || attributeName === 'end') &&
+					(attributeName === 'start' ||
+						attributeName === 'end' ||
+						attributeName === 'comment') &&
 					name === 'stackTrace'
 				) {
 					attributeValue = JSON.stringify(attributeValue);

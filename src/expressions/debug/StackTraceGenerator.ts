@@ -9,10 +9,16 @@ import { IterationHint } from '../util/iterators';
 import { StackTraceEntry } from './StackTraceEntry';
 
 export default class StackTraceGenerator extends PossiblyUpdatingExpression {
+	private _comment: string;
 	private _innerExpressionType: string;
 	private _location: SourceRange;
 
-	constructor(location: SourceRange, innerExpressionType: string, innerExpression: Expression) {
+	constructor(
+		location: SourceRange,
+		innerExpressionType: string,
+		innerExpression: Expression,
+		comment: string
+	) {
 		super(innerExpression.specificity, [innerExpression], {
 			canBeStaticallyEvaluated: innerExpression.canBeStaticallyEvaluated,
 			peer: innerExpression.peer,
@@ -34,6 +40,8 @@ export default class StackTraceGenerator extends PossiblyUpdatingExpression {
 				offset: location.start.offset,
 			},
 		};
+
+		this._comment = comment;
 	}
 
 	public performFunctionalEvaluation(
@@ -45,7 +53,12 @@ export default class StackTraceGenerator extends PossiblyUpdatingExpression {
 		try {
 			innerSequence = sequenceCallback(dynamicContext);
 		} catch (error) {
-			throw new StackTraceEntry(this._location, this._innerExpressionType, error);
+			throw new StackTraceEntry(
+				this._location,
+				this._innerExpressionType,
+				this._comment,
+				error
+			);
 		}
 
 		return sequenceFactory.create({
@@ -53,7 +66,12 @@ export default class StackTraceGenerator extends PossiblyUpdatingExpression {
 				try {
 					return innerSequence.value.next(hint);
 				} catch (error) {
-					throw new StackTraceEntry(this._location, this._innerExpressionType, error);
+					throw new StackTraceEntry(
+						this._location,
+						this._innerExpressionType,
+						this._comment,
+						error
+					);
 				}
 			},
 		});
@@ -63,8 +81,17 @@ export default class StackTraceGenerator extends PossiblyUpdatingExpression {
 		try {
 			super.performStaticEvaluation(staticContext);
 		} catch (error) {
-			throw new StackTraceEntry(this._location, this._innerExpressionType, error);
+			throw new StackTraceEntry(
+				this._location,
+				this._innerExpressionType,
+				this._comment,
+				error
+			);
 		}
+	}
+
+	public getBucket() {
+		return this._childExpressions[0].getBucket();
 	}
 }
 
@@ -74,7 +101,8 @@ export type Location = {
 	offset: number;
 };
 
-export type SourceRange = {
+export declare type SourceRange = {
 	end: Location;
 	start: Location;
+	comment?: string;
 };

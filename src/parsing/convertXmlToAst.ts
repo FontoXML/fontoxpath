@@ -24,8 +24,10 @@ export default function convertXmlToAst(element: Element): IAST {
 		ast.push(
 			Array.from(attributes).reduce<ASTAttributes>((attrs, attr) => {
 				if (
-					attr.localName === 'start' ||
-					(attr.localName === 'end' && element.localName === 'stackTrace')
+					(attr.localName === 'comment' ||
+						attr.localName === 'start' ||
+						attr.localName === 'end') &&
+					element.localName === 'stackTrace'
 				) {
 					attrs[attr.localName] = JSON.parse(attr.value);
 				} else if (attr.localName === 'type') {
