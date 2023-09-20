@@ -101,7 +101,7 @@ export type Location = {
 	offset: number;
 };
 
-export declare type SourceRange = {
+export type SourceRange = {
 	end: Location;
 	start: Location;
 	comment?: string;
