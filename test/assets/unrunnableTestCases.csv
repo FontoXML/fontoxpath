@@ -164,8 +164,7 @@ fn-ceiling-float-8-dyn,Error: 1: (declare variable $NaN-float external; ceiling(
 fn-codepoint-equal-22,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}normalize-unicode with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}normalize-space (xs:string?)", "Q{http://www.w3.org/2005/xpath-functions}normalize-space ()" or "Q{http://www.w3.org/2001/XMLSchema}normalizedString (xs:anyAtomicType?)"?
 cbcl-codepoints-to-string-015,AssertionError: Expected XPath deep-equal( fn:string-to-codepoints(fn:codepoints-to-string(65536 to 66000)), 65536 to 66000 ) to resolve to true: expected false to be true
 cbcl-codepoints-to-string-016,AssertionError: Expected XPath deep-equal( fn:string-to-codepoints(fn:codepoints-to-string(65536 to 100000)), 65536 to 100000 ) to resolve to true: expected false to be true
-cbcl-codepoints-to-string-027,AssertionError: Expected XPath for $x in (13), $y in (13,9,10) return codepoints-to-string($x to $y) to (deep equally) resolve to "
-", "", "": expected false to be true
+cbcl-codepoints-to-string-027,AssertionError: Expected XPath for $x in (13), $y in (13,9,10) return codepoints-to-string($x to $y) to (deep equally) resolve to "", "", "": expected false to be true
 fn-concatintg2args-1,Error: FOCA0003: can not cast -999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-concatintg2args-2,Error: FOCA0003: can not cast 830993497117024304 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-concatintg2args-3,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
@@ -515,7 +514,7 @@ format-integer-046,AssertionError: Expected XPath string-join(for $i in 1 to 5 r
 format-integer-047,AssertionError: Expected XPath string-join(for $i in 1 to 5 return format-integer($i, '⑴'), '|') to resolve to '⑴|⑵|⑶|⑷|⑸': expected false to be true
 format-integer-048,AssertionError: Expected XPath string-join(for $i in 1 to 5 return format-integer($i, '⒈'), '|') to resolve to '⒈|⒉|⒊|⒋|⒌': expected false to be true
 format-integer-051,AssertionError: Expected XPath format-integer(12345678901,'# 000') to resolve to '12 345 678 901': expected false to be true
-format-integer-052,AssertionError: Expected XPath string-join(             for $i in (1 to 23, 151, 302, 469, 2025)             return concat($i, '=', format-integer($i, '一')), '|') to resolve to                  '1=一|2=二|3=三|4=四|5=五|6=六|7=七|8=八|9=九|10=十|11=十一|12=十二|13=十三|14=十四|15=十五|16=十六|17=十七|18=十八|19=十九|20=二十|21=二十一|22=二十二|23=二十三|151=百五十一|302=三百二|469=四百六十九|2025=二千二十五': expected false to be true
+format-integer-052,AssertionError: Expected XPath string-join(                 for $i in (1 to 23, 151, 302, 469, 2025)                  return concat($i, '=',  format-integer($i, '一')), '|') to resolve to '1=一|2=二|3=三|4=四|5=五|6=六|7=七|8=八|9=九|10=十|11=十一|12=十二|13=十三|14=十四|15=十五|16=十六|17=十七|18=十八|19=十九|20=二十|21=二十一|22=二十二|23=二十三|151=百五十一|302=三百二|469=四百六十九|2025=二千二十五': expected false to be true
 format-integer-054,AssertionError: expected [Function] to throw an error
 format-integer-059,AssertionError: Expected XPath format-integer(1,'001;') to resolve to '001': expected false to be true
 format-integer-060,AssertionError: Expected XPath format-integer(1234,'#;##1;') to resolve to '1;234': expected false to be true
@@ -2643,8 +2642,7 @@ nscons-042,AssertionError: expected [Function] to throw error matching /XQDY0102
 nscons-043,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'No selector counterpart for: computed…'
 nscons-044,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'No selector counterpart for: computed…'
 Constr-comppi-space-1,AssertionError: Expected XPath processing-instruction pi {' text'} to resolve to the given XML. Expected <?pi  text?> to equal <?pi text?>
-Constr-comppi-space-2,AssertionError: Expected XPath processing-instruction pi {'&#x20;&#x0A;&#x0D;&#x09;text'} to resolve to the given XML. Expected <?pi   
-	text?> to equal <?pi text?>
+Constr-comppi-space-2,AssertionError: Expected XPath processing-instruction pi {'&#x20;&#x0A;&#x0D;&#x09;text'} to resolve to the given XML. Expected <?pi   	text?> to equal <?pi text?>
 Constr-comppi-space-3,AssertionError: string-to-codepoints(processing-instruction pi {' text'}): expected '32 116 101 120 116' to equal '116 101 120 116'
 Constr-comppi-space-4,AssertionError: string-to-codepoints(processing-instruction pi {'&#x20;&#x0A;&#x0D;&#x09;text'}): expected '32 10 13 9 116 101 120 116' to equal '116 101 120 116'
 K2-ComputeConPI-3,AssertionError: expected [Function] to throw an error
@@ -2989,14 +2987,14 @@ K-FunctionCallExpr-17a,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-
 K-FunctionCallExpr-25a,Error: XPST0017: Function generate-id with arity of 1 not registered. No similar functions found.
 function-call-reserved-function-names-034,AssertionError: expected [Function] to throw error matching /XPST0017/ but got '1: \n2: \tnamespace-node(1)\n   \t   …'
 function-declaration-017,Error: XPST0008, The variable v is not in scope.
-function-declaration-022,AssertionError: expected [Function] to throw error matching /XQST0034/ but got 'XQST0049: The function Q{http://www.w…'
+function-declaration-022,AssertionError: expected [Function] to throw error matching /XQST0034/ but got 'XQST0049: The function or variable "Q…'
 function-declaration-024,AssertionError: expected [Function] to throw an error
 function-declaration-028,Error: 1: ( 2:          declare function local:function() { };                     ^ 3:          local:function()) => empty()  Error: XPST0003: Failed to parse script. Expected -,+,validate,(#,(,#,parent::,ancestor::,preceding-sibling::,preceding::,ancestor-or-self::,..,child::,descendant::,attribute::,self::,descendant-or-self::,following-sibling::,following::,document-node(,element,attribute,schema-element,schema-attribute(,processing-instruction(,processing-instruction(),comment(),text(),namespace-node(),node(),:*,Q,[A-Z_a-z\xC0-\xD6\xD8-\xF6\xF8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD],[\uD800-\uDB7F],/,//   at <>:2:18 - 2:19
 function-declaration-029,Error: 1: ( 2:          declare function local:function($x) { (:there is nothing here:) };                     ^ 3:          local:function(3)) => empty()  Error: XPST0003: Failed to parse script. Expected -,+,validate,(#,(,#,parent::,ancestor::,preceding-sibling::,preceding::,ancestor-or-self::,..,child::,descendant::,attribute::,self::,descendant-or-self::,following-sibling::,following::,document-node(,element,attribute,schema-element,schema-attribute(,processing-instruction(,processing-instruction(),comment(),text(),namespace-node(),node(),:*,Q,[A-Z_a-z\xC0-\xD6\xD8-\xF6\xF8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD],[\uD800-\uDB7F],/,//   at <>:2:18 - 2:19
-K-FunctionProlog-26,AssertionError: expected [Function] to throw error matching /XQST0034/ but got 'XQST0049: The function Q{http://www.w…'
-K-FunctionProlog-27,AssertionError: expected [Function] to throw error matching /XQST0034/ but got 'XQST0049: The function Q{http://www.w…'
-K-FunctionProlog-28,AssertionError: expected [Function] to throw error matching /XQST0034/ but got 'XQST0049: The function Q{http://www.w…'
-K-FunctionProlog-29,AssertionError: expected [Function] to throw error matching /XQST0034/ but got 'XQST0049: The function Q{http://www.w…'
+K-FunctionProlog-26,AssertionError: expected [Function] to throw error matching /XQST0034/ but got 'XQST0049: The function or variable "Q…'
+K-FunctionProlog-27,AssertionError: expected [Function] to throw error matching /XQST0034/ but got 'XQST0049: The function or variable "Q…'
+K-FunctionProlog-28,AssertionError: expected [Function] to throw error matching /XQST0034/ but got 'XQST0049: The function or variable "Q…'
+K-FunctionProlog-29,AssertionError: expected [Function] to throw error matching /XQST0034/ but got 'XQST0049: The function or variable "Q…'
 K-FunctionProlog-36,AssertionError: expected [Function] to throw error matching /XPST0008/ but got 'XQDY0054: The variable myArg is decla…'
 K-FunctionProlog-37,AssertionError: expected [Function] to throw an error
 K-FunctionProlog-38,AssertionError: expected [Function] to throw an error
@@ -3523,10 +3521,8 @@ K2-InternalVariablesWithout-9a,AssertionError: expected [Function] to throw erro
 vardeclwithtype-6,AssertionError: declare variable $var as xs:float := xs:float(12.5E10); $var: expected '125000000000' to equal '1.25E11'
 vardeclwithtype-7,AssertionError: declare variable $var as xs:double := xs:double(1267.43233E12); $var: expected '1267432330000000' to equal '1.26743233E15'
 vardeclwithtype-13,AssertionError: expected [Function] to throw an error
-internalvar-1,Error: 1: declare(::)variable(::)$var(::)as(::)item((: :))*(::):=(::)1(::);(::) 1(::)eq(::)1(::)                                             ^  Error: XPST0003: Failed to parse script. Expected :=, ,	,
-, ,(:   at <>:1:42 - 1:43
-K-InternalVariablesWith-1,Error: 1: declare(::)variable(::)$local:var(::)as(::)item((: :))* :=3(::);(::)1(::)eq(::)1                                                   ^  Error: XPST0003: Failed to parse script. Expected :=, ,	,
-, ,(:   at <>:1:48 - 1:49
+internalvar-1,Error: 1: declare(::)variable(::)$var(::)as(::)item((: :))*(::):=(::)1(::);(::) 1(::)eq(::)1(::)                                             ^  Error: XPST0003: Failed to parse script. Expected :=, ,	,, ,(:   at <>:1:42 - 1:43
+K-InternalVariablesWith-1,Error: 1: declare(::)variable(::)$local:var(::)as(::)item((: :))* :=3(::);(::)1(::)eq(::)1                                                   ^  Error: XPST0003: Failed to parse script. Expected :=, ,	,, ,(:   at <>:1:48 - 1:49
 K-InternalVariablesWith-5,AssertionError: expected [Function] to throw an error
 K-InternalVariablesWith-13,AssertionError: expected [Function] to throw an error
 K-InternalVariablesWith-14,AssertionError: expected [Function] to throw an error
@@ -3571,10 +3567,8 @@ K2-ExternalVariablesWith-19,AssertionError: expected [Function] to throw an erro
 K2-ExternalVariablesWith-20,AssertionError: expected [Function] to throw an error
 K2-ExternalVariablesWith-21,AssertionError: expected [Function] to throw an error
 K2-ExternalVariablesWith-22,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got '1: declare variable $v as element(*, …'
-K2-ExternalVariablesWith-22a,Error: 1: declare variable $v as element(*, xs:untyped?)+ := <e/>; exists($v/*)                                  ^  Error: XPST0003: Failed to parse script. Expected :=, ,	,
-, ,(:   at <>:1:31 - 1:32
-K2-ExternalVariablesWith-23,Error: 1: declare variable $v as element(elementName, xs:anyType?)+ := <elementName/>; 1 = 1                                  ^  Error: XPST0003: Failed to parse script. Expected :=, ,	,
-, ,(:   at <>:1:31 - 1:32
+K2-ExternalVariablesWith-22a,Error: 1: declare variable $v as element(*, xs:untyped?)+ := <e/>; exists($v/*)                                  ^  Error: XPST0003: Failed to parse script. Expected :=, ,	,, ,(:   at <>:1:31 - 1:32
+K2-ExternalVariablesWith-23,Error: 1: declare variable $v as element(elementName, xs:anyType?)+ := <elementName/>; 1 = 1                                  ^  Error: XPST0003: Failed to parse script. Expected :=, ,	,, ,(:   at <>:1:31 - 1:32
 extvardef-002b,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'FOTY0013: Atomization is not supporte…'
 extvardef-003a,Error: FORG0006: items passed to fn:sum are not all numeric.
 extvardef-007,Error: Not implemented: adding durations to xs:date
@@ -3601,7 +3595,6 @@ K-WhereExpr-7,Error: No selector counterpart for: treatExpr.
 K-WhereExpr-8,Error: No selector counterpart for: treatExpr.
 K-WhereExpr-9,Error: No selector counterpart for: treatExpr.
 cbcl-hash-join-3,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}adjust-date-to-timezone with arity of 2 not registered. No similar functions found.
-combined-errors-1,AssertionError: Expected executing the XPath "import module namespace defs="http://www.w3.org/TestModules/defs"; "ABC"" to resolve to one of the expected results, but got Error: XQST0049: The function or variable "Q{http://www.w3.org/TestModules/test1}ok" is declared more than once., AssertionError: expected [Function] to throw an error.
 combined-errors-2,AssertionError: Expected executing the XPath "import schema namespace atomic="http://www.w3.org/XQueryTest"; "ABC"" to resolve to one of the expected results, but got Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules, AssertionError: expected [Function] to throw error matching /XQST0009/ but got 'Not implemented: only module imports,…'.
 combined-errors-3,AssertionError: Expected executing the XPath "declare default element namespace "http://www.w3.org/XQueryTestOrderBy";          import schema "http://www.w3.org/XQueryTestOrderBy";          validate strict {<Strings><orderData>one string</orderData></Strings>}" to resolve to one of the expected results, but got Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules, AssertionError: expected [Function] to throw error matching /XQST0075/ but got 'Not implemented: only module imports,…', AssertionError: expected [Function] to throw error matching /XQST0009/ but got 'Not implemented: only module imports,…'.
 K-CombinedErrorCodes-1,AssertionError: Expected executing the XPath "import schema "http://example.com/NSNOTRECOGNIZED"; 1 eq 1" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error matching /XQST0009/ but got 'Not implemented: only module imports,…', AssertionError: expected [Function] to throw error matching /XQST0059/ but got 'Not implemented: only module imports,…'.
@@ -3663,7 +3656,7 @@ XQDY0091,AssertionError: Expected executing the XPath "<e xml:id=" ab c d "/>" t
 XQST0031,AssertionError: expected [Function] to throw an error
 XQST0032,AssertionError: expected [Function] to throw error matching /XQST0032/ but got 'Not implemented: only module imports,…'
 XQST0033,AssertionError: expected [Function] to throw an error
-XQST0034,AssertionError: expected [Function] to throw error matching /XQST0034/ but got 'XQST0049: The function Q{http://www.e…'
+XQST0034,AssertionError: expected [Function] to throw error matching /XQST0034/ but got 'XQST0049: The function or variable "Q…'
 XQST0038_1,AssertionError: expected [Function] to throw error matching /XQST0038/ but got 'Not implemented: only module imports,…'
 XQST0038_3,AssertionError: expected [Function] to throw error matching /XQST0038/ but got 'Not implemented: only module imports,…'
 XQST0039,AssertionError: expected [Function] to throw an error
@@ -3744,8 +3737,7 @@ surrogates14a,Error: FORX0002: SyntaxError: Invalid regular expression: /[𝅐-�
 surrogates15a,AssertionError: replace("abc𝅗def", "[^a-f]", "###"): expected 'abc######def' to equal 'abc###def'
 XML10-4ed-Excluded-char-1,AssertionError: expected [Function] to throw an error
 XML11-1ed-Included-char-1,AssertionError: expected [Function] to throw an error
-line-ending-P002,AssertionError: Expected XPath deep-equal(string-to-codepoints('
- '), (13, 10)) to resolve to true: expected false to be true
+line-ending-P002,AssertionError: Expected XPath deep-equal(string-to-codepoints(' '), (13, 10)) to resolve to true: expected false to be true
 Catalog001,Error: 1: ( 2:         declare namespace fots = "http://www.w3.org/2010/09/qt-fots-catalog";                    ^ 3:         let $testsets := //fots:test-set/@file/doc(resolve-uri(., base-uri(..))), 4:             $tests := $testsets//fots-test-case,  Error: XPST0003: Failed to parse script. Expected -,+,validate,(#,(,#,parent::,ancestor::,preceding-sibling::,preceding::,ancestor-or-self::,..,child::,descendant::,attribute::,self::,descendant-or-self::,following-sibling::,following::,document-node(,element,attribute,schema-element,schema-attribute(,processing-instruction(,processing-instruction(),comment(),text(),namespace-node(),node(),:*,Q,[A-Z_a-z\xC0-\xD6\xD8-\xF6\xF8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD],[\uD800-\uDB7F],/,//   at <>:2:17 - 2:18
 Catalog003,Error: 1: ( 2:         declare namespace fots = "http://www.w3.org/2010/09/qt-fots-catalog";                    ^ 3:         let $testsets := //fots:test-set/@file/doc(resolve-uri(., base-uri(..))) 4:         for $test in $testsets//fots:test-case[contains(test, "import schema")]  Error: XPST0003: Failed to parse script. Expected -,+,validate,(#,(,#,parent::,ancestor::,preceding-sibling::,preceding::,ancestor-or-self::,..,child::,descendant::,attribute::,self::,descendant-or-self::,following-sibling::,following::,document-node(,element,attribute,schema-element,schema-attribute(,processing-instruction(,processing-instruction(),comment(),text(),namespace-node(),node(),:*,Q,[A-Z_a-z\xC0-\xD6\xD8-\xF6\xF8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD],[\uD800-\uDB7F],/,//   at <>:2:17 - 2:18
 Catalog004,Error: 1: ( 2:         declare namespace fots = "http://www.w3.org/2010/09/qt-fots-catalog";                    ^ 3:         let $testsets := //fots:test-set/@file/doc(resolve-uri(., base-uri(..))) 4:         for $schema in (.|$testsets)//fots:environment/fots:schema  Error: XPST0003: Failed to parse script. Expected -,+,validate,(#,(,#,parent::,ancestor::,preceding-sibling::,preceding::,ancestor-or-self::,..,child::,descendant::,attribute::,self::,descendant-or-self::,following-sibling::,following::,document-node(,element,attribute,schema-element,schema-attribute(,processing-instruction(,processing-instruction(),comment(),text(),namespace-node(),node(),:*,Q,[A-Z_a-z\xC0-\xD6\xD8-\xF6\xF8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD],[\uD800-\uDB7F],/,//   at <>:2:17 - 2:18

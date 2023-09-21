@@ -99,6 +99,7 @@ else
 
 Error: FORG0006: Cannot determine the effective boolean value of a value with the type array(*)
   at <andOp>:2:3 - 2:11
+  at <thenClause>:2:3 - 2:11
   at <ifThenElseExpr>:1:1 - 4:12`
 		);
 	});
@@ -270,7 +271,10 @@ Test error
 			chai.assert.include(errorMessageLines[7], '    at c (');
 			chai.assert.include(errorMessageLines[7], 'stackTrace.tests.ts');
 
-			chai.assert.equal(errorMessageLines[15], '  at <functionCallExpr>:1:1 - 1:18');
+			chai.assert.equal(
+				errorMessageLines[15],
+				'  at <functionCallExpr (Q{test}boom-abc)>:1:1 - 1:18'
+			);
 		}
 	});
 
@@ -305,8 +309,12 @@ Test error
 			chai.assert.include(error.message, '    at c (');
 			chai.assert.include(error.message, 'stackTrace.tests.ts');
 
-			chai.assert.include(error.message, '  at <functionCallExpr>:1:15 - 1:32');
+			chai.assert.include(
+				error.message,
+				'  at <functionCallExpr (Q{test}boom-abc)>:1:15 - 1:32'
+			);
 			chai.assert.include(error.message, '  at <andOp>:1:4 - 1:32');
+			chai.assert.include(error.message, '  at <ifClause>:1:4 - 1:32');
 			chai.assert.include(error.message, '  at <ifThenElseExpr>:1:1 - 1:57');
 
 			chai.assert.include(error.message, '    at e (');
@@ -315,7 +323,10 @@ Test error
 			chai.assert.include(error.message, '    at f (');
 			chai.assert.include(error.message, 'stackTrace.tests.ts');
 
-			chai.assert.include(error.message, '  at <functionCallExpr>:1:1 - 1:18');
+			chai.assert.include(
+				error.message,
+				'  at <functionCallExpr (Q{test}boom-def)>:1:1 - 1:18'
+			);
 		}
 	});
 
@@ -354,7 +365,7 @@ Error: XPST0008, The variable map is not in scope.
    ^^^^^^^^^^^^^^^^^^^
 
 Error: FORG0006: Cannot determine the effective boolean value of a sequence with a length higher than one.
-  at <functionCallExpr>:1:1 - 1:20`
+  at <functionCallExpr (fn:boolean)>:1:1 - 1:20`
 		);
 	});
 
@@ -377,7 +388,7 @@ Error: FORG0006: Cannot determine the effective boolean value of a sequence with
 3: \t\t\t\t\t]
 
 Error: FOER0000
-  at <functionCallExpr>:2:7 - 2:17
+  at <functionCallExpr (fn:error)>:2:7 - 2:17
   at <pathExpr>:1:1 - 3:7`
 		);
 	});

@@ -264,18 +264,24 @@ const annotationFunctions = new Map<
 		'ifThenElseExpr',
 		(ast: IAST, context: AnnotationContext): SequenceType => {
 			// If clause
-			annotate(
-				astHelper.getFirstChild(astHelper.getFirstChild(ast, 'ifClause'), '*'),
-				context
-			);
-			const thenClause = annotate(
-				astHelper.getFirstChild(astHelper.getFirstChild(ast, 'thenClause'), '*'),
-				context
-			);
-			const elseClause = annotate(
-				astHelper.getFirstChild(astHelper.getFirstChild(ast, 'elseClause'), '*'),
-				context
-			);
+			const ifClausePart =
+				astHelper.getFirstChild(ast, 'ifClause') ||
+				astHelper.getFirstChild(astHelper.getChildren(ast, 'x:stackTrace')[0], 'ifClause');
+			const thenClausePart =
+				astHelper.getFirstChild(ast, 'thenClause') ||
+				astHelper.getFirstChild(
+					astHelper.getChildren(ast, 'x:stackTrace')[1],
+					'thenClause'
+				);
+			const elseClausePart =
+				astHelper.getFirstChild(ast, 'elseClause') ||
+				astHelper.getFirstChild(
+					astHelper.getChildren(ast, 'x:stackTrace')[2],
+					'elseClause'
+				);
+			annotate(astHelper.getFirstChild(ifClausePart, '*'), context);
+			const thenClause = annotate(astHelper.getFirstChild(thenClausePart, '*'), context);
+			const elseClause = annotate(astHelper.getFirstChild(elseClausePart, '*'), context);
 			return annotateIfThenElseExpr(ast, thenClause, elseClause);
 		},
 	],

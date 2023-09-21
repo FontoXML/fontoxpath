@@ -238,6 +238,12 @@ function compile(ast: IAST, compilationOptions: CompilationOptions): Expression 
 		case 'x:stackTrace':
 			return stackTrace(ast, compilationOptions);
 
+		// Some simple aliases:
+		case 'ifClause':
+		case 'thenClause':
+		case 'elseClause':
+			return compile(astHelper.getFirstChild(ast, '*'), compilationOptions);
+
 		default:
 			return compileTest(ast, compilationOptions);
 	}
@@ -272,24 +278,29 @@ function compileTest(ast: IAST, compilationOptions: CompilationOptions): TestAbs
 			return typeTest(ast, compilationOptions);
 		case 'anyItemType':
 			return anyItemTest();
+
 		default:
 			throw new Error('No selector counterpart for: ' + ast[0] + '.');
 	}
 }
 
 function stackTrace(ast: IAST, compilationOptions: CompilationOptions) {
-	const location = ast[1] as SourceRange;
 	const innerExpression = ast[2] as IAST;
 
+	// Do not make nested stacktraces at the same exact location. Just use the inner one
 	let nextCompilableExpression: IAST = innerExpression;
 	while (nextCompilableExpression[0] === 'x:stackTrace') {
+		ast = nextCompilableExpression;
 		nextCompilableExpression = nextCompilableExpression[2] as IAST;
 	}
+
+	const location = ast[1] as SourceRange;
 
 	return new StackTraceGenerator(
 		location,
 		nextCompilableExpression[0],
-		compile(nextCompilableExpression, compilationOptions)
+		compile(nextCompilableExpression, compilationOptions),
+		location.comment
 	);
 }
 
@@ -463,19 +474,17 @@ function compare(compareType: string, ast: IAST, compilationOptions: Compilation
 
 function IfThenElseExpr(ast: IAST, compilationOptions: CompilationOptions) {
 	const retType = astHelper.getAttribute(ast, 'type');
+	const ifClausePart =
+		astHelper.getFirstChild(ast, 'ifClause') || astHelper.getChildren(ast, 'x:stackTrace')[0];
+	const thenClausePart =
+		astHelper.getFirstChild(ast, 'thenClause') || astHelper.getChildren(ast, 'x:stackTrace')[1];
+	const elseClausePart =
+		astHelper.getFirstChild(ast, 'elseClause') || astHelper.getChildren(ast, 'x:stackTrace')[2];
+
 	return new IfExpression(
-		compile(
-			astHelper.getFirstChild(astHelper.getFirstChild(ast, 'ifClause'), '*'),
-			disallowUpdating(compilationOptions)
-		),
-		compile(
-			astHelper.getFirstChild(astHelper.getFirstChild(ast, 'thenClause'), '*'),
-			compilationOptions
-		) as PossiblyUpdatingExpression,
-		compile(
-			astHelper.getFirstChild(astHelper.getFirstChild(ast, 'elseClause'), '*'),
-			compilationOptions
-		) as PossiblyUpdatingExpression,
+		compile(ifClausePart, disallowUpdating(compilationOptions)),
+		compile(thenClausePart, compilationOptions) as PossiblyUpdatingExpression,
+		compile(elseClausePart, compilationOptions) as PossiblyUpdatingExpression,
 		retType
 	);
 }
