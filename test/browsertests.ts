@@ -23,9 +23,9 @@ describe('Browser tests', function () {
 
 			chai.assert.equal(
 				evaluateXPathToString(
-					'cf:firstDocument() | cf:secondDocument() | cf:thirdDocument()'
+					'cf:firstDocument() | cf:secondDocument() | cf:thirdDocument()',
 				),
-				'1st Document 2nd Document 3rd Document'
+				'1st Document 2nd Document 3rd Document',
 			);
 		});
 	});

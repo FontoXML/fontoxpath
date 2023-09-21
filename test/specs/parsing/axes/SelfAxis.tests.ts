@@ -19,7 +19,7 @@ describe('self', () => {
 		chai.assert.include(
 			getBucketsForNode(element),
 			getBucketForSelector('self::someElement'),
-			'The self::element selector should have the matching buckets'
+			'The self::element selector should have the matching buckets',
 		);
 	});
 
@@ -28,7 +28,7 @@ describe('self', () => {
 		chai.assert.include(
 			getBucketsForNode(element),
 			getBucketForSelector('self::*[self::someElement]'),
-			'The self::*[self::someElement] selector should have the matching buckets'
+			'The self::*[self::someElement] selector should have the matching buckets',
 		);
 	});
 

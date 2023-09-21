@@ -22,7 +22,7 @@ export default function evaluateXPathToFirstNode<T extends Node>(
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
-	options?: Options | null
+	options?: Options | null,
 ): T | null {
 	return evaluateXPath<T, ReturnType.FIRST_NODE>(
 		selector,
@@ -30,6 +30,6 @@ export default function evaluateXPathToFirstNode<T extends Node>(
 		domFacade,
 		variables,
 		evaluateXPath.FIRST_NODE_TYPE,
-		options
+		options,
 	);
 }

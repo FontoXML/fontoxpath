@@ -21,12 +21,12 @@ declare interface IInternalDomFacadeUnmangled {
  */
 export type CompiledXPathFunction<
 	TNode extends Node = Node,
-	TReturnType extends ReturnType = ReturnType.ANY
+	TReturnType extends ReturnType = ReturnType.ANY,
 > = () => (
 	contextItem: unknown,
 	domFacade: unknown,
 	runtimeLib: unknown,
-	options: unknown
+	options: unknown,
 ) => IReturnTypes<TNode>[TReturnType];
 
 /**
@@ -46,7 +46,7 @@ const executeJavaScriptCompiledXPath = <TNode extends Node, TReturnType extends 
 	compiledXPathFunction: CompiledXPathFunction<TNode, TReturnType>,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
-	options?: Options | null
+	options?: Options | null,
 ): IReturnTypes<TNode>[TReturnType] => {
 	domFacade = !domFacade ? new ExternalDomFacade() : domFacade;
 

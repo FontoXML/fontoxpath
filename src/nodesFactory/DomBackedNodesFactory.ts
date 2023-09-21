@@ -25,7 +25,7 @@ export default class DomBackedNodesFactory implements INodesFactory {
 	public createAttributeNS(namespaceURI: string, name: string) {
 		if (!this._documentNode) {
 			throw new Error(
-				'Please pass a node factory if an XQuery script uses node constructors'
+				'Please pass a node factory if an XQuery script uses node constructors',
 			);
 		}
 		return this._documentNode.createAttributeNS(namespaceURI, name);
@@ -34,7 +34,7 @@ export default class DomBackedNodesFactory implements INodesFactory {
 	public createCDATASection(contents: string) {
 		if (!this._documentNode) {
 			throw new Error(
-				'Please pass a node factory if an XQuery script uses node constructors'
+				'Please pass a node factory if an XQuery script uses node constructors',
 			);
 		}
 		return this._documentNode.createCDATASection(contents);
@@ -43,7 +43,7 @@ export default class DomBackedNodesFactory implements INodesFactory {
 	public createComment(contents: string) {
 		if (!this._documentNode) {
 			throw new Error(
-				'Please pass a node factory if an XQuery script uses node constructors'
+				'Please pass a node factory if an XQuery script uses node constructors',
 			);
 		}
 		return this._documentNode.createComment(contents);
@@ -52,7 +52,7 @@ export default class DomBackedNodesFactory implements INodesFactory {
 	public createDocument() {
 		if (!this._documentNode) {
 			throw new Error(
-				'Please pass a node factory if an XQuery script uses node constructors'
+				'Please pass a node factory if an XQuery script uses node constructors',
 			);
 		}
 		return this._documentNode.implementation.createDocument(null, null, null);
@@ -61,7 +61,7 @@ export default class DomBackedNodesFactory implements INodesFactory {
 	public createElementNS(namespaceURI: string, name: string) {
 		if (!this._documentNode) {
 			throw new Error(
-				'Please pass a node factory if an XQuery script uses node constructors'
+				'Please pass a node factory if an XQuery script uses node constructors',
 			);
 		}
 		return this._documentNode.createElementNS(namespaceURI, name);
@@ -70,7 +70,7 @@ export default class DomBackedNodesFactory implements INodesFactory {
 	public createProcessingInstruction(target: string, data: string) {
 		if (!this._documentNode) {
 			throw new Error(
-				'Please pass a node factory if an XQuery script uses node constructors'
+				'Please pass a node factory if an XQuery script uses node constructors',
 			);
 		}
 		return this._documentNode.createProcessingInstruction(target, data);
@@ -79,7 +79,7 @@ export default class DomBackedNodesFactory implements INodesFactory {
 	public createTextNode(contents: string) {
 		if (!this._documentNode) {
 			throw new Error(
-				'Please pass a node factory if an XQuery script uses node constructors'
+				'Please pass a node factory if an XQuery script uses node constructors',
 			);
 		}
 		return this._documentNode.createTextNode(contents);

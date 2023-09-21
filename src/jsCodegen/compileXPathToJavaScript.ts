@@ -34,7 +34,7 @@ import { JavaScriptCompiledXPathResult, rejectAst } from './JavaScriptCompiledXP
 function compileXPathToJavaScript(
 	selector: EvaluableExpression,
 	returnType?: ReturnType,
-	options?: Options | null
+	options?: Options | null,
 ): JavaScriptCompiledXPathResult {
 	options = options || {};
 	returnType = returnType || (ReturnType.ANY as any);
@@ -75,7 +75,7 @@ function compileXPathToJavaScript(
 
 	const codegenContext = new CodeGenContext(
 		options['namespaceResolver'] || createDefaultNamespaceResolver(null),
-		defaultFunctionNamespaceUri
+		defaultFunctionNamespaceUri,
 	);
 
 	annotateAst(
@@ -88,11 +88,11 @@ function compileXPathToJavaScript(
 					defaultFunctionNamespaceUri,
 					options['functionNameResolver'] ||
 						createDefaultFunctionNameResolver(
-							BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI
-						)
-				)
-			)
-		)
+							BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
+						),
+				),
+			),
+		),
 	);
 
 	return compileAstToJavaScript(ast, returnType, codegenContext);

@@ -70,7 +70,7 @@ builtinModels.forEach((model) => {
 
 		case Variety.UNION: {
 			const memberTypes = model.memberTypes.map(
-				(memberTypeRef) => builtinDataTypesByType[memberTypeRef]
+				(memberTypeRef) => builtinDataTypesByType[memberTypeRef],
 			);
 			builtinDataTypesByType[name] = {
 				variety: Variety.UNION,

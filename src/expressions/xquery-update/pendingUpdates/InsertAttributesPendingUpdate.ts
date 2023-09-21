@@ -5,7 +5,10 @@ import { IPendingUpdate } from '../IPendingUpdate';
 
 export class InsertAttributesPendingUpdate extends IPendingUpdate {
 	public readonly type: 'insertAttributes';
-	constructor(readonly target: ElementNodePointer, readonly content: AttributeNodePointer[]) {
+	constructor(
+		readonly target: ElementNodePointer,
+		readonly content: AttributeNodePointer[],
+	) {
 		super('insertAttributes');
 	}
 	public toTransferable(executionParameters: ExecutionParameters) {

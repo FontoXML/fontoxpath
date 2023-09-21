@@ -30,7 +30,7 @@ import IDomFacade from './IDomFacade';
 function createPointer<TPointer extends NodePointer>(
 	node: ConcreteNode | TinyNode,
 	parent: ParentNodePointer | null,
-	offset: string | number
+	offset: string | number,
 ): TPointer {
 	let graftAncestor: GraftPoint = null;
 	if (parent) {
@@ -64,17 +64,17 @@ class DomFacade {
 
 	public getAllAttributePointers(
 		pointer: ElementNodePointer,
-		bucket: Bucket | null = null
+		bucket: Bucket | null = null,
 	): AttributeNodePointer[] {
 		return this.getAllAttributes(pointer.node, bucket).map(
 			(attributeNode: ConcreteAttributeNode | TinyAttributeNode) =>
-				createPointer(attributeNode, pointer, attributeNode.nodeName)
+				createPointer(attributeNode, pointer, attributeNode.nodeName),
 		);
 	}
 
 	public getAllAttributes(
 		node: ConcreteElementNode | TinyElementNode,
-		bucket: Bucket | null = null
+		bucket: Bucket | null = null,
 	): (ConcreteAttributeNode | TinyAttributeNode)[] {
 		return isTinyNode(node)
 			? node.attributes
@@ -96,17 +96,17 @@ class DomFacade {
 
 	public getChildNodePointers(
 		parentPointer: ParentNodePointer,
-		bucket: Bucket | null = null
+		bucket: Bucket | null = null,
 	): ChildNodePointer[] {
 		return this.getChildNodes(parentPointer.node, bucket).map(
 			(childNode: ConcreteChildNode | TinyChildNode, index) =>
-				createPointer(childNode, parentPointer, index)
+				createPointer(childNode, parentPointer, index),
 		);
 	}
 
 	public getChildNodes(
 		parentNode: ConcreteParentNode | TinyParentNode,
-		bucket: Bucket | null = null
+		bucket: Bucket | null = null,
 	) {
 		const childNodes = isTinyNode(parentNode)
 			? parentNode.childNodes
@@ -114,7 +114,7 @@ class DomFacade {
 
 		if (parentNode.nodeType === NODE_TYPES.DOCUMENT_NODE) {
 			return childNodes.filter(
-				(childNode) => childNode['nodeType'] !== NODE_TYPES.DOCUMENT_TYPE_NODE
+				(childNode) => childNode['nodeType'] !== NODE_TYPES.DOCUMENT_TYPE_NODE,
 			);
 		}
 
@@ -126,7 +126,7 @@ class DomFacade {
 			| ConcreteAttributeNode
 			| TinyAttributeNode
 			| TinyCharacterDataNode
-			| ConcreteCharacterDataNode
+			| ConcreteCharacterDataNode,
 	): string {
 		if (isTinyNode(node)) {
 			return node.nodeType === NODE_TYPES.ATTRIBUTE_NODE ? node.value : node.data;
@@ -145,7 +145,7 @@ class DomFacade {
 
 	public getFirstChildPointer(
 		parentPointer: ParentNodePointer,
-		bucket: Bucket | null = null
+		bucket: Bucket | null = null,
 	): ChildNodePointer {
 		const parentNode = parentPointer.node;
 		let firstChild: ConcreteChildNode | TinyChildNode;
@@ -165,7 +165,7 @@ class DomFacade {
 
 	public getLastChildPointer(
 		parentPointer: ParentNodePointer,
-		bucket: Bucket | null = null
+		bucket: Bucket | null = null,
 	): ChildNodePointer {
 		const parentNode = parentPointer.node;
 		let lastChild: ConcreteChildNode | TinyChildNode;
@@ -195,7 +195,7 @@ class DomFacade {
 
 	public getNextSiblingPointer(
 		pointer: ChildNodePointer,
-		bucket: Bucket | null = null
+		bucket: Bucket | null = null,
 	): ChildNodePointer {
 		const node = pointer.node;
 		let nextSibling;
@@ -235,7 +235,7 @@ class DomFacade {
 			? createPointer(
 					nextSibling as ConcreteChildNode,
 					parentPointer || this.getParentNodePointer(pointer, bucket),
-					nextSiblingIndex
+					nextSiblingIndex,
 			  )
 			: null;
 	}
@@ -261,14 +261,14 @@ class DomFacade {
 	 */
 	public getParentNode(
 		node: ConcreteChildNode | ConcreteAttributeNode,
-		bucket: Bucket | null = null
+		bucket: Bucket | null = null,
 	): ConcreteParentNode {
 		return this._domFacade['getParentNode'](node, bucket) as ConcreteParentNode;
 	}
 
 	public getParentNodePointer(
 		pointer: ChildNodePointer | AttributeNodePointer,
-		bucket: Bucket | null = null
+		bucket: Bucket | null = null,
 	): ParentNodePointer {
 		const childNode = pointer.node;
 		const graftAncestor = pointer.graftAncestor;
@@ -289,7 +289,7 @@ class DomFacade {
 			(typeof graftAncestor.offset === 'string' &&
 				childNode ===
 					(graftAncestor.parent as TinyElementNode).attributes.find(
-						(e) => graftAncestor.offset === e.nodeName
+						(e) => graftAncestor.offset === e.nodeName,
 					))
 		) {
 			parentNode = graftAncestor.parent as TinyParentNode | ConcreteParentNode;
@@ -309,7 +309,7 @@ class DomFacade {
 
 	public getPreviousSiblingPointer(
 		pointer: ChildNodePointer,
-		bucket: Bucket | null = null
+		bucket: Bucket | null = null,
 	): ChildNodePointer {
 		const node = pointer.node;
 		let previousSibling;
@@ -334,7 +334,7 @@ class DomFacade {
 				while (previousSibling) {
 					previousSibling = this._domFacade['getPreviousSibling'](
 						previousSibling,
-						bucket
+						bucket,
 					);
 					if (
 						previousSibling &&
@@ -357,7 +357,7 @@ class DomFacade {
 			? createPointer(
 					previousSibling as ConcreteChildNode,
 					parentPointer || this.getParentNodePointer(pointer, bucket),
-					previousSiblingIndex
+					previousSiblingIndex,
 			  )
 			: null;
 	}
@@ -365,7 +365,7 @@ class DomFacade {
 	// Can be used to create an extra frame when tracking dependencies
 	public getRelatedNodes(
 		node: Node[],
-		callback: (nodes: Node[], domFacade: DomFacade) => Node[]
+		callback: (nodes: Node[], domFacade: DomFacade) => Node[],
 	) {
 		return callback(node, this);
 	}

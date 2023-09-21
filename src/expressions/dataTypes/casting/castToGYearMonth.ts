@@ -8,7 +8,7 @@ const createGYearMonthValue = (value: any): AtomicValue =>
 	createAtomicValue(value, ValueType.XSGYEARMONTH);
 
 export default function castToGYearMonth(
-	instanceOf: (typeName: ValueType) => boolean
+	instanceOf: (typeName: ValueType) => boolean,
 ): (value: any) => CastResult {
 	if (instanceOf(ValueType.XSDATE) || instanceOf(ValueType.XSDATETIME)) {
 		return (value) => ({
@@ -25,7 +25,7 @@ export default function castToGYearMonth(
 	return () => ({
 		successful: false,
 		error: new Error(
-			'XPTY0004: Casting not supported from given type to xs:gYearMonth or any of its derived types.'
+			'XPTY0004: Casting not supported from given type to xs:gYearMonth or any of its derived types.',
 		),
 	});
 }

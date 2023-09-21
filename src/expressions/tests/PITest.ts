@@ -14,7 +14,7 @@ class PITest extends TestAbstractExpression {
 		super(
 			new Specificity({
 				[Specificity.NODENAME_KIND]: 1,
-			})
+			}),
 		);
 
 		this._target = target;
@@ -23,7 +23,7 @@ class PITest extends TestAbstractExpression {
 	public evaluateToBoolean(
 		_dynamicContext: DynamicContext,
 		node: Value,
-		executionParameters: ExecutionParameters
+		executionParameters: ExecutionParameters,
 	) {
 		// Assume singleton
 		const isMatchingProcessingInstruction =

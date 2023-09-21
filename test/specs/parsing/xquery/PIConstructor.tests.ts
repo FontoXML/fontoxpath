@@ -17,9 +17,9 @@ describe('PIConstructor', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 			).nodeType,
-			7
+			7,
 		);
 	});
 });

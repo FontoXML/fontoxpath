@@ -16,27 +16,27 @@ describe('operators', () => {
 				'someParentElement',
 				['someMiddleElement', { someAttribute: 'someValue' }, ['someOtherElement']],
 			],
-			documentNode
+			documentNode,
 		);
 		chai.assert.isTrue(
 			evaluateXPathToBoolean(
 				"(child::someElement and ancestor::someParentElement) or @someAttribute='someValue'",
-				documentNode.documentElement.firstChild
-			)
+				documentNode.documentElement.firstChild,
+			),
 		);
 		// The other way around
 		chai.assert.isTrue(
 			evaluateXPathToBoolean(
 				"(child::someOtherElement and ancestor::someParentElement) or @someAttribute='someOtherValue'",
-				documentNode.documentElement.firstChild
-			)
+				documentNode.documentElement.firstChild,
+			),
 		);
 		// Changes to testcase A: Operator order changed because of parentheses
 		chai.assert.isFalse(
 			evaluateXPathToBoolean(
 				'child::someElement and (ancestor::someParentElement or @someAttribute="someValue")',
-				documentNode.documentElement.firstChild
-			)
+				documentNode.documentElement.firstChild,
+			),
 		);
 	});
 });

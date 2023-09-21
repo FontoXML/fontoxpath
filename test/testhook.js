@@ -11,7 +11,7 @@ const tsConfig = require('./tsconfig.json');
 const tsConfigPaths = require('tsconfig-paths');
 
 if (useDist) {
-	tsConfig.compilerOptions.paths.fontoxpath = ['../dist/fontoxpath.esm.js'];
+	tsConfig.compilerOptions.paths.fontoxpath = ['../dist/fontoxpath.js'];
 }
 
 if (useJsCodegen) {

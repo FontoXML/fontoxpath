@@ -27,18 +27,18 @@ function contextItemAsFirstArgument(
 	fn: FunctionDefinitionType,
 	dynamicContext: DynamicContext,
 	executionParameters: ExecutionParameters,
-	staticContext: StaticContext
+	staticContext: StaticContext,
 ) {
 	if (dynamicContext.contextItem === null) {
 		throw errXPDY0002(
-			'The function which was called depends on dynamic context, which is absent.'
+			'The function which was called depends on dynamic context, which is absent.',
 		);
 	}
 	return fn(
 		dynamicContext,
 		executionParameters,
 		staticContext,
-		sequenceFactory.singleton(dynamicContext.contextItem)
+		sequenceFactory.singleton(dynamicContext.contextItem),
 	);
 }
 
@@ -47,7 +47,7 @@ const fnCompare: FunctionDefinitionType = (
 	_executionParameters,
 	_staticContext,
 	arg1,
-	arg2
+	arg2,
 ) => {
 	if (arg1.isEmpty() || arg2.isEmpty()) {
 		return sequenceFactory.empty();
@@ -81,11 +81,11 @@ const fnConcat: FunctionDefinitionType = (
 						.map((stringValue) =>
 							stringValue === null
 								? ''
-								: castToType(stringValue, ValueType.XSSTRING).value
+								: castToType(stringValue, ValueType.XSSTRING).value,
 						)
 						.join(''),
-					ValueType.XSSTRING
-				)
+					ValueType.XSSTRING,
+				),
 			);
 		});
 	});
@@ -94,8 +94,8 @@ const fnConcat: FunctionDefinitionType = (
 		return sequenceFactory.singleton(
 			createAtomicValue(
 				stringValues.map((stringValue) => stringValue.value).join(''),
-				ValueType.XSSTRING
-			)
+				ValueType.XSSTRING,
+			),
 		);
 	});
 };
@@ -105,7 +105,7 @@ const fnContains: FunctionDefinitionType = (
 	_executionParameters,
 	_staticContext,
 	arg1,
-	arg2
+	arg2,
 ) => {
 	const stringToTest = !arg1.isEmpty() ? arg1.first().value : '';
 	const contains = !arg2.isEmpty() ? arg2.first().value : '';
@@ -129,7 +129,7 @@ const fnStartsWith: FunctionDefinitionType = (
 	_executionParameters,
 	_staticContext,
 	arg1,
-	arg2
+	arg2,
 ) => {
 	const startsWith = !arg2.isEmpty() ? arg2.first().value : '';
 	if (startsWith.length === 0) {
@@ -151,7 +151,7 @@ const fnEndsWith: FunctionDefinitionType = (
 	_executionParameters,
 	_staticContext,
 	arg1,
-	arg2
+	arg2,
 ) => {
 	const endsWith = !arg2.isEmpty() ? arg2.first().value : '';
 	if (endsWith.length === 0) {
@@ -172,7 +172,7 @@ const fnString: FunctionDefinitionType = (
 	_dynamicContext,
 	executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	return sequence.switchCases({
 		empty: () => sequenceFactory.singleton(createAtomicValue('', ValueType.XSSTRING)),
@@ -198,7 +198,7 @@ const fnStringJoin: FunctionDefinitionType = (
 	executionParameters,
 	_staticContext,
 	sequence,
-	separator
+	separator,
 ) => {
 	return zipSingleton([separator], ([separatorString]) =>
 		atomize(sequence, executionParameters).mapAll((allStrings) => {
@@ -206,7 +206,7 @@ const fnStringJoin: FunctionDefinitionType = (
 				.map((stringValue) => castToType(stringValue, ValueType.XSSTRING).value)
 				.join(separatorString.value);
 			return sequenceFactory.singleton(createAtomicValue(joinedString, ValueType.XSSTRING));
-		})
+		}),
 	);
 };
 
@@ -214,7 +214,7 @@ const fnStringLength: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	if (sequence.isEmpty()) {
 		return sequenceFactory.singleton(createAtomicValue(0, ValueType.XSINTEGER));
@@ -222,7 +222,7 @@ const fnStringLength: FunctionDefinitionType = (
 	const stringValue = sequence.first().value;
 	// In ES6, Array.from(💩).length === 1
 	return sequenceFactory.singleton(
-		createAtomicValue(Array.from(stringValue).length, ValueType.XSINTEGER)
+		createAtomicValue(Array.from(stringValue).length, ValueType.XSINTEGER),
 	);
 };
 
@@ -231,7 +231,7 @@ const fnSubstringBefore: FunctionDefinitionType = (
 	_executionParameters,
 	_staticContext,
 	arg1,
-	arg2
+	arg2,
 ) => {
 	const strArg1 = arg1.isEmpty() ? '' : arg1.first().value;
 
@@ -245,7 +245,7 @@ const fnSubstringBefore: FunctionDefinitionType = (
 		return sequenceFactory.singleton(createAtomicValue('', ValueType.XSSTRING));
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(strArg1.substring(0, startIndex), ValueType.XSSTRING)
+		createAtomicValue(strArg1.substring(0, startIndex), ValueType.XSSTRING),
 	);
 };
 
@@ -254,7 +254,7 @@ const fnSubstringAfter: FunctionDefinitionType = (
 	_executionParameters,
 	_staticContext,
 	arg1,
-	arg2
+	arg2,
 ) => {
 	const strArg1 = arg1.isEmpty() ? '' : arg1.first().value;
 
@@ -268,7 +268,7 @@ const fnSubstringAfter: FunctionDefinitionType = (
 		return sequenceFactory.singleton(createAtomicValue('', ValueType.XSSTRING));
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(strArg1.substring(startIndex + strArg2.length), ValueType.XSSTRING)
+		createAtomicValue(strArg1.substring(startIndex + strArg2.length), ValueType.XSSTRING),
 	);
 };
 
@@ -278,7 +278,7 @@ const fnSubstring: FunctionDefinitionType = (
 	staticContext,
 	sourceString,
 	start,
-	length
+	length,
 ) => {
 	const roundedStart = fnRound(
 		false,
@@ -286,7 +286,7 @@ const fnSubstring: FunctionDefinitionType = (
 		executionParameters,
 		staticContext,
 		start,
-		null
+		null,
 	);
 	const roundedLength =
 		length !== null
@@ -331,11 +331,11 @@ const fnSubstring: FunctionDefinitionType = (
 							Math.max((startItem.value as number) - 1, 0),
 							length
 								? (startItem.value as number) + (lengthItem.value as number) - 1
-								: undefined
+								: undefined,
 						)
 						.join(''),
-					ValueType.XSSTRING
-				)
+					ValueType.XSSTRING,
+				),
 			);
 		},
 	});
@@ -346,7 +346,7 @@ const fnTokenize: FunctionDefinitionType = (
 	_executionParameters,
 	_staticContext,
 	input,
-	pattern
+	pattern,
 ) => {
 	if (input.isEmpty() || input.first().value.length === 0) {
 		return sequenceFactory.empty();
@@ -359,7 +359,7 @@ const fnTokenize: FunctionDefinitionType = (
 	return sequenceFactory.create(
 		inputString
 			.split(regex)
-			.map((token: string) => createAtomicValue(token, ValueType.XSSTRING))
+			.map((token: string) => createAtomicValue(token, ValueType.XSSTRING)),
 	);
 };
 
@@ -367,13 +367,13 @@ const fnUpperCase: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	stringSequence
+	stringSequence,
 ) => {
 	if (stringSequence.isEmpty()) {
 		return sequenceFactory.singleton(createAtomicValue('', ValueType.XSSTRING));
 	}
 	return stringSequence.map((stringValue) =>
-		createAtomicValue(stringValue.value.toUpperCase(), ValueType.XSSTRING)
+		createAtomicValue(stringValue.value.toUpperCase(), ValueType.XSSTRING),
 	);
 };
 
@@ -381,13 +381,13 @@ const fnLowerCase: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	stringSequence
+	stringSequence,
 ) => {
 	if (stringSequence.isEmpty()) {
 		return sequenceFactory.singleton(createAtomicValue('', ValueType.XSSTRING));
 	}
 	return stringSequence.map((stringValue) =>
-		createAtomicValue(stringValue.value.toLowerCase(), ValueType.XSSTRING)
+		createAtomicValue(stringValue.value.toLowerCase(), ValueType.XSSTRING),
 	);
 };
 
@@ -395,14 +395,14 @@ const fnNormalizeSpace: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	arg
+	arg,
 ) => {
 	if (arg.isEmpty()) {
 		return sequenceFactory.singleton(createAtomicValue('', ValueType.XSSTRING));
 	}
 	const stringValue = arg.first().value.trim();
 	return sequenceFactory.singleton(
-		createAtomicValue(stringValue.replace(/\s+/g, ' '), ValueType.XSSTRING)
+		createAtomicValue(stringValue.replace(/\s+/g, ' '), ValueType.XSSTRING),
 	);
 };
 
@@ -412,7 +412,7 @@ const fnTranslate: FunctionDefinitionType = (
 	_staticContext,
 	argSequence,
 	mapStringSequence,
-	transStringSequence
+	transStringSequence,
 ) => {
 	return zipSingleton(
 		[argSequence, mapStringSequence, transStringSequence],
@@ -432,9 +432,9 @@ const fnTranslate: FunctionDefinitionType = (
 				}
 			});
 			return sequenceFactory.singleton(
-				createAtomicValue(result.join(''), ValueType.XSSTRING)
+				createAtomicValue(result.join(''), ValueType.XSSTRING),
 			);
-		}
+		},
 	);
 };
 
@@ -442,7 +442,7 @@ const fnCodepointsToString: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	numberSequence: ISequence
+	numberSequence: ISequence,
 ) => {
 	return numberSequence.mapAll((numbers) => {
 		const str = numbers
@@ -470,7 +470,7 @@ const fnStringToCodepoints: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	stringSequence: ISequence
+	stringSequence: ISequence,
 ) => {
 	return zipSingleton([stringSequence], ([str]) => {
 		const characters = str ? (str.value as string).split('') : [];
@@ -480,8 +480,8 @@ const fnStringToCodepoints: FunctionDefinitionType = (
 
 		return sequenceFactory.create(
 			characters.map((character) =>
-				createAtomicValue(character.codePointAt(0), ValueType.XSINTEGER)
-			)
+				createAtomicValue(character.codePointAt(0), ValueType.XSINTEGER),
+			),
 		);
 	});
 };
@@ -490,7 +490,7 @@ const fnEncodeForUri: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	stringSequence: ISequence
+	stringSequence: ISequence,
 ) => {
 	return zipSingleton([stringSequence], ([str]) => {
 		if (str === null || str.value.length === 0) {
@@ -503,8 +503,8 @@ const fnEncodeForUri: FunctionDefinitionType = (
 				encodeURIComponent(str.value).replace(/[!'()*]/g, (c) => {
 					return '%' + c.charCodeAt(0).toString(16).toUpperCase();
 				}),
-				ValueType.XSSTRING
-			)
+				ValueType.XSSTRING,
+			),
 		);
 	});
 };
@@ -513,7 +513,7 @@ const fnIriToUri: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	stringSequence: ISequence
+	stringSequence: ISequence,
 ) => {
 	return zipSingleton([stringSequence], ([str]) => {
 		if (str === null || str.value.length === 0) {
@@ -526,10 +526,10 @@ const fnIriToUri: FunctionDefinitionType = (
 			createAtomicValue(
 				strValue.replace(
 					/([\u00A0-\uD7FF\uE000-\uFDCF\uFDF0-\uFFEF "<>{}|\\^`/\n\u007f\u0080-\u009f]|[\uD800-\uDBFF][\uDC00-\uDFFF])/g,
-					(a) => encodeURI(a)
+					(a) => encodeURI(a),
 				),
-				ValueType.XSSTRING
-			)
+				ValueType.XSSTRING,
+			),
 		);
 	});
 };
@@ -539,7 +539,7 @@ const fnCodepointEqual: FunctionDefinitionType = (
 	_executionParameters,
 	_staticContext,
 	stringSequence1: ISequence,
-	stringSequence2: ISequence
+	stringSequence2: ISequence,
 ) => {
 	return zipSingleton([stringSequence1, stringSequence2], ([value1, value2]) => {
 		if (value1 === null || value2 === null) {
@@ -572,7 +572,7 @@ const fnMatches: FunctionDefinitionType = (
 	_executionParameters,
 	_staticContext,
 	inputSequence: ISequence,
-	patternSequence: ISequence
+	patternSequence: ISequence,
 ) => {
 	return zipSingleton([inputSequence, patternSequence], ([inputValue, patternValue]) => {
 		const input: string = inputValue ? inputValue.value : '';
@@ -620,7 +620,7 @@ const fnReplace: FunctionDefinitionType = (
 	_staticContext,
 	inputSequence: ISequence,
 	patternSequence: ISequence,
-	replacementSequence: ISequence
+	replacementSequence: ISequence,
 ) => {
 	return zipSingleton(
 		[inputSequence, patternSequence, replacementSequence],
@@ -630,7 +630,7 @@ const fnReplace: FunctionDefinitionType = (
 			let replacement: string = replacementValue.value;
 			if (replacement.includes('$0')) {
 				throw new Error(
-					'Using $0 in fn:replace to replace substrings with full matches is not supported.'
+					'Using $0 in fn:replace to replace substrings with full matches is not supported.',
 				);
 			}
 
@@ -654,7 +654,7 @@ const fnReplace: FunctionDefinitionType = (
 			const result = input.replace(regex, replacement);
 
 			return sequenceFactory.singleton(createAtomicValue(result, ValueType.XSSTRING));
-		}
+		},
 	);
 };
 
@@ -759,14 +759,14 @@ const declarations: BuiltinDeclarationType[] = [
 				dynamicContext: DynamicContext,
 				executionParameters: ExecutionParameters,
 				staticContext: StaticContext,
-				contextItem: ISequence
+				contextItem: ISequence,
 			) =>
 				fnNormalizeSpace(
 					dynamicContext,
 					executionParameters,
 					staticContext,
-					fnString(dynamicContext, executionParameters, staticContext, contextItem)
-				)
+					fnString(dynamicContext, executionParameters, staticContext, contextItem),
+				),
 		),
 	},
 
@@ -894,7 +894,7 @@ const declarations: BuiltinDeclarationType[] = [
 				executionParameters,
 				staticContext,
 				arg1,
-				sequenceFactory.singleton(createAtomicValue('', ValueType.XSSTRING))
+				sequenceFactory.singleton(createAtomicValue('', ValueType.XSSTRING)),
 			);
 		},
 	},
@@ -918,14 +918,14 @@ const declarations: BuiltinDeclarationType[] = [
 				dynamicContext: DynamicContext,
 				executionParameters: ExecutionParameters,
 				staticContext: StaticContext,
-				contextItem: ISequence
+				contextItem: ISequence,
 			) =>
 				fnStringLength(
 					dynamicContext,
 					executionParameters,
 					staticContext,
-					fnString(dynamicContext, executionParameters, staticContext, contextItem)
-				)
+					fnString(dynamicContext, executionParameters, staticContext, contextItem),
+				),
 		),
 	},
 
@@ -947,7 +947,7 @@ const declarations: BuiltinDeclarationType[] = [
 			_staticContext,
 			_input,
 			_pattern,
-			_flags
+			_flags,
 		) {
 			throw new Error('Not implemented: Using flags in tokenize is not supported');
 		},
@@ -981,7 +981,7 @@ const declarations: BuiltinDeclarationType[] = [
 				executionParameters,
 				staticContext,
 				fnNormalizeSpace(dynamicContext, executionParameters, staticContext, input),
-				sequenceFactory.singleton(createAtomicValue(' ', ValueType.XSSTRING))
+				sequenceFactory.singleton(createAtomicValue(' ', ValueType.XSSTRING)),
 			);
 		},
 	},
@@ -1091,7 +1091,7 @@ const declarations: BuiltinDeclarationType[] = [
 			_staticContext,
 			_input,
 			_pattern,
-			_flags
+			_flags,
 		) {
 			throw new Error('Not implemented: Using flags in replace is not supported');
 		},

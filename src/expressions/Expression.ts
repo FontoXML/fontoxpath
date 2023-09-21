@@ -45,7 +45,7 @@ abstract class Expression {
 			subtree: false,
 		},
 		canBeUpdating: boolean = false,
-		type?: SequenceType
+		type?: SequenceType,
 	) {
 		this.specificity = specificity;
 		this.expectedResultOrder = optimizationOptions.resultOrder || RESULT_ORDERINGS.UNSORTED;
@@ -65,7 +65,7 @@ abstract class Expression {
 
 	public evaluateMaybeStatically(
 		dynamicContext: DynamicContext,
-		executionParameters: ExecutionParameters
+		executionParameters: ExecutionParameters,
 	): ISequence {
 		if (!dynamicContext || dynamicContext.contextItem === null) {
 			// We must be free of context here. But: this will be memoized / constant folded on a
@@ -91,7 +91,7 @@ abstract class Expression {
 
 	public performStaticEvaluation(staticContext: StaticContext): void {
 		this._childExpressions.forEach((selector) =>
-			selector.performStaticEvaluation(staticContext)
+			selector.performStaticEvaluation(staticContext),
 		);
 		if (
 			!this._canBeUpdating &&
@@ -103,7 +103,7 @@ abstract class Expression {
 
 	protected evaluateWithoutFocus(
 		_contextlessDynamicContext: DynamicContext,
-		executionParameters: ExecutionParameters
+		executionParameters: ExecutionParameters,
 	): ISequence {
 		if (this._eagerlyEvaluatedValue === null) {
 			this._eagerlyEvaluatedValue = createDoublyIterableSequence(
@@ -111,8 +111,8 @@ abstract class Expression {
 					new UnfocusableDynamicContext({
 						variableBindings: {},
 					}),
-					executionParameters
-				).expandSequence()
+					executionParameters,
+				).expandSequence(),
 			);
 		}
 		return this._eagerlyEvaluatedValue();
@@ -120,7 +120,7 @@ abstract class Expression {
 
 	public abstract evaluate(
 		_dynamicContext?: DynamicContext,
-		_executionParameters?: ExecutionParameters
+		_executionParameters?: ExecutionParameters,
 	): ISequence;
 }
 

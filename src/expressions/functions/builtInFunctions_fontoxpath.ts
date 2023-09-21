@@ -30,10 +30,10 @@ function getEvaluableExpressionFromValue(queryValue: Value): EvaluableExpression
 
 	throw errXPTY0004(
 		`Unable to convert selector argument of type ${valueTypeToString(
-			queryValue.type
+			queryValue.type,
 		)} to either an ${valueTypeToString(ValueType.XSSTRING)} or an ${valueTypeToString(
-			ValueType.ELEMENT
-		)} representing an XQueryX program while calling 'fontoxpath:evaluate'`
+			ValueType.ELEMENT,
+		)} representing an XQueryX program while calling 'fontoxpath:evaluate'`,
 	);
 }
 
@@ -41,7 +41,7 @@ function buildResultIterator(
 	query: ISequence,
 	args: ISequence,
 	staticContext: StaticContext,
-	executionParameters: ExecutionParameters
+	executionParameters: ExecutionParameters,
 ): { queryValue: Value; resultIterator: IIterator<Value> } {
 	const queryValue = query.first();
 	const variables = (args.first() as MapValue).keyValuePairs.reduce((expandedArgs, arg) => {
@@ -70,7 +70,7 @@ function buildResultIterator(
 			}, {}),
 			{},
 			BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
-			(lexicalName, arity) => staticContext.resolveFunctionName(lexicalName, arity)
+			(lexicalName, arity) => staticContext.resolveFunctionName(lexicalName, arity),
 		);
 
 		const hasContextItem = !contextItemSequence.isEmpty();
@@ -99,7 +99,7 @@ const fontoxpathEvaluate: FunctionDefinitionType = (
 	executionParameters,
 	staticContext,
 	query,
-	args
+	args,
 ) => {
 	let resultIterator: IIterator<Value>;
 	let queryValue: Value;
@@ -110,7 +110,7 @@ const fontoxpathEvaluate: FunctionDefinitionType = (
 					query,
 					args,
 					staticContext,
-					executionParameters
+					executionParameters,
 				));
 			}
 

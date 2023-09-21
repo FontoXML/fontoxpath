@@ -18,7 +18,7 @@ class Literal extends Expression {
 				resultOrder: RESULT_ORDERINGS.SORTED,
 			},
 			false,
-			type
+			type,
 		);
 
 		let value: AtomicValue;

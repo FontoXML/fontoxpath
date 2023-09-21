@@ -40,12 +40,12 @@ describe('debugging functions', () => {
 				undefined,
 				{
 					xmlSerializer: new slimdom.XMLSerializer(),
-				}
+				},
 			);
 			chai.assert.isTrue(consoleSpy.called);
 			chai.assert.equal(
 				consoleSpy.args[0],
-				'{type: document-node(), value: <someElement>Some text.</someElement>}\n{type: xs:integer, value: 42}\n{type: text(), value: Some text.}\n'
+				'{type: document-node(), value: <someElement>Some text.</someElement>}\n{type: xs:integer, value: 42}\n{type: text(), value: Some text.}\n',
 			);
 		});
 	});

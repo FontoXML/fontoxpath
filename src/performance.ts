@@ -121,7 +121,7 @@ export const profiler: Profiler = {
 
 					return summedMeasurements;
 				}, new Map<string, XPathPerformanceMeasurement>())
-				.values()
+				.values(),
 		)
 			.map((entry) => {
 				entry.average = entry.totalDuration / entry.times;
@@ -139,7 +139,7 @@ export const profiler: Profiler = {
 	startProfiling() {
 		if (performance === null) {
 			throw new Error(
-				'Performance API object must be set using `profiler.setPerformanceImplementation` before starting to profile'
+				'Performance API object must be set using `profiler.setPerformanceImplementation` before starting to profile',
 			);
 		}
 		performance.clearMarks();

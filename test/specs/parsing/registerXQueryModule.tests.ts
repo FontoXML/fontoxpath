@@ -78,7 +78,7 @@ declare %public function test:hello ($a) {
 			null,
 			null,
 			null,
-			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 		);
 
 		chai.assert.deepEqual(result, []);
@@ -112,8 +112,8 @@ declare function x:fn () external;`);
 				null,
 				undefined,
 				undefined,
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-			)
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
+			),
 		).to.throw('XPST0017');
 
 		// Now register it
@@ -124,7 +124,7 @@ declare function x:fn () external;`);
 			},
 			[],
 			'item()',
-			() => 'meep'
+			() => 'meep',
 		);
 
 		chai.expect(
@@ -134,8 +134,8 @@ declare function x:fn () external;`);
 				null,
 				undefined,
 				undefined,
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-			)
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
+			),
 		).to.equal('meep');
 	});
 
@@ -158,7 +158,7 @@ declare function x:fn () external;`);
 			},
 			[],
 			'xs:string',
-			() => 'meep'
+			() => 'meep',
 		);
 
 		chai.expect(() =>
@@ -168,8 +168,8 @@ declare function x:fn () external;`);
 				null,
 				undefined,
 				undefined,
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-			)
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
+			),
 		).to.throw('External function declaration types do not match actual function');
 	});
 
@@ -192,7 +192,7 @@ declare function x:fn () external;`);
 			},
 			['xs:string'],
 			'item()',
-			() => 'meep'
+			() => 'meep',
 		);
 
 		chai.expect(() =>
@@ -202,8 +202,8 @@ declare function x:fn () external;`);
 				null,
 				undefined,
 				undefined,
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-			)
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
+			),
 		).to.throw('External function declaration types do not match actual function');
 	});
 
@@ -211,8 +211,8 @@ declare function x:fn () external;`);
 		chai.expect(() =>
 			registerXQueryModule(
 				`module namespace x = 'http://www.example.com';
-				declare %updating function x:updating-fn () external;`
-			)
+				declare %updating function x:updating-fn () external;`,
+			),
 		).to.throw('Updating external function declarations are not supported');
 	});
 
@@ -224,7 +224,7 @@ declare function x:fn () external;`);
 			},
 			[],
 			'item()',
-			() => 'meep'
+			() => 'meep',
 		);
 
 		chai.expect(() =>
@@ -232,10 +232,10 @@ declare function x:fn () external;`);
 				`module namespace x = 'http://www.example.com';
 				declare function x:duplicate-fn () {
 					'maap'
-				};`
-			)
+				};`,
+			),
 		).to.throw(
-			'XQST0049: The function or variable "Q{http://www.example.com}duplicate-fn" is declared more than once.'
+			'XQST0049: The function or variable "Q{http://www.example.com}duplicate-fn" is declared more than once.',
 		);
 	});
 
@@ -247,12 +247,12 @@ declare function x:fn () external;`);
 			},
 			[],
 			'item()',
-			() => 'meep'
+			() => 'meep',
 		);
 
 		registerXQueryModule(
 			`module namespace x = 'http://www.example.com';
-			declare function x:pre-registered-fn () external;`
+			declare function x:pre-registered-fn () external;`,
 		);
 
 		chai.expect(
@@ -262,8 +262,8 @@ declare function x:fn () external;`);
 				null,
 				undefined,
 				undefined,
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-			)
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
+			),
 		).to.equal('meep');
 	});
 
@@ -288,9 +288,9 @@ $foo:var`,
 				null,
 				null,
 				undefined,
-				xQueryOptions
+				xQueryOptions,
 			),
-			'hello world'
+			'hello world',
 		);
 	});
 
@@ -316,7 +316,7 @@ declare function bar:baz() {
 
 		chai.assert.equal(
 			evaluateXPathToString(`bar:baz()`, null, null, null, xQueryOptions),
-			'hello world'
+			'hello world',
 		);
 	});
 
@@ -342,7 +342,7 @@ declare function bar:baz() {
 
 		chai.assert.throws(
 			() => evaluateXPathToString(`bar:baz()`, null, null, null, xQueryOptions),
-			'XPST0017'
+			'XPST0017',
 		);
 	});
 });

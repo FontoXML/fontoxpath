@@ -34,7 +34,7 @@ builtInFunctions.forEach((builtInFunction) => {
 		builtInFunction.localName,
 		builtInFunction.argumentTypes,
 		builtInFunction.returnType,
-		builtInFunction.callFunction
+		builtInFunction.callFunction,
 	);
 });
 
@@ -48,7 +48,7 @@ export function createDefaultNamespaceResolver(contextItem: any): (s: string) =>
 export function createDefaultFunctionNameResolver(defaultFunctionNamespaceURI: string) {
 	return (
 		{ prefix, localName }: LexicalQualifiedName,
-		_arity: number
+		_arity: number,
 	): ResolvedQualifiedName | null => {
 		if (!prefix) {
 			return {
@@ -71,7 +71,7 @@ export default function buildEvaluationContext(
 		allowXQuery: boolean;
 		debug: boolean;
 		disableCache: boolean;
-	}
+	},
 ): {
 	dynamicContext: DynamicContext;
 	executionParameters: ExecutionParameters;
@@ -102,7 +102,7 @@ export default function buildEvaluationContext(
 		  };
 
 	const wrappedDomFacade: DomFacade = new DomFacade(
-		domFacade === null ? new ExternalDomFacade() : domFacade
+		domFacade === null ? new ExternalDomFacade() : domFacade,
 	);
 
 	const moduleImports = internalOptions.moduleImports || Object.create(null);
@@ -126,7 +126,7 @@ export default function buildEvaluationContext(
 		variables,
 		moduleImports,
 		defaultFunctionNamespaceURI,
-		functionNameResolver
+		functionNameResolver,
 	);
 
 	const contextSequence = contextItem
@@ -158,13 +158,13 @@ export default function buildEvaluationContext(
 					// The value is not converted yet. Do it just in time.
 					return adaptJavaScriptValueToSequence(
 						wrappedDomFacade,
-						variables[variableName]
+						variables[variableName],
 					);
 				};
 			}
 			return typedVariableByName;
 		},
-		Object.create(null) as { [s: string]: () => ISequence }
+		Object.create(null) as { [s: string]: () => ISequence },
 	);
 
 	// This is written to later, but must already be available.
@@ -175,7 +175,7 @@ export default function buildEvaluationContext(
 			variableBindings[binding] = () =>
 				expressionAndStaticContext.staticContext.getVariableDeclaration(binding)(
 					dynamicContext,
-					executionParameters
+					executionParameters,
 				);
 		}
 	}
@@ -196,7 +196,7 @@ export default function buildEvaluationContext(
 		externalOptions['currentContext'],
 		new Map(),
 		internalOptions.logger,
-		xmlSerializer
+		xmlSerializer,
 	);
 
 	return {

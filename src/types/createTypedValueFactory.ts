@@ -35,13 +35,13 @@ export type TypedExternalValue = {
 export default function createTypedValueFactory(sequenceTypeName: string) {
 	return (value: UntypedExternalValue, domFacade: IDomFacade): TypedExternalValue => {
 		const wrappedDomFacade: DomFacade = new DomFacade(
-			domFacade === null ? new ExternalDomFacade() : domFacade
+			domFacade === null ? new ExternalDomFacade() : domFacade,
 		);
 
 		const convertedValue = adaptJavaScriptValueToArrayOfXPathValues(
 			wrappedDomFacade,
 			value,
-			stringToSequenceType(sequenceTypeName)
+			stringToSequenceType(sequenceTypeName),
 		);
 
 		return {

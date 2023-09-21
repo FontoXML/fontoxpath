@@ -14,7 +14,7 @@ export function annotateSequenceOperator(
 	ast: IAST,
 	length: number,
 	elems: IAST[],
-	types: SequenceType[]
+	types: SequenceType[],
 ): SequenceType {
 	let seqType;
 

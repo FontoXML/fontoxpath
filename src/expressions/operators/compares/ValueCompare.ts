@@ -24,7 +24,7 @@ import atomizeSequence from '../../util/atomizeSequence';
 
 function handleQName(
 	operator: string,
-	applyCastFunctions: (valA: AtomicValue, valB: AtomicValue) => any
+	applyCastFunctions: (valA: AtomicValue, valB: AtomicValue) => any,
 ): (valA: any, valB: any, dynamicContext: DynamicContext) => boolean {
 	if (operator === 'eqOp') {
 		return (a, b, _dynamicContext) => {
@@ -49,7 +49,7 @@ function handleQName(
 
 function handleNumeric(
 	operator: string,
-	applyCastFunctions: (valA: AtomicValue, valB: AtomicValue) => any
+	applyCastFunctions: (valA: AtomicValue, valB: AtomicValue) => any,
 ): (valA: any, valB: any, dynamicContext: DynamicContext) => boolean {
 	switch (operator) {
 		case 'eqOp':
@@ -89,7 +89,7 @@ function handleNumeric(
 
 function handleYearMonthDuration(
 	operator: string,
-	applyCastFunctions: (valA: AtomicValue, valB: AtomicValue) => any
+	applyCastFunctions: (valA: AtomicValue, valB: AtomicValue) => any,
 ): (valA: any, valB: any, dynamicContext: DynamicContext) => boolean {
 	switch (operator) {
 		case 'ltOp':
@@ -126,7 +126,7 @@ function handleYearMonthDuration(
 
 function handleDayTimeDuration(
 	operator: string,
-	applyCastFunctions: (valA: AtomicValue, valB: AtomicValue) => any
+	applyCastFunctions: (valA: AtomicValue, valB: AtomicValue) => any,
 ): (valA: any, valB: any, dynamicContext: DynamicContext) => boolean {
 	switch (operator) {
 		case 'eqOp':
@@ -167,7 +167,7 @@ function handleDayTimeDuration(
 
 function handleDuration(
 	operator: string,
-	applyCastFunctions: (valA: AtomicValue, valB: AtomicValue) => any
+	applyCastFunctions: (valA: AtomicValue, valB: AtomicValue) => any,
 ): (valA: any, valB: any, dynamicContext: DynamicContext) => boolean {
 	switch (operator) {
 		case 'eqOp':
@@ -187,7 +187,7 @@ function handleDuration(
 
 function handleDateAndTime(
 	operator: string,
-	applyCastFunctions: (valA: AtomicValue, valB: AtomicValue) => any
+	applyCastFunctions: (valA: AtomicValue, valB: AtomicValue) => any,
 ): (valA: any, valB: any, dynamicContext: DynamicContext) => boolean {
 	switch (operator) {
 		case 'eqOp':
@@ -196,7 +196,7 @@ function handleDateAndTime(
 				return dateTimeEqual(
 					castA.value,
 					castB.value,
-					dynamicContext.getImplicitTimezone()
+					dynamicContext.getImplicitTimezone(),
 				);
 			};
 		case 'neOp':
@@ -205,7 +205,7 @@ function handleDateAndTime(
 				return !dateTimeEqual(
 					castA.value,
 					castB.value,
-					dynamicContext.getImplicitTimezone()
+					dynamicContext.getImplicitTimezone(),
 				);
 			};
 
@@ -215,7 +215,7 @@ function handleDateAndTime(
 				return dateTimeLessThan(
 					castA.value,
 					castB.value,
-					dynamicContext.getImplicitTimezone()
+					dynamicContext.getImplicitTimezone(),
 				);
 			};
 		case 'leOp':
@@ -233,7 +233,7 @@ function handleDateAndTime(
 				return dateTimeGreaterThan(
 					castA.value,
 					castB.value,
-					dynamicContext.getImplicitTimezone()
+					dynamicContext.getImplicitTimezone(),
 				);
 			};
 		case 'geOp':
@@ -244,7 +244,7 @@ function handleDateAndTime(
 					dateTimeGreaterThan(
 						castA.value,
 						castB.value,
-						dynamicContext.getImplicitTimezone()
+						dynamicContext.getImplicitTimezone(),
 					)
 				);
 			};
@@ -255,7 +255,7 @@ function handleDateAndTime(
 
 function handleDayMonthAndYear(
 	operator: string,
-	applyCastFunctions: (valA: AtomicValue, valB: AtomicValue) => any
+	applyCastFunctions: (valA: AtomicValue, valB: AtomicValue) => any,
 ): (valA: any, valB: any, dynamicContext: DynamicContext) => boolean {
 	switch (operator) {
 		case 'eqOp':
@@ -264,7 +264,7 @@ function handleDayMonthAndYear(
 				return dateTimeEqual(
 					castA.value,
 					castB.value,
-					dynamicContext.getImplicitTimezone()
+					dynamicContext.getImplicitTimezone(),
 				);
 			};
 		case 'neOp':
@@ -273,7 +273,7 @@ function handleDayMonthAndYear(
 				return !dateTimeEqual(
 					castA.value,
 					castB.value,
-					dynamicContext.getImplicitTimezone()
+					dynamicContext.getImplicitTimezone(),
 				);
 			};
 		default:
@@ -284,7 +284,7 @@ function handleDayMonthAndYear(
 function generateCompareFunction(
 	operator: string,
 	typeA: ValueType,
-	typeB: ValueType
+	typeB: ValueType,
 ): (valA: any, valB: any, dynamicContext: DynamicContext) => boolean {
 	let castFunctionForValueA: (x: AtomicValue) => AtomicValue = null;
 	let castFunctionForValueB: (x: AtomicValue) => AtomicValue = null;
@@ -387,8 +387,8 @@ function generateCompareFunction(
 
 	throw new Error(
 		`XPTY0004: ${operator} not available for ${valueTypeToString(
-			typeA
-		)} and ${valueTypeToString(typeB)}`
+			typeA,
+		)} and ${valueTypeToString(typeB)}`,
 	);
 }
 
@@ -397,7 +397,7 @@ const comparatorsByTypingKey = Object.create(null);
 export function valueCompare(
 	operator: string,
 	typeA: ValueType,
-	typeB: ValueType
+	typeB: ValueType,
 ): (valueA: AtomicValue, valueB: AtomicValue, dynamicContext: DynamicContext) => boolean {
 	// https://www.w3.org/TR/xpath-3/#doc-xpath31-ValueComp
 	const typingKey = `${typeA as number}~${typeB as number}~${operator}`;
@@ -406,7 +406,7 @@ export function valueCompare(
 		prefabComparator = comparatorsByTypingKey[typingKey] = generateCompareFunction(
 			operator,
 			typeA,
-			typeB
+			typeB,
 		);
 	}
 
@@ -424,7 +424,7 @@ export default class ValueCompare extends Expression {
 			[firstExpression, secondExpression],
 			{
 				canBeStaticallyEvaluated: false,
-			}
+			},
 		);
 		this._firstExpression = firstExpression;
 		this._secondExpression = secondExpression;
@@ -433,15 +433,15 @@ export default class ValueCompare extends Expression {
 
 	public evaluate(
 		dynamicContext: DynamicContext,
-		executionParameters: ExecutionParameters
+		executionParameters: ExecutionParameters,
 	): ISequence {
 		const firstSequence = this._firstExpression.evaluateMaybeStatically(
 			dynamicContext,
-			executionParameters
+			executionParameters,
 		);
 		const secondSequence = this._secondExpression.evaluateMaybeStatically(
 			dynamicContext,
-			executionParameters
+			executionParameters,
 		);
 
 		const firstAtomizedSequence = atomizeSequence(firstSequence, executionParameters);
@@ -458,7 +458,7 @@ export default class ValueCompare extends Expression {
 						const compareFunction = valueCompare(
 							this._operator,
 							onlyFirstValue.type,
-							onlySecondValue.type
+							onlySecondValue.type,
 						);
 
 						return compareFunction(onlyFirstValue, onlySecondValue, dynamicContext)

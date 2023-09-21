@@ -17,7 +17,7 @@ export function emitOperand(
 	ast: IAST,
 	operandKind: 'firstOperand' | 'secondOperand',
 	contextItemExpr: PartialCompilationResult,
-	context: CodeGenContext
+	context: CodeGenContext,
 ): [PartialCompilationResult, Bucket] {
 	const exprAst = astHelper.followPath(ast, [operandKind, '*']);
 	if (!exprAst) {

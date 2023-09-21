@@ -23,7 +23,7 @@ const nodeName = builtInFunctionsNode.functions.nodeName;
 
 function asyncGenerateEvery<T>(
 	items: T[],
-	callback: (item: T, index: number, all: T[]) => IIterator<boolean>
+	callback: (item: T, index: number, all: T[]) => IIterator<boolean>,
 ): IIterator<boolean> {
 	let i = 0;
 	const l = items.length;
@@ -62,7 +62,7 @@ export function anyAtomicTypeDeepEqual(
 	_executionParameters: ExecutionParameters,
 	_staticContext: StaticContext,
 	item1: Value,
-	item2: Value
+	item2: Value,
 ): boolean {
 	if (
 		(isSubtypeOf(item1.type, ValueType.XSDECIMAL) ||
@@ -133,7 +133,7 @@ function compareNormalizedTextNodes(
 	executionParameters: ExecutionParameters,
 	staticContext: StaticContext,
 	textValues1: Value[],
-	textValues2: Value[]
+	textValues2: Value[],
 ) {
 	const [atomicValue1, atomicValue2]: Value[] = [textValues1, textValues2].map((textValues) => {
 		const value = textValues.reduce((wholeValue, textValue) => {
@@ -155,8 +155,8 @@ function compareNormalizedTextNodes(
 			executionParameters,
 			staticContext,
 			atomicValue1,
-			atomicValue2
-		)
+			atomicValue2,
+		),
 	);
 }
 
@@ -164,7 +164,7 @@ function takeConsecutiveTextValues(
 	item: IterationResult<Value>,
 	textValues: Value[],
 	iterator: IIterator<Value>,
-	domFacade: DomFacade
+	domFacade: DomFacade,
 ): IterationResult<Value> {
 	while (item.value && isSubtypeOf(item.value.type, ValueType.TEXT)) {
 		textValues.push(item.value);
@@ -182,7 +182,7 @@ function sequenceDeepEqual(
 	executionParameters: ExecutionParameters,
 	staticContext: StaticContext,
 	sequence1: ISequence,
-	sequence2: ISequence
+	sequence2: ISequence,
 ): IIterator<boolean> {
 	const domFacade = executionParameters.domFacade;
 	const it1 = sequence1.value;
@@ -212,7 +212,7 @@ function sequenceDeepEqual(
 						executionParameters,
 						staticContext,
 						textValues1,
-						textValues2
+						textValues2,
 					);
 					textValues1.length = 0;
 					textValues2.length = 0;
@@ -236,7 +236,7 @@ function sequenceDeepEqual(
 						executionParameters,
 						staticContext,
 						item1.value,
-						item2.value
+						item2.value,
 					);
 				}
 				const comparisonResult = comparisonGenerator.next(IterationHint.NONE);
@@ -260,7 +260,7 @@ function mapTypeDeepEqual(
 	executionParameters: ExecutionParameters,
 	staticContext: StaticContext,
 	item1: MapValue,
-	item2: MapValue
+	item2: MapValue,
 ): IIterator<boolean> {
 	if (item1.keyValuePairs.length !== item2.keyValuePairs.length) {
 		return createSingleValueIterator(false);
@@ -273,8 +273,8 @@ function mapTypeDeepEqual(
 				executionParameters,
 				staticContext,
 				entry.key,
-				mapEntry1.key
-			)
+				mapEntry1.key,
+			),
 		);
 
 		if (!mapEntry2) {
@@ -286,7 +286,7 @@ function mapTypeDeepEqual(
 			executionParameters,
 			staticContext,
 			mapEntry1.value(),
-			mapEntry2.value()
+			mapEntry2.value(),
 		);
 	});
 }
@@ -296,7 +296,7 @@ function arrayTypeDeepEqual(
 	executionParameters: ExecutionParameters,
 	staticContext: StaticContext,
 	item1: ArrayValue,
-	item2: ArrayValue
+	item2: ArrayValue,
 ): IIterator<boolean> {
 	if (item1.members.length !== item2.members.length) {
 		return createSingleValueIterator(false);
@@ -309,7 +309,7 @@ function arrayTypeDeepEqual(
 			executionParameters,
 			staticContext,
 			arrayEntry1(),
-			arrayEntry2()
+			arrayEntry2(),
 		);
 	});
 }
@@ -319,23 +319,23 @@ function nodeDeepEqual(
 	executionParameters: ExecutionParameters,
 	staticContext: StaticContext,
 	item1: Value,
-	item2: Value
+	item2: Value,
 ): IIterator<boolean> {
 	let item1Nodes = executionParameters.domFacade.getChildNodePointers(item1.value);
 	let item2Nodes = executionParameters.domFacade.getChildNodePointers(item2.value);
 
 	item1Nodes = item1Nodes.filter((item1Node) =>
-		filterElementAndTextNodes(item1Node, executionParameters.domFacade)
+		filterElementAndTextNodes(item1Node, executionParameters.domFacade),
 	);
 	item2Nodes = item2Nodes.filter((item2Node) =>
-		filterElementAndTextNodes(item2Node, executionParameters.domFacade)
+		filterElementAndTextNodes(item2Node, executionParameters.domFacade),
 	);
 
 	const item1NodesSeq = sequenceFactory.create(
-		item1Nodes.map((node) => createPointerValue(node, executionParameters.domFacade))
+		item1Nodes.map((node) => createPointerValue(node, executionParameters.domFacade)),
 	);
 	const item2NodesSeq = sequenceFactory.create(
-		item2Nodes.map((node) => createPointerValue(node, executionParameters.domFacade))
+		item2Nodes.map((node) => createPointerValue(node, executionParameters.domFacade)),
 	);
 
 	return sequenceDeepEqual(
@@ -343,7 +343,7 @@ function nodeDeepEqual(
 		executionParameters,
 		staticContext,
 		item1NodesSeq,
-		item2NodesSeq
+		item2NodesSeq,
 	);
 }
 
@@ -352,7 +352,7 @@ function elementNodeDeepEqual(
 	executionParameters: ExecutionParameters,
 	staticContext: StaticContext,
 	item1: Value,
-	item2: Value
+	item2: Value,
 ): IIterator<boolean> {
 	const namesAreEqualResultGenerator = sequenceDeepEqual(
 		dynamicContext,
@@ -362,31 +362,31 @@ function elementNodeDeepEqual(
 			dynamicContext,
 			executionParameters,
 			staticContext,
-			sequenceFactory.singleton(item1)
+			sequenceFactory.singleton(item1),
 		),
 		nodeName(
 			dynamicContext,
 			executionParameters,
 			staticContext,
-			sequenceFactory.singleton(item2)
-		)
+			sequenceFactory.singleton(item2),
+		),
 	);
 	const nodeDeepEqualGenerator = nodeDeepEqual(
 		dynamicContext,
 		executionParameters,
 		staticContext,
 		item1,
-		item2
+		item2,
 	);
 	const domFacade = executionParameters.domFacade;
 	const attributes1 = domFacade
 		.getAllAttributePointers(item1.value)
 		.filter(
 			(attr) =>
-				domFacade.getNamespaceURI(attr) !== BUILT_IN_NAMESPACE_URIS.XMLNS_NAMESPACE_URI
+				domFacade.getNamespaceURI(attr) !== BUILT_IN_NAMESPACE_URIS.XMLNS_NAMESPACE_URI,
 		)
 		.sort((attrA, attrB) =>
-			domFacade.getNodeName(attrA) > domFacade.getNodeName(attrB) ? 1 : -1
+			domFacade.getNodeName(attrA) > domFacade.getNodeName(attrB) ? 1 : -1,
 		)
 		.map((attr) => createPointerValue(attr, executionParameters.domFacade));
 
@@ -394,10 +394,10 @@ function elementNodeDeepEqual(
 		.getAllAttributePointers(item2.value)
 		.filter(
 			(attr) =>
-				domFacade.getNamespaceURI(attr) !== BUILT_IN_NAMESPACE_URIS.XMLNS_NAMESPACE_URI
+				domFacade.getNamespaceURI(attr) !== BUILT_IN_NAMESPACE_URIS.XMLNS_NAMESPACE_URI,
 		)
 		.sort((attrA, attrB) =>
-			domFacade.getNodeName(attrA) > domFacade.getNodeName(attrB) ? 1 : -1
+			domFacade.getNodeName(attrA) > domFacade.getNodeName(attrB) ? 1 : -1,
 		)
 		.map((attr) => createPointerValue(attr, executionParameters.domFacade));
 
@@ -406,7 +406,7 @@ function elementNodeDeepEqual(
 		executionParameters,
 		staticContext,
 		sequenceFactory.create(attributes1),
-		sequenceFactory.create(attributes2)
+		sequenceFactory.create(attributes2),
 	);
 	let done = false;
 	return {
@@ -438,7 +438,7 @@ function atomicTypeNodeDeepEqual(
 	executionParameters: ExecutionParameters,
 	staticContext: StaticContext,
 	item1: Value,
-	item2: Value
+	item2: Value,
 ): IIterator<boolean> {
 	const namesAreEqualResultGenerator = sequenceDeepEqual(
 		dynamicContext,
@@ -448,14 +448,14 @@ function atomicTypeNodeDeepEqual(
 			dynamicContext,
 			executionParameters,
 			staticContext,
-			sequenceFactory.singleton(item1)
+			sequenceFactory.singleton(item1),
 		),
 		nodeName(
 			dynamicContext,
 			executionParameters,
 			staticContext,
-			sequenceFactory.singleton(item2)
-		)
+			sequenceFactory.singleton(item2),
+		),
 	);
 	let done = false;
 	return {
@@ -479,8 +479,8 @@ function atomicTypeNodeDeepEqual(
 					executionParameters,
 					staticContext,
 					atomizeSingleValue(item1, executionParameters).first(),
-					atomizeSingleValue(item2, executionParameters).first()
-				)
+					atomizeSingleValue(item2, executionParameters).first(),
+				),
 			);
 		},
 	};
@@ -491,7 +491,7 @@ export function itemDeepEqual(
 	executionParameters: ExecutionParameters,
 	staticContext: StaticContext,
 	item1: Value,
-	item2: Value
+	item2: Value,
 ): IIterator<boolean> {
 	// All atomic types
 	if (
@@ -499,7 +499,13 @@ export function itemDeepEqual(
 		isSubtypeOf(item2.type, ValueType.XSANYATOMICTYPE)
 	) {
 		return createSingleValueIterator(
-			anyAtomicTypeDeepEqual(dynamicContext, executionParameters, staticContext, item1, item2)
+			anyAtomicTypeDeepEqual(
+				dynamicContext,
+				executionParameters,
+				staticContext,
+				item1,
+				item2,
+			),
 		);
 	}
 
@@ -510,7 +516,7 @@ export function itemDeepEqual(
 			executionParameters,
 			staticContext,
 			item1 as MapValue,
-			item2 as MapValue
+			item2 as MapValue,
 		);
 	}
 
@@ -521,7 +527,7 @@ export function itemDeepEqual(
 			executionParameters,
 			staticContext,
 			item1 as ArrayValue,
-			item2 as ArrayValue
+			item2 as ArrayValue,
 		);
 	}
 
@@ -545,7 +551,7 @@ export function itemDeepEqual(
 				executionParameters,
 				staticContext,
 				item1,
-				item2
+				item2,
 			);
 		}
 
@@ -559,7 +565,7 @@ export function itemDeepEqual(
 				executionParameters,
 				staticContext,
 				item1,
-				item2
+				item2,
 			);
 		}
 
@@ -573,7 +579,7 @@ export function itemDeepEqual(
 				executionParameters,
 				staticContext,
 				item1,
-				item2
+				item2,
 			);
 		}
 
@@ -587,7 +593,7 @@ export function itemDeepEqual(
 				executionParameters,
 				staticContext,
 				item1,
-				item2
+				item2,
 			);
 		}
 

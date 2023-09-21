@@ -21,14 +21,14 @@ import { performFunctionConversion } from './argumentHelper';
 
 const functionXPTY0004 = () =>
 	errXPTY0004(
-		'Expected base expression of a function call to evaluate to a sequence of single function item'
+		'Expected base expression of a function call to evaluate to a sequence of single function item',
 	);
 
 export function transformArgumentList(
 	argumentTypes: SequenceType[],
 	argumentList: ISequence[],
 	executionParameters: ExecutionParameters,
-	functionItem: string
+	functionItem: string,
 ): ISequence[] {
 	const transformedArguments = [];
 	for (let i = 0; i < argumentList.length; ++i) {
@@ -42,7 +42,7 @@ export function transformArgumentList(
 			argumentList[i],
 			executionParameters,
 			functionItem,
-			false
+			false,
 		);
 		transformedArguments.push(transformedArgument);
 	}
@@ -74,7 +74,7 @@ function callFunction(
 	executionParameters: ExecutionParameters,
 	isGapByOffset: boolean[],
 	createArgumentSequences: ((dynamicContext: DynamicContext) => ISequence)[],
-	staticContext: StaticContext
+	staticContext: StaticContext,
 ): ISequence {
 	let argumentOffset = 0;
 	const evaluatedArgs = isGapByOffset.map((isGap) => {
@@ -89,7 +89,7 @@ function callFunction(
 		functionItem.getArgumentTypes() as SequenceType[],
 		evaluatedArgs,
 		executionParameters,
-		functionItem.getName()
+		functionItem.getName(),
 	);
 
 	if (transformedArguments.indexOf(null) >= 0) {
@@ -108,7 +108,7 @@ function callFunction(
 		toReturn,
 		executionParameters,
 		functionItem.getName(),
-		true
+		true,
 	);
 }
 
@@ -136,7 +136,7 @@ class FunctionCall extends PossiblyUpdatingExpression {
 				subtree: false,
 				canBeStaticallyEvaluated: false, // args.every(arg => arg.canBeStaticallyEvaluated) && functionReference.canBeStaticallyEvaluated
 			},
-			type
+			type,
 		);
 
 		this._callArity = args.length;
@@ -151,7 +151,7 @@ class FunctionCall extends PossiblyUpdatingExpression {
 
 	public evaluateWithUpdateList(
 		dynamicContext: DynamicContext,
-		executionParameters: ExecutionParameters
+		executionParameters: ExecutionParameters,
 	): IIterator<UpdatingExpressionResult> {
 		if (!this._functionReference || !this._functionReference.isUpdating) {
 			// The function reference can not be updating at this point
@@ -170,11 +170,11 @@ class FunctionCall extends PossiblyUpdatingExpression {
 					innerDynamicContext,
 					innerExecutionParameters,
 					staticContext,
-					...args
+					...args,
 				),
 				(pendingUpdates) => {
 					pendingUpdateList = mergeUpdates(pendingUpdateList, pendingUpdates);
-				}
+				},
 			);
 		};
 
@@ -191,14 +191,14 @@ class FunctionCall extends PossiblyUpdatingExpression {
 				return separateXDMValueFromUpdatingExpressionResult(
 					(expr as PossiblyUpdatingExpression).evaluateWithUpdateList(
 						dynamicContext,
-						executionParameters
+						executionParameters,
 					),
 					(pendingUpdates) => {
 						pendingUpdateList = mergeUpdates(pendingUpdateList, pendingUpdates);
-					}
+					},
 				);
 			}),
-			this._staticContext
+			this._staticContext,
 		);
 
 		let done = false;
@@ -221,8 +221,8 @@ class FunctionCall extends PossiblyUpdatingExpression {
 		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters,
 		[createFunctionReferenceSequence, ...createArgumentSequences]: ((
-			dynContext: DynamicContext
-		) => ISequence)[]
+			dynContext: DynamicContext,
+		) => ISequence)[],
 	): ISequence {
 		if (this._functionReference) {
 			// We can assume this function is not updating
@@ -233,13 +233,13 @@ class FunctionCall extends PossiblyUpdatingExpression {
 						innerDynamicContext,
 						innerExecutionParameters,
 						staticContext,
-						...args
+						...args,
 					),
 				dynamicContext,
 				executionParameters,
 				this._isGapByOffset,
 				createArgumentSequences,
-				this._staticContext
+				this._staticContext,
 			);
 		}
 		const sequence = createFunctionReferenceSequence(dynamicContext);
@@ -261,7 +261,7 @@ class FunctionCall extends PossiblyUpdatingExpression {
 						executionParameters,
 						this._isGapByOffset,
 						createArgumentSequences,
-						this._staticContext
+						this._staticContext,
 					);
 				});
 			},
@@ -277,14 +277,14 @@ class FunctionCall extends PossiblyUpdatingExpression {
 		if (this._functionReferenceExpression.canBeStaticallyEvaluated) {
 			const functionRefSequence = this._functionReferenceExpression.evaluateMaybeStatically(
 				null,
-				null
+				null,
 			);
 			if (!functionRefSequence.isSingleton()) {
 				throw functionXPTY0004();
 			}
 			this._functionReference = validateFunctionItem(
 				functionRefSequence.first(),
-				this._callArity
+				this._callArity,
 			);
 
 			if (this._functionReference.isUpdating) {

@@ -25,7 +25,7 @@ class NamedFunctionRef extends Expression {
 	constructor(
 		functionReference: { localName: string; namespaceURI: string | null; prefix: string },
 		arity: number,
-		type: SequenceType
+		type: SequenceType,
 	) {
 		super(
 			new Specificity({
@@ -36,7 +36,7 @@ class NamedFunctionRef extends Expression {
 				canBeStaticallyEvaluated: true,
 			},
 			false,
-			type
+			type,
 		);
 
 		this._arity = arity;
@@ -67,7 +67,7 @@ class NamedFunctionRef extends Expression {
 		if (namespaceURI === null) {
 			const functionName = staticContext.resolveFunctionName(
 				{ localName, prefix },
-				this._arity
+				this._arity,
 			);
 
 			if (!functionName) {
@@ -75,7 +75,7 @@ class NamedFunctionRef extends Expression {
 				throw new Error(
 					`XPST0017: The function ${prefix ? prefix + ':' : ''}${localName} with arity ${
 						this._arity
-					} could not be resolved. ${getAlternativesAsStringFor(localName)}`
+					} could not be resolved. ${getAlternativesAsStringFor(localName)}`,
 				);
 			}
 			namespaceURI = functionName.namespaceURI;
@@ -88,10 +88,10 @@ class NamedFunctionRef extends Expression {
 		if (!this._functionProperties) {
 			throw new Error(
 				`XPST0017: Function ${buildFormattedFunctionName(
-					this._functionReference
+					this._functionReference,
 				)} with arity of ${this._arity} not registered. ${getAlternativesAsStringFor(
-					localName
-				)}`
+					localName,
+				)}`,
 			);
 		}
 

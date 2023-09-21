@@ -18,7 +18,7 @@ describe('createTypedValueFactory', () => {
 			evaluateXPathToBoolean('$value instance of xs:integer', null, null, {
 				value: typedValue,
 			}),
-			true
+			true,
 		);
 	});
 
@@ -31,7 +31,7 @@ describe('createTypedValueFactory', () => {
 			evaluateXPathToBoolean('$value instance of xs:integer', null, null, {
 				value: typedValue,
 			}),
-			true
+			true,
 		);
 	});
 
@@ -40,7 +40,7 @@ describe('createTypedValueFactory', () => {
 
 		chai.assert.throws(
 			() => typedValueFactory(true, documentNode),
-			`The JavaScript value true with type boolean is not a valid type to be converted to an XPath xs:date.`
+			`The JavaScript value true with type boolean is not a valid type to be converted to an XPath xs:date.`,
 		);
 	});
 
@@ -49,7 +49,7 @@ describe('createTypedValueFactory', () => {
 
 		chai.assert.throws(
 			() => typedValueFactory(true, documentNode),
-			`The JavaScript value true with type boolean is not a valid type to be converted to an XPath node().`
+			`The JavaScript value true with type boolean is not a valid type to be converted to an XPath node().`,
 		);
 	});
 
@@ -58,7 +58,7 @@ describe('createTypedValueFactory', () => {
 
 		chai.assert.throws(
 			() => typedValueFactory(true, documentNode),
-			`Cannot convert JavaScript value 'true' to the XPath type xs:integer since it is not valid.`
+			`Cannot convert JavaScript value 'true' to the XPath type xs:integer since it is not valid.`,
 		);
 	});
 
@@ -67,7 +67,7 @@ describe('createTypedValueFactory', () => {
 
 		chai.assert.throws(
 			() => typedValueFactory('foo', documentNode),
-			`Cannot convert JavaScript value 'foo' to the XPath type xs:integer since it is not valid.`
+			`Cannot convert JavaScript value 'foo' to the XPath type xs:integer since it is not valid.`,
 		);
 	});
 
@@ -76,7 +76,7 @@ describe('createTypedValueFactory', () => {
 
 		chai.assert.throws(
 			() => typedValueFactory(null, documentNode),
-			`The JavaScript value null should be a single entry if it is to be converted to xs:integer.`
+			`The JavaScript value null should be a single entry if it is to be converted to xs:integer.`,
 		);
 	});
 
@@ -85,7 +85,7 @@ describe('createTypedValueFactory', () => {
 
 		chai.assert.throws(
 			() => typedValueFactory(123, documentNode),
-			`The JavaScript value 123 should be an array if it is to be converted to xs:integer*.`
+			`The JavaScript value 123 should be an array if it is to be converted to xs:integer*.`,
 		);
 	});
 
@@ -94,7 +94,7 @@ describe('createTypedValueFactory', () => {
 
 		chai.assert.throws(
 			() => typedValueFactory(Symbol('foo') as unknown as string, documentNode),
-			'Value Symbol(foo) of type "symbol" is not adaptable to an XPath value.'
+			'Value Symbol(foo) of type "symbol" is not adaptable to an XPath value.',
 		);
 	});
 });

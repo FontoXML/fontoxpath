@@ -23,7 +23,7 @@ abstract class FlworExpression extends Expression {
 		specificity: Specificity,
 		childExpressions: Expression[],
 		optimizationOptions: OptimizationOptions,
-		returnExpression: PossiblyUpdatingExpression | FlworExpression
+		returnExpression: PossiblyUpdatingExpression | FlworExpression,
 	) {
 		super(specificity, childExpressions, optimizationOptions, true);
 
@@ -34,7 +34,7 @@ abstract class FlworExpression extends Expression {
 	public doFlworExpressionUpdating(
 		outerDynamicContext: DynamicContext,
 		outerDynamicContextIterator: IIterator<DynamicContext>,
-		executionParameters: ExecutionParameters
+		executionParameters: ExecutionParameters,
 	): IIterator<UpdatingExpressionResult> {
 		let updateList: IPendingUpdate[] = [];
 		const sequence = this.doFlworExpression(
@@ -47,12 +47,12 @@ abstract class FlworExpression extends Expression {
 					const updateListAndValue = this._returnExpression.doFlworExpressionUpdating(
 						outerDynamicContext,
 						dynamicContextIterator,
-						executionParameters
+						executionParameters,
 					);
 
 					return separateXDMValueFromUpdatingExpressionResult(
 						updateListAndValue,
-						(pendingUpdates) => (updateList = pendingUpdates)
+						(pendingUpdates) => (updateList = pendingUpdates),
 					);
 				}
 				// We are transitioning to a non-FLWOR expression. Also apply all looping here
@@ -62,7 +62,7 @@ abstract class FlworExpression extends Expression {
 						while (true) {
 							if (!currentReturnValueGenerator) {
 								const currentDynamicContext = dynamicContextIterator.next(
-									IterationHint.NONE
+									IterationHint.NONE,
 								);
 
 								if (currentDynamicContext.done) {
@@ -72,13 +72,13 @@ abstract class FlworExpression extends Expression {
 								const updateListAndValue =
 									this._returnExpression.evaluateWithUpdateList(
 										currentDynamicContext.value,
-										executionParameters
+										executionParameters,
 									);
 								currentReturnValueGenerator =
 									separateXDMValueFromUpdatingExpressionResult(
 										updateListAndValue,
 										(pendingUpdates) =>
-											(updateList = mergeUpdates(updateList, pendingUpdates))
+											(updateList = mergeUpdates(updateList, pendingUpdates)),
 									).value;
 							}
 
@@ -91,7 +91,7 @@ abstract class FlworExpression extends Expression {
 						}
 					},
 				});
-			}
+			},
 		);
 
 		let done = false;
@@ -111,7 +111,7 @@ abstract class FlworExpression extends Expression {
 
 	public evaluate(
 		dynamicContext: DynamicContext,
-		executionParameters: ExecutionParameters
+		executionParameters: ExecutionParameters,
 	): ISequence {
 		return this.doFlworExpression(
 			dynamicContext,
@@ -123,7 +123,7 @@ abstract class FlworExpression extends Expression {
 					return this._returnExpression.doFlworExpressionInternal(
 						dynamicContext,
 						dynamicContextIterator,
-						executionParameters
+						executionParameters,
 					);
 				}
 
@@ -140,7 +140,7 @@ abstract class FlworExpression extends Expression {
 								currentSequenceIterator =
 									this._returnExpression.evaluateMaybeStatically(
 										temp.value,
-										executionParameters
+										executionParameters,
 									).value;
 							}
 
@@ -153,18 +153,18 @@ abstract class FlworExpression extends Expression {
 						}
 					},
 				});
-			}
+			},
 		);
 	}
 
 	public evaluateWithUpdateList(
 		dynamicContext: DynamicContext,
-		executionParameters: ExecutionParameters
+		executionParameters: ExecutionParameters,
 	): IIterator<UpdatingExpressionResult> {
 		return this.doFlworExpressionUpdating(
 			dynamicContext,
 			createSingleValueIterator(dynamicContext),
-			executionParameters
+			executionParameters,
 		);
 	}
 
@@ -187,7 +187,7 @@ abstract class FlworExpression extends Expression {
 	private doFlworExpressionInternal(
 		outerDynamicContext: DynamicContext,
 		outerDynamicContextIterator: IIterator<DynamicContext>,
-		executionParameters: ExecutionParameters
+		executionParameters: ExecutionParameters,
 	): ISequence {
 		return this.doFlworExpression(
 			outerDynamicContext,
@@ -198,7 +198,7 @@ abstract class FlworExpression extends Expression {
 					return this._returnExpression.doFlworExpressionInternal(
 						outerDynamicContext,
 						dynamicContextIterator,
-						executionParameters
+						executionParameters,
 					);
 				}
 				let currentSequenceIterator: IIterator<Value> = null;
@@ -214,7 +214,7 @@ abstract class FlworExpression extends Expression {
 								currentSequenceIterator =
 									this._returnExpression.evaluateMaybeStatically(
 										temp.value,
-										executionParameters
+										executionParameters,
 									).value;
 							}
 
@@ -227,7 +227,7 @@ abstract class FlworExpression extends Expression {
 						}
 					},
 				});
-			}
+			},
 		);
 	}
 
@@ -235,7 +235,7 @@ abstract class FlworExpression extends Expression {
 		dynamicContext: DynamicContext,
 		dynamicContextIterator: IIterator<DynamicContext>,
 		executionParameters: ExecutionParameters,
-		createReturnSequence: (dynamicContextIterator: IIterator<DynamicContext>) => ISequence
+		createReturnSequence: (dynamicContextIterator: IIterator<DynamicContext>) => ISequence,
 	): ISequence;
 }
 

@@ -9,7 +9,7 @@ class YearMonthDuration extends AbstractDuration {
 
 		if (months > Number.MAX_SAFE_INTEGER || months < Number.MIN_SAFE_INTEGER) {
 			throw new Error(
-				'FODT0002: Number of months given to construct YearMonthDuration overflows MAX_SAFE_INTEGER or MIN_SAFE_INTEGER'
+				'FODT0002: Number of months given to construct YearMonthDuration overflows MAX_SAFE_INTEGER or MIN_SAFE_INTEGER',
 			);
 		}
 
@@ -49,7 +49,7 @@ class YearMonthDuration extends AbstractDuration {
 YearMonthDuration.fromParts = (
 	years: number,
 	months: number,
-	isPositive: boolean
+	isPositive: boolean,
 ): YearMonthDuration => {
 	const totalMonths = years * 12 + months;
 	if (totalMonths > Number.MAX_SAFE_INTEGER || !Number.isFinite(totalMonths)) {
@@ -75,28 +75,28 @@ YearMonthDuration.fromString = (yearMonthDurationString: string): YearMonthDurat
 
 export function lessThan(
 	yearMonthDuration1: YearMonthDuration,
-	yearMonthDuration2: YearMonthDuration
+	yearMonthDuration2: YearMonthDuration,
 ): boolean {
 	return yearMonthDuration1.months < yearMonthDuration2.months;
 }
 
 export function greaterThan(
 	yearMonthDuration1: YearMonthDuration,
-	yearMonthDuration2: YearMonthDuration
+	yearMonthDuration2: YearMonthDuration,
 ): boolean {
 	return yearMonthDuration1.months > yearMonthDuration2.months;
 }
 
 export function add(
 	yearMonthDuration1: YearMonthDuration,
-	yearMonthDuration2: YearMonthDuration
+	yearMonthDuration2: YearMonthDuration,
 ): YearMonthDuration {
 	return new YearMonthDuration(yearMonthDuration1.months + yearMonthDuration2.months);
 }
 
 export function subtract(
 	yearMonthDuration1: YearMonthDuration,
-	yearMonthDuration2: YearMonthDuration
+	yearMonthDuration2: YearMonthDuration,
 ): YearMonthDuration {
 	return new YearMonthDuration(yearMonthDuration1.months - yearMonthDuration2.months);
 }
@@ -125,7 +125,7 @@ export function divide(yearMonthDuration: YearMonthDuration, double: number): Ye
 
 export function divideByYearMonthDuration(
 	yearMonthDuration1: YearMonthDuration,
-	yearMonthDuration2: YearMonthDuration
+	yearMonthDuration2: YearMonthDuration,
 ): number {
 	return yearMonthDuration1.months / yearMonthDuration2.months;
 }

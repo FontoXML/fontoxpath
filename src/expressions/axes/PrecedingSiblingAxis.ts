@@ -42,7 +42,7 @@ class PrecedingSiblingAxis extends Expression {
 
 	public evaluate(
 		dynamicContext: DynamicContext,
-		executionParameters: ExecutionParameters
+		executionParameters: ExecutionParameters,
 	): ISequence {
 		const domFacade = executionParameters.domFacade;
 		const contextPointer = validateContextNode(dynamicContext.contextItem);
@@ -53,7 +53,7 @@ class PrecedingSiblingAxis extends Expression {
 				return this._siblingExpression.evaluateToBoolean(
 					dynamicContext,
 					item,
-					executionParameters
+					executionParameters,
 				);
 			});
 	}

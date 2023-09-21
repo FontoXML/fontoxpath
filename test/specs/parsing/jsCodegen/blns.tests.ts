@@ -23,14 +23,14 @@ describe('Big List of Naughty Strings tests for JSCodegen', () => {
 					null,
 					null,
 					ReturnType.STRING,
-					{}
+					{},
 				);
 				const jsCodegenRes = evaluateXPathWithJsCodegen(
 					literalQuery,
 					documentNode,
 					null,
 					ReturnType.STRING,
-					{}
+					{},
 				);
 
 				chai.assert.equal(jsCodegenRes, normalRes);
@@ -41,10 +41,10 @@ describe('Big List of Naughty Strings tests for JSCodegen', () => {
 						documentNode,
 						null,
 						ReturnType.STRING,
-						{}
+						{},
 					);
 					chai.assert.fail(
-						`BLNS literal ${literalQuery} errored during evaluation but not during JS Codegen.`
+						`BLNS literal ${literalQuery} errored during evaluation but not during JS Codegen.`,
 					);
 				} catch (errJs) {
 					// Only comparing the string representations, since the stack traces will differ.

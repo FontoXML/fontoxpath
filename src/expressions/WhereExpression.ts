@@ -12,7 +12,7 @@ class WhereExpression extends FlworExpression {
 
 	constructor(
 		testExpression: Expression,
-		returnExpression: PossiblyUpdatingExpression | FlworExpression
+		returnExpression: PossiblyUpdatingExpression | FlworExpression,
 	) {
 		const specificity = new Specificity({});
 		super(
@@ -24,7 +24,7 @@ class WhereExpression extends FlworExpression {
 				resultOrder: RESULT_ORDERINGS.UNSORTED,
 				subtree: false,
 			},
-			returnExpression
+			returnExpression,
 		);
 
 		this._testExpression = testExpression;
@@ -34,7 +34,7 @@ class WhereExpression extends FlworExpression {
 		_dynamicContext: DynamicContext,
 		dynamicContextIterator: IIterator<DynamicContext>,
 		executionParameters: ExecutionParameters,
-		createReturnSequence: (dynamicContextIterator: IIterator<DynamicContext>) => ISequence
+		createReturnSequence: (dynamicContextIterator: IIterator<DynamicContext>) => ISequence,
 	): ISequence {
 		let currentDynamicContext: DynamicContext = null;
 		let testExpressionResult: ISequence = null;
@@ -43,7 +43,7 @@ class WhereExpression extends FlworExpression {
 				while (true) {
 					if (!testExpressionResult) {
 						const currentDynamicContextValue = dynamicContextIterator.next(
-							IterationHint.NONE
+							IterationHint.NONE,
 						);
 						if (currentDynamicContextValue.done) {
 							return DONE_TOKEN;
@@ -51,7 +51,7 @@ class WhereExpression extends FlworExpression {
 						currentDynamicContext = currentDynamicContextValue.value;
 						testExpressionResult = this._testExpression.evaluateMaybeStatically(
 							currentDynamicContext,
-							executionParameters
+							executionParameters,
 						);
 					}
 

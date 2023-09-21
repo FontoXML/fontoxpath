@@ -15,9 +15,9 @@ describe('createExpressionFromXPath', () => {
 		chai.assert.deepEqual(
 			evaluateXPathToNodes(
 				'self::hovercraft[eel and not(*[not(self::eel)])]',
-				documentNode.documentElement
+				documentNode.documentElement,
 			),
-			[documentNode.documentElement]
+			[documentNode.documentElement],
 		);
 	});
 });

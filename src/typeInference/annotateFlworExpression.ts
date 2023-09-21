@@ -14,7 +14,7 @@ import { AnnotationContext } from './AnnotationContext';
 export function annotateFlworExpression(
 	ast: IAST,
 	annotationContext: AnnotationContext,
-	annotate: (ast: IAST, annotationContext: AnnotationContext) => SequenceType
+	annotate: (ast: IAST, annotationContext: AnnotationContext) => SequenceType,
 ): SequenceType | undefined {
 	let hasFor = false;
 	for (let i = 1; i < ast.length; i++) {
@@ -47,7 +47,7 @@ export function annotateFlworExpression(
 				let retType: SequenceType = annotateReturnType(
 					ast[i] as IAST,
 					annotationContext,
-					annotate
+					annotate,
 				);
 
 				if (!retType) {
@@ -96,7 +96,7 @@ export function annotateFlworExpression(
 function annotateLetClause(
 	ast: IAST,
 	annotationContext: AnnotationContext,
-	annotate: (ast: IAST, annotationContext: AnnotationContext) => SequenceType
+	annotate: (ast: IAST, annotationContext: AnnotationContext) => SequenceType,
 ): void {
 	const pathToVarName: string[] = ['letClauseItem', 'typedVariableBinding', 'varName'];
 	const varNameNode: IAST = astHelper.followPath(ast, pathToVarName);
@@ -120,7 +120,7 @@ function annotateLetClause(
 function annotateForClause(
 	ast: IAST,
 	annotationContext: AnnotationContext,
-	annotate: (ast: IAST, annotationContext: AnnotationContext) => SequenceType
+	annotate: (ast: IAST, annotationContext: AnnotationContext) => SequenceType,
 ): void {
 	const pathToTypedVariableBinding = ['forClauseItem', 'typedVariableBinding', 'varName'];
 	const pathToForExpr = ['forClauseItem', 'forExpr', 'sequenceExpr'];
@@ -162,7 +162,7 @@ function annotateForClause(
 function annotateWhereClause(
 	ast: IAST,
 	annotationContext: AnnotationContext,
-	annotate: (ast: IAST, annotationContext: AnnotationContext) => SequenceType
+	annotate: (ast: IAST, annotationContext: AnnotationContext) => SequenceType,
 ): SequenceType {
 	const seqType = {
 		type: ValueType.XSBOOLEAN,
@@ -191,14 +191,14 @@ export function filterOnUniqueObjects(array: SequenceType[]): SequenceType[] {
 	return array.filter(
 		(current, index, arrayCopy) =>
 			arrayCopy.findIndex(
-				(element) => element.type === current.type && element.mult === current.mult
-			) === index
+				(element) => element.type === current.type && element.mult === current.mult,
+			) === index,
 	);
 }
 function annotateReturnType(
 	ast: IAST,
 	context: AnnotationContext,
-	annotate: (ast: IAST, context: AnnotationContext) => SequenceType
+	annotate: (ast: IAST, context: AnnotationContext) => SequenceType,
 ): SequenceType {
 	const pathFollowed: IAST = astHelper.followPath(ast, ['*']);
 	const returnType = annotate(pathFollowed, context);

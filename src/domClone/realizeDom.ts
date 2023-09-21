@@ -28,13 +28,13 @@ function createNewNode(pointer: NodePointer, executionParameters: ExecutionParam
 				const newAttributePointer = pointer as AttributeNodePointer;
 				const newAttributeNode = nodesFactory.createAttributeNS(
 					domFacade.getNamespaceURI(newAttributePointer),
-					domFacade.getNodeName(newAttributePointer)
+					domFacade.getNodeName(newAttributePointer),
 				);
 				newAttributeNode.value = domFacade.getDataFromPointer(newAttributePointer);
 				return newAttributeNode;
 			case NODE_TYPES.COMMENT_NODE:
 				return nodesFactory.createComment(
-					domFacade.getDataFromPointer(pointer as CommentNodePointer)
+					domFacade.getDataFromPointer(pointer as CommentNodePointer),
 				);
 			case NODE_TYPES.ELEMENT_NODE:
 				const elementNodePointer = pointer as ElementNodePointer;
@@ -43,7 +43,7 @@ function createNewNode(pointer: NodePointer, executionParameters: ExecutionParam
 				const localName = domFacade.getLocalName(elementNodePointer);
 				const element = nodesFactory.createElementNS(
 					namespaceURI,
-					prefix ? prefix + ':' + localName : localName
+					prefix ? prefix + ':' + localName : localName,
 				);
 				domFacade.getChildNodePointers(elementNodePointer).forEach((childPointer) => {
 					const newChildNode = createNewNode(childPointer, executionParameters);
@@ -56,7 +56,7 @@ function createNewNode(pointer: NodePointer, executionParameters: ExecutionParam
 							element,
 							domFacade.getNamespaceURI(attributePointer),
 							domFacade.getNodeName(attributePointer),
-							domFacade.getDataFromPointer(attributePointer)
+							domFacade.getDataFromPointer(attributePointer),
 						);
 					});
 				(element as any).normalize();
@@ -65,11 +65,11 @@ function createNewNode(pointer: NodePointer, executionParameters: ExecutionParam
 				const pIPointer = pointer as ProcessingInstructionNodePointer;
 				return nodesFactory.createProcessingInstruction(
 					domFacade.getTarget(pIPointer),
-					domFacade.getDataFromPointer(pIPointer)
+					domFacade.getDataFromPointer(pIPointer),
 				);
 			case NODE_TYPES.TEXT_NODE:
 				return nodesFactory.createTextNode(
-					domFacade.getDataFromPointer(pointer as TextNodePointer)
+					domFacade.getDataFromPointer(pointer as TextNodePointer),
 				);
 		}
 	} else {
@@ -81,11 +81,11 @@ function createNewNode(pointer: NodePointer, executionParameters: ExecutionParam
 function getRootPointer(
 	pointer: NodePointer,
 	pathToNodeFromRoot: (number | string)[],
-	domFacade: DomFacade
+	domFacade: DomFacade,
 ): NodePointer {
 	let rootPointer = pointer;
 	let parentPointer = domFacade.getParentNodePointer(
-		rootPointer as ChildNodePointer | AttributeNodePointer
+		rootPointer as ChildNodePointer | AttributeNodePointer,
 	);
 	while (parentPointer !== null) {
 		if (domFacade.getNodeType(rootPointer) === NODE_TYPES.ATTRIBUTE_NODE) {
@@ -94,12 +94,12 @@ function getRootPointer(
 		} else {
 			const children = domFacade.getChildNodePointers(parentPointer);
 			pathToNodeFromRoot.push(
-				children.findIndex((child) => arePointersEqual(child, rootPointer))
+				children.findIndex((child) => arePointersEqual(child, rootPointer)),
 			);
 		}
 		rootPointer = parentPointer;
 		parentPointer = domFacade.getParentNodePointer(
-			rootPointer as ChildNodePointer | AttributeNodePointer
+			rootPointer as ChildNodePointer | AttributeNodePointer,
 		);
 	}
 	return rootPointer;
@@ -108,7 +108,7 @@ function getRootPointer(
 function getNodeFromRoot(
 	rootPointer: NodePointer,
 	pathToNodeFromRoot: (number | string)[],
-	domFacade: DomFacade
+	domFacade: DomFacade,
 ): Node {
 	let child = rootPointer;
 	while (pathToNodeFromRoot.length > 0) {
@@ -128,7 +128,7 @@ function getNodeFromRoot(
 export default function realizeDom(
 	pointer: NodePointer,
 	executionParameters: ExecutionParameters,
-	forceCreateClone: boolean
+	forceCreateClone: boolean,
 ): Node {
 	const node = pointer.node;
 	if (!(isTinyNode(node) || forceCreateClone || pointer.graftAncestor)) {

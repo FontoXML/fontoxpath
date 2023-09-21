@@ -43,7 +43,7 @@ export type EvaluateXPath = {
 		domFacade?: IDomFacade | null,
 		variables?: { [s: string]: any } | null,
 		returnType?: TReturnType,
-		options?: Options | null
+		options?: Options | null,
 	): IReturnTypes<TNode>[TReturnType];
 
 	/**
@@ -152,12 +152,12 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 		[s: string]: TypedExternalValue | UntypedExternalValue;
 	} | null,
 	returnType?: TReturnType,
-	options?: Options | null
+	options?: Options | null,
 ): IReturnTypes<TNode>[TReturnType] => {
 	returnType = returnType || (ReturnType.ANY as any);
 	if (!selector || (typeof selector !== 'string' && !('nodeType' in selector))) {
 		throw new TypeError(
-			"Failed to execute 'evaluateXPath': xpathExpression must be a string or an element depicting an XQueryX DOM tree."
+			"Failed to execute 'evaluateXPath': xpathExpression must be a string or an element depicting an XQueryX DOM tree.",
 		);
 	}
 
@@ -180,7 +180,7 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 					options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE,
 				debug: !!options['debug'],
 				disableCache: !!options['disableCache'],
-			}
+			},
 		);
 		dynamicContext = context.dynamicContext;
 		executionParameters = context.executionParameters;
@@ -191,7 +191,7 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 
 	if (expression.isUpdating) {
 		throw new Error(
-			'XUST0001: Updating expressions should be evaluated as updating expressions'
+			'XUST0001: Updating expressions should be evaluated as updating expressions',
 		);
 	}
 
@@ -220,7 +220,7 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 			selector,
 			rawResults,
 			returnType,
-			executionParameters
+			executionParameters,
 		);
 		markXPathEnd(selector);
 		return toReturn;

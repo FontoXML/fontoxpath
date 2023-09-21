@@ -6,7 +6,7 @@ const arrayGet: FunctionDefinitionType = (
 	_executionParameters,
 	_staticContext,
 	arraySequence,
-	positionSequence
+	positionSequence,
 ) => {
 	return positionSequence.mapAll(([position]) =>
 		arraySequence.mapAll(([array]) => {
@@ -15,7 +15,7 @@ const arrayGet: FunctionDefinitionType = (
 				throw new Error('FOAY0001: array position out of bounds.');
 			}
 			return (array as ArrayValue).members[positionValue - 1]();
-		})
+		}),
 	);
 };
 

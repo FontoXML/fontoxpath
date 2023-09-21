@@ -39,7 +39,7 @@ class OrderByExpression extends FlworExpression {
 			isAscending: boolean;
 			isEmptyLeast: boolean;
 		}[],
-		returnExpression: PossiblyUpdatingExpression
+		returnExpression: PossiblyUpdatingExpression,
 	) {
 		const specificity = new Specificity({});
 		super(
@@ -51,7 +51,7 @@ class OrderByExpression extends FlworExpression {
 				resultOrder: RESULT_ORDERINGS.UNSORTED,
 				subtree: false,
 			},
-			returnExpression
+			returnExpression,
 		);
 
 		this._orderSpecs = orderSpecs;
@@ -61,7 +61,7 @@ class OrderByExpression extends FlworExpression {
 		dynamicContext: DynamicContext,
 		dynamicContextIterator: IIterator<DynamicContext>,
 		executionParameters: ExecutionParameters,
-		createReturnSequence: (dynamicContextIterator: IIterator<DynamicContext>) => ISequence
+		createReturnSequence: (dynamicContextIterator: IIterator<DynamicContext>) => ISequence,
 	): ISequence {
 		// More than one order spec is not supported for now.
 		if (this._orderSpecs[1]) {
@@ -93,14 +93,14 @@ class OrderByExpression extends FlworExpression {
 						(dynamicContextForEvaluation) =>
 							orderSpec.expression.evaluate(
 								dynamicContextForEvaluation,
-								executionParameters
-							)
+								executionParameters,
+							),
 					);
 
 					// Atomize
 					// Atomization is applied to the result of the expression in each orderspec. If the result of atomization is neither a single atomic value nor an empty sequence, a type error is raised [err:XPTY0004].
 					const atomizedSequences: ISequence[] = evaluatedOrderSpecs.map(
-						(evaluatedOrderSpec) => atomize(evaluatedOrderSpec, executionParameters)
+						(evaluatedOrderSpec) => atomize(evaluatedOrderSpec, executionParameters),
 					);
 					if (atomizedSequences.find((val) => !val.isEmpty() && !val.isSingleton())) {
 						throw errXPTY0004('Order by only accepts empty or singleton sequences');

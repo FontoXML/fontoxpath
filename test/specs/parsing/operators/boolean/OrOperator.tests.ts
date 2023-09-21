@@ -23,16 +23,16 @@ describe('or operator', () => {
 		chai.assert.isTrue(
 			evaluateXPathToBoolean(
 				'self::someElement or self::processing-instruction()',
-				documentNode.documentElement.firstChild
-			)
+				documentNode.documentElement.firstChild,
+			),
 		);
 	});
 
 	it('can parse a concatenation of ors', () =>
 		chai.assert.isTrue(
 			evaluateXPathToBoolean(
-				'false() or false() or false() or (: Note: the last true() will make te result true:) true()'
-			)
+				'false() or false() or false() or (: Note: the last true() will make te result true:) true()',
+			),
 		));
 
 	it('allows not in combination with or', () => {
@@ -40,8 +40,8 @@ describe('or operator', () => {
 		chai.assert.isTrue(
 			evaluateXPathToBoolean(
 				'someChildElement or not(someOtherChild)',
-				documentNode.documentElement
-			)
+				documentNode.documentElement,
+			),
 		);
 	});
 });

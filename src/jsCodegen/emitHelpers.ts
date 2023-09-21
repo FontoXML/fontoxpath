@@ -13,7 +13,7 @@ import {
 
 export function mapPartialCompilationResult(
 	expr: PartialCompilationResult,
-	cb: (expr: PartiallyCompiledAstAccepted) => PartialCompilationResult
+	cb: (expr: PartiallyCompiledAstAccepted) => PartialCompilationResult,
 ): PartialCompilationResult {
 	if (!expr.isAstAccepted) {
 		return expr;
@@ -24,7 +24,7 @@ export function mapPartialCompilationResult(
 
 export function mapPartialCompilationResultAndBucket(
 	expr: PartialCompilationResult,
-	cb: (expr: PartiallyCompiledAstAccepted) => [PartialCompilationResult, Bucket]
+	cb: (expr: PartiallyCompiledAstAccepted) => [PartialCompilationResult, Bucket],
 ): [PartialCompilationResult, Bucket] {
 	if (!expr.isAstAccepted) {
 		return [expr, null];
@@ -36,7 +36,7 @@ export function mapPartialCompilationResultAndBucket(
 export function emitConversionToValue(
 	expr: PartialCompilationResult,
 	contextItemExpr: PartialCompilationResult,
-	context: CodeGenContext
+	context: CodeGenContext,
 ): PartialCompilationResult {
 	return mapPartialCompilationResult(expr, (expr) => {
 		switch (expr.generatedCodeType.type) {
@@ -57,15 +57,15 @@ export function emitConversionToValue(
 							return done ? null : value;
 						})()`,
 									{ type: GeneratedCodeBaseType.Value },
-									[...expr.variables, ...contextItemExpr.variables]
-								)
-						)
+									[...expr.variables, ...contextItemExpr.variables],
+								),
+						),
 				);
 			}
 
 			default:
 				throw new Error(
-					`invalid generated code type to convert to value: ${expr.generatedCodeType.type}`
+					`invalid generated code type to convert to value: ${expr.generatedCodeType.type}`,
 				);
 		}
 	});
@@ -75,7 +75,7 @@ export function emitEffectiveBooleanValue(
 	expr: PartialCompilationResult,
 	astType: SequenceType | null,
 	contextItemExpr: PartialCompilationResult,
-	context: CodeGenContext
+	context: CodeGenContext,
 ): PartialCompilationResult {
 	// TODO: a sequence of more than one non-node should return an error, but we don't generate such
 	// sequences yet
@@ -96,7 +96,7 @@ export function emitEffectiveBooleanValue(
 export function emitAtomizedValue(
 	expr: PartialCompilationResult,
 	astType: SequenceType | null,
-	context: CodeGenContext
+	context: CodeGenContext,
 ): PartialCompilationResult {
 	if (!astType) {
 		return rejectAst('Can not atomize value if type was not annotated');
@@ -114,8 +114,8 @@ export function emitAtomizedValue(
 			acceptAst(
 				`(${expr.code} ? domFacade.getData(${expr.code}) : null)`,
 				{ type: GeneratedCodeBaseType.Value },
-				expr.variables
-			)
+				expr.variables,
+			),
 		);
 	}
 	return rejectAst('Atomization only implemented for string and attribute');
@@ -125,7 +125,7 @@ export function emitConversionToString(
 	expr: PartialCompilationResult,
 	astType: SequenceType,
 	contextItemExpr: PartialCompilationResult,
-	context: CodeGenContext
+	context: CodeGenContext,
 ): PartialCompilationResult {
 	const value = emitConversionToValue(expr, contextItemExpr, context);
 	const atomized = emitAtomizedValue(value, astType, context);
@@ -136,15 +136,15 @@ export function emitConversionToString(
 		acceptAst(
 			`${atomized.code} ?? ''`,
 			{ type: GeneratedCodeBaseType.Value },
-			atomized.variables
-		)
+			atomized.variables,
+		),
 	);
 }
 
 function emitNodeCheck(
 	expr: PartialCompilationResult,
 	astType: SequenceType | null,
-	context: CodeGenContext
+	context: CodeGenContext,
 ): PartialCompilationResult {
 	return mapPartialCompilationResult(context.getIdentifierFor(expr, 'node'), (expr) => {
 		// Accept generators as-is (these currently always yield nodes)
@@ -165,7 +165,7 @@ function emitNodeCheck(
 				return ${expr.code};
 			})()`,
 			{ type: GeneratedCodeBaseType.Value },
-			expr.variables
+			expr.variables,
 		);
 	});
 }
@@ -174,7 +174,7 @@ export function emitConversionToFirstNode(
 	expr: PartialCompilationResult,
 	astType: SequenceType | null,
 	contextItemExpr: PartialCompilationResult,
-	context: CodeGenContext
+	context: CodeGenContext,
 ): PartialCompilationResult {
 	const exprAsValue = emitConversionToValue(expr, contextItemExpr, context);
 	return emitNodeCheck(exprAsValue, astType, context);
@@ -184,7 +184,7 @@ export function emitConversionToNodes(
 	expr: PartialCompilationResult,
 	astType: SequenceType,
 	contextItemExpr: PartialCompilationResult,
-	context: CodeGenContext
+	context: CodeGenContext,
 ): PartialCompilationResult {
 	return mapPartialCompilationResult(expr, (expr) => {
 		switch (expr.generatedCodeType.type) {
@@ -198,9 +198,9 @@ export function emitConversionToNodes(
 								acceptAst(
 									`Array.from(${expr.code}(${contextItemExpr.code}))`,
 									{ type: GeneratedCodeBaseType.Value },
-									[...expr.variables, ...contextItemExpr.variables]
-								)
-						)
+									[...expr.variables, ...contextItemExpr.variables],
+								),
+						),
 				);
 			case GeneratedCodeBaseType.Value:
 				return mapPartialCompilationResult(
@@ -209,8 +209,8 @@ export function emitConversionToNodes(
 						acceptAst(
 							`(${expr.code} === null ? [] : [${expr.code}])`,
 							{ type: GeneratedCodeBaseType.Value },
-							expr.variables
-						)
+							expr.variables,
+						),
 				);
 			default:
 				return rejectAst('Unsupported code type to evaluate to nodes');
@@ -220,7 +220,7 @@ export function emitConversionToNodes(
 
 export function emitAnd(
 	condition1: PartialCompilationResult,
-	condition2: PartialCompilationResult
+	condition2: PartialCompilationResult,
 ): PartialCompilationResult {
 	return mapPartialCompilationResult(condition1, (condition1) =>
 		mapPartialCompilationResult(condition2, (condition2) => {
@@ -233,8 +233,8 @@ export function emitAnd(
 			return acceptAst(
 				`${condition1.code} && ${condition2.code}`,
 				{ type: GeneratedCodeBaseType.Value },
-				[...condition1.variables, ...condition2.variables]
+				[...condition1.variables, ...condition2.variables],
 			);
-		})
+		}),
 	);
 }

@@ -52,7 +52,7 @@ const allTypes = [
 export function generateBinaryOperatorFunction(
 	operator: string,
 	typeA: ValueType,
-	typeB: ValueType
+	typeB: ValueType,
 ): BinaryEvaluationFunction {
 	let castFunctionForValueA: any = null;
 	let castFunctionForValueB: any = null;
@@ -121,7 +121,7 @@ export function generateBinaryOperatorFunction(
 export function generateBinaryOperatorType(
 	operator: string,
 	typeA: ValueType,
-	typeB: ValueType
+	typeB: ValueType,
 ): ValueType {
 	const GENERIC_NUMERIC_VALUE_TYPES = [
 		ValueType.XSNUMERIC,
@@ -196,7 +196,7 @@ export function generateBinaryOperatorType(
  */
 function iDivOpChecksFunction(
 	applyCastFunctions: (a: AtomicValue, b: AtomicValue) => any,
-	fun: (a: any, b: any) => any
+	fun: (a: any, b: any) => any,
 ): [(a: any, b: any) => AtomicValue, ValueType] {
 	return [
 		(a, b) => {
@@ -210,7 +210,7 @@ function iDivOpChecksFunction(
 				!Number.isFinite(castA.value)
 			) {
 				throw new Error(
-					'FOAR0002: One of the operands of idiv is NaN or the first operand is (-)INF'
+					'FOAR0002: One of the operands of idiv is NaN or the first operand is (-)INF',
 				);
 			}
 			if (Number.isFinite(castA.value) && !Number.isFinite(castB.value)) {
@@ -238,7 +238,7 @@ const operatorsByTypingKey: Record<string, BinaryEvaluationFunction> = Object.cr
 export function getBinaryPrefabOperator(
 	leftType: ValueType,
 	rightType: ValueType,
-	operator: string
+	operator: string,
 ): BinaryEvaluationFunction {
 	const typingKey = `${leftType}~${rightType}~${operator}`;
 
@@ -247,7 +247,7 @@ export function getBinaryPrefabOperator(
 		prefabOperator = operatorsByTypingKey[typingKey] = generateBinaryOperatorFunction(
 			operator,
 			leftType,
-			rightType
+			rightType,
 		);
 	}
 
@@ -273,7 +273,7 @@ class BinaryOperator extends Expression {
 		firstValueExpr: Expression,
 		secondValueExpr: Expression,
 		type: SequenceType,
-		evaluateFunction: BinaryEvaluationFunction
+		evaluateFunction: BinaryEvaluationFunction,
 	) {
 		super(
 			firstValueExpr.specificity.add(secondValueExpr.specificity),
@@ -282,7 +282,7 @@ class BinaryOperator extends Expression {
 				canBeStaticallyEvaluated: false,
 			},
 			false,
-			type
+			type,
 		);
 		this._firstValueExpr = firstValueExpr;
 		this._secondValueExpr = secondValueExpr;
@@ -302,7 +302,7 @@ class BinaryOperator extends Expression {
 	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
 		const firstValueSequence = atomize(
 			this._firstValueExpr.evaluateMaybeStatically(dynamicContext, executionParameters),
-			executionParameters
+			executionParameters,
 		);
 
 		return firstValueSequence.mapAll((firstValues) => {
@@ -313,7 +313,7 @@ class BinaryOperator extends Expression {
 			}
 			const secondValueSequence = atomize(
 				this._secondValueExpr.evaluateMaybeStatically(dynamicContext, executionParameters),
-				executionParameters
+				executionParameters,
 			);
 			return secondValueSequence.mapAll((secondValues) => {
 				if (secondValues.length === 0) {
@@ -324,7 +324,7 @@ class BinaryOperator extends Expression {
 					throw new Error(
 						'XPTY0004: the operands of the "' +
 							this._operator +
-							'" operator should be empty or singleton.'
+							'" operator should be empty or singleton.',
 					);
 				}
 
@@ -334,21 +334,21 @@ class BinaryOperator extends Expression {
 				// We could infer all the necessary type information to do an early return
 				if (this._evaluateFunction && this.type) {
 					return sequenceFactory.singleton(
-						this._evaluateFunction(firstValue, secondValue)
+						this._evaluateFunction(firstValue, secondValue),
 					);
 				}
 
 				const prefabOperator = getBinaryPrefabOperator(
 					firstValue.type,
 					secondValue.type,
-					this._operator
+					this._operator,
 				);
 
 				if (!prefabOperator) {
 					throw new Error(
 						`XPTY0004: ${this._operator} not available for types ${valueTypeToString(
-							firstValue.type
-						)} and ${valueTypeToString(secondValue.type)}`
+							firstValue.type,
+						)} and ${valueTypeToString(secondValue.type)}`,
 					);
 				}
 

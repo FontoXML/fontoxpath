@@ -14,7 +14,7 @@ const fnTrace: FunctionDefinitionType = (
 	executionParameters,
 	_staticContext,
 	arg,
-	label
+	label,
 ) => {
 	return arg.mapAll((allItems) => {
 		let newMessage = '';
@@ -26,8 +26,8 @@ const fnTrace: FunctionDefinitionType = (
 							realizeDom(
 								value.value as NodePointer,
 								executionParameters,
-								false
-							) as Node
+								false,
+							) as Node,
 					  )
 					: atomize(sequenceFactory.singleton(value), executionParameters)
 							.map((atomizedValue) => castToType(atomizedValue, ValueType.XSSTRING))

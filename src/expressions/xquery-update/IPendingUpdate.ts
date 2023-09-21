@@ -24,6 +24,6 @@ export abstract class IPendingUpdate {
 	}
 
 	public abstract toTransferable(
-		executionParameters: ExecutionParameters
+		executionParameters: ExecutionParameters,
 	): TransferablePendingUpdate;
 }

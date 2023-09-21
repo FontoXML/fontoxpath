@@ -32,7 +32,7 @@ export class CodeGenContext {
 
 	public getIdentifierFor(
 		expr: PartialCompilationResult,
-		prefix: string
+		prefix: string,
 	): PartialCompilationResult {
 		return mapPartialCompilationResult(expr, (expr) => {
 			let identifierExpr = this._identifierExprByExpr.get(expr);

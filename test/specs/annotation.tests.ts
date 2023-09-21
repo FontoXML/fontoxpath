@@ -23,7 +23,7 @@ function assertValueType(
 	expression: string,
 	expectedType: ValueType,
 	context: AnnotationContext,
-	followSpecificPath?: string[]
+	followSpecificPath?: string[],
 ) {
 	const ast = parseExpression(expression, {});
 	if (context) annotateAst(ast, context);
@@ -31,7 +31,7 @@ function assertValueType(
 
 	const upperNode = astHelper.followPath(
 		ast,
-		followSpecificPath ? followSpecificPath : ['mainModule', 'queryBody', '*']
+		followSpecificPath ? followSpecificPath : ['mainModule', 'queryBody', '*'],
 	);
 	const resultType = astHelper.getAttribute(upperNode, 'type');
 
@@ -40,7 +40,7 @@ function assertValueType(
 		expectedType,
 		`Expected ${
 			resultType ? sequenceTypeToString(resultType) : '"untyped type"'
-		} to equal ${valueTypeToString(expectedType)}`
+		} to equal ${valueTypeToString(expectedType)}`,
 	);
 }
 
@@ -299,7 +299,7 @@ describe('Annotating Instance of', () => {
 		assertValueType(
 			'array { true(), false()} instance of xs:array*',
 			ValueType.XSBOOLEAN,
-			undefined
+			undefined,
 		);
 	});
 });
@@ -337,28 +337,28 @@ describe('Annotating typeswitch expression', () => {
 		assertValueType(
 			'typeswitch(1) case xs:integer return 2 case xs:string return 42.0 default return a',
 			ValueType.XSINTEGER,
-			undefined
+			undefined,
 		);
 	});
 	it('not first case matches', () => {
 		assertValueType(
 			'typeswitch(1) case xs:string return 42.0 case xs:integer return 2 default return a',
 			ValueType.XSINTEGER,
-			undefined
+			undefined,
 		);
 	});
 	it('typeswitch with an OR in the condition', () => {
 		assertValueType(
 			'typeswitch(1) case xs:integer | xs:string return 2 default return 42.0',
 			ValueType.XSINTEGER,
-			undefined
+			undefined,
 		);
 	});
 	it('default case is returned', () => {
 		assertValueType(
 			'typeswitch(1) case xs:string return 42.0 default return 2',
 			ValueType.XSINTEGER,
-			undefined
+			undefined,
 		);
 	});
 });
@@ -400,7 +400,7 @@ describe('Annotating flwor Expressions', () => {
 		assertValueType(
 			"let $s := 'Hello' return let $v := 3 return $s || $v",
 			ValueType.XSSTRING,
-			undefined
+			undefined,
 		);
 	});
 	it('annotate simple for expression', () => {
@@ -411,7 +411,7 @@ describe('Annotating flwor Expressions', () => {
 		assertValueType(
 			'for $x in (3, 4, 5) for $y in (2, 5) return $x + $y',
 			ValueType.XSINTEGER,
-			undefined
+			undefined,
 		);
 	});
 
@@ -419,7 +419,7 @@ describe('Annotating flwor Expressions', () => {
 		assertValueType(
 			'for $x in (3, 25, 5) let $x := "stuff" || $x return $x',
 			ValueType.XSSTRING,
-			undefined
+			undefined,
 		);
 	});
 });

@@ -18,26 +18,26 @@ describe('node tests', () => {
 		const comment = documentNode.documentElement.lastChild;
 		chai.assert.sameOrderedMembers(
 			evaluateXPathWithJsCodegen('/xml/node()', documentNode, null, ReturnType.NODES),
-			[textNode, comment]
+			[textNode, comment],
 		);
 	});
 
 	it('selects text nodes', () => {
 		chai.assert.isTrue(
-			evaluateXPathWithJsCodegen('/xml/text()', documentNode, null, ReturnType.BOOLEAN)
+			evaluateXPathWithJsCodegen('/xml/text()', documentNode, null, ReturnType.BOOLEAN),
 		);
 		// text() should also match CDATA sections
 		const cdata = documentNode.createCDATASection('hello');
 		documentNode.documentElement.replaceChildren(cdata);
 		chai.assert.equal(
 			evaluateXPathWithJsCodegen('/xml/text()', documentNode, null, ReturnType.FIRST_NODE),
-			cdata
+			cdata,
 		);
 	});
 
 	it('does not select non-text nodes', () => {
 		chai.assert.isFalse(
-			evaluateXPathWithJsCodegen('/text()', documentNode, null, ReturnType.BOOLEAN)
+			evaluateXPathWithJsCodegen('/text()', documentNode, null, ReturnType.BOOLEAN),
 		);
 	});
 
@@ -49,9 +49,9 @@ describe('node tests', () => {
 				'self::Q{http://fontoxml.com/ns/}someElement',
 				element,
 				null,
-				ReturnType.FIRST_NODE
+				ReturnType.FIRST_NODE,
 			),
-			element
+			element,
 		);
 	});
 
@@ -63,9 +63,9 @@ describe('node tests', () => {
 				'self::Q{}someElement',
 				element,
 				null,
-				ReturnType.FIRST_NODE
+				ReturnType.FIRST_NODE,
 			),
-			element
+			element,
 		);
 	});
 
@@ -75,7 +75,7 @@ describe('node tests', () => {
 		element.setAttribute('attr', 'value');
 		chai.assert.equal(
 			evaluateXPathWithJsCodegen('@Q{}attr', element, null, ReturnType.FIRST_NODE),
-			element.getAttributeNode('attr')
+			element.getAttributeNode('attr'),
 		);
 	});
 
@@ -96,9 +96,9 @@ describe('node tests', () => {
 						}
 						return '';
 					},
-				}
+				},
 			),
-			element
+			element,
 		);
 	});
 
@@ -115,14 +115,14 @@ describe('node tests', () => {
 					return '';
 				},
 			}),
-			element
+			element,
 		);
 	});
 
 	it('compiles the * prefix', () => {
 		chai.assert.equal(
 			evaluateXPathWithJsCodegen('/*:xml', documentNode, null, ReturnType.FIRST_NODE),
-			documentNode.firstChild
+			documentNode.firstChild,
 		);
 	});
 
@@ -136,8 +136,8 @@ describe('node tests', () => {
 				'self::Q{}row[parent::Q{}thead]',
 				row,
 				null,
-				ReturnType.BOOLEAN
-			)
+				ReturnType.BOOLEAN,
+			),
 		);
 	});
 });

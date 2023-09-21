@@ -18,9 +18,9 @@ describe('string tests', () => {
 				documentNode,
 				null,
 				ReturnType.BOOLEAN,
-				{}
+				{},
 			),
-			true
+			true,
 		);
 	});
 
@@ -31,16 +31,16 @@ describe('string tests', () => {
 				documentNode,
 				null,
 				ReturnType.BOOLEAN,
-				{}
+				{},
 			),
-			false
+			false,
 		);
 	});
 
 	it('test simple valueCompare expression empty strings', () => {
 		chai.assert.equal(
 			evaluateXPathWithJsCodegen('"" eq ""', documentNode, null, ReturnType.BOOLEAN, {}),
-			true
+			true,
 		);
 	});
 
@@ -51,9 +51,9 @@ describe('string tests', () => {
 				documentNode,
 				null,
 				ReturnType.BOOLEAN,
-				{}
+				{},
 			),
-			true
+			true,
 		);
 	});
 
@@ -64,9 +64,9 @@ describe('string tests', () => {
 				documentNode,
 				null,
 				ReturnType.BOOLEAN,
-				{}
+				{},
 			),
-			true
+			true,
 		);
 	});
 
@@ -75,7 +75,7 @@ describe('string tests', () => {
 			evaluateXPathWithJsCodegen('"&#45;" = "-"', documentNode, null, ReturnType.BOOLEAN, {
 				language: Language.XQUERY_3_1_LANGUAGE,
 			}),
-			true
+			true,
 		);
 	});
 });
@@ -94,9 +94,9 @@ describe('node tests', () => {
 				documentNode,
 				null,
 				ReturnType.BOOLEAN,
-				{}
+				{},
 			),
-			true
+			true,
 		);
 	});
 
@@ -107,9 +107,9 @@ describe('node tests', () => {
 				documentNode,
 				null,
 				ReturnType.BOOLEAN,
-				{}
+				{},
 			),
-			false
+			false,
 		);
 	});
 
@@ -120,9 +120,9 @@ describe('node tests', () => {
 				documentNode,
 				null,
 				ReturnType.BOOLEAN,
-				{}
+				{},
 			),
-			true
+			true,
 		);
 	});
 
@@ -133,22 +133,22 @@ describe('node tests', () => {
 				documentNode,
 				null,
 				ReturnType.BOOLEAN,
-				{}
+				{},
 			),
-			true
+			true,
 		);
 	});
 
 	it('rejects compares with the lhs being something uncompilable', () => {
 		// Change this test when we do have full function support
 		chai.assert.isFalse(
-			compileXPathToJavaScript('count((1,2,3)) = 3', ReturnType.BOOLEAN, {}).isAstAccepted
+			compileXPathToJavaScript('count((1,2,3)) = 3', ReturnType.BOOLEAN, {}).isAstAccepted,
 		);
 	});
 	it('rejects compares with the rhs being something uncompilable', () => {
 		// Change this test when we do have full function support
 		chai.assert.isFalse(
-			compileXPathToJavaScript('3 = count((1,2,3))', ReturnType.BOOLEAN, {}).isAstAccepted
+			compileXPathToJavaScript('3 = count((1,2,3))', ReturnType.BOOLEAN, {}).isAstAccepted,
 		);
 	});
 
@@ -159,9 +159,9 @@ describe('node tests', () => {
 				documentNode,
 				null,
 				ReturnType.BOOLEAN,
-				{}
+				{},
 			),
-			true
+			true,
 		);
 	});
 });

@@ -56,7 +56,7 @@ describe('evaluateXPath', () => {
 		it('Returns the value of attribute nodes', () => {
 			jsonMlMapper.parse(
 				['someElement', { someAttribute: 'someValue' }, 'Some data'],
-				documentNode
+				documentNode,
 			);
 			chai.assert.equal(evaluateXPath('//@*', documentNode, domFacade), 'someValue');
 		});
@@ -70,9 +70,9 @@ describe('evaluateXPath', () => {
 						domFacade,
 						null,
 						null,
-						{ language: evaluateXPath.XQUERY_UPDATE_3_1_LANGUAGE }
+						{ language: evaluateXPath.XQUERY_UPDATE_3_1_LANGUAGE },
 					),
-				'XUST0001'
+				'XUST0001',
 			));
 	});
 
@@ -84,9 +84,9 @@ describe('evaluateXPath', () => {
 				domFacade,
 				null,
 				evaluateXPath.FIRST_NODE_TYPE,
-				{ language: evaluateXPath.XQUERY_UPDATE_3_1_LANGUAGE }
+				{ language: evaluateXPath.XQUERY_UPDATE_3_1_LANGUAGE },
 			).outerHTML,
-			'<element>test</element>'
+			'<element>test</element>',
 		);
 	});
 
@@ -97,12 +97,12 @@ describe('evaluateXPath', () => {
 		it('Keeps booleans booleans', () =>
 			chai.assert.sameMembers(
 				evaluateXPath('true()', documentNode, domFacade, {}, ReturnType.ALL_RESULTS),
-				[true]
+				[true],
 			));
 		it('Keeps numbers numbers', () =>
 			chai.assert.sameMembers(
 				evaluateXPath('1', documentNode, domFacade, {}, ReturnType.ALL_RESULTS),
-				[1]
+				[1],
 			));
 		it('Keeps mixed sequences mixed', () =>
 			chai.assert.sameMembers(
@@ -111,32 +111,32 @@ describe('evaluateXPath', () => {
 					documentNode,
 					domFacade,
 					{},
-					ReturnType.ALL_RESULTS
+					ReturnType.ALL_RESULTS,
 				),
-				[1, true, 'test', documentNode]
+				[1, true, 'test', documentNode],
 			));
 		it('Keeps strings strings', () =>
 			chai.assert.sameMembers(
 				evaluateXPath('"string"', documentNode, domFacade, {}, ReturnType.ALL_RESULTS),
-				['string']
+				['string'],
 			));
 		it('Keeps nodes nodes', () =>
 			chai.assert.sameMembers(
 				evaluateXPath('.', documentNode, domFacade, {}, ReturnType.ALL_RESULTS),
-				[documentNode]
+				[documentNode],
 			));
 		it('Keeps attributes attributes', () => {
 			const tmp = documentNode.createElement('tmp');
 			tmp.setAttribute('class', 'value');
 			chai.assert.sameMembers(
 				evaluateXPath('@class', tmp, domFacade, {}, ReturnType.ALL_RESULTS),
-				[tmp.getAttributeNode('class')]
+				[tmp.getAttributeNode('class')],
 			);
 		});
 		it('Keeps arrays arrays', () =>
 			chai.assert.deepEqual(
 				evaluateXPath('[1,2,3]', documentNode, domFacade, {}, ReturnType.ALL_RESULTS),
-				[[1, 2, 3]]
+				[[1, 2, 3]],
 			));
 		it('Keeps maps maps', () =>
 			chai.assert.deepEqual(
@@ -145,20 +145,20 @@ describe('evaluateXPath', () => {
 					documentNode,
 					domFacade,
 					{},
-					ReturnType.ALL_RESULTS
+					ReturnType.ALL_RESULTS,
 				),
 				[
 					{
 						1: 2,
 						a: 'b',
 					},
-				]
+				],
 			));
 
 		it('returns the correct number of results', () => {
 			chai.assert.equal(
 				evaluateXPath('(1 to 250)', null, null, null, ReturnType.ALL_RESULTS).length,
-				250
+				250,
 			);
 		});
 
@@ -171,9 +171,9 @@ describe('evaluateXPath', () => {
 						domFacade,
 						null,
 						ReturnType.ALL_RESULTS,
-						{ language: evaluateXPath.XQUERY_UPDATE_3_1_LANGUAGE }
+						{ language: evaluateXPath.XQUERY_UPDATE_3_1_LANGUAGE },
 					),
-				'XUST0001'
+				'XUST0001',
 			));
 	});
 
@@ -206,7 +206,7 @@ describe('evaluateXPath', () => {
 		it('throws when unable to convert the result to a number', () =>
 			chai.assert.throws(
 				() => evaluateXPathToNumbers('"fortytwo"', documentNode, domFacade),
-				'to resolve to numbers'
+				'to resolve to numbers',
 			));
 	});
 
@@ -214,16 +214,16 @@ describe('evaluateXPath', () => {
 		it('Keeps string values strings', () =>
 			chai.assert.equal(
 				evaluateXPathToString('"A piece of text"', documentNode, domFacade),
-				'A piece of text'
+				'A piece of text',
 			));
 		it('Makes strings from nodes', () => {
 			documentNode.appendChild(documentNode.createElement('element'));
 			documentNode.documentElement.appendChild(
-				documentNode.createTextNode('A piece of text')
+				documentNode.createTextNode('A piece of text'),
 			);
 			chai.assert.equal(
 				evaluateXPathToString('.', documentNode, domFacade),
-				'A piece of text'
+				'A piece of text',
 			);
 		});
 		it('Stringifies numeric types', () =>
@@ -239,9 +239,9 @@ describe('evaluateXPath', () => {
 				evaluateXPathToStrings(
 					'("A piece of text", "another piece of text")',
 					documentNode,
-					domFacade
+					domFacade,
 				),
-				['A piece of text', 'another piece of text']
+				['A piece of text', 'another piece of text'],
 			));
 
 		it('Stringifies numeric types', () =>
@@ -264,14 +264,14 @@ describe('evaluateXPath', () => {
 			const documentFragment = documentNode.createDocumentFragment();
 			chai.assert.equal(
 				evaluateXPathToFirstNode('.', documentFragment, domFacade),
-				documentFragment
+				documentFragment,
 			);
 		});
 
 		it('Only returns the first node', () =>
 			chai.assert.equal(
 				evaluateXPathToFirstNode('(., ., .)', documentNode, domFacade),
-				documentNode
+				documentNode,
 			));
 
 		it('Returns null when the xpath resolves to the empty sequence', () =>
@@ -285,11 +285,11 @@ describe('evaluateXPath', () => {
 						someAttribute: 'someValue',
 					},
 				],
-				documentNode
+				documentNode,
 			);
 			chai.assert.equal(
 				evaluateXPathToFirstNode('//@someAttribute', documentNode, domFacade),
-				documentNode.documentElement.attributes[0]
+				documentNode.documentElement.attributes[0],
 			);
 		});
 		it('Throws when the xpath resolves to not a node', () => {
@@ -325,11 +325,11 @@ describe('evaluateXPath', () => {
 						someAttribute: 'someValue',
 					},
 				],
-				documentNode
+				documentNode,
 			);
 			chai.assert.deepEqual(
 				evaluateXPathToNodes('//@someAttribute', documentNode, domFacade),
-				documentNode.documentElement.attributes
+				documentNode.documentElement.attributes,
 			);
 		});
 	});
@@ -347,7 +347,7 @@ describe('evaluateXPath', () => {
 		it('throws for arrays with sequences', () => {
 			chai.assert.throws(
 				() => evaluateXPathToArray('[1, (2, 2.5), 3]'),
-				'Serialization error'
+				'Serialization error',
 			);
 		});
 	});
@@ -371,33 +371,33 @@ describe('evaluateXPath', () => {
 		it('can resolve the built-in namespaces', () => {
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
-					'xs:QName("fn:string") => namespace-uri-from-QName() eq "http://www.w3.org/2005/xpath-functions"'
+					'xs:QName("fn:string") => namespace-uri-from-QName() eq "http://www.w3.org/2005/xpath-functions"',
 				),
-				'fn'
+				'fn',
 			);
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
-					'xs:QName("xs:string") => namespace-uri-from-QName() eq "http://www.w3.org/2001/XMLSchema"'
+					'xs:QName("xs:string") => namespace-uri-from-QName() eq "http://www.w3.org/2001/XMLSchema"',
 				),
-				'xs'
+				'xs',
 			);
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
-					'xs:QName("map:merge") => namespace-uri-from-QName() eq "http://www.w3.org/2005/xpath-functions/map"'
+					'xs:QName("map:merge") => namespace-uri-from-QName() eq "http://www.w3.org/2005/xpath-functions/map"',
 				),
-				'map'
+				'map',
 			);
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
-					'xs:QName("array:sort") => namespace-uri-from-QName() eq "http://www.w3.org/2005/xpath-functions/array"'
+					'xs:QName("array:sort") => namespace-uri-from-QName() eq "http://www.w3.org/2005/xpath-functions/array"',
 				),
-				'array'
+				'array',
 			);
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
-					'xs:QName("math:pi") => namespace-uri-from-QName() eq "http://www.w3.org/2005/xpath-functions/math"'
+					'xs:QName("math:pi") => namespace-uri-from-QName() eq "http://www.w3.org/2005/xpath-functions/math"',
 				),
-				'math'
+				'math',
 			);
 		});
 
@@ -406,8 +406,8 @@ describe('evaluateXPath', () => {
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
 					'xs:QName("something-without-a-prefix") => namespace-uri-from-QName() eq "http://example.com/ns"',
-					ele
-				)
+					ele,
+				),
 			);
 		});
 
@@ -434,7 +434,7 @@ describe('evaluateXPath', () => {
 			slimdomDocument.appendChild(nameElement);
 			chai.assert.equal(
 				evaluateXPathToString('/name/text() (:from-this-test:)', slimdomDocument),
-				'name'
+				'name',
 			);
 		});
 
@@ -445,8 +445,8 @@ describe('evaluateXPath', () => {
 					null,
 					null,
 					null,
-					{ namespaceResolver: () => 'http://example.com/ns' }
-				)
+					{ namespaceResolver: () => 'http://example.com/ns' },
+				),
 			);
 		});
 	});
@@ -479,32 +479,32 @@ describe('evaluateXPath', () => {
 				null,
 				null,
 				null,
-				{ nodesFactory, language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				{ nodesFactory, language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 			);
 
 			chai.assert.isFalse(
 				(slimdomDocument.createCDATASection as any).called,
-				'nodesFactory.createCDATASection'
+				'nodesFactory.createCDATASection',
 			);
 			chai.assert.isTrue(
 				(slimdomDocument.createComment as any).called,
-				'nodesFactory.createComment'
+				'nodesFactory.createComment',
 			);
 			chai.assert.isFalse(
 				(slimdomDocument.implementation.createDocument as any).called,
-				'nodesFactory.createDocument'
+				'nodesFactory.createDocument',
 			);
 			chai.assert.isTrue(
 				(slimdomDocument.createElementNS as any).called,
-				'nodesFactory.createElementNS'
+				'nodesFactory.createElementNS',
 			);
 			chai.assert.isTrue(
 				(slimdomDocument.createProcessingInstruction as any).called,
-				'nodesFactory.createProcessingInstruction'
+				'nodesFactory.createProcessingInstruction',
 			);
 			chai.assert.isTrue(
 				(slimdomDocument.createTextNode as any).called,
-				'nodesFactory.createTextNode'
+				'nodesFactory.createTextNode',
 			);
 		});
 
@@ -522,20 +522,20 @@ describe('evaluateXPath', () => {
 					slimdomDocument,
 					null,
 					null,
-					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 				).outerHTML,
-				'<element>Some text, a <?processing instruction ?> and a <!--comment-->&lt;,&amp;and)</element>'
+				'<element>Some text, a <?processing instruction ?> and a <!--comment-->&lt;,&amp;and)</element>',
 			);
 
 			chai.assert.isFalse(
 				(slimdomDocument.createCDATASection as any).called,
-				'nodesFactory.createCDATASection'
+				'nodesFactory.createCDATASection',
 			);
 			chai.assert.isTrue((slimdomDocument.createComment as any).called, 'createComment');
 			chai.assert.isTrue((slimdomDocument.createElementNS as any).called, 'createElementNS');
 			chai.assert.isTrue(
 				(slimdomDocument.createProcessingInstruction as any).called,
-				'createProcessingInstruction'
+				'createProcessingInstruction',
 			);
 			chai.assert.isTrue((slimdomDocument.createTextNode as any).called, 'createTextNode');
 		});
@@ -544,7 +544,7 @@ describe('evaluateXPath', () => {
 			chai.assert.doesNotThrow(() =>
 				evaluateXPathToBoolean('true()', { nodeType: 1 }, null, null, {
 					language: evaluateXPath.XQUERY_3_1_LANGUAGE,
-				})
+				}),
 			);
 		});
 	});

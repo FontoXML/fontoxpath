@@ -9,13 +9,13 @@ const fnYearsFromDuration: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getYears(), ValueType.XSINTEGER)
+		createAtomicValue(sequence.first().value.getYears(), ValueType.XSINTEGER),
 	);
 };
 
@@ -23,13 +23,13 @@ const fnMonthsFromDuration: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getMonths(), ValueType.XSINTEGER)
+		createAtomicValue(sequence.first().value.getMonths(), ValueType.XSINTEGER),
 	);
 };
 
@@ -37,13 +37,13 @@ const fnDaysFromDuration: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getDays(), ValueType.XSINTEGER)
+		createAtomicValue(sequence.first().value.getDays(), ValueType.XSINTEGER),
 	);
 };
 
@@ -51,13 +51,13 @@ const fnHoursFromDuration: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getHours(), ValueType.XSINTEGER)
+		createAtomicValue(sequence.first().value.getHours(), ValueType.XSINTEGER),
 	);
 };
 
@@ -65,13 +65,13 @@ const fnMinutesFromDuration: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getMinutes(), ValueType.XSINTEGER)
+		createAtomicValue(sequence.first().value.getMinutes(), ValueType.XSINTEGER),
 	);
 };
 
@@ -79,13 +79,13 @@ const fnSecondsFromDuration: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getSeconds(), ValueType.XSDECIMAL)
+		createAtomicValue(sequence.first().value.getSeconds(), ValueType.XSDECIMAL),
 	);
 };
 

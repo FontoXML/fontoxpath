@@ -16,9 +16,9 @@ describe('Computed Text Constructor ', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 			),
-			'Hello'
+			'Hello',
 		);
 	});
 
@@ -29,9 +29,9 @@ describe('Computed Text Constructor ', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 			),
-			'\n'
+			'\n',
 		);
 	});
 });

@@ -30,7 +30,7 @@ describe('Corpus Fuzzer tests', () => {
 			<tip id="examples">You can access more examples from a menu in the top right</tip> \
 			<tip id="permalink">Another button there lets you share your test using an URL</tip> \
 			</tips> \
-		</xml>'
+		</xml>',
 		);
 	});
 
@@ -46,7 +46,7 @@ describe('Corpus Fuzzer tests', () => {
 				} catch (error) {
 					if (!fuzzCase.isExpectedError(error)) {
 						chai.assert.fail(
-							`Fuzz case was not expecting an error for selector \"${selector}\", but it failed nonetheless.`
+							`Fuzz case was not expecting an error for selector \"${selector}\", but it failed nonetheless.`,
 						);
 					}
 				}
@@ -66,7 +66,7 @@ describe('Corpus Fuzzer tests', () => {
 							if (!fuzzCase.isExpectedError(error)) {
 								throw error;
 								chai.assert.fail(
-									`Fuzz case was not expecting an error for selector \"${fuzzCase.selector}\", but it failed nonetheless.`
+									`Fuzz case was not expecting an error for selector \"${fuzzCase.selector}\", but it failed nonetheless.`,
 								);
 							}
 						}

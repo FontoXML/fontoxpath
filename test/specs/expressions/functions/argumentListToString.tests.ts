@@ -59,7 +59,7 @@ describe('argumentListToString()', () => {
 		];
 		chai.assert.equal(
 			argumentListToString(argumentList),
-			'item()?, xs:anyAtomicType, xs:anyAtomicType+'
+			'item()?, xs:anyAtomicType, xs:anyAtomicType+',
 		);
 	});
 });

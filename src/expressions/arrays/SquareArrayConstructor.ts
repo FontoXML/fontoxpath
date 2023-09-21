@@ -17,11 +17,11 @@ class SquareArrayConstructor extends Expression {
 			members,
 			{
 				canBeStaticallyEvaluated: members.every(
-					(member) => member.canBeStaticallyEvaluated
+					(member) => member.canBeStaticallyEvaluated,
 				),
 			},
 			false,
-			type
+			type,
 		);
 
 		this._members = members;
@@ -32,10 +32,10 @@ class SquareArrayConstructor extends Expression {
 			new ArrayValue(
 				this._members.map((entry) =>
 					createDoublyIterableSequence(
-						entry.evaluateMaybeStatically(dynamicContext, executionParameters)
-					)
-				)
-			)
+						entry.evaluateMaybeStatically(dynamicContext, executionParameters),
+					),
+				),
+			),
 		);
 	}
 }

@@ -24,25 +24,25 @@ const fnLast: FunctionDefinitionType = (dynamicContext) => {
 				return ready(createAtomicValue(length, ValueType.XSINTEGER));
 			},
 		},
-		1
+		1,
 	);
 };
 
 const fnPosition: FunctionDefinitionType = (dynamicContext) => {
 	if (dynamicContext.contextItem === null) {
 		throw errXPDY0002(
-			'The fn:position() function depends on dynamic context, which is absent.'
+			'The fn:position() function depends on dynamic context, which is absent.',
 		);
 	}
 	// Note: +1 because XPath is one-based
 	return sequenceFactory.singleton(
-		createAtomicValue(dynamicContext.contextItemIndex + 1, ValueType.XSINTEGER)
+		createAtomicValue(dynamicContext.contextItemIndex + 1, ValueType.XSINTEGER),
 	);
 };
 
 const fnCurrentDateTime: FunctionDefinitionType = (dynamicContext) => {
 	return sequenceFactory.singleton(
-		createAtomicValue(dynamicContext.getCurrentDateTime(), ValueType.XSDATETIMESTAMP)
+		createAtomicValue(dynamicContext.getCurrentDateTime(), ValueType.XSDATETIMESTAMP),
 	);
 };
 
@@ -50,8 +50,8 @@ const fnCurrentDate: FunctionDefinitionType = (dynamicContext) => {
 	return sequenceFactory.singleton(
 		createAtomicValue(
 			dynamicContext.getCurrentDateTime().convertToType(ValueType.XSDATE),
-			ValueType.XSDATE
-		)
+			ValueType.XSDATE,
+		),
 	);
 };
 
@@ -59,14 +59,14 @@ const fnCurrentTime: FunctionDefinitionType = (dynamicContext) => {
 	return sequenceFactory.singleton(
 		createAtomicValue(
 			dynamicContext.getCurrentDateTime().convertToType(ValueType.XSTIME),
-			ValueType.XSTIME
-		)
+			ValueType.XSTIME,
+		),
 	);
 };
 
 const fnImplicitTimezone: FunctionDefinitionType = (dynamicContext) => {
 	return sequenceFactory.singleton(
-		createAtomicValue(dynamicContext.getImplicitTimezone(), ValueType.XSDAYTIMEDURATION)
+		createAtomicValue(dynamicContext.getImplicitTimezone(), ValueType.XSDAYTIMEDURATION),
 	);
 };
 

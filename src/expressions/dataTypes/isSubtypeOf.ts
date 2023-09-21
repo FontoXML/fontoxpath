@@ -14,7 +14,7 @@ function isSubtypeOfType(subType: TypeModel, superType: TypeModel): boolean {
 		}
 		if (subType.variety === Variety.UNION) {
 			return !!subType.memberTypes.find((memberType) =>
-				isSubtypeOf(memberType.type, superType.type)
+				isSubtypeOf(memberType.type, superType.type),
 			);
 		}
 		subType = subType.parent;

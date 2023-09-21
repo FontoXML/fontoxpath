@@ -10,7 +10,7 @@ export class StackTraceEntry {
 		location: SourceRange,
 		innerExpressionType: string,
 		comment: string,
-		innerTrace: Error | StackTraceEntry
+		innerTrace: Error | StackTraceEntry,
 	) {
 		this.location = location;
 		this.innerExpressionType = innerExpressionType;
@@ -37,7 +37,9 @@ export class StackTraceEntry {
 		innerStackTrace.push(
 			`  at <${this.innerExpressionType}${this.comment ? ` (${this.comment})` : ''}>:${
 				this.location.start.line
-			}:${this.location.start.column} - ${this.location.end.line}:${this.location.end.column}`
+			}:${this.location.start.column} - ${this.location.end.line}:${
+				this.location.end.column
+			}`,
 		);
 		return innerStackTrace;
 	}

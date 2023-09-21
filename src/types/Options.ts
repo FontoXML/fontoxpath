@@ -46,7 +46,7 @@ export type ResolvedQualifiedName = {
  */
 export type FunctionNameResolver = (
 	qname: LexicalQualifiedName,
-	arity: number
+	arity: number,
 ) => ResolvedQualifiedName;
 
 /**

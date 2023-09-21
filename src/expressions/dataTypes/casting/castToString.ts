@@ -4,7 +4,7 @@ import CastResult from './CastResult';
 import castToStringLikeType from './castToStringLikeType';
 
 export default function castToString(
-	instanceOf: (typeName: ValueType) => boolean
+	instanceOf: (typeName: ValueType) => boolean,
 ): (value: any) => CastResult {
 	const caster = castToStringLikeType(instanceOf);
 	return (value) => {

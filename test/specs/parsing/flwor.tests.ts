@@ -19,9 +19,9 @@ describe('FLWOR', () => {
 				null,
 				null,
 				null,
-				{ debug: true, language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				{ debug: true, language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 			),
-			'Hello Hello Hello'
+			'Hello Hello Hello',
 		));
 
 	it('runs flwor with where', () =>
@@ -34,9 +34,9 @@ describe('FLWOR', () => {
 				null,
 				null,
 				null,
-				{ debug: true, language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				{ debug: true, language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 			),
-			'Hello'
+			'Hello',
 		));
 
 	it('runs flwor expressions with order by', () => {
@@ -48,9 +48,9 @@ describe('FLWOR', () => {
 				null,
 				null,
 				null,
-				{ debug: true, language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				{ debug: true, language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 			),
-			['A', 'B', 'C']
+			['A', 'B', 'C'],
 		);
 	});
 });

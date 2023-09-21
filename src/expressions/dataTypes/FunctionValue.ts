@@ -16,7 +16,7 @@ export type FunctionSignature<T> = (
 
 function expandParameterTypeToArity(
 	argumentTypes: ParameterType[],
-	arity: number
+	arity: number,
 ): ParameterType[] {
 	let indexOfRest = -1;
 	for (let i = 0; i < argumentTypes.length; i++) {
@@ -27,7 +27,7 @@ function expandParameterTypeToArity(
 
 	if (indexOfRest > -1) {
 		const replacePart = new Array(arity - (argumentTypes.length - 1)).fill(
-			argumentTypes[indexOfRest - 1]
+			argumentTypes[indexOfRest - 1],
 		);
 
 		return argumentTypes.slice(0, indexOfRest).concat(replacePart);
@@ -93,7 +93,7 @@ class FunctionValue<T = ISequence> extends Value {
 		function curriedFunction(
 			dynamicContext: DynamicContext,
 			executionParameters: ExecutionParameters,
-			staticContext: StaticContext
+			staticContext: StaticContext,
 		) {
 			const newArguments = Array.from(arguments).slice(3);
 			const allArguments = argumentSequenceCreators.map((createArgumentSequence) => {
@@ -105,7 +105,7 @@ class FunctionValue<T = ISequence> extends Value {
 			});
 			return fn.apply(
 				undefined,
-				[dynamicContext, executionParameters, staticContext].concat(allArguments)
+				[dynamicContext, executionParameters, staticContext].concat(allArguments),
 			);
 		}
 		const argumentTypes = appliedArguments.reduce(
@@ -115,7 +115,7 @@ class FunctionValue<T = ISequence> extends Value {
 				}
 				return indices;
 			},
-			[]
+			[],
 		);
 
 		const functionItem = new FunctionValue({

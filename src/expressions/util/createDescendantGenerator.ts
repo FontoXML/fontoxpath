@@ -10,7 +10,7 @@ import { DONE_TOKEN, IterationHint, ready } from './iterators';
 function findDeepestLastDescendant(
 	pointer: NodePointer,
 	domFacade: DomFacade,
-	bucket: Bucket | null
+	bucket: Bucket | null,
 ): NodePointer {
 	const nodeType = domFacade.getNodeType(pointer);
 	if (nodeType !== NODE_TYPES.ELEMENT_NODE && nodeType !== NODE_TYPES.DOCUMENT_NODE) {
@@ -33,7 +33,7 @@ export default function createDescendantGenerator(
 	domFacade: DomFacade,
 	pointer: NodePointer,
 	returnInReverse = false,
-	bucket: Bucket | null
+	bucket: Bucket | null,
 ) {
 	if (returnInReverse) {
 		let currentPointer: NodePointer = pointer;
@@ -59,7 +59,7 @@ export default function createDescendantGenerator(
 						? null
 						: domFacade.getPreviousSiblingPointer(
 								currentPointer as ChildNodePointer,
-								bucket
+								bucket,
 						  );
 				if (previousSibling !== null) {
 					currentPointer = findDeepestLastDescendant(previousSibling, domFacade, bucket);
@@ -71,7 +71,7 @@ export default function createDescendantGenerator(
 						? null
 						: domFacade.getParentNodePointer(
 								currentPointer as ChildNodePointer,
-								bucket
+								bucket,
 						  );
 				if (arePointersEqual(currentPointer, pointer)) {
 					isDone = true;

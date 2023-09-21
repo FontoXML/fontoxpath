@@ -20,7 +20,7 @@ export default function evaluateXPathToBoolean(
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
-	options?: Options | null
+	options?: Options | null,
 ): boolean {
 	return evaluateXPath(
 		selector,
@@ -28,6 +28,6 @@ export default function evaluateXPathToBoolean(
 		domFacade,
 		variables,
 		evaluateXPath.BOOLEAN_TYPE,
-		options
+		options,
 	);
 }

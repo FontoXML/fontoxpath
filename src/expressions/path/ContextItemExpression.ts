@@ -15,7 +15,7 @@ class ContextItemExpression extends Expression {
 				resultOrder: RESULT_ORDERINGS.SORTED,
 			},
 			false,
-			type
+			type,
 		);
 	}
 

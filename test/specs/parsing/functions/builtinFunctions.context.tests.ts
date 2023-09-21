@@ -17,7 +17,7 @@ describe('Context related functions', () => {
 		it('returns different values for different queries', async () => {
 			const dateTime = evaluateXPathToString('current-dateTime()');
 			const dateTimeLater = await new Promise((resolve) =>
-				setTimeout(() => resolve(evaluateXPathToString('current-dateTime()')), 100)
+				setTimeout(() => resolve(evaluateXPathToString('current-dateTime()')), 100),
 			);
 
 			chai.assert.notEqual(dateTime, dateTimeLater);

@@ -8,10 +8,13 @@ export const typeName: Parser<QNameAST> = eqName;
 
 export const simpleTypeName: Parser<IAST | [ASTAttributes, string]> = typeName;
 
-export const singleType: Parser<IAST> = then(simpleTypeName, optional(QUESTION_MARK), (type, opt) =>
-	opt !== null
-		? ['singleType', ['atomicType', ...type], ['optional']]
-		: ['singleType', ['atomicType', ...type]]
+export const singleType: Parser<IAST> = then(
+	simpleTypeName,
+	optional(QUESTION_MARK),
+	(type, opt) =>
+		opt !== null
+			? ['singleType', ['atomicType', ...type], ['optional']]
+			: ['singleType', ['atomicType', ...type]],
 );
 
 export const atomicOrUnionType: Parser<IAST> = map(eqName, (x) => ['atomicType', ...x]);

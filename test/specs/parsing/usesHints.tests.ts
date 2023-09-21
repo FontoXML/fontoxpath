@@ -28,8 +28,8 @@ function buildDomFacade(...shouldNotBeTraversed: slimdom.Node[]): IDomFacade {
 		if (shouldNotBeTraversed.includes(node)) {
 			throw new Error(
 				`The node ${new slimdom.XMLSerializer().serializeToString(
-					node
-				)} should not be traversed.`
+					node,
+				)} should not be traversed.`,
 			);
 		}
 		throwIfShouldNotTraversed(node.parentNode);
@@ -85,7 +85,7 @@ describe('uses hints', () => {
 		const nodes = evaluateXPathToNodes<slimdom.Node>(
 			'outermost(descendant::foo)',
 			documentNode,
-			buildDomFacade(descendant)
+			buildDomFacade(descendant),
 		);
 
 		chai.assert.deepEqual(nodes, [documentNode.documentElement.firstChild]);
@@ -98,7 +98,7 @@ describe('uses hints', () => {
 		const nodes = evaluateXPathToNodes<slimdom.Node>(
 			'outermost(root/descendant::foo)',
 			documentNode,
-			buildDomFacade(descendant)
+			buildDomFacade(descendant),
 		);
 
 		chai.assert.deepEqual(nodes, [documentNode.documentElement.firstChild]);
@@ -111,7 +111,7 @@ describe('uses hints', () => {
 		const nodes = evaluateXPathToNodes<slimdom.Node>(
 			'outermost(descendant::foo!.)',
 			documentNode,
-			buildDomFacade(descendant)
+			buildDomFacade(descendant),
 		);
 
 		chai.assert.deepEqual(nodes, [documentNode.documentElement.firstChild]);
@@ -127,7 +127,7 @@ describe('uses hints', () => {
 			documentNode,
 			buildDomFacade(descendant),
 			null,
-			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 		);
 
 		nodes.sort((node) => (node.nodeName === 'bar' ? 1 : -1));
@@ -136,7 +136,7 @@ describe('uses hints', () => {
 			nodes,
 			evaluateXPathToNodes<slimdom.Element>('(root/foo, <bar/>)', documentNode, null, null, {
 				language: evaluateXPath.XQUERY_3_1_LANGUAGE,
-			})
+			}),
 		);
 
 		// It is successful when the dom facade does not throw
@@ -145,7 +145,7 @@ describe('uses hints', () => {
 			documentNode,
 			buildDomFacade(descendant),
 			null,
-			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 		);
 
 		nodes.sort((node) => (node.nodeName === 'bar' ? 1 : -1));
@@ -154,7 +154,7 @@ describe('uses hints', () => {
 			nodes,
 			evaluateXPathToNodes<slimdom.Element>('(root/foo, <bar/>)', documentNode, null, null, {
 				language: evaluateXPath.XQUERY_3_1_LANGUAGE,
-			})
+			}),
 		);
 	});
 
@@ -166,8 +166,8 @@ describe('uses hints', () => {
 				documentNode,
 				null,
 				null,
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-			)
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
+			),
 		);
 	});
 
@@ -180,7 +180,7 @@ describe('uses hints', () => {
 			documentNode,
 			buildDomFacade(descendant),
 			null,
-			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 		);
 
 		chai.assert.deepEqual(nodes, [documentNode.documentElement.firstChild]);
@@ -195,7 +195,7 @@ describe('uses hints', () => {
 			documentNode,
 			buildDomFacade(descendant),
 			null,
-			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 		);
 
 		chai.assert.deepEqual(nodes, [documentNode.documentElement.firstChild]);
@@ -210,7 +210,7 @@ describe('uses hints', () => {
 			documentNode,
 			buildDomFacade(descendant),
 			null,
-			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 		);
 
 		chai.assert.deepEqual(nodes, [documentNode.documentElement.firstChild]);
@@ -225,7 +225,7 @@ describe('uses hints', () => {
 			documentNode,
 			buildDomFacade(descendant),
 			null,
-			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 		);
 
 		chai.assert.deepEqual(nodes, [documentNode.documentElement.firstChild]);
@@ -239,8 +239,8 @@ describe('uses hints', () => {
 				documentNode,
 				null,
 				null,
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-			)
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
+			),
 		);
 	});
 
@@ -253,7 +253,7 @@ describe('uses hints', () => {
 			documentNode,
 			buildDomFacade(descendant),
 			null,
-			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 		);
 
 		chai.assert.deepEqual(nodes, [documentNode.documentElement.firstChild]);
@@ -267,8 +267,8 @@ describe('uses hints', () => {
 				documentNode,
 				null,
 				null,
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-			)
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
+			),
 		);
 	});
 
@@ -280,8 +280,8 @@ describe('uses hints', () => {
 				documentNode,
 				null,
 				null,
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-			)
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
+			),
 		);
 	});
 
@@ -298,8 +298,8 @@ describe('uses hints', () => {
 				documentNode,
 				null,
 				null,
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-			)
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
+			),
 		);
 	});
 
@@ -312,7 +312,7 @@ describe('uses hints', () => {
 			documentNode,
 			buildDomFacade(descendant),
 			null,
-			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 		);
 
 		chai.assert.deepEqual(nodes, [documentNode.documentElement.firstChild]);
@@ -329,7 +329,7 @@ describe('uses hints', () => {
 			null,
 			{
 				debug: true,
-			}
+			},
 		);
 
 		chai.assert.deepEqual(nodes, [documentNode.documentElement.firstChild]);

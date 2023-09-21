@@ -60,7 +60,7 @@ export function adaptSingleJavaScriptValue(value: ValidValue, domFacade: DomFaca
 								: sequenceFactory.singleton(adaptedValue);
 
 						return createDoublyIterableSequence(adaptedSequence);
-					})
+					}),
 				);
 			}
 			if (value instanceof Date) {
@@ -83,13 +83,13 @@ export function adaptSingleJavaScriptValue(value: ValidValue, domFacade: DomFaca
 							key: createAtomicValue(key, ValueType.XSSTRING),
 							value: createDoublyIterableSequence(adaptedSequence),
 						};
-					})
+					}),
 			);
 	}
 	// This code will be reached if the passed value is not actually a ValidValue. This can happen
 	// as JavaScript does not check the types from TypeScript
 	throw new Error(
-		`Value ${String(value)} of type "${typeof value}" is not adaptable to an XPath value.`
+		`Value ${String(value)} of type "${typeof value}" is not adaptable to an XPath value.`,
 	);
 }
 
@@ -105,8 +105,8 @@ function checkNumericType(value: ValidValue, type: ValueType): asserts value is 
 	}
 	throw new Error(
 		`Cannot convert JavaScript value '${value}' to the XPath type ${valueTypeToString(
-			type
-		)} since it is not valid.`
+			type,
+		)} since it is not valid.`,
 	);
 }
 
@@ -119,7 +119,7 @@ function checkNumericType(value: ValidValue, type: ValueType): asserts value is 
 function adaptJavaScriptValueToXPath(
 	type: ValueType,
 	value: UntypedExternalValue,
-	domFacade: DomFacade
+	domFacade: DomFacade,
 ): Value | null {
 	if (value === null) {
 		return null;
@@ -153,13 +153,13 @@ function adaptJavaScriptValueToXPath(
 			if (!(value instanceof Date)) {
 				throw new Error(
 					`The JavaScript value ${value} with type ${typeof value} is not a valid type to be converted to an XPath ${valueTypeToString(
-						type
-					)}.`
+						type,
+					)}.`,
 				);
 			}
 			return createAtomicValue(
 				DateTime.fromString(value.toISOString()).convertToType(type),
-				type
+				type,
 			);
 		case ValueType.NODE:
 		case ValueType.ATTRIBUTE:
@@ -171,8 +171,8 @@ function adaptJavaScriptValueToXPath(
 			if (!(typeof value === 'object') || !('nodeType' in value)) {
 				throw new Error(
 					`The JavaScript value ${value} with type ${typeof value} is not a valid type to be converted to an XPath ${valueTypeToString(
-						type
-					)}.`
+						type,
+					)}.`,
 				);
 			}
 			const pointer: NodePointer = {
@@ -187,8 +187,8 @@ function adaptJavaScriptValueToXPath(
 		default:
 			throw new Error(
 				`Values of the type "${valueTypeToString(
-					type
-				)}" can not be adapted from JavaScript to equivalent XPath values.`
+					type,
+				)}" can not be adapted from JavaScript to equivalent XPath values.`,
 			);
 	}
 }
@@ -196,7 +196,7 @@ function adaptJavaScriptValueToXPath(
 export function adaptJavaScriptValueToArrayOfXPathValues(
 	domFacade: DomFacade,
 	value: UntypedExternalValue,
-	expectedType: SequenceType
+	expectedType: SequenceType,
 ): Value[] {
 	if (expectedType.mult === SequenceMultiplicity.ZERO_OR_ONE) {
 		const converted = adaptJavaScriptValueToXPath(expectedType.type, value, domFacade);
@@ -210,8 +210,8 @@ export function adaptJavaScriptValueToArrayOfXPathValues(
 		if (!Array.isArray(value)) {
 			throw new Error(
 				`The JavaScript value ${value} should be an array if it is to be converted to ${sequenceTypeToString(
-					expectedType
-				)}.`
+					expectedType,
+				)}.`,
 			);
 		}
 		return value
@@ -223,8 +223,8 @@ export function adaptJavaScriptValueToArrayOfXPathValues(
 	if (adaptedValue === null) {
 		throw new Error(
 			`The JavaScript value ${value} should be a single entry if it is to be converted to ${sequenceTypeToString(
-				expectedType
-			)}.`
+				expectedType,
+			)}.`,
 		);
 	}
 	return [adaptedValue];
@@ -242,9 +242,9 @@ export function adaptJavaScriptValueToArrayOfXPathValues(
 export function adaptJavaScriptValueToSequence(
 	domFacade: DomFacade,
 	value: UntypedExternalValue,
-	expectedType: SequenceType = { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_ONE }
+	expectedType: SequenceType = { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_ONE },
 ): ISequence {
 	return sequenceFactory.create(
-		adaptJavaScriptValueToArrayOfXPathValues(domFacade, value, expectedType)
+		adaptJavaScriptValueToArrayOfXPathValues(domFacade, value, expectedType),
 	);
 }

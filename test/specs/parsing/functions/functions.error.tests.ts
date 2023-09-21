@@ -15,7 +15,7 @@ describe('error functions', () => {
 		it('supports the no-argument version', () => {
 			chai.assert.throws(
 				() => evaluateXPathToBoolean('fn:error()', documentNode, domFacade),
-				'FOER0000'
+				'FOER0000',
 			);
 		});
 		it('supports the one-argument version', () => {
@@ -24,9 +24,9 @@ describe('error functions', () => {
 					evaluateXPathToBoolean(
 						"fn:error(fn:QName('http://www.example.com/HR', 'myerr:toohighsal'))",
 						documentNode,
-						domFacade
+						domFacade,
 					),
-				'toohighsal'
+				'toohighsal',
 			);
 		});
 		it('supports the two-argument version', () => {
@@ -35,9 +35,9 @@ describe('error functions', () => {
 					evaluateXPathToBoolean(
 						"fn:error(fn:QName('http://www.example.com/HR', 'myerr:toohighsal'), 'Does not apply because salary is too high')",
 						documentNode,
-						domFacade
+						domFacade,
 					),
-				'toohighsal: Does not apply because salary is too high'
+				'toohighsal: Does not apply because salary is too high',
 			);
 		});
 		it('Rejects passing passing an error object', () => {
@@ -46,23 +46,23 @@ describe('error functions', () => {
 					evaluateXPathToBoolean(
 						"fn:error(fn:QName('http://www.example.com/', 'myerr:mycode'), 'My description', map{})",
 						documentNode,
-						domFacade
+						domFacade,
 					),
-				'Not implemented: Using an error object in error is not supported'
+				'Not implemented: Using an error object in error is not supported',
 			);
 		});
 
 		it('Throws the correct error when used in another operator', () => {
 			chai.assert.throws(
 				() => evaluateXPathToBoolean('fn:error() + 1', documentNode, domFacade),
-				'FOER0000'
+				'FOER0000',
 			);
 		});
 
 		it('Throws the correct error when used in another operator with annotation', () => {
 			chai.assert.throws(
 				() => evaluateXPathToBoolean('fn:error() + 4', documentNode, domFacade, null, {}),
-				'FOER0000'
+				'FOER0000',
 			);
 		});
 	});

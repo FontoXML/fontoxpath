@@ -13,10 +13,10 @@ const mathExp: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	return sequence.map((onlyValue) =>
-		createAtomicValue(Math.pow(Math.E, onlyValue.value), ValueType.XSDOUBLE)
+		createAtomicValue(Math.pow(Math.E, onlyValue.value), ValueType.XSDOUBLE),
 	);
 };
 
@@ -24,10 +24,10 @@ const mathExp10: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	return sequence.map((onlyValue) =>
-		createAtomicValue(Math.pow(10, onlyValue.value), ValueType.XSDOUBLE)
+		createAtomicValue(Math.pow(10, onlyValue.value), ValueType.XSDOUBLE),
 	);
 };
 
@@ -35,10 +35,10 @@ const mathLog: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	return sequence.map((onlyValue) =>
-		createAtomicValue(Math.log(onlyValue.value), ValueType.XSDOUBLE)
+		createAtomicValue(Math.log(onlyValue.value), ValueType.XSDOUBLE),
 	);
 };
 
@@ -46,10 +46,10 @@ const mathLog10: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	return sequence.map((onlyValue) =>
-		createAtomicValue(Math.log10(onlyValue.value), ValueType.XSDOUBLE)
+		createAtomicValue(Math.log10(onlyValue.value), ValueType.XSDOUBLE),
 	);
 };
 
@@ -58,7 +58,7 @@ const mathPow: FunctionDefinitionType = (
 	_executionParameters,
 	_staticContext,
 	base,
-	exponent
+	exponent,
 ) => {
 	// Note: base is double?, exponent is numeric. In the base is empty case, return empty.
 	return exponent.mapAll(([valueY]) =>
@@ -68,7 +68,7 @@ const mathPow: FunctionDefinitionType = (
 				return createAtomicValue(1, ValueType.XSDOUBLE);
 			}
 			return createAtomicValue(Math.pow(valueX.value, valueY.value), ValueType.XSDOUBLE);
-		})
+		}),
 	);
 };
 
@@ -76,10 +76,10 @@ const mathSqrt: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	return sequence.map((onlyValue) =>
-		createAtomicValue(Math.sqrt(onlyValue.value), ValueType.XSDOUBLE)
+		createAtomicValue(Math.sqrt(onlyValue.value), ValueType.XSDOUBLE),
 	);
 };
 
@@ -87,10 +87,10 @@ const mathSin: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	return sequence.map((onlyValue) =>
-		createAtomicValue(Math.sin(onlyValue.value), ValueType.XSDOUBLE)
+		createAtomicValue(Math.sin(onlyValue.value), ValueType.XSDOUBLE),
 	);
 };
 
@@ -98,10 +98,10 @@ const mathCos: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	return sequence.map((onlyValue) =>
-		createAtomicValue(Math.cos(onlyValue.value), ValueType.XSDOUBLE)
+		createAtomicValue(Math.cos(onlyValue.value), ValueType.XSDOUBLE),
 	);
 };
 
@@ -109,10 +109,10 @@ const mathTan: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	return sequence.map((onlyValue) =>
-		createAtomicValue(Math.tan(onlyValue.value), ValueType.XSDOUBLE)
+		createAtomicValue(Math.tan(onlyValue.value), ValueType.XSDOUBLE),
 	);
 };
 
@@ -120,10 +120,10 @@ const mathAsin: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	return sequence.map((onlyValue) =>
-		createAtomicValue(Math.asin(onlyValue.value), ValueType.XSDOUBLE)
+		createAtomicValue(Math.asin(onlyValue.value), ValueType.XSDOUBLE),
 	);
 };
 
@@ -131,10 +131,10 @@ const mathAcos: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	return sequence.map((onlyValue) =>
-		createAtomicValue(Math.acos(onlyValue.value), ValueType.XSDOUBLE)
+		createAtomicValue(Math.acos(onlyValue.value), ValueType.XSDOUBLE),
 	);
 };
 
@@ -142,10 +142,10 @@ const mathAtan: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	return sequence.map((onlyValue) =>
-		createAtomicValue(Math.atan(onlyValue.value), ValueType.XSDOUBLE)
+		createAtomicValue(Math.atan(onlyValue.value), ValueType.XSDOUBLE),
 	);
 };
 
@@ -154,13 +154,13 @@ const mathAtan2: FunctionDefinitionType = (
 	_executionParameters,
 	_staticContext,
 	x,
-	y
+	y,
 ) => {
 	// Note that x is the double? argument, y is double.
 	return y.mapAll(([onlyYValue]) =>
 		x.map((onlyXValue) =>
-			createAtomicValue(Math.atan2(onlyXValue.value, onlyYValue.value), ValueType.XSDOUBLE)
-		)
+			createAtomicValue(Math.atan2(onlyXValue.value, onlyYValue.value), ValueType.XSDOUBLE),
+		),
 	);
 };
 

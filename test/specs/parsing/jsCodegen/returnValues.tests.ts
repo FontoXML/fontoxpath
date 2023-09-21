@@ -23,7 +23,7 @@ describe('return values', () => {
 					['tip', 'Make it fast'],
 				],
 			],
-			documentNode
+			documentNode,
 		);
 	});
 
@@ -33,24 +33,24 @@ describe('return values', () => {
 				'/xml/element()/text()',
 				documentNode,
 				null,
-				ReturnType.BOOLEAN
-			)
+				ReturnType.BOOLEAN,
+			),
 		);
 		chai.assert.isFalse(
 			evaluateXPathWithJsCodegen(
 				'/xml/element(tips)/text()',
 				documentNode,
 				null,
-				ReturnType.BOOLEAN
-			)
+				ReturnType.BOOLEAN,
+			),
 		);
 		chai.assert.isTrue(
 			evaluateXPathWithJsCodegen(
 				`false() or self::xml`,
 				documentNode.documentElement,
 				null,
-				ReturnType.BOOLEAN
-			)
+				ReturnType.BOOLEAN,
+			),
 		);
 	});
 
@@ -59,7 +59,7 @@ describe('return values', () => {
 			'/element()/element()/element()/text()',
 			documentNode,
 			null,
-			ReturnType.NODES
+			ReturnType.NODES,
 		);
 		chai.assert.equal(results.length, 3);
 	});
@@ -69,7 +69,7 @@ describe('return values', () => {
 			'/element()',
 			documentNode,
 			null,
-			ReturnType.FIRST_NODE
+			ReturnType.FIRST_NODE,
 		);
 		chai.assert.equal(node, documentNode.firstChild);
 	});
@@ -79,7 +79,7 @@ describe('return values', () => {
 			'"abc"',
 			documentNode,
 			null,
-			ReturnType.STRING
+			ReturnType.STRING,
 		);
 		chai.assert.equal(output, 'abc');
 	});
@@ -89,7 +89,7 @@ describe('return values', () => {
 			'@absent',
 			documentNode,
 			null,
-			ReturnType.STRING
+			ReturnType.STRING,
 		);
 		chai.assert.equal(output, '');
 	});

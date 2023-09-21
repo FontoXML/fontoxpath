@@ -8,7 +8,7 @@ class DayTimeDuration extends AbstractDuration {
 		minutes: any,
 		seconds: any,
 		secondFraction: any,
-		isPositive: any
+		isPositive: any,
 	) => DayTimeDuration;
 	public static fromString: (str: string) => DayTimeDuration;
 	public static fromTimezoneString: (str: string) => DayTimeDuration;
@@ -18,7 +18,7 @@ class DayTimeDuration extends AbstractDuration {
 
 		if (seconds > Number.MAX_SAFE_INTEGER || seconds < Number.MIN_SAFE_INTEGER) {
 			throw new Error(
-				'FODT0002: Number of seconds given to construct DayTimeDuration overflows MAX_SAFE_INTEGER or MIN_SAFE_INTEGER'
+				'FODT0002: Number of seconds given to construct DayTimeDuration overflows MAX_SAFE_INTEGER or MIN_SAFE_INTEGER',
 			);
 		}
 
@@ -85,7 +85,7 @@ DayTimeDuration.fromParts = (
 	minutes: number,
 	seconds: number,
 	secondFraction: number,
-	isPositive: boolean
+	isPositive: boolean,
 ): DayTimeDuration => {
 	const totalSeconds = days * 86400 + hours * 3600 + minutes * 60 + seconds + secondFraction;
 	return new DayTimeDuration(isPositive || totalSeconds === 0 ? totalSeconds : -totalSeconds);
@@ -133,28 +133,28 @@ DayTimeDuration.fromJavascriptDateTimezone = (date: Date): DayTimeDuration => {
 
 export function lessThan(
 	dayTimeDuration1: DayTimeDuration,
-	dayTimeDuration2: DayTimeDuration
+	dayTimeDuration2: DayTimeDuration,
 ): boolean {
 	return dayTimeDuration1.seconds < dayTimeDuration2.seconds;
 }
 
 export function greaterThan(
 	dayTimeDuration1: DayTimeDuration,
-	dayTimeDuration2: DayTimeDuration
+	dayTimeDuration2: DayTimeDuration,
 ): boolean {
 	return dayTimeDuration1.seconds > dayTimeDuration2.seconds;
 }
 
 export function add(
 	dayTimeDuration1: DayTimeDuration,
-	dayTimeDuration2: DayTimeDuration
+	dayTimeDuration2: DayTimeDuration,
 ): DayTimeDuration {
 	return new DayTimeDuration(dayTimeDuration1.seconds + dayTimeDuration2.seconds);
 }
 
 export function subtract(
 	dayTimeDuration1: DayTimeDuration,
-	dayTimeDuration2: DayTimeDuration
+	dayTimeDuration2: DayTimeDuration,
 ): DayTimeDuration {
 	return new DayTimeDuration(dayTimeDuration1.seconds - dayTimeDuration2.seconds);
 }
@@ -168,7 +168,7 @@ export function multiply(dayTimeDuration: DayTimeDuration, double: number): DayT
 		throw new Error('FODT0002: Value overflow while multiplying xs:dayTimeDuration');
 	}
 	return new DayTimeDuration(
-		result < Number.MIN_SAFE_INTEGER || Object.is(-0, result) ? 0 : result
+		result < Number.MIN_SAFE_INTEGER || Object.is(-0, result) ? 0 : result,
 	);
 }
 
@@ -181,13 +181,13 @@ export function divide(dayTimeDuration: DayTimeDuration, double: number): DayTim
 		throw new Error('FODT0002: Value overflow while dividing xs:dayTimeDuration');
 	}
 	return new DayTimeDuration(
-		result < Number.MIN_SAFE_INTEGER || Object.is(-0, result) ? 0 : result
+		result < Number.MIN_SAFE_INTEGER || Object.is(-0, result) ? 0 : result,
 	);
 }
 
 export function divideByDayTimeDuration(
 	dayTimeDuration1: DayTimeDuration,
-	dayTimeDuration2: DayTimeDuration
+	dayTimeDuration2: DayTimeDuration,
 ): number {
 	if (dayTimeDuration2.seconds === 0) {
 		throw new Error('FOAR0001: Division by 0');

@@ -29,7 +29,7 @@ import {
 export declare type QNameAST = [{ prefix: string | null; URI: string | null }, string];
 
 export const assertAdjacentOpeningTerminal: Parser<string> = peek(
-	or([tokens.BRACE_OPEN, tokens.DOUBLE_QUOTE, tokens.SINGLE_QUOTE, whitespaceCharacter])
+	or([tokens.BRACE_OPEN, tokens.DOUBLE_QUOTE, tokens.SINGLE_QUOTE, whitespaceCharacter]),
 );
 
 export const forwardAxis: Parser<string> = map(
@@ -42,7 +42,7 @@ export const forwardAxis: Parser<string> = map(
 		tokens.FOLLOWING_SIBLING_AXIS,
 		tokens.FOLLOWING_AXIS,
 	]),
-	(x: string) => x.substring(0, x.length - 2)
+	(x: string) => x.substring(0, x.length - 2),
 );
 
 export const reverseAxis: Parser<string> = map(
@@ -53,14 +53,14 @@ export const reverseAxis: Parser<string> = map(
 		tokens.PRECEDING_AXIS,
 		tokens.ANCESTOR_OR_SELF_AXIS,
 	]),
-	(x: string) => x.substring(0, x.length - 2)
+	(x: string) => x.substring(0, x.length - 2),
 );
 
 export const predefinedEntityRef: Parser<string> = then3(
 	tokens.AMPERSAND,
 	or([tokens.LT, tokens.GT, tokens.AMP, tokens.QUOT, tokens.APOS]),
 	tokens.SEMICOLON,
-	(a, b, c) => a + b + c
+	(a, b, c) => a + b + c,
 );
 
 export const charRef: Parser<string> = or([
@@ -74,7 +74,7 @@ export const escapeApos: Parser<string> = alias([tokens.SINGLE_QUOTE_DOUBLE], "'
 export const commentTest: Parser<IAST> = wrapArray(alias([tokens.COMMENT_TEST], 'commentTest'));
 export const textTest: Parser<IAST> = wrapArray(alias([tokens.TEXT_TEST], 'textTest'));
 export const namespaceNodeTest: Parser<IAST> = wrapArray(
-	alias([tokens.NAMESPACE_NODE_TEST], 'namespaceTest')
+	alias([tokens.NAMESPACE_NODE_TEST], 'namespaceTest'),
 );
 export const anyKindTest: Parser<IAST> = wrapArray(alias([tokens.ANY_KIND_TEST], 'anyKindTest'));
 
@@ -86,16 +86,16 @@ const doubleLiteral: Parser<IAST> = then(
 		then(
 			digits,
 			optional(preceded(tokens.DOT, regex(/[0-9]*/))),
-			(a, b) => a + (b !== null ? '.' + b : '')
+			(a, b) => a + (b !== null ? '.' + b : ''),
 		),
 	]),
 	then3(
 		or([tokens.E_LOWER, tokens.E_UPPER]),
 		optional(or([tokens.PLUS, tokens.MINUS])),
 		digits,
-		(e, expSign, expDigits) => e + (expSign ? expSign : '') + expDigits
+		(e, expSign, expDigits) => e + (expSign ? expSign : '') + expDigits,
 	),
-	(base, exponent) => ['doubleConstantExpr', ['value', base + exponent]]
+	(base, exponent) => ['doubleConstantExpr', ['value', base + exponent]],
 );
 
 const decimalLiteral: Parser<IAST> = or([
@@ -108,20 +108,20 @@ const decimalLiteral: Parser<IAST> = or([
 
 export const integerLiteral: Parser<IAST> = map(
 	digits,
-	(x) => ['integerConstantExpr', ['value', x]] as IAST
+	(x) => ['integerConstantExpr', ['value', x]] as IAST,
 );
 
 export const numericLiteral: Parser<IAST> = followed(
 	or([doubleLiteral, decimalLiteral, integerLiteral]),
-	peek(not(regex(/[a-zA-Z]/), ['no alphabetical characters after numeric literal']))
+	peek(not(regex(/[a-zA-Z]/), ['no alphabetical characters after numeric literal'])),
 );
 
 export const contextItemExpr: Parser<IAST> = map(
 	followed(
 		tokens.DOT,
-		peek(not(tokens.DOT, ['context item should not be followed by another .']))
+		peek(not(tokens.DOT, ['context item should not be followed by another .'])),
 	),
-	(_) => ['contextItemExpr']
+	(_) => ['contextItemExpr'],
 );
 
 export const reservedFunctionNames = or([
@@ -146,7 +146,7 @@ export const reservedFunctionNames = or([
 ]);
 
 export const argumentPlaceholder: Parser<IAST> = wrapArray(
-	alias([tokens.QUESTION_MARK], 'argumentPlaceholder')
+	alias([tokens.QUESTION_MARK], 'argumentPlaceholder'),
 );
 
 export const occurrenceIndicator: Parser<string> = or([
@@ -157,7 +157,7 @@ export const occurrenceIndicator: Parser<string> = or([
 
 export const elementContentChar = preceded(
 	peek(not(regex(/[{}<&]/), ['elementContentChar cannot be {, }, <, or &'])),
-	char
+	char,
 );
 
 export const cdataSection: Parser<IAST> = map(
@@ -166,23 +166,23 @@ export const cdataSection: Parser<IAST> = map(
 		star(
 			preceded(
 				peek(not(tokens.CDATA_CLOSE, ['CDataSection content may not contain "]]>"'])),
-				char
-			)
+				char,
+			),
 		),
 		tokens.CDATA_CLOSE,
-		true
+		true,
 	),
-	(contents) => ['CDataSection', contents.join('')]
+	(contents) => ['CDataSection', contents.join('')],
 );
 
 export const quotAttrValueContentChar: Parser<string> = preceded(
 	peek(not(regex(/[\"{}<&]/), ['quotAttrValueContentChar cannot be ", {, }, <, or &'])),
-	char
+	char,
 );
 
 export const aposAttrValueContentChar: Parser<string> = preceded(
 	peek(not(regex(/[\'{}<&]/), ["aposAttrValueContentChar cannot be ', {, }, <, or &"])),
-	char
+	char,
 );
 
 export const dirCommentContents: Parser<string> = map(
@@ -192,18 +192,18 @@ export const dirCommentContents: Parser<string> = map(
 			map(
 				precededMultiple(
 					[tokens.MINUS, peek(not(tokens.MINUS, [])) as Parser<string>],
-					char
+					char,
 				),
-				(x) => '-' + x
+				(x) => '-' + x,
 			),
-		])
+		]),
 	),
-	(x) => x.join('')
+	(x) => x.join(''),
 );
 
 export const dirCommentConstructor: Parser<IAST> = map(
 	delimited(tokens.DIR_COMMENT_OPEN, dirCommentContents, tokens.DIR_COMMENT_CLOSE, true),
-	(x) => ['computedCommentConstructor', ['argExpr', ['stringConstantExpr', ['value', x]]]]
+	(x) => ['computedCommentConstructor', ['argExpr', ['stringConstantExpr', ['value', x]]]],
 );
 
 // Note: we deviate from the grammar in the XQuery spec here. Processing instruction targets must
@@ -213,12 +213,12 @@ const piTarget: Parser<string> = filter(
 	(target: string) => {
 		return target.toLowerCase() !== 'xml';
 	},
-	['A processing instruction target cannot be "xml"']
+	['A processing instruction target cannot be "xml"'],
 );
 
 const dirPiContents: Parser<string> = map(
 	star(preceded(peek(not(tokens.DIR_PI_CLOSE, [])), char)),
-	(x) => x.join('')
+	(x) => x.join(''),
 );
 
 export const dirPiConstructor: Parser<IAST> = then(
@@ -228,7 +228,7 @@ export const dirPiConstructor: Parser<IAST> = then(
 		'computedPIConstructor',
 		['piTarget', target],
 		['piValueExpr', ['stringConstantExpr', ['value', contents]]],
-	]
+	],
 );
 
 export const locationPathAbbreviation: Parser<IAST> = map(tokens.DOUBLE_SLASH, (_) => [
@@ -241,15 +241,15 @@ export const validationMode: Parser<string> = or([tokens.LAX, tokens.STRICT]);
 
 export const pragmaContents: Parser<string> = map(
 	star(followed(char, peek(not(tokens.PRAGMA_END, ["Pragma contents should not contain '#)'"])))),
-	(x) => x.join('')
+	(x) => x.join(''),
 );
 
 export const valueCompare: Parser<string> = map(
 	followed(
 		or([tokens.EQ, tokens.NE, tokens.LT, tokens.LE, tokens.GT, tokens.GE]),
-		assertAdjacentOpeningTerminal
+		assertAdjacentOpeningTerminal,
 	),
-	(x) => x + 'Op'
+	(x) => x + 'Op',
 );
 
 export const nodeCompare: Parser<string> = or([
@@ -295,25 +295,25 @@ export const decimalFormatPropertyName: Parser<string> = or([
 export const boundarySpaceDecl: Parser<IAST> = map(
 	precededMultiple(
 		[tokens.DECLARE, whitespacePlus, tokens.BOUNDARY_SPACE, whitespacePlus],
-		or([tokens.PRESERVE, tokens.STRIP])
+		or([tokens.PRESERVE, tokens.STRIP]),
 	),
-	(x) => ['boundarySpaceDecl', x]
+	(x) => ['boundarySpaceDecl', x],
 );
 
 export const constructionDecl: Parser<IAST> = map(
 	precededMultiple(
 		[tokens.DECLARE, whitespacePlus, tokens.CONSTRUCTION, whitespacePlus],
-		or([tokens.PRESERVE, tokens.STRIP])
+		or([tokens.PRESERVE, tokens.STRIP]),
 	),
-	(x) => ['constructionDecl', x]
+	(x) => ['constructionDecl', x],
 );
 
 export const orderingModeDecl: Parser<IAST> = map(
 	precededMultiple(
 		[tokens.DECLARE, whitespacePlus, tokens.ORDERING, whitespacePlus],
-		or([tokens.ORDERED, tokens.UNORDERED])
+		or([tokens.ORDERED, tokens.UNORDERED]),
 	),
-	(x) => ['orderingModeDecl', x]
+	(x) => ['orderingModeDecl', x],
 );
 
 export const emptyOrderDecl: Parser<IAST> = map(
@@ -328,20 +328,20 @@ export const emptyOrderDecl: Parser<IAST> = map(
 			tokens.EMPTY,
 			whitespacePlus,
 		],
-		or([tokens.GREATEST, tokens.LEAST])
+		or([tokens.GREATEST, tokens.LEAST]),
 	),
-	(x) => ['emptyOrderDecl', x]
+	(x) => ['emptyOrderDecl', x],
 );
 
 export const copyNamespacesDecl: Parser<IAST> = then(
 	precededMultiple(
 		[tokens.DECLARE, whitespacePlus, tokens.COPY_NAMESPACES, whitespacePlus],
-		preserveMode
+		preserveMode,
 	),
 	precededMultiple([whitespace, tokens.COMMA, whitespace], inheritMode),
 	(preserveModePart, inheritModePart) => [
 		'copyNamespacesDecl',
 		['preserveMode', preserveModePart],
 		['inheritMode', inheritModePart],
-	]
+	],
 );

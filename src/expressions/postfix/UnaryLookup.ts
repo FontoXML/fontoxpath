@@ -17,7 +17,7 @@ class UnaryLookup extends Expression {
 			keySpecifier === '*' ? [] : [keySpecifier],
 			{ canBeStaticallyEvaluated: false },
 			false,
-			type
+			type,
 		);
 
 		this._keySpecifier = keySpecifier;
@@ -29,7 +29,7 @@ class UnaryLookup extends Expression {
 			this._keySpecifier,
 			new EmptySequence(),
 			dynamicContext,
-			executionParameters
+			executionParameters,
 		);
 	}
 }

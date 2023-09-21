@@ -17,11 +17,11 @@ class CurlyArrayConstructor extends Expression {
 			members,
 			{
 				canBeStaticallyEvaluated: members.every(
-					(member) => member.canBeStaticallyEvaluated
+					(member) => member.canBeStaticallyEvaluated,
 				),
 			},
 			false,
-			type
+			type,
 		);
 
 		this._members = members;
@@ -37,10 +37,10 @@ class CurlyArrayConstructor extends Expression {
 				sequenceFactory.singleton(
 					new ArrayValue(
 						allValues.map((item) =>
-							createDoublyIterableSequence(sequenceFactory.singleton(item))
-						)
-					)
-				)
+							createDoublyIterableSequence(sequenceFactory.singleton(item)),
+						),
+					),
+				),
 			);
 	}
 }

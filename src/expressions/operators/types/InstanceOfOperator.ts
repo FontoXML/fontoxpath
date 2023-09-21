@@ -14,14 +14,14 @@ class InstanceOfOperator extends Expression {
 		expression: Expression,
 		typeTest: Expression,
 		multiplicity: string,
-		type: SequenceType
+		type: SequenceType,
 	) {
 		super(
 			expression.specificity,
 			[expression],
 			{ canBeStaticallyEvaluated: false },
 			false,
-			type
+			type,
 		);
 
 		this._expression = expression;
@@ -32,7 +32,7 @@ class InstanceOfOperator extends Expression {
 	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
 		const evaluatedExpression = this._expression.evaluateMaybeStatically(
 			dynamicContext,
-			executionParameters
+			executionParameters,
 		);
 		return evaluatedExpression.switchCases({
 			empty: () => {
@@ -49,7 +49,7 @@ class InstanceOfOperator extends Expression {
 						const scopedContext = dynamicContext.scopeWithFocus(0, value, contextItem);
 						return this._typeTest.evaluateMaybeStatically(
 							scopedContext,
-							executionParameters
+							executionParameters,
 						);
 					});
 				}
@@ -61,7 +61,7 @@ class InstanceOfOperator extends Expression {
 					const scopedContext = dynamicContext.scopeWithFocus(0, value, contextItem);
 					return this._typeTest.evaluateMaybeStatically(
 						scopedContext,
-						executionParameters
+						executionParameters,
 					);
 				});
 			},

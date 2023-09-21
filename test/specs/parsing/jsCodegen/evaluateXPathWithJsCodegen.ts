@@ -15,7 +15,7 @@ const compiledXPathCache = new Map<EvaluableExpression, Map<ReturnType, Compiled
 
 function getFromCache(
 	query: EvaluableExpression,
-	returnType: ReturnType
+	returnType: ReturnType,
 ): CompiledXPathFunction | undefined {
 	return compiledXPathCache.get(query)?.get(returnType);
 }
@@ -23,7 +23,7 @@ function getFromCache(
 function addToCache(
 	query: EvaluableExpression,
 	returnType: ReturnType,
-	fn: CompiledXPathFunction
+	fn: CompiledXPathFunction,
 ): void {
 	let byReturnType = compiledXPathCache.get(query);
 	if (byReturnType === undefined) {
@@ -35,13 +35,13 @@ function addToCache(
 
 const evaluateXPathWithJsCodegen = <
 	TNode extends Node,
-	TReturnType extends keyof IReturnTypes<TNode>
+	TReturnType extends keyof IReturnTypes<TNode>,
 >(
 	query: EvaluableExpression,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
 	returnType?: ReturnType,
-	options?: Options
+	options?: Options,
 ): IReturnTypes<TNode>[TReturnType] => {
 	returnType = returnType || (ReturnType.ANY as any);
 

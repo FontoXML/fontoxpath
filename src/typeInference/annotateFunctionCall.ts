@@ -13,7 +13,7 @@ import { AnnotationContext } from './AnnotationContext';
  */
 export function annotateFunctionCall(
 	ast: IAST,
-	annotationContext: AnnotationContext
+	annotationContext: AnnotationContext,
 ): SequenceType {
 	// We need the context to lookup the function information
 	if (!annotationContext || !annotationContext.staticContext) {
@@ -39,7 +39,7 @@ export function annotateFunctionCall(
 				localName,
 				prefix,
 			},
-			functionArguments.length
+			functionArguments.length,
 		);
 
 		if (!resolvedName) {
@@ -61,7 +61,7 @@ export function annotateFunctionCall(
 	const functionProps = annotationContext.staticContext.lookupFunction(
 		namespaceURI,
 		localName,
-		functionArguments.length
+		functionArguments.length,
 	);
 
 	// If we did not find a returnType, we return item()*

@@ -23,7 +23,7 @@ describe('instance of operator', () => {
 		chai.assert.isTrue(evaluateXPathToBoolean('true() instance of xs:boolean*'), 'singleton');
 		chai.assert.isTrue(
 			evaluateXPathToBoolean('(true(), false()) instance of xs:boolean*'),
-			'multiple'
+			'multiple',
 		);
 	});
 

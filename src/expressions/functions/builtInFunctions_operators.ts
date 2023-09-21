@@ -10,7 +10,7 @@ const opTo: FunctionDefinitionType = (
 	_executionParameters,
 	_staticContext,
 	fromSequence,
-	toSequence
+	toSequence,
 ) => {
 	// shortcut the non-trivial case of both values being known
 	// RangeExpr is inclusive: 1 to 3 will make (1,2,3)
@@ -29,7 +29,7 @@ const opTo: FunctionDefinitionType = (
 		{
 			next: () => ready(createAtomicValue(fromValue++, ValueType.XSINTEGER)),
 		},
-		toValue - fromValue + 1
+		toValue - fromValue + 1,
 	);
 };
 

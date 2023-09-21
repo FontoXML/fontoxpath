@@ -11,7 +11,7 @@ import { DONE_TOKEN, IIterator, IterationHint, ready } from './expressions/util/
 
 export function transformMapToObject(
 	map: MapValue,
-	executionParameters: ExecutionParameters
+	executionParameters: ExecutionParameters,
 ): IIterator<object> {
 	const mapObj: { [s: string]: Value } = {};
 	let i = 0;
@@ -34,7 +34,7 @@ export function transformMapToObject(
 							default: (seq) => seq,
 							multiple: () => {
 								throw new Error(
-									`Serialization error: The value of an entry in a map is expected to be a single item or an empty sequence. Use arrays when putting multiple values in a map. The value of the key ${keyValuePair.key.value} holds multiple items`
+									`Serialization error: The value of an entry in a map is expected to be a single item or an empty sequence. Use arrays when putting multiple values in a map. The value of the key ${keyValuePair.key.value} holds multiple items`,
 								);
 							},
 						})
@@ -47,7 +47,7 @@ export function transformMapToObject(
 
 					transformedValueIterator = transformXPathItemToJavascriptObject(
 						val,
-						executionParameters
+						executionParameters,
 					);
 				}
 				const transformedValue = transformedValueIterator.next(IterationHint.NONE);
@@ -63,7 +63,7 @@ export function transformMapToObject(
 
 export function transformArrayToArray(
 	array: ArrayValue,
-	executionParameters: ExecutionParameters
+	executionParameters: ExecutionParameters,
 ): IIterator<any[]> {
 	const arr: Value[] = [];
 	let i = 0;
@@ -81,7 +81,7 @@ export function transformArrayToArray(
 							default: (seq) => seq,
 							multiple: () => {
 								throw new Error(
-									`Serialization error: The value of an entry in an array is expected to be a single item or an empty sequence. Use nested arrays when putting multiple values in an array.`
+									`Serialization error: The value of an entry in an array is expected to be a single item or an empty sequence. Use nested arrays when putting multiple values in an array.`,
 								);
 							},
 						})
@@ -92,7 +92,7 @@ export function transformArrayToArray(
 					}
 					transformedMemberGenerator = transformXPathItemToJavascriptObject(
 						val,
-						executionParameters
+						executionParameters,
 					);
 				}
 				const transformedValue = transformedMemberGenerator.next(IterationHint.NONE);
@@ -107,7 +107,7 @@ export function transformArrayToArray(
 
 export default function transformXPathItemToJavascriptObject(
 	value: Value,
-	executionParameters: ExecutionParameters
+	executionParameters: ExecutionParameters,
 ): IIterator<any> {
 	if (isSubtypeOf(value.type, ValueType.MAP)) {
 		return transformMapToObject(value as MapValue, executionParameters);

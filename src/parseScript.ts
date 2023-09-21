@@ -87,7 +87,7 @@ function parseNode(
 	simpleNodesFactory: ISimpleNodesFactory,
 	jsonml: any[] | string,
 	parentUri: string | null,
-	skipEmptyPrefixes: boolean
+	skipEmptyPrefixes: boolean,
 ): Text | Element {
 	if (typeof jsonml === 'string') {
 		if (jsonml.length === 0) {
@@ -107,7 +107,7 @@ function parseNode(
 	// Node must be a normal element
 	const element = simpleNodesFactory.createElementNS(
 		namespaceUri,
-		PREFERRED_PREFIX_BY_NAMESPACEURI[namespaceUri] + ':' + name
+		PREFERRED_PREFIX_BY_NAMESPACEURI[namespaceUri] + ':' + name,
 	);
 	const firstChild = jsonml[1];
 	let firstChildIndex = 1;
@@ -125,7 +125,7 @@ function parseNode(
 							element,
 							namespaceUri,
 							'fontoxpath:' + attributeName,
-							sequenceTypeToString(attributeValue)
+							sequenceTypeToString(attributeValue),
 						);
 					}
 					continue;
@@ -145,7 +145,7 @@ function parseNode(
 					element,
 					namespaceUri,
 					PREFERRED_PREFIX_BY_NAMESPACEURI[namespaceUri] + ':' + attributeName,
-					attributeValue
+					attributeValue,
 				);
 			}
 		}
@@ -159,7 +159,7 @@ function parseNode(
 			simpleNodesFactory,
 			jsonml[i] as any[] | string,
 			namespaceUri,
-			skipEmptyPrefixes
+			skipEmptyPrefixes,
 		);
 		if (node !== null) {
 			documentWriter.insertBefore(element, node, null);
@@ -217,7 +217,7 @@ export default function parseScript<TElement extends Element>(
 	script: string,
 	options: Options & { annotateAst?: boolean },
 	simpleNodesFactory: ISimpleNodesFactory,
-	documentWriter: IDocumentWriter = domBackedDocumentWriter
+	documentWriter: IDocumentWriter = domBackedDocumentWriter,
 ): TElement {
 	script = normalizeEndOfLines(script);
 	let ast: IAST;
@@ -239,7 +239,7 @@ export default function parseScript<TElement extends Element>(
 		options['defaultFunctionNamespaceURI'] === undefined
 			? BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI
 			: options['defaultFunctionNamespaceURI'],
-		options['functionNameResolver'] || (() => null)
+		options['functionNameResolver'] || (() => null),
 	);
 	const rootStaticContext = new StaticContext(executionSpecificStaticContext);
 	const anyModuleDecl = astHelper.getFirstChild(ast, ['mainModule', 'libraryModule']);
@@ -269,12 +269,12 @@ export default function parseScript<TElement extends Element>(
 		simpleNodesFactory,
 		ast,
 		null,
-		options.annotateAst === false
+		options.annotateAst === false,
 	) as TElement;
 	documentWriter.insertBefore(
 		astAsXML,
 		simpleNodesFactory.createComment(script),
-		domFacade['getFirstChild'](astAsXML)
+		domFacade['getFirstChild'](astAsXML),
 	);
 
 	return astAsXML;

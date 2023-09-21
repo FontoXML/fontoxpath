@@ -79,7 +79,7 @@ export function validateRestrictions(value: string, valueType: ValueType): boole
 					return true;
 				}
 				return validationFunction(value, type.restrictionsByName[restrictionName]);
-			}
+			},
 		);
 
 		if (!matchesRestrictions) {

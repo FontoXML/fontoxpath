@@ -40,7 +40,7 @@ class AttributeConstructor extends Expression {
 
 	constructor(
 		name: { expr: Expression } | { localName: string; namespaceURI: string; prefix: string },
-		value: { value: string } | { valueExprParts: Expression[] }
+		value: { value: string } | { valueExprParts: Expression[] },
 	) {
 		let childExpressions = (value as any).valueExprParts || [];
 		childExpressions = childExpressions.concat((name as any).expr || []);
@@ -55,7 +55,7 @@ class AttributeConstructor extends Expression {
 			this.name = new QName(
 				(name as any).prefix,
 				(name as any).namespaceURI,
-				(name as any).localName
+				(name as any).localName,
 			);
 		}
 		this._value = value;
@@ -80,12 +80,12 @@ class AttributeConstructor extends Expression {
 						if (!nameIterator) {
 							const nameSequence = this._nameExpr.evaluate(
 								dynamicContext,
-								executionParameters
+								executionParameters,
 							);
 							nameIterator = evaluateQNameExpression(
 								this._staticContext,
 								executionParameters,
-								nameSequence
+								nameSequence,
 							);
 						}
 						const nv = nameIterator.next(IterationHint.NONE);
@@ -127,26 +127,26 @@ class AttributeConstructor extends Expression {
 							valueExprParts.map((expr) => {
 								return atomize(
 									expr.evaluate(dynamicContext, executionParameters),
-									executionParameters
+									executionParameters,
 								).mapAll((allValues) =>
 									sequenceFactory.singleton(
 										createAtomicValue(
 											allValues.map((val) => val.value).join(' '),
-											ValueType.XSSTRING
-										)
-									)
+											ValueType.XSSTRING,
+										),
+									),
 								);
-							})
+							}),
 						).mapAll((allValueParts) =>
 							sequenceFactory.singleton(
 								createPointerValue(
 									createAttribute(
 										name,
-										allValueParts.map((val) => val.value).join('')
+										allValueParts.map((val) => val.value).join(''),
 									),
-									executionParameters.domFacade
-								)
-							)
+									executionParameters.domFacade,
+								),
+							),
 						).value;
 					}
 					return valueIterator.next(IterationHint.NONE);
@@ -157,8 +157,8 @@ class AttributeConstructor extends Expression {
 				return ready(
 					createPointerValue(
 						createAttribute(name, (this._value as any).value),
-						executionParameters.domFacade
-					)
+						executionParameters.domFacade,
+					),
 				);
 			},
 		});

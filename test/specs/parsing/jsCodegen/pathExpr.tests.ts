@@ -16,29 +16,29 @@ describe('paths (js-codegen)', () => {
 	it('compiles (/)', () => {
 		chai.assert.deepEqual(
 			evaluateXPathWithJsCodegen('(/)', documentNode, null, ReturnType.NODES),
-			[documentNode]
+			[documentNode],
 		);
 	});
 
 	it('evaluates absolute paths by going "up" to the document node', () => {
 		const titleNode = documentNode.firstChild.firstChild;
 		chai.assert.isTrue(
-			evaluateXPathWithJsCodegen('/xml/title', titleNode, null, ReturnType.BOOLEAN)
+			evaluateXPathWithJsCodegen('/xml/title', titleNode, null, ReturnType.BOOLEAN),
 		);
 		chai.assert.isFalse(
-			evaluateXPathWithJsCodegen('/does-not-exist', titleNode, null, ReturnType.BOOLEAN)
+			evaluateXPathWithJsCodegen('/does-not-exist', titleNode, null, ReturnType.BOOLEAN),
 		);
 	});
 
 	it('handles paths with filterExpr', () => {
 		const titleNode = documentNode.firstChild.firstChild;
 		chai.assert.isFalse(
-			evaluateXPathWithJsCodegen('self::title/false()', titleNode, null, ReturnType.BOOLEAN)
+			evaluateXPathWithJsCodegen('self::title/false()', titleNode, null, ReturnType.BOOLEAN),
 		);
 		// context item is also a filterExpr
 		chai.assert.equal(
 			evaluateXPathWithJsCodegen('self::title/./.', titleNode, null, ReturnType.FIRST_NODE),
-			titleNode
+			titleNode,
 		);
 		// filterExpr with following steps must result in a node
 		chai.assert.throws(
@@ -47,9 +47,9 @@ describe('paths (js-codegen)', () => {
 					'false()/self::title',
 					titleNode,
 					null,
-					ReturnType.BOOLEAN
+					ReturnType.BOOLEAN,
 				),
-			/XPTY0019/
+			/XPTY0019/,
 		);
 	});
 
@@ -59,26 +59,26 @@ describe('paths (js-codegen)', () => {
 		const outerAst = parseScript(
 			'$a/*',
 			{ language: Language.XQUERY_3_1_LANGUAGE, debug: false },
-			new slimdom.Document()
+			new slimdom.Document(),
 		);
 		const innerAst = parseScript(
 			'self::nope',
 			{ language: Language.XQUERY_3_1_LANGUAGE, debug: false },
-			new slimdom.Document()
+			new slimdom.Document(),
 		);
 		const actualExpression = evaluateXPath<slimdom.Element, ReturnType.FIRST_NODE>(
 			'descendant::Q{http://www.w3.org/2005/XQueryX}queryBody/*',
 			innerAst,
 			null,
 			{},
-			ReturnType.FIRST_NODE
+			ReturnType.FIRST_NODE,
 		);
 		const expressionToReplace = evaluateXPath<slimdom.Element, ReturnType.FIRST_NODE>(
 			`descendant::Q{http://www.w3.org/2005/XQueryX}varRef`,
 			outerAst,
 			null,
 			{},
-			ReturnType.FIRST_NODE
+			ReturnType.FIRST_NODE,
 		);
 		expressionToReplace.replaceWith(actualExpression);
 
@@ -87,9 +87,9 @@ describe('paths (js-codegen)', () => {
 				outerAst,
 				documentNode.documentElement,
 				null,
-				ReturnType.FIRST_NODE
+				ReturnType.FIRST_NODE,
 			),
-			null
+			null,
 		);
 	});
 
@@ -99,32 +99,32 @@ describe('paths (js-codegen)', () => {
 		const outerAst = parseScript(
 			'$a/*',
 			{ language: Language.XQUERY_3_1_LANGUAGE, debug: false },
-			new slimdom.Document()
+			new slimdom.Document(),
 		);
 		const innerAst = parseScript(
 			'*',
 			{ language: Language.XQUERY_3_1_LANGUAGE, debug: false },
-			new slimdom.Document()
+			new slimdom.Document(),
 		);
 		const actualExpression = evaluateXPath<slimdom.Element, ReturnType.FIRST_NODE>(
 			'descendant::Q{http://www.w3.org/2005/XQueryX}queryBody/*',
 			innerAst,
 			null,
 			{},
-			ReturnType.FIRST_NODE
+			ReturnType.FIRST_NODE,
 		);
 		const expressionToReplace = evaluateXPath<slimdom.Element, ReturnType.FIRST_NODE>(
 			`descendant::Q{http://www.w3.org/2005/XQueryX}varRef`,
 			outerAst,
 			null,
 			{},
-			ReturnType.FIRST_NODE
+			ReturnType.FIRST_NODE,
 		);
 		expressionToReplace.replaceWith(actualExpression);
 
 		chai.assert.equal(
 			evaluateXPathWithJsCodegen(outerAst, documentNode, null, ReturnType.FIRST_NODE),
-			documentNode.documentElement.firstElementChild
+			documentNode.documentElement.firstElementChild,
 		);
 	});
 });

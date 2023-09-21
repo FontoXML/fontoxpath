@@ -8,7 +8,7 @@ const createYearMonthDurationValue = (value: YearMonthDuration) =>
 	createAtomicValue(value, ValueType.XSYEARMONTHDURATION);
 
 export default function castToYearMonthDuration(
-	instanceOf: (typeName: ValueType) => boolean
+	instanceOf: (typeName: ValueType) => boolean,
 ): (value: any) => CastResult {
 	if (instanceOf(ValueType.XSDURATION) && !instanceOf(ValueType.XSDAYTIMEDURATION)) {
 		return (value) => ({
@@ -40,7 +40,7 @@ export default function castToYearMonthDuration(
 	return () => ({
 		successful: false,
 		error: new Error(
-			'XPTY0004: Casting not supported from given type to xs:yearMonthDuration or any of its derived types.'
+			'XPTY0004: Casting not supported from given type to xs:yearMonthDuration or any of its derived types.',
 		),
 	});
 }

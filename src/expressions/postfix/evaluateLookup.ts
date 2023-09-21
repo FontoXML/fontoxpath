@@ -16,7 +16,7 @@ import { errXPTY0004 } from '../xquery/XQueryErrors';
 function performLookup(
 	contextItem: Value,
 	lookup: '*' | Value,
-	previousSequence: ISequence
+	previousSequence: ISequence,
 ): ISequence {
 	const sequences = [previousSequence];
 
@@ -39,7 +39,7 @@ function performLookup(
 			sequences.push(...mapItem.keyValuePairs.map((keyValuePair) => keyValuePair.value()));
 		} else {
 			const matchingPair = mapItem.keyValuePairs.find((keyValuePair) =>
-				isSameMapKey(keyValuePair.key, lookup)
+				isSameMapKey(keyValuePair.key, lookup),
 			);
 			if (matchingPair) {
 				sequences.push(matchingPair.value());
@@ -56,7 +56,7 @@ export default function evaluateLookup(
 	keySpecifier: '*' | Expression,
 	initialSequence: ISequence,
 	dynamicContext: DynamicContext,
-	executionParameters: ExecutionParameters
+	executionParameters: ExecutionParameters,
 ): ISequence {
 	if (keySpecifier === '*') {
 		return performLookup(contextItem, keySpecifier, initialSequence);
@@ -64,14 +64,14 @@ export default function evaluateLookup(
 
 	const lookupSequence = keySpecifier.evaluateMaybeStatically(
 		dynamicContext,
-		executionParameters
+		executionParameters,
 	);
 	const createLookupSequence = createDoublyIterableSequence(lookupSequence);
 
 	const deepSequence = createLookupSequence().mapAll((lookups) =>
 		lookups.reduce((sequenceToReturn, lookup) => {
 			return performLookup(contextItem, lookup, sequenceToReturn);
-		}, new EmptySequence())
+		}, new EmptySequence()),
 	);
 	return concatSequences([initialSequence, deepSequence]);
 }

@@ -34,7 +34,7 @@ import {
 function evaluateReplaceNode(
 	executionParameters: ExecutionParameters,
 	targetValueIterator: IIterator<UpdatingExpressionResult>,
-	replacementValueIterator: IIterator<UpdatingExpressionResult>
+	replacementValueIterator: IIterator<UpdatingExpressionResult>,
 ) {
 	const domFacade = executionParameters.domFacade;
 	let rlist: {
@@ -98,7 +98,7 @@ function evaluateReplaceNode(
 			// property is empty, [err:XUDY0009] is raised.
 			parent = executionParameters.domFacade.getParentNodePointer(
 				tv.value.xdmValue[0].value,
-				null
+				null,
 			) as ElementNodePointer;
 			if (parent === null) {
 				throw errXUDY0009(tv.value.xdmValue[0].value);
@@ -154,7 +154,7 @@ function evaluateReplaceNode(
 						namespaceBindings[prefix] = namespaceURI;
 						return namespaceBindings;
 					},
-					{}
+					{},
 				);
 			}
 
@@ -169,7 +169,7 @@ function evaluateReplaceNode(
 				pendingUpdateList: mergeUpdates(
 					[replaceNode(target.value, [].concat(rlist.attributes, rlist.contentNodes))],
 					rlistUpdates,
-					targetUpdates
+					targetUpdates,
 				),
 			});
 		},
@@ -179,7 +179,7 @@ function evaluateReplaceNode(
 function evaluateReplaceNodeValue(
 	executionParameters: ExecutionParameters,
 	targetValueIterator: IIterator<UpdatingExpressionResult>,
-	replacementValueIterator: IIterator<UpdatingExpressionResult>
+	replacementValueIterator: IIterator<UpdatingExpressionResult>,
 ) {
 	let target: Value;
 	let targetUpdates: IPendingUpdate[];
@@ -204,7 +204,7 @@ function evaluateReplaceNodeValue(
 				// Let $text be the result of this step.
 				const atomized = atomize(
 					sequenceFactory.create(rl.value.xdmValue),
-					executionParameters
+					executionParameters,
 				).map((value) => castToType(value, ValueType.XSSTRING));
 
 				const textContent = atomized
@@ -267,7 +267,7 @@ function evaluateReplaceNodeValue(
 					pendingUpdateList: mergeUpdates(
 						[replaceElementContent(target.value, text)],
 						rlistUpdates,
-						targetUpdates
+						targetUpdates,
 					),
 				});
 			}
@@ -321,7 +321,7 @@ function evaluateReplaceNodeValue(
 					pendingUpdateList: mergeUpdates(
 						[replaceValue(target.value, stringValue)],
 						rlistUpdates,
-						targetUpdates
+						targetUpdates,
 					),
 				});
 			}
@@ -347,27 +347,27 @@ class ReplaceExpression extends UpdatingExpression {
 
 	public evaluateWithUpdateList(
 		dynamicContext: DynamicContext,
-		executionParameters: ExecutionParameters
+		executionParameters: ExecutionParameters,
 	): IIterator<UpdatingExpressionResult> {
 		const targetValueIterator = this.ensureUpdateListWrapper(this._targetExpression)(
 			dynamicContext,
-			executionParameters
+			executionParameters,
 		);
 		const replacementValueIterator = this.ensureUpdateListWrapper(this._replacementExpression)(
 			dynamicContext,
-			executionParameters
+			executionParameters,
 		);
 
 		return this._valueOf
 			? evaluateReplaceNodeValue(
 					executionParameters,
 					targetValueIterator,
-					replacementValueIterator
+					replacementValueIterator,
 			  )
 			: evaluateReplaceNode(
 					executionParameters,
 					targetValueIterator,
-					replacementValueIterator
+					replacementValueIterator,
 			  );
 	}
 }

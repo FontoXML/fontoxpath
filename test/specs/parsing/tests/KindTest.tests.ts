@@ -13,7 +13,7 @@ describe('KindTest', () => {
 	it('can select any element -> element()', () => {
 		jsonMlMapper.parse(['someOtherParentElement', ['someElement']], documentNode);
 		chai.assert.isTrue(
-			evaluateXPathToBoolean('self::element()', documentNode.documentElement.firstChild)
+			evaluateXPathToBoolean('self::element()', documentNode.documentElement.firstChild),
 		);
 	});
 
@@ -22,22 +22,22 @@ describe('KindTest', () => {
 		chai.assert.isTrue(
 			evaluateXPathToBoolean(
 				'self::element(someElement)',
-				documentNode.documentElement.firstChild
-			)
+				documentNode.documentElement.firstChild,
+			),
 		);
 	});
 
 	it('does not match if the names do not match', () => {
 		jsonMlMapper.parse(['someOtherParentElement', ['AAAAA']], documentNode);
 		chai.assert.isFalse(
-			evaluateXPathToBoolean('self::element(BBBBB)', documentNode.documentElement.firstChild)
+			evaluateXPathToBoolean('self::element(BBBBB)', documentNode.documentElement.firstChild),
 		);
 	});
 
 	it('can select any text node -> text()', () => {
 		jsonMlMapper.parse(['someOtherParentElement', 'Some text'], documentNode);
 		chai.assert.isTrue(
-			evaluateXPathToBoolean('self::text()', documentNode.documentElement.firstChild)
+			evaluateXPathToBoolean('self::text()', documentNode.documentElement.firstChild),
 		);
 	});
 
@@ -46,15 +46,15 @@ describe('KindTest', () => {
 		chai.assert.isTrue(
 			evaluateXPathToBoolean(
 				'self::processing-instruction()',
-				documentNode.documentElement.firstChild
-			)
+				documentNode.documentElement.firstChild,
+			),
 		);
 	});
 
 	it('can select any comment -> comment()', () => {
 		jsonMlMapper.parse(['someOtherParentElement', ['!', 'some comment']], documentNode);
 		chai.assert.isTrue(
-			evaluateXPathToBoolean('self::comment()', documentNode.documentElement.firstChild)
+			evaluateXPathToBoolean('self::comment()', documentNode.documentElement.firstChild),
 		);
 	});
 
@@ -65,7 +65,7 @@ describe('KindTest', () => {
 	it('can select any attribute -> attribute(name)', () => {
 		jsonMlMapper.parse(['someOtherParentElement', { attr: 'value' }], documentNode);
 		chai.assert.isTrue(
-			evaluateXPathToBoolean('@attribute(attr)', documentNode.documentElement)
+			evaluateXPathToBoolean('@attribute(attr)', documentNode.documentElement),
 		);
 	});
 	it('can return when directly fed an attribute (skipping any paths)', () => {
@@ -73,8 +73,8 @@ describe('KindTest', () => {
 		chai.assert.isTrue(
 			evaluateXPathToBoolean(
 				'self::attribute()',
-				documentNode.documentElement.getAttributeNode('attr')
-			)
+				documentNode.documentElement.getAttributeNode('attr'),
+			),
 		);
 	});
 });

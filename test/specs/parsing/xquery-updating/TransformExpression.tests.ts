@@ -23,7 +23,7 @@ return $a
 			documentNode,
 			null,
 			{},
-			{ returnType: evaluateXPath.NODES_TYPE }
+			{ returnType: evaluateXPath.NODES_TYPE },
 		);
 		chai.assert.equal(result.xdmValue.length, 1);
 		const actualXml = new XMLSerializer().serializeToString(result.xdmValue[0]);
@@ -59,7 +59,7 @@ return ($a, replace node element with <replacement/>)
 			{},
 			{
 				returnType: evaluateXPath.NODES_TYPE,
-			}
+			},
 		);
 		chai.assert.equal(result.xdmValue.length, 1);
 		const actualXml = new XMLSerializer().serializeToString(result.xdmValue[0]);
@@ -87,7 +87,7 @@ return ($a)
 			evaluateXPath.NODES_TYPE,
 			{
 				language: evaluateXPath.XQUERY_UPDATE_3_1_LANGUAGE,
-			}
+			},
 		) as Node[];
 		chai.assert.equal(result.length, 1);
 		const actualXml = new XMLSerializer().serializeToString(result[0]);
@@ -115,7 +115,7 @@ return ($a)
 			documentNode,
 			null,
 			{},
-			{}
+			{},
 		);
 		const actualXml = new XMLSerializer().serializeToString(result.xdmValue[0]);
 		const expectedXml = new XMLSerializer().serializeToString(documentNode.documentElement);
@@ -133,7 +133,7 @@ return ($a)
 			documentNode,
 			null,
 			{},
-			{}
+			{},
 		);
 		const actualXml = new XMLSerializer().serializeToString(result.xdmValue[0]);
 		const expectedXml = new XMLSerializer().serializeToString(documentNode);
@@ -163,7 +163,7 @@ return ($a)
 			documentNode,
 			null,
 			{},
-			{}
+			{},
 		);
 		const actualXml = new XMLSerializer().serializeToString(result.xdmValue[0]);
 		const newlySyncXMLDoc = new XMLSerializer().serializeToString(parseXmlDocument(xml));
@@ -194,7 +194,7 @@ return ($a)
 			documentNode,
 			null,
 			{},
-			{ nodesFactory: new DomBackedNodesFactory(documentNode) }
+			{ nodesFactory: new DomBackedNodesFactory(documentNode) },
 		);
 		const actualXml = new XMLSerializer().serializeToString(result.xdmValue[0]);
 		const newlySyncXMLDoc = new XMLSerializer().serializeToString(parseXmlDocument(xml));
@@ -228,11 +228,11 @@ return ($a)
 			documentNode,
 			myDomFacade,
 			{},
-			{}
+			{},
 		);
 		const actualXml = new XMLSerializer().serializeToString(result.xdmValue[0]);
 		const expectedXml = new XMLSerializer().serializeToString(
-			parseXmlDocument('<xml><a/></xml>')
+			parseXmlDocument('<xml><a/></xml>'),
 		);
 		chai.assert.equal(actualXml, expectedXml);
 		assertUpdateList(result.pendingUpdateList, []);
@@ -247,7 +247,7 @@ return ($a)
 				documentNode,
 				null,
 				{},
-				{}
+				{},
 			);
 		} catch (err) {
 			error = err;

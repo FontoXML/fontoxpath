@@ -7,7 +7,7 @@ const createDayTimeDurationValue = (value: DayTimeDuration) =>
 	createAtomicValue(value, ValueType.XSDAYTIMEDURATION);
 
 export default function castToDayTimeDuration(
-	instanceOf: (typeName: ValueType) => boolean
+	instanceOf: (typeName: ValueType) => boolean,
 ): (value: any) => CastResult {
 	if (instanceOf(ValueType.XSDURATION) && !instanceOf(ValueType.XSYEARMONTHDURATION)) {
 		return (value) => ({
@@ -39,7 +39,7 @@ export default function castToDayTimeDuration(
 	return () => ({
 		successful: false,
 		error: new Error(
-			'XPTY0004: Casting not supported from given type to xs:dayTimeDuration or any of its derived types.'
+			'XPTY0004: Casting not supported from given type to xs:dayTimeDuration or any of its derived types.',
 		),
 	});
 }

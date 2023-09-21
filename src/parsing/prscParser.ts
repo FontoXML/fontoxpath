@@ -107,12 +107,12 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 	function binaryOperator<T, S>(
 		exp: Parser<T>,
 		operator: Parser<string>,
-		constructionFn: (lhs: T, rhs: [string, T][]) => S
+		constructionFn: (lhs: T, rhs: [string, T][]) => S,
 	): Parser<S> {
 		return then(
 			exp,
 			star(then(surrounded(operator, whitespace), cut(exp), (a, b) => [a, b])),
-			constructionFn
+			constructionFn,
 		);
 	}
 
@@ -120,7 +120,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		exp: Parser<IAST>,
 		operator: Parser<string>,
 		firstArgName: string = 'firstOperand',
-		secondArgName: string = 'secondOperand'
+		secondArgName: string = 'secondOperand',
 	): Parser<IAST> {
 		return then(
 			exp,
@@ -130,7 +130,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 					return lhs;
 				}
 				return [rhs[0], [firstArgName, lhs], [secondArgName, rhs[1]]];
-			}
+			},
 		);
 	}
 
@@ -141,7 +141,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			IAST & {
 				comment?: string;
 			}
-		>
+		>,
 	): Parser<IAST> {
 		if (!options.outputDebugInfo) {
 			return parser;
@@ -188,7 +188,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const predicate: Parser<IAST> = preceded(
 		tokens.BRACKET_OPEN,
-		followed(surrounded(expr, whitespace), tokens.BRACKET_CLOSE)
+		followed(surrounded(expr, whitespace), tokens.BRACKET_CLOSE),
 	);
 
 	const stringLiteral: Parser<string> = map(
@@ -196,18 +196,18 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			? or([
 					surrounded(
 						star(or([predefinedEntityRef, charRef, escapeQuot, regex(/[^\"&]/)])),
-						tokens.DOUBLE_QUOTE
+						tokens.DOUBLE_QUOTE,
 					),
 					surrounded(
 						star(or([predefinedEntityRef, charRef, escapeApos, regex(/[^'&]/)])),
-						tokens.SINGLE_QUOTE
+						tokens.SINGLE_QUOTE,
 					),
 			  ])
 			: or([
 					surrounded(star(or([escapeQuot, regex(/[^\"]/)])), tokens.DOUBLE_QUOTE),
 					surrounded(star(or([escapeApos, regex(/[^']/)])), tokens.SINGLE_QUOTE),
 			  ]),
-		(x) => x.join('')
+		(x) => x.join(''),
 	);
 
 	const elementTest: Parser<IAST> = or([
@@ -223,26 +223,26 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 							[
 								['elementName', elemName],
 								['typeName', ...type],
-							] as [IAST, IAST]
+							] as [IAST, IAST],
 					),
-					preceded(whitespace, tokens.BRACE_CLOSE)
-				)
+					preceded(whitespace, tokens.BRACE_CLOSE),
+				),
 			),
-			([nameOrWildcard, type]) => ['elementTest', nameOrWildcard, type] as IAST
+			([nameOrWildcard, type]) => ['elementTest', nameOrWildcard, type] as IAST,
 		),
 		map(
 			precededMultiple(
 				[tokens.ELEMENT, whitespace],
-				delimited(tokens.BRACE_OPEN, elementNameOrWildCard, tokens.BRACE_CLOSE)
+				delimited(tokens.BRACE_OPEN, elementNameOrWildCard, tokens.BRACE_CLOSE),
 			),
-			(nameOrWildcard) => ['elementTest', ['elementName', nameOrWildcard]] as IAST
+			(nameOrWildcard) => ['elementTest', ['elementName', nameOrWildcard]] as IAST,
 		),
 		map(
 			precededMultiple(
 				[tokens.ELEMENT, whitespace],
-				delimited(tokens.BRACE_OPEN, whitespace, tokens.BRACE_CLOSE)
+				delimited(tokens.BRACE_OPEN, whitespace, tokens.BRACE_CLOSE),
 			),
-			(_) => ['elementTest']
+			(_) => ['elementTest'],
 		),
 	]);
 
@@ -264,26 +264,26 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 							[
 								['attributeName', attrName],
 								['typeName', ...type],
-							] as [IAST, IAST]
+							] as [IAST, IAST],
 					),
-					preceded(whitespace, tokens.BRACE_CLOSE)
-				)
+					preceded(whitespace, tokens.BRACE_CLOSE),
+				),
 			),
-			([nameOrWildcard, type]) => ['attributeTest', nameOrWildcard, type] as IAST
+			([nameOrWildcard, type]) => ['attributeTest', nameOrWildcard, type] as IAST,
 		),
 		map(
 			precededMultiple(
 				[tokens.ATTRIBUTE, whitespace],
-				delimited(tokens.BRACE_OPEN, attribNameOrWildCard, tokens.BRACE_CLOSE)
+				delimited(tokens.BRACE_OPEN, attribNameOrWildCard, tokens.BRACE_CLOSE),
 			),
-			(nameOrWildcard) => ['attributeTest', ['attributeName', nameOrWildcard]] as IAST
+			(nameOrWildcard) => ['attributeTest', ['attributeName', nameOrWildcard]] as IAST,
 		),
 		map(
 			precededMultiple(
 				[tokens.ATTRIBUTE, whitespace],
-				delimited(tokens.BRACE_OPEN, whitespace, tokens.BRACE_CLOSE)
+				delimited(tokens.BRACE_OPEN, whitespace, tokens.BRACE_CLOSE),
 			),
-			(_) => ['attributeTest']
+			(_) => ['attributeTest'],
 		),
 	]);
 
@@ -292,9 +292,9 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 	const schemaElementTest: Parser<IAST> = map(
 		precededMultiple(
 			[tokens.SCHEMA_ELEMENT, whitespace, tokens.BRACE_OPEN],
-			followed(elementDeclaration, tokens.BRACE_CLOSE)
+			followed(elementDeclaration, tokens.BRACE_CLOSE),
 		),
-		(x) => ['schemaElementTest', ...x]
+		(x) => ['schemaElementTest', ...x],
 	);
 
 	const attributeName = eqName;
@@ -305,9 +305,9 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		delimited(
 			tokens.SCHEMA_ATTRIBUTE_OPEN,
 			surrounded(attributeDeclaration, whitespace),
-			tokens.BRACE_CLOSE
+			tokens.BRACE_CLOSE,
 		),
-		(decl) => ['schemaAttributeTest', ...decl]
+		(decl) => ['schemaAttributeTest', ...decl],
 	);
 
 	const documentTest: Parser<IAST> = map(
@@ -315,19 +315,19 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			tokens.DOCUMENT_NODE_OPEN,
 			followed(
 				surrounded(optional(or([elementTest, schemaElementTest])), whitespace),
-				tokens.BRACE_CLOSE
-			)
+				tokens.BRACE_CLOSE,
+			),
 		),
-		(x) => ['documentTest', ...(x ? [x] : [])]
+		(x) => ['documentTest', ...(x ? [x] : [])],
 	);
 
 	const piTest: Parser<IAST> = or([
 		map(
 			preceded(
 				tokens.PROCESSING_INSTRUCTION_OPEN,
-				followed(surrounded(or([ncName, stringLiteral]), whitespace), tokens.BRACE_CLOSE)
+				followed(surrounded(or([ncName, stringLiteral]), whitespace), tokens.BRACE_CLOSE),
 			),
-			(target) => ['piTest', ['piTarget', target]] as IAST
+			(target) => ['piTest', ['piTarget', target]] as IAST,
 		),
 
 		wrapArray(alias([tokens.PROCESSING_INSTRUCTION_TEST], 'piTest')),
@@ -389,13 +389,13 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const predicateList: Parser<IAST | undefined> = map(
 		star(preceded(whitespace, predicate)),
-		(x: IAST[]) => (x.length > 0 ? ['predicates', ...x] : undefined)
+		(x: IAST[]) => (x.length > 0 ? ['predicates', ...x] : undefined),
 	);
 
 	const axisStep: Parser<IAST> = then(
 		or([reverseStep, forwardStep]),
 		predicateList,
-		(a: IAST, b: IAST | undefined) => (b === undefined ? a : (a.concat([b]) as IAST))
+		(a: IAST, b: IAST | undefined) => (b === undefined ? a : (a.concat([b]) as IAST)),
 	);
 
 	const literal: Parser<IAST> = or([
@@ -421,14 +421,14 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 					then(
 						argument,
 						star(preceded(surrounded(tokens.COMMA, whitespace), argument)),
-						(first, following) => [first, ...following]
-					)
+						(first, following) => [first, ...following],
+					),
 				),
-				whitespace
+				whitespace,
 			),
-			tokens.BRACE_CLOSE
+			tokens.BRACE_CLOSE,
 		),
-		(x) => (x !== null ? x : [])
+		(x) => (x !== null ? x : []),
 	);
 
 	function qnameToString(functionName: QNameAST): string {
@@ -448,7 +448,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 	const functionCall: Parser<IAST> = preceded(
 		not(
 			then3(reservedFunctionNames, whitespace, tokens.BRACE_OPEN, (_a, _b, _c) => undefined),
-			['cannot use reserved keyword for function names']
+			['cannot use reserved keyword for function names'],
 		),
 		wrapInStackTrace(
 			then(eqName, preceded(whitespace, argumentList), (functionName, args) => {
@@ -459,20 +459,20 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				];
 				result.comment = qnameToString(functionName);
 				return result;
-			})
-		)
+			}),
+		),
 	);
 
 	const namedFunctionRef: Parser<IAST> = then(
 		eqName,
 		preceded(tokens.HASHTAG, integerLiteral),
-		(functionName, integer) => ['namedFunctionRef', ['functionName', ...functionName], integer]
+		(functionName, integer) => ['namedFunctionRef', ['functionName', ...functionName], integer],
 	);
 
 	const enclosedExpr: Parser<IAST | null> = delimited(
 		tokens.CURLY_BRACE_OPEN,
 		surrounded(optional(expr), whitespace),
-		tokens.CURLY_BRACE_CLOSE
+		tokens.CURLY_BRACE_CLOSE,
 	);
 
 	const functionBody: Parser<IAST> = map(enclosedExpr, (x) => (x ? x : ['sequenceExpr']));
@@ -485,7 +485,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			(type, occurrence) => [
 				type,
 				...(occurrence !== null ? ([['occurrenceIndicator', occurrence]] as IAST[]) : []),
-			]
+			],
 		),
 	]);
 
@@ -496,17 +496,17 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				then(
 					precededMultiple([tokens.BRACE_OPEN, whitespace], literal),
 					star(precededMultiple([tokens.COMMA, whitespace], literal)),
-					(lhs, rhs) => lhs.concat(rhs)
+					(lhs, rhs) => lhs.concat(rhs),
 				),
-				tokens.BRACE_CLOSE
-			)
+				tokens.BRACE_CLOSE,
+			),
 		),
 		(annotationName, params) =>
 			[
 				'annotation',
 				['annotationName', ...annotationName],
 				...(params ? ['arguments', params] : []),
-			] as IAST
+			] as IAST,
 	);
 
 	const anyFunctionTest: Parser<IAST> = map(
@@ -519,9 +519,9 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				tokens.ASTERIX,
 				whitespace,
 			],
-			tokens.BRACE_CLOSE
+			tokens.BRACE_CLOSE,
 		),
-		(_) => ['anyFunctionTest']
+		(_) => ['anyFunctionTest'],
 	);
 
 	const typedFunctionTest: Parser<IAST> = then(
@@ -531,46 +531,46 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				binaryOperator(sequenceType, tokens.COMMA, (lhs, rhs) =>
 					lhs.concat.apply(
 						lhs,
-						rhs.map((x) => x[1])
-					)
-				)
-			)
+						rhs.map((x) => x[1]),
+					),
+				),
+			),
 		),
 		precededMultiple(
 			[whitespace, tokens.BRACE_CLOSE, whitespacePlus, tokens.AS, whitespacePlus],
-			sequenceType
+			sequenceType,
 		),
 		(paramTypeList, returnType) => [
 			'typedFunctionTest',
 			['paramTypeList', ['sequenceType', ...(paramTypeList ? paramTypeList : [])]],
 			['sequenceType', ...returnType],
-		]
+		],
 	);
 
 	const functionTest: Parser<IAST> = then(
 		star(annotation),
 		or([anyFunctionTest, typedFunctionTest]),
-		(annotations, test) => [test[0], ...annotations, ...test.slice(1)]
+		(annotations, test) => [test[0], ...annotations, ...test.slice(1)],
 	);
 
 	const anyMapTest: Parser<IAST> = map(
 		precededMultiple(
 			[tokens.MAP, whitespace, tokens.BRACE_OPEN, whitespace, tokens.ASTERIX, whitespace],
-			tokens.BRACE_CLOSE
+			tokens.BRACE_CLOSE,
 		),
-		(_) => ['anyMapTest']
+		(_) => ['anyMapTest'],
 	);
 
 	const typedMapTest: Parser<IAST> = then(
 		precededMultiple(
 			[tokens.MAP, whitespace, tokens.BRACE_OPEN, whitespace],
-			atomicOrUnionType
+			atomicOrUnionType,
 		),
 		precededMultiple(
 			[whitespace, tokens.COMMA],
-			followed(surrounded(sequenceType, whitespace), tokens.BRACE_CLOSE)
+			followed(surrounded(sequenceType, whitespace), tokens.BRACE_CLOSE),
 		),
-		(keyType, valueType) => ['typedMapTest', keyType, ['sequenceType', ...valueType]]
+		(keyType, valueType) => ['typedMapTest', keyType, ['sequenceType', ...valueType]],
 	);
 
 	const mapTest: Parser<IAST> = or([anyMapTest, typedMapTest]);
@@ -578,24 +578,24 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 	const anyArrayTest: Parser<IAST> = map(
 		precededMultiple(
 			[tokens.ARRAY, whitespace, tokens.BRACE_OPEN, whitespace, tokens.ASTERIX, whitespace],
-			tokens.BRACE_CLOSE
+			tokens.BRACE_CLOSE,
 		),
-		(_) => ['anyArrayTest']
+		(_) => ['anyArrayTest'],
 	);
 
 	const typedArrayTest: Parser<IAST> = map(
 		precededMultiple(
 			[tokens.ARRAY, whitespace, tokens.BRACE_OPEN],
-			followed(surrounded(sequenceType, whitespace), tokens.BRACE_CLOSE)
+			followed(surrounded(sequenceType, whitespace), tokens.BRACE_CLOSE),
 		),
-		(type) => ['typedArrayTest', ['sequenceType', ...type]]
+		(type) => ['typedArrayTest', ['sequenceType', ...type]],
 	);
 
 	const arrayTest: Parser<IAST> = or([anyArrayTest, typedArrayTest]);
 
 	const parenthesizedItemType: Parser<IAST> = map(
 		delimited(tokens.BRACE_OPEN, surrounded(itemTypeIndirect, whitespace), tokens.BRACE_CLOSE),
-		(x) => ['parenthesizedItemType', x]
+		(x) => ['parenthesizedItemType', x],
 	);
 
 	const itemType: Parser<IAST> = or([
@@ -614,7 +614,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const typeDeclaration: Parser<IAST> = map(
 		precededMultiple([tokens.AS, whitespacePlus], sequenceType),
-		(x) => ['typeDeclaration', ...x]
+		(x) => ['typeDeclaration', ...x],
 	);
 
 	const param: Parser<IAST> = then(
@@ -624,7 +624,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			'param',
 			['varName', ...variableName],
 			...(typeDecl ? [typeDecl] : []),
-		]
+		],
 	);
 
 	const paramList: Parser<IAST[]> = binaryOperator(param, tokens.COMMA, (lhs, rhs) => [
@@ -636,16 +636,16 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		star(annotation),
 		precededMultiple(
 			[whitespace, tokens.FUNCTION, whitespace, tokens.BRACE_OPEN, whitespace],
-			optional(paramList)
+			optional(paramList),
 		),
 		precededMultiple(
 			[whitespace, tokens.BRACE_CLOSE, whitespace],
 			optional(
 				map(
 					precededMultiple([tokens.AS, whitespace], followed(sequenceType, whitespace)),
-					(x) => ['typeDeclaration', ...x]
-				)
-			)
+					(x) => ['typeDeclaration', ...x],
+				),
+			),
 		),
 		functionBody,
 		(annotations, params, typeDecl, body) =>
@@ -655,7 +655,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				['paramList', ...(params ? params : [])],
 				...(typeDecl ? [typeDecl] : []),
 				['functionBody', body],
-			] as IAST
+			] as IAST,
 	);
 
 	const functionItemExpr: Parser<IAST> = or([namedFunctionRef, inlineFunctionExpr]);
@@ -666,7 +666,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 	const mapConstructorEntry: Parser<IAST> = then(
 		mapKeyExpr,
 		preceded(surrounded(tokens.COLON, whitespace), mapValueExpr),
-		(k, v) => ['mapConstructorEntry', k, v]
+		(k, v) => ['mapConstructorEntry', k, v],
 	);
 
 	const mapConstructor: Parser<IAST> = preceded(
@@ -678,13 +678,13 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 					binaryOperator(
 						mapConstructorEntry,
 						surrounded(tokens.COMMA, whitespace),
-						(lhs, rhs) => [lhs, ...rhs.map((x) => x[1])]
-					)
+						(lhs, rhs) => [lhs, ...rhs.map((x) => x[1])],
+					),
 				),
-				(entries) => (entries ? ['mapConstructor', ...entries] : ['mapConstructor'])
+				(entries) => (entries ? ['mapConstructor', ...entries] : ['mapConstructor']),
 			),
-			preceded(whitespace, tokens.CURLY_BRACE_CLOSE)
-		)
+			preceded(whitespace, tokens.CURLY_BRACE_CLOSE),
+		),
 	);
 
 	const squareArrayConstructor: Parser<IAST> = map(
@@ -693,24 +693,24 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			surrounded(
 				optional(
 					binaryOperator(exprSingle, tokens.COMMA, (lhs, rhs) =>
-						[lhs, ...rhs.map((x) => x[1])].map((x) => ['arrayElem', x])
-					)
+						[lhs, ...rhs.map((x) => x[1])].map((x) => ['arrayElem', x]),
+					),
 				),
-				whitespace
+				whitespace,
 			),
-			tokens.BRACKET_CLOSE
+			tokens.BRACKET_CLOSE,
 		),
-		(x) => ['squareArray', ...(x !== null ? x : [])] as IAST
+		(x) => ['squareArray', ...(x !== null ? x : [])] as IAST,
 	);
 
 	const curlyArrayConstructor: Parser<IAST> = map(
 		preceded(tokens.ARRAY, preceded(whitespace, enclosedExpr)),
-		(x) => ['curlyArray', ...(x !== null ? [['arrayElem', x]] : [])] as IAST
+		(x) => ['curlyArray', ...(x !== null ? [['arrayElem', x]] : [])] as IAST,
 	);
 
 	const arrayConstructor: Parser<IAST> = map(
 		or([squareArrayConstructor, curlyArrayConstructor]),
-		(x) => ['arrayConstructor', x]
+		(x) => ['arrayConstructor', x],
 	);
 
 	const keySpecifier: Parser<string | IAST> = or([
@@ -728,7 +728,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				: typeof x === 'string'
 				? ['unaryLookup', ['NCName', x]]
 				: ['unaryLookup', x];
-		}
+		},
 	);
 
 	const commonContent: Parser<IAST | string> = or([
@@ -765,7 +765,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			surrounded(star(or([escapeQuot, quotAttrValueContent])), tokens.DOUBLE_QUOTE),
 			surrounded(star(or([escapeApos, aposAttrValueContent])), tokens.SINGLE_QUOTE),
 		]),
-		(x: (IAST | string)[]) => accumulateDirContents(x, false, false)
+		(x: (IAST | string)[]) => accumulateDirContents(x, false, false),
 	);
 
 	const attribute: Parser<IAST> = then(
@@ -775,7 +775,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			if (attrName[0].prefix === '' && attrName[1] === 'xmlns') {
 				if (value.length && typeof value[0] !== 'string') {
 					throw new Error(
-						'XQST0022: A namespace declaration may not contain enclosed expressions'
+						'XQST0022: A namespace declaration may not contain enclosed expressions',
 					);
 				}
 				return ['namespaceDeclaration', value.length ? ['uri', value[0]] : ['uri']];
@@ -785,7 +785,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 					throw new Error(
 						"XQST0022: The namespace declaration for 'xmlns:" +
 							attrName[1] +
-							"' may not contain enclosed expressions"
+							"' may not contain enclosed expressions",
 					);
 				}
 				return [
@@ -803,12 +803,12 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 					? ['attributeValue', value[0]]
 					: (['attributeValueExpr'] as IAST).concat(value),
 			] as IAST;
-		}
+		},
 	);
 
 	const dirAttributeList: Parser<IAST[]> = map(
 		star(preceded(explicitWhitespace, optional(attribute))),
-		(x) => x.filter(Boolean)
+		(x) => x.filter(Boolean),
 	);
 
 	const dirElemConstructor: Parser<IAST> = then3(
@@ -822,12 +822,12 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 					[whitespace, tokens.DIR_ELEM_OPEN_CONTENT],
 					followed(
 						qName,
-						then(optional(explicitWhitespace), tokens.GREATER_THAN, (_) => null)
-					)
+						then(optional(explicitWhitespace), tokens.GREATER_THAN, (_) => null),
+					),
 				),
 				(contents, endName) => {
 					return [accumulateDirContents(contents, true, true), endName];
-				}
+				},
 			),
 		]),
 		(tagName, attList, contentsEndName) => {
@@ -842,7 +842,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				...(attList.length ? [['attributeList', ...attList]] : []),
 				...(contents && contents.length ? [['elementContent', ...contents]] : []),
 			] as IAST;
-		}
+		},
 	);
 
 	const directConstructor: Parser<IAST> = or([
@@ -857,11 +857,11 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const compDocConstructor: Parser<IAST> = map(
 		precededMultiple([tokens.DOCUMENT, whitespace], enclosedExpr),
-		(x) => ['computedDocumentConstructor', ...(x ? [['argExpr', x]] : [])] as IAST
+		(x) => ['computedDocumentConstructor', ...(x ? [['argExpr', x]] : [])] as IAST,
 	);
 
 	const enclosedContentExpr: Parser<IAST[]> = map(enclosedExpr, (x) =>
-		x ? [['contentExpr', x]] : []
+		x ? [['contentExpr', x]] : [],
 	);
 
 	const compElemConstructor: Parser<IAST> = then(
@@ -873,14 +873,14 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 					delimited(
 						tokens.CURLY_BRACE_OPEN,
 						surrounded(expr, whitespace),
-						tokens.CURLY_BRACE_CLOSE
+						tokens.CURLY_BRACE_CLOSE,
 					),
-					(x) => ['tagNameExpr', x] as IAST
+					(x) => ['tagNameExpr', x] as IAST,
 				),
-			])
+			]),
 		),
 		preceded(whitespace, enclosedContentExpr),
-		(tagName, content) => ['computedElementConstructor', tagName, ...content] as IAST
+		(tagName, content) => ['computedElementConstructor', tagName, ...content] as IAST,
 	);
 
 	const compAttrConstructor: Parser<IAST> = then(
@@ -889,7 +889,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			or([
 				map(
 					precededMultiple([assertAdjacentOpeningTerminal, whitespace], eqName),
-					(x) => ['tagName', ...x] as IAST
+					(x) => ['tagName', ...x] as IAST,
 				),
 				map(
 					preceded(
@@ -897,12 +897,12 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 						delimited(
 							tokens.CURLY_BRACE_OPEN,
 							surrounded(expr, whitespace),
-							tokens.CURLY_BRACE_CLOSE
-						)
+							tokens.CURLY_BRACE_CLOSE,
+						),
 					),
-					(x) => ['tagNameExpr', x] as IAST
+					(x) => ['tagNameExpr', x] as IAST,
 				),
-			])
+			]),
 		),
 		preceded(whitespace, enclosedExpr),
 		(constructorName, valExpr) =>
@@ -910,11 +910,11 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				'computedAttributeConstructor',
 				constructorName,
 				['valueExpr', valExpr ? valExpr : ['sequenceExpr']],
-			] as IAST
+			] as IAST,
 	);
 
 	const enclosedPrefixExpr: Parser<IAST[]> = map(enclosedExpr, (x) =>
-		x ? [['prefixExpr', x]] : []
+		x ? [['prefixExpr', x]] : [],
 	);
 
 	const enclosedUriExpr: Parser<IAST[]> = map(enclosedExpr, (x) => (x ? [['URIExpr', x]] : []));
@@ -922,20 +922,20 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 	const compNamespaceConstructor: Parser<IAST> = then(
 		precededMultiple(
 			[tokens.NAMESPACE, whitespace],
-			or([prefix as Parser<IAST[] | IAST>, enclosedPrefixExpr])
+			or([prefix as Parser<IAST[] | IAST>, enclosedPrefixExpr]),
 		),
 		preceded(whitespace, enclosedUriExpr),
-		(prefixPart, uri) => ['computedNamespaceConstructor', ...prefixPart, ...uri]
+		(prefixPart, uri) => ['computedNamespaceConstructor', ...prefixPart, ...uri],
 	);
 
 	const compTextConstructor: Parser<IAST> = map(
 		precededMultiple([tokens.TEXT, whitespace], enclosedExpr),
-		(x) => ['computedTextConstructor', ...(x ? [['argExpr', x]] : [])] as IAST
+		(x) => ['computedTextConstructor', ...(x ? [['argExpr', x]] : [])] as IAST,
 	);
 
 	const compCommentConstructor: Parser<IAST> = map(
 		precededMultiple([tokens.COMMENT, whitespace], enclosedExpr),
-		(x) => ['computedCommentConstructor', ...(x ? [['argExpr', x]] : [])] as IAST
+		(x) => ['computedCommentConstructor', ...(x ? [['argExpr', x]] : [])] as IAST,
 	);
 
 	const compPiConstructor: Parser<IAST> = precededMultiple(
@@ -947,9 +947,9 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 					delimited(
 						tokens.CURLY_BRACE_OPEN,
 						surrounded(expr, whitespace),
-						tokens.CURLY_BRACE_CLOSE
+						tokens.CURLY_BRACE_CLOSE,
 					),
-					(x) => ['piTargetExpr', x]
+					(x) => ['piTargetExpr', x],
 				),
 			]),
 			preceded(whitespace, enclosedExpr),
@@ -958,8 +958,8 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 					'computedPIConstructor',
 					target,
 					...(value ? [['piValueExpr', value]] : []),
-				] as IAST
-		)
+				] as IAST,
+		),
 	);
 
 	const computedConstructor: Parser<IAST> = or([
@@ -997,7 +997,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				? ['lookup', ['star']]
 				: typeof x === 'string'
 				? ['lookup', ['NCName', x]]
-				: ['lookup', x]
+				: ['lookup', x],
 	);
 
 	const postfixExprWithStep: Parser<IAST[]> = then(
@@ -1007,7 +1007,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				map(preceded(whitespace, predicate), (x) => ['predicate', x] as IAST),
 				map(preceded(whitespace, argumentList), (x) => ['argumentList', x] as IAST),
 				preceded(whitespace, lookup),
-			])
+			]),
 		),
 		(expression: IAST, postfixExpr: IAST[]) => {
 			let toWrap = [expression];
@@ -1074,7 +1074,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			flushFilters(true);
 
 			return toWrap;
-		}
+		},
 	);
 
 	const stepExprWithForcedStep: Parser<IAST> = or([
@@ -1087,8 +1087,8 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		peek(
 			not(preceded(whitespace, or([predicate, argumentList as Parser<IAST>, lookup])), [
 				'primary expression not followed by predicate, argumentList, or lookup',
-			])
-		)
+			]),
+		),
 	);
 
 	const stepExprWithoutStep: Parser<IAST> = postfixExprWithoutStep;
@@ -1098,12 +1098,12 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			stepExprWithForcedStep,
 			preceded(whitespace, locationPathAbbreviation),
 			preceded(whitespace, relativePathExprWithForcedStepIndirect),
-			(lhs, abbrev, rhs) => ['pathExpr', lhs, abbrev, ...rhs]
+			(lhs, abbrev, rhs) => ['pathExpr', lhs, abbrev, ...rhs],
 		),
 		then(
 			stepExprWithForcedStep,
 			preceded(surrounded(tokens.SLASH, whitespace), relativePathExprWithForcedStepIndirect),
-			(lhs, rhs) => ['pathExpr', lhs, ...rhs]
+			(lhs, rhs) => ['pathExpr', lhs, ...rhs],
 		),
 		stepExprWithoutStep,
 		map(stepExprWithForcedStep, (x) => ['pathExpr', x]),
@@ -1114,19 +1114,19 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			stepExprWithForcedStep,
 			preceded(whitespace, locationPathAbbreviation),
 			preceded(whitespace, relativePathExprWithForcedStepIndirect),
-			(lhs, abbrev, rhs) => [lhs, abbrev, ...rhs]
+			(lhs, abbrev, rhs) => [lhs, abbrev, ...rhs],
 		),
 		then(
 			stepExprWithForcedStep,
 			preceded(surrounded(tokens.SLASH, whitespace), relativePathExprWithForcedStepIndirect),
-			(lhs, rhs) => [lhs, ...rhs]
+			(lhs, rhs) => [lhs, ...rhs],
 		),
 		map(stepExprWithForcedStep, (x) => [x]),
 	]);
 
 	function relativePathExprWithForcedStepIndirect(
 		input: string,
-		offset: number
+		offset: number,
 	): ParseResult<IAST[]> {
 		return relativePathExprWithForcedStep(input, offset);
 	}
@@ -1140,7 +1140,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		then(
 			locationPathAbbreviation,
 			preceded(whitespace, relativePathExprWithForcedStep),
-			(abbrev, path) => ['pathExpr', ['rootExpr'], abbrev, ...path]
+			(abbrev, path) => ['pathExpr', ['rootExpr'], abbrev, ...path],
 		),
 		map(
 			followed(
@@ -1149,16 +1149,16 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 					preceded(whitespace, options.xquery ? regex(/[*<a-zA-Z]/) : regex(/[*a-zA-Z]/)),
 					[
 						'Single rootExpr cannot be by followed by something that can be interpreted as a relative path',
-					]
-				)
+					],
+				),
 			),
-			(_) => ['pathExpr', ['rootExpr']] as IAST
+			(_) => ['pathExpr', ['rootExpr']] as IAST,
 		),
 	]);
 
 	const pathExpr: Parser<IAST> = cached(
 		or([relativePathExpr, absoluteLocationPath]),
-		pathExprCache
+		pathExprCache,
 	);
 
 	const validateExpr: Parser<IAST> = preceded(
@@ -1171,16 +1171,16 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 						'type',
 						...t,
 					]),
-				])
+				]),
 			),
 			delimited(
 				preceded(whitespace, tokens.CURLY_BRACE_OPEN),
 				surrounded(expr, whitespace),
-				tokens.CURLY_BRACE_CLOSE
+				tokens.CURLY_BRACE_CLOSE,
 			),
 			(modeOrType, argExpr) =>
-				['validateExpr', ...(modeOrType ? [modeOrType] : []), ['argExpr', argExpr]] as IAST
-		)
+				['validateExpr', ...(modeOrType ? [modeOrType] : []), ['argExpr', argExpr]] as IAST,
+		),
 	);
 
 	const pragma: Parser<IAST> = delimited(
@@ -1191,9 +1191,9 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			(pragmaName, contents) =>
 				(contents
 					? ['pragma', ['pragmaName', pragmaName], ['pragmaContents', contents]]
-					: ['pragma', ['pragmaName', pragmaName]]) as IAST
+					: ['pragma', ['pragmaName', pragmaName]]) as IAST,
 		),
-		preceded(whitespace, tokens.PRAGMA_END)
+		preceded(whitespace, tokens.PRAGMA_END),
 	);
 
 	const extensionExpr: Parser<IAST> = map(
@@ -1204,11 +1204,11 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				delimited(
 					tokens.CURLY_BRACE_OPEN,
 					surrounded(optional(expr), whitespace),
-					tokens.CURLY_BRACE_CLOSE
-				)
-			)
+					tokens.CURLY_BRACE_CLOSE,
+				),
+			),
 		),
-		(extension) => ['extensionExpr', ...extension] as IAST
+		(extension) => ['extensionExpr', ...extension] as IAST,
 	);
 
 	const simpleMapExpr: Parser<IAST> = wrapInStackTrace(
@@ -1235,9 +1235,9 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 											['filterExpr', wrapInSequenceExprIfNeeded(item)],
 										],
 								  ];
-						})
+						}),
 				  ) as IAST);
-		})
+		}),
 	);
 
 	const valueExpr: Parser<IAST> = or([validateExpr, extensionExpr, simpleMapExpr]);
@@ -1246,7 +1246,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		then(
 			or([alias([tokens.MINUS], 'unaryMinusOp'), alias([tokens.PLUS], 'unaryPlusOp')]),
 			preceded(whitespace, unaryExprIndirect),
-			(op, value) => [op, ['operand', value]]
+			(op, value) => [op, ['operand', value]],
 		),
 		valueExpr,
 	]);
@@ -1269,15 +1269,15 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				then(
 					arrowFunctionSpecifier,
 					preceded(whitespace, argumentList),
-					(specifier: IAST, argList: IAST[]) => [specifier, argList]
-				)
-			)
+					(specifier: IAST, argList: IAST[]) => [specifier, argList],
+				),
+			),
 		),
 		(argExpr, functionParts: [IAST, IAST[]][]) =>
 			functionParts.reduce(
 				(arg, part) => ['arrowExpr', ['argExpr', arg], part[0], ['arguments', ...part[1]]],
-				argExpr
-			)
+				argExpr,
+			),
 	);
 	const castExpr: Parser<IAST> = then(
 		arrowExpr,
@@ -1291,10 +1291,10 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 					assertAdjacentOpeningTerminal,
 					whitespace,
 				],
-				singleType
-			)
+				singleType,
+			),
 		),
-		(lhs, rhs) => (rhs !== null ? ['castExpr', ['argExpr', lhs], rhs] : lhs)
+		(lhs, rhs) => (rhs !== null ? ['castExpr', ['argExpr', lhs], rhs] : lhs),
 	);
 
 	const castableExpr: Parser<IAST> = then(
@@ -1309,10 +1309,10 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 					assertAdjacentOpeningTerminal,
 					whitespace,
 				],
-				singleType
-			)
+				singleType,
+			),
 		),
-		(lhs, rhs) => (rhs !== null ? ['castableExpr', ['argExpr', lhs], rhs] : lhs)
+		(lhs, rhs) => (rhs !== null ? ['castableExpr', ['argExpr', lhs], rhs] : lhs),
 	);
 
 	const treatExpr: Parser<IAST> = then(
@@ -1327,11 +1327,11 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 					assertAdjacentOpeningTerminal,
 					whitespace,
 				],
-				sequenceType
-			)
+				sequenceType,
+			),
 		),
 		(lhs, rhs) =>
-			rhs !== null ? ['treatExpr', ['argExpr', lhs], ['sequenceType', ...rhs]] : lhs
+			rhs !== null ? ['treatExpr', ['argExpr', lhs], ['sequenceType', ...rhs]] : lhs,
 	);
 
 	const instanceofExpr: Parser<IAST> = then(
@@ -1346,20 +1346,20 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 					assertAdjacentOpeningTerminal,
 					whitespace,
 				],
-				sequenceType
-			)
+				sequenceType,
+			),
 		),
 		(lhs, rhs) =>
-			rhs !== null ? ['instanceOfExpr', ['argExpr', lhs], ['sequenceType', ...rhs]] : lhs
+			rhs !== null ? ['instanceOfExpr', ['argExpr', lhs], ['sequenceType', ...rhs]] : lhs,
 	);
 
 	const intersectExpr: Parser<IAST> = binaryOperator(
 		instanceofExpr,
 		followed(
 			or([alias([tokens.INTERSECT], 'intersectOp'), alias([tokens.EXCEPT], 'exceptOp')]),
-			assertAdjacentOpeningTerminal
+			assertAdjacentOpeningTerminal,
 		),
-		defaultBinaryOperatorFn
+		defaultBinaryOperatorFn,
 	);
 
 	const unionExpr: Parser<IAST> = binaryOperator(
@@ -1368,7 +1368,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			alias([tokens.VERTICAL_BAR], 'unionOp'),
 			followed(alias([tokens.UNION], 'unionOp'), assertAdjacentOpeningTerminal),
 		]),
-		defaultBinaryOperatorFn
+		defaultBinaryOperatorFn,
 	);
 
 	const multiplicativeExpr: Parser<IAST> = binaryOperator(
@@ -1379,43 +1379,43 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			followed(alias([tokens.IDIV], 'idivOp'), assertAdjacentOpeningTerminal),
 			followed(alias([tokens.MOD], 'modOp'), assertAdjacentOpeningTerminal),
 		]),
-		defaultBinaryOperatorFn
+		defaultBinaryOperatorFn,
 	);
 
 	const additiveExpr: Parser<IAST> = binaryOperator(
 		multiplicativeExpr,
 		or([alias([tokens.MINUS], 'subtractOp'), alias([tokens.PLUS], 'addOp')]),
-		defaultBinaryOperatorFn
+		defaultBinaryOperatorFn,
 	);
 
 	const rangeExpr: Parser<IAST> = nonRepeatableBinaryOperator(
 		additiveExpr,
 		followed(alias([tokens.TO], 'rangeSequenceExpr'), assertAdjacentOpeningTerminal),
 		'startExpr',
-		'endExpr'
+		'endExpr',
 	);
 
 	const stringConcatExpr: Parser<IAST> = binaryOperator(
 		rangeExpr,
 		alias([tokens.VERTICAL_BAR_DOUBLE], 'stringConcatenateOp'),
-		defaultBinaryOperatorFn
+		defaultBinaryOperatorFn,
 	);
 
 	const comparisonExpr: Parser<IAST> = nonRepeatableBinaryOperator(
 		stringConcatExpr,
-		or([valueCompare, nodeCompare, generalCompare])
+		or([valueCompare, nodeCompare, generalCompare]),
 	);
 
 	const andExpr: Parser<IAST> = binaryOperator(
 		comparisonExpr,
 		followed(alias([tokens.AND], 'andOp'), assertAdjacentOpeningTerminal),
-		defaultBinaryOperatorFn
+		defaultBinaryOperatorFn,
 	);
 
 	const orExpr: Parser<IAST> = binaryOperator(
 		andExpr,
 		followed(alias([tokens.OR], 'orOp'), assertAdjacentOpeningTerminal),
-		defaultBinaryOperatorFn
+		defaultBinaryOperatorFn,
 	);
 
 	const ifClause: Parser<IAST> = wrapInStackTrace(map(expr, (x) => ['ifClause', x]));
@@ -1434,24 +1434,24 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 					assertAdjacentOpeningTerminal,
 					whitespace,
 				],
-				thenClause
+				thenClause,
 			),
-			(ifClause, thenClause) => [ifClause, thenClause]
+			(ifClause, thenClause) => [ifClause, thenClause],
 		),
 		precededMultiple(
 			[whitespace, tokens.ELSE, assertAdjacentOpeningTerminal, whitespace],
-			elseClause
+			elseClause,
 		),
 		(ifthen, elseClause) => {
 			return ['ifThenElseExpr', ifthen[0], ifthen[1], elseClause];
-		}
+		},
 	);
 
 	const allowingEmpty: Parser<string> = delimited(tokens.ALLOWING, whitespacePlus, tokens.EMPTY);
 
 	const positionalVar: Parser<IAST> = map(
 		precededMultiple([tokens.AT, whitespacePlus, tokens.DOLLAR], varName),
-		(x) => ['positionalVariableBinding', ...x]
+		(x) => ['positionalVariableBinding', ...x],
 	);
 
 	const forBinding: Parser<IAST> = then5(
@@ -1470,7 +1470,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				...(empty ? [['allowingEmpty']] : []),
 				...(pos ? [pos] : []),
 				['forExpr', forExpr],
-			] as IAST
+			] as IAST,
 	);
 
 	const forClause: Parser<IAST> = precededMultiple(
@@ -1479,7 +1479,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			'forClause',
 			lhs,
 			...rhs.map((x) => x[1]),
-		])
+		]),
 	);
 
 	const letBinding: Parser<IAST> = then3(
@@ -1490,22 +1490,22 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			'letClauseItem',
 			['typedVariableBinding', ['varName', ...variableName], ...(typeDecl ? [typeDecl] : [])],
 			['letExpr', letExpr],
-		]
+		],
 	);
 
 	const letClause: Parser<IAST> = map(
 		precededMultiple(
 			[tokens.LET, whitespace],
-			binaryOperator(letBinding, tokens.COMMA, (lhs, rhs) => [lhs, ...rhs.map((x) => x[1])])
+			binaryOperator(letBinding, tokens.COMMA, (lhs, rhs) => [lhs, ...rhs.map((x) => x[1])]),
 		),
-		(x) => ['letClause', ...x]
+		(x) => ['letClause', ...x],
 	);
 
 	const initialClause: Parser<IAST> = or([forClause, letClause]);
 
 	const whereClause: Parser<IAST> = map(
 		precededMultiple([tokens.WHERE, assertAdjacentOpeningTerminal, whitespace], exprSingle),
-		(x) => ['whereClause', x]
+		(x) => ['whereClause', x],
 	);
 
 	const uriLiteral: Parser<string> = stringLiteral;
@@ -1523,7 +1523,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				'groupVarInitialize',
 				...(t ? [['typeDeclaration', ...t]] : []),
 				['varValue', val],
-			] as IAST
+			] as IAST,
 	);
 
 	const groupingSpec: Parser<IAST> = then3(
@@ -1533,21 +1533,21 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			map(preceded(surrounded(tokens.COLLATION, whitespace), uriLiteral), (x) => [
 				'collation',
 				x,
-			])
+			]),
 		),
 		(variableName, init, col) =>
-			['groupingSpec', variableName, ...(init ? [init] : []), ...(col ? [col] : [])] as IAST
+			['groupingSpec', variableName, ...(init ? [init] : []), ...(col ? [col] : [])] as IAST,
 	);
 
 	const groupingSpecList: Parser<IAST[]> = binaryOperator(
 		groupingSpec,
 		tokens.COMMA,
-		(lhs, rhs) => [lhs, ...rhs.map((x) => x[1])]
+		(lhs, rhs) => [lhs, ...rhs.map((x) => x[1])],
 	);
 
 	const groupByClause: Parser<IAST> = map(
 		precededMultiple([tokens.GROUP, whitespacePlus, tokens.BY, whitespace], groupingSpecList),
-		(x) => ['groupByClause', ...x]
+		(x) => ['groupByClause', ...x],
 	);
 
 	const orderModifier: Parser<IAST | null> = then3(
@@ -1555,12 +1555,12 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		optional(
 			precededMultiple(
 				[whitespace, tokens.EMPTY, whitespace],
-				or([tokens.GREATEST, tokens.LEAST].map((x) => map(x, (y) => 'empty ' + y)))
-			)
+				or([tokens.GREATEST, tokens.LEAST].map((x) => map(x, (y) => 'empty ' + y))),
+			),
 		),
 		preceded(
 			whitespace,
-			optional(precededMultiple([tokens.COLLATION, whitespace], uriLiteral))
+			optional(precededMultiple([tokens.COLLATION, whitespace], uriLiteral)),
 		),
 		(kind, empty, collation) => {
 			return !kind && !empty && !collation
@@ -1571,7 +1571,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 						...(empty ? [['emptyOrderingMode', empty]] : []),
 						...(collation ? [['collation', collation]] : []),
 				  ] as IAST);
-		}
+		},
 	);
 
 	const orderSpec: Parser<IAST> = then(
@@ -1581,7 +1581,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			'orderBySpec',
 			['orderByExpr', orderByExpr],
 			...(modifier ? [modifier] : []),
-		]
+		],
 	);
 
 	const orderSpecList: Parser<IAST[]> = binaryOperator(orderSpec, tokens.COMMA, (lhs, rhs) => [
@@ -1595,14 +1595,14 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			map(
 				precededMultiple(
 					[tokens.STABLE, whitespacePlus, tokens.ORDER, whitespacePlus],
-					tokens.BY
+					tokens.BY,
 				),
-				(_) => true
+				(_) => true,
 			),
 		]),
 		preceded(whitespace, orderSpecList),
 		(stable, specList) =>
-			['orderByClause', ...(stable ? [['stable']] : []), ...specList] as IAST
+			['orderByClause', ...(stable ? [['stable']] : []), ...specList] as IAST,
 	);
 
 	const intermediateClause: Parser<IAST> = or([
@@ -1614,14 +1614,14 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const returnClause: Parser<IAST> = map(
 		precededMultiple([tokens.RETURN, whitespace], exprSingle),
-		(x) => ['returnClause', x]
+		(x) => ['returnClause', x],
 	);
 
 	const flworExpr: Parser<IAST> = then3(
 		initialClause,
 		cut(star(preceded(whitespace, intermediateClause))),
 		cut(preceded(whitespace, returnClause)),
-		(initial, intermediate, ret) => ['flworExpr', initial, ...intermediate, ret] as IAST
+		(initial, intermediate, ret) => ['flworExpr', initial, ...intermediate, ret] as IAST,
 	);
 
 	const sequenceTypeUnion: Parser<IAST> = binaryOperator(
@@ -1634,15 +1634,15 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 						'sequenceTypeUnion',
 						['sequenceType', ...lhs],
 						...rhs.map((x) => ['sequenceType', ...x[1]]),
-				  ] as IAST)
+				  ] as IAST),
 	);
 
 	const caseClause: Parser<IAST> = then3(
 		precededMultiple(
 			[tokens.CASE, whitespace],
 			optional(
-				preceded(tokens.DOLLAR, followed(followed(varName, whitespacePlus), tokens.AS))
-			)
+				preceded(tokens.DOLLAR, followed(followed(varName, whitespacePlus), tokens.AS)),
+			),
 		),
 		preceded(whitespace, sequenceTypeUnion),
 		precededMultiple([whitespacePlus, tokens.RETURN, whitespacePlus], exprSingle),
@@ -1650,7 +1650,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			(['typeswitchExprCaseClause'] as IAST)
 				.concat(variableName ? [['variableBinding', ...variableName]] : [])
 				.concat([sequence])
-				.concat([['resultExpr', result]]) as IAST
+				.concat([['resultExpr', result]]) as IAST,
 	);
 
 	const typeswitchExpr: Parser<IAST> = then4(
@@ -1658,13 +1658,13 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			tokens.TYPESWITCH,
 			surrounded(
 				delimited(tokens.BRACE_OPEN, surrounded(expr, whitespace), tokens.BRACE_CLOSE),
-				whitespace
-			)
+				whitespace,
+			),
 		),
 		plus(followed(caseClause, whitespace)),
 		precededMultiple(
 			[tokens.DEFAULT, whitespacePlus],
-			optional(preceded(tokens.DOLLAR, followed(varName, whitespacePlus)))
+			optional(preceded(tokens.DOLLAR, followed(varName, whitespacePlus))),
 		),
 		precededMultiple([tokens.RETURN, whitespacePlus], exprSingle),
 		(args, clauses, variableName, result) => [
@@ -1672,7 +1672,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			['argExpr', args],
 			...clauses,
 			['typeswitchExprDefaultClause', ...(variableName || []), ['resultExpr', result]],
-		]
+		],
 	);
 
 	const quantifiedExprInClause: Parser<IAST> = then3(
@@ -1683,13 +1683,13 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			'quantifiedExprInClause',
 			['typedVariableBinding', ['varName', ...variableName], ...(type ? [type] : [])],
 			['sourceExpr', source],
-		]
+		],
 	);
 
 	const quantifiedExprInClauses: Parser<IAST[]> = binaryOperator(
 		quantifiedExprInClause,
 		tokens.COMMA,
-		(lhs, rhs) => [lhs, ...rhs.map((x) => x[1])]
+		(lhs, rhs) => [lhs, ...rhs.map((x) => x[1])],
 	);
 
 	const quantifiedExpr: Parser<IAST> = then3(
@@ -1701,7 +1701,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			['quantifier', kind],
 			...clauses,
 			['predicateExpr', predicatePart],
-		]
+		],
 	);
 
 	const targetExpr: Parser<IAST> = exprSingle;
@@ -1709,15 +1709,15 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 	const deleteExpr: Parser<IAST> = map(
 		precededMultiple(
 			[tokens.DELETE, whitespacePlus, or([tokens.NODES, tokens.NODE]), whitespacePlus],
-			targetExpr
+			targetExpr,
 		),
-		(x) => ['deleteExpr', ['targetExpr', x]]
+		(x) => ['deleteExpr', ['targetExpr', x]],
 	);
 
 	const replaceExpr: Parser<IAST> = then3(
 		precededMultiple(
 			[tokens.REPLACE, whitespacePlus],
-			optional(precededMultiple([tokens.VALUE, whitespacePlus, tokens.OF], whitespacePlus))
+			optional(precededMultiple([tokens.VALUE, whitespacePlus, tokens.OF], whitespacePlus)),
 		),
 		precededMultiple([tokens.NODE, whitespacePlus], targetExpr),
 		preceded(surrounded(tokens.WITH, whitespacePlus), exprSingle),
@@ -1729,13 +1729,13 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 						['targetExpr', target],
 						['replacementExpr', replacementExpr],
 				  ]
-				: ['replaceExpr', ['targetExpr', target], ['replacementExpr', replacementExpr]]
+				: ['replaceExpr', ['targetExpr', target], ['replacementExpr', replacementExpr]],
 	);
 
 	const transformCopy: Parser<IAST> = then(
 		varRef,
 		preceded(surrounded(tokens.WALRUS, whitespace), exprSingle),
-		(ref, copySource) => ['transformCopy', ref, ['copySource', copySource]]
+		(ref, copySource) => ['transformCopy', ref, ['copySource', copySource]],
 	);
 
 	const copyModifyExpr: Parser<IAST> = then3(
@@ -1744,7 +1744,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			binaryOperator(transformCopy, tokens.COMMA, (lhs, rhs) => [
 				lhs,
 				...rhs.map((x) => x[1]),
-			])
+			]),
 		),
 		precededMultiple([whitespace, tokens.MODIFY, whitespacePlus], exprSingle),
 		preceded(surrounded(tokens.RETURN, whitespacePlus), exprSingle),
@@ -1754,7 +1754,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				['transformCopies', ...transformExprs],
 				['modifyExpr', modifyExpr],
 				['returnExpr', returnExpr],
-			] as IAST
+			] as IAST,
 	);
 
 	const sourceExpr: Parser<IAST> = exprSingle;
@@ -1769,14 +1769,14 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 							or([
 								map(tokens.FIRST, (_) => ['insertAsFirst']),
 								map(tokens.LAST, (_) => ['insertAsLast']),
-							])
+							]),
 						),
-						whitespacePlus
-					)
+						whitespacePlus,
+					),
 				),
-				(x) => (x ? ['insertInto', x] : ['insertInto']) as IAST
+				(x) => (x ? ['insertInto', x] : ['insertInto']) as IAST,
 			),
-			tokens.INTO
+			tokens.INTO,
 		),
 		map(tokens.AFTER, (_) => ['insertAfter']),
 		map(tokens.BEFORE, (_) => ['insertBefore']),
@@ -1785,7 +1785,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 	const insertExpr: Parser<IAST> = then3(
 		precededMultiple(
 			[tokens.INSERT, whitespacePlus, or([tokens.NODES, tokens.NODE]), whitespacePlus],
-			sourceExpr
+			sourceExpr,
 		),
 		preceded(whitespacePlus, insertExprTargetChoice),
 		preceded(whitespacePlus, targetExpr),
@@ -1794,7 +1794,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			['sourceExpr', source],
 			ietc,
 			['targetExpr', target],
-		]
+		],
 	);
 
 	const newNameExpr: Parser<IAST> = exprSingle;
@@ -1806,7 +1806,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			'renameExpr',
 			['targetExpr', targetExprPart],
 			['newNameExpr', newNamePart],
-		]
+		],
 	);
 
 	const switchCaseOperand: Parser<IAST> = exprSingle;
@@ -1816,29 +1816,29 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			map(precededMultiple([tokens.CASE, whitespacePlus], switchCaseOperand), (x) => [
 				'switchCaseExpr',
 				x,
-			])
+			]),
 		),
 		precededMultiple([whitespacePlus, tokens.RETURN, whitespacePlus], exprSingle),
 		(operands, exprPart) =>
-			['switchExprCaseClause', ...operands, ['resultExpr', exprPart]] as IAST
+			['switchExprCaseClause', ...operands, ['resultExpr', exprPart]] as IAST,
 	);
 
 	const switchExpr: Parser<IAST> = then3(
 		precededMultiple([tokens.SWITCH, whitespace, tokens.BRACE_OPEN], expr),
 		precededMultiple(
 			[whitespace, tokens.BRACE_CLOSE, whitespace],
-			plus(followed(switchCaseClause, whitespace))
+			plus(followed(switchCaseClause, whitespace)),
 		),
 		precededMultiple(
 			[tokens.DEFAULT, whitespacePlus, tokens.RETURN, whitespacePlus],
-			exprSingle
+			exprSingle,
 		),
 		(exprPart, clauses, resultExpr) => [
 			'switchExpr',
 			['argExpr', exprPart],
 			...clauses,
 			['switchExprDefaultClause', ['resultExpr', resultExpr]],
-		]
+		],
 	);
 
 	function exprSingle(input: string, offset: number): ParseResult<IAST> {
@@ -1855,7 +1855,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				replaceExpr,
 				copyModifyExpr,
 				orExpr,
-			])
+			]),
 		)(input, offset);
 	}
 
@@ -1873,9 +1873,9 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			then(
 				ncName,
 				preceded(surrounded(tokens.EQUALS, whitespace), uriLiteral),
-				(prefixPart, uri) => ['namespaceDecl', ['prefix', prefixPart], ['uri', uri]]
-			)
-		)
+				(prefixPart, uri) => ['namespaceDecl', ['prefix', prefixPart], ['uri', uri]],
+			),
+		),
 	);
 
 	const varValue: Parser<IAST> = exprSingle;
@@ -1888,13 +1888,13 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			then(varName, optional(preceded(whitespace, typeDeclaration)), (namePart, t) => [
 				namePart,
 				t,
-			])
+			]),
 		),
 		cut(
 			or([
 				map(
 					precededMultiple([whitespace, tokens.WALRUS, whitespace], varValue),
-					(x) => ['varValue', x] as IAST
+					(x) => ['varValue', x] as IAST,
 				),
 				map(
 					precededMultiple(
@@ -1902,16 +1902,16 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 						optional(
 							precededMultiple(
 								[whitespace, tokens.WALRUS, whitespace],
-								varDefaultValue
-							)
-						)
+								varDefaultValue,
+							),
+						),
 					),
-					(x) => ['external', ...(x ? [['varValue', x]] : [])] as IAST
+					(x) => ['external', ...(x ? [['varValue', x]] : [])] as IAST,
 				),
-			])
+			]),
 		),
 		([namePart, t], value) =>
-			['varDecl', ['varName', ...namePart], ...(t !== null ? [t] : []), ...[value]] as IAST
+			['varDecl', ['varName', ...namePart], ...(t !== null ? [t] : []), ...[value]] as IAST,
 	);
 
 	const functionDecl: Parser<IAST> = then4(
@@ -1923,20 +1923,20 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 					peek(
 						not(followed(reservedFunctionNames, not(tokens.COLON, [''])), [
 							'Cannot use reserved function name',
-						])
-					)
+						]),
+					),
 				) as Parser<string>,
 			],
-			eqName
+			eqName,
 		),
 		cut(precededMultiple([whitespace, tokens.BRACE_OPEN, whitespace], optional(paramList))),
 		cut(
 			precededMultiple(
 				[whitespace, tokens.BRACE_CLOSE],
 				optional(
-					precededMultiple([whitespacePlus, tokens.AS, whitespacePlus], sequenceType)
-				)
-			)
+					precededMultiple([whitespacePlus, tokens.AS, whitespacePlus], sequenceType),
+				),
+			),
 		),
 		cut(
 			preceded(
@@ -1944,8 +1944,8 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				or([
 					map(functionBody, (x) => ['functionBody', x]),
 					map(tokens.EXTERNAL, (_) => ['externalDefinition']),
-				])
-			)
+				]),
+			),
 		),
 		(namePart, paramListPart, typeDeclarations, body) =>
 			[
@@ -1954,7 +1954,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				['paramList', ...(paramListPart || [])],
 				...(typeDeclarations ? [['typeDeclaration', ...typeDeclarations]] : []),
 				body,
-			] as IAST
+			] as IAST,
 	);
 
 	const annotatedDecl: Parser<IAST> = precededMultiple(
@@ -1962,37 +1962,37 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		then(
 			star(followed(or([annotation, compatibilityAnnotation]), whitespacePlus)),
 			or([varDecl, functionDecl]),
-			(annotations, decl) => [decl[0], ...annotations, ...decl.slice(1)]
-		)
+			(annotations, decl) => [decl[0], ...annotations, ...decl.slice(1)],
+		),
 	);
 
 	const defaultNamespaceDecl: Parser<IAST> = then(
 		precededMultiple(
 			[tokens.DECLARE, whitespacePlus, tokens.DEFAULT, whitespacePlus],
-			or([tokens.ELEMENT, tokens.FUNCTION])
+			or([tokens.ELEMENT, tokens.FUNCTION]),
 		),
 		precededMultiple([whitespacePlus, tokens.NAMESPACE, whitespacePlus], uriLiteral),
 		(elementOrFunction, uri) => [
 			'defaultNamespaceDecl',
 			['defaultNamespaceCategory', elementOrFunction],
 			['uri', uri],
-		]
+		],
 	);
 
 	const schemaPrefix: Parser<IAST> = or([
 		map(
 			followed(
 				precededMultiple([tokens.NAMESPACE, whitespacePlus], ncName),
-				preceded(whitespace, tokens.EQUALS)
+				preceded(whitespace, tokens.EQUALS),
 			),
-			(prefixPart) => ['namespacePrefix', prefixPart]
+			(prefixPart) => ['namespacePrefix', prefixPart],
 		),
 		map(
 			precededMultiple(
 				[tokens.DEFAULT, whitespacePlus, tokens.ELEMENT, whitespacePlus],
-				tokens.NAMESPACE
+				tokens.NAMESPACE,
 			),
-			(_) => ['defaultElementNamespace'] as IAST
+			(_) => ['defaultElementNamespace'] as IAST,
 		),
 	]);
 
@@ -2005,8 +2005,8 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				then(
 					precededMultiple([whitespacePlus, tokens.AT, whitespacePlus], uriLiteral),
 					star(precededMultiple([whitespace, tokens.COMMA, whitespace], uriLiteral)),
-					(lhs, rhs) => [lhs, ...rhs]
-				)
+					(lhs, rhs) => [lhs, ...rhs],
+				),
 			),
 			(prefixPart, namespace, targetLocations) =>
 				[
@@ -2014,8 +2014,8 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 					...(prefixPart ? [prefixPart] : []),
 					...[['targetNamespace', namespace]],
 					...(targetLocations ? [targetLocations] : []),
-				] as IAST
-		)
+				] as IAST,
+		),
 	);
 
 	const moduleImport: Parser<IAST> = precededMultiple(
@@ -2024,24 +2024,24 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 			optional(
 				followed(
 					precededMultiple([whitespacePlus, tokens.NAMESPACE, whitespacePlus], ncName),
-					preceded(whitespace, tokens.EQUALS)
-				)
+					preceded(whitespace, tokens.EQUALS),
+				),
 			),
 			preceded(whitespace, uriLiteral),
 			optional(
 				then(
 					precededMultiple([whitespacePlus, tokens.AT, whitespacePlus], uriLiteral),
 					star(precededMultiple([whitespace, tokens.COMMA, whitespace], uriLiteral)),
-					(lhs, rhs) => [lhs, ...rhs]
-				)
+					(lhs, rhs) => [lhs, ...rhs],
+				),
 			),
 			(prefixPart, uri, _uris) => [
 				// Implementing the uris part into the AST.
 				'moduleImport',
 				['namespacePrefix', prefixPart],
 				['targetNamespace', uri],
-			]
-		)
+			],
+		),
 	);
 
 	const importExpr: Parser<IAST> = or([schemaImport, moduleImport]);
@@ -2056,17 +2056,17 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				tokens.COLLATION,
 				whitespacePlus,
 			],
-			uriLiteral
+			uriLiteral,
 		),
-		(x) => ['defaultCollationDecl', x]
+		(x) => ['defaultCollationDecl', x],
 	);
 
 	const baseUriDecl: Parser<IAST> = map(
 		precededMultiple(
 			[tokens.DECLARE, whitespacePlus, tokens.BASE_URI, whitespacePlus],
-			uriLiteral
+			uriLiteral,
 		),
-		(x) => ['baseUriDecl', x]
+		(x) => ['baseUriDecl', x],
 	);
 
 	const decimalFormatDecl: Parser<IAST> = then(
@@ -2079,9 +2079,9 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				]),
 				map(
 					precededMultiple([tokens.DEFAULT, whitespacePlus], tokens.DECIMAL_FORMAT),
-					(_) => null
+					(_) => null,
 				),
-			])
+			]),
 		),
 		star(
 			then(
@@ -2091,14 +2091,14 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 					'decimalFormatParam',
 					['decimalFormatParamName', namePart],
 					['decimalFormatParamValue', value],
-				]
-			)
+				],
+			),
 		),
 		(decimalFormatName, decimalFormatParams) => [
 			'decimalFormatDecl',
 			...(decimalFormatName ? [decimalFormatName] : []),
 			...decimalFormatParams,
-		]
+		],
 	);
 
 	const setter: Parser<IAST> = or([
@@ -2116,22 +2116,22 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		precededMultiple([tokens.DECLARE, whitespacePlus, tokens.OPTION, whitespacePlus], eqName),
 		preceded(whitespacePlus, stringLiteral),
 		(optionName, optionContents) =>
-			['optionDecl', ['optionName', optionName], ['optionContents', optionContents]] as IAST
+			['optionDecl', ['optionName', optionName], ['optionContents', optionContents]] as IAST,
 	);
 
 	const contextItemDecl: Parser<IAST> = then(
 		precededMultiple(
 			[tokens.DECLARE, whitespacePlus, tokens.CONTEXT, whitespacePlus, tokens.ITEM],
-			optional(precededMultiple([whitespacePlus, tokens.AS], itemType))
+			optional(precededMultiple([whitespacePlus, tokens.AS], itemType)),
 		),
 		or([
 			map(preceded(surrounded(tokens.WALRUS, whitespace), varValue), (x) => ['varValue', x]),
 			map(
 				precededMultiple(
 					[whitespacePlus, tokens.EXTERNAL],
-					optional(preceded(surrounded(tokens.WALRUS, whitespace), varDefaultValue))
+					optional(preceded(surrounded(tokens.WALRUS, whitespace), varDefaultValue)),
 				),
-				(_) => ['external']
+				(_) => ['external'],
 			),
 		]),
 		(itemTypePart, val) =>
@@ -2139,26 +2139,26 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 				'contextItemDecl',
 				...(itemTypePart ? [['contextItemType', itemTypePart]] : []),
 				val,
-			] as IAST
+			] as IAST,
 	);
 
 	const prolog: Parser<IAST> = then(
 		star(
 			followed(
 				or([defaultNamespaceDecl, setter, namespaceDecl, importExpr]),
-				cut(surrounded(separator, whitespace))
-			)
+				cut(surrounded(separator, whitespace)),
+			),
 		),
 		star(
 			followed(
 				or([contextItemDecl, annotatedDecl, optionDecl]),
-				cut(surrounded(separator, whitespace))
-			)
+				cut(surrounded(separator, whitespace)),
+			),
 		),
 		(moduleSettings, declarations) =>
 			moduleSettings.length === 0 && declarations.length === 0
 				? null
-				: ['prolog', ...moduleSettings, ...declarations]
+				: ['prolog', ...moduleSettings, ...declarations],
 	);
 
 	const moduleDecl: Parser<IAST> = precededMultiple(
@@ -2166,21 +2166,21 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		then(
 			followed(ncName, surrounded(tokens.EQUALS, whitespace)),
 			followed(uriLiteral, surrounded(separator, whitespace)),
-			(prefixPart, uri) => ['moduleDecl', ['prefix', prefixPart], ['uri', uri]]
-		)
+			(prefixPart, uri) => ['moduleDecl', ['prefix', prefixPart], ['uri', uri]],
+		),
 	);
 
 	const libraryModule: Parser<IAST> = then(
 		moduleDecl,
 		preceded(whitespace, prolog),
 		(moduleDeclPart, prologPart) =>
-			['libraryModule', moduleDeclPart, ...(prologPart ? [prologPart] : [])] as IAST
+			['libraryModule', moduleDeclPart, ...(prologPart ? [prologPart] : [])] as IAST,
 	);
 
 	const mainModule: Parser<IAST> = then(
 		prolog,
 		preceded(whitespace, queryBody),
-		(prologPart, body) => ['mainModule', ...(prologPart ? [prologPart] : []), body]
+		(prologPart, body) => ['mainModule', ...(prologPart ? [prologPart] : []), body],
 	);
 
 	const versionDeclaration: Parser<IAST> = map(
@@ -2191,34 +2191,34 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 					then(
 						preceded(tokens.ENCODING, whitespacePlus),
 						stringLiteral,
-						(encoding) => ['encoding', encoding] as IAST | IAST[]
+						(encoding) => ['encoding', encoding] as IAST | IAST[],
 					),
 					then(
 						precededMultiple([tokens.VERSION, whitespacePlus], stringLiteral),
 						optional(
 							precededMultiple(
 								[whitespacePlus, tokens.ENCODING, whitespacePlus],
-								stringLiteral
-							)
+								stringLiteral,
+							),
 						),
 						(version, encoding) =>
 							[
 								['version', version],
 								...(encoding ? [['encoding', encoding]] : []),
-							] as IAST[]
+							] as IAST[],
 					),
 				]),
-				preceded(whitespace, separator)
-			)
+				preceded(whitespace, separator),
+			),
 		),
-		(x) => ['versionDecl', ...x]
+		(x) => ['versionDecl', ...x],
 	);
 
 	const module: Parser<IAST> = then(
 		optional(surrounded(versionDeclaration, whitespace)),
 		or([libraryModule, mainModule]),
 		(versionDecl, modulePart) =>
-			['module', ...(versionDecl ? [versionDecl] : []), ...[modulePart]] as IAST
+			['module', ...(versionDecl ? [versionDecl] : []), ...[modulePart]] as IAST,
 	);
 
 	const completeParser = complete(surrounded(module, whitespace));
@@ -2258,7 +2258,7 @@ const xqueryDebugParser = generateParser({ outputDebugInfo: true, xquery: true }
 
 export function parseUsingPrsc(
 	xpath: string,
-	options: { outputDebugInfo: boolean; xquery: boolean }
+	options: { outputDebugInfo: boolean; xquery: boolean },
 ): ParseResult<IAST> {
 	whitespaceCache.clear();
 	whitespacePlusCache.clear();

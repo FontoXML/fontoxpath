@@ -25,7 +25,7 @@ export function annotateBinOp(
 	left: SequenceType | undefined,
 	right: SequenceType | undefined,
 	operator: string,
-	context: AnnotationContext
+	context: AnnotationContext,
 ): SequenceType {
 	// If we don't have the left and right type, we cannot infer the current type
 	if (!left || !right) {
@@ -48,7 +48,7 @@ export function annotateBinOp(
 
 	throw new Error(
 		`XPTY0004: ${operator} not available for types ${sequenceTypeToString(
-			left
-		)} and ${sequenceTypeToString(right)}`
+			left,
+		)} and ${sequenceTypeToString(right)}`,
 	);
 }

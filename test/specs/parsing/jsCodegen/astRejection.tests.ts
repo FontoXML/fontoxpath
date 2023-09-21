@@ -14,19 +14,19 @@ describe("rejecting unsupported AST's (js-codegen)", () => {
 			{ localName: 'customFunctionAcceptsMultiple', namespaceURI: 'test' },
 			['item()*'],
 			'xs:boolean',
-			(_dynamicContext, _items) => true
+			(_dynamicContext, _items) => true,
 		);
 		registerCustomXPathFunction(
 			{ localName: 'customFunctionAcceptsDate', namespaceURI: 'test' },
 			['xs:date?'],
 			'xs:boolean',
-			(_dynamicContext, _date) => true
+			(_dynamicContext, _date) => true,
 		);
 		registerCustomXPathFunction(
 			{ localName: 'customFunctionReturnsDate', namespaceURI: 'test' },
 			[],
 			'xs:date?',
-			(_dynamicContext, date) => null
+			(_dynamicContext, date) => null,
 		);
 	});
 
@@ -44,7 +44,7 @@ describe("rejecting unsupported AST's (js-codegen)", () => {
 					['tip', 'Make it fast'],
 				],
 			],
-			documentNode
+			documentNode,
 		);
 	});
 
@@ -54,7 +54,7 @@ describe("rejecting unsupported AST's (js-codegen)", () => {
 				'/xml[descendant::element(xml)]',
 				documentNode,
 				null,
-				ReturnType.BOOLEAN
+				ReturnType.BOOLEAN,
 			);
 		}, 'Unsupported');
 		chai.assert.throws(() => {
@@ -62,7 +62,7 @@ describe("rejecting unsupported AST's (js-codegen)", () => {
 				'/xml[descendant-or-self::element(xml)]',
 				documentNode,
 				null,
-				ReturnType.BOOLEAN
+				ReturnType.BOOLEAN,
 			);
 		}, 'Unsupported');
 		chai.assert.throws(() => {
@@ -70,7 +70,7 @@ describe("rejecting unsupported AST's (js-codegen)", () => {
 				'/xml[following-sibling::element(xml)]',
 				documentNode,
 				null,
-				ReturnType.BOOLEAN
+				ReturnType.BOOLEAN,
 			);
 		}, 'Unsupported');
 		chai.assert.throws(() => {
@@ -78,7 +78,7 @@ describe("rejecting unsupported AST's (js-codegen)", () => {
 				'/xml[following::element(xml)]',
 				documentNode,
 				null,
-				ReturnType.BOOLEAN
+				ReturnType.BOOLEAN,
 			);
 		}, 'Unsupported');
 	});
@@ -89,7 +89,7 @@ describe("rejecting unsupported AST's (js-codegen)", () => {
 				'/xml[ancestor::element(xml)]',
 				documentNode,
 				null,
-				ReturnType.BOOLEAN
+				ReturnType.BOOLEAN,
 			);
 		}, 'Unsupported');
 		chai.assert.throws(() => {
@@ -97,7 +97,7 @@ describe("rejecting unsupported AST's (js-codegen)", () => {
 				'/xml[preceding-sibling::element(xml)]',
 				documentNode,
 				null,
-				ReturnType.BOOLEAN
+				ReturnType.BOOLEAN,
 			);
 		}, 'Unsupported');
 		chai.assert.throws(() => {
@@ -105,7 +105,7 @@ describe("rejecting unsupported AST's (js-codegen)", () => {
 				'/xml[preceding::element(xml)]',
 				documentNode,
 				null,
-				ReturnType.BOOLEAN
+				ReturnType.BOOLEAN,
 			);
 		}, 'Unsupported');
 		chai.assert.throws(() => {
@@ -113,7 +113,7 @@ describe("rejecting unsupported AST's (js-codegen)", () => {
 				'/xml[ancestor-or-self::element(xml)]',
 				documentNode,
 				null,
-				ReturnType.BOOLEAN
+				ReturnType.BOOLEAN,
 			);
 		}, 'Unsupported');
 	});
@@ -125,9 +125,9 @@ describe("rejecting unsupported AST's (js-codegen)", () => {
 					'/processing-instruction()',
 					documentNode,
 					null,
-					ReturnType.BOOLEAN
+					ReturnType.BOOLEAN,
 				),
-			'Unsupported'
+			'Unsupported',
 		);
 	});
 
@@ -138,9 +138,9 @@ describe("rejecting unsupported AST's (js-codegen)", () => {
 					'/xml[self::element(tips) or self::processing-instruction()]',
 					documentNode,
 					null,
-					ReturnType.BOOLEAN
+					ReturnType.BOOLEAN,
 				),
-			'Unsupported'
+			'Unsupported',
 		);
 	});
 
@@ -151,9 +151,9 @@ describe("rejecting unsupported AST's (js-codegen)", () => {
 					'/xml[self::element(xml) and self::processing-instruction()]',
 					documentNode,
 					null,
-					ReturnType.BOOLEAN
+					ReturnType.BOOLEAN,
 				),
-			'Unsupported'
+			'Unsupported',
 		);
 	});
 
@@ -164,9 +164,9 @@ describe("rejecting unsupported AST's (js-codegen)", () => {
 					'boolean(/xml) and self::element(xml)',
 					documentNode,
 					null,
-					ReturnType.BOOLEAN
+					ReturnType.BOOLEAN,
 				),
-			'Not supported: built-in function not on allow list: boolean#1'
+			'Not supported: built-in function not on allow list: boolean#1',
 		);
 	});
 
@@ -178,9 +178,9 @@ describe("rejecting unsupported AST's (js-codegen)", () => {
 					'Q{test}customFunctionAcceptsMultiple(/xml/*)',
 					documentNode,
 					null,
-					ReturnType.BOOLEAN
+					ReturnType.BOOLEAN,
 				),
-			'Not supported: sequence arguments with multiple items'
+			'Not supported: sequence arguments with multiple items',
 		);
 		// Types not supported by codegen not supported as arguments
 		chai.assert.throws(
@@ -189,9 +189,9 @@ describe("rejecting unsupported AST's (js-codegen)", () => {
 					'Q{test}customFunctionAcceptsDate("bla")',
 					null,
 					null,
-					ReturnType.BOOLEAN
+					ReturnType.BOOLEAN,
 				),
-			'Argument types not supported: xs:string -> xs:date'
+			'Argument types not supported: xs:string -> xs:date',
 		);
 		// Types not supported by codegen not supported as return type
 		chai.assert.throws(
@@ -200,9 +200,9 @@ describe("rejecting unsupported AST's (js-codegen)", () => {
 					'Q{test}customFunctionReturnsDate()',
 					null,
 					null,
-					ReturnType.BOOLEAN
+					ReturnType.BOOLEAN,
 				),
-			'Function return type xs:date not supported'
+			'Function return type xs:date not supported',
 		);
 	});
 
@@ -218,7 +218,7 @@ declare %public function test:hello($a) {
 `,
 				null,
 				null,
-				ReturnType.BOOLEAN
+				ReturnType.BOOLEAN,
 			);
 		}, 'Unsupported');
 	});

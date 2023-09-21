@@ -58,7 +58,7 @@ describe('numeric functions', () => {
 		it('returns the absolute value', () =>
 			chai.assert.equal(
 				evaluateXPathToNumber('abs(xs:int("-2147483648"))', documentNode),
-				2147483648
+				2147483648,
 			));
 	});
 
@@ -74,12 +74,12 @@ describe('numeric functions', () => {
 		it('returns -INF when given -INF', () =>
 			chai.assert.equal(
 				evaluateXPathToNumber('round(xs:double("-INF"))', documentNode),
-				-Infinity
+				-Infinity,
 			));
 		it('returns +INF when given +INF', () =>
 			chai.assert.equal(
 				evaluateXPathToNumber('round(xs:double("+INF"))', documentNode),
-				+Infinity
+				+Infinity,
 			));
 
 		it('returns 25 for 24.5', () =>
@@ -93,9 +93,9 @@ describe('numeric functions', () => {
 			chai.assert.equal(
 				evaluateXPathToNumber(
 					'fn:round(xs:double("-1.7976931348623157E308"))',
-					documentNode
+					documentNode,
 				),
-				-1.7976931348623157e308
+				-1.7976931348623157e308,
 			));
 	});
 
@@ -103,7 +103,7 @@ describe('numeric functions', () => {
 		it('returns an empty sequence when given an empty sequence', () =>
 			chai.assert.deepEqual(
 				evaluateXPathToNumbers('round-half-to-even(())', documentNode),
-				[]
+				[],
 			));
 		it('returns NaN when given NaN', () =>
 			chai.assert.isNaN(evaluateXPathToNumber('round-half-to-even(NaN)', documentNode)));
@@ -114,12 +114,12 @@ describe('numeric functions', () => {
 		it('returns -INF when given -INF', () =>
 			chai.assert.equal(
 				evaluateXPathToNumber('round-half-to-even(xs:double("-INF"))', documentNode),
-				-Infinity
+				-Infinity,
 			));
 		it('returns +INF when given +INF', () =>
 			chai.assert.equal(
 				evaluateXPathToNumber('round-half-to-even(xs:double("+INF"))', documentNode),
-				+Infinity
+				+Infinity,
 			));
 
 		it('returns 24 for 24.5', () =>
@@ -139,43 +139,43 @@ describe('numeric functions', () => {
 		it('returns 24.426 for 24.42566 (precision 3)', () =>
 			chai.assert.equal(
 				evaluateXPathToNumber('round-half-to-even(24.42566, 3)', documentNode),
-				24.426
+				24.426,
 			));
 
 		it('returns 4561 for 4561.000005e0 (precision 0)', () =>
 			chai.assert.equal(
 				evaluateXPathToNumber('round-half-to-even(4561.000005e0, 0)', documentNode),
-				4561
+				4561,
 			));
 		it('returns 4561234600 for 4561234567 (precision -2)', () =>
 			chai.assert.equal(
 				evaluateXPathToNumber('round-half-to-even(4561234567, -2)', documentNode),
-				4561234600
+				4561234600,
 			));
 		it('returns 4561234567 for 4561234567 (precision 0)', () =>
 			chai.assert.equal(
 				evaluateXPathToNumber('round-half-to-even(4561234567, 0)', documentNode),
-				4561234567
+				4561234567,
 			));
 		it.skip('returns 0.1 for 0.05 (precision 1)', () =>
 			chai.assert.equal(
 				evaluateXPathToNumber('round-half-to-even(xs:float("0.05"), 1)', documentNode),
-				0.1
+				0.1,
 			));
 		it.skip('returns -0.1 for -0.05 (precision 1)', () =>
 			chai.assert.equal(
 				evaluateXPathToNumber('round-half-to-even(xs:float("-0.05"), 1)', documentNode),
-				-0.1
+				-0.1,
 			));
 		it('returns 3567.812 for 3.567812E+3 (precision 4294967296)', () =>
 			chai.assert.equal(
 				evaluateXPathToNumber('round-half-to-even(3.567812E+3, 4294967296)', documentNode),
-				3567.812
+				3567.812,
 			));
 		it('returns 3.567812 for 3.567812 (precision 4294967296)', () =>
 			chai.assert.equal(
 				evaluateXPathToNumber('round-half-to-even(3.567812, 4294967296)', documentNode),
-				3.567812
+				3.567812,
 			));
 	});
 
@@ -187,27 +187,27 @@ describe('numeric functions', () => {
 						evaluateXPathToNumber('random-number-generator()?number', documentNode),
 						0.5,
 						0.5,
-						'number should return something in the range 0 to 10'
+						'number should return something in the range 0 to 10',
 					));
 
 				it('returns any random number via next function', () =>
 					chai.assert.closeTo(
 						evaluateXPathToNumber(
 							'random-number-generator()?next()?number',
-							documentNode
+							documentNode,
 						),
 						0.5,
 						0.5,
-						'number should return something in the range 0 to 10'
+						'number should return something in the range 0 to 10',
 					));
 
 				it('permute should permute the sequence', () =>
 					chai.assert.sameMembers(
 						evaluateXPathToNumbers(
 							'random-number-generator()?permute((1, 2, 3, 4))',
-							documentNode
+							documentNode,
 						),
-						[1, 2, 3, 4]
+						[1, 2, 3, 4],
 					));
 			});
 		}
@@ -295,7 +295,7 @@ describe('numeric functions', () => {
 			chai.assert.equal(evaluateXPathToString('format-integer((), "arabicAbjadi")'), '');
 			chai.assert.equal(
 				evaluateXPathToString('format-integer((), "arabicAbjadNumeral")'),
-				''
+				'',
 			);
 			chai.assert.equal(evaluateXPathToString('format-integer((), "arabicAlifBaTa")'), '');
 			chai.assert.equal(evaluateXPathToString('format-integer((), "١")'), '');
@@ -311,7 +311,7 @@ describe('numeric functions', () => {
 		it('fn-format-integer returns the input for unknown pictures (boolean check)', () => {
 			chai.assert.isTrue(evaluateXPathToBoolean('format-integer(1234, "ﯴ") = "1234"'));
 			chai.assert.isTrue(
-				evaluateXPathToBoolean('format-integer(1234, "ﯴ") instance of xs:string')
+				evaluateXPathToBoolean('format-integer(1234, "ﯴ") instance of xs:string'),
 			);
 		});
 	});
@@ -363,7 +363,7 @@ describe('numeric functions', () => {
 			it(`should format ${int} as a letter of the Arabic alphabet, sorted in Abjadi order`, () => {
 				chai.assert.equal(
 					evaluateXPathToString(`format-integer(${int}, "arabicAbjadi")`),
-					expected
+					expected,
 				);
 			});
 		}
@@ -429,7 +429,7 @@ describe('numeric functions', () => {
 			it(`should format ${int} as an Abjad numeral`, () => {
 				chai.assert.equal(
 					evaluateXPathToString(`format-integer(${int}, "arabicAbjadNumeral")`),
-					expected
+					expected,
 				);
 			});
 		}
@@ -484,7 +484,7 @@ describe('numeric functions', () => {
 			it(`should format ${int} as a letter of the Arabic alphabet, sorted in AlifBaTa order`, () => {
 				chai.assert.equal(
 					evaluateXPathToString(`format-integer(${int}, "arabicAlifBaTa")`),
-					expected
+					expected,
 				);
 			});
 		}
@@ -535,7 +535,7 @@ describe('numeric functions', () => {
 			it(`should format ${int} as a letter of the Hebrew alphabet`, () => {
 				chai.assert.equal(
 					evaluateXPathToString(`format-integer(${int}, "hebrewAlefBet")`),
-					expected
+					expected,
 				);
 			});
 		}
@@ -598,7 +598,7 @@ describe('numeric functions', () => {
 			it(`should format ${int} as a Hebrew numeral`, () => {
 				chai.assert.equal(
 					evaluateXPathToString(`format-integer(${int}, "hebrewNumeral")`),
-					expected
+					expected,
 				);
 			});
 		}
@@ -627,14 +627,14 @@ describe('numeric functions', () => {
 			it(`should format ${int} as an Arabic-Indic numeral using arabic-indic numeral 1 as the format string`, () => {
 				chai.assert.equal(
 					evaluateXPathToString(`format-integer(${int}, "١")`),
-					expectedArabicNum
+					expectedArabicNum,
 				);
 			});
 
 			it(`should format ${int} as an Arabic-Indic numeral using arabic-indic numeral 4 as the format string`, () => {
 				chai.assert.equal(
 					evaluateXPathToString(`format-integer(${int}, "٤")`),
-					expectedArabicNum
+					expectedArabicNum,
 				);
 			});
 		}
@@ -645,14 +645,14 @@ describe('numeric functions', () => {
 			it(`should format ${int} as a Persian numeral using persian numeral 1 as the format string`, () => {
 				chai.assert.equal(
 					evaluateXPathToString(`format-integer(${int}, "۱")`),
-					expectedPersianNum
+					expectedPersianNum,
 				);
 			});
 
 			it(`should format ${int} as a Persian numeral using persian numeral 4 as the format string`, () => {
 				chai.assert.equal(
 					evaluateXPathToString(`format-integer(${int}, "۴")`),
-					expectedPersianNum
+					expectedPersianNum,
 				);
 			});
 		}

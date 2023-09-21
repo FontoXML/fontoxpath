@@ -13,7 +13,7 @@ describe('union', () => {
 		jsonMlMapper.parse(['someNode', ['someChildNode']], documentNode);
 		chai.assert.deepEqual(
 			evaluateXPathToNodes('(//someNode | //someChildNode)', documentNode),
-			[documentNode.firstChild, documentNode.firstChild.firstChild]
+			[documentNode.firstChild, documentNode.firstChild.firstChild],
 		);
 	});
 
@@ -29,7 +29,7 @@ describe('union', () => {
 		jsonMlMapper.parse(['someNode', ['someChildNode']], documentNode);
 		chai.assert.deepEqual(
 			evaluateXPathToNodes('((//someNode)union(//someChildNode))', documentNode),
-			[documentNode.firstChild, documentNode.firstChild.firstChild]
+			[documentNode.firstChild, documentNode.firstChild.firstChild],
 		);
 	});
 
@@ -44,14 +44,14 @@ describe('union', () => {
 	it('throws an error when not passed a node sequence', () =>
 		chai.assert.throws(
 			() => evaluateXPathToNodes('(1,2,3) | (4,5,6)', documentNode),
-			'XPTY0004'
+			'XPTY0004',
 		));
 
 	it('sorts nodes', () => {
 		jsonMlMapper.parse(['someNode', ['A'], ['B'], ['C']], documentNode);
 		chai.assert.deepEqual(
 			evaluateXPathToNodes('(//C | //B | //A)', documentNode),
-			Array.from(documentNode.firstChild.childNodes)
+			Array.from(documentNode.firstChild.childNodes),
 		);
 	});
 });

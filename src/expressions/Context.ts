@@ -10,14 +10,14 @@ export default interface IContext {
 	registeredVariableDeclarationByHashKey: {
 		[hash: string]: (
 			dynamicContext: DynamicContext,
-			executionParameters: ExecutionParameters
+			executionParameters: ExecutionParameters,
 		) => ISequence;
 	};
 	lookupFunction(
 		namespaceURI: string,
 		localName: string,
 		arity: number,
-		skipExternal?: boolean
+		skipExternal?: boolean,
 	): FunctionProperties | null;
 	lookupVariable(namespaceURI: string | null, localName: string): string | null;
 	resolveFunctionName(lexicalQName: LexicalQualifiedName, arity: number): ResolvedQualifiedName;

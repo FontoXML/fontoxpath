@@ -21,7 +21,7 @@ describe('Filter', () => {
 					getBucket: () => 'name-just-for-testing',
 					specificity: new Specificity({}),
 				} as unknown as Expression,
-				equalExpression
+				equalExpression,
 			);
 			chai.assert.equal(filter.getBucket(), 'name-just-for-testing');
 		});
@@ -31,12 +31,12 @@ describe('Filter', () => {
 		it('returns the specificity of the selector plus the other part', () => {
 			const filter = new Filter(
 				{ specificity: new Specificity({ external: 1 }) } as Expression,
-				{ specificity: new Specificity({ external: 1 }) } as Expression
+				{ specificity: new Specificity({ external: 1 }) } as Expression,
 			);
 			chai.assert.equal(
 				filter.specificity.compareTo(new Specificity({ external: 2 })),
 				0,
-				'should be of equal specificity'
+				'should be of equal specificity',
 			);
 		});
 	});

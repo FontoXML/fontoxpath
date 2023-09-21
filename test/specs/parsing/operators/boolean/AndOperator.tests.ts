@@ -14,7 +14,7 @@ describe('and operator', () => {
 	it('can not compute the ebv of a sequence with 2 items', () => {
 		chai.assert.throws(
 			() => evaluateXPathToBoolean('(false(), false()) and (false(), false())'),
-			'FORG0006'
+			'FORG0006',
 		);
 	});
 
@@ -28,7 +28,7 @@ describe('and operator', () => {
 
 	it('can optimize an and expression with buckets, inside a not()', () => {
 		chai.assert.isTrue(
-			evaluateXPathToBoolean('not(self::p and true())', new slimdom.Document())
+			evaluateXPathToBoolean('not(self::p and true())', new slimdom.Document()),
 		);
 	});
 

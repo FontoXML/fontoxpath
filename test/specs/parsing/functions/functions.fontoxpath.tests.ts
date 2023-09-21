@@ -38,7 +38,7 @@ describe('extension functions', () => {
 				(_dynamicContext) => {
 					// This query will throw an error during static evaluation
 					return '"prefix-" || string("bla", "bliep") || "-postfix"';
-				}
+				},
 			);
 
 			registerCustomXPathFunction(
@@ -51,7 +51,7 @@ describe('extension functions', () => {
 				(_dynamicContext) => {
 					// This query will throw an error immediately during evaluation
 					return '"prefix-" || string(./descendant::text()) || "-postfix"';
-				}
+				},
 			);
 
 			registerCustomXPathFunction(
@@ -64,7 +64,7 @@ describe('extension functions', () => {
 				(_dynamicContext) => {
 					// This query will throw an error during evaluation when advancing the iterator
 					return 'string(./descendant::text())';
-				}
+				},
 			);
 		});
 
@@ -73,40 +73,40 @@ describe('extension functions', () => {
 				evaluateXPathToBoolean(
 					'fontoxpath:evaluate("true()", map{})',
 					documentNode,
-					domFacade
-				)
+					domFacade,
+				),
 			));
 		it('can iterate over the same sequence, inside the evaluate call', () =>
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
 					'fontoxpath:evaluate("count($x) + count(reverse($x))", map{"x": (1,2,3,4,5)})',
 					documentNode,
-					domFacade
-				)
+					domFacade,
+				),
 			));
 		it('can run inline inline functions', () =>
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
 					'fontoxpath:evaluate("fontoxpath:evaluate(""true()"", map{})", map{})',
 					documentNode,
-					domFacade
-				)
+					domFacade,
+				),
 			));
 		it('can run inside inline functions', () =>
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
 					'function() {fontoxpath:evaluate("true()", map{})}()',
 					documentNode,
-					domFacade
-				)
+					domFacade,
+				),
 			));
 		it('accepts parameters', () =>
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
 					'fontoxpath:evaluate("$a", map{"a":true()})',
 					documentNode,
-					domFacade
-				)
+					domFacade,
+				),
 			));
 		it('retains namespaces in scope', () => {
 			chai.assert.isTrue(
@@ -117,9 +117,9 @@ describe('extension functions', () => {
 					{},
 					{
 						namespaceResolver: (prefix) =>
-							({ fun: 'http://www.w3.org/2005/xpath-functions' }[prefix]),
-					}
-				)
+							({ fun: 'http://www.w3.org/2005/xpath-functions' })[prefix],
+					},
+				),
 			);
 		});
 		it('accepts "." as contextItem', () =>
@@ -127,15 +127,15 @@ describe('extension functions', () => {
 				evaluateXPathToBoolean(
 					'fontoxpath:evaluate(".", map{".":true()})',
 					documentNode,
-					domFacade
-				)
+					domFacade,
+				),
 			));
 		it('also allows XQuery to be evaluated', () =>
 			chai.assert.equal(
 				evaluateXPathToNumber(
-					'fontoxpath:evaluate("declare default function namespace ""http://www.w3.org/2005/xpath-functions/math""; exp10(3)", map{})'
+					'fontoxpath:evaluate("declare default function namespace ""http://www.w3.org/2005/xpath-functions/math""; exp10(3)", map{})',
 				),
-				1000
+				1000,
 			));
 
 		it('also allows XQueryX programs to be evaluated', () =>
@@ -153,9 +153,9 @@ describe('extension functions', () => {
 					documentNode,
 					domFacade,
 					null,
-					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 				),
-				42
+				42,
 			));
 
 		it('throws when passed nonsense as an XQueryX program', () =>
@@ -166,9 +166,9 @@ describe('extension functions', () => {
 						documentNode,
 						domFacade,
 						null,
-						{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+						{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 					),
-				'XPTY0004'
+				'XPTY0004',
 			));
 
 		it('throws when passed invalid arguments', () => {
@@ -179,10 +179,10 @@ describe('extension functions', () => {
 						documentNode,
 						domFacade,
 						null,
-						{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+						{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 					),
 				/XPTY0004/,
-				'When passed an integer'
+				'When passed an integer',
 			);
 
 			chai.assert.throws(
@@ -192,10 +192,10 @@ describe('extension functions', () => {
 						documentNode,
 						domFacade,
 						null,
-						{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+						{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 					),
 				/XPTY0004/,
-				'When passed a map'
+				'When passed a map',
 			);
 
 			chai.assert.throws(
@@ -205,10 +205,10 @@ describe('extension functions', () => {
 						documentNode,
 						domFacade,
 						null,
-						{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+						{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 					),
 				/XPTY0004/,
-				'When passed a boolean'
+				'When passed a boolean',
 			);
 		});
 
@@ -226,7 +226,7 @@ describe('extension functions', () => {
 						{
 							namespaceResolver: identityNamespaceResolver,
 							debug: true,
-						}
+						},
 					),
 				// We expect the error message to contain the errored Query which is evaluated by
 				// fontoxpath:evaluate
@@ -237,7 +237,7 @@ Inner error:
 1: "prefix-" || string("bla", "bliep") || "-postfix"
                 ^^^^^^^^^^^^^^^^^^^^^^
 
-Error: XPST0017`
+Error: XPST0017`,
 			);
 		});
 
@@ -259,7 +259,7 @@ Error: XPST0017`
 							language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 							namespaceResolver: identityNamespaceResolver,
 							debug: true,
-						}
+						},
 					),
 				// We expect the error message to contain the errored Query which is evaluated by
 				// fontoxpath:evaluate
@@ -270,7 +270,7 @@ Inner error:
 1: "prefix-" || string(./descendant::text()) || "-postfix"
                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Error: XPTY0004`
+Error: XPTY0004`,
 			);
 		});
 
@@ -292,7 +292,7 @@ Error: XPTY0004`
 							language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 							namespaceResolver: identityNamespaceResolver,
 							debug: true,
-						}
+						},
 					),
 				// We expect the error message to contain the errored Query which is evaluated by
 				// fontoxpath:evaluate
@@ -303,7 +303,7 @@ Inner error:
 1: string(./descendant::text())
    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Error: XPTY0004`
+Error: XPTY0004`,
 			);
 		});
 	});

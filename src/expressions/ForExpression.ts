@@ -31,7 +31,7 @@ class ForExpression extends FlworExpression {
 			namespaceURI: string | null;
 			prefix: string;
 		} | null,
-		returnExpression: PossiblyUpdatingExpression | FlworExpression
+		returnExpression: PossiblyUpdatingExpression | FlworExpression,
 	) {
 		super(
 			clauseExpression.specificity.add(returnExpression.specificity),
@@ -39,7 +39,7 @@ class ForExpression extends FlworExpression {
 			{
 				canBeStaticallyEvaluated: false,
 			},
-			returnExpression
+			returnExpression,
 		);
 
 		this._prefix = rangeVariable.prefix;
@@ -58,7 +58,7 @@ class ForExpression extends FlworExpression {
 		_dynamicContext: DynamicContext,
 		dynamicContextIterator: IIterator<DynamicContext>,
 		executionParameters: ExecutionParameters,
-		createReturnSequence: (dynamicContextIterator: IIterator<DynamicContext>) => ISequence
+		createReturnSequence: (dynamicContextIterator: IIterator<DynamicContext>) => ISequence,
 	): ISequence {
 		let clauseIterator: IIterator<Value> = null;
 		let currentDynamicContext: DynamicContext = null;
@@ -78,7 +78,7 @@ class ForExpression extends FlworExpression {
 
 						clauseIterator = this._clauseExpression.evaluateMaybeStatically(
 							currentDynamicContext,
-							executionParameters
+							executionParameters,
 						).value;
 					}
 
@@ -111,7 +111,7 @@ class ForExpression extends FlworExpression {
 
 			if (!this._namespaceURI && this._prefix) {
 				throw new Error(
-					`XPST0081: Could not resolve namespace for prefix ${this._prefix} in a for expression`
+					`XPST0081: Could not resolve namespace for prefix ${this._prefix} in a for expression`,
 				);
 			}
 		}
@@ -120,13 +120,13 @@ class ForExpression extends FlworExpression {
 		staticContext.introduceScope();
 		this._variableBindingKey = staticContext.registerVariable(
 			this._namespaceURI,
-			this._localName
+			this._localName,
 		);
 
 		if (this._positionalVariableBinding) {
 			if (this._positionalVariableBinding.prefix) {
 				this._positionalVariableBinding.namespaceURI = staticContext.resolveNamespace(
-					this._positionalVariableBinding.prefix
+					this._positionalVariableBinding.prefix,
 				);
 
 				if (
@@ -134,14 +134,14 @@ class ForExpression extends FlworExpression {
 					this._positionalVariableBinding.prefix
 				) {
 					throw new Error(
-						`XPST0081: Could not resolve namespace for prefix ${this._prefix} in the positionalVariableBinding in a for expression`
+						`XPST0081: Could not resolve namespace for prefix ${this._prefix} in the positionalVariableBinding in a for expression`,
 					);
 				}
 			}
 
 			this._positionalVariableBindingKey = staticContext.registerVariable(
 				this._positionalVariableBinding.namespaceURI,
-				this._positionalVariableBinding.localName
+				this._positionalVariableBinding.localName,
 			);
 		}
 

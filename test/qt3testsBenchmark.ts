@@ -32,7 +32,7 @@ function runTests() {
 			console.log(
 				`${event.target.name}, ${Math.round(event.target.hz * 1000) / 1000} op/sec, ±${
 					Math.round(event.target.stats.rme * 1000) / 1000
-				}%, ${event.target.stats.sample.length} runs sampled`
+				}%, ${event.target.stats.sample.length} runs sampled`,
 			);
 		})
 		.run({ async: true });
@@ -45,22 +45,22 @@ function addTestCaseToBenchmark(
 	contextNode: Node | undefined,
 	variablesInScope: {},
 	namespaceResolver: (prefix: string) => string | null,
-	name: string
+	name: string,
 ): void {
 	const nodesFactory = {
 		createAttributeNS: assertNode.ownerDocument.createAttributeNS.bind(
-			assertNode.ownerDocument
+			assertNode.ownerDocument,
 		),
 		createCDATASection: assertNode.ownerDocument.createCDATASection.bind(
-			assertNode.ownerDocument
+			assertNode.ownerDocument,
 		),
 		createComment: assertNode.ownerDocument.createComment.bind(assertNode.ownerDocument),
 		createDocument: assertNode.ownerDocument.implementation.createDocument.bind(
-			assertNode.ownerDocument
+			assertNode.ownerDocument,
 		),
 		createElementNS: assertNode.ownerDocument.createElementNS.bind(assertNode.ownerDocument),
 		createProcessingInstruction: assertNode.ownerDocument.createProcessingInstruction.bind(
-			assertNode.ownerDocument
+			assertNode.ownerDocument,
 		),
 		createTextNode: assertNode.ownerDocument.createTextNode.bind(assertNode.ownerDocument),
 	};
@@ -79,8 +79,8 @@ function addTestCaseToBenchmark(
 					contextNode,
 					variablesInScope,
 					namespaceResolver,
-					`${name}-${i}`
-				)
+					`${name}-${i}`,
+				),
 			);
 			break;
 		}
@@ -91,12 +91,12 @@ function addTestCaseToBenchmark(
 					evaluateXPathToBoolean(
 						`let $result := (${xpath}) return ${evaluateXPathToString(
 							'.',
-							assertNode
+							assertNode,
 						)}`,
 						contextNode,
 						null,
 						variablesInScope,
-						{ namespaceResolver, nodesFactory, language }
+						{ namespaceResolver, nodesFactory, language },
 					),
 			});
 			break;
@@ -122,7 +122,7 @@ function addTestCaseToBenchmark(
 						contextNode,
 						null,
 						variablesInScope,
-						{ namespaceResolver, nodesFactory, language }
+						{ namespaceResolver, nodesFactory, language },
 					),
 			});
 			break;
@@ -136,7 +136,7 @@ function addTestCaseToBenchmark(
 						contextNode,
 						null,
 						variablesInScope,
-						{ namespaceResolver, nodesFactory, language }
+						{ namespaceResolver, nodesFactory, language },
 					),
 			});
 			break;
@@ -149,7 +149,7 @@ function addTestCaseToBenchmark(
 						contextNode,
 						null,
 						variablesInScope,
-						{ namespaceResolver, nodesFactory, language }
+						{ namespaceResolver, nodesFactory, language },
 					),
 			});
 			break;
@@ -162,7 +162,7 @@ function addTestCaseToBenchmark(
 						contextNode,
 						null,
 						variablesInScope,
-						{ namespaceResolver, nodesFactory, language }
+						{ namespaceResolver, nodesFactory, language },
 					),
 			});
 			break;
@@ -176,7 +176,7 @@ function addTestCaseToBenchmark(
 						contextNode,
 						null,
 						variablesInScope,
-						{ namespaceResolver, nodesFactory, language }
+						{ namespaceResolver, nodesFactory, language },
 					),
 			});
 			break;
@@ -247,7 +247,7 @@ const runBenchmarking = () => {
 					contextNode,
 					variablesInScope,
 					namespaceResolver,
-					testName
+					testName,
 				);
 			} catch (e) {
 				// tslint:disable-next-line: no-console

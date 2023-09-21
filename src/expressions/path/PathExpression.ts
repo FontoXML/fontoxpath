@@ -25,7 +25,7 @@ function sortResults(domFacade: DomFacade, result: Value[]) {
 	});
 	if (resultContainsNonNodes && resultContainsNodes) {
 		throw new Error(
-			'XPTY0018: The path operator should either return nodes or non-nodes. Mixed sequences are not allowed.'
+			'XPTY0018: The path operator should either return nodes or non-nodes. Mixed sequences are not allowed.',
 		);
 	}
 
@@ -55,7 +55,7 @@ class PathExpression extends Expression {
 					? RESULT_ORDERINGS.SORTED
 					: RESULT_ORDERINGS.UNSORTED,
 				subtree: pathResultsInSubtreeSequence,
-			}
+			},
 		);
 
 		this._stepExpressions = stepExpressions;
@@ -91,15 +91,15 @@ class PathExpression extends Expression {
 								// from outside. In that case, the axis step is supposed to error
 								// with XPTY0020
 								throw new Error(
-									'XPTY0019: The result of E1 in a path expression E1/E2 should not evaluate to a sequence of nodes.'
+									'XPTY0019: The result of E1 in a path expression E1/E2 should not evaluate to a sequence of nodes.',
 								);
 							}
 						}
 						return ready(
 							selector.evaluateMaybeStatically(
 								childContext.value,
-								executionParameters
-							)
+								executionParameters,
+							),
 						);
 					},
 				};
@@ -119,8 +119,8 @@ class PathExpression extends Expression {
 									}
 									return ready(
 										res.value.mapAll((items) =>
-											sequenceFactory.create(items.reverse())
-										)
+											sequenceFactory.create(items.reverse()),
+										),
 									);
 								},
 							};
@@ -129,25 +129,25 @@ class PathExpression extends Expression {
 						case RESULT_ORDERINGS.SORTED:
 							if (selector.subtree && sequenceHasPeerProperty) {
 								sortedResultSequence = concatSortedSequences(
-									resultValuesInOrderOfEvaluation
+									resultValuesInOrderOfEvaluation,
 								);
 								break;
 							}
 							// Only locally sorted
 							sortedResultSequence = mergeSortedSequences(
 								executionParameters.domFacade,
-								resultValuesInOrderOfEvaluation
+								resultValuesInOrderOfEvaluation,
 							);
 							break;
 						case RESULT_ORDERINGS.UNSORTED: {
 							// The result should be sorted before we can continue
 							const concattedSequence = concatSortedSequences(
-								resultValuesInOrderOfEvaluation
+								resultValuesInOrderOfEvaluation,
 							);
 							return concattedSequence.mapAll((allValues) =>
 								sequenceFactory.create(
-									sortResults(executionParameters.domFacade, allValues)
-								)
+									sortResults(executionParameters.domFacade, allValues),
+								),
 							);
 						}
 					}
@@ -157,7 +157,7 @@ class PathExpression extends Expression {
 				sequenceHasPeerProperty = sequenceHasPeerProperty && selector.peer;
 				return sortedResultSequence;
 			},
-			null
+			null,
 		);
 
 		return result;

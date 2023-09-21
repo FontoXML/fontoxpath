@@ -8,7 +8,7 @@ const fnNot: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	const ebv = sequence.getEffectiveBooleanValue();
 	return ebv === false
@@ -20,7 +20,7 @@ const fnBoolean: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	const ebv = sequence.getEffectiveBooleanValue();
 	return ebv ? sequenceFactory.singletonTrueSequence() : sequenceFactory.singletonFalseSequence();

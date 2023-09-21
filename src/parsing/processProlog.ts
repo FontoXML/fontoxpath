@@ -73,7 +73,7 @@ function processFunctionDefinition(
 	staticContext: StaticContext,
 	staticallyCompilableExpressions: { expression: Expression; staticContextLeaf: StaticContext }[],
 	compiledFunctionDeclarations: FunctionDeclaration[],
-	createExpressions: boolean
+	createExpressions: boolean,
 ) {
 	const functionName = astHelper.getFirstChild(declaration, 'functionName');
 	const declarationPrefix = (astHelper.getAttribute(functionName, 'prefix') || '') as string;
@@ -108,12 +108,12 @@ function processFunctionDefinition(
 	const isPublicDeclaration = annotations.every(
 		(annotationName) =>
 			!astHelper.getAttribute(annotationName, 'URI') &&
-			astHelper.getTextContent(annotationName) !== 'private'
+			astHelper.getTextContent(annotationName) !== 'private',
 	);
 	const isUpdatingFunction = annotations.some(
 		(annotationName) =>
 			!astHelper.getAttribute(annotationName, 'URI') &&
-			astHelper.getTextContent(annotationName) === 'updating'
+			astHelper.getTextContent(annotationName) === 'updating',
 	);
 
 	if (!declarationNamespaceURI) {
@@ -123,7 +123,7 @@ function processFunctionDefinition(
 	const returnType: SequenceType = astHelper.getTypeDeclaration(declaration);
 	const params = astHelper.getChildren(
 		astHelper.getFirstChild(declaration, 'paramList'),
-		'param'
+		'param',
 	);
 	const paramNames = params.map((param) => astHelper.getFirstChild(param, 'varName'));
 	const paramTypes: SequenceType[] = params.map((param) => astHelper.getTypeDeclaration(param));
@@ -135,7 +135,7 @@ function processFunctionDefinition(
 			staticContext.lookupFunction(
 				declarationNamespaceURI,
 				declarationLocalName,
-				paramTypes.length
+				paramTypes.length,
 			)
 		) {
 			throw errXQST0049(declarationNamespaceURI, declarationLocalName);
@@ -177,11 +177,11 @@ function processFunctionDefinition(
 						parameterBindingNames.reduce((paramByName, bindingName, i) => {
 							paramByName[bindingName] = createDoublyIterableSequence(parameters[i]);
 							return paramByName;
-						}, Object.create(null))
+						}, Object.create(null)),
 					);
 				return (compiledFunctionBody as UpdatingExpression).evaluateWithUpdateList(
 					scopedDynamicContext,
-					executionParameters
+					executionParameters,
 				);
 			};
 
@@ -209,11 +209,11 @@ function processFunctionDefinition(
 						parameterBindingNames.reduce((paramByName, bindingName, i) => {
 							paramByName[bindingName] = createDoublyIterableSequence(parameters[i]);
 							return paramByName;
-						}, Object.create(null))
+						}, Object.create(null)),
 					);
 				return compiledFunctionBody.evaluateMaybeStatically(
 					scopedDynamicContext,
-					executionParameters
+					executionParameters,
 				);
 			};
 
@@ -263,13 +263,13 @@ function processFunctionDefinition(
 				declarationNamespaceURI,
 				declarationLocalName,
 				paramNames.length,
-				true
+				true,
 			);
 			if (!actualFunctionProperties) {
 				throw new Error(
 					`XPST0017: Function Q{${declarationNamespaceURI}}${declarationLocalName} with arity of ${
 						paramNames.length
-					} not registered. ${getAlternativesAsStringFor(declarationLocalName)}`
+					} not registered. ${getAlternativesAsStringFor(declarationLocalName)}`,
 				);
 			}
 
@@ -278,7 +278,7 @@ function processFunctionDefinition(
 				actualFunctionProperties.argumentTypes.some(
 					// TODO: what do we do with any RestArguments here?
 					// It seems that callFunction in FunctionCall.ts performs a similar cast...
-					(type, i) => (type as SequenceType).type !== paramTypes[i].type
+					(type, i) => (type as SequenceType).type !== paramTypes[i].type,
 				)
 			) {
 				throw new Error('External function declaration types do not match actual function');
@@ -288,7 +288,7 @@ function processFunctionDefinition(
 				dynamicContext,
 				executionParameters,
 				innerStaticContext,
-				...parameters
+				...parameters,
 			);
 		};
 
@@ -309,7 +309,7 @@ function processFunctionDefinition(
 		declarationNamespaceURI,
 		declarationLocalName,
 		paramNames.length,
-		functionDefinition
+		functionDefinition,
 	);
 }
 
@@ -325,7 +325,7 @@ export default function processProlog(
 	prolog: IAST,
 	staticContext: StaticContext,
 	createExpressions: boolean,
-	moduleString: EvaluableExpression
+	moduleString: EvaluableExpression,
 ): ModuleDeclaration {
 	const staticallyCompilableExpressions: {
 		expression: Expression;
@@ -343,7 +343,7 @@ export default function processProlog(
 				break;
 			default:
 				throw new Error(
-					'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
+					'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules',
 				);
 		}
 	});
@@ -352,10 +352,10 @@ export default function processProlog(
 	const importedModuleNamespaces = new Set<string>();
 	astHelper.getChildren(prolog, 'moduleImport').forEach((moduleImport) => {
 		const moduleImportPrefix = astHelper.getTextContent(
-			astHelper.getFirstChild(moduleImport, 'namespacePrefix')
+			astHelper.getFirstChild(moduleImport, 'namespacePrefix'),
 		);
 		const moduleImportNamespaceURI = astHelper.getTextContent(
-			astHelper.getFirstChild(moduleImport, 'targetNamespace')
+			astHelper.getFirstChild(moduleImport, 'targetNamespace'),
 		);
 
 		if (importedModuleNamespaces.has(moduleImportNamespaceURI)) {
@@ -369,7 +369,7 @@ export default function processProlog(
 	astHelper.getChildren(prolog, 'namespaceDecl').forEach((namespaceDecl) => {
 		const prefix = astHelper.getTextContent(astHelper.getFirstChild(namespaceDecl, 'prefix'));
 		const namespaceURI = astHelper.getTextContent(
-			astHelper.getFirstChild(namespaceDecl, 'uri')
+			astHelper.getFirstChild(namespaceDecl, 'uri'),
 		);
 
 		if (prefix === 'xml' || prefix === 'xmlns') {
@@ -392,7 +392,7 @@ export default function processProlog(
 
 	for (const astNode of astHelper.getChildren(prolog, 'defaultNamespaceDecl')) {
 		const category = astHelper.getTextContent(
-			astHelper.getFirstChild(astNode, 'defaultNamespaceCategory')
+			astHelper.getFirstChild(astNode, 'defaultNamespaceCategory'),
 		);
 
 		const namespaceURI = astHelper.getTextContent(astHelper.getFirstChild(astNode, 'uri'));
@@ -434,7 +434,7 @@ export default function processProlog(
 			staticContext,
 			staticallyCompilableExpressions,
 			compiledFunctionDeclarations,
-			createExpressions
+			createExpressions,
 		);
 	});
 
@@ -472,13 +472,13 @@ export default function processProlog(
 			registeredVariables.some(
 				(registered) =>
 					registered.namespaceURI === declarationNamespaceURI &&
-					registered.localName === varName.localName
+					registered.localName === varName.localName,
 			)
 		) {
 			throw new Error(
 				`XQST0049: The variable ${
 					declarationNamespaceURI ? `Q{${declarationNamespaceURI}}` : ''
-				}${varName.localName} has already been declared.`
+				}${varName.localName} has already been declared.`,
 			);
 		}
 
@@ -509,11 +509,11 @@ export default function processProlog(
 					cachedVariableValue = createDoublyIterableSequence(
 						compiledVariableAsExpression.evaluateMaybeStatically(
 							dynamicContext,
-							executionParameters
-						)
+							executionParameters,
+						),
 					);
 					return cachedVariableValue();
-				}
+				},
 			);
 			staticallyCompilableExpressions.push({
 				expression: compiledVariableAsExpression,
@@ -534,7 +534,7 @@ export default function processProlog(
 			compiledFunctionDeclaration.expression.isUpdating
 		) {
 			throw errXUST0001(
-				`The function Q{${compiledFunctionDeclaration.namespaceURI}}${compiledFunctionDeclaration.localName} is updating but the %updating annotation is missing.`
+				`The function Q{${compiledFunctionDeclaration.namespaceURI}}${compiledFunctionDeclaration.localName} is updating but the %updating annotation is missing.`,
 			);
 		}
 	});
@@ -542,7 +542,7 @@ export default function processProlog(
 	return {
 		functionDeclarations: compiledFunctionDeclarations.map(
 			(declaration) =>
-				declaration.functionDefinition as UpdatingFunctionDefinition | FunctionDefinition
+				declaration.functionDefinition as UpdatingFunctionDefinition | FunctionDefinition,
 		),
 		variableDeclarations: registeredVariables,
 		source: moduleString,
@@ -561,7 +561,7 @@ export default function processProlog(
 							funDecl.namespaceURI,
 							funDecl.localName,
 							funDecl.arity,
-							true
+							true,
 						)
 					) {
 						// The function is defined in this module already. We do not have to
@@ -574,7 +574,7 @@ export default function processProlog(
 							funDecl.namespaceURI,
 							funDecl.localName,
 							funDecl.arity,
-							funDecl
+							funDecl,
 						);
 					}
 				});

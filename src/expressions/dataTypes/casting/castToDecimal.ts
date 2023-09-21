@@ -3,7 +3,7 @@ import { ValueType } from '../Value';
 import CastResult from './CastResult';
 
 export default function castToDecimal(
-	instanceOf: (typeName: ValueType) => boolean
+	instanceOf: (typeName: ValueType) => boolean,
 ): (value: any) => CastResult {
 	if (instanceOf(ValueType.XSINTEGER)) {
 		return (value) => ({
@@ -23,7 +23,7 @@ export default function castToDecimal(
 				return {
 					successful: false,
 					error: new Error(
-						`FOAR0002: Can not cast ${value} to xs:decimal, it is out of bounds for JavaScript numbers`
+						`FOAR0002: Can not cast ${value} to xs:decimal, it is out of bounds for JavaScript numbers`,
 					),
 				};
 			}
@@ -59,7 +59,7 @@ export default function castToDecimal(
 	return () => ({
 		successful: false,
 		error: new Error(
-			'XPTY0004: Casting not supported from given type to xs:decimal or any of its derived types.'
+			'XPTY0004: Casting not supported from given type to xs:decimal or any of its derived types.',
 		),
 	});
 }

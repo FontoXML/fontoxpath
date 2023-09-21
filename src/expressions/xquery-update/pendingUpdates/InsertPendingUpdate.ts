@@ -6,7 +6,7 @@ export class InsertPendingUpdate extends IPendingUpdate {
 	constructor(
 		readonly target: NodePointer,
 		readonly content: (ChildNodePointer | AttributeNodePointer)[],
-		type: PendingUpdateType
+		type: PendingUpdateType,
 	) {
 		super(type);
 	}
@@ -15,7 +15,7 @@ export class InsertPendingUpdate extends IPendingUpdate {
 			['type']: this.type,
 			['target']: realizeDom(this.target, executionParameters, false),
 			['content']: this.content.map((pointer) =>
-				realizeDom(pointer, executionParameters, true)
+				realizeDom(pointer, executionParameters, true),
 			),
 		};
 	}

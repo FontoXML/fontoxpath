@@ -6,7 +6,7 @@ export class ReplaceValuePendingUpdate extends IPendingUpdate {
 	public readonly type: 'replaceValue';
 	constructor(
 		readonly target: ElementNodePointer | AttributeNodePointer,
-		readonly stringValue: string
+		readonly stringValue: string,
 	) {
 		super('replaceValue');
 	}

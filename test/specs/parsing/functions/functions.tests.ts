@@ -24,15 +24,15 @@ describe('functions', () => {
 		it('Works with paths', () => {
 			jsonMlMapper.parse(
 				['someParentElement', ...new Array(10).fill(['someElement'])],
-				documentNode
+				documentNode,
 			);
 
 			chai.assert.equal(
 				evaluateXPathToString(
 					'/descendant::*/(last() - position())!string()=>string-join(",")',
-					documentNode
+					documentNode,
 				),
-				'10,9,8,7,6,5,4,3,2,1,0'
+				'10,9,8,7,6,5,4,3,2,1,0',
 			);
 		});
 		it('uses the size of the current dynamic context', () =>
@@ -67,7 +67,7 @@ describe('functions', () => {
 		it('As a consequence of the rules given above, a type error occurs if the context item cannot be atomized, or if the result of atomizing the context item is a sequence containing more than one atomic value.', () =>
 			chai.assert.throws(
 				() => evaluateXPathToNumber('number(concat#2)', documentNode),
-				'FOTY0013'
+				'FOTY0013',
 			));
 	});
 
@@ -94,15 +94,15 @@ describe('functions', () => {
 			chai.assert.isFalse(
 				evaluateXPathToBoolean(
 					'boolean(+("not a number" (: string coerce to double will be NaN :)))',
-					documentNode
-				)
+					documentNode,
+				),
 			);
 		});
 
 		it('In all other cases, fn:boolean raises a type error [err:FORG0006].', () =>
 			chai.assert.throw(
 				() => evaluateXPathToBoolean('boolean(("a", "b", "c"))', documentNode),
-				/FORG0006/
+				/FORG0006/,
 			));
 	});
 
@@ -113,7 +113,7 @@ describe('functions', () => {
 		it('Returns a sequence containing the items in $arg in reverse order.', () =>
 			chai.assert.equal(
 				evaluateXPathToString('reverse(("1","2","3")) => string-join(",")', documentNode),
-				'3,2,1'
+				'3,2,1',
 			));
 	});
 
@@ -124,7 +124,7 @@ describe('functions', () => {
 		it('can be chained', () =>
 			chai.assert.equal(
 				evaluateXPathToNumber('(1,2,3) => count() => count()', documentNode),
-				1
+				1,
 			));
 	});
 
@@ -149,7 +149,7 @@ describe('functions', () => {
 						},
 					],
 				],
-				documentNode
+				documentNode,
 			);
 			chai.assert.deepEqual(evaluateXPathToNodes('id("some-id")', documentNode), [
 				documentNode.documentElement.firstChild,
@@ -164,11 +164,11 @@ describe('functions', () => {
 						id: 'some-id',
 					},
 				],
-				documentNode
+				documentNode,
 			);
 			chai.assert.throws(
 				() => evaluateXPathToNodes('(1)!id("some-id")', documentNode),
-				'XPTY0004'
+				'XPTY0004',
 			);
 		});
 
@@ -180,11 +180,11 @@ describe('functions', () => {
 						id: 'some-id',
 					},
 				],
-				documentNode
+				documentNode,
 			);
 			chai.assert.throws(
 				() => evaluateXPathToNodes('(function() { id("some-id") })()', documentNode),
-				'XPDY0002'
+				'XPDY0002',
 			);
 		});
 
@@ -196,7 +196,7 @@ describe('functions', () => {
 						id: 'some-id',
 					},
 				],
-				documentNode
+				documentNode,
 			);
 			chai.assert.deepEqual(evaluateXPathToNodes('id("some-id", .)', documentNode), [
 				documentNode.documentElement,
@@ -220,7 +220,7 @@ describe('functions', () => {
 						},
 					],
 				],
-				documentNode
+				documentNode,
 			);
 			chai.assert.deepEqual(evaluateXPathToNodes('id("some-id", .)', documentNode), [
 				documentNode.documentElement.firstChild,
@@ -244,11 +244,11 @@ describe('functions', () => {
 						},
 					],
 				],
-				documentNode
+				documentNode,
 			);
 			chai.assert.deepEqual(
 				evaluateXPathToNodes('id("some-id some-other-id")', documentNode),
-				[documentNode.documentElement.firstChild, documentNode.documentElement.lastChild]
+				[documentNode.documentElement.firstChild, documentNode.documentElement.lastChild],
 			);
 		});
 
@@ -269,11 +269,11 @@ describe('functions', () => {
 						},
 					],
 				],
-				documentNode
+				documentNode,
 			);
 			chai.assert.deepEqual(
 				evaluateXPathToNodes('id(("some-id", "some-other-id"))', documentNode),
-				[documentNode.documentElement.firstChild, documentNode.documentElement.lastChild]
+				[documentNode.documentElement.firstChild, documentNode.documentElement.lastChild],
 			);
 		});
 
@@ -291,11 +291,11 @@ describe('functions', () => {
 						},
 					],
 				],
-				documentNode
+				documentNode,
 			);
 			chai.assert.deepEqual(
 				evaluateXPathToNodes('id(("some-other-id", "some-id"))', documentNode),
-				[documentNode.documentElement, documentNode.documentElement.firstChild]
+				[documentNode.documentElement, documentNode.documentElement.firstChild],
 			);
 		});
 
@@ -305,7 +305,7 @@ describe('functions', () => {
 
 			chai.assert.throws(
 				() => evaluateXPathToNodes('id(("some-id", .))', someElement),
-				'FODC0001'
+				'FODC0001',
 			);
 		});
 	});
@@ -328,11 +328,11 @@ describe('functions', () => {
 						},
 					],
 				],
-				documentNode
+				documentNode,
 			);
 			chai.assert.deepEqual(
 				evaluateXPathToNodes('idref(("some-id", "some-other-id"))', documentNode),
-				[documentNode.documentElement.firstChild, documentNode.documentElement.lastChild]
+				[documentNode.documentElement.firstChild, documentNode.documentElement.lastChild],
 			);
 		});
 
@@ -344,11 +344,11 @@ describe('functions', () => {
 						id: 'some-id',
 					},
 				],
-				documentNode
+				documentNode,
 			);
 			chai.assert.throws(
 				() => evaluateXPathToNodes('(1)!idref("some-id")', documentNode),
-				'XPTY0004'
+				'XPTY0004',
 			);
 		});
 
@@ -360,11 +360,11 @@ describe('functions', () => {
 						id: 'some-id',
 					},
 				],
-				documentNode
+				documentNode,
 			);
 			chai.assert.throws(
 				() => evaluateXPathToNodes('(function() { idref("some-id") })()', documentNode),
-				'XPDY0002'
+				'XPDY0002',
 			);
 		});
 
@@ -376,7 +376,7 @@ describe('functions', () => {
 						idref: 'some-id',
 					},
 				],
-				documentNode
+				documentNode,
 			);
 			chai.assert.deepEqual(evaluateXPathToNodes('idref("some-id", .)', documentNode), [
 				documentNode.documentElement,
@@ -391,7 +391,7 @@ describe('functions', () => {
 						idref: 'some-other-id some-id yet-some-other-id',
 					},
 				],
-				documentNode
+				documentNode,
 			);
 			chai.assert.deepEqual(evaluateXPathToNodes('idref("some-id", .)', documentNode), [
 				documentNode.documentElement,
@@ -415,11 +415,11 @@ describe('functions', () => {
 						},
 					],
 				],
-				documentNode
+				documentNode,
 			);
 			chai.assert.deepEqual(
 				evaluateXPathToNodes('idref(("some-id", "some-other-id"), .)', documentNode),
-				[documentNode.documentElement.firstChild, documentNode.documentElement.lastChild]
+				[documentNode.documentElement.firstChild, documentNode.documentElement.lastChild],
 			);
 		});
 
@@ -429,7 +429,7 @@ describe('functions', () => {
 
 			chai.assert.throws(
 				() => evaluateXPathToNodes('idref(("some-id", .))', someElement),
-				'FODC0001'
+				'FODC0001',
 			);
 		});
 	});
@@ -440,7 +440,7 @@ describe('functions', () => {
 		it('computes which function the dev might mean', () =>
 			chai.assert.throws(
 				() => evaluateXPathToString('sterts-with()', documentNode),
-				'starts-with'
+				'starts-with',
 			));
 	});
 
@@ -458,7 +458,7 @@ describe('functions', () => {
 							localName: 'true',
 						};
 					},
-				})
+				}),
 			));
 
 		it('can resolve a function w/o a prefix using an injected function name resolver', () =>
@@ -474,7 +474,7 @@ describe('functions', () => {
 							localName: 'true',
 						};
 					},
-				})
+				}),
 			));
 
 		it('does not erronously cache function resolving', () => {
@@ -490,7 +490,7 @@ describe('functions', () => {
 							localName: 'true',
 						};
 					},
-				})
+				}),
 			);
 			chai.assert.isFalse(
 				evaluateXPathToBoolean('bloop()', null, null, null, {
@@ -504,7 +504,7 @@ describe('functions', () => {
 							localName: 'false',
 						};
 					},
-				})
+				}),
 			);
 		});
 
@@ -519,7 +519,7 @@ describe('functions', () => {
 							return null;
 						},
 					}),
-				'XPST0017'
+				'XPST0017',
 			));
 
 		it('can resolve a function with a bogus prefix using the injected namespace resolver', () => {
@@ -530,7 +530,7 @@ describe('functions', () => {
 
 						return 'http://www.w3.org/2005/xpath-functions';
 					},
-				})
+				}),
 			);
 		});
 		it('Allows the usage of both a namespaceresolver and a functionnameresolver', () => {
@@ -550,7 +550,7 @@ describe('functions', () => {
 							localName: 'true',
 						};
 					},
-				})
+				}),
 			);
 		});
 	});

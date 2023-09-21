@@ -23,7 +23,7 @@ class Lookup extends Expression {
 	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
 		const sequence = this._selector.evaluateMaybeStatically(
 			dynamicContext,
-			executionParameters
+			executionParameters,
 		);
 		return sequence.mapAll((items) => {
 			return items.reduce((toReturn, item) => {
@@ -32,7 +32,7 @@ class Lookup extends Expression {
 					this._keySpecifier,
 					toReturn,
 					dynamicContext,
-					executionParameters
+					executionParameters,
 				);
 			}, new EmptySequence());
 		});

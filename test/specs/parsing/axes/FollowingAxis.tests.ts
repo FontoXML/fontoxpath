@@ -19,17 +19,17 @@ describe('following', () => {
 	it('returns the next sibling', () => {
 		jsonMlMapper.parse(
 			['someParentElement', ['someElement'], ['someSiblingElement', ['someSiblingElement']]],
-			documentNode
+			documentNode,
 		);
 		chai.assert.deepEqual(
 			evaluateXPathToNodes(
 				'following::someSiblingElement',
-				documentNode.documentElement.firstChild
+				documentNode.documentElement.firstChild,
 			),
 			[
 				documentNode.documentElement.lastChild,
 				documentNode.documentElement.lastChild.lastChild,
-			]
+			],
 		);
 	});
 
@@ -68,7 +68,7 @@ return map{
 			documentNode,
 			null,
 			null,
-			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 		);
 		chai.assert.equal(result.got.length, 5);
 		chai.assert.equal(result.expected.length, 5);
@@ -82,14 +82,14 @@ return map{
 				['someElement'],
 				['someNonMatchingElement', ['someNonMatchingElement']],
 			],
-			documentNode
+			documentNode,
 		);
 		chai.assert.deepEqual(
 			evaluateXPathToNodes(
 				'following::someSiblingElement',
-				documentNode.documentElement.firstChild
+				documentNode.documentElement.firstChild,
 			),
-			[]
+			[],
 		);
 	});
 
@@ -98,16 +98,16 @@ return map{
 		chai.assert.deepEqual(
 			evaluateXPathToNodes(
 				'following::someSiblingElement',
-				documentNode.documentElement.firstChild
+				documentNode.documentElement.firstChild,
 			),
-			[]
+			[],
 		);
 	});
 
 	it('passes buckets for following', () => {
 		jsonMlMapper.parse(
 			['parentElement', ['firstChildElement'], ['secondChildElement']],
-			documentNode
+			documentNode,
 		);
 
 		const firstChildNode = documentNode.firstChild.firstChild;

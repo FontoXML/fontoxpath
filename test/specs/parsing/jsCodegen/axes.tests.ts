@@ -23,7 +23,7 @@ describe('axes (js-codegen)', () => {
 					['tip', 'Make it fast'],
 				],
 			],
-			documentNode
+			documentNode,
 		);
 	});
 
@@ -31,10 +31,10 @@ describe('axes (js-codegen)', () => {
 		const xmlNode: slimdom.Node = documentNode.firstChild;
 		chai.assert.equal(
 			evaluateXPathWithJsCodegen('self::xml', xmlNode, null, ReturnType.FIRST_NODE),
-			xmlNode
+			xmlNode,
 		);
 		chai.assert.isFalse(
-			evaluateXPathWithJsCodegen('self::p', xmlNode, null, ReturnType.BOOLEAN)
+			evaluateXPathWithJsCodegen('self::p', xmlNode, null, ReturnType.BOOLEAN),
 		);
 	});
 
@@ -45,15 +45,15 @@ describe('axes (js-codegen)', () => {
 					'@id',
 					documentNode.documentElement,
 					null,
-					ReturnType.STRING
+					ReturnType.STRING,
 				),
-				'yes'
+				'yes',
 			);
 		});
 
 		it('compiles the attribute axis combined with a childaxis', () => {
 			chai.assert.isTrue(
-				evaluateXPathWithJsCodegen('/xml/@id', documentNode, null, ReturnType.BOOLEAN)
+				evaluateXPathWithJsCodegen('/xml/@id', documentNode, null, ReturnType.BOOLEAN),
 			);
 		});
 
@@ -64,7 +64,7 @@ describe('axes (js-codegen)', () => {
 			const xmlNode: any = documentNode.firstChild;
 
 			chai.assert.isFalse(
-				evaluateXPathWithJsCodegen('@attribute or @id', xmlNode, null, ReturnType.BOOLEAN)
+				evaluateXPathWithJsCodegen('@attribute or @id', xmlNode, null, ReturnType.BOOLEAN),
 			);
 		});
 	});
@@ -75,8 +75,8 @@ describe('axes (js-codegen)', () => {
 				'/xml/tips/parent::element(xml)',
 				documentNode,
 				null,
-				ReturnType.BOOLEAN
-			)
+				ReturnType.BOOLEAN,
+			),
 		);
 	});
 
@@ -88,9 +88,9 @@ describe('axes (js-codegen)', () => {
 				'@Q{http://example.com}ns-attr',
 				ele,
 				null,
-				ReturnType.STRING
+				ReturnType.STRING,
 			),
-			'value'
+			'value',
 		);
 	});
 
@@ -101,7 +101,7 @@ describe('axes (js-codegen)', () => {
 			evaluateXPathWithJsCodegen('self::test[@present]', ele, null, ReturnType.BOOLEAN, {
 				namespaceResolver: (_prefix) => 'http://www.example.com',
 			}),
-			true
+			true,
 		);
 	});
 });

@@ -18,7 +18,7 @@ import Value, { ValueType } from './Value';
 
 export function atomizeSingleValue(
 	value: Value,
-	executionParameters: ExecutionParameters
+	executionParameters: ExecutionParameters,
 ): ISequence {
 	if (
 		isSubtypeOf(value.type, ValueType.XSANYATOMICTYPE) ||
@@ -48,7 +48,7 @@ export function atomizeSingleValue(
 			pointer.node.nodeType === NODE_TYPES.TEXT_NODE
 		) {
 			return sequenceFactory.create(
-				createAtomicValue(domFacade.getDataFromPointer(pointer), ValueType.XSUNTYPEDATOMIC)
+				createAtomicValue(domFacade.getDataFromPointer(pointer), ValueType.XSUNTYPEDATOMIC),
 			);
 		}
 
@@ -58,7 +58,7 @@ export function atomizeSingleValue(
 			pointer.node.nodeType === NODE_TYPES.PROCESSING_INSTRUCTION_NODE
 		) {
 			return sequenceFactory.create(
-				createAtomicValue(domFacade.getDataFromPointer(pointer), ValueType.XSSTRING)
+				createAtomicValue(domFacade.getDataFromPointer(pointer), ValueType.XSSTRING),
 			);
 		}
 		// This is an element or a document node. Because we do not know the specific type of this element.
@@ -75,13 +75,13 @@ export function atomizeSingleValue(
 
 			if (aNodeType === NODE_TYPES.TEXT_NODE || aNodeType === NODE_TYPES.CDATA_SECTION_NODE) {
 				allTexts.push(
-					domFacade.getData(aNode as ConcreteCharacterDataNode | TinyCharacterDataNode)
+					domFacade.getData(aNode as ConcreteCharacterDataNode | TinyCharacterDataNode),
 				);
 				return;
 			}
 			if (aNodeType === NODE_TYPES.ELEMENT_NODE || aNodeType === NODE_TYPES.DOCUMENT_NODE) {
 				const children = domFacade.getChildNodes(
-					aNode as ConcreteParentNode | TinyParentNode
+					aNode as ConcreteParentNode | TinyParentNode,
 				);
 				children.forEach((child) => {
 					getTextNodes(child as ConcreteParentNode | TinyParentNode);
@@ -90,7 +90,7 @@ export function atomizeSingleValue(
 		})(pointer.node);
 
 		return sequenceFactory.create(
-			createAtomicValue(allTexts.join(''), ValueType.XSUNTYPEDATOMIC)
+			createAtomicValue(allTexts.join(''), ValueType.XSUNTYPEDATOMIC),
 		);
 	}
 	// (function || map) && !array
@@ -101,15 +101,15 @@ export function atomizeSingleValue(
 		const arrayValue = value as ArrayValue;
 		return concatSequences(
 			arrayValue.members.map((getMemberSequence) =>
-				atomize(getMemberSequence(), executionParameters)
-			)
+				atomize(getMemberSequence(), executionParameters),
+			),
 		);
 	}
 	throw new Error(`Atomizing ${value.type} is not implemented.`);
 }
 export default function atomize(
 	sequence: ISequence,
-	executionParameters: ExecutionParameters
+	executionParameters: ExecutionParameters,
 ): ISequence {
 	// Generate the atomized items one by one to prevent getting all items
 	let done = false;

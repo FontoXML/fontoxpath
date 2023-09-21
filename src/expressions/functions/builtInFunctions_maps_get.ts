@@ -9,7 +9,7 @@ const mapGet: FunctionDefinitionType = (
 	_executionParameters,
 	_staticContext,
 	mapSequence,
-	key
+	key,
 ) => {
 	return zipSingleton([mapSequence, key], ([map, keyValue]) => {
 		const matchingPair = (map as MapValue).keyValuePairs.find((keyValuePair) => {

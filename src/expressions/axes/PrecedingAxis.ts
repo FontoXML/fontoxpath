@@ -17,7 +17,7 @@ import validateContextNode from './validateContextNode';
 function createPrecedingGenerator(
 	domFacade: DomFacade,
 	node: ChildNodePointer,
-	bucket: Bucket | null
+	bucket: Bucket | null,
 ) {
 	const nodeStack: NodePointer[] = [];
 
@@ -43,7 +43,7 @@ function createPrecedingGenerator(
 						domFacade,
 						nodeStack[0],
 						true,
-						bucket
+						bucket,
 					);
 				}
 
@@ -56,7 +56,7 @@ function createPrecedingGenerator(
 					// Set the focus to the concurrent sibling of this node
 					const nextNode = domFacade.getPreviousSiblingPointer(
 						nodeStack[0] as ChildNodePointer,
-						bucket
+						bucket,
 					);
 					const toReturn = ready(createPointerValue(nodeStack[0], domFacade));
 					if (nextNode === null) {
@@ -99,7 +99,7 @@ class PrecedingAxis extends Expression {
 
 	public evaluate(
 		dynamicContext: DynamicContext,
-		executionParameters: ExecutionParameters
+		executionParameters: ExecutionParameters,
 	): ISequence {
 		const domFacade = executionParameters.domFacade;
 		const contextPointer = validateContextNode(dynamicContext.contextItem);
@@ -109,14 +109,14 @@ class PrecedingAxis extends Expression {
 				createPrecedingGenerator(
 					domFacade,
 					contextPointer as ChildNodePointer,
-					this._bucket
-				)
+					this._bucket,
+				),
 			)
 			.filter((item) => {
 				return this._testExpression.evaluateToBoolean(
 					dynamicContext,
 					item,
-					executionParameters
+					executionParameters,
 				);
 			});
 	}

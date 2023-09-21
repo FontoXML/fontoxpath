@@ -35,7 +35,7 @@ export default class ExecutionSpecificStaticContext implements IContext {
 	public registeredVariableDeclarationByHashKey: {
 		[hash: string]: (
 			dynamicContext: DynamicContext,
-			executionParameters: ExecutionParameters
+			executionParameters: ExecutionParameters,
 		) => ISequence;
 	} = Object.create(null);
 
@@ -59,7 +59,7 @@ export default class ExecutionSpecificStaticContext implements IContext {
 		namespaceResolver: (prefix: string) => string | null,
 		variableByName: { [varName: string]: any },
 		defaultFunctionNamespaceURI: string,
-		functionNameResolver: FunctionNameResolver
+		functionNameResolver: FunctionNameResolver,
 	) {
 		this._namespaceResolver = namespaceResolver;
 
@@ -71,7 +71,7 @@ export default class ExecutionSpecificStaticContext implements IContext {
 				bindings[variableName] = generateGlobalVariableBindingName(variableName);
 				return bindings;
 			},
-			Object.create(null)
+			Object.create(null),
 		);
 
 		this._referredVariableByName = Object.create(null);
@@ -106,7 +106,7 @@ export default class ExecutionSpecificStaticContext implements IContext {
 		namespaceURI: string,
 		localName: string,
 		arity: number,
-		_skipExternal: boolean
+		_skipExternal: boolean,
 	): FunctionProperties | null {
 		// It is impossible to inject functions at execution time, so we can always return a globally defined one.
 		return getFunctionByArity(namespaceURI, localName, arity);
@@ -130,7 +130,7 @@ export default class ExecutionSpecificStaticContext implements IContext {
 
 	public resolveFunctionName(
 		lexicalQName: LexicalQualifiedName,
-		arity: number
+		arity: number,
 	): ResolvedQualifiedName {
 		const resolvedQName = this._functionNameResolver(lexicalQName, arity);
 

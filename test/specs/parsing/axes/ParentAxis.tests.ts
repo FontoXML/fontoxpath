@@ -17,21 +17,21 @@ describe('parent', () => {
 	it('returns the parentNode', () => {
 		jsonMlMapper.parse(
 			['someParentElement', ['someElement', { someAttribute: 'someValue' }]],
-			documentNode
+			documentNode,
 		);
 		chai.assert.deepEqual(
 			evaluateXPathToNodes(
 				'parent::someParentElement',
-				documentNode.documentElement.firstChild
+				documentNode.documentElement.firstChild,
 			),
-			[documentNode.documentElement]
+			[documentNode.documentElement],
 		);
 	});
 
 	it('returns nothing for root nodes', () => {
 		jsonMlMapper.parse(
 			['someParentElement', ['someElement', { someAttribute: 'someValue' }]],
-			documentNode
+			documentNode,
 		);
 		chai.assert.deepEqual(evaluateXPathToNodes('parent::node()', documentNode), []);
 	});
@@ -93,7 +93,7 @@ describe('parent', () => {
 					return null;
 				},
 			} as unknown as IDomFacade),
-			[]
+			[],
 		);
 	});
 });

@@ -17,7 +17,7 @@ export default class StackTraceGenerator extends PossiblyUpdatingExpression {
 		location: SourceRange,
 		innerExpressionType: string,
 		innerExpression: Expression,
-		comment: string
+		comment: string,
 	) {
 		super(innerExpression.specificity, [innerExpression], {
 			canBeStaticallyEvaluated: innerExpression.canBeStaticallyEvaluated,
@@ -47,7 +47,7 @@ export default class StackTraceGenerator extends PossiblyUpdatingExpression {
 	public performFunctionalEvaluation(
 		dynamicContext: DynamicContext,
 		_executionParameters: ExecutionParameters,
-		[sequenceCallback]: ((dynamicContext: DynamicContext) => ISequence)[]
+		[sequenceCallback]: ((dynamicContext: DynamicContext) => ISequence)[],
 	): ISequence {
 		let innerSequence: ISequence;
 		try {
@@ -57,7 +57,7 @@ export default class StackTraceGenerator extends PossiblyUpdatingExpression {
 				this._location,
 				this._innerExpressionType,
 				this._comment,
-				error
+				error,
 			);
 		}
 
@@ -70,7 +70,7 @@ export default class StackTraceGenerator extends PossiblyUpdatingExpression {
 						this._location,
 						this._innerExpressionType,
 						this._comment,
-						error
+						error,
 					);
 				}
 			},
@@ -85,7 +85,7 @@ export default class StackTraceGenerator extends PossiblyUpdatingExpression {
 				this._location,
 				this._innerExpressionType,
 				this._comment,
-				error
+				error,
 			);
 		}
 	}

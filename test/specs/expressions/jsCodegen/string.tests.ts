@@ -23,21 +23,21 @@ describe('string tests', () => {
 	it('test simple string expression true', () => {
 		chai.assert.equal(
 			evaluateXPathWithJsCodegen('"hello"', documentNode, null, ReturnType.STRING, {}),
-			'hello'
+			'hello',
 		);
 	});
 
 	it('test simple string expression false', () => {
 		chai.assert.notEqual(
 			evaluateXPathWithJsCodegen("'hello!'", documentNode, null, ReturnType.STRING, {}),
-			'hello'
+			'hello',
 		);
 	});
 
 	it('test simple string expression with escaping', () => {
 		chai.assert.equal(
 			evaluateXPathWithJsCodegen("'he''llo'", documentNode, null, ReturnType.STRING, {}),
-			"he'llo"
+			"he'llo",
 		);
 	});
 
@@ -68,9 +68,9 @@ describe('string tests', () => {
 				documentNode,
 				null,
 				ReturnType.STRING,
-				{}
+				{},
 			),
-			"' || console.log(3); //"
+			"' || console.log(3); //",
 		);
 	});
 
@@ -81,9 +81,9 @@ describe('string tests', () => {
 				documentNode,
 				null,
 				ReturnType.STRING,
-				{}
+				{},
 			),
-			'child::element()'
+			'child::element()',
 		);
 	});
 
@@ -92,7 +92,7 @@ describe('string tests', () => {
 			evaluateXPathWithJsCodegen('"&#45;"', documentNode, null, ReturnType.STRING, {
 				language: Language.XQUERY_3_1_LANGUAGE,
 			}),
-			'-'
+			'-',
 		);
 	});
 
@@ -102,9 +102,9 @@ describe('string tests', () => {
 		chai.assert.isTrue(script.isAstAccepted);
 		chai.assert.equal(
 			executeJavaScriptCompiledXPath(
-				new Function((script as IAstAccepted).code) as CompiledXPathFunction
+				new Function((script as IAstAccepted).code) as CompiledXPathFunction,
 			),
-			''
+			'',
 		);
 	});
 });

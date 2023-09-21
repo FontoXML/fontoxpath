@@ -6,7 +6,10 @@ import { IPendingUpdate } from '../IPendingUpdate';
 export class RenamePendingUpdate extends IPendingUpdate {
 	public newName: QName;
 	public readonly type: 'rename';
-	constructor(readonly target: ElementNodePointer, newName: QName) {
+	constructor(
+		readonly target: ElementNodePointer,
+		newName: QName,
+	) {
 		super('rename');
 		this.newName = newName.buildPrefixedName
 			? newName

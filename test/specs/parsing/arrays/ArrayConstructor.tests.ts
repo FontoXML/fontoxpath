@@ -12,7 +12,7 @@ describe('array constructor', () => {
 	beforeEach(() => {
 		jsonMlMapper.parse(
 			['someElement', { someAttribute: 'someValue' }, 'A piece of text'],
-			documentNode
+			documentNode,
 		);
 	});
 
@@ -20,7 +20,7 @@ describe('array constructor', () => {
 		it('can be parsed', () =>
 			chai.assert.isOk(
 				evaluateXPathToArray('array {1, 2}', documentNode),
-				'It should be able to be parsed'
+				'It should be able to be parsed',
 			));
 		it('unfolds passed sequences', () =>
 			chai.assert.deepEqual(evaluateXPathToArray('array {("a", "b"), "c"}', documentNode), [
@@ -34,7 +34,7 @@ describe('array constructor', () => {
 		it('can be parsed', () =>
 			chai.assert.isOk(
 				evaluateXPathToArray('[1, 2]', documentNode),
-				'It should be able to be parsed'
+				'It should be able to be parsed',
 			));
 		it('does not unfold passed sequences', () =>
 			chai.assert.equal(evaluateXPathToString('[("a", "b"), "c"](1)', documentNode), 'a b'));

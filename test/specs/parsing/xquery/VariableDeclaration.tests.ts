@@ -22,8 +22,8 @@ describe('VariableDeclaration', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-			)
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
+			),
 		);
 	});
 	it('create a more complex variable declaration', () => {
@@ -35,9 +35,9 @@ describe('VariableDeclaration', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 			),
-			7
+			7,
 		);
 	});
 
@@ -51,9 +51,9 @@ describe('VariableDeclaration', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 			),
-			2
+			2,
 		);
 	});
 	it('create a more complex variable declaration using variables', () => {
@@ -65,9 +65,9 @@ describe('VariableDeclaration', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 			),
-			'hello'
+			'hello',
 		);
 	});
 	it('allows external variables with defaults', () => {
@@ -78,9 +78,9 @@ describe('VariableDeclaration', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 			),
-			'12'
+			'12',
 		);
 	});
 
@@ -93,9 +93,9 @@ describe('VariableDeclaration', () => {
 				documentNode,
 				undefined,
 				{ nx: 44 },
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 			),
-			'44'
+			'44',
 		);
 	});
 
@@ -107,9 +107,9 @@ describe('VariableDeclaration', () => {
 				documentNode,
 				undefined,
 				{ nxa: 33 },
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 			),
-			'33'
+			'33',
 		);
 	});
 
@@ -122,9 +122,9 @@ describe('VariableDeclaration', () => {
 				documentNode,
 				undefined,
 				{ p: 7 },
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 			),
-			19
+			19,
 		);
 	});
 
@@ -138,9 +138,9 @@ describe('VariableDeclaration', () => {
 				documentNode,
 				null,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 			),
-			1
+			1,
 		));
 
 	it('Test node operations and variable declaration scope - 2', () =>
@@ -153,8 +153,8 @@ describe('VariableDeclaration', () => {
 				documentNode,
 				null,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 			),
-			1
+			1,
 		));
 });

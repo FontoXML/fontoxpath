@@ -16,15 +16,15 @@ class TypeTest extends TestAbstractExpression {
 	public evaluateToBoolean(
 		_dynamicContext: DynamicContext,
 		item: Value,
-		_executionParameters: ExecutionParameters
+		_executionParameters: ExecutionParameters,
 	) {
 		return isSubtypeOf(
 			item.type,
 			stringToValueType(
 				this._type.prefix
 					? this._type.prefix + ':' + this._type.localName
-					: this._type.localName
-			)
+					: this._type.localName,
+			),
 		);
 	}
 }

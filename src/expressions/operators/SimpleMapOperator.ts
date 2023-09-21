@@ -25,7 +25,7 @@ class SimpleMapOperator extends Expression {
 					expression1.canBeStaticallyEvaluated && expression2.canBeStaticallyEvaluated,
 			},
 			false,
-			type
+			type,
 		);
 
 		this._expression1 = expression1;
@@ -35,7 +35,7 @@ class SimpleMapOperator extends Expression {
 	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
 		const sequence = this._expression1.evaluateMaybeStatically(
 			dynamicContext,
-			executionParameters
+			executionParameters,
 		);
 		const childContextIterator = dynamicContext.createSequenceIterator(sequence);
 		let childContext: IterationResult<DynamicContext> = null;
@@ -56,7 +56,7 @@ class SimpleMapOperator extends Expression {
 					if (!sequenceValueIterator) {
 						sequenceValueIterator = this._expression2.evaluateMaybeStatically(
 							childContext.value,
-							executionParameters
+							executionParameters,
 						);
 					}
 					const value = sequenceValueIterator.value.next(hint);

@@ -171,7 +171,7 @@ function createCastingFunction(from: ValueType, to: ValueType): (value: Value) =
 			error: new Error(
 				`XPST0081: Can not cast: type ${
 					primitiveTo ? valueTypeToString(from) : valueTypeToString(to)
-				} is unknown.`
+				} is unknown.`,
 			),
 		});
 	}
@@ -261,7 +261,7 @@ export default function tryCastToType(valueTuple: AtomicValue, type: ValueType):
 	if (!prefabConverter) {
 		prefabConverter = precomputedCastFunctorsByTypeString[index] = createCastingFunction(
 			valueTuple.type,
-			type
+			type,
 		);
 	}
 	return prefabConverter.call(undefined, valueTuple.value, type);

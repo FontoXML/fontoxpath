@@ -25,7 +25,7 @@ function run() {
 		const xml = parseXmlDocument(await testFs.readFile(testFilePath));
 		const xqueries = evaluateXPathToMap(
 			'(/descendant::test-case/map:entry(@name, (test/@file/string(), test/string())[1])) => map:merge()',
-			xml
+			xml,
 		);
 
 		for (const key of Object.keys(xqueries)) {
@@ -94,7 +94,7 @@ function run() {
 						actual.documentElement.setAttributeNS(
 							'http://www.w3.org/2001/XMLSchema-instance',
 							'xsi:schemaLocation',
-							'http://www.w3.org/2005/XQueryX                                 http://www.w3.org/2005/XQueryX/xqueryx.xsd'
+							'http://www.w3.org/2005/XQueryX                                 http://www.w3.org/2005/XQueryX/xqueryx.xsd',
 						);
 					});
 				});
@@ -106,7 +106,7 @@ function run() {
 		console.log(`Marking ${skippableTests.length} tests as known to fail`);
 		testFs.writeFileSync(
 			'failingXQueryXTestNames.csv',
-			skippableTests.join('\n').trim() + '\n'
+			skippableTests.join('\n').trim() + '\n',
 		);
 	});
 }

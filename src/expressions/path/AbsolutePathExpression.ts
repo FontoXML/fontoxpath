@@ -18,7 +18,7 @@ class AbsolutePathExpression extends Expression {
 				subtree: false,
 				peer: false,
 				canBeStaticallyEvaluated: false,
-			}
+			},
 		);
 
 		this._relativePathExpression = relativePathExpression;
@@ -36,19 +36,19 @@ class AbsolutePathExpression extends Expression {
 			documentNode = domFacade.getParentNodePointer(documentNode);
 			if (documentNode === null) {
 				throw new Error(
-					'XPDY0050: the root node of the context node is not a document node.'
+					'XPDY0050: the root node of the context node is not a document node.',
 				);
 			}
 		}
 
 		// Assume this is the start, so only one node
 		const contextSequence = sequenceFactory.singleton(
-			createPointerValue(documentNode, domFacade)
+			createPointerValue(documentNode, domFacade),
 		);
 		return this._relativePathExpression
 			? this._relativePathExpression.evaluateMaybeStatically(
 					dynamicContext.scopeWithFocus(0, contextSequence.first(), contextSequence),
-					executionParameters
+					executionParameters,
 			  )
 			: contextSequence;
 	}

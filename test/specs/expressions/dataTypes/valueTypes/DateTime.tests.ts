@@ -23,7 +23,16 @@ describe('Data type: dateTime', () => {
 			const dateTime = DateTime.fromString('2000-12-12T20:10:10.2Z');
 			chai.assert.deepEqual(
 				dateTime,
-				new DateTime(2000, 12, 12, 20, 10, 10, 0.2, DayTimeDuration.fromTimezoneString('Z'))
+				new DateTime(
+					2000,
+					12,
+					12,
+					20,
+					10,
+					10,
+					0.2,
+					DayTimeDuration.fromTimezoneString('Z'),
+				),
 			);
 		});
 
@@ -39,8 +48,8 @@ describe('Data type: dateTime', () => {
 					10,
 					10,
 					0.2,
-					DayTimeDuration.fromTimezoneString('+10:00')
-				)
+					DayTimeDuration.fromTimezoneString('+10:00'),
+				),
 			);
 		});
 	});

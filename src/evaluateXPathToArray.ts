@@ -20,7 +20,7 @@ export default function evaluateXPathToArray(
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
-	options?: Options | null
+	options?: Options | null,
 ): any[] {
 	return evaluateXPath(
 		selector,
@@ -28,6 +28,6 @@ export default function evaluateXPathToArray(
 		domFacade,
 		variables,
 		evaluateXPath.ARRAY_TYPE,
-		options
+		options,
 	);
 }

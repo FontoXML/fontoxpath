@@ -9,21 +9,21 @@ describe('functionRegistry.getFunctionByArity', () => {
 			'fontoxpath_test_prefix:functionName',
 			[],
 			'xs:boolean',
-			function () {}
+			function () {},
 		);
 
 		registerCustomXPathFunction(
 			'fontoxpath_test_prefix:functionName',
 			['xs:boolean'],
 			'xs:boolean',
-			function () {}
+			function () {},
 		);
 
 		registerCustomXPathFunction(
 			'fontoxpath_test_prefix:otherFunctionName',
 			[],
 			'xs:boolean',
-			function () {}
+			function () {},
 		);
 	});
 
@@ -32,8 +32,8 @@ describe('functionRegistry.getFunctionByArity', () => {
 			functionRegistry.getFunctionByArity(
 				'fontoxpath_test_prefix:bla',
 				'functionLocalName',
-				0
-			)
+				0,
+			),
 		);
 	});
 
@@ -42,8 +42,8 @@ describe('functionRegistry.getFunctionByArity', () => {
 			functionRegistry.getFunctionByArity(
 				'fontoxpath_test_prefix:functionName',
 				'functionLocalName',
-				3
-			)
+				3,
+			),
 		);
 	});
 

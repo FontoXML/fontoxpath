@@ -17,7 +17,7 @@ class NameTest extends TestAbstractExpression {
 
 	constructor(
 		name: { localName: string; namespaceURI: string | null; prefix: string },
-		options: { kind: number | null } = { kind: null }
+		options: { kind: number | null } = { kind: null },
 	) {
 		const { prefix, namespaceURI, localName } = name;
 		const specificity: { [s: string]: number } = {};
@@ -42,7 +42,7 @@ class NameTest extends TestAbstractExpression {
 	public evaluateToBoolean(
 		_dynamicContext: DynamicContext,
 		value: Value,
-		executionParameters: ExecutionParameters
+		executionParameters: ExecutionParameters,
 	) {
 		const domFacade = executionParameters.domFacade;
 		const nodeIsElement = isSubtypeOf(value.type, ValueType.ELEMENT);

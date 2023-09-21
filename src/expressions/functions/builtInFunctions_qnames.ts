@@ -13,7 +13,7 @@ const fnQName: FunctionDefinitionType = (
 	_executionParameters,
 	_staticContext,
 	paramURI,
-	paramQName
+	paramQName,
 ) => {
 	return zipSingleton([paramURI, paramQName], ([uriValue, lexicalQNameValue]) => {
 		const lexicalQName = lexicalQNameValue.value;
@@ -23,25 +23,25 @@ const fnQName: FunctionDefinitionType = (
 		const uri = uriValue ? uriValue.value || null : null;
 		if (uri === null && lexicalQName.includes(':')) {
 			throw new Error(
-				'FOCA0002: The URI of a QName may not be empty if a prefix is provided.'
+				'FOCA0002: The URI of a QName may not be empty if a prefix is provided.',
 			);
 		}
 		// Skip URI validation for now
 
 		if (paramURI.isEmpty()) {
 			return sequenceFactory.singleton(
-				createAtomicValue(new QName('', null, lexicalQName), ValueType.XSQNAME)
+				createAtomicValue(new QName('', null, lexicalQName), ValueType.XSQNAME),
 			);
 		}
 		if (!lexicalQName.includes(':')) {
 			// Only a local part
 			return sequenceFactory.singleton(
-				createAtomicValue(new QName('', uri, lexicalQName), ValueType.XSQNAME)
+				createAtomicValue(new QName('', uri, lexicalQName), ValueType.XSQNAME),
 			);
 		}
 		const [prefix, localName] = lexicalQName.split(':');
 		return sequenceFactory.singleton(
-			createAtomicValue(new QName(prefix, uri, localName), ValueType.XSQNAME)
+			createAtomicValue(new QName(prefix, uri, localName), ValueType.XSQNAME),
 		);
 	});
 };
@@ -50,7 +50,7 @@ const fnPrefixFromQName: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	arg
+	arg,
 ) => {
 	return zipSingleton([arg], ([qname]) => {
 		if (qname === null) {
@@ -68,7 +68,7 @@ const fnNamespaceURIFromQName: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	arg
+	arg,
 ) => {
 	return arg.map((qname) => {
 		const qnameValue = qname.value;
@@ -80,7 +80,7 @@ const fnLocalNameFromQName: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	arg
+	arg,
 ) => {
 	return arg.map((qname) => {
 		const qnameValue = qname.value;

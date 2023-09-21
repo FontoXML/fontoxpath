@@ -15,8 +15,8 @@ describe('processing-instruction()', () => {
 		chai.assert.isTrue(
 			evaluateXPathToBoolean(
 				'self::processing-instruction("someTarget")',
-				documentNode.documentElement.firstChild
-			)
+				documentNode.documentElement.firstChild,
+			),
 		);
 	});
 
@@ -25,8 +25,8 @@ describe('processing-instruction()', () => {
 		chai.assert.isTrue(
 			evaluateXPathToBoolean(
 				'self::processing-instruction()',
-				documentNode.documentElement.firstChild
-			)
+				documentNode.documentElement.firstChild,
+			),
 		);
 	});
 
@@ -35,15 +35,15 @@ describe('processing-instruction()', () => {
 		chai.assert.isTrue(
 			evaluateXPathToBoolean(
 				'self::processing-instruction(someTarget)',
-				documentNode.documentElement.firstChild
-			)
+				documentNode.documentElement.firstChild,
+			),
 		);
 	});
 
 	it('allows processing instruction tests without an axis, without a target', () => {
 		jsonMlMapper.parse(['someOtherParentElement', ['?someTarget', 'someData']], documentNode);
 		chai.assert.isTrue(
-			evaluateXPathToBoolean('processing-instruction()', documentNode.documentElement)
+			evaluateXPathToBoolean('processing-instruction()', documentNode.documentElement),
 		);
 	});
 
@@ -52,8 +52,8 @@ describe('processing-instruction()', () => {
 		chai.assert.isTrue(
 			evaluateXPathToBoolean(
 				'processing-instruction(someTarget)',
-				documentNode.documentElement
-			)
+				documentNode.documentElement,
+			),
 		);
 	});
 
@@ -62,8 +62,8 @@ describe('processing-instruction()', () => {
 		chai.assert.isTrue(
 			evaluateXPathToBoolean(
 				'processing-instruction("someTarget")',
-				documentNode.documentElement
-			)
+				documentNode.documentElement,
+			),
 		);
 	});
 });

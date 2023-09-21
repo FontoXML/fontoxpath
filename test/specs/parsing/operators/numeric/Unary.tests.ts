@@ -16,22 +16,22 @@ describe('unary operators', () => {
 
 	it('returns a decimal when given a decimal', () =>
 		chai.assert.isTrue(
-			evaluateXPathToBoolean('-(xs:decimal("1.5")) instance of xs:decimal', documentNode)
+			evaluateXPathToBoolean('-(xs:decimal("1.5")) instance of xs:decimal', documentNode),
 		));
 
 	it('returns a float when given a float', () =>
 		chai.assert.isTrue(
-			evaluateXPathToBoolean('-(xs:float("1.5")) instance of xs:float', documentNode)
+			evaluateXPathToBoolean('-(xs:float("1.5")) instance of xs:float', documentNode),
 		));
 
 	it('returns a double when given a double', () =>
 		chai.assert.isTrue(
-			evaluateXPathToBoolean('-(xs:double("1.5")) instance of xs:double', documentNode)
+			evaluateXPathToBoolean('-(xs:double("1.5")) instance of xs:double', documentNode),
 		));
 
 	it('returns an integer when given an integer', () =>
 		chai.assert.isTrue(
-			evaluateXPathToBoolean('-(xs:integer("1")) instance of xs:integer', documentNode)
+			evaluateXPathToBoolean('-(xs:integer("1")) instance of xs:integer', documentNode),
 		));
 
 	it('accepts + when passed 0', () =>
@@ -68,9 +68,9 @@ describe('unary operators', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 			),
-			-1
+			-1,
 		);
 	});
 
@@ -81,9 +81,9 @@ describe('unary operators', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 			),
-			1
+			1,
 		);
 	});
 });

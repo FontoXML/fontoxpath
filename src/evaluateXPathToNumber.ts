@@ -20,7 +20,7 @@ export default function evaluateXPathToNumber(
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
-	options?: Options | null
+	options?: Options | null,
 ): number {
 	return evaluateXPath(
 		selector,
@@ -28,6 +28,6 @@ export default function evaluateXPathToNumber(
 		domFacade,
 		variables,
 		evaluateXPath.NUMBER_TYPE,
-		options
+		options,
 	);
 }

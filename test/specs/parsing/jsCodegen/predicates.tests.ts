@@ -22,7 +22,7 @@ describe('predicates', () => {
 					['tip', 'Make it fast'],
 				],
 			],
-			documentNode
+			documentNode,
 		);
 	});
 
@@ -32,24 +32,24 @@ describe('predicates', () => {
 				'/xml/tips[parent::element()]',
 				documentNode,
 				null,
-				ReturnType.BOOLEAN
-			)
+				ReturnType.BOOLEAN,
+			),
 		);
 		chai.assert.isFalse(
 			evaluateXPathWithJsCodegen(
 				'/xml/tips/tip/text()[parent::text()]',
 				documentNode,
 				null,
-				ReturnType.BOOLEAN
-			)
+				ReturnType.BOOLEAN,
+			),
 		);
 		chai.assert.isTrue(
 			evaluateXPathWithJsCodegen(
 				'/xml/tips/tip/text()[parent::element()]',
 				documentNode,
 				null,
-				ReturnType.BOOLEAN
-			)
+				ReturnType.BOOLEAN,
+			),
 		);
 	});
 
@@ -59,16 +59,16 @@ describe('predicates', () => {
 				'/xml/tips[parent::element()][self::element()][child::element(tip)]',
 				documentNode,
 				null,
-				ReturnType.BOOLEAN
-			)
+				ReturnType.BOOLEAN,
+			),
 		);
 		chai.assert.isFalse(
 			evaluateXPathWithJsCodegen(
 				'/xml/tips/tip/text()[parent::text()][self::element()]',
 				documentNode,
 				null,
-				ReturnType.BOOLEAN
-			)
+				ReturnType.BOOLEAN,
+			),
 		);
 	});
 
@@ -77,7 +77,7 @@ describe('predicates', () => {
 			'/xml/element()[child::text() and self::element(title) or self::element(tips)]',
 			documentNode,
 			null,
-			ReturnType.NODES
+			ReturnType.NODES,
 		);
 		chai.assert.equal(results.length, 2);
 	});

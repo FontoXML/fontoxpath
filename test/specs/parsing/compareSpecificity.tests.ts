@@ -6,21 +6,21 @@ describe('compareSpecificity', () => {
 	function assertSpecificity(
 		selectorExpressionA: string,
 		selectorExpressionB: string,
-		expectedResult
+		expectedResult,
 	) {
 		// Assert selectors as a string
 		chai.assert.equal(
 			compareSpecificity(selectorExpressionA, selectorExpressionB),
-			expectedResult
+			expectedResult,
 		);
 
 		// Assert selectors as an AST
 		chai.assert.equal(
 			compareSpecificity(
 				parseScript(selectorExpressionA, {}, new Document()),
-				parseScript(selectorExpressionB, {}, new Document())
+				parseScript(selectorExpressionB, {}, new Document()),
 			),
-			expectedResult
+			expectedResult,
 		);
 	}
 

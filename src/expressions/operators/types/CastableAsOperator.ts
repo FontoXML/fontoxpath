@@ -15,14 +15,14 @@ class CastableAsOperator extends Expression {
 	constructor(
 		expression: Expression,
 		targetType: { localName: string; namespaceURI: string | null; prefix: string },
-		allowsEmptySequence: boolean
+		allowsEmptySequence: boolean,
 	) {
 		super(expression.specificity, [expression], { canBeStaticallyEvaluated: false });
 
 		this._targetType = stringToValueType(
 			targetType.prefix
 				? `${targetType.prefix}:${targetType.localName}`
-				: targetType.localName
+				: targetType.localName,
 		);
 		if (
 			this._targetType === ValueType.XSANYATOMICTYPE ||
@@ -30,7 +30,7 @@ class CastableAsOperator extends Expression {
 			this._targetType === ValueType.XSNOTATION
 		) {
 			throw new Error(
-				'XPST0080: Casting to xs:anyAtomicType, xs:anySimpleType or xs:NOTATION is not permitted.'
+				'XPST0080: Casting to xs:anyAtomicType, xs:anySimpleType or xs:NOTATION is not permitted.',
 			);
 		}
 
@@ -45,7 +45,7 @@ class CastableAsOperator extends Expression {
 	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
 		const evaluatedExpression = atomize(
 			this._expression.evaluateMaybeStatically(dynamicContext, executionParameters),
-			executionParameters
+			executionParameters,
 		);
 		return evaluatedExpression.switchCases({
 			empty: () => {
@@ -56,7 +56,7 @@ class CastableAsOperator extends Expression {
 			},
 			singleton: () => {
 				return evaluatedExpression.map((value) =>
-					canCastToType(value, this._targetType) ? trueBoolean : falseBoolean
+					canCastToType(value, this._targetType) ? trueBoolean : falseBoolean,
 				);
 			},
 			multiple: () => {

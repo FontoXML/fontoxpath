@@ -11,7 +11,7 @@ const emptySequence = new EmptySequence();
 
 function create(
 	value: Value | Value[] | IIterator<Value> | null = null,
-	predictedLength: number | null | undefined = null
+	predictedLength: number | null | undefined = null,
 ): ISequence {
 	if (value === null) {
 		return emptySequence;
@@ -31,7 +31,7 @@ function create(
 		return new IteratorBackedSequence(
 			sequenceFactory,
 			value as IIterator<Value>,
-			predictedLength
+			predictedLength,
 		);
 	}
 	return new SingletonSequence(sequenceFactory, value as Value);

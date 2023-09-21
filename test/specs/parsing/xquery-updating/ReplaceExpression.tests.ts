@@ -21,7 +21,7 @@ describe('ReplaceExpression', () => {
 			documentNode,
 			null,
 			{},
-			{}
+			{},
 		);
 
 		chai.assert.deepEqual(result.xdmValue, []);
@@ -42,7 +42,7 @@ describe('ReplaceExpression', () => {
 			documentNode,
 			null,
 			{},
-			{}
+			{},
 		);
 
 		chai.assert.deepEqual(result.xdmValue, []);
@@ -63,7 +63,7 @@ describe('ReplaceExpression', () => {
 			documentNode,
 			null,
 			{},
-			{}
+			{},
 		);
 
 		chai.assert.deepEqual(result.xdmValue, []);
@@ -83,7 +83,7 @@ describe('ReplaceExpression', () => {
 			documentNode,
 			null,
 			{},
-			{}
+			{},
 		);
 
 		chai.assert.deepEqual(result.xdmValue, []);
@@ -104,7 +104,7 @@ describe('ReplaceExpression', () => {
 				documentNode,
 				null,
 				{},
-				{}
+				{},
 			);
 		} catch (err) {
 			error = err;
@@ -128,7 +128,7 @@ describe('ReplaceExpression', () => {
 				documentNode,
 				null,
 				{},
-				{}
+				{},
 			);
 		} catch (err) {
 			error = err;
@@ -155,7 +155,7 @@ describe('ReplaceExpression', () => {
 				documentNode,
 				null,
 				{},
-				{}
+				{},
 			);
 		} catch (err) {
 			error = err;
@@ -182,7 +182,7 @@ describe('ReplaceExpression', () => {
 				documentNode,
 				null,
 				{},
-				{}
+				{},
 			);
 		} catch (err) {
 			error = err;
@@ -210,7 +210,7 @@ describe('ReplaceExpression', () => {
 				documentNode,
 				null,
 				{},
-				{}
+				{},
 			);
 			executePendingUpdateList(result.pendingUpdateList, null, null, null);
 		} catch (err) {
@@ -234,7 +234,7 @@ describe('ReplaceExpression', () => {
 				documentNode,
 				null,
 				{},
-				{}
+				{},
 			);
 		} catch (err) {
 			error = err;
@@ -257,7 +257,7 @@ describe('ReplaceExpression', () => {
 				documentNode,
 				null,
 				{},
-				{}
+				{},
 			);
 		} catch (err) {
 			error = err;
@@ -280,7 +280,7 @@ describe('ReplaceExpression', () => {
 				documentNode,
 				null,
 				{},
-				{}
+				{},
 			);
 		} catch (err) {
 			error = err;
@@ -303,7 +303,7 @@ describe('ReplaceExpression', () => {
 				documentNode,
 				null,
 				{},
-				{}
+				{},
 			);
 		} catch (err) {
 			error = err;
@@ -326,7 +326,7 @@ describe('ReplaceExpression', () => {
 				documentNode,
 				null,
 				{},
-				{}
+				{},
 			);
 		} catch (err) {
 			error = err;
@@ -349,7 +349,7 @@ describe('ReplaceExpression', () => {
 				documentNode,
 				null,
 				{},
-				{}
+				{},
 			);
 		} catch (err) {
 			error = err;
@@ -372,7 +372,7 @@ describe('ReplaceExpression', () => {
 				documentNode,
 				null,
 				{},
-				{}
+				{},
 			);
 		} catch (err) {
 			error = err;
@@ -403,7 +403,7 @@ describe('ReplaceExpression', () => {
 			documentNode,
 			null,
 			{},
-			{}
+			{},
 		);
 
 		chai.assert.deepEqual(result.xdmValue, []);
@@ -444,7 +444,7 @@ replace node /element with /
 			documentNode,
 			null,
 			{},
-			{}
+			{},
 		);
 
 		chai.assert.deepEqual(result.xdmValue, []);

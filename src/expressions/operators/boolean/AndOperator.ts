@@ -23,22 +23,22 @@ class AndOperator extends Expression {
 			expressions,
 			{
 				canBeStaticallyEvaluated: expressions.every(
-					(selector) => selector.canBeStaticallyEvaluated
+					(selector) => selector.canBeStaticallyEvaluated,
 				),
 			},
 			false,
-			type
+			type,
 		);
 		this._subExpressions = expressions;
 		this._bucket = expressions.reduce<Bucket | null>(
 			(bucket, expression) => intersectBuckets(bucket, expression.getBucket()),
-			null
+			null,
 		);
 	}
 
 	public evaluate(
 		dynamicContext: DynamicContext,
-		executionParameters: ExecutionParameters
+		executionParameters: ExecutionParameters,
 	): ISequence {
 		let i = 0;
 		let resultSequence: ISequence = null;
@@ -49,7 +49,7 @@ class AndOperator extends Expression {
 			if (contextItem !== null && isSubtypeOf(contextItem.type, ValueType.NODE)) {
 				contextItemBuckets = getBucketsForPointer(
 					contextItem.value as NodePointer,
-					executionParameters.domFacade
+					executionParameters.domFacade,
 				);
 			}
 		}
@@ -70,7 +70,7 @@ class AndOperator extends Expression {
 							}
 							resultSequence = subExpression.evaluateMaybeStatically(
 								dynamicContext,
-								executionParameters
+								executionParameters,
 							);
 						}
 						const ebv = resultSequence.getEffectiveBooleanValue();

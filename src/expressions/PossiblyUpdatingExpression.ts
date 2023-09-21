@@ -27,7 +27,7 @@ export type SequenceCallbacks = ((dynamicContext: DynamicContext) => ISequence)[
  */
 export function separateXDMValueFromUpdatingExpressionResult(
 	updatingExpressionResultIterator: IIterator<UpdatingExpressionResult>,
-	outputPUL: (updates: IPendingUpdate[]) => void
+	outputPUL: (updates: IPendingUpdate[]) => void,
 ): ISequence {
 	const itResult = updatingExpressionResultIterator.next(IterationHint.NONE);
 	outputPUL(itResult.value.pendingUpdateList);
@@ -44,12 +44,12 @@ export default abstract class PossiblyUpdatingExpression extends UpdatingExpress
 		specificity: Specificity,
 		childExpressions: Expression[],
 		optimizationOptions: OptimizationOptions,
-		type?: SequenceType
+		type?: SequenceType,
 	) {
 		super(specificity, childExpressions, optimizationOptions, type);
 
 		this.isUpdating = this._childExpressions.some(
-			(childExpression) => childExpression.isUpdating
+			(childExpression) => childExpression.isUpdating,
 		);
 	}
 
@@ -59,14 +59,14 @@ export default abstract class PossiblyUpdatingExpression extends UpdatingExpress
 			executionParameters,
 			this._childExpressions.map(
 				(expr) => (innerDynamicContext: DynamicContext) =>
-					expr.evaluate(innerDynamicContext, executionParameters)
-			)
+					expr.evaluate(innerDynamicContext, executionParameters),
+			),
 		);
 	}
 
 	public evaluateWithUpdateList(
 		dynamicContext: DynamicContext,
-		executionParameters: ExecutionParameters
+		executionParameters: ExecutionParameters,
 	): IIterator<UpdatingExpressionResult> {
 		let updateList: IPendingUpdate[] = [];
 
@@ -82,14 +82,14 @@ export default abstract class PossiblyUpdatingExpression extends UpdatingExpress
 					const updatingExpression = expr as UpdatingExpression;
 					const updateListAndValue = updatingExpression.evaluateWithUpdateList(
 						innerDynamicContext,
-						executionParameters
+						executionParameters,
 					);
 					return separateXDMValueFromUpdatingExpressionResult(
 						updateListAndValue,
-						(pendingUpdates) => (updateList = mergeUpdates(updateList, pendingUpdates))
+						(pendingUpdates) => (updateList = mergeUpdates(updateList, pendingUpdates)),
 					);
 				};
-			})
+			}),
 		);
 
 		let done = false;
@@ -131,6 +131,6 @@ export default abstract class PossiblyUpdatingExpression extends UpdatingExpress
 	public abstract performFunctionalEvaluation(
 		_dynamicContext: DynamicContext,
 		_executionParameters: ExecutionParameters,
-		_sequenceCallbacks: SequenceCallbacks
+		_sequenceCallbacks: SequenceCallbacks,
 	): ISequence;
 }

@@ -25,7 +25,7 @@ import { errXUDY0014, errXUDY0037, errXUTY0013 } from './XQueryUpdateFacilityErr
 function isCreatedNode(
 	node: NodePointer,
 	createdNodes: NodePointer[],
-	domFacade: DomFacade
+	domFacade: DomFacade,
 ): boolean {
 	if (createdNodes.find((cNode) => arePointersEqual(cNode, node))) {
 		return true;
@@ -44,7 +44,7 @@ class TransformExpression extends UpdatingExpression {
 	constructor(
 		variableBindings: VariableBinding[],
 		modifyExpr: Expression,
-		returnExpr: Expression
+		returnExpr: Expression,
 	) {
 		super(
 			new Specificity({}),
@@ -53,12 +53,12 @@ class TransformExpression extends UpdatingExpression {
 					childExpressions.push(variableBinding.sourceExpr);
 					return childExpressions;
 				},
-				[modifyExpr, returnExpr]
+				[modifyExpr, returnExpr],
 			),
 			{
 				canBeStaticallyEvaluated: false,
 				resultOrder: RESULT_ORDERINGS.UNSORTED,
-			}
+			},
 		);
 		this._variableBindings = variableBindings;
 		this._modifyExpr = modifyExpr;
@@ -70,13 +70,13 @@ class TransformExpression extends UpdatingExpression {
 
 	public evaluate(
 		dynamicContext: DynamicContext,
-		executionParameters: ExecutionParameters
+		executionParameters: ExecutionParameters,
 	): ISequence {
 		// If we were updating, the calling code would have called the evaluateWithUpdateList
 		// method. We can assume we're not actually updating
 		const pendingUpdateIterator = this.evaluateWithUpdateList(
 			dynamicContext,
-			executionParameters
+			executionParameters,
 		);
 		return separateXDMValueFromUpdatingExpressionResult(pendingUpdateIterator, (_pul) => {
 			/* Ignore the PUL part */
@@ -85,7 +85,7 @@ class TransformExpression extends UpdatingExpression {
 
 	public evaluateWithUpdateList(
 		dynamicContext: DynamicContext,
-		executionParameters: ExecutionParameters
+		executionParameters: ExecutionParameters,
 	): IIterator<UpdatingExpressionResult> {
 		const { domFacade, nodesFactory, documentWriter } = executionParameters;
 
@@ -111,7 +111,7 @@ class TransformExpression extends UpdatingExpression {
 							sourceValueIterators[i] = sourceValueIterator =
 								this.ensureUpdateListWrapper(variableBinding.sourceExpr)(
 									dynamicContext,
-									executionParameters
+									executionParameters,
 								);
 						}
 						const sv = sourceValueIterator.next(IterationHint.NONE);
@@ -128,7 +128,7 @@ class TransformExpression extends UpdatingExpression {
 						// A new copy is made of $node and all nodes that have $node as an ancestor, collectively referred to as copied nodes.
 						const copiedNodes = createPointerValue(
 							deepCloneNode(node.value, executionParameters),
-							domFacade
+							domFacade,
 						);
 						createdNodes.push(copiedNodes.value);
 						toMergePuls.push(sv.value.pendingUpdateList);
@@ -146,7 +146,7 @@ class TransformExpression extends UpdatingExpression {
 					if (!modifyValueIterator) {
 						modifyValueIterator = this.ensureUpdateListWrapper(this._modifyExpr)(
 							dynamicContext,
-							executionParameters
+							executionParameters,
 						);
 					}
 					const mv = modifyValueIterator.next(IterationHint.NONE);
@@ -178,7 +178,7 @@ class TransformExpression extends UpdatingExpression {
 				if (!returnValueIterator) {
 					returnValueIterator = this.ensureUpdateListWrapper(this._returnExpr)(
 						dynamicContext,
-						executionParameters
+						executionParameters,
 					);
 				}
 				const rv = returnValueIterator.next(IterationHint.NONE);
@@ -198,8 +198,8 @@ class TransformExpression extends UpdatingExpression {
 			(variableBinding) =>
 				(variableBinding.registeredVariable = staticContext.registerVariable(
 					variableBinding.varRef.namespaceURI,
-					variableBinding.varRef.localName
-				))
+					variableBinding.varRef.localName,
+				)),
 		);
 		super.performStaticEvaluation(staticContext);
 		staticContext.removeScope();

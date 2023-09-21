@@ -120,14 +120,14 @@ describe('adaptJavaScriptValueToSequence', () => {
 			{
 				type: ValueType.XSDATE,
 				mult: SequenceMultiplicity.EXACTLY_ONE,
-			}
+			},
 		);
 		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 		chai.assert(xpathSequence.first().type === ValueType.XSDATE, 'is a date');
 		chai.assert.deepEqual(
 			xpathSequence.first().value,
 			DateTime.fromString('2018-06-22Z'),
-			'is 22nd June 2018'
+			'is 22nd June 2018',
 		);
 	});
 
@@ -135,14 +135,14 @@ describe('adaptJavaScriptValueToSequence', () => {
 		const xpathSequence = adaptJavaScriptValueToSequence(
 			null,
 			new Date(Date.UTC(2018, 5, 22, 9, 10, 20)),
-			{ type: ValueType.XSTIME, mult: SequenceMultiplicity.EXACTLY_ONE }
+			{ type: ValueType.XSTIME, mult: SequenceMultiplicity.EXACTLY_ONE },
 		);
 		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 		chai.assert(xpathSequence.first().type === ValueType.XSTIME, 'is a time');
 		chai.assert.deepEqual(
 			xpathSequence.first().value,
 			DateTime.fromString('09:10:20Z'),
-			'is 09:10:20'
+			'is 09:10:20',
 		);
 	});
 
@@ -150,14 +150,14 @@ describe('adaptJavaScriptValueToSequence', () => {
 		const xpathSequence = adaptJavaScriptValueToSequence(
 			null,
 			new Date(Date.UTC(2018, 5, 22, 9, 10, 20)),
-			{ type: ValueType.XSDATETIME, mult: SequenceMultiplicity.EXACTLY_ONE }
+			{ type: ValueType.XSDATETIME, mult: SequenceMultiplicity.EXACTLY_ONE },
 		);
 		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 		chai.assert(xpathSequence.first().type === ValueType.XSDATETIME, 'is a dateTime');
 		chai.assert.deepEqual(
 			xpathSequence.first().value,
 			DateTime.fromString('2018-06-22T09:10:20Z'),
-			'is 22nd June 2018 09:10:20'
+			'is 22nd June 2018 09:10:20',
 		);
 	});
 
@@ -165,14 +165,14 @@ describe('adaptJavaScriptValueToSequence', () => {
 		const xpathSequence = adaptJavaScriptValueToSequence(
 			null,
 			new Date(Date.UTC(2018, 5, 22, 9, 10, 20)),
-			{ type: ValueType.XSGYEARMONTH, mult: SequenceMultiplicity.EXACTLY_ONE }
+			{ type: ValueType.XSGYEARMONTH, mult: SequenceMultiplicity.EXACTLY_ONE },
 		);
 		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 		chai.assert(xpathSequence.first().type === ValueType.XSGYEARMONTH, 'is a gYearMonth');
 		chai.assert.deepEqual(
 			xpathSequence.first().value,
 			DateTime.fromString('2018-06Z'),
-			'is June 2018'
+			'is June 2018',
 		);
 	});
 
@@ -180,7 +180,7 @@ describe('adaptJavaScriptValueToSequence', () => {
 		const xpathSequence = adaptJavaScriptValueToSequence(
 			null,
 			new Date(Date.UTC(2018, 5, 22, 9, 10, 20)),
-			{ type: ValueType.XSGYEAR, mult: SequenceMultiplicity.EXACTLY_ONE }
+			{ type: ValueType.XSGYEAR, mult: SequenceMultiplicity.EXACTLY_ONE },
 		);
 		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 		chai.assert(xpathSequence.first().type === ValueType.XSGYEAR, 'is a gYear');
@@ -191,14 +191,14 @@ describe('adaptJavaScriptValueToSequence', () => {
 		const xpathSequence = adaptJavaScriptValueToSequence(
 			null,
 			new Date(Date.UTC(2018, 5, 22, 9, 10, 20)),
-			{ type: ValueType.XSGMONTHDAY, mult: SequenceMultiplicity.EXACTLY_ONE }
+			{ type: ValueType.XSGMONTHDAY, mult: SequenceMultiplicity.EXACTLY_ONE },
 		);
 		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 		chai.assert(xpathSequence.first().type === ValueType.XSGMONTHDAY, 'is a gMonthDay');
 		chai.assert.deepEqual(
 			xpathSequence.first().value,
 			DateTime.fromString('-06-22Z'),
-			'is 22nd June'
+			'is 22nd June',
 		);
 	});
 
@@ -206,7 +206,7 @@ describe('adaptJavaScriptValueToSequence', () => {
 		const xpathSequence = adaptJavaScriptValueToSequence(
 			null,
 			new Date(Date.UTC(2018, 5, 22, 9, 10, 20)),
-			{ type: ValueType.XSGMONTH, mult: SequenceMultiplicity.EXACTLY_ONE }
+			{ type: ValueType.XSGMONTH, mult: SequenceMultiplicity.EXACTLY_ONE },
 		);
 		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 		chai.assert(xpathSequence.first().type === ValueType.XSGMONTH, 'is a gMonth');
@@ -217,14 +217,14 @@ describe('adaptJavaScriptValueToSequence', () => {
 		const xpathSequence = adaptJavaScriptValueToSequence(
 			null,
 			new Date(Date.UTC(2018, 5, 22, 9, 10, 20)),
-			{ type: ValueType.XSGDAY, mult: SequenceMultiplicity.EXACTLY_ONE }
+			{ type: ValueType.XSGDAY, mult: SequenceMultiplicity.EXACTLY_ONE },
 		);
 		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 		chai.assert(xpathSequence.first().type === ValueType.XSGDAY, 'is a gDay');
 		chai.assert.deepEqual(
 			xpathSequence.first().value,
 			DateTime.fromString('---22Z'),
-			'is 22nd'
+			'is 22nd',
 		);
 	});
 
@@ -263,7 +263,7 @@ describe('adaptJavaScriptValueToSequence', () => {
 			const xpathSequence = adaptJavaScriptValueToSequence(
 				null,
 				{},
-				{ type: ValueType.ITEM, mult: SequenceMultiplicity.EXACTLY_ONE }
+				{ type: ValueType.ITEM, mult: SequenceMultiplicity.EXACTLY_ONE },
 			);
 			chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 			chai.assert(xpathSequence.first().type === ValueType.MAP, 'is a map');
@@ -273,7 +273,7 @@ describe('adaptJavaScriptValueToSequence', () => {
 			const xpathSequence = adaptJavaScriptValueToSequence(
 				null,
 				{},
-				{ type: ValueType.MAP, mult: SequenceMultiplicity.EXACTLY_ONE }
+				{ type: ValueType.MAP, mult: SequenceMultiplicity.EXACTLY_ONE },
 			);
 			chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 			chai.assert(xpathSequence.first().type === ValueType.MAP, 'is a map');
@@ -284,7 +284,7 @@ describe('adaptJavaScriptValueToSequence', () => {
 			const xpathSequence = adaptJavaScriptValueToSequence(
 				null,
 				{ date: then },
-				{ type: ValueType.MAP, mult: SequenceMultiplicity.EXACTLY_ONE }
+				{ type: ValueType.MAP, mult: SequenceMultiplicity.EXACTLY_ONE },
 			);
 			chai.assert.isTrue(xpathSequence.isSingleton(), 'is a singleton sequence');
 

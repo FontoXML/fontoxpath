@@ -36,7 +36,7 @@ export type GeneratedCodeType =
 export function acceptAst(
 	code: string,
 	generatedCodeType: GeneratedCodeType,
-	variables: string[]
+	variables: string[],
 ): PartiallyCompiledAstAccepted {
 	return {
 		code,

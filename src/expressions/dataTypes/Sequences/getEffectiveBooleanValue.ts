@@ -32,7 +32,7 @@ export default function getEffectiveBooleanValue(value: Value): boolean {
 	// In all other cases, fn:boolean raises a type error [err:FORG0006]FO31.
 	throw errFORG0006(
 		`Cannot determine the effective boolean value of a value with the type ${valueTypeToString(
-			value.type
-		)}`
+			value.type,
+		)}`,
 	);
 }

@@ -13,14 +13,14 @@ describe('map constructor', () => {
 	beforeEach(() => {
 		jsonMlMapper.parse(
 			['someElement', { someAttribute: 'someValue' }, 'A piece of text'],
-			documentNode
+			documentNode,
 		);
 	});
 
 	it('can be parsed', () =>
 		chai.assert.isOk(
 			evaluateXPathToMap('map {"a": 1, "b":2}', documentNode),
-			'It should be able to be parsed'
+			'It should be able to be parsed',
 		));
 
 	it('creates a map which can be returned by evaluateXPathToMap', () =>
@@ -32,7 +32,7 @@ describe('map constructor', () => {
 	it('can use attribute nodes as keys', () =>
 		chai.assert.deepEqual(
 			evaluateXPathToMap('map {@someAttribute: 1}', documentNode.documentElement),
-			{ someValue: 1 }
+			{ someValue: 1 },
 		));
 
 	it('can use nodes as keys', () =>
@@ -63,13 +63,13 @@ describe('map constructor', () => {
 			}),
 			{
 				a: expectedElement,
-			}
+			},
 		);
 	});
 
 	it('throws an error when the key is not a singleton sequence', () =>
 		chai.assert.throws(
 			() => evaluateXPathToMap('map {(1, 2): 3}', documentNode.documentElement),
-			'XPTY0004'
+			'XPTY0004',
 		));
 });

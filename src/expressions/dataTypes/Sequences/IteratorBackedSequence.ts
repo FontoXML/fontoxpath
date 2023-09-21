@@ -17,7 +17,7 @@ export default class IteratorBackedSequence implements ISequence {
 	constructor(
 		private readonly _sequenceFactory: typeof sequenceFactory,
 		valueIterator: IIterator<Value>,
-		predictedLength: number = null
+		predictedLength: number = null,
 	) {
 		this.value = {
 			next: (hint: IterationHint) => {
@@ -128,7 +128,7 @@ export default class IteratorBackedSequence implements ISequence {
 		const secondValue = iterator.next(IterationHint.NONE);
 		if (!secondValue.done) {
 			throw errFORG0006(
-				`Cannot determine the effective boolean value of a sequence with a length higher than one.`
+				`Cannot determine the effective boolean value of a sequence with a length higher than one.`,
 			);
 		}
 
@@ -196,7 +196,7 @@ export default class IteratorBackedSequence implements ISequence {
 					return ready(callback(value.value, i++, this));
 				},
 			},
-			this._length
+			this._length,
 		);
 	}
 
@@ -250,7 +250,7 @@ export default class IteratorBackedSequence implements ISequence {
 				const isSingleton = this.isSingleton();
 				if (isSingleton) {
 					setResultIterator(
-						cases.singleton ? cases.singleton(this) : cases.default(this)
+						cases.singleton ? cases.singleton(this) : cases.default(this),
 					);
 					return resultIterator.next(hint);
 				}

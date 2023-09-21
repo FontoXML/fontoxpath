@@ -31,7 +31,7 @@ const supportedFunctions: Record<
 	(
 		ast: IAST,
 		contextItemExpr: PartialCompilationResult,
-		context: CodeGenContext
+		context: CodeGenContext,
 	) => PartialCompilationResult
 > = {
 	'false#0': emitFalseFunction,
@@ -56,7 +56,7 @@ function emitFunctionArgumentConversion(
 	argAst: IAST,
 	requestedType: SequenceType,
 	contextItemExpr: PartialCompilationResult,
-	context: CodeGenContext
+	context: CodeGenContext,
 ): PartialCompilationResult {
 	const [argExpr, _] = context.emitBaseExpr(argAst, contextItemExpr, context);
 	const actualType = astHelper.getAttribute(argAst, 'type');
@@ -84,7 +84,7 @@ function emitFunctionArgumentConversion(
 	return rejectAst(
 		`Argument types not supported: ${
 			actualType ? valueTypeToString(actualType.type) : 'unknown'
-		} -> ${valueTypeToString(requestedType.type)}`
+		} -> ${valueTypeToString(requestedType.type)}`,
 	);
 }
 
@@ -92,7 +92,7 @@ function emitFunctionArgumentsConversion(
 	argAsts: IAST[],
 	argTypes: ParameterType[],
 	contextItemExpr: PartialCompilationResult,
-	context: CodeGenContext
+	context: CodeGenContext,
 ): PartialCompilationResult {
 	if (
 		argAsts.length !== argTypes.length ||
@@ -112,9 +112,9 @@ function emitFunctionArgumentsConversion(
 			// We checked for ELLIPSIS earlier, so all argument types are normal SequenceTypes
 			type as SequenceType,
 			contextItemExpr,
-			context
+			context,
 		),
-		'arg'
+		'arg',
 	);
 	if (restArgAsts.length === 0) {
 		return argExpr;
@@ -126,20 +126,20 @@ function emitFunctionArgumentsConversion(
 			restArgAsts,
 			restTypes,
 			contextItemExpr,
-			context
+			context,
 		);
 		return mapPartialCompilationResult(argsExpr, (argsExpr) =>
 			acceptAst(`${argExpr.code}, ${argsExpr.code}`, { type: GeneratedCodeBaseType.Value }, [
 				...argExpr.variables,
 				...argsExpr.variables,
-			])
+			]),
 		);
 	});
 }
 
 function emitFunctionReturnTypeConversion(
 	callFunctionExpr: PartialCompilationResult,
-	returnType: SequenceType
+	returnType: SequenceType,
 ) {
 	return mapPartialCompilationResult(callFunctionExpr, (callFunctionExpr) => {
 		// We support (zero or) one string, node or boolean
@@ -152,7 +152,7 @@ function emitFunctionReturnTypeConversion(
 			return callFunctionExpr;
 		}
 		return rejectAst(
-			`Function return type ${valueTypeToString(returnType.type)} not supported`
+			`Function return type ${valueTypeToString(returnType.type)} not supported`,
 		);
 	});
 }
@@ -160,10 +160,10 @@ function emitFunctionReturnTypeConversion(
 export function emitFunctionCallExpr(
 	ast: IAST,
 	contextItemExpr: PartialCompilationResult,
-	context: CodeGenContext
+	context: CodeGenContext,
 ): PartialCompilationResult {
 	const { localName, namespaceURI } = astHelper.getQName(
-		astHelper.getFirstChild(ast, 'functionName')
+		astHelper.getFirstChild(ast, 'functionName'),
 	);
 
 	const argAsts = astHelper.getChildren(astHelper.getFirstChild(ast, 'arguments'), '*');
@@ -185,7 +185,7 @@ export function emitFunctionCallExpr(
 		// Function is built-in and must be allowed explicitly to be considered safe for codegen
 		if (!allowlist.includes(functionNameAndArity)) {
 			return rejectAst(
-				`Not supported: built-in function not on allow list: ${functionNameAndArity}`
+				`Not supported: built-in function not on allow list: ${functionNameAndArity}`,
 			);
 		}
 	}
@@ -205,24 +205,24 @@ export function emitFunctionCallExpr(
 		argAsts,
 		functionProperties.argumentTypes,
 		contextItemExpr,
-		context
+		context,
 	);
 
 	const callFunction = mapPartialCompilationResult(argsExpr, (argsExpr) =>
 		acceptAst(
 			`runtimeLib.callFunction(domFacade, ${escapeJavaScriptString(
-				namespaceURI
+				namespaceURI,
 			)}, ${escapeJavaScriptString(localName)}, [${argsExpr.code}], options)`,
 			{ type: GeneratedCodeBaseType.Value },
-			argsExpr.variables
-		)
+			argsExpr.variables,
+		),
 	);
 	return emitFunctionReturnTypeConversion(callFunction, functionProperties.returnType);
 }
 
 function emitContextItemCheck(
 	contextItemExpr: PartialCompilationResult,
-	context: CodeGenContext
+	context: CodeGenContext,
 ): PartialCompilationResult {
 	return mapPartialCompilationResult(
 		context.getIdentifierFor(contextItemExpr, 'contextItem'),
@@ -232,7 +232,7 @@ function emitContextItemCheck(
 				`if (${contextItemExpr.code} === undefined || ${contextItemExpr.code} === null) {
 					throw errXPDY0002('The function which was called depends on dynamic context, which is absent.');
 				}`,
-			])
+			]),
 	);
 }
 
@@ -240,7 +240,7 @@ function emitSpecificNameFunction(
 	ast: IAST,
 	contextItemExpr: PartialCompilationResult,
 	context: CodeGenContext,
-	nameGetterFunction: (itemName: string) => string
+	nameGetterFunction: (itemName: string) => string,
 ): PartialCompilationResult {
 	const argumentAst = astHelper.followPath(ast, ['arguments', '*']);
 	let argExpr: PartialCompilationResult;
@@ -265,15 +265,15 @@ function emitSpecificNameFunction(
 		acceptAst(
 			`(${argAsValue.code} ? ${nameGetterFunction(argAsValue.code)} : '')`,
 			{ type: GeneratedCodeBaseType.Value },
-			argAsValue.variables
-		)
+			argAsValue.variables,
+		),
 	);
 }
 
 function emitNameFunction(
 	ast: IAST,
 	contextItemExpr: PartialCompilationResult,
-	context: CodeGenContext
+	context: CodeGenContext,
 ): PartialCompilationResult {
 	return emitSpecificNameFunction(
 		ast,
@@ -281,41 +281,41 @@ function emitNameFunction(
 		context,
 		(identifier) =>
 			`(((${identifier}.prefix || '').length !== 0 ? ${identifier}.prefix + ':' : '')
-		+ (${identifier}.localName || ${identifier}.target || ''))`
+		+ (${identifier}.localName || ${identifier}.target || ''))`,
 	);
 }
 
 function emitLocalNameFunction(
 	ast: IAST,
 	contextItemExpr: PartialCompilationResult,
-	context: CodeGenContext
+	context: CodeGenContext,
 ): PartialCompilationResult {
 	return emitSpecificNameFunction(
 		ast,
 		contextItemExpr,
 		context,
-		(identifier) => `(${identifier}.localName || ${identifier}.target || '')`
+		(identifier) => `(${identifier}.localName || ${identifier}.target || '')`,
 	);
 }
 
 function emitNotFunction(
 	ast: IAST,
 	contextItemExpr: PartialCompilationResult,
-	context: CodeGenContext
+	context: CodeGenContext,
 ): PartialCompilationResult {
 	const argumentAst = astHelper.followPath(ast, ['arguments', '*']);
 	const argType = astHelper.getAttribute(argumentAst, 'type');
 	const [argExpr, _] = context.emitBaseExpr(argumentAst, contextItemExpr, context);
 	const argAsBool = emitEffectiveBooleanValue(argExpr, argType, contextItemExpr, context);
 	return mapPartialCompilationResult(argAsBool, (argAsBool) =>
-		acceptAst(`!${argAsBool.code}`, { type: GeneratedCodeBaseType.Value }, argAsBool.variables)
+		acceptAst(`!${argAsBool.code}`, { type: GeneratedCodeBaseType.Value }, argAsBool.variables),
 	);
 }
 
 function emitFalseFunction(
 	_ast: IAST,
 	_contextItemExpr: PartialCompilationResult,
-	_context: CodeGenContext
+	_context: CodeGenContext,
 ): PartialCompilationResult {
 	return acceptAst('false', { type: GeneratedCodeBaseType.Value }, []);
 }
@@ -323,7 +323,7 @@ function emitFalseFunction(
 function emitTrueFunction(
 	_ast: IAST,
 	_contextItemExpr: PartialCompilationResult,
-	_context: CodeGenContext
+	_context: CodeGenContext,
 ): PartialCompilationResult {
 	return acceptAst('true', { type: GeneratedCodeBaseType.Value }, []);
 }

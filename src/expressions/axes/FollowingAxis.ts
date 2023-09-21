@@ -17,7 +17,7 @@ import validateContextNode from './validateContextNode';
 function createFollowingGenerator(
 	domFacade: DomFacade,
 	node: ChildNodePointer,
-	bucket: Bucket | null
+	bucket: Bucket | null,
 ) {
 	const nodeStack: NodePointer[] = [];
 
@@ -29,7 +29,7 @@ function createFollowingGenerator(
 	) {
 		const previousSibling = domFacade.getNextSiblingPointer(
 			ancestorNode as ChildNodePointer,
-			bucket
+			bucket,
 		);
 		if (previousSibling) {
 			nodeStack.push(previousSibling);
@@ -45,14 +45,14 @@ function createFollowingGenerator(
 						domFacade,
 						nodeStack[0],
 						false,
-						bucket
+						bucket,
 					);
 
 					const toReturn = ready(createPointerValue(nodeStack[0], domFacade));
 					// Set the focus to the concurrent sibling of this node
 					const nextNode = domFacade.getNextSiblingPointer(
 						nodeStack[0] as ChildNodePointer,
-						bucket
+						bucket,
 					);
 					if (!nextNode) {
 						// This is the last sibling, we can continue with a child of the current
@@ -104,7 +104,7 @@ class FollowingAxis extends Expression {
 
 	public evaluate(
 		dynamicContext: DynamicContext,
-		executionParameters: ExecutionParameters
+		executionParameters: ExecutionParameters,
 	): ISequence {
 		const domFacade = executionParameters.domFacade;
 		const contextPointer = validateContextNode(dynamicContext.contextItem);
@@ -114,14 +114,14 @@ class FollowingAxis extends Expression {
 				createFollowingGenerator(
 					domFacade,
 					contextPointer as ChildNodePointer,
-					this._bucket
-				)
+					this._bucket,
+				),
 			)
 			.filter((item) => {
 				return this._testExpression.evaluateToBoolean(
 					dynamicContext,
 					item,
-					executionParameters
+					executionParameters,
 				);
 			});
 	}

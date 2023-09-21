@@ -20,17 +20,17 @@ describe('preceding', () => {
 	it('returns the preceding nodes', () => {
 		jsonMlMapper.parse(
 			['someParentElement', ['someOtherElement', ['someOtherElement']], ['someElement']],
-			documentNode
+			documentNode,
 		);
 		chai.assert.deepEqual(
 			evaluateXPathToNodes(
 				'preceding::someOtherElement',
-				documentNode.documentElement.lastChild
+				documentNode.documentElement.lastChild,
 			).map((node) => (node as slimdom.Element).outerHTML),
 			[
 				(documentNode.documentElement.firstChild as slimdom.Element).outerHTML,
 				(documentNode.documentElement.firstChild.firstChild as slimdom.Element).outerHTML,
-			]
+			],
 		);
 	});
 
@@ -73,7 +73,7 @@ return map{
 			documentNode,
 			null,
 			null,
-			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 		);
 		chai.assert.equal(result.got.length, 6);
 		chai.assert.equal(result.expected.length, 6);
@@ -87,14 +87,14 @@ return map{
 				['someNonMatchingElement', ['someNonMatchingElement']],
 				['someElement'],
 			],
-			documentNode
+			documentNode,
 		);
 		chai.assert.deepEqual(
 			evaluateXPathToNodes(
 				'preceding::someSiblingElement',
-				documentNode.documentElement.lastChild
+				documentNode.documentElement.lastChild,
 			),
-			[]
+			[],
 		);
 	});
 
@@ -106,14 +106,14 @@ return map{
 				['someNonMatchingElement', ['someSiblingElement', { position: 'second' }]],
 				['someElement'],
 			],
-			documentNode
+			documentNode,
 		);
 		chai.assert.equal(
 			evaluateXPathToString(
 				'(preceding::someSiblingElement)[1]/@position',
-				documentNode.documentElement.lastChild
+				documentNode.documentElement.lastChild,
 			),
-			'first'
+			'first',
 		);
 	});
 
@@ -122,16 +122,16 @@ return map{
 		chai.assert.deepEqual(
 			evaluateXPathToNodes(
 				'preceding::someSiblingElement',
-				documentNode.documentElement.firstChild
+				documentNode.documentElement.firstChild,
 			),
-			[]
+			[],
 		);
 	});
 
 	it('passes buckets for preceding', () => {
 		jsonMlMapper.parse(
 			['parentElement', ['firstChildElement'], ['secondChildElement']],
-			documentNode
+			documentNode,
 		);
 
 		const secondChildNode = documentNode.firstChild.lastChild;

@@ -164,21 +164,21 @@ class Duration extends AbstractDuration {
 Duration.fromString = (durationString: string): Duration | null => {
 	return new Duration(
 		YearMonthDuration.fromString(durationString),
-		DayTimeDuration.fromString(durationString)
+		DayTimeDuration.fromString(durationString),
 	);
 };
 
 Duration.fromYearMonthDuration = (yearMonthDuration: YearMonthDuration): Duration => {
 	return new Duration(
 		yearMonthDuration,
-		new DayTimeDuration(yearMonthDuration.isPositive() ? 0 : -0)
+		new DayTimeDuration(yearMonthDuration.isPositive() ? 0 : -0),
 	);
 };
 
 Duration.fromDayTimeDuration = (dayTimeDuration: DayTimeDuration): Duration => {
 	return new Duration(
 		new YearMonthDuration(dayTimeDuration.isPositive() ? 0 : -0),
-		dayTimeDuration
+		dayTimeDuration,
 	);
 };
 

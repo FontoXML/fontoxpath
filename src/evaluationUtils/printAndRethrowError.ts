@@ -9,7 +9,7 @@ function getNumberStringLength(i: number) {
 
 export function printAndRethrowError(
 	selector: string | EvaluableExpression,
-	error: Error | StackTraceEntry
+	error: Error | StackTraceEntry,
 ): never {
 	if (error instanceof Error) {
 		throw error;
@@ -25,7 +25,7 @@ export function printAndRethrowError(
 	const rawLines = selector.replace(/\r/g, '').split('\n');
 
 	const lineNumberStringLength = getNumberStringLength(
-		Math.min(errorLocation.end.line + 2, rawLines.length)
+		Math.min(errorLocation.end.line + 2, rawLines.length),
 	);
 
 	const lines = rawLines.reduce((markedLines: string[], line, i) => {
@@ -54,7 +54,7 @@ export function printAndRethrowError(
 				' '.repeat(prefix.length) +
 				// To preserve alignment, mirror any tabs in line in the indentation of the mark
 				Array.from(line.substring(0, startColumn - prefix.length), (c) =>
-					c === '\t' ? '\t' : ' '
+					c === '\t' ? '\t' : ' ',
 				).join('') +
 				'^'.repeat(endColumn - startColumn);
 			markedLines.push(mark);
