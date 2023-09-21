@@ -20,7 +20,7 @@ import { PartialCompilationResult, rejectAst } from './JavaScriptCompiledXPath';
 export function emitBaseExpr(
 	ast: IAST,
 	contextItemExpr: PartialCompilationResult,
-	context: CodeGenContext
+	context: CodeGenContext,
 ): [PartialCompilationResult, Bucket] {
 	const name = ast[0];
 

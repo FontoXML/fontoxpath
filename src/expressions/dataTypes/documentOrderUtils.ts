@@ -22,7 +22,7 @@ import Value, { ValueType } from './Value';
 function compareSiblingElements(
 	domFacade: DomFacade,
 	node1: NodePointer,
-	node2: NodePointer
+	node2: NodePointer,
 ): number {
 	const parentNode = domFacade.getParentNodePointer(node1 as ChildNodePointer, null);
 	const childNodes = domFacade.getChildNodePointers(parentNode, null);
@@ -51,7 +51,7 @@ function findAllAncestorPointers(domFacade: DomFacade, node: NodePointer): NodeP
 		ancestor;
 		ancestor = domFacade.getParentNodePointer(
 			ancestor as ChildNodePointer | AttributeNodePointer,
-			null
+			null,
 		)
 	) {
 		ancestors.unshift(ancestor);
@@ -91,7 +91,7 @@ function compareElements(
 	tieBreakerArr: NodePointer[],
 	domFacade: DomFacade,
 	nodeA: NodePointer,
-	nodeB: NodePointer
+	nodeB: NodePointer,
 ): number {
 	if (
 		!nodeA.graftAncestor &&
@@ -202,7 +202,7 @@ function compareNodePositionsWithTieBreaker(
 	tieBreakerArr: NodePointer[],
 	domFacade: DomFacade,
 	node1: Value,
-	node2: Value
+	node2: Value,
 ) {
 	const isNode1SubtypeOfAttribute = isSubtypeOf(node1.type, ValueType.ATTRIBUTE);
 	const isNode2SubtypeOfAttribute = isSubtypeOf(node2.type, ValueType.ATTRIBUTE);
@@ -226,7 +226,7 @@ function compareNodePositionsWithTieBreaker(
 		if (
 			arePointersEqual(
 				domFacade.getParentNodePointer(node2.value),
-				domFacade.getParentNodePointer(node1.value)
+				domFacade.getParentNodePointer(node1.value),
 			)
 		) {
 			// Sort on attributes name
@@ -248,7 +248,7 @@ export function compareNodePositions(domFacade: DomFacade, node1: Value, node2: 
 		domFacade.orderOfDetachedNodes,
 		domFacade,
 		node1,
-		node2
+		node2,
 	);
 }
 
@@ -264,14 +264,14 @@ export function compareNodePositions(domFacade: DomFacade, node1: Value, node2: 
  */
 export function sortNodeValues(domFacade: DomFacade, nodeValues: Value[]): Value[] {
 	return mergeSort(nodeValues, (node1, node2) =>
-		compareNodePositionsWithTieBreaker(domFacade.orderOfDetachedNodes, domFacade, node1, node2)
+		compareNodePositionsWithTieBreaker(domFacade.orderOfDetachedNodes, domFacade, node1, node2),
 	).filter((nodeValue, i, sortedNodes) => {
 		if (i === 0) {
 			return true;
 		}
 		return !arePointersEqual(
 			nodeValue.value as NodePointer,
-			sortedNodes[i - 1].value as NodePointer
+			sortedNodes[i - 1].value as NodePointer,
 		);
 	});
 }

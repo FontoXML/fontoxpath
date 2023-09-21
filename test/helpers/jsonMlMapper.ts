@@ -43,7 +43,7 @@ function parseNode(document: Document, jsonml: JsonML | string): Node {
 		const data = jsonml[1] || '';
 		if (jsonml.length > 2 || typeof data !== 'string') {
 			throw new TypeError(
-				'JsonML processing instruction should contain at most a single string'
+				'JsonML processing instruction should contain at most a single string',
 			);
 		}
 		return document.createProcessingInstruction(target, data);
@@ -68,7 +68,7 @@ function parseNode(document: Document, jsonml: JsonML | string): Node {
 		const doctype = document.implementation.createDocumentType(
 			jsonml[1] as string,
 			jsonml[2] as string,
-			jsonml[3] as string
+			jsonml[3] as string,
 		);
 		return doctype;
 	}

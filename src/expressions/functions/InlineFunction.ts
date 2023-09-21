@@ -21,7 +21,7 @@ class InlineFunction extends Expression {
 	constructor(
 		paramDescriptions: { name: QName; type: SequenceType }[],
 		returnType: SequenceType,
-		functionBody: PossiblyUpdatingExpression
+		functionBody: PossiblyUpdatingExpression,
 	) {
 		super(
 			new Specificity({
@@ -32,7 +32,7 @@ class InlineFunction extends Expression {
 				// inline functions may never be statically evaluated because the domfacade may be used in the function body to resolve dom relations
 				canBeStaticallyEvaluated: false,
 				resultOrder: RESULT_ORDERINGS.UNSORTED,
-			}
+			},
 		);
 
 		this._parameterNames = paramDescriptions.map(({ name }) => name);
@@ -63,11 +63,11 @@ class InlineFunction extends Expression {
 					this._parameterBindingNames.reduce((paramByName, bindingName, i) => {
 						paramByName[bindingName] = createDoublyIterableSequence(parameters[i]);
 						return paramByName;
-					}, Object.create(null))
+					}, Object.create(null)),
 				);
 			return this._functionBody.evaluateMaybeStatically(
 				scopedDynamicContext,
-				executionParameters
+				executionParameters,
 			);
 		};
 

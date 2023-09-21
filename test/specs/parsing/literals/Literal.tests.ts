@@ -26,22 +26,22 @@ describe('Double literal', () => {
 	it('disallows directly adjacent operators before', () =>
 		chai.assert.throws(
 			() => evaluateXPathToBoolean('10.0e10div 10.0e10', documentNode),
-			'XPST0003'
+			'XPST0003',
 		));
 	it('disallows directly adjacent operators after', () =>
 		chai.assert.throws(
 			() => evaluateXPathToBoolean('10.0e10 div10.0e10', documentNode),
-			'XPST0003'
+			'XPST0003',
 		));
 	it('disallows directly adjacent binary operators after', () =>
 		chai.assert.throws(
 			() => evaluateXPathToBoolean('10.0e10 eq10.0e10', documentNode),
-			'XPST0003'
+			'XPST0003',
 		));
 	it('disallows directly adjacent compares after', () =>
 		chai.assert.throws(
 			() => evaluateXPathToBoolean('10.0e10 eq10.0e10', documentNode),
-			'XPST0003'
+			'XPST0003',
 		));
 });
 
@@ -55,7 +55,7 @@ describe('String literal', () => {
 	it('allows directly adjacent operators', () =>
 		chai.assert.equal(
 			evaluateXPathToBoolean('"some"instance of xs:string', documentNode),
-			true
+			true,
 		));
 	it('allows directly adjacent compares operators', () =>
 		chai.assert.throws(() => evaluateXPathToBoolean('"s"is"s"', documentNode), 'XPTY0004'));
@@ -66,9 +66,9 @@ describe('String literal', () => {
 				documentNode,
 				null,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 			),
-			'&'
+			'&',
 		);
 	});
 	it('does not transform entity references in XPath mode', () => {
@@ -78,9 +78,9 @@ describe('String literal', () => {
 				documentNode,
 				null,
 				{},
-				{ language: evaluateXPath.XPATH_3_1_LANGUAGE }
+				{ language: evaluateXPath.XPATH_3_1_LANGUAGE },
 			),
-			'&amp;'
+			'&amp;',
 		);
 	});
 });

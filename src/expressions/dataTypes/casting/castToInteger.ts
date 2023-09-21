@@ -6,7 +6,7 @@ import CastResult from './CastResult';
 const createIntegerValue = (value: number) => createAtomicValue(value, ValueType.XSINTEGER);
 
 export default function castToInteger(
-	instanceOf: (typeName: ValueType) => boolean
+	instanceOf: (typeName: ValueType) => boolean,
 ): (value: any) => CastResult {
 	if (instanceOf(ValueType.XSBOOLEAN)) {
 		return (value) => ({
@@ -28,7 +28,7 @@ export default function castToInteger(
 				return {
 					successful: false,
 					error: new Error(
-						`FOAR0002: can not cast ${value} to xs:integer, it is out of bounds for JavaScript numbers.`
+						`FOAR0002: can not cast ${value} to xs:integer, it is out of bounds for JavaScript numbers.`,
 					),
 				};
 			}
@@ -52,7 +52,7 @@ export default function castToInteger(
 				return {
 					successful: false,
 					error: new Error(
-						`FOCA0003: can not cast ${value} to xs:integer, it is out of bounds for JavaScript numbers.`
+						`FOCA0003: can not cast ${value} to xs:integer, it is out of bounds for JavaScript numbers.`,
 					),
 				};
 			}
@@ -66,7 +66,7 @@ export default function castToInteger(
 	return (value) => ({
 		successful: false,
 		error: new Error(
-			'XPTY0004: Casting not supported from given type to xs:integer or any of its derived types.'
+			'XPTY0004: Casting not supported from given type to xs:integer or any of its derived types.',
 		),
 	});
 }

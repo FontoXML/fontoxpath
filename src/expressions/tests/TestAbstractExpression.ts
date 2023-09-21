@@ -14,7 +14,7 @@ abstract class TestAbstractExpression extends Expression {
 		return this.evaluateToBoolean(
 			dynamicContext,
 			dynamicContext.contextItem,
-			executionParameters
+			executionParameters,
 		)
 			? sequenceFactory.singletonTrueSequence()
 			: sequenceFactory.singletonFalseSequence();
@@ -23,7 +23,7 @@ abstract class TestAbstractExpression extends Expression {
 	public abstract evaluateToBoolean(
 		dynamicContext: DynamicContext,
 		item: AtomicValue,
-		executionParameters: ExecutionParameters
+		executionParameters: ExecutionParameters,
 	): boolean;
 }
 

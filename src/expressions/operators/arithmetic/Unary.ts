@@ -47,7 +47,7 @@ class Unary extends Expression {
 	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
 		return atomize(
 			this._valueExpr.evaluateMaybeStatically(dynamicContext, executionParameters),
-			executionParameters
+			executionParameters,
 		).mapAll((atomizedValues) => {
 			if (atomizedValues.length === 0) {
 				// Return the empty sequence when inputted the empty sequence
@@ -65,7 +65,7 @@ class Unary extends Expression {
 
 			if (atomizedValues.length > 1) {
 				throw new Error(
-					'XPTY0004: The operand to a unary operator must be a sequence with a length less than one'
+					'XPTY0004: The operand to a unary operator must be a sequence with a length less than one',
 				);
 			}
 
@@ -74,8 +74,8 @@ class Unary extends Expression {
 				return sequenceFactory.singleton(
 					createAtomicValue(
 						this._kind === '+' ? castValue : -castValue,
-						ValueType.XSDOUBLE
-					)
+						ValueType.XSDOUBLE,
+					),
 				);
 			}
 
@@ -84,7 +84,7 @@ class Unary extends Expression {
 					return sequenceFactory.singleton(value);
 				}
 				return sequenceFactory.singleton(
-					createAtomicValue((value.value as number) * -1, UNARY_LOOKUP[value.type])
+					createAtomicValue((value.value as number) * -1, UNARY_LOOKUP[value.type]),
 				);
 			}
 			return sequenceFactory.singleton(createAtomicValue(Number.NaN, ValueType.XSDOUBLE));

@@ -31,7 +31,7 @@ export const tests = Object.values(testAstNodes);
 function emitTextTest(
 	_ast: IAST,
 	contextItemExpr: PartialCompilationResult,
-	_context: CodeGenContext
+	_context: CodeGenContext,
 ): [PartialCompilationResult, Bucket | null] {
 	return [
 		mapPartialCompilationResult(contextItemExpr, (contextItemExpr) =>
@@ -41,8 +41,8 @@ function emitTextTest(
 				{
 					type: GeneratedCodeBaseType.Value,
 				},
-				[]
-			)
+				[],
+			),
 		),
 		'type-3',
 	];
@@ -68,7 +68,7 @@ function emitNameTestFromQName(
 	qName: QName,
 	canBeAttribute: boolean,
 	contextItemExpr: PartialCompilationResult,
-	context: CodeGenContext
+	context: CodeGenContext,
 ): [PartialCompilationResult, Bucket | null] {
 	resolveNamespaceURI(qName, context);
 	const { prefix, namespaceURI, localName } = qName;
@@ -80,13 +80,13 @@ function emitNameTestFromQName(
 						&& (${contextItemExpr.code}.nodeType === /*ELEMENT_NODE*/ ${NODE_TYPES.ELEMENT_NODE}
 						|| ${contextItemExpr.code}.nodeType === /*ATTRIBUTE_NODE*/ ${NODE_TYPES.ATTRIBUTE_NODE})`,
 					{ type: GeneratedCodeBaseType.Value },
-					[]
+					[],
 			  )
 			: acceptAst(
 					`${contextItemExpr.code}.nodeType
 						&& ${contextItemExpr.code}.nodeType === /*ELEMENT_NODE*/ ${NODE_TYPES.ELEMENT_NODE}`,
 					{ type: GeneratedCodeBaseType.Value },
-					[]
+					[],
 			  );
 
 		// Simple cases.
@@ -99,11 +99,11 @@ function emitNameTestFromQName(
 					isCorrectNodeTypeExpr,
 					acceptAst(
 						`${contextItemExpr.code}.localName === ${escapeJavaScriptString(
-							localName
+							localName,
 						)}`,
 						{ type: GeneratedCodeBaseType.Value },
-						[]
-					)
+						[],
+					),
 				),
 				`name-${localName}`,
 			];
@@ -117,17 +117,17 @@ function emitNameTestFromQName(
 						isCorrectNodeTypeExpr,
 						acceptAst(
 							`${contextItemExpr.code}.localName === ${escapeJavaScriptString(
-								localName
+								localName,
 							)}`,
 							{ type: GeneratedCodeBaseType.Value },
-							[]
-						)
+							[],
+						),
 				  );
 
 		const namespaceUriExpr = acceptAst(
 			escapeJavaScriptString(namespaceURI),
 			{ type: GeneratedCodeBaseType.Value },
-			[]
+			[],
 		);
 		const nodeNamespaceExpr =
 			prefix === '' && canBeAttribute
@@ -136,8 +136,8 @@ function emitNameTestFromQName(
 						acceptAst(
 							`${contextItemExpr.code}.nodeType === /*ELEMENT_NODE*/ ${NODE_TYPES.ELEMENT_NODE} ? ${namespaceUriExpr.code} : null`,
 							{ type: GeneratedCodeBaseType.Value },
-							namespaceUriExpr.variables
-						)
+							namespaceUriExpr.variables,
+						),
 				  )
 				: namespaceUriExpr;
 		const matchesNamespaceExpr = mapPartialCompilationResult(
@@ -146,8 +146,8 @@ function emitNameTestFromQName(
 				acceptAst(
 					`(${contextItemExpr.code}.namespaceURI || null) === ((${nodeNamespaceExpr.code}) || null)`,
 					{ type: GeneratedCodeBaseType.Value },
-					nodeNamespaceExpr.variables
-				)
+					nodeNamespaceExpr.variables,
+				),
 		);
 
 		return [emitAnd(matchesLocalNameExpr, matchesNamespaceExpr), `name-${localName}`];
@@ -159,7 +159,7 @@ function emitNameTestFromQName(
 function emitElementTest(
 	ast: IAST,
 	contextItemExpr: PartialCompilationResult,
-	context: CodeGenContext
+	context: CodeGenContext,
 ): [PartialCompilationResult, Bucket | null] {
 	const elementName = astHelper.getFirstChild(ast, 'elementName');
 	const star = elementName && astHelper.getFirstChild(elementName, 'star');
@@ -170,8 +170,8 @@ function emitElementTest(
 				acceptAst(
 					`${contextItemExpr.code}.nodeType === /*ELEMENT_NODE*/ ${NODE_TYPES.ELEMENT_NODE}`,
 					{ type: GeneratedCodeBaseType.Value },
-					[]
-				)
+					[],
+				),
 			),
 			'type-1',
 		];
@@ -188,7 +188,7 @@ function emitNameTest(
 	ast: IAST,
 	canBeAttribute: boolean,
 	contextItemExpr: PartialCompilationResult,
-	context: CodeGenContext
+	context: CodeGenContext,
 ) {
 	return emitNameTestFromQName(astHelper.getQName(ast), canBeAttribute, contextItemExpr, context);
 }
@@ -200,7 +200,7 @@ function emitWildcard(
 	ast: IAST,
 	canBeAttribute: boolean,
 	contextItemExpr: PartialCompilationResult,
-	context: CodeGenContext
+	context: CodeGenContext,
 ): [PartialCompilationResult, Bucket | null] {
 	if (!astHelper.getFirstChild(ast, 'star')) {
 		return emitNameTestFromQName(
@@ -211,7 +211,7 @@ function emitWildcard(
 			},
 			canBeAttribute,
 			contextItemExpr,
-			context
+			context,
 		);
 	}
 
@@ -225,7 +225,7 @@ function emitWildcard(
 			},
 			canBeAttribute,
 			contextItemExpr,
-			context
+			context,
 		);
 	}
 
@@ -241,7 +241,7 @@ function emitWildcard(
 			},
 			canBeAttribute,
 			contextItemExpr,
-			context
+			context,
 		);
 	}
 
@@ -254,7 +254,7 @@ function emitWildcard(
 		},
 		canBeAttribute,
 		contextItemExpr,
-		context
+		context,
 	);
 }
 
@@ -263,7 +263,7 @@ function emitWildcard(
 function emitAnyKindTest(
 	_ast: IAST,
 	contextItemExpr: PartialCompilationResult,
-	_context: CodeGenContext
+	_context: CodeGenContext,
 ): [PartialCompilationResult, Bucket | null] {
 	return [
 		mapPartialCompilationResult(contextItemExpr, (contextItemExpr) =>
@@ -272,8 +272,8 @@ function emitAnyKindTest(
 				{
 					type: GeneratedCodeBaseType.Value,
 				},
-				[]
-			)
+				[],
+			),
 		),
 		null,
 	];
@@ -283,7 +283,7 @@ export default function emitTest(
 	ast: IAST,
 	canBeAttribute: boolean,
 	contextItemExpr: PartialCompilationResult,
-	context: CodeGenContext
+	context: CodeGenContext,
 ): [PartialCompilationResult, Bucket | null] {
 	const test = ast[0];
 

@@ -24,12 +24,12 @@ export function then3<T, S, U, V>(
 	aParser: Parser<T>,
 	bParser: Parser<S>,
 	cParser: Parser<U>,
-	func: (aValue: T, bValue: S, cValue: U) => V
+	func: (aValue: T, bValue: S, cValue: U) => V,
 ): Parser<V> {
 	return then(
 		then(aParser, bParser, (a, b): [T, S] => [a, b]),
 		cParser,
-		([a, b], c) => func(a, b, c)
+		([a, b], c) => func(a, b, c),
 	);
 }
 
@@ -38,16 +38,16 @@ export function then4<T, S, U, V, P>(
 	bParser: Parser<S>,
 	cParser: Parser<U>,
 	dParser: Parser<V>,
-	func: (aValue: T, bValue: S, cValue: U, dValue: V) => P
+	func: (aValue: T, bValue: S, cValue: U, dValue: V) => P,
 ): Parser<P> {
 	return then(
 		then(
 			then(aParser, bParser, (a, b) => [a, b]),
 			cParser,
-			([a, b], c) => [a, b, c]
+			([a, b], c) => [a, b, c],
 		),
 		dParser,
-		([a, b, c]: [T, S, U], d) => func(a, b, c, d)
+		([a, b, c]: [T, S, U], d) => func(a, b, c, d),
 	);
 }
 
@@ -57,20 +57,20 @@ export function then5<T, S, U, V, W, P>(
 	cParser: Parser<U>,
 	dParser: Parser<V>,
 	eParser: Parser<W>,
-	func: (aValue: T, bValue: S, cValue: U, dValue: V, eValue: W) => P
+	func: (aValue: T, bValue: S, cValue: U, dValue: V, eValue: W) => P,
 ): Parser<P> {
 	return then(
 		then(
 			then(
 				then(aParser, bParser, (a, b) => [a, b]),
 				cParser,
-				([a, b], c) => [a, b, c]
+				([a, b], c) => [a, b, c],
 			),
 			dParser,
-			([a, b, c]: [T, S, U], d) => [a, b, c, d]
+			([a, b, c]: [T, S, U], d) => [a, b, c, d],
 		),
 		eParser,
-		([a, b, c, d]: [T, S, U, V], e) => func(a, b, c, d, e)
+		([a, b, c, d]: [T, S, U, V], e) => func(a, b, c, d, e),
 	);
 }
 

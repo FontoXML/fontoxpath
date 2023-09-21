@@ -28,11 +28,11 @@ class Union extends Expression {
 			expressions,
 			{
 				canBeStaticallyEvaluated: expressions.every(
-					(expression) => expression.canBeStaticallyEvaluated
+					(expression) => expression.canBeStaticallyEvaluated,
 				),
 			},
 			false,
-			type
+			type,
 		);
 
 		this._subExpressions = expressions;
@@ -41,7 +41,7 @@ class Union extends Expression {
 	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
 		if (
 			this._subExpressions.every(
-				(subExpression) => subExpression.expectedResultOrder === RESULT_ORDERINGS.SORTED
+				(subExpression) => subExpression.expectedResultOrder === RESULT_ORDERINGS.SORTED,
 			)
 		) {
 			let i = 0;
@@ -55,8 +55,8 @@ class Union extends Expression {
 					return ready(
 						this._subExpressions[i++].evaluateMaybeStatically(
 							dynamicContext,
-							executionParameters
-						)
+							executionParameters,
+						),
 					);
 				},
 			}).map((value) => {
@@ -68,8 +68,8 @@ class Union extends Expression {
 		}
 		return concatSequences(
 			this._subExpressions.map((expression) =>
-				expression.evaluateMaybeStatically(dynamicContext, executionParameters)
-			)
+				expression.evaluateMaybeStatically(dynamicContext, executionParameters),
+			),
 		).mapAll((allValues) => {
 			if (allValues.some((nodeValue) => !isSubtypeOf(nodeValue.type, ValueType.NODE))) {
 				throw new Error('XPTY0004: The sequences to union are not of type node()*');

@@ -14,13 +14,13 @@ describe('function calls', () => {
 			{ localName: 'functionCallTest', namespaceURI: 'test' },
 			['xs:string', 'xs:boolean?', 'node()'],
 			'node()?',
-			({ domFacade }, str, bool, node) => (bool ? domFacade.getFirstChild(node) : null)
+			({ domFacade }, str, bool, node) => (bool ? domFacade.getFirstChild(node) : null),
 		);
 		registerCustomXPathFunction(
 			{ localName: 'functionCallWithItem', namespaceURI: 'test' },
 			['item()?'],
 			'xs:boolean',
-			(_dynamicContext, item) => !!item
+			(_dynamicContext, item) => !!item,
 		);
 	});
 
@@ -38,7 +38,7 @@ describe('function calls', () => {
 					['tip', { id: 'last' }, 'Make it fast'],
 				],
 			],
-			documentNode
+			documentNode,
 		);
 	});
 
@@ -48,16 +48,16 @@ describe('function calls', () => {
 				'fontoxpath:version()',
 				documentNode,
 				null,
-				ReturnType.STRING
+				ReturnType.STRING,
 			),
-			'devbuild'
+			'devbuild',
 		);
 	});
 
 	it('can codegen specific functions directly', () => {
 		chai.assert.equal(
 			evaluateXPathWithJsCodegen('not(name(/bla))', documentNode, null, ReturnType.BOOLEAN),
-			true
+			true,
 		);
 	});
 
@@ -67,18 +67,18 @@ describe('function calls', () => {
 				'Q{test}functionCallTest("a", true(), root(.))',
 				documentNode.firstChild.lastChild,
 				null,
-				ReturnType.FIRST_NODE
+				ReturnType.FIRST_NODE,
 			),
-			documentNode.firstChild
+			documentNode.firstChild,
 		);
 		chai.assert.equal(
 			evaluateXPathWithJsCodegen(
 				'Q{test}functionCallTest("a", xml/nope, .)',
 				documentNode.firstChild.lastChild,
 				null,
-				ReturnType.FIRST_NODE
+				ReturnType.FIRST_NODE,
 			),
-			null
+			null,
 		);
 	});
 
@@ -88,36 +88,36 @@ describe('function calls', () => {
 				'Q{test}functionCallWithItem(true())',
 				null,
 				null,
-				ReturnType.BOOLEAN
+				ReturnType.BOOLEAN,
 			),
-			true
+			true,
 		);
 		chai.assert.equal(
 			evaluateXPathWithJsCodegen(
 				'Q{test}functionCallWithItem("a")',
 				null,
 				null,
-				ReturnType.BOOLEAN
+				ReturnType.BOOLEAN,
 			),
-			true
+			true,
 		);
 		chai.assert.equal(
 			evaluateXPathWithJsCodegen(
 				'Q{test}functionCallWithItem(/xml)',
 				documentNode,
 				null,
-				ReturnType.BOOLEAN
+				ReturnType.BOOLEAN,
 			),
-			true
+			true,
 		);
 		chai.assert.equal(
 			evaluateXPathWithJsCodegen(
 				'Q{test}functionCallWithItem(/nope)',
 				documentNode,
 				null,
-				ReturnType.BOOLEAN
+				ReturnType.BOOLEAN,
 			),
-			false
+			false,
 		);
 	});
 
@@ -127,18 +127,18 @@ describe('function calls', () => {
 				'xml/tips/tip[@id="last"]/local-name()',
 				documentNode,
 				null,
-				ReturnType.STRING
+				ReturnType.STRING,
 			),
-			'tip'
+			'tip',
 		);
 		chai.assert.equal(
 			evaluateXPathWithJsCodegen(
 				'xml/tips/tip[@id="last"]/path(.)',
 				documentNode,
 				null,
-				ReturnType.STRING
+				ReturnType.STRING,
 			),
-			'/Q{}xml[1]/Q{}tips[1]/Q{}tip[3]'
+			'/Q{}xml[1]/Q{}tips[1]/Q{}tip[3]',
 		);
 	});
 });

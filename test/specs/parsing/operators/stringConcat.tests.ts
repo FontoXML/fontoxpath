@@ -12,15 +12,15 @@ describe('stringConcat', () => {
 	it('can concatenate strings', () =>
 		chai.assert.equal(
 			evaluateXPathToString('"con" || "cat" || "enate"', documentNode),
-			'concatenate'
+			'concatenate',
 		));
 
 	it('can concatenate empty sequences', () =>
 		chai.assert.equal(
 			evaluateXPathToString(
 				'() || "con" || () || "cat" || () || "enate" || ()',
-				documentNode
+				documentNode,
 			),
-			'concatenate'
+			'concatenate',
 		));
 });

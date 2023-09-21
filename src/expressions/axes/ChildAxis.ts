@@ -44,7 +44,7 @@ class ChildAxis extends Expression {
 							// Initial run
 							node = domFacade.getFirstChildPointer(
 								contextNode as ParentNodePointer,
-								this._filterBucket
+								this._filterBucket,
 							);
 							if (!node) {
 								isDone = true;
@@ -66,7 +66,7 @@ class ChildAxis extends Expression {
 				return this._childExpression.evaluateToBoolean(
 					dynamicContext,
 					item,
-					executionParameters
+					executionParameters,
 				);
 			});
 	}

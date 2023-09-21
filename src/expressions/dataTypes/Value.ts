@@ -2,7 +2,10 @@
 export type ValueValue = any;
 
 export default class Value {
-	constructor(public type: ValueType, readonly value: ValueValue) {}
+	constructor(
+		public type: ValueType,
+		readonly value: ValueValue,
+	) {}
 }
 
 /**

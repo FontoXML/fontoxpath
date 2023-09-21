@@ -6,7 +6,7 @@ import { DONE_TOKEN, IterationHint, ready } from './iterators';
 
 export default function sequenceEvery(
 	sequence: ISequence,
-	typeTest: (value: Value) => ISequence
+	typeTest: (value: Value) => ISequence,
 ): ISequence {
 	const iterator = sequence.value;
 	let typeTestResultIterator: ISequence | null = null;

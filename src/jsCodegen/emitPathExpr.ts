@@ -20,7 +20,7 @@ import {
 function emitPredicate(
 	predicateAst: IAST,
 	contextItemExpr: PartialCompilationResult,
-	context: CodeGenContext
+	context: CodeGenContext,
 ): [PartialCompilationResult, Bucket] {
 	const [expr, bucket] = context.emitBaseExpr(predicateAst, contextItemExpr, context);
 	const type = astHelper.getAttribute(predicateAst, 'type');
@@ -34,7 +34,7 @@ function emitPredicate(
 function emitPredicates(
 	predicatesAst: IAST | null,
 	contextItemExpr: PartialCompilationResult,
-	context: CodeGenContext
+	context: CodeGenContext,
 ): [PartialCompilationResult | null, Bucket] {
 	const predicateAsts = predicatesAst ? astHelper.getChildren(predicatesAst, '*') : [];
 	const [combinedPredicatesExpr, bucket] = predicateAsts.reduce<
@@ -49,7 +49,7 @@ function emitPredicates(
 				const [predicateExpr, bucket] = emitPredicate(
 					predicateAst,
 					contextItemExpr,
-					context
+					context,
 				);
 				combinedBucket = intersectBuckets(previousBucket, bucket);
 				return [
@@ -57,14 +57,14 @@ function emitPredicates(
 						acceptAst(
 							`${previousExpr.code} && ${predicateExpr.code}`,
 							{ type: GeneratedCodeBaseType.Value },
-							[...previousExpr.variables, ...predicateExpr.variables]
-						)
+							[...previousExpr.variables, ...predicateExpr.variables],
+						),
 					),
 					combinedBucket,
 				];
 			});
 		},
-		[null, null]
+		[null, null],
 	);
 
 	return [
@@ -77,8 +77,8 @@ function emitPredicates(
 							return ${combinedPredicatesExpr.code};
 						})()`,
 						{ type: GeneratedCodeBaseType.Value },
-						[]
-					)
+						[],
+					),
 			  )
 			: null,
 		bucket,
@@ -92,7 +92,7 @@ function emitSteps(
 	stepAsts: IAST[],
 	contextItemCanBeAttribute: boolean,
 	contextItemExpr: PartialCompilationResult,
-	context: CodeGenContext
+	context: CodeGenContext,
 ): [PartialCompilationResult, Bucket] {
 	if (stepAsts.length === 0) {
 		return [
@@ -100,8 +100,8 @@ function emitSteps(
 				acceptAst(
 					`yield ${contextItemExpr.code};`,
 					{ type: GeneratedCodeBaseType.Statement },
-					contextItemExpr.variables
-				)
+					contextItemExpr.variables,
+				),
 			),
 			null,
 		];
@@ -130,7 +130,7 @@ function emitSteps(
 	const [predicatesExpr, predicatesBucket] = emitPredicates(
 		predicatesAst,
 		stepContextItemExpr,
-		context
+		context,
 	);
 
 	const axisAst = astHelper.getFirstChild(stepAst, 'xpathAxis');
@@ -148,7 +148,7 @@ function emitSteps(
 			testAst,
 			stepContextItemCanBeAttribute,
 			stepContextItemExpr,
-			context
+			context,
 		);
 
 		const combinedConditionExpr =
@@ -160,7 +160,7 @@ function emitSteps(
 			restStepAsts,
 			stepContextItemCanBeAttribute,
 			stepContextItemExpr,
-			context
+			context,
 		);
 
 		return emitAxis(
@@ -169,7 +169,7 @@ function emitSteps(
 			combinedConditionBucket,
 			nestedStepsCode,
 			stepContextItemExpr,
-			contextItemExpr
+			contextItemExpr,
 		);
 	}
 
@@ -183,7 +183,7 @@ function emitSteps(
 	const [filterExpr, filterBucket] = context.emitBaseExpr(
 		filterExprAst,
 		contextItemExpr,
-		context
+		context,
 	);
 	// Assign it to the stepContextItem variable
 	// If the filterExpr is a path, the result could be another generator we should loop over
@@ -198,7 +198,7 @@ function emitSteps(
 									throw new Error('XPTY0019: The result of E1 in a path expression E1/E2 should evaluate to a sequence of nodes.');
 								}`,
 							{ type: GeneratedCodeBaseType.Statement },
-							[]
+							[],
 					  );
 
 			// Compile nested steps
@@ -206,7 +206,7 @@ function emitSteps(
 				restStepAsts,
 				true,
 				stepContextItemExpr,
-				context
+				context,
 			);
 
 			const nestedCode =
@@ -220,9 +220,9 @@ function emitSteps(
 									${nestedStepsCode.code}
 								}`,
 									{ type: GeneratedCodeBaseType.Statement },
-									predicatesExpr.variables
-								)
-							)
+									predicatesExpr.variables,
+								),
+							),
 					  );
 
 			// Combine
@@ -242,8 +242,8 @@ function emitSteps(
 									...stepContextItemExpr.variables,
 									...filterExpr.variables,
 									...pathTypeCheck.variables,
-								]
-							)
+								],
+							),
 						);
 
 					case GeneratedCodeBaseType.Value:
@@ -259,7 +259,7 @@ function emitSteps(
 								...stepContextItemExpr.variables,
 								...filterExpr.variables,
 								...pathTypeCheck.variables,
-							]
+							],
 						);
 					default:
 						return rejectAst('Unsupported generated code type for filterExpr');
@@ -272,7 +272,7 @@ function emitSteps(
 
 function emitRootExpr(
 	contextItemExpr: PartialCompilationResult,
-	_context: CodeGenContext
+	_context: CodeGenContext,
 ): PartialCompilationResult {
 	return mapPartialCompilationResult(contextItemExpr, (contextItemExpr) =>
 		acceptAst(
@@ -287,15 +287,15 @@ function emitRootExpr(
 				return n;
 			})()`,
 			{ type: GeneratedCodeBaseType.Value },
-			contextItemExpr.variables
-		)
+			contextItemExpr.variables,
+		),
 	);
 }
 
 function emitSingleSelfPathExpr(
 	stepAst: IAST,
 	contextItemExpr: PartialCompilationResult,
-	context: CodeGenContext
+	context: CodeGenContext,
 ): [PartialCompilationResult, Bucket] {
 	return mapPartialCompilationResultAndBucket(contextItemExpr, (contextItemExpr) => {
 		const lookupAsts = astHelper.getChildren(stepAst, 'lookup');
@@ -306,7 +306,7 @@ function emitSingleSelfPathExpr(
 		const [predicatesExpr, predicatesBucket] = emitPredicates(
 			predicatesAst,
 			contextItemExpr,
-			context
+			context,
 		);
 		const testAst = astHelper.getFirstChild(stepAst, tests);
 		if (!testAst) {
@@ -322,8 +322,8 @@ function emitSingleSelfPathExpr(
 				acceptAst(
 					`((${combinedConditionExpr.code}) ? ${contextItemExpr.code} : null)`,
 					{ type: GeneratedCodeBaseType.Value },
-					[...contextItemExpr.variables, ...combinedConditionExpr.variables]
-				)
+					[...contextItemExpr.variables, ...combinedConditionExpr.variables],
+				),
 			),
 			combinedConditionBucket,
 		];
@@ -340,7 +340,7 @@ function emitSingleSelfPathExpr(
 export function emitPathExpr(
 	ast: IAST,
 	contextItemExpr: PartialCompilationResult,
-	context: CodeGenContext
+	context: CodeGenContext,
 ): [PartialCompilationResult, Bucket] {
 	// Optimized code for single-self-axis paths, which are used a lot in selectors and don't need
 	// a generator as they only test the context node
@@ -367,8 +367,8 @@ export function emitPathExpr(
 			${stepsCode.code}
 		})`,
 			{ type: GeneratedCodeBaseType.Generator },
-			[]
-		)
+			[],
+		),
 	);
 	return [generatorExpr, bucket];
 }

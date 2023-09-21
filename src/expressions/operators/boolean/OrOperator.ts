@@ -28,11 +28,11 @@ class OrOperator extends Expression {
 			expressions,
 			{
 				canBeStaticallyEvaluated: expressions.every(
-					(selector) => selector.canBeStaticallyEvaluated
+					(selector) => selector.canBeStaticallyEvaluated,
 				),
 			},
 			false,
-			type
+			type,
 		);
 
 		// If all subExpressions define the same bucket: use that one, else, use no bucket.
@@ -67,7 +67,7 @@ class OrOperator extends Expression {
 			if (contextItem !== null && isSubtypeOf(contextItem.type, ValueType.NODE)) {
 				contextItemBuckets = getBucketsForPointer(
 					contextItem.value,
-					executionParameters.domFacade
+					executionParameters.domFacade,
 				);
 			}
 		}
@@ -88,7 +88,7 @@ class OrOperator extends Expression {
 							}
 							resultSequence = subExpression.evaluateMaybeStatically(
 								dynamicContext,
-								executionParameters
+								executionParameters,
 							);
 						}
 						const ebv = resultSequence.getEffectiveBooleanValue();

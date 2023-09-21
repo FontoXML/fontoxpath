@@ -15,7 +15,7 @@ describe('boolean functions', () => {
 		it('accepts "true"', () => {
 			chai.assert.equal(
 				evaluateXPathToBoolean('xs:boolean("true")', documentNode, domFacade),
-				true
+				true,
 			);
 		});
 	});
@@ -23,7 +23,7 @@ describe('boolean functions', () => {
 		it('accepts "true"', () => {
 			chai.assert.equal(
 				evaluateXPathToBoolean('fn:boolean("true")', documentNode, domFacade),
-				true
+				true,
 			);
 		});
 	});

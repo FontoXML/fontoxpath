@@ -29,18 +29,18 @@ describe('attribute', () => {
 		chai.assert.equal(
 			evaluateXPathToString(
 				'attribute::someAttribute',
-				documentNode.createComment('some comment')
+				documentNode.createComment('some comment'),
 			),
-			''
+			'',
 		));
 
 	it('returns no attributes for processing instructions', () =>
 		chai.assert.equal(
 			evaluateXPathToString(
 				'attribute::someAttribute',
-				documentNode.createProcessingInstruction('someTarget', 'some data')
+				documentNode.createProcessingInstruction('someTarget', 'some data'),
 			),
-			''
+			'',
 		));
 
 	it('resolves to false if attribute is absent', () => {
@@ -53,13 +53,13 @@ describe('attribute', () => {
 		element.setAttributeNS(
 			'http://fontoxml.com/ns/',
 			'someNamespace:someAttribute',
-			'someValue'
+			'someValue',
 		);
 		chai.assert.equal(
 			evaluateXPathToString('attribute::someNamespace:someAttribute', element, null, null, {
 				namespaceResolver: () => 'http://fontoxml.com/ns/',
 			}),
-			'someValue'
+			'someValue',
 		);
 	});
 
@@ -68,7 +68,7 @@ describe('attribute', () => {
 		element.setAttributeNS(
 			'http://fontoxml.com/ns/',
 			'someNamespace:someAttribute',
-			'someValue'
+			'someValue',
 		);
 		chai.assert.equal(
 			evaluateXPathToString(
@@ -76,9 +76,9 @@ describe('attribute', () => {
 				element,
 				null,
 				null,
-				{ namespaceResolver: () => 'http://fontoxml.com/ns/' }
+				{ namespaceResolver: () => 'http://fontoxml.com/ns/' },
 			),
-			'someValue'
+			'someValue',
 		);
 	});
 
@@ -99,13 +99,13 @@ describe('attribute', () => {
 		element.setAttributeNS(
 			'http://fontoxml.com/ns/',
 			'someNamespace:someAttribute',
-			'someValue'
+			'someValue',
 		);
 		chai.assert.equal(
 			evaluateXPathToString('@someNamespace:someAttribute="someValue"', element, null, null, {
 				namespaceResolver: () => 'http://fontoxml.com/ns/',
 			}),
-			'true'
+			'true',
 		);
 	});
 
@@ -116,7 +116,7 @@ describe('attribute', () => {
 		element.setAttribute('someAttribute3', 'someValue3');
 		chai.assert.equal(
 			evaluateXPathToString('string-join(@*/name(), ",")', element),
-			'someAttribute1,someAttribute2,someAttribute3'
+			'someAttribute1,someAttribute2,someAttribute3',
 		);
 	});
 
@@ -127,7 +127,7 @@ describe('attribute', () => {
 		element.setAttribute('someAttribute3', 'someValue3');
 		chai.assert.equal(
 			evaluateXPathToString('string-join(@node()/name(), ",")', element),
-			'someAttribute1,someAttribute2,someAttribute3'
+			'someAttribute1,someAttribute2,someAttribute3',
 		);
 	});
 
@@ -144,7 +144,7 @@ describe('attribute', () => {
 		element.setAttributeNS(
 			'http://www.w3.org/2000/xmlns/',
 			'xmlns:prefix',
-			'https://www.example.org'
+			'https://www.example.org',
 		);
 		element.setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns', 'https://www.example.org');
 		element.setAttributeNS('https://www.example.org', 'prefix:someAttribute', 'someValue');

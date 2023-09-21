@@ -14,7 +14,7 @@ class KindTest extends TestAbstractExpression {
 		super(
 			new Specificity({
 				[Specificity.NODETYPE_KIND]: 1,
-			})
+			}),
 		);
 
 		this._nodeType = nodeType;
@@ -23,7 +23,7 @@ class KindTest extends TestAbstractExpression {
 	public evaluateToBoolean(
 		_dynamicContext: DynamicContext,
 		node: Value,
-		executionParameters: ExecutionParameters
+		executionParameters: ExecutionParameters,
 	) {
 		if (!isSubtypeOf(node.type, ValueType.NODE)) {
 			return false;

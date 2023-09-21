@@ -59,7 +59,7 @@ function generalCompare(
 	operator: string,
 	firstSequence: ISequence,
 	secondSequence: ISequence,
-	dynamicContext: DynamicContext
+	dynamicContext: DynamicContext,
 ): ISequence {
 	// Change operator to equivalent valueCompare operator
 	operator = OPERATOR_TRANSLATION[operator];
@@ -94,7 +94,7 @@ function generalCompare(
 					const compareFunction = valueCompare(
 						operator,
 						firstValue.type,
-						secondValue.type
+						secondValue.type,
 					);
 
 					if (compareFunction(firstValue, secondValue, dynamicContext)) {
@@ -106,7 +106,7 @@ function generalCompare(
 			.switchCases({
 				default: () => sequenceFactory.singletonTrueSequence(),
 				empty: () => sequenceFactory.singletonFalseSequence(),
-			})
+			}),
 	);
 }
 
@@ -121,7 +121,7 @@ export default class GeneralCompare extends Expression {
 			[firstExpression, secondExpression],
 			{
 				canBeStaticallyEvaluated: false,
-			}
+			},
 		);
 		this._firstExpression = firstExpression;
 		this._secondExpression = secondExpression;
@@ -130,15 +130,15 @@ export default class GeneralCompare extends Expression {
 
 	public evaluate(
 		dynamicContext: DynamicContext,
-		executionParameters: ExecutionParameters
+		executionParameters: ExecutionParameters,
 	): ISequence {
 		const firstSequence = this._firstExpression.evaluateMaybeStatically(
 			dynamicContext,
-			executionParameters
+			executionParameters,
 		);
 		const secondSequence = this._secondExpression.evaluateMaybeStatically(
 			dynamicContext,
-			executionParameters
+			executionParameters,
 		);
 
 		return firstSequence.switchCases({
@@ -153,18 +153,18 @@ export default class GeneralCompare extends Expression {
 					default: () => {
 						const firstAtomizedSequence = atomizeSequence(
 							firstSequence,
-							executionParameters
+							executionParameters,
 						);
 						const secondAtomizedSequence = atomizeSequence(
 							secondSequence,
-							executionParameters
+							executionParameters,
 						);
 
 						return generalCompare(
 							this._operator,
 							firstAtomizedSequence,
 							secondAtomizedSequence,
-							dynamicContext
+							dynamicContext,
 						);
 					},
 				}),

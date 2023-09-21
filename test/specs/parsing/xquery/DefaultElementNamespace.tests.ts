@@ -19,8 +19,8 @@ self::p
 				documentNode.createElementNS('http://example.com', 'p'),
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-			)
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
+			),
 		);
 
 		chai.assert.isFalse(
@@ -32,8 +32,8 @@ self::p
 				documentNode.createElementNS('http://example.com', 'p'),
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-			)
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
+			),
 		);
 	});
 });

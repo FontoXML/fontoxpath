@@ -18,7 +18,7 @@ declare interface IRuntimeLib {
 		namespaceURI: string,
 		localName: string,
 		args: UntypedExternalValue[],
-		options: Options | null
+		options: Options | null,
 	) => unknown;
 	errXPDY0002: typeof errXPDY0002;
 }
@@ -46,7 +46,7 @@ const runtimeLib: IRuntimeLib = {
 			null,
 			null,
 			currentContext,
-			null
+			null,
 		);
 		const ret = functionProperties.callFunction(
 			dynamicContext,
@@ -58,9 +58,9 @@ const runtimeLib: IRuntimeLib = {
 				adaptJavaScriptValueToSequence(
 					wrappedDomFacade,
 					v,
-					functionProperties.argumentTypes[i] as SequenceType
-				)
-			)
+					functionProperties.argumentTypes[i] as SequenceType,
+				),
+			),
 		);
 		return adaptXPathValueToJavascriptValue(
 			ret,
@@ -68,7 +68,7 @@ const runtimeLib: IRuntimeLib = {
 				type: ValueType.ITEM,
 				mult: SequenceMultiplicity.ZERO_OR_ONE,
 			},
-			executionParameters
+			executionParameters,
 		);
 	},
 	errXPDY0002,

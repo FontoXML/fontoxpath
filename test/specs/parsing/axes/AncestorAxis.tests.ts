@@ -18,28 +18,28 @@ describe('ancestor', () => {
 	it('parses ancestor::', () => {
 		jsonMlMapper.parse(
 			['someParentElement', ['someElement', { someAttribute: 'someValue' }]],
-			documentNode
+			documentNode,
 		);
 		chai.assert.deepEqual(
 			evaluateXPathToNodes(
 				'ancestor::someParentElement',
-				documentNode.documentElement.firstChild
+				documentNode.documentElement.firstChild,
 			),
-			[documentNode.documentElement]
+			[documentNode.documentElement],
 		);
 	});
 
 	it('correctly sets contextSequence', () => {
 		jsonMlMapper.parse(
 			['someParentElement', ['someElement', { someAttribute: 'someValue' }]],
-			documentNode
+			documentNode,
 		);
 		chai.assert.deepEqual(
 			evaluateXPathToStrings(
 				'ancestor-or-self::*/position()',
-				documentNode.documentElement.firstChild
+				documentNode.documentElement.firstChild,
 			),
-			['1', '2']
+			['1', '2'],
 		);
 	});
 
@@ -64,11 +64,11 @@ describe('ancestor', () => {
 	it('can move up more than a single step', () => {
 		jsonMlMapper.parse(
 			['works', ['employee'], ['employee', ['overtime', ['day'], ['day']]]],
-			documentNode
+			documentNode,
 		);
 		chai.assert.deepEqual(
 			evaluateXPathToNodes('/works/employee/overtime/day/ancestor::employee', documentNode),
-			[documentNode.documentElement.lastChild]
+			[documentNode.documentElement.lastChild],
 		);
 	});
 });
@@ -77,34 +77,34 @@ describe('ancestor-or-self', () => {
 	it('parses ancestor-or-self:: ancestor part', () => {
 		jsonMlMapper.parse(
 			['someParentElement', ['someElement', { someAttribute: 'someValue' }]],
-			documentNode
+			documentNode,
 		);
 		chai.assert.deepEqual(
 			evaluateXPathToNodes(
 				'ancestor-or-self::someParentElement',
-				documentNode.documentElement.firstChild
+				documentNode.documentElement.firstChild,
 			),
-			[documentNode.documentElement]
+			[documentNode.documentElement],
 		);
 	});
 	it('parses ancestor-or-self:: self part', () => {
 		jsonMlMapper.parse(
 			['someParentElement', ['someElement', { someAttribute: 'someValue' }]],
-			documentNode
+			documentNode,
 		);
 		chai.assert.deepEqual(
 			evaluateXPathToNodes(
 				'ancestor-or-self::someParentElement',
-				documentNode.documentElement
+				documentNode.documentElement,
 			),
-			[documentNode.documentElement]
+			[documentNode.documentElement],
 		);
 	});
 	it('orders self before all ancestors', () => {
 		jsonMlMapper.parse(['someParentElement', ['someElement']], documentNode);
 		chai.assert.deepEqual(
 			evaluateXPathToNodes('ancestor-or-self::*', documentNode.documentElement.firstChild),
-			[documentNode.documentElement, documentNode.documentElement.firstChild]
+			[documentNode.documentElement, documentNode.documentElement.firstChild],
 		);
 	});
 
@@ -112,35 +112,35 @@ describe('ancestor-or-self', () => {
 		jsonMlMapper.parse(['someParentElement', ['someElement']], documentNode);
 		chai.assert.deepEqual(
 			evaluateXPathToNodes('//someElement/ancestor::*[last()]', documentNode),
-			[documentNode.documentElement]
+			[documentNode.documentElement],
 		);
 	});
 
 	it('can move up more than a single step', () => {
 		jsonMlMapper.parse(
 			['works', ['employee'], ['employee', ['overtime', ['day', 'text'], ['day']]]],
-			documentNode
+			documentNode,
 		);
 		chai.assert.deepEqual(
 			evaluateXPathToNodes(
 				'/works/employee/overtime/day/ancestor-or-self::employee',
-				documentNode
+				documentNode,
 			),
-			[documentNode.documentElement.lastChild]
+			[documentNode.documentElement.lastChild],
 		);
 		chai.assert.deepEqual(
 			evaluateXPathToNodes(
 				'/works/employee/overtime/day/text()/ancestor-or-self::text()',
-				documentNode
+				documentNode,
 			),
-			[documentNode.documentElement.lastChild.firstChild.firstChild.firstChild]
+			[documentNode.documentElement.lastChild.firstChild.firstChild.firstChild],
 		);
 		chai.assert.deepEqual(
 			evaluateXPathToNodes(
 				'/works/employee/overtime/day/ancestor-or-self::document-node()',
-				documentNode
+				documentNode,
 			),
-			[documentNode]
+			[documentNode],
 		);
 	});
 });

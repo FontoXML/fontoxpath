@@ -13,35 +13,35 @@ describe('preceding-sibling', () => {
 	it('returns the previous sibling', () => {
 		jsonMlMapper.parse(
 			['someParentElement', ['someSiblingElement'], ['someElement']],
-			documentNode
+			documentNode,
 		);
 		chai.assert.deepEqual(
 			evaluateXPathToNodes(
 				'preceding-sibling::someSiblingElement',
-				documentNode.documentElement.lastChild
+				documentNode.documentElement.lastChild,
 			),
-			[documentNode.documentElement.firstChild]
+			[documentNode.documentElement.firstChild],
 		);
 	});
 
 	it('does not return non-matching siblings', () => {
 		jsonMlMapper.parse(
 			['someParentElement', ['someNonMatchingElement'], ['someElement']],
-			documentNode
+			documentNode,
 		);
 		chai.assert.deepEqual(
 			evaluateXPathToNodes(
 				'preceding-sibling::someSiblingElement',
-				documentNode.documentElement.lastChild
+				documentNode.documentElement.lastChild,
 			),
-			[]
+			[],
 		);
 	});
 
 	it('passes buckets for preceding-sibling', () => {
 		jsonMlMapper.parse(
 			['parentElement', ['firstChildElement'], ['secondChildElement']],
-			documentNode
+			documentNode,
 		);
 
 		const secondChildNode = documentNode.firstChild.lastChild;
@@ -65,14 +65,14 @@ describe('preceding-sibling', () => {
 		evaluateXPathToNodes(
 			'preceding-sibling::firstChildElement',
 			secondChildNode,
-			testDomFacade
+			testDomFacade,
 		);
 	});
 
 	it('passes intersecting buckets for preceding-sibling', () => {
 		jsonMlMapper.parse(
 			['parentElement', ['firstChildElement'], ['secondChildElement']],
-			documentNode
+			documentNode,
 		);
 
 		const secondChildNode = documentNode.firstChild.lastChild;
@@ -96,7 +96,7 @@ describe('preceding-sibling', () => {
 		evaluateXPathToNodes(
 			'preceding-sibling::*[self::firstChildElement]',
 			secondChildNode,
-			testDomFacade
+			testDomFacade,
 		);
 	});
 

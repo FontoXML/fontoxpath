@@ -17,15 +17,15 @@ describe('functions over qnames', () => {
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
 					'local-name-from-QName(QName((), "someElement")) = "someElement"',
-					documentNode
-				)
+					documentNode,
+				),
 			));
 		it('Returns the local part of a qname with no prefix', () =>
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
 					'local-name-from-QName(QName((), "someElement")) = "someElement"',
-					documentNode
-				)
+					documentNode,
+				),
 			));
 		it('Returns the local part of a qname resulting from an attribute', () => {
 			documentNode
@@ -34,8 +34,8 @@ describe('functions over qnames', () => {
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
 					'local-name-from-QName(node-name(//@*)) eq "someAttribute"',
-					documentNode
-				)
+					documentNode,
+				),
 			);
 		});
 	});
@@ -43,28 +43,28 @@ describe('functions over qnames', () => {
 	describe('prefix-from-QName()', () => {
 		it('returns the empty sequence if inputted the empty sequence', () =>
 			chai.assert.isTrue(
-				evaluateXPathToBoolean('prefix-from-QName(()) => count() = 0', documentNode)
+				evaluateXPathToBoolean('prefix-from-QName(()) => count() = 0', documentNode),
 			));
 		it('Returns the prefix of a qname with no prefix', () =>
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
 					'prefix-from-QName(QName((), "someElement")) => empty()',
-					documentNode
-				)
+					documentNode,
+				),
 			));
 		it('Returns the prefix of a qname with a prefix', () =>
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
 					'prefix-from-QName(QName("http://example.com/ns", "ns:someElement")) = "ns"',
-					documentNode
-				)
+					documentNode,
+				),
 			));
 		it('Returns the prefix of a qname resulting from an attribute', () => {
 			documentNode
 				.appendChild(documentNode.createElementNS('http://example.com/ns', 'someElement'))
 				.setAttributeNS('http://example.com/ns', 'ns:someAttribute', 'someValue');
 			chai.assert.isTrue(
-				evaluateXPathToBoolean('prefix-from-QName(node-name(//@*)) = "ns"', documentNode)
+				evaluateXPathToBoolean('prefix-from-QName(node-name(//@*)) = "ns"', documentNode),
 			);
 		});
 	});
@@ -74,27 +74,27 @@ describe('functions over qnames', () => {
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
 					'namespace-uri-from-QName(QName((), "someElement")) = ""',
-					documentNode
-				)
+					documentNode,
+				),
 			));
 		it('Returns the namespace-uri of a qname with a prefix', () =>
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
 					'namespace-uri-from-QName(QName("http://example.com/ns", "ns:someElement")) = "http://example.com/ns"',
-					documentNode
-				)
+					documentNode,
+				),
 			));
 		it('Returns the namespace uri of a qname resulting from an attribute', () => {
 			documentNode
 				.appendChild(
-					documentNode.createElementNS('http://example.com/ns', 'ns:someElement')
+					documentNode.createElementNS('http://example.com/ns', 'ns:someElement'),
 				)
 				.setAttributeNS('http://example.com/ns', 'ns:someAttribute', 'someValue');
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
 					'namespace-uri-from-QName(node-name((//@*)[1])) = "http://example.com/ns"',
-					documentNode
-				)
+					documentNode,
+				),
 			);
 		});
 	});

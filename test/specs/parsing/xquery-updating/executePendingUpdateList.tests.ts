@@ -17,7 +17,7 @@ describe('executePendingUpdateList', () => {
 			documentNode,
 			null,
 			{},
-			{}
+			{},
 		);
 
 		chai.assert.equal(pendingUpdateList.length, 1);
@@ -35,7 +35,7 @@ describe('executePendingUpdateList', () => {
 			documentNode,
 			null,
 			{},
-			{}
+			{},
 		);
 
 		chai.assert.equal(pendingUpdateList.length, 1);
@@ -44,7 +44,7 @@ describe('executePendingUpdateList', () => {
 
 		chai.assert.equal(
 			documentNode.documentElement.outerHTML,
-			'<e xmlns:ns1="my-ns" ns1:foo="bar"/>'
+			'<e xmlns:ns1="my-ns" ns1:foo="bar"/>',
 		);
 	});
 
@@ -56,7 +56,7 @@ describe('executePendingUpdateList', () => {
 			documentNode,
 			null,
 			{},
-			{}
+			{},
 		);
 
 		chai.assert.equal(pendingUpdateList.length, 1);
@@ -65,7 +65,7 @@ describe('executePendingUpdateList', () => {
 
 		chai.assert.equal(
 			documentNode.documentElement.outerHTML,
-			'<element xmlns:ns1="my-ns" beep="boop"/>'
+			'<element xmlns:ns1="my-ns" beep="boop"/>',
 		);
 	});
 
@@ -77,7 +77,7 @@ describe('executePendingUpdateList', () => {
 			documentNode,
 			null,
 			{},
-			{}
+			{},
 		);
 
 		chai.assert.equal(pendingUpdateList.length, 1);
@@ -86,7 +86,7 @@ describe('executePendingUpdateList', () => {
 
 		chai.assert.equal(
 			documentNode.documentElement.outerHTML,
-			'<element xmlns:ns1="my-ns" ns1:foo="boop"/>'
+			'<element xmlns:ns1="my-ns" ns1:foo="boop"/>',
 		);
 	});
 
@@ -98,7 +98,7 @@ describe('executePendingUpdateList', () => {
 			documentNode,
 			null,
 			{},
-			{}
+			{},
 		);
 
 		chai.assert.equal(pendingUpdateList.length, 1);
@@ -108,7 +108,7 @@ describe('executePendingUpdateList', () => {
 
 	it('throws an error when an replace attribute tries to overwrite an existing attribute in a namespace', () => {
 		documentNode = slimdom.parseXmlDocument(
-			'<element xmlns:ns1="my-ns" ns1:foo="bar" beep="boop"/>'
+			'<element xmlns:ns1="my-ns" ns1:foo="bar" beep="boop"/>',
 		);
 
 		const { pendingUpdateList, xdmValue } = evaluateUpdatingExpressionSync(
@@ -116,7 +116,7 @@ describe('executePendingUpdateList', () => {
 			documentNode,
 			null,
 			{},
-			{}
+			{},
 		);
 
 		chai.assert.equal(pendingUpdateList.length, 1);

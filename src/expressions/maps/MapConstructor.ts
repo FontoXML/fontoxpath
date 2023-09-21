@@ -21,13 +21,13 @@ class MapConstructor extends Expression {
 			}),
 			entries.reduce(
 				(allExpressions, { key, value }) => allExpressions.concat(key, value),
-				[]
+				[],
 			),
 			{
 				canBeStaticallyEvaluated: false,
 			},
 			false,
-			type
+			type,
 		);
 		this._entries = entries;
 	}
@@ -36,15 +36,15 @@ class MapConstructor extends Expression {
 		const keySequences = this._entries.map((kvp) =>
 			atomize(
 				kvp.key.evaluateMaybeStatically(dynamicContext, executionParameters),
-				executionParameters
+				executionParameters,
 			).switchCases({
 				default: () => {
 					throw new Error(
-						'XPTY0004: A key of a map should be a single atomizable value.'
+						'XPTY0004: A key of a map should be a single atomizable value.',
 					);
 				},
 				singleton: (seq) => seq,
-			})
+			}),
 		);
 
 		return zipSingleton(keySequences, (keys) =>
@@ -55,12 +55,12 @@ class MapConstructor extends Expression {
 						value: createDoublyIterableSequence(
 							this._entries[keyIndex].value.evaluateMaybeStatically(
 								dynamicContext,
-								executionParameters
-							)
+								executionParameters,
+							),
 						),
-					}))
-				)
-			)
+					})),
+				),
+			),
 		);
 	}
 }

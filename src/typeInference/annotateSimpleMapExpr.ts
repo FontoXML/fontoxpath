@@ -12,7 +12,7 @@ import { AnnotationContext } from './AnnotationContext';
 export function annotateSimpleMapExpr(
 	ast: IAST,
 	context: AnnotationContext,
-	lastType: SequenceType
+	lastType: SequenceType,
 ): SequenceType {
 	if (lastType !== undefined && lastType !== null) {
 		const sequenceType: SequenceType = {

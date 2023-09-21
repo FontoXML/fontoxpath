@@ -4,7 +4,7 @@ import CastResult from './CastResult';
 import castToFloatLikeType from './castToFloatLikeType';
 
 export default function castToDouble(
-	instanceOf: (typeName: ValueType) => boolean
+	instanceOf: (typeName: ValueType) => boolean,
 ): (value: any) => CastResult {
 	const caster = castToFloatLikeType(instanceOf, ValueType.XSDOUBLE);
 	return (value) => {

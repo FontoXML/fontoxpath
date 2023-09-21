@@ -6,7 +6,7 @@ import CastResult from './CastResult';
 const createAnyURIValue = (value: any): AtomicValue => createAtomicValue(value, ValueType.XSANYURI);
 
 export default function castToAnyURI(
-	instanceOf: (typeName: ValueType) => boolean
+	instanceOf: (typeName: ValueType) => boolean,
 ): (value: any) => CastResult {
 	if (instanceOf(ValueType.XSSTRING) || instanceOf(ValueType.XSUNTYPEDATOMIC)) {
 		return (value) => ({
@@ -18,7 +18,7 @@ export default function castToAnyURI(
 	return () => ({
 		successful: false,
 		error: new Error(
-			'XPTY0004: Casting not supported from given type to xs:anyURI or any of its derived types.'
+			'XPTY0004: Casting not supported from given type to xs:anyURI or any of its derived types.',
 		),
 	});
 }

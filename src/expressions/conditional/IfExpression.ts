@@ -16,7 +16,7 @@ class IfExpression extends PossiblyUpdatingExpression {
 		testExpression: Expression,
 		thenExpression: PossiblyUpdatingExpression,
 		elseExpression: PossiblyUpdatingExpression,
-		type: SequenceType
+		type: SequenceType,
 	) {
 		const specificity = testExpression.specificity
 			.add(thenExpression.specificity)
@@ -37,7 +37,7 @@ class IfExpression extends PossiblyUpdatingExpression {
 				subtree:
 					thenExpression.subtree === elseExpression.subtree && thenExpression.subtree,
 			},
-			type
+			type,
 		);
 
 		this._testExpression = testExpression;
@@ -46,7 +46,7 @@ class IfExpression extends PossiblyUpdatingExpression {
 	public performFunctionalEvaluation(
 		dynamicContext: DynamicContext,
 		_executionParameters: ExecutionParameters,
-		sequenceCallbacks: ((dynamicContext: DynamicContext) => ISequence)[]
+		sequenceCallbacks: ((dynamicContext: DynamicContext) => ISequence)[],
 	) {
 		let resultIterator: IIterator<Value> | null = null;
 		const ifExpressionResultSequence = sequenceCallbacks[0](dynamicContext);

@@ -10,7 +10,7 @@ export default class ArrayBackedSequence implements ISequence {
 
 	constructor(
 		private readonly _sequenceFactory: typeof sequenceFactory,
-		private readonly _values: Value[]
+		private readonly _values: Value[],
 	) {
 		let i = -1;
 		this.value = {
@@ -60,7 +60,7 @@ export default class ArrayBackedSequence implements ISequence {
 		}
 		// We always have a length > 1, or we'd be a singletonSequence
 		throw errFORG0006(
-			`Cannot determine the effective boolean value of a sequence with a length higher than one.`
+			`Cannot determine the effective boolean value of a sequence with a length higher than one.`,
 		);
 	}
 
@@ -86,7 +86,7 @@ export default class ArrayBackedSequence implements ISequence {
 						: ready(callback(this._values[i], i, this));
 				},
 			},
-			this._values.length
+			this._values.length,
 		);
 	}
 

@@ -21,17 +21,17 @@ class SequenceOperator extends PossiblyUpdatingExpression {
 			{
 				resultOrder: RESULT_ORDERINGS.UNSORTED,
 				canBeStaticallyEvaluated: expressions.every(
-					(selector) => selector.canBeStaticallyEvaluated
+					(selector) => selector.canBeStaticallyEvaluated,
 				),
 			},
-			type
+			type,
 		);
 	}
 
 	public performFunctionalEvaluation(
 		dynamicContext: DynamicContext,
 		_executionParameters: ExecutionParameters,
-		sequenceCallbacks: ((innerDynamicContext: DynamicContext) => ISequence)[]
+		sequenceCallbacks: ((innerDynamicContext: DynamicContext) => ISequence)[],
 	) {
 		if (!sequenceCallbacks.length) {
 			return sequenceFactory.empty();

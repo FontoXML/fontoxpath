@@ -29,7 +29,7 @@ export class AnnotationContext {
 		if (this._variableScope[this._scopeIndex][varName]) {
 			// TODO: change the error being thrown in here to adhere the "error code" code.
 			throw new Error(
-				`Another variable of in the scope ${this._scopeIndex} with the same name ${varName} already exists`
+				`Another variable of in the scope ${this._scopeIndex} with the same name ${varName} already exists`,
 			);
 		}
 

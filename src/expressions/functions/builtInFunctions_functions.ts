@@ -12,13 +12,13 @@ const fnFunctionLookup: FunctionDefinitionType = (
 	_executionParameters,
 	staticContext,
 	nameSequence,
-	aritySequence
+	aritySequence,
 ) => {
 	return zipSingleton([nameSequence, aritySequence], ([name, arity]) => {
 		const functionProperties = staticContext.lookupFunction(
 			name.value.namespaceURI,
 			name.value.localName,
-			arity.value
+			arity.value,
 		);
 
 		if (functionProperties === null) {
@@ -42,14 +42,14 @@ const fnFunctionName: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	functionItem
+	functionItem,
 ) => {
 	return zipSingleton([functionItem], ([functionValue]: FunctionValue[]) => {
 		if (functionValue.isAnonymous()) {
 			return sequenceFactory.empty();
 		}
 		return sequenceFactory.singleton(
-			createAtomicValue(functionValue.getQName(), ValueType.XSQNAME)
+			createAtomicValue(functionValue.getQName(), ValueType.XSQNAME),
 		);
 	});
 };
@@ -58,11 +58,11 @@ const fnFunctionArity: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	functionItem
+	functionItem,
 ) => {
 	return zipSingleton([functionItem], ([functionValue]: FunctionValue[]) => {
 		return sequenceFactory.singleton(
-			createAtomicValue(functionValue.getArity(), ValueType.XSINTEGER)
+			createAtomicValue(functionValue.getArity(), ValueType.XSINTEGER),
 		);
 	});
 };

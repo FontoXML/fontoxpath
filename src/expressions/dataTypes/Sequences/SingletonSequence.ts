@@ -11,7 +11,7 @@ export default class SingletonSequence implements ISequence {
 
 	constructor(
 		private readonly _sequenceFactory: typeof sequenceFactory,
-		private readonly _onlyValue: Value
+		private readonly _onlyValue: Value,
 	) {
 		let hasPassed = false;
 		this.value = {

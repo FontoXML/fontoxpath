@@ -25,11 +25,11 @@ describe('intersect', () => {
 				['a', { someAttribute: 'someValue' }],
 				['b', { someAttribute: 'someOtherValue' }],
 			],
-			documentNode
+			documentNode,
 		);
 		chai.assert.deepEqual(
 			evaluateXPathToNodes('(//*[@someAttribute] intersect //b)', documentNode),
-			[documentNode.documentElement.lastChild]
+			[documentNode.documentElement.lastChild],
 		);
 	});
 
@@ -41,7 +41,7 @@ describe('intersect', () => {
 				A: nodeA,
 				B: nodeB,
 			}),
-			[nodeA, nodeB]
+			[nodeA, nodeB],
 		);
 	});
 });
@@ -63,11 +63,11 @@ describe('except', () => {
 				['a', { someAttribute: 'someValue' }],
 				['b', { someAttribute: 'someOtherValue' }],
 			],
-			documentNode
+			documentNode,
 		);
 		chai.assert.deepEqual(
 			evaluateXPathToNodes('(//*[@someAttribute] except //b)', documentNode),
-			[documentNode.documentElement.firstChild]
+			[documentNode.documentElement.firstChild],
 		);
 	});
 
@@ -79,7 +79,7 @@ describe('except', () => {
 				A: nodeA,
 				B: nodeB,
 			}),
-			[]
+			[],
 		);
 	});
 });

@@ -13,7 +13,7 @@ import { AnnotationContext } from '../typeInference/AnnotationContext';
  */
 export function annotateNamedFunctionRef(
 	ast: IAST,
-	annotationContext: AnnotationContext
+	annotationContext: AnnotationContext,
 ): SequenceType {
 	// Can't find info about the function without the context.
 	if (!annotationContext || !annotationContext.staticContext) {
@@ -31,14 +31,14 @@ export function annotateNamedFunctionRef(
 	const prefix = qName.prefix;
 
 	const arity: number = Number(
-		astHelper.followPath(ast, ['integerConstantExpr', 'value'])[1] as string
+		astHelper.followPath(ast, ['integerConstantExpr', 'value'])[1] as string,
 	);
 
 	// If there is no namespace URI, resolve the function name
 	if (!namespaceURI) {
 		const functionName = annotationContext.staticContext.resolveFunctionName(
 			{ localName, prefix },
-			arity
+			arity,
 		);
 
 		if (!functionName) {

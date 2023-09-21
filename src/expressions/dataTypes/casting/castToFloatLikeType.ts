@@ -3,7 +3,7 @@ import { ValueType } from '../Value';
 
 export default function castToFloatLikeType(
 	instanceOf: (typeName: ValueType) => boolean,
-	to: ValueType
+	to: ValueType,
 ): (value: any) => { successful: true; value: number } | { error: Error; successful: false } {
 	if (instanceOf(ValueType.XSNUMERIC)) {
 		return (value) => ({
@@ -64,7 +64,7 @@ export default function castToFloatLikeType(
 	return () => ({
 		successful: false,
 		error: new Error(
-			`XPTY0004: Casting not supported from given type to ${to} or any of its derived types.`
+			`XPTY0004: Casting not supported from given type to ${to} or any of its derived types.`,
 		),
 	});
 }

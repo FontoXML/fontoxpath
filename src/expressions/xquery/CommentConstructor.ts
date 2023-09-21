@@ -33,7 +33,7 @@ class CommentConstructor extends Expression {
 		};
 		if (!this._expr) {
 			return sequenceFactory.singleton(
-				createPointerValue(commentNodePointer, executionParameters.domFacade)
+				createPointerValue(commentNodePointer, executionParameters.domFacade),
 			);
 		}
 		const sequence = this._expr.evaluateMaybeStatically(_dynamicContext, executionParameters);
@@ -44,14 +44,14 @@ class CommentConstructor extends Expression {
 
 			if (content.indexOf('-->') !== -1) {
 				throw new Error(
-					'XQDY0072: The contents of the data of a comment may not include "-->"'
+					'XQDY0072: The contents of the data of a comment may not include "-->"',
 				);
 			}
 
 			tinyCommentNode.data = content;
 
 			return sequenceFactory.singleton(
-				createPointerValue(commentNodePointer, executionParameters.domFacade)
+				createPointerValue(commentNodePointer, executionParameters.domFacade),
 			);
 		});
 	}

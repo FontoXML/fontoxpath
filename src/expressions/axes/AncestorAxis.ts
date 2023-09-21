@@ -14,7 +14,7 @@ import validateContextNode from './validateContextNode';
 function generateAncestors(
 	domFacade: DomFacade,
 	contextPointer: ChildNodePointer,
-	bucket: Bucket | null
+	bucket: Bucket | null,
 ) {
 	let ancestor = contextPointer as ParentNodePointer;
 	return {
@@ -36,7 +36,7 @@ class AncestorAxis extends Expression {
 	private _isInclusive: boolean;
 	constructor(
 		ancestorExpression: TestAbstractExpression,
-		options: { inclusive: boolean } | undefined
+		options: { inclusive: boolean } | undefined,
 	) {
 		options = options || { inclusive: false };
 		super(ancestorExpression.specificity, [ancestorExpression], {
@@ -52,7 +52,7 @@ class AncestorAxis extends Expression {
 
 	public evaluate(
 		dynamicContext: DynamicContext,
-		executionParameters: ExecutionParameters
+		executionParameters: ExecutionParameters,
 	): ISequence {
 		const domFacade = executionParameters.domFacade;
 		const contextPointer = validateContextNode(dynamicContext.contextItem);
@@ -74,16 +74,16 @@ class AncestorAxis extends Expression {
 						? (contextPointer as ChildNodePointer)
 						: (domFacade.getParentNodePointer(
 								contextPointer as ChildNodePointer,
-								ancestorAxisBucket
+								ancestorAxisBucket,
 						  ) as ChildNodePointer),
-					ancestorAxisBucket
-				)
+					ancestorAxisBucket,
+				),
 			)
 			.filter((item) => {
 				return this._ancestorExpression.evaluateToBoolean(
 					dynamicContext,
 					item,
-					executionParameters
+					executionParameters,
 				);
 			});
 	}

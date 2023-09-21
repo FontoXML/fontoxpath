@@ -11,7 +11,7 @@ class UniversalExpression extends Expression {
 			[],
 			{
 				canBeStaticallyEvaluated: true,
-			}
+			},
 		);
 	}
 

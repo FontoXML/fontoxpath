@@ -23,7 +23,7 @@ export default function evaluateXPathToMap(
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
-	options?: Options | null
+	options?: Options | null,
 ): { [s: string]: any } {
 	return evaluateXPath(
 		selector,
@@ -31,6 +31,6 @@ export default function evaluateXPathToMap(
 		domFacade,
 		variables,
 		evaluateXPath.MAP_TYPE,
-		options
+		options,
 	);
 }

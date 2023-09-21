@@ -21,7 +21,7 @@ export function annotateTypeSwitchOperator(
 	ast: IAST,
 	argumentType: SequenceType,
 	caseClausesReturns: SequenceType[],
-	defaultCaseReturn: SequenceType
+	defaultCaseReturn: SequenceType,
 ): SequenceType | undefined {
 	// TODO: check this case in more detail (anyKindTest for example returns undefined)
 	if (!argumentType || caseClausesReturns.includes(undefined)) {
@@ -90,7 +90,7 @@ export function annotateTypeSwitchOperator(
 function checkComparison(
 	condition: IAST,
 	argumentType: SequenceType,
-	returnType: SequenceType
+	returnType: SequenceType,
 ): SequenceType | undefined {
 	// Get the children of the SequenceType which contains an atomicType and an optional occurrenceIndicator
 	const children = astHelper.getChildren(condition, '*');
@@ -118,7 +118,7 @@ function checkComparison(
 		} else {
 			const multiplicity = astHelper.getFirstChild(
 				condition,
-				'occurrenceIndicator'
+				'occurrenceIndicator',
 			)[1] as string;
 			// If they match, return the returnType
 			if (argumentType.mult === stringToSequenceMultiplicity(multiplicity)) {

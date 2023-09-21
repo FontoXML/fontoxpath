@@ -5,7 +5,10 @@ import { IPendingUpdate } from '../IPendingUpdate';
 
 export class ReplaceElementContentPendingUpdate extends IPendingUpdate {
 	public readonly type: 'replaceElementContent';
-	constructor(readonly target: ElementNodePointer, readonly text: TextNodePointer | null) {
+	constructor(
+		readonly target: ElementNodePointer,
+		readonly text: TextNodePointer | null,
+	) {
 		super('replaceElementContent');
 	}
 	public toTransferable(executionParameters: ExecutionParameters) {

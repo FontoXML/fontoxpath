@@ -16,7 +16,7 @@ class CacheEntry {
 			| { namespaceURI: any; prefix: string }[]
 			| { namespaceURI: string; prefix: string }[],
 		public readonly defaultFunctionNamespaceURI: string,
-		public readonly resolvedFunctions: ResolvedFunction[]
+		public readonly resolvedFunctions: ResolvedFunction[],
 	) {}
 }
 
@@ -27,7 +27,7 @@ function generateLanguageKey(language: string, debug: boolean): string {
 export function getAnyStaticCompilationResultFromCache(
 	selectorExpression: EvaluableExpression,
 	language: string | null,
-	debug: boolean
+	debug: boolean,
 ) {
 	const cachesForExpression = compiledExpressionCache.get(selectorExpression);
 
@@ -63,7 +63,7 @@ export function getStaticCompilationResultFromCache(
 	moduleImports: { [x: string]: string },
 	debug: boolean,
 	defaultFunctionNamespaceURI: string,
-	functionNameResolver: FunctionNameResolver
+	functionNameResolver: FunctionNameResolver,
 ) {
 	const cachesForExpression = compiledExpressionCache.get(selectorExpression);
 
@@ -80,16 +80,16 @@ export function getStaticCompilationResultFromCache(
 		(cache) =>
 			cache.defaultFunctionNamespaceURI === defaultFunctionNamespaceURI &&
 			cache.referredNamespaces.every(
-				(nsRef) => namespaceResolver(nsRef.prefix) === nsRef.namespaceURI
+				(nsRef) => namespaceResolver(nsRef.prefix) === nsRef.namespaceURI,
 			) &&
 			cache.referredVariables.every((varRef) => variables[varRef.name] !== undefined) &&
 			cache.moduleImports.every(
-				(moduleImport) => moduleImports[moduleImport.prefix] === moduleImport.namespaceURI
+				(moduleImport) => moduleImports[moduleImport.prefix] === moduleImport.namespaceURI,
 			) &&
 			cache.resolvedFunctions.every((resolvedFunction) => {
 				const newResolvedFunction = functionNameResolver(
 					resolvedFunction.lexicalQName,
-					resolvedFunction.arity
+					resolvedFunction.arity,
 				);
 				return (
 					newResolvedFunction &&
@@ -97,7 +97,7 @@ export function getStaticCompilationResultFromCache(
 						resolvedFunction.resolvedQName.namespaceURI &&
 					newResolvedFunction.localName === resolvedFunction.resolvedQName.localName
 				);
-			})
+			}),
 	);
 
 	if (!cacheWithCorrectContext) {
@@ -117,7 +117,7 @@ export function storeStaticCompilationResultInCache(
 	moduleImports: { [x: string]: any },
 	compiledExpression: Expression,
 	debug: boolean,
-	defaultFunctionNamespaceURI: string
+	defaultFunctionNamespaceURI: string,
 ) {
 	let cachesForExpression = compiledExpressionCache.get(selectorExpression);
 	if (!cachesForExpression) {
@@ -141,7 +141,7 @@ export function storeStaticCompilationResultInCache(
 				prefix: moduleImportPrefix,
 			})),
 			defaultFunctionNamespaceURI,
-			executionStaticContext.getResolvedFunctions()
-		)
+			executionStaticContext.getResolvedFunctions(),
+		),
 	);
 }

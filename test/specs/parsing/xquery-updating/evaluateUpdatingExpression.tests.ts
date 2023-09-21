@@ -107,7 +107,7 @@ describe('evaluateUpdatingExpression', () => {
 			documentNode,
 			null,
 			null,
-			{ returnType: evaluateXPath.NODES_TYPE }
+			{ returnType: evaluateXPath.NODES_TYPE },
 		);
 
 		chai.assert.deepEqual(result.xdmValue, []);
@@ -119,12 +119,12 @@ describe('evaluateUpdatingExpression', () => {
 			parseScript(
 				'replace node ele with <ele/>',
 				{ language: Language.XQUERY_UPDATE_3_1_LANGUAGE },
-				documentNode
+				documentNode,
 			),
 			documentNode,
 			null,
 			null,
-			{ returnType: evaluateXPath.NODES_TYPE }
+			{ returnType: evaluateXPath.NODES_TYPE },
 		);
 
 		chai.assert.deepEqual(result.xdmValue, []);
@@ -134,7 +134,7 @@ describe('evaluateUpdatingExpression', () => {
 		documentNode.appendChild(documentNode.createElement('ele'));
 		const result = await evaluateUpdatingExpression(
 			'(replace node ele with <ele/>, 1)',
-			documentNode
+			documentNode,
 		);
 
 		chai.assert.deepEqual(result.xdmValue as any, 1);
@@ -173,7 +173,7 @@ describe('evaluateUpdatingExpression', () => {
 			{
 				documentWriter: stubbedDocumentWriter,
 				nodesFactory: stubbedNodesFactory,
-			}
+			},
 		);
 
 		chai.assert.isFalse(insertBeforeCalled, 'insertBeforeCalled');
@@ -195,7 +195,7 @@ describe('evaluateUpdatingExpression', () => {
 			result.pendingUpdateList,
 			null,
 			stubbedNodesFactory,
-			stubbedDocumentWriter
+			stubbedDocumentWriter,
 		);
 
 		chai.assert.isFalse(insertBeforeCalled, 'insertBeforeCalled');
@@ -218,14 +218,14 @@ describe('evaluateUpdatingExpression', () => {
 			{
 				documentWriter: stubbedDocumentWriter,
 				nodesFactory: stubbedNodesFactory,
-			}
+			},
 		);
 
 		executePendingUpdateList(
 			result.pendingUpdateList,
 			null,
 			stubbedNodesFactory,
-			stubbedDocumentWriter
+			stubbedDocumentWriter,
 		);
 
 		chai.assert.isFalse(insertBeforeCalled, 'insertBeforeCalled');
@@ -258,14 +258,14 @@ describe('evaluateUpdatingExpression', () => {
 			{
 				documentWriter: stubbedDocumentWriter,
 				nodesFactory: stubbedNodesFactory,
-			}
+			},
 		);
 
 		executePendingUpdateList(
 			result.pendingUpdateList,
 			null,
 			stubbedNodesFactory,
-			stubbedDocumentWriter
+			stubbedDocumentWriter,
 		);
 
 		chai.assert.isFalse(insertBeforeCalled, 'insertBeforeCalled');
@@ -296,7 +296,7 @@ describe('evaluateUpdatingExpression', () => {
 			{
 				documentWriter: stubbedDocumentWriter,
 				nodesFactory: stubbedNodesFactory,
-			}
+			},
 		);
 
 		chai.assert.isTrue(insertBeforeCalled, 'insertBeforeCalled');
@@ -318,7 +318,7 @@ describe('evaluateUpdatingExpression', () => {
 			result.pendingUpdateList,
 			null,
 			stubbedNodesFactory,
-			stubbedDocumentWriter
+			stubbedDocumentWriter,
 		);
 
 		chai.assert.isTrue(insertBeforeCalled, 'insertBeforeCalled');

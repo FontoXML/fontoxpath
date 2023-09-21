@@ -24,7 +24,7 @@ function parseChildNodes(
 	attributes: (ConcreteAttributeNode | TinyAttributeNode)[],
 	contentNodes: (ConcreteChildNode | TinyChildNode)[],
 	attributesDone: boolean,
-	attributeError: (arg0: any, arg1?: any) => Error
+	attributeError: (arg0: any, arg1?: any) => Error,
 ): boolean {
 	const domFacade = executionParameters.domFacade;
 	// Plonk all childNodes, these are special though
@@ -36,7 +36,7 @@ function parseChildNodes(
 				arrayValue.members.forEach((member) =>
 					member()
 						.getAllValues()
-						.forEach((item: Value) => flattenArray(convertedChildNodes, item))
+						.forEach((item: Value) => flattenArray(convertedChildNodes, item)),
 				);
 				return convertedChildNodes;
 			}
@@ -61,7 +61,7 @@ function parseChildNodes(
 				const atomizedValue = isSubtypeOf(childNode.type, ValueType.XSANYATOMICTYPE)
 					? castToType(
 							atomizeSingleValue(childNode, executionParameters).first(),
-							ValueType.XSSTRING
+							ValueType.XSSTRING,
 					  ).value
 					: domFacade.getDataFromPointer(childNode.value);
 				if (
@@ -90,7 +90,7 @@ function parseChildNodes(
 					attributes,
 					contentNodes,
 					attributesDone,
-					attributeError
+					attributeError,
 				);
 				return;
 			}
@@ -113,7 +113,7 @@ function parseChildNodes(
 export default function parseContent(
 	allChildNodes: Value[][],
 	executionParameters: ExecutionParameters,
-	attributeError: (arg0: any, arg1?: any) => Error
+	attributeError: (arg0: any, arg1?: any) => Error,
 ) {
 	const attributes: (ConcreteAttributeNode | TinyAttributeNode)[] = [];
 	const contentNodes: (ConcreteChildNode | TinyChildNode)[] = [];
@@ -126,7 +126,7 @@ export default function parseContent(
 			attributes,
 			contentNodes,
 			attributesDone,
-			attributeError
+			attributeError,
 		);
 	});
 	return { attributes, contentNodes };

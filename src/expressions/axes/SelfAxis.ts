@@ -25,14 +25,14 @@ class SelfAxis extends Expression {
 
 	public evaluate(
 		dynamicContext: DynamicContext,
-		executionParameters: ExecutionParameters
+		executionParameters: ExecutionParameters,
 	): ISequence {
 		validateContextNode(dynamicContext.contextItem);
 
 		const isMatch = this._selector.evaluateToBoolean(
 			dynamicContext,
 			dynamicContext.contextItem,
-			executionParameters
+			executionParameters,
 		);
 		return isMatch
 			? sequenceFactory.singleton(dynamicContext.contextItem)

@@ -42,7 +42,7 @@ declare namespace xxx="http://www.example.com/";
 self::xxx:element
 `,
 			{},
-			new Document()
+			new Document(),
 		);
 
 		chai.assert.isTrue(
@@ -51,8 +51,8 @@ self::xxx:element
 				ast,
 				null,
 				{},
-				{ namespaceResolver }
-			)
+				{ namespaceResolver },
+			),
 		);
 	});
 
@@ -64,7 +64,7 @@ declare namespace xxx="http://www.example.com/";
 $xxx:yyy
 `,
 			{},
-			new Document()
+			new Document(),
 		);
 
 		chai.assert.isTrue(
@@ -73,8 +73,8 @@ $xxx:yyy
 				ast,
 				null,
 				{},
-				{ namespaceResolver }
-			)
+				{ namespaceResolver },
+			),
 		);
 	});
 
@@ -86,7 +86,7 @@ declare namespace xxx="http://www.example.com/";
 xxx:some-function()
 `,
 			{},
-			new Document()
+			new Document(),
 		);
 
 		chai.assert.isTrue(
@@ -95,8 +95,8 @@ xxx:some-function()
 				ast,
 				null,
 				{},
-				{ namespaceResolver }
-			)
+				{ namespaceResolver },
+			),
 		);
 	});
 
@@ -108,7 +108,7 @@ declare namespace xxx="http://www.example.com/";
 xxx:some-function#0()
 `,
 			{},
-			new Document()
+			new Document(),
 		);
 
 		chai.assert.isTrue(
@@ -117,8 +117,8 @@ xxx:some-function#0()
 				ast,
 				null,
 				{},
-				{ namespaceResolver }
-			)
+				{ namespaceResolver },
+			),
 		);
 	});
 
@@ -130,7 +130,7 @@ declare default function namespace "http://www.example.com/";
 some-function#0()
 `,
 			{},
-			new Document()
+			new Document(),
 		);
 
 		chai.assert.isTrue(
@@ -139,8 +139,8 @@ some-function#0()
 				ast,
 				null,
 				{},
-				{ namespaceResolver }
-			)
+				{ namespaceResolver },
+			),
 		);
 	});
 
@@ -177,7 +177,7 @@ some-function#0()
 			ast,
 			null,
 			null,
-			{ namespaceResolver }
+			{ namespaceResolver },
 		);
 		chai.assert.isOk(FIND_ME, 'varRef should have been found');
 
@@ -186,7 +186,7 @@ some-function#0()
 			ast2,
 			null,
 			null,
-			{ namespaceResolver }
+			{ namespaceResolver },
 		);
 		chai.assert.isOk(queryBodyContents, 'Query body contents should have been found');
 		FIND_ME.replaceWith(queryBodyContents);
@@ -254,7 +254,7 @@ declare %public function prefix:ok() as xs:string {
 };
 `,
 			{},
-			document
+			document,
 		);
 
 		chai.assert.isOk(ast);
@@ -276,7 +276,7 @@ declare %public function prefix:ok() as xs:string {
         then "it is Monday"
         else "it is not Monday"`,
 			{},
-			new Document()
+			new Document(),
 		);
 		const result = evaluateXPathToString(ast);
 		chai.assert.deepEqual(result, 'it is Monday');
@@ -286,7 +286,7 @@ declare %public function prefix:ok() as xs:string {
 		const ast = parseScript(
 			'"a " || "b " || "a " || "b " || "b " || "a " || "b " || "b " || "a " || "b " || "b " || "a " || "b " || "b " || "a " || "b " || "b " || "a " || "b "',
 			{},
-			new Document()
+			new Document(),
 		);
 		const result = evaluateXPathToString(ast);
 		chai.assert.equal(result, 'a b a b b a b b a b b a b b a b b a b ');

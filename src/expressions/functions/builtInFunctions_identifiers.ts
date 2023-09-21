@@ -13,7 +13,7 @@ import FunctionDefinitionType from './FunctionDefinitionType';
 function findDescendants(
 	domFacade: DomFacade,
 	node: NodePointer,
-	isMatch: (node: NodePointer) => boolean
+	isMatch: (node: NodePointer) => boolean,
 ): Node[] {
 	if (
 		node.node.nodeType !== NODE_TYPES.ELEMENT_NODE &&
@@ -40,7 +40,7 @@ const fnId: FunctionDefinitionType = (
 	executionParameters,
 	_staticContext,
 	idrefSequence,
-	targetNodeSequence
+	targetNodeSequence,
 ) => {
 	const targetNodeValue = targetNodeSequence.first();
 	if (!targetNodeValue) {
@@ -48,7 +48,7 @@ const fnId: FunctionDefinitionType = (
 	}
 	if (!isSubtypeOf(targetNodeValue.type, ValueType.NODE)) {
 		throw errXPTY0004(
-			'The context item is not a node, it needs to be node to use id function.'
+			'The context item is not a node, it needs to be node to use id function.',
 		);
 	}
 
@@ -98,7 +98,7 @@ const fnIdref: FunctionDefinitionType = (
 	executionParameters,
 	_staticContext,
 	idSequence,
-	targetNodeSequence
+	targetNodeSequence,
 ) => {
 	const targetNodeValue = targetNodeSequence.first();
 	if (!targetNodeValue) {
@@ -106,7 +106,7 @@ const fnIdref: FunctionDefinitionType = (
 	}
 	if (!isSubtypeOf(targetNodeValue.type, ValueType.NODE)) {
 		throw errXPTY0004(
-			'The context item is not a node, it needs to be node to use idref function.'
+			'The context item is not a node, it needs to be node to use idref function.',
 		);
 	}
 
@@ -168,7 +168,7 @@ const declarations: BuiltinDeclarationType[] = [
 				executionParameters,
 				_staticContext,
 				strings,
-				sequenceFactory.singleton(dynamicContext.contextItem)
+				sequenceFactory.singleton(dynamicContext.contextItem),
 			);
 		},
 	},
@@ -195,7 +195,7 @@ const declarations: BuiltinDeclarationType[] = [
 				executionParameters,
 				_staticContext,
 				strings,
-				sequenceFactory.singleton(dynamicContext.contextItem)
+				sequenceFactory.singleton(dynamicContext.contextItem),
 			);
 		},
 	},

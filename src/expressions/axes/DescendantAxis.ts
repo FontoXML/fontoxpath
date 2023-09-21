@@ -17,7 +17,7 @@ import validateContextNode from './validateContextNode';
 function createInclusiveDescendantGenerator(
 	domFacade: DomFacade,
 	node: ChildNodePointer,
-	bucket: Bucket | null
+	bucket: Bucket | null,
 ): IIterator<Value> {
 	const descendantIteratorStack: IIterator<ChildNodePointer>[] = [
 		createSingleValueIterator(node),
@@ -57,7 +57,7 @@ class DescendantAxis extends Expression {
 
 	constructor(
 		descendantExpression: TestAbstractExpression,
-		options: { inclusive: boolean } | undefined
+		options: { inclusive: boolean } | undefined,
 	) {
 		options = options || { inclusive: false };
 		super(descendantExpression.specificity, [descendantExpression], {
@@ -86,7 +86,7 @@ class DescendantAxis extends Expression {
 
 	public evaluate(
 		dynamicContext: DynamicContext,
-		executionParameters: ExecutionParameters
+		executionParameters: ExecutionParameters,
 	): ISequence {
 		const domFacade = executionParameters.domFacade;
 		const contextPointer = validateContextNode(dynamicContext.contextItem);
@@ -96,7 +96,7 @@ class DescendantAxis extends Expression {
 		const iterator = createInclusiveDescendantGenerator(
 			domFacade,
 			contextPointer as ChildNodePointer,
-			this._descendantBucket
+			this._descendantBucket,
 		);
 		if (!inclusive) {
 			iterator.next(IterationHint.NONE);
@@ -106,7 +106,7 @@ class DescendantAxis extends Expression {
 			return this._descendantExpression.evaluateToBoolean(
 				dynamicContext,
 				item,
-				executionParameters
+				executionParameters,
 			);
 		});
 	}

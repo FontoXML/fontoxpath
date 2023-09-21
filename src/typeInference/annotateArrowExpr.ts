@@ -43,7 +43,7 @@ export function annotateArrowExpr(ast: IAST, annotationContext: AnnotationContex
 			localName,
 			prefix,
 		},
-		functionArguments.length
+		functionArguments.length,
 	);
 
 	// If we did not find the function, we return item()*
@@ -59,7 +59,7 @@ export function annotateArrowExpr(ast: IAST, annotationContext: AnnotationContex
 		resolvedName.namespaceURI,
 		resolvedName.localName,
 		// Since this is an arrowExpr, we add one for the implicit argument
-		functionArguments.length + 1
+		functionArguments.length + 1,
 	);
 
 	// If we did not find the returnType, we return item()*

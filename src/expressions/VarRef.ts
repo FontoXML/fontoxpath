@@ -10,7 +10,7 @@ class VarRef extends Expression {
 	private _prefix: string;
 	private _staticallyBoundVariableValue: (
 		dynamicContext: DynamicContext,
-		executionParameters: ExecutionParameters
+		executionParameters: ExecutionParameters,
 	) => ISequence;
 	private _variableBindingName: any;
 	private _variableName: string;
@@ -36,7 +36,7 @@ class VarRef extends Expression {
 				return this._staticallyBoundVariableValue(dynamicContext, executionParameters);
 			}
 			throw new Error(
-				'XQDY0054: The variable ' + this._variableName + ' is declared but not in scope.'
+				'XQDY0054: The variable ' + this._variableName + ' is declared but not in scope.',
 			);
 		}
 
@@ -50,14 +50,14 @@ class VarRef extends Expression {
 
 		this._variableBindingName = staticContext.lookupVariable(
 			this._namespaceURI || '',
-			this._variableName
+			this._variableName,
 		);
 		if (!this._variableBindingName) {
 			throw new Error('XPST0008, The variable ' + this._variableName + ' is not in scope.');
 		}
 
 		const staticallyBoundVariableBinding = staticContext.getVariableDeclaration(
-			this._variableBindingName
+			this._variableBindingName,
 		);
 
 		if (staticallyBoundVariableBinding) {

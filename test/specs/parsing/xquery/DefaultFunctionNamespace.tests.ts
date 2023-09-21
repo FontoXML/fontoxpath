@@ -16,9 +16,9 @@ describe('DefaultFunctionDeclaration', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 			),
-			Math.PI
+			Math.PI,
 		);
 	});
 	it('Can create a default namespace and a function', () => {
@@ -28,8 +28,8 @@ describe('DefaultFunctionDeclaration', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-			)
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
+			),
 		);
 	});
 	it('Can create a default namespace, a function and declare a normal prefix', () => {
@@ -42,8 +42,8 @@ describe('DefaultFunctionDeclaration', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-			)
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
+			),
 		);
 	});
 
@@ -55,9 +55,9 @@ describe('DefaultFunctionDeclaration', () => {
 					documentNode,
 					undefined,
 					{},
-					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 				),
-			'XQST0070: The prefixes xml and xmlns may not be used in a namespace declaration or be bound to another namespaceURI.'
+			'XQST0070: The prefixes xml and xmlns may not be used in a namespace declaration or be bound to another namespaceURI.',
 		);
 	});
 
@@ -69,9 +69,9 @@ describe('DefaultFunctionDeclaration', () => {
 					documentNode,
 					undefined,
 					{},
-					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 				),
-			'XQST0066: A Prolog may contain at most one default function namespace declaration.'
+			'XQST0066: A Prolog may contain at most one default function namespace declaration.',
 		);
 	});
 });
@@ -87,9 +87,9 @@ describe('Using Javascript API to set a new default function namespace', () => {
 				{
 					language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 					defaultFunctionNamespaceURI: 'http://www.w3.org/2005/xpath-functions/math',
-				}
+				},
 			),
-			Math.PI
+			Math.PI,
 		);
 	});
 
@@ -103,9 +103,9 @@ describe('Using Javascript API to set a new default function namespace', () => {
 				{
 					language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 					defaultFunctionNamespaceURI: 'testNamespace',
-				}
+				},
 			),
-			Math.PI
+			Math.PI,
 		);
 	});
 
@@ -117,9 +117,12 @@ describe('Using Javascript API to set a new default function namespace', () => {
 					documentNode,
 					undefined,
 					{},
-					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE, defaultFunctionNamespaceURI: '' }
+					{
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
+						defaultFunctionNamespaceURI: '',
+					},
 				),
-			'XPST0017: Function pi with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/math}pi ()"?'
+			'XPST0017: Function pi with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/math}pi ()"?',
 		);
 	});
 
@@ -134,9 +137,9 @@ describe('Using Javascript API to set a new default function namespace', () => {
 					{
 						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 						defaultFunctionNamespaceURI: null,
-					}
+					},
 				),
-			'XPST0017: Function pi with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/math}pi ()"?'
+			'XPST0017: Function pi with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/math}pi ()"?',
 		);
 	});
 });

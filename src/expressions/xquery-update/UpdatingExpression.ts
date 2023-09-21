@@ -13,7 +13,7 @@ abstract class UpdatingExpression extends Expression {
 		specificity: Specificity,
 		childExpressions: Expression[],
 		optimizationOptions: OptimizationOptions,
-		type?: SequenceType
+		type?: SequenceType,
 	) {
 		super(specificity, childExpressions, optimizationOptions, true, type);
 
@@ -22,16 +22,16 @@ abstract class UpdatingExpression extends Expression {
 
 	public evaluate(
 		_dynamicContext: DynamicContext,
-		_executionParameters: ExecutionParameters
+		_executionParameters: ExecutionParameters,
 	): ISequence {
 		throw errXUST0001();
 	}
 
 	protected ensureUpdateListWrapper(
-		expression: Expression
+		expression: Expression,
 	): (
 		dynamicContext: DynamicContext,
-		executionParameters: ExecutionParameters
+		executionParameters: ExecutionParameters,
 	) => IIterator<UpdatingExpressionResult> {
 		if (expression.isUpdating) {
 			const updatingExpression = expression as UpdatingExpression;
@@ -55,7 +55,7 @@ abstract class UpdatingExpression extends Expression {
 
 	public abstract evaluateWithUpdateList(
 		_dynamicContext: DynamicContext | null,
-		_executionParameters: ExecutionParameters
+		_executionParameters: ExecutionParameters,
 	): IIterator<UpdatingExpressionResult>;
 }
 

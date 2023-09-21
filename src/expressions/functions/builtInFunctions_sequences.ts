@@ -50,7 +50,7 @@ function subSequence(sequence: ISequence, start: number, length: number) {
 				return returnableVal;
 			},
 		},
-		newSequenceLength
+		newSequenceLength,
 	);
 }
 
@@ -88,7 +88,7 @@ const fnEmpty: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	return sequence.switchCases({
 		empty: () => sequenceFactory.singletonTrueSequence(),
@@ -101,7 +101,7 @@ const fnExists: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	return sequence.switchCases({
 		empty: () => sequenceFactory.singletonFalseSequence(),
@@ -114,7 +114,7 @@ const fnHead: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	return subSequence(sequence, 1, 1);
 };
@@ -123,7 +123,7 @@ const fnTail: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	return subSequence(sequence, 2, null);
 };
@@ -134,7 +134,7 @@ const fnInsertBefore: FunctionDefinitionType = (
 	_staticContext,
 	sequence,
 	position,
-	inserts
+	inserts,
 ) => {
 	if (sequence.isEmpty()) {
 		return inserts;
@@ -164,7 +164,7 @@ const fnRemove: FunctionDefinitionType = (
 	_executionParameters,
 	_staticContext,
 	sequence,
-	position
+	position,
 ) => {
 	const effectivePosition = position.first().value;
 	const sequenceValue = sequence.getAllValues();
@@ -183,7 +183,7 @@ const fnReverse: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	return sequence.mapAll((allValues) => sequenceFactory.create(allValues.reverse()));
 };
@@ -194,7 +194,7 @@ const fnSubsequence: FunctionDefinitionType = (
 	_staticContext,
 	sequence,
 	startSequence,
-	lengthSequence
+	lengthSequence,
 ) => {
 	return zipSingleton([startSequence, lengthSequence], ([startVal, lengthVal]) => {
 		if (startVal.value === Infinity) {
@@ -220,7 +220,7 @@ const fnSubsequence: FunctionDefinitionType = (
 		return subSequence(
 			sequence,
 			Math.round(startVal.value),
-			lengthVal ? Math.round(lengthVal.value) : null
+			lengthVal ? Math.round(lengthVal.value) : null,
 		);
 	});
 };
@@ -229,7 +229,7 @@ const fnUnordered: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	return sequence;
 };
@@ -238,7 +238,7 @@ const fnDistinctValues: FunctionDefinitionType = (
 	dynamicContext,
 	executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	const xs = atomize(sequence, executionParameters).getAllValues();
 	const equals = (x: Value, y: Value): boolean =>
@@ -251,7 +251,7 @@ const fnIndexOf: FunctionDefinitionType = (
 	executionParameters,
 	_staticContext,
 	sequence,
-	search
+	search,
 ) => {
 	return search.mapAll(([onlySearchValue]) =>
 		atomize(sequence, executionParameters)
@@ -263,7 +263,7 @@ const fnIndexOf: FunctionDefinitionType = (
 			})
 			.filter((indexValue) => {
 				return indexValue.value !== -1;
-			})
+			}),
 	);
 };
 
@@ -272,7 +272,7 @@ const fnDeepEqual: FunctionDefinitionType = (
 	executionParameters,
 	staticContext,
 	parameter1,
-	parameter2
+	parameter2,
 ) => {
 	let hasPassed = false;
 	const deepEqualityIterator = sequenceDeepEqual(
@@ -280,7 +280,7 @@ const fnDeepEqual: FunctionDefinitionType = (
 		executionParameters,
 		staticContext,
 		parameter1,
-		parameter2
+		parameter2,
 	);
 
 	return sequenceFactory.create({
@@ -302,7 +302,7 @@ const fnCount: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	let hasPassed = false;
 	return sequenceFactory.create({
@@ -321,7 +321,7 @@ const fnAvg: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	if (sequence.isEmpty()) {
 		return sequence;
@@ -369,7 +369,7 @@ const fnMax: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	if (sequence.isEmpty()) {
 		return sequence;
@@ -381,7 +381,7 @@ const fnMax: FunctionDefinitionType = (
 	return sequenceFactory.singleton(
 		items.reduce((max, item) => {
 			return max.value < item.value ? item : max;
-		})
+		}),
 	);
 };
 
@@ -389,7 +389,7 @@ const fnMin: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	if (sequence.isEmpty()) {
 		return sequence;
@@ -401,7 +401,7 @@ const fnMin: FunctionDefinitionType = (
 	return sequenceFactory.singleton(
 		items.reduce((min, item) => {
 			return min.value > item.value ? item : min;
-		})
+		}),
 	);
 };
 
@@ -410,7 +410,7 @@ const fnSum: FunctionDefinitionType = (
 	_executionParameters,
 	_staticContext,
 	sequence,
-	zero
+	zero,
 ) => {
 	// TODO: throw FORG0006 if the items contain both yearMonthDurations and dayTimeDurations
 	if (sequence.isEmpty()) {
@@ -462,11 +462,11 @@ const fnZeroOrOne: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	arg
+	arg,
 ) => {
 	if (!arg.isEmpty() && !arg.isSingleton()) {
 		throw new Error(
-			'FORG0003: The argument passed to fn:zero-or-one contained more than one item.'
+			'FORG0003: The argument passed to fn:zero-or-one contained more than one item.',
 		);
 	}
 	return arg;
@@ -476,7 +476,7 @@ const fnOneOrMore: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	arg
+	arg,
 ) => {
 	if (arg.isEmpty()) {
 		throw new Error('FORG0004: The argument passed to fn:one-or-more was empty.');
@@ -488,11 +488,11 @@ const fnExactlyOne: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	arg
+	arg,
 ) => {
 	if (!arg.isSingleton()) {
 		throw new Error(
-			'FORG0005: The argument passed to fn:exactly-one is empty or contained more than one item.'
+			'FORG0005: The argument passed to fn:exactly-one is empty or contained more than one item.',
 		);
 	}
 	return arg;
@@ -503,7 +503,7 @@ const fnFilter: FunctionDefinitionType = (
 	executionParameters,
 	staticContext,
 	sequence,
-	callbackSequence
+	callbackSequence,
 ) => {
 	if (sequence.isEmpty()) {
 		return sequence;
@@ -522,14 +522,14 @@ const fnFilter: FunctionDefinitionType = (
 			sequenceFactory.singleton(item),
 			executionParameters,
 			'fn:filter',
-			false
+			false,
 		);
 		const functionCallResult = callbackFn.value.call(
 			undefined,
 			dynamicContext,
 			executionParameters,
 			staticContext,
-			transformedArgument
+			transformedArgument,
 		);
 		if (
 			!functionCallResult.isSingleton() ||
@@ -546,7 +546,7 @@ const fnForEach: FunctionDefinitionType = (
 	executionParameters,
 	staticContext,
 	sequence,
-	callbackSequence
+	callbackSequence,
 ) => {
 	if (sequence.isEmpty()) {
 		return sequence;
@@ -575,14 +575,14 @@ const fnForEach: FunctionDefinitionType = (
 						sequenceFactory.singleton(item.value),
 						executionParameters,
 						'fn:for-each',
-						false
+						false,
 					);
 					const nextSequence = callbackFn.value.call(
 						undefined,
 						dynamicContext,
 						executionParameters,
 						staticContext,
-						transformedArgument
+						transformedArgument,
 					);
 
 					innerIterator = nextSequence.value;
@@ -604,7 +604,7 @@ const fnFoldLeft: FunctionDefinitionType = (
 	staticContext,
 	sequence,
 	zero,
-	callbackSequence
+	callbackSequence,
 ) => {
 	if (sequence.isEmpty()) {
 		return sequence;
@@ -623,14 +623,14 @@ const fnFoldLeft: FunctionDefinitionType = (
 				previous,
 				executionParameters,
 				'fn:fold-left',
-				false
+				false,
 			);
 			const currentArg = performFunctionConversion(
 				callbackArgumentTypes[1] as SequenceType,
 				sequenceFactory.singleton(current),
 				executionParameters,
 				'fn:fold-left',
-				false
+				false,
 			);
 			return callbackFn.value.call(
 				undefined,
@@ -638,9 +638,9 @@ const fnFoldLeft: FunctionDefinitionType = (
 				executionParameters,
 				staticContext,
 				previousArg,
-				currentArg
+				currentArg,
 			);
-		}, zero)
+		}, zero),
 	);
 };
 
@@ -650,7 +650,7 @@ const fnFoldRight: FunctionDefinitionType = (
 	staticContext,
 	sequence,
 	zero,
-	callbackSequence
+	callbackSequence,
 ) => {
 	if (sequence.isEmpty()) {
 		return sequence;
@@ -669,14 +669,14 @@ const fnFoldRight: FunctionDefinitionType = (
 				previous,
 				executionParameters,
 				'fn:fold-right',
-				false
+				false,
 			);
 			const currentArg = performFunctionConversion(
 				callbackArgumentTypes[1] as SequenceType,
 				sequenceFactory.singleton(current),
 				executionParameters,
 				'fn:fold-right',
-				false
+				false,
 			);
 			return callbackFn.value.call(
 				undefined,
@@ -684,9 +684,9 @@ const fnFoldRight: FunctionDefinitionType = (
 				executionParameters,
 				staticContext,
 				currentArg,
-				previousArg
+				previousArg,
 			);
-		}, zero)
+		}, zero),
 	);
 };
 
@@ -694,7 +694,7 @@ const fnSerialize: FunctionDefinitionType = (
 	_dynamicContext,
 	executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	if (!executionParameters.xmlSerializer) {
 		throw new Error('serialize() called but no xmlSerializer set in execution parameters.');
@@ -717,13 +717,13 @@ const fnSerialize: FunctionDefinitionType = (
 						realizeDom(
 							nodeValue.value as NodePointer,
 							executionParameters,
-							false
-						) as Node
+							false,
+						) as Node,
 					);
 				})
 				.join(''),
-			ValueType.XSSTRING
-		)
+			ValueType.XSSTRING,
+		),
 	);
 };
 
@@ -803,7 +803,7 @@ const declarations: BuiltinDeclarationType[] = [
 				_staticContext,
 				sequence,
 				start,
-				sequenceFactory.empty()
+				sequenceFactory.empty(),
 			)) as FunctionDefinitionType,
 		localName: 'subsequence',
 		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
@@ -978,7 +978,7 @@ const declarations: BuiltinDeclarationType[] = [
 				executionParameters,
 				_staticContext,
 				sequence,
-				sequenceFactory.singleton(createAtomicValue(0, ValueType.XSINTEGER))
+				sequenceFactory.singleton(createAtomicValue(0, ValueType.XSINTEGER)),
 			);
 		}) as FunctionDefinitionType,
 		localName: 'sum',

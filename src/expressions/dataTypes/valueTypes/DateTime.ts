@@ -64,7 +64,7 @@ class DateTime {
 		seconds: number,
 		secondFraction: number,
 		timezone: DayTimeDuration,
-		type: ValueType = ValueType.XSDATETIME
+		type: ValueType = ValueType.XSDATETIME,
 	) {
 		this._years = years;
 		this._months = months;
@@ -117,7 +117,7 @@ class DateTime {
 				seconds,
 				secondFraction,
 				timezone,
-				ValueType.XSDATETIME
+				ValueType.XSDATETIME,
 			);
 		}
 
@@ -132,7 +132,7 @@ class DateTime {
 				seconds,
 				secondFraction,
 				timezone,
-				ValueType.XSTIME
+				ValueType.XSTIME,
 			);
 		}
 
@@ -185,7 +185,7 @@ class DateTime {
 					0,
 					0,
 					this._timezone,
-					ValueType.XSGDAY
+					ValueType.XSGDAY,
 				);
 			case ValueType.XSGMONTH:
 				return new DateTime(
@@ -197,7 +197,7 @@ class DateTime {
 					0,
 					0,
 					this._timezone,
-					ValueType.XSGMONTH
+					ValueType.XSGMONTH,
 				);
 			case ValueType.XSGYEAR:
 				return new DateTime(
@@ -209,7 +209,7 @@ class DateTime {
 					0,
 					0,
 					this._timezone,
-					ValueType.XSGYEAR
+					ValueType.XSGYEAR,
 				);
 			case ValueType.XSGMONTHDAY:
 				return new DateTime(
@@ -221,7 +221,7 @@ class DateTime {
 					0,
 					0,
 					this._timezone,
-					ValueType.XSGMONTHDAY
+					ValueType.XSGMONTHDAY,
 				);
 			case ValueType.XSGYEARMONTH:
 				return new DateTime(
@@ -233,7 +233,7 @@ class DateTime {
 					0,
 					0,
 					this._timezone,
-					ValueType.XSGYEARMONTH
+					ValueType.XSGYEARMONTH,
 				);
 			case ValueType.XSTIME:
 				return new DateTime(
@@ -245,7 +245,7 @@ class DateTime {
 					this._seconds,
 					this.secondFraction,
 					this._timezone,
-					ValueType.XSTIME
+					ValueType.XSTIME,
 				);
 			case ValueType.XSDATE:
 				return new DateTime(
@@ -257,7 +257,7 @@ class DateTime {
 					0,
 					0,
 					this._timezone,
-					ValueType.XSDATE
+					ValueType.XSDATE,
 				);
 			case ValueType.XSDATETIME:
 			default:
@@ -270,7 +270,7 @@ class DateTime {
 					this._seconds,
 					this.secondFraction,
 					this._timezone,
-					ValueType.XSDATETIME
+					ValueType.XSDATETIME,
 				);
 		}
 	}
@@ -326,8 +326,8 @@ class DateTime {
 				this._hours - timezoneToUse.getHours(),
 				this._minutes - timezoneToUse.getMinutes(),
 				this._seconds,
-				this.secondFraction * 1000
-			)
+				this.secondFraction * 1000,
+			),
 		);
 	}
 
@@ -406,7 +406,7 @@ class DateTime {
 export function compare(
 	dateTime1: DateTime,
 	dateTime2: DateTime,
-	implicitTimezone?: DayTimeDuration | null
+	implicitTimezone?: DayTimeDuration | null,
 ): number {
 	const jsTime1 = dateTime1.toJavaScriptDate(implicitTimezone).getTime();
 	const jsTime2 = dateTime2.toJavaScriptDate(implicitTimezone).getTime();
@@ -432,7 +432,7 @@ export function compare(
 export function equal(
 	dateTime1: DateTime,
 	dateTime2: DateTime,
-	implicitTimezone?: DayTimeDuration | null
+	implicitTimezone?: DayTimeDuration | null,
 ): boolean {
 	return compare(dateTime1, dateTime2, implicitTimezone) === 0;
 }
@@ -440,7 +440,7 @@ export function equal(
 export function lessThan(
 	dateTime1: DateTime,
 	dateTime2: DateTime,
-	implicitTimezone?: DayTimeDuration | null
+	implicitTimezone?: DayTimeDuration | null,
 ): boolean {
 	return compare(dateTime1, dateTime2, implicitTimezone) < 0;
 }
@@ -448,7 +448,7 @@ export function lessThan(
 export function greaterThan(
 	dateTime1: DateTime,
 	dateTime2: DateTime,
-	implicitTimezone?: DayTimeDuration | null
+	implicitTimezone?: DayTimeDuration | null,
 ): boolean {
 	return compare(dateTime1, dateTime2, implicitTimezone) > 0;
 }
@@ -456,7 +456,7 @@ export function greaterThan(
 export function subtract(
 	dateTime1: DateTime,
 	dateTime2: DateTime,
-	implicitTimezone?: DayTimeDuration | null
+	implicitTimezone?: DayTimeDuration | null,
 ): DayTimeDuration {
 	// Divided by 1000 because date subtraction results in milliseconds
 	const secondsOfDuration =
@@ -472,7 +472,7 @@ export function addDuration(dateTime: DateTime, _duration: AbstractDuration): Da
 
 export function subtractDuration(dateTime: DateTime, _duration: AbstractDuration): DateTime {
 	throw new Error(
-		`Not implemented: subtracting durations from ${valueTypeToString(dateTime.type)}`
+		`Not implemented: subtracting durations from ${valueTypeToString(dateTime.type)}`,
 	);
 }
 

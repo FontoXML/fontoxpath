@@ -31,7 +31,7 @@ export type TransferablePendingUpdate = {
 };
 
 export default function createPendingUpdateFromTransferable(
-	transferable: TransferablePendingUpdate
+	transferable: TransferablePendingUpdate,
 ): IPendingUpdate {
 	switch (transferable['type']) {
 		case 'delete':
@@ -47,47 +47,47 @@ export default function createPendingUpdateFromTransferable(
 				},
 				transferable['content'].map((contentNode: ConcreteChildNode) => {
 					return { node: contentNode, graftAncestor: null };
-				})
+				}),
 			);
 		case 'insertBefore':
 			return new InsertBeforePendingUpdate(
 				{ node: transferable['target'] as ConcreteParentNode, graftAncestor: null },
 				transferable['content'].map((contentNode: ConcreteChildNode) => {
 					return { node: contentNode, graftAncestor: null };
-				})
+				}),
 			);
 		case 'insertInto':
 			return new InsertIntoPendingUpdate(
 				{ node: transferable['target'] as ConcreteElementNode, graftAncestor: null },
 				transferable['content'].map((contentNode: ConcreteChildNode) => {
 					return { node: contentNode, graftAncestor: null };
-				})
+				}),
 			);
 		case 'insertIntoAsFirst':
 			return new InsertIntoAsFirstPendingUpdate(
 				{ node: transferable['target'] as ConcreteElementNode, graftAncestor: null },
 				transferable['content'].map((contentNode: ConcreteChildNode) => {
 					return { node: contentNode, graftAncestor: null };
-				})
+				}),
 			);
 		case 'insertIntoAsLast':
 			return new InsertIntoAsLastPendingUpdate(
 				{ node: transferable['target'] as ConcreteElementNode, graftAncestor: null },
 				transferable['content'].map((contentNode: ConcreteChildNode) => {
 					return { node: contentNode, graftAncestor: null };
-				})
+				}),
 			);
 		case 'insertAttributes':
 			return new InsertAttributesPendingUpdate(
 				{ node: transferable['target'] as ConcreteElementNode, graftAncestor: null },
 				transferable['content'].map((contentNode: ConcreteAttributeNode) => {
 					return { node: contentNode, graftAncestor: null };
-				})
+				}),
 			);
 		case 'rename':
 			return new RenamePendingUpdate(
 				{ node: transferable['target'] as ConcreteElementNode, graftAncestor: null },
-				transferable['newName']
+				transferable['newName'],
 			);
 		case 'replaceNode':
 			return new ReplaceNodePendingUpdate(
@@ -97,7 +97,7 @@ export default function createPendingUpdateFromTransferable(
 				},
 				transferable['replacement'].map((contentNode: ConcreteChildNode) => {
 					return { node: contentNode, graftAncestor: null };
-				})
+				}),
 			);
 		case 'replaceValue':
 			return new ReplaceValuePendingUpdate(
@@ -105,18 +105,18 @@ export default function createPendingUpdateFromTransferable(
 					node: transferable['target'] as ConcreteElementNode,
 					graftAncestor: null,
 				},
-				transferable['string-value']
+				transferable['string-value'],
 			);
 		case 'replaceElementContent':
 			return new ReplaceElementContentPendingUpdate(
 				{ node: transferable['target'] as ConcreteElementNode, graftAncestor: null },
 				transferable['text']
 					? { node: transferable['text'] as ConcreteTextNode, graftAncestor: null }
-					: null
+					: null,
 			);
 		default:
 			throw new Error(
-				`Unexpected type "${transferable['type']}" when parsing a transferable pending update.`
+				`Unexpected type "${transferable['type']}" when parsing a transferable pending update.`,
 			);
 	}
 }

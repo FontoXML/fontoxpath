@@ -19,7 +19,7 @@ describe('child', () => {
 		jsonMlMapper.parse(['someParentElement', ['someElement']], documentNode);
 		chai.assert(
 			evaluateXPathToFirstNode('child::someElement', documentNode.documentElement) ===
-				documentNode.documentElement.firstChild
+				documentNode.documentElement.firstChild,
 		);
 	});
 
@@ -27,7 +27,7 @@ describe('child', () => {
 		jsonMlMapper.parse(['someParentElement', ['someElement']], documentNode);
 		chai.assert(
 			evaluateXPathToFirstNode('someElement', documentNode.documentElement) ===
-				documentNode.documentElement.firstChild
+				documentNode.documentElement.firstChild,
 		);
 	});
 
@@ -40,22 +40,22 @@ describe('child', () => {
 				},
 				['someElement'],
 			],
-			documentNode
+			documentNode,
 		);
 		chai.assert(
 			evaluateXPathToFirstNode('/attribute::someAttribute/child::node()', documentNode) ===
-				null
+				null,
 		);
 	});
 
 	it('sets the context sequence', () => {
 		jsonMlMapper.parse(
 			['someParentElement', ['someElement'], ['someOtherElement']],
-			documentNode
+			documentNode,
 		);
 		chai.assert.deepEqual(
 			evaluateXPathToFirstNode('someParentElement/child::*[last()]', documentNode),
-			documentNode.documentElement.lastChild
+			documentNode.documentElement.lastChild,
 		);
 	});
 

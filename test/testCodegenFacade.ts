@@ -58,14 +58,14 @@ let variablesCases = 0;
 
 const evaluateXPathWithJsCodegen = <
 	TNode extends Node,
-	TReturnType extends keyof IReturnTypes<TNode>
+	TReturnType extends keyof IReturnTypes<TNode>,
 >(
 	query: EvaluableExpression,
 	contextItem?: any | null,
 	localDomFacade?: IDomFacade | null,
 	returnType?: ReturnType,
 	options?: Options,
-	variables?: { [s: string]: any } | null
+	variables?: { [s: string]: any } | null,
 ): IReturnTypes<TNode>[TReturnType] => {
 	totalCases++;
 
@@ -101,7 +101,7 @@ export function evaluateXPathToArray(
 	contextItem?: any | null,
 	localDomFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
-	options?: Options | null
+	options?: Options | null,
 ): any[] {
 	return evaluateXPathWithJsCodegen(
 		selector,
@@ -109,7 +109,7 @@ export function evaluateXPathToArray(
 		localDomFacade,
 		ReturnType.ARRAY,
 		options,
-		variables
+		variables,
 	);
 }
 
@@ -118,7 +118,7 @@ export function evaluateXPathToAsyncIterator(
 	contextItem?: any | null,
 	localDomFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
-	options?: Options | null
+	options?: Options | null,
 ): AsyncIterableIterator<any> {
 	return evaluateXPathWithJsCodegen(
 		selector,
@@ -126,7 +126,7 @@ export function evaluateXPathToAsyncIterator(
 		localDomFacade,
 		ReturnType.ASYNC_ITERATOR,
 		options,
-		variables
+		variables,
 	);
 }
 
@@ -135,7 +135,7 @@ export function evaluateXPathToBoolean(
 	contextItem?: any | null,
 	localDomFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
-	options?: Options | null
+	options?: Options | null,
 ): boolean {
 	return evaluateXPathWithJsCodegen(
 		selector,
@@ -143,7 +143,7 @@ export function evaluateXPathToBoolean(
 		localDomFacade,
 		ReturnType.BOOLEAN,
 		options,
-		variables
+		variables,
 	);
 }
 
@@ -152,7 +152,7 @@ export function evaluateXPathToFirstNode<T extends Node>(
 	contextItem?: any | null,
 	localDomFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
-	options?: Options | null
+	options?: Options | null,
 ): T | null {
 	return evaluateXPathWithJsCodegen(
 		selector,
@@ -160,7 +160,7 @@ export function evaluateXPathToFirstNode<T extends Node>(
 		localDomFacade,
 		ReturnType.FIRST_NODE,
 		options,
-		variables
+		variables,
 	);
 }
 
@@ -169,7 +169,7 @@ export function evaluateXPathToMap(
 	contextItem?: any | null,
 	localDomFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
-	options?: Options | null
+	options?: Options | null,
 ): { [s: string]: any } {
 	return evaluateXPathWithJsCodegen(
 		selector,
@@ -177,7 +177,7 @@ export function evaluateXPathToMap(
 		localDomFacade,
 		ReturnType.MAP,
 		options,
-		variables
+		variables,
 	);
 }
 
@@ -186,7 +186,7 @@ export function evaluateXPathToNodes<T extends Node>(
 	contextItem?: any | null,
 	localDomFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
-	options?: Options | null
+	options?: Options | null,
 ): T[] {
 	return evaluateXPathWithJsCodegen(
 		selector,
@@ -194,7 +194,7 @@ export function evaluateXPathToNodes<T extends Node>(
 		localDomFacade,
 		ReturnType.NODES,
 		options,
-		variables
+		variables,
 	);
 }
 
@@ -203,7 +203,7 @@ export function evaluateXPathToNumber(
 	contextItem?: any | null,
 	localDomFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
-	options?: Options | null
+	options?: Options | null,
 ): number {
 	return evaluateXPathWithJsCodegen(
 		selector,
@@ -211,7 +211,7 @@ export function evaluateXPathToNumber(
 		localDomFacade,
 		ReturnType.NUMBER,
 		options,
-		variables
+		variables,
 	);
 }
 
@@ -220,7 +220,7 @@ export function evaluateXPathToNumbers(
 	contextItem?: any | null,
 	localDomFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
-	options?: Options | null
+	options?: Options | null,
 ): number[] {
 	return evaluateXPathWithJsCodegen(
 		selector,
@@ -228,7 +228,7 @@ export function evaluateXPathToNumbers(
 		localDomFacade,
 		ReturnType.NUMBERS,
 		options,
-		variables
+		variables,
 	);
 }
 
@@ -237,7 +237,7 @@ export function evaluateXPathToString(
 	contextItem?: any | null,
 	localDomFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
-	options?: Options | null
+	options?: Options | null,
 ): string {
 	return evaluateXPathWithJsCodegen(
 		selector,
@@ -245,7 +245,7 @@ export function evaluateXPathToString(
 		localDomFacade,
 		ReturnType.STRING,
 		options,
-		variables
+		variables,
 	);
 }
 
@@ -254,7 +254,7 @@ export function evaluateXPathToStrings(
 	contextItem?: any | null,
 	localDomFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
-	options?: Options | null
+	options?: Options | null,
 ): string[] {
 	return evaluateXPathWithJsCodegen(
 		selector,
@@ -262,7 +262,7 @@ export function evaluateXPathToStrings(
 		localDomFacade,
 		ReturnType.STRINGS,
 		options,
-		variables
+		variables,
 	);
 }
 

@@ -24,7 +24,7 @@ describe('functions over nodes', () => {
 			jsonMlMapper.parse(['someElement', 'Some text.'], documentNode);
 			chai.assert.equal(
 				evaluateXPathToString('node-name()', documentNode.firstChild),
-				'someElement'
+				'someElement',
 			);
 		});
 
@@ -32,7 +32,7 @@ describe('functions over nodes', () => {
 			jsonMlMapper.parse(['someElement', 'Some text.'], documentNode);
 			chai.assert.equal(
 				evaluateXPathToString('node-name(.)', documentNode.firstChild),
-				'someElement'
+				'someElement',
 			);
 		});
 	});
@@ -45,7 +45,7 @@ describe('functions over nodes', () => {
 			jsonMlMapper.parse(['someElement', 'Some text.'], documentNode);
 			chai.assert.equal(
 				evaluateXPathToString('local-name()', documentNode.firstChild),
-				'someElement'
+				'someElement',
 			);
 		});
 
@@ -53,7 +53,7 @@ describe('functions over nodes', () => {
 			jsonMlMapper.parse(['someElement', 'Some text.'], documentNode);
 			chai.assert.equal(
 				evaluateXPathToString('local-name(.)', documentNode.firstChild),
-				'someElement'
+				'someElement',
 			);
 		});
 
@@ -61,7 +61,7 @@ describe('functions over nodes', () => {
 			jsonMlMapper.parse(['?somePi', 'With some data'], documentNode);
 			chai.assert.equal(
 				evaluateXPathToString('local-name(.)', documentNode.firstChild),
-				'somePi'
+				'somePi',
 			);
 		});
 	});
@@ -74,7 +74,7 @@ describe('functions over nodes', () => {
 			jsonMlMapper.parse(['someElement'], documentNode);
 			chai.assert.equal(
 				evaluateXPathToString('name()', documentNode.firstChild),
-				'someElement'
+				'someElement',
 			);
 		});
 
@@ -87,7 +87,7 @@ describe('functions over nodes', () => {
 			jsonMlMapper.parse(['someElement'], documentNode);
 			chai.assert.equal(
 				evaluateXPathToString('name(.)', documentNode.firstChild),
-				'someElement'
+				'someElement',
 			);
 		});
 
@@ -100,7 +100,7 @@ describe('functions over nodes', () => {
 			jsonMlMapper.parse(['someElement', { someAttribute: 'someValue' }], documentNode);
 			chai.assert.equal(
 				evaluateXPathToString('name(@someAttribute)', documentNode.firstChild),
-				'someAttribute'
+				'someAttribute',
 			);
 		});
 
@@ -130,8 +130,8 @@ return root($node) = $element`,
 					documentNode,
 					null,
 					null,
-					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-				)
+					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
+				),
 			));
 
 		it('returns the root of the given constructed element from context', () =>
@@ -144,8 +144,8 @@ return $node/root() = $element`,
 					documentNode,
 					null,
 					null,
-					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-				)
+					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
+				),
 			));
 	});
 
@@ -154,7 +154,7 @@ return $node/root() = $element`,
 			jsonMlMapper.parse(['root', ['child'], ['child', ['descendant']]], documentNode);
 			chai.assert.sameMembers(
 				evaluateXPathToStrings('(/root//* => outermost())!name()', documentNode),
-				['child', 'child']
+				['child', 'child'],
 			);
 		});
 
@@ -162,7 +162,7 @@ return $node/root() = $element`,
 			jsonMlMapper.parse(['root', ['child'], ['child', ['descendant']]], documentNode);
 			chai.assert.equal(
 				evaluateXPathToString('(//* => outermost())!name()', documentNode),
-				'root'
+				'root',
 			);
 		});
 
@@ -173,14 +173,14 @@ return $node/root() = $element`,
 					['child', ['descendant', { pos: 'first' }]],
 					['child', ['descendant', { pos: 'last' }]],
 				],
-				documentNode
+				documentNode,
 			);
 			chai.assert.sameMembers(
 				evaluateXPathToStrings(
 					'(descendant::descendant => outermost())!@pos',
-					documentNode
+					documentNode,
 				),
-				['first', 'last']
+				['first', 'last'],
 			);
 		});
 
@@ -188,7 +188,7 @@ return $node/root() = $element`,
 			jsonMlMapper.parse(['root', ['child1'], ['child2', ['descendant']]], documentNode);
 			chai.assert.sameMembers(
 				evaluateXPathToStrings('outermost((//child2 | //child1))!name()', documentNode),
-				['child1', 'child2']
+				['child1', 'child2'],
 			);
 		});
 
@@ -196,18 +196,18 @@ return $node/root() = $element`,
 			jsonMlMapper.parse(['root', ['child1'], ['child2', ['descendant']]], documentNode);
 			chai.assert.sameMembers(
 				evaluateXPathToStrings('outermost((//child1 | //child1))!name()', documentNode),
-				['child1']
+				['child1'],
 			);
 		});
 
 		it('keeps attribute nodes', () => {
 			jsonMlMapper.parse(
 				['root', ['child1', { attr: 'value' }], ['child2', ['descendant']]],
-				documentNode
+				documentNode,
 			);
 			chai.assert.sameMembers(
 				evaluateXPathToStrings('outermost((//child2 | //@*))!name()', documentNode),
-				['attr', 'child2']
+				['attr', 'child2'],
 			);
 		});
 
@@ -220,7 +220,7 @@ return $node/root() = $element`,
 			jsonMlMapper.parse(['root', ['child'], ['child', ['descendant']]], documentNode);
 			chai.assert.sameOrderedMembers(
 				evaluateXPathToStrings('(/root//* => innermost())!name()', documentNode),
-				['child', 'descendant']
+				['child', 'descendant'],
 			);
 		});
 
@@ -228,18 +228,18 @@ return $node/root() = $element`,
 			jsonMlMapper.parse(['root', ['child'], ['child', ['descendant']]], documentNode);
 			chai.assert.sameOrderedMembers(
 				evaluateXPathToStrings('(//* => innermost())!name()', documentNode),
-				['child', 'descendant']
+				['child', 'descendant'],
 			);
 		});
 
 		it('returns the bottom level nodes if the nodes are not direct children', () => {
 			jsonMlMapper.parse(
 				['root', ['child', ['descendant']], ['child', ['descendant'], ['descendant']]],
-				documentNode
+				documentNode,
 			);
 			chai.assert.sameOrderedMembers(
 				evaluateXPathToStrings('(//* => innermost())!name()', documentNode),
-				['descendant', 'descendant', 'descendant']
+				['descendant', 'descendant', 'descendant'],
 			);
 		});
 
@@ -252,7 +252,7 @@ return $node/root() = $element`,
 				'(innermost(($docA//node(), $docB//node())))!name()',
 				documentNode,
 				null,
-				{ docA, docB }
+				{ docA, docB },
 			);
 			try {
 				chai.assert.sameOrderedMembers(result, ['b', 'c', 'B', 'C']);
@@ -265,7 +265,7 @@ return $node/root() = $element`,
 			jsonMlMapper.parse(['root', ['child1'], ['child2', ['descendant']]], documentNode);
 			chai.assert.sameOrderedMembers(
 				evaluateXPathToStrings('innermost((//child2 | //child1))!name()', documentNode),
-				['child1', 'child2']
+				['child1', 'child2'],
 			);
 		});
 
@@ -273,21 +273,21 @@ return $node/root() = $element`,
 			jsonMlMapper.parse(['root', ['child1'], ['child2', ['descendant']]], documentNode);
 			chai.assert.sameOrderedMembers(
 				evaluateXPathToStrings('innermost((//child1 | //child1))!name()', documentNode),
-				['child1']
+				['child1'],
 			);
 		});
 
 		it('does not remove attribute nodes', () => {
 			jsonMlMapper.parse(
 				['root', ['child1', { attr: 'value' }], ['child2', ['descendant']]],
-				documentNode
+				documentNode,
 			);
 			chai.assert.sameOrderedMembers(
 				evaluateXPathToStrings(
 					'innermost((//child2 | //child1 | //@*))!name()',
-					documentNode
+					documentNode,
 				),
-				['attr', 'child2']
+				['attr', 'child2'],
 			);
 		});
 
@@ -332,9 +332,9 @@ return $node/root() = $element`,
 					null,
 					{
 						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
-					}
+					},
 				),
-				'Q{http://www.w3.org/2005/xpath-functions}root()'
+				'Q{http://www.w3.org/2005/xpath-functions}root()',
 			);
 		});
 
@@ -352,9 +352,9 @@ return $node/root() = $element`,
 					null,
 					{
 						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
-					}
+					},
 				),
-				'Q{http://www.w3.org/2005/xpath-functions}root()/@Q{http://www.w3.org/XML/1998/namespace}id'
+				'Q{http://www.w3.org/2005/xpath-functions}root()/@Q{http://www.w3.org/XML/1998/namespace}id',
 			);
 		});
 
@@ -372,9 +372,9 @@ return $node/root() = $element`,
 					null,
 					{
 						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
-					}
+					},
 				),
-				'Q{http://www.w3.org/2005/xpath-functions}root()/Q{}empnr[1]'
+				'Q{http://www.w3.org/2005/xpath-functions}root()/Q{}empnr[1]',
 			);
 		});
 
@@ -384,14 +384,14 @@ return $node/root() = $element`,
 				Freude, schöner Götterfunken,<br/>
 				Tochter aus Elysium,<br/>
 				Wir betreten feuertrunken,<br/>
-				Himmlische, dein Heiligtum.</p>`
+				Himmlische, dein Heiligtum.</p>`,
 			);
 
 			chai.assert.equal(
 				evaluateXPathToString(`let $e := . return fn:path($e)`, documentNode, null, null, {
 					language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 				}),
-				'/'
+				'/',
 			);
 		});
 
@@ -401,7 +401,7 @@ return $node/root() = $element`,
 				Freude, schöner Götterfunken,<br/>
 				Tochter aus Elysium,<br/>
 				Wir betreten feuertrunken,<br/>
-				Himmlische, dein Heiligtum.</p>`
+				Himmlische, dein Heiligtum.</p>`,
 			);
 
 			chai.assert.equal(
@@ -412,9 +412,9 @@ return $node/root() = $element`,
 					null,
 					{
 						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
-					}
+					},
 				),
-				'/Q{http://example.com/one}p[1]'
+				'/Q{http://example.com/one}p[1]',
 			);
 		});
 
@@ -424,7 +424,7 @@ return $node/root() = $element`,
 				Freude, schöner Götterfunken,<br/>
 				Tochter aus Elysium,<br/>
 				Wir betreten feuertrunken,<br/>
-				Himmlische, dein Heiligtum.</p>`
+				Himmlische, dein Heiligtum.</p>`,
 			);
 
 			chai.assert.equal(
@@ -435,9 +435,9 @@ return $node/root() = $element`,
 					null,
 					{
 						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
-					}
+					},
 				),
-				'/Q{http://example.com/one}p[1]/@Q{http://www.w3.org/XML/1998/namespace}lang'
+				'/Q{http://example.com/one}p[1]/@Q{http://www.w3.org/XML/1998/namespace}lang',
 			);
 		});
 
@@ -447,7 +447,7 @@ return $node/root() = $element`,
 				Freude, schöner Götterfunken,<br/>
 				Tochter aus Elysium,<br/>
 				Wir betreten feuertrunken,<br/>
-				Himmlische, dein Heiligtum.</p>`
+				Himmlische, dein Heiligtum.</p>`,
 			);
 
 			chai.assert.equal(
@@ -458,9 +458,9 @@ return $node/root() = $element`,
 					null,
 					{
 						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
-					}
+					},
 				),
-				'/Q{http://example.com/one}p[1]/@author'
+				'/Q{http://example.com/one}p[1]/@author',
 			);
 		});
 
@@ -472,7 +472,7 @@ return $node/root() = $element`,
 				Tochter aus Elysium,<br/> <said>
 				blablabla </said>
 				Wir betreten feuertrunken,<br/>
-				Himmlische, dein Heiligtum.</p>`
+				Himmlische, dein Heiligtum.</p>`,
 			);
 
 			chai.assert.equal(
@@ -483,9 +483,9 @@ return $node/root() = $element`,
 					null,
 					{
 						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
-					}
+					},
 				),
-				'/Q{http://example.com/one}p[1]/Q{http://example.com/one}br[2]'
+				'/Q{http://example.com/one}p[1]/Q{http://example.com/one}br[2]',
 			);
 		});
 
@@ -495,7 +495,7 @@ return $node/root() = $element`,
 				Freude, schöner Götterfunken,<br/>
 				Tochter aus Elysium,<br/> <s/>
 				Wir betreten feuertrunken,<br/>
-				Himmlische, dein Heiligtum.</p>`
+				Himmlische, dein Heiligtum.</p>`,
 			);
 
 			chai.assert.equal(
@@ -506,9 +506,9 @@ return $node/root() = $element`,
 					null,
 					{
 						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
-					}
+					},
 				),
-				'/Q{http://example.com/one}p[1]/text()[2]'
+				'/Q{http://example.com/one}p[1]/text()[2]',
 			);
 		});
 
@@ -516,7 +516,7 @@ return $node/root() = $element`,
 			chai.assert.isEmpty(
 				evaluateXPathToStrings(`fn:path(())`, documentNode, null, null, {
 					language: evaluateXPath.XQUERY_3_1_LANGUAGE,
-				})
+				}),
 			);
 		});
 
@@ -533,9 +533,9 @@ return $node/root() = $element`,
 					null,
 					{
 						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
-					}
+					},
 				),
-				'Q{http://www.w3.org/2005/xpath-functions}root()/Q{http://test2}a[1]'
+				'Q{http://www.w3.org/2005/xpath-functions}root()/Q{http://test2}a[1]',
 			);
 		});
 
@@ -552,9 +552,9 @@ return $node/root() = $element`,
 					null,
 					{
 						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
-					}
+					},
 				),
-				'Q{http://www.w3.org/2005/xpath-functions}root()/Q{http://test}a[2]'
+				'Q{http://www.w3.org/2005/xpath-functions}root()/Q{http://test}a[2]',
 			);
 		});
 
@@ -565,7 +565,7 @@ return $node/root() = $element`,
 				<?ANOTHER_TARGET  MORE DATA?>
 				<?canAlsoBeLowerCaps data may contain spaces?>
 				<?etc etc, etc?>
-				</xml>`
+				</xml>`,
 			);
 			chai.assert.equal(
 				evaluateXPathToString(
@@ -575,9 +575,9 @@ return $node/root() = $element`,
 					null,
 					{
 						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
-					}
+					},
 				),
-				'/Q{}xml[1]/processing-instruction(canAlsoBeLowerCaps)[1]'
+				'/Q{}xml[1]/processing-instruction(canAlsoBeLowerCaps)[1]',
 			);
 		});
 
@@ -588,7 +588,7 @@ return $node/root() = $element`,
 				<?TARGET MORE DATA?>
 				<?TARGET data may contain spaces?>
 				<?TARGET etc, etc?>
-				</xml>`
+				</xml>`,
 			);
 			chai.assert.equal(
 				evaluateXPathToString(
@@ -598,9 +598,9 @@ return $node/root() = $element`,
 					null,
 					{
 						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
-					}
+					},
 				),
-				'/Q{}xml[1]/processing-instruction(TARGET)[3]'
+				'/Q{}xml[1]/processing-instruction(TARGET)[3]',
 			);
 		});
 	});

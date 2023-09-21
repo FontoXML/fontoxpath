@@ -124,26 +124,26 @@ function convertIntegerToUpperAlphabet(integer: number) {
 function getUnicodeSubset(
 	firstCharacterCharCode: number,
 	numberOfCharacters: number,
-	charactersToSkip: number[] = []
+	charactersToSkip: number[] = [],
 ): number[] {
 	return Array.from({ length: numberOfCharacters }, (_, i) => i + firstCharacterCharCode).filter(
 		(charCode) => {
 			return !charactersToSkip.includes(charCode);
-		}
+		},
 	);
 }
 
 const HEBREW_ALPHABET_UNICODE = getUnicodeSubset(
 	0x05d0,
 	27,
-	[0x05da, 0x05dd, 0x05df, 0x05e3, 0x05e5]
+	[0x05da, 0x05dd, 0x05df, 0x05e3, 0x05e5],
 );
 
 // The Unicode standard follows the modern Arabic Alif-Ba-Ta alphabetical order
 const ARABIC_ALPHABET_UNICODE = getUnicodeSubset(
 	0x0627,
 	36,
-	[0x0629, 0x063b, 0x063c, 0x063d, 0x063e, 0x063f, 0x0640, 0x0649]
+	[0x0629, 0x063b, 0x063c, 0x063d, 0x063e, 0x063f, 0x0640, 0x0649],
 );
 
 const ARABIC_ABJADI_ALPHABET = [
@@ -237,7 +237,7 @@ const DECIMAL_TO_HEBREW_ALEFBET_NUMBER_TABLE: [number, string][] = [
 function createUnicodeRangeBasedNumberFormatter(
 	firstCharacterCharCode: number,
 	numberOfCharacters: number,
-	charactersToSkip: number[] = []
+	charactersToSkip: number[] = [],
 ): (integer: number) => string {
 	charactersToSkip.sort((a, b) => a - b);
 	numberOfCharacters = numberOfCharacters - charactersToSkip.length;
@@ -471,10 +471,10 @@ const fnAbs: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	return sequence.map((onlyValue) =>
-		createValidNumericType(onlyValue.type, Math.abs(onlyValue.value))
+		createValidNumericType(onlyValue.type, Math.abs(onlyValue.value)),
 	);
 };
 
@@ -519,7 +519,7 @@ const fnFormatInteger: FunctionDefinitionType = (
 	_executionParameters,
 	_staticContext,
 	sequence,
-	pictureSequence
+	pictureSequence,
 ) => {
 	const sequenceValue = sequence.first();
 	const pictureValue = pictureSequence.first();
@@ -544,10 +544,10 @@ const fnCeiling: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	return sequence.map((onlyValue) =>
-		createValidNumericType(onlyValue.type, Math.ceil(onlyValue.value))
+		createValidNumericType(onlyValue.type, Math.ceil(onlyValue.value)),
 	);
 };
 
@@ -555,10 +555,10 @@ const fnFloor: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	return sequence.map((onlyValue) =>
-		createValidNumericType(onlyValue.type, Math.floor(onlyValue.value))
+		createValidNumericType(onlyValue.type, Math.floor(onlyValue.value)),
 	);
 };
 
@@ -600,7 +600,7 @@ function fnRound(
 	_executionParameters: ExecutionParameters,
 	_staticContext: StaticContext,
 	sequence: ISequence,
-	precision: ISequence
+	precision: ISequence,
 ): ISequence {
 	let done = false;
 	return sequenceFactory.create({
@@ -668,7 +668,7 @@ const fnNumber: FunctionDefinitionType = (
 	_dynamicContext,
 	executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	return atomize(sequence, executionParameters).switchCases({
 		empty: () => sequenceFactory.singleton(createAtomicValue(NaN, ValueType.XSDOUBLE)),
@@ -701,12 +701,12 @@ const fnRandomNumberGenerator: FunctionDefinitionType = (
 	dynamicContext: DynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence = sequenceFactory.empty()
+	sequence = sequenceFactory.empty(),
 ) => {
 	const iseed = sequence.isEmpty()
 		? dynamicContext.getRandomNumber()
 		: dynamicContext.getRandomNumber(
-				createSeedFromString(castToType(sequence.first(), ValueType.XSSTRING).value)
+				createSeedFromString(castToType(sequence.first(), ValueType.XSSTRING).value),
 		  );
 
 	/**
@@ -717,7 +717,7 @@ const fnRandomNumberGenerator: FunctionDefinitionType = (
 			_dynamicContext,
 			_executionParameters,
 			_staticContext,
-			sequence
+			sequence,
 		) => {
 			if (sequence.isEmpty() || sequence.isSingleton()) {
 				return sequence;
@@ -745,8 +745,8 @@ const fnRandomNumberGenerator: FunctionDefinitionType = (
 						sequenceFactory.singleton(
 							createAtomicValue(
 								dynamicContext.getRandomNumber(iseed).currentDecimal,
-								ValueType.XSDOUBLE
-							)
+								ValueType.XSDOUBLE,
+							),
 						),
 				},
 				{
@@ -756,7 +756,7 @@ const fnRandomNumberGenerator: FunctionDefinitionType = (
 							new FunctionValue({
 								value: () =>
 									fnRandomImplementation(
-										dynamicContext.getRandomNumber(iseed).currentInt
+										dynamicContext.getRandomNumber(iseed).currentInt,
 									),
 								isAnonymous: true,
 								localName: '',
@@ -767,7 +767,7 @@ const fnRandomNumberGenerator: FunctionDefinitionType = (
 									type: ValueType.MAP,
 									mult: SequenceMultiplicity.EXACTLY_ONE,
 								},
-							})
+							}),
 						),
 				},
 				{
@@ -790,10 +790,10 @@ const fnRandomNumberGenerator: FunctionDefinitionType = (
 									type: ValueType.ITEM,
 									mult: SequenceMultiplicity.ZERO_OR_MORE,
 								},
-							})
+							}),
 						),
 				},
-			])
+			]),
 		);
 	}
 	return fnRandomImplementation(iseed.currentInt);
@@ -896,7 +896,7 @@ const declarations: BuiltinDeclarationType[] = [
 					sequenceFactory.singleton(dynamicContext.contextItem),
 					executionParameters,
 					'fn:number',
-					false
+					false,
 				);
 			if (!atomizedContextItem) {
 				throw errXPDY0002('fn:number needs an atomizable context item.');
@@ -905,7 +905,7 @@ const declarations: BuiltinDeclarationType[] = [
 				dynamicContext,
 				executionParameters,
 				staticContext,
-				atomizedContextItem
+				atomizedContextItem,
 			);
 		},
 	},

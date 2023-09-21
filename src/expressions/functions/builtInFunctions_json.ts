@@ -15,8 +15,8 @@ function convert(obj: any): ISequence {
 			if (Array.isArray(obj)) {
 				return sequenceFactory.singleton(
 					new ArrayValue(
-						obj.map((subObject) => createDoublyIterableSequence(convert(subObject)))
-					)
+						obj.map((subObject) => createDoublyIterableSequence(convert(subObject))),
+					),
 				);
 			}
 			if (obj === null) {
@@ -31,8 +31,8 @@ function convert(obj: any): ISequence {
 							key: createAtomicValue(key, ValueType.XSSTRING),
 							value: createDoublyIterableSequence(convert(objThingy[key])),
 						};
-					})
-				)
+					}),
+				),
 			);
 		case 'number':
 			return sequenceFactory.singleton(createAtomicValue(obj, ValueType.XSDOUBLE));
@@ -51,7 +51,7 @@ const fnParseJson: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	jsonString
+	jsonString,
 ) => {
 	let jsObject: any;
 	try {

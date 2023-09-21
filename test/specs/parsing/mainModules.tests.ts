@@ -21,7 +21,7 @@ test:hello("World")
 			null,
 			null,
 			null,
-			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 		);
 
 		chai.assert.equal(result, 'Hello World');
@@ -49,9 +49,9 @@ test:hello("World")
 					null,
 					null,
 					null,
-					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 				),
-			'XQST0047'
+			'XQST0047',
 		);
 	});
 
@@ -85,9 +85,9 @@ test:hello("World")
 					null,
 					null,
 					null,
-					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 				),
-			'XQST0049'
+			'XQST0049',
 		);
 	});
 
@@ -102,7 +102,7 @@ prrt:true()
 			null,
 			null,
 			null,
-			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 		);
 
 		chai.assert.equal(result, true);
@@ -118,9 +118,9 @@ declare function fn () external; 1`,
 					null,
 					null,
 					null,
-					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 				),
-			'XQST0045'
+			'XQST0045',
 		);
 	});
 
@@ -166,7 +166,7 @@ test:AAA(5)
 			null,
 			null,
 			null,
-			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 		);
 
 		chai.assert.equal(result, 'Hello Hello Hello  World World World');
@@ -191,7 +191,7 @@ test:hello()
 			null,
 			null,
 			null,
-			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 		);
 
 		chai.assert.equal(result, 'Hello world!');

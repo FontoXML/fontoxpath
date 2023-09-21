@@ -17,7 +17,7 @@ function mapItem(
 	type: SequenceType,
 	executionParameters: ExecutionParameters,
 	functionName: string,
-	isReturn: boolean
+	isReturn: boolean,
 ) {
 	if (isSubtypeOf(argumentItem.type, type.type)) {
 		return argumentItem;
@@ -49,8 +49,8 @@ function mapItem(
 				`XPTY0004 Unable to convert ${
 					isReturn ? 'return' : 'argument'
 				} of type ${valueTypeToString(argumentItem.type)} to type ${sequenceTypeToString(
-					type
-				)} while calling ${functionName}`
+					type,
+				)} while calling ${functionName}`,
 			);
 		}
 		return convertedItem;
@@ -63,8 +63,8 @@ function mapItem(
 			`XPTY0004 Unable to cast ${
 				isReturn ? 'return' : 'argument'
 			} of type ${valueTypeToString(argumentItem.type)} to type ${sequenceTypeToString(
-				type
-			)} while calling ${functionName}`
+				type,
+			)} while calling ${functionName}`,
 		);
 	}
 	return item;
@@ -91,21 +91,21 @@ export const performFunctionConversion = (
 	argument: ISequence,
 	executionParameters: ExecutionParameters,
 	functionName: string,
-	isReturn: boolean
+	isReturn: boolean,
 ): ISequence => {
 	if (argumentType.mult === SequenceMultiplicity.ZERO_OR_ONE) {
 		return argument.switchCases({
 			default: () =>
 				argument.map((value) =>
-					mapItem(value, argumentType, executionParameters, functionName, isReturn)
+					mapItem(value, argumentType, executionParameters, functionName, isReturn),
 				),
 			multiple: () => {
 				throw new Error(
 					`XPTY0004: Multiplicity of ${
 						isReturn ? 'function return value' : 'function argument'
 					} of type ${valueTypeToString(argumentType.type)}${multiplicityToString(
-						argumentType.mult
-					)} for ${functionName} is incorrect. Expected "?", but got "+".`
+						argumentType.mult,
+					)} for ${functionName} is incorrect. Expected "?", but got "+".`,
 				);
 			},
 		});
@@ -117,34 +117,34 @@ export const performFunctionConversion = (
 					`XPTY0004: Multiplicity of ${
 						isReturn ? 'function return value' : 'function argument'
 					} of type ${valueTypeToString(argumentType.type)}${multiplicityToString(
-						argumentType.mult
-					)} for ${functionName} is incorrect. Expected "+", but got "empty-sequence()"`
+						argumentType.mult,
+					)} for ${functionName} is incorrect. Expected "+", but got "empty-sequence()"`,
 				);
 			},
 			default: () =>
 				argument.map((value) =>
-					mapItem(value, argumentType, executionParameters, functionName, isReturn)
+					mapItem(value, argumentType, executionParameters, functionName, isReturn),
 				),
 		});
 	}
 	if (argumentType.mult === SequenceMultiplicity.ZERO_OR_MORE) {
 		return argument.map((value) =>
-			mapItem(value, argumentType, executionParameters, functionName, isReturn)
+			mapItem(value, argumentType, executionParameters, functionName, isReturn),
 		);
 	}
 
 	return argument.switchCases({
 		singleton: () =>
 			argument.map((value) =>
-				mapItem(value, argumentType, executionParameters, functionName, isReturn)
+				mapItem(value, argumentType, executionParameters, functionName, isReturn),
 			),
 		default: () => {
 			throw new Error(
 				`XPTY0004: Multiplicity of ${
 					isReturn ? 'function return value' : 'function argument'
 				} of type ${valueTypeToString(argumentType.type)}${multiplicityToString(
-					argumentType.mult
-				)} for ${functionName} is incorrect. Expected exactly one`
+					argumentType.mult,
+				)} for ${functionName} is incorrect. Expected exactly one`,
 			);
 		},
 	});

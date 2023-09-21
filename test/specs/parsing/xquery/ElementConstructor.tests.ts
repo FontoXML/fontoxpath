@@ -23,9 +23,9 @@ describe('ElementConstructor', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 			).nodeType,
-			1
+			1,
 		);
 	});
 	it('Sets the correct name', () => {
@@ -35,8 +35,8 @@ describe('ElementConstructor', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-			)
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
+			),
 		);
 	});
 	it('Sets attributes', () => {
@@ -46,8 +46,8 @@ describe('ElementConstructor', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-			)
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
+			),
 		);
 	});
 	it('May use inner expressions', () => {
@@ -57,8 +57,8 @@ describe('ElementConstructor', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-			)
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
+			),
 		);
 	});
 	it('Joins inner expressions using spaces', () => {
@@ -68,8 +68,8 @@ describe('ElementConstructor', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-			)
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
+			),
 		);
 	});
 	it('Allows creating namespaced elements', () => {
@@ -79,8 +79,8 @@ describe('ElementConstructor', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-			)
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
+			),
 		);
 	});
 	it('Allows creating elements with no namespace', () => {
@@ -90,8 +90,8 @@ describe('ElementConstructor', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-			)
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
+			),
 		);
 	});
 	it('Allows creating namespaced elements with attributes', () => {
@@ -101,8 +101,8 @@ describe('ElementConstructor', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-			)
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
+			),
 		);
 	});
 	it('Allows creating namespaced elements without prefixes', () => {
@@ -112,8 +112,8 @@ describe('ElementConstructor', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-			)
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
+			),
 		);
 	});
 	it('Allows mixing inner expressions and direct attributes', () => {
@@ -123,8 +123,8 @@ describe('ElementConstructor', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-			)
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
+			),
 		);
 	});
 
@@ -135,8 +135,8 @@ describe('ElementConstructor', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-			)
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
+			),
 		);
 	});
 
@@ -147,8 +147,8 @@ describe('ElementConstructor', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-			)
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
+			),
 		);
 	});
 	it('Parses character references with hexadecimal points', () => {
@@ -158,8 +158,8 @@ describe('ElementConstructor', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-			)
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
+			),
 		);
 	});
 
@@ -170,9 +170,9 @@ describe('ElementConstructor', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 			).outerHTML,
-			'<e>1A1</e>'
+			'<e>1A1</e>',
 		);
 	});
 
@@ -183,9 +183,9 @@ describe('ElementConstructor', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 			).outerHTML,
-			'<e>1 a 2 3</e>'
+			'<e>1 a 2 3</e>',
 		);
 	});
 
@@ -196,9 +196,9 @@ describe('ElementConstructor', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 			).outerHTML,
-			'<e><a/><b/><c/></e>'
+			'<e><a/><b/><c/></e>',
 		);
 	});
 
@@ -219,9 +219,9 @@ describe('ElementConstructor', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 			).outerHTML,
-			`<e><!-- my comment --><d attr="v-a-l-u-e"><c><?PITarget PIContent?><b><a>hey text node!</a></b></c></d></e>`
+			`<e><!-- my comment --><d attr="v-a-l-u-e"><c><?PITarget PIContent?><b><a>hey text node!</a></b></c></d></e>`,
 		);
 	});
 
@@ -238,9 +238,9 @@ describe('ElementConstructor', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 			),
-			'clone node b.'
+			'clone node b.',
 		);
 
 		chai.assert.isTrue(
@@ -250,9 +250,9 @@ describe('ElementConstructor', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 			),
-			'does not clone node b.'
+			'does not clone node b.',
 		);
 
 		chai.assert.isTrue(
@@ -261,9 +261,9 @@ describe('ElementConstructor', () => {
 				b,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 			),
-			'The node b is the first child of its parent.'
+			'The node b is the first child of its parent.',
 		);
 
 		chai.assert.isTrue(
@@ -273,9 +273,9 @@ describe('ElementConstructor', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 			),
-			'create all dom only once.'
+			'create all dom only once.',
 		);
 
 		chai.assert.equal(
@@ -284,10 +284,10 @@ describe('ElementConstructor', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 			).value,
 			'value',
-			'clone attribute.'
+			'clone attribute.',
 		);
 	});
 
@@ -305,7 +305,7 @@ describe('ElementConstructor', () => {
 			null,
 			{
 				language: evaluateXPath.XQUERY_3_1_LANGUAGE,
-			}
+			},
 		);
 
 		chai.assert.equal(nodes[0].parentNode, nodes[1]);
@@ -323,10 +323,10 @@ describe('ElementConstructor', () => {
 				title,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 			),
 			'Hello World!',
-			'Returns "Hello World!"'
+			'Returns "Hello World!"',
 		);
 	});
 
@@ -337,9 +337,9 @@ describe('ElementConstructor', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 			).outerHTML,
-			'<e>Some CDATA</e>'
+			'<e>Some CDATA</e>',
 		);
 	});
 
@@ -350,8 +350,8 @@ describe('ElementConstructor', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-			)
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
+			),
 		);
 	});
 });

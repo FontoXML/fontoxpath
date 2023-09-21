@@ -20,26 +20,26 @@ describe('predicates', () => {
 		const element = documentNode.createElement('someElement');
 		chai.assert.deepEqual(
 			evaluateXPathToNodes("self::someElement[@someAttribute='someValue']", element),
-			[]
+			[],
 		);
 		element.setAttribute('someAttribute', 'someValue');
 		chai.assert.deepEqual(
 			evaluateXPathToFirstNode("self::someElement[@someAttribute='someValue']", element),
-			element
+			element,
 		);
 	});
 
 	it('uses correct contexts in predicates', () => {
 		jsonMlMapper.parse(
 			['someGrandParentElement', ['someParentElement', ['someChildelement']]],
-			documentNode
+			documentNode,
 		);
 		chai.assert.deepEqual(
 			evaluateXPathToFirstNode(
 				'parent::someParentElement[parent::someGrandParentElement]',
-				documentNode.documentElement.firstChild.firstChild
+				documentNode.documentElement.firstChild.firstChild,
 			),
-			documentNode.documentElement.firstChild
+			documentNode.documentElement.firstChild,
 		);
 	});
 
@@ -48,12 +48,12 @@ describe('predicates', () => {
 		element.setAttribute('someAttribute', 'someValue');
 		chai.assert.deepEqual(
 			evaluateXPathToFirstNode("self::*[@someAttribute='someValue']", element),
-			element
+			element,
 		);
 		const comment = documentNode.createComment('someComment');
 		chai.assert.deepEqual(
 			evaluateXPathToNodes("self::*[@someAttribute='someValue']", comment),
-			[]
+			[],
 		);
 	});
 
@@ -62,9 +62,9 @@ describe('predicates', () => {
 		chai.assert.deepEqual(
 			evaluateXPathToNodes(
 				'descendant-or-self::node()[self::*[@someAttribute="someValue"]]',
-				documentNode.documentElement.firstChild
+				documentNode.documentElement.firstChild,
 			),
-			[]
+			[],
 		);
 	});
 
@@ -73,9 +73,9 @@ describe('predicates', () => {
 		chai.assert.deepEqual(
 			evaluateXPathToFirstNode(
 				'self::node()[self::*][child::someChildElement]',
-				documentNode.documentElement
+				documentNode.documentElement,
 			),
-			documentNode.documentElement
+			documentNode.documentElement,
 		);
 	});
 
@@ -84,9 +84,9 @@ describe('predicates', () => {
 		chai.assert.deepEqual(
 			evaluateXPathToNodes(
 				'self::node()[self::*][child::someChildElement][false()]',
-				documentNode.documentElement
+				documentNode.documentElement,
 			),
-			[]
+			[],
 		);
 	});
 
@@ -100,8 +100,8 @@ describe('predicates', () => {
 		chai.assert.isTrue(
 			evaluateXPathToBoolean(
 				'parent::node() and not(parent::*)',
-				documentNode.documentElement
-			)
+				documentNode.documentElement,
+			),
 		);
 	});
 

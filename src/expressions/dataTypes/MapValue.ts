@@ -20,7 +20,7 @@ class MapValue extends FunctionValue<ISequence> {
 					executionParameters,
 					staticContext,
 					sequenceFactory.singleton(this),
-					key
+					key,
 				),
 			returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
 		});

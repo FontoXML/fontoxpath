@@ -100,7 +100,7 @@ function mergeSortedSequences(domFacade: DomFacade, sequences: IIterator<ISequen
 
 				if (
 					allIterators.every((iterator) =>
-						isSubtypeOf(iterator.current.value.type, ValueType.NODE)
+						isSubtypeOf(iterator.current.value.type, ValueType.NODE),
 					)
 				) {
 					// Sort the iterators initially. We know these iterators return locally sorted items, but we do not know the inter-ordering of these items.
@@ -108,8 +108,8 @@ function mergeSortedSequences(domFacade: DomFacade, sequences: IIterator<ISequen
 						compareNodePositions(
 							domFacade,
 							iteratorA.current.value,
-							iteratorB.current.value
-						)
+							iteratorB.current.value,
+						),
 					);
 				}
 			}
@@ -138,7 +138,7 @@ function mergeSortedSequences(domFacade: DomFacade, sequences: IIterator<ISequen
 						const comparisonResult = compareNodePositions(
 							domFacade,
 							consumedIterator.current.value,
-							otherNode
+							otherNode,
 						);
 						if (comparisonResult === 0) {
 							// The same, this should be 0

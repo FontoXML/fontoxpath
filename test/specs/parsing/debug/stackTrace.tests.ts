@@ -31,7 +31,7 @@ function d() {
 		null,
 		{
 			debug: true,
-		}
+		},
 	);
 }
 
@@ -61,7 +61,7 @@ describe('showStackTraceOnError', () => {
 			(_dynamicContext) => {
 				// This will throw an error so no need for a return
 				c();
-			}
+			},
 		);
 
 		// This function will call 3 nested JS functions which we expect in our call stack as well
@@ -73,7 +73,7 @@ describe('showStackTraceOnError', () => {
 			(_dynamicContext) => {
 				// This will throw an error so no need for a return
 				f();
-			}
+			},
 		);
 	});
 
@@ -89,7 +89,7 @@ else
 					null,
 					null,
 					null,
-					{ debug: true }
+					{ debug: true },
 				),
 			`1: if (true()) then
 2:   [] and 1
@@ -100,7 +100,7 @@ else
 Error: FORG0006: Cannot determine the effective boolean value of a value with the type array(*)
   at <andOp>:2:3 - 2:11
   at <thenClause>:2:3 - 2:11
-  at <ifThenElseExpr>:1:1 - 4:12`
+  at <ifThenElseExpr>:1:1 - 4:12`,
 		);
 	});
 
@@ -112,7 +112,7 @@ Error: FORG0006: Cannot determine the effective boolean value of a value with th
    ^^^^^^^^^^^^^^^^^^^^^^^^
 
 Error: XPST0008, The variable non-existing-map is not in scope.
-  at <pathExpr>:1:1 - 1:25`
+  at <pathExpr>:1:1 - 1:25`,
 		);
 	});
 
@@ -129,7 +129,7 @@ Error: XPST0008, The variable non-existing-map is not in scope.
 
 Error: XPDY0002: context is absent, it needs to be present to use paths.
   at <pathExpr>:1:14 - 1:16
-  at <replaceExpr>:1:1 - 1:26`
+  at <replaceExpr>:1:1 - 1:26`,
 			);
 		}
 	});
@@ -147,7 +147,7 @@ Error: XPDY0002: context is absent, it needs to be present to use paths.
 
 Error: XPST0008, The variable node is not in scope.
   at <varRef>:1:14 - 1:19
-  at <replaceExpr>:1:1 - 1:29`
+  at <replaceExpr>:1:1 - 1:29`,
 			);
 		}
 	});
@@ -161,7 +161,7 @@ Error: XPST0008, The variable node is not in scope.
 declare %public %updating function my-ns:my-func ($node as node()) as xs:integer {
     $node/descendant::p ! (replace value of node . with "steve"), 1
 };`,
-					{ debug: true }
+					{ debug: true },
 				);
 				finalizeModuleRegistration();
 			},
@@ -172,7 +172,7 @@ declare %public %updating function my-ns:my-func ($node as node()) as xs:integer
 5: };
 
 Error: XUST0001: Can not execute an updating expression in a non-updating context.
-  at <simpleMapExpr>:4:5 - 4:65`
+  at <simpleMapExpr>:4:5 - 4:65`,
 		);
 	});
 
@@ -191,7 +191,7 @@ $map("key")
 					null,
 					null,
 					null,
-					{ debug: true }
+					{ debug: true },
 				),
 			`2: (: 2 :)
 3: (: 3 :)
@@ -201,7 +201,7 @@ $map("key")
 6: (: 5 :)
 
 Error: XPST0008, The variable map is not in scope.
-  at <pathExpr>:4:1 - 4:12`
+  at <pathExpr>:4:1 - 4:12`,
 		);
 	});
 
@@ -221,7 +221,7 @@ Error: XPST0008, The variable map is not in scope.
 9: (::)
 
 Error: XPST0008, The variable map is not in scope.
-  at <pathExpr>:7:1 - 7:12`
+  at <pathExpr>:7:1 - 7:12`,
 		);
 		chai.assert.throws(
 			() => {
@@ -236,7 +236,7 @@ Error: XPST0008, The variable map is not in scope.
 10: (::)
 
 Error: XPST0008, The variable map is not in scope.
-  at <pathExpr>:9:1 - 9:12`
+  at <pathExpr>:9:1 - 9:12`,
 		);
 	});
 
@@ -254,7 +254,7 @@ Error: XPST0008, The variable map is not in scope.
 
 Error: Custom XPath function Q{test}boom-abc raised:
 Test error
-    at a (`
+    at a (`,
 			);
 
 			const errorMessageLines = error.message.split('\n');
@@ -273,7 +273,7 @@ Test error
 
 			chai.assert.equal(
 				errorMessageLines[15],
-				'  at <functionCallExpr (Q{test}boom-abc)>:1:1 - 1:18'
+				'  at <functionCallExpr (Q{test}boom-abc)>:1:1 - 1:18',
 			);
 		}
 	});
@@ -294,7 +294,7 @@ Error: Custom XPath function Q{test}boom-def raised:
 
 Error: Custom XPath function Q{test}boom-abc raised:
 Test error
-    at a (`
+    at a (`,
 			);
 
 			// Check the error message lines containing our JS call stack contain function name,
@@ -311,7 +311,7 @@ Test error
 
 			chai.assert.include(
 				error.message,
-				'  at <functionCallExpr (Q{test}boom-abc)>:1:15 - 1:32'
+				'  at <functionCallExpr (Q{test}boom-abc)>:1:15 - 1:32',
 			);
 			chai.assert.include(error.message, '  at <andOp>:1:4 - 1:32');
 			chai.assert.include(error.message, '  at <ifClause>:1:4 - 1:32');
@@ -325,7 +325,7 @@ Test error
 
 			chai.assert.include(
 				error.message,
-				'  at <functionCallExpr (Q{test}boom-def)>:1:1 - 1:18'
+				'  at <functionCallExpr (Q{test}boom-def)>:1:1 - 1:18',
 			);
 		}
 	});
@@ -341,7 +341,7 @@ Test error
    ^^^^^^^^^^^
 
 Error: XPST0008, The variable map is not in scope.
-  at <pathExpr>:1:1 - 1:12`
+  at <pathExpr>:1:1 - 1:12`,
 		);
 	});
 
@@ -352,7 +352,7 @@ Error: XPST0008, The variable map is not in scope.
 				language: Language.XQUERY_3_1_LANGUAGE,
 				debug: true,
 			},
-			new Document()
+			new Document(),
 		);
 
 		chai.assert.throws(
@@ -365,7 +365,7 @@ Error: XPST0008, The variable map is not in scope.
    ^^^^^^^^^^^^^^^^^^^
 
 Error: FORG0006: Cannot determine the effective boolean value of a sequence with a length higher than one.
-  at <functionCallExpr (fn:boolean)>:1:1 - 1:20`
+  at <functionCallExpr (fn:boolean)>:1:1 - 1:20`,
 		);
 	});
 
@@ -380,7 +380,7 @@ Error: FORG0006: Cannot determine the effective boolean value of a sequence with
 					new Document(),
 					null,
 					null,
-					{ debug: true }
+					{ debug: true },
 				),
 			`1: /[
 2: \t\t\t\t\t\tfn:error()
@@ -389,7 +389,7 @@ Error: FORG0006: Cannot determine the effective boolean value of a sequence with
 
 Error: FOER0000
   at <functionCallExpr (fn:error)>:2:7 - 2:17
-  at <pathExpr>:1:1 - 3:7`
+  at <pathExpr>:1:1 - 3:7`,
 		);
 	});
 });

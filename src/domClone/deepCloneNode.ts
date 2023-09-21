@@ -19,7 +19,7 @@ import INodesFactory from '../nodesFactory/INodesFactory';
 
 export default function deepCloneNode(
 	pointer: NodePointer,
-	executionParameters: ExecutionParameters
+	executionParameters: ExecutionParameters,
 ): NodePointer {
 	// Each copied node receives a new node identity. The parent, children, and attributes properties of the copied nodes are set so as to preserve their inter-node relationships. The parent property of the copy of $node is set to empty. Other properties of the copied nodes are determined as follows:
 
@@ -39,7 +39,7 @@ export default function deepCloneNode(
 		case NODE_TYPES.ELEMENT_NODE:
 			const cloneElem = nodesFactory.createElementNS(
 				domFacade.getNamespaceURI(pointer as ElementNodePointer),
-				domFacade.getNodeName(pointer as ElementNodePointer)
+				domFacade.getNodeName(pointer as ElementNodePointer),
 			);
 			domFacade
 				.getAllAttributes(pointer.node as ConcreteElementNode | TinyElementNode)
@@ -48,15 +48,15 @@ export default function deepCloneNode(
 						cloneElem,
 						attr.namespaceURI,
 						attr.nodeName,
-						attr.value
-					)
+						attr.value,
+					),
 				);
 			for (const child of domFacade.getChildNodePointers(pointer as ElementNodePointer)) {
 				const descendant = deepCloneNode(child, executionParameters);
 				documentWriter.insertBefore(
 					cloneElem as ConcreteElementNode,
 					descendant.node,
-					null
+					null,
 				);
 			}
 			const elementNodePointer: ElementNodePointer = { node: cloneElem, graftAncestor: null };
@@ -64,7 +64,7 @@ export default function deepCloneNode(
 		case NODE_TYPES.ATTRIBUTE_NODE:
 			const cloneAttr = nodesFactory.createAttributeNS(
 				domFacade.getNamespaceURI(pointer as AttributeNodePointer),
-				domFacade.getNodeName(pointer as AttributeNodePointer)
+				domFacade.getNodeName(pointer as AttributeNodePointer),
 			);
 			cloneAttr.value = domFacade.getDataFromPointer(pointer as AttributeNodePointer);
 			const attributeNodePointer: AttributeNodePointer = {
@@ -75,7 +75,7 @@ export default function deepCloneNode(
 		case NODE_TYPES.CDATA_SECTION_NODE:
 			const characterDataNodePointer: CharacterDataNodePointer = {
 				node: nodesFactory.createCDATASection(
-					domFacade.getDataFromPointer(pointer as CDATASectionNodePointer)
+					domFacade.getDataFromPointer(pointer as CDATASectionNodePointer),
 				),
 				graftAncestor: null,
 			};
@@ -83,7 +83,7 @@ export default function deepCloneNode(
 		case NODE_TYPES.COMMENT_NODE:
 			const commentNodePointer: CommentNodePointer = {
 				node: nodesFactory.createComment(
-					domFacade.getDataFromPointer(pointer as AttributeNodePointer)
+					domFacade.getDataFromPointer(pointer as AttributeNodePointer),
 				),
 				graftAncestor: null,
 			};
@@ -95,7 +95,7 @@ export default function deepCloneNode(
 				documentWriter.insertBefore(
 					cloneDoc as ConcreteDocumentNode,
 					descendant.node,
-					null
+					null,
 				);
 			}
 			const documentNodePointer: DocumentNodePointer = {
@@ -107,7 +107,7 @@ export default function deepCloneNode(
 			const processingInstructionNodePointer: ProcessingInstructionNodePointer = {
 				node: nodesFactory.createProcessingInstruction(
 					domFacade.getTarget(pointer as ProcessingInstructionNodePointer),
-					domFacade.getDataFromPointer(pointer as ProcessingInstructionNodePointer)
+					domFacade.getDataFromPointer(pointer as ProcessingInstructionNodePointer),
 				),
 				graftAncestor: null,
 			};
@@ -115,7 +115,7 @@ export default function deepCloneNode(
 		case NODE_TYPES.TEXT_NODE:
 			const textNodePointer: TextNodePointer = {
 				node: nodesFactory.createTextNode(
-					domFacade.getDataFromPointer(pointer as TextNodePointer)
+					domFacade.getDataFromPointer(pointer as TextNodePointer),
 				),
 				graftAncestor: null,
 			};

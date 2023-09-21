@@ -21,14 +21,14 @@ class QuantifiedExpression extends Expression {
 		quantifier: string,
 		inClauses: InClause[],
 		satisfiesExpr: Expression,
-		type: SequenceType
+		type: SequenceType,
 	) {
 		const inClauseExpressions = inClauses.map((inClause) => inClause.sourceExpr);
 		const inClauseNames = inClauses.map((inClause) => inClause.name);
 
 		const specificity = inClauseExpressions.reduce(
 			(summedSpecificity, inClause) => summedSpecificity.add(inClause.specificity),
-			satisfiesExpr.specificity
+			satisfiesExpr.specificity,
 		);
 		super(
 			specificity,
@@ -37,7 +37,7 @@ class QuantifiedExpression extends Expression {
 				canBeStaticallyEvaluated: false,
 			},
 			false,
-			type
+			type,
 		);
 
 		this._quantifier = quantifier;
@@ -96,7 +96,7 @@ class QuantifiedExpression extends Expression {
 				const context = dynamicContext.scopeWithVariableBindings(variables);
 				const result = this._satisfiesExpr.evaluateMaybeStatically(
 					context,
-					executionParameters
+					executionParameters,
 				);
 
 				if (result.getEffectiveBooleanValue() && this._quantifier === 'some') {
@@ -129,7 +129,7 @@ class QuantifiedExpression extends Expression {
 				: null;
 			const varBindingName = staticContext.registerVariable(
 				inClauseNameNamespaceURI,
-				inClauseName.localName
+				inClauseName.localName,
 			);
 			this._inClauseVariableNames[i] = varBindingName;
 		}

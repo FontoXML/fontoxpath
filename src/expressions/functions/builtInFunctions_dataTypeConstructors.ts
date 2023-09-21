@@ -18,7 +18,7 @@ function genericDataTypeConstructor(
 	_dynamicContext: DynamicContext,
 	_executionParameters: ExecutionParameters,
 	_staticContext: StaticContext,
-	sequence: ISequence
+	sequence: ISequence,
 ) {
 	if (sequence.isEmpty()) {
 		return sequence;
@@ -30,7 +30,7 @@ const xsQName: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	staticContext,
-	sequence
+	sequence,
 ) => {
 	if (sequence.isEmpty()) {
 		return sequence;
@@ -52,19 +52,19 @@ const xsQName: FunctionDefinitionType = (
 		return sequenceFactory.singleton(
 			createAtomicValue(
 				new QName('', resolvedDefaultNamespaceURI, lexicalQName),
-				ValueType.XSQNAME
-			)
+				ValueType.XSQNAME,
+			),
 		);
 	}
 	const [prefix, localName] = lexicalQName.split(':');
 	const namespaceURI = staticContext.resolveNamespace(prefix);
 	if (!namespaceURI) {
 		throw new Error(
-			`FONS0004: The value ${lexicalQName} can not be cast to a QName. Did you mean to use fn:QName?`
+			`FONS0004: The value ${lexicalQName} can not be cast to a QName. Did you mean to use fn:QName?`,
 		);
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(new QName(prefix, namespaceURI, localName), ValueType.XSQNAME)
+		createAtomicValue(new QName(prefix, namespaceURI, localName), ValueType.XSQNAME),
 	);
 };
 
@@ -78,7 +78,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSUNTYPEDATOMIC, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSUNTYPEDATOMIC
+			ValueType.XSUNTYPEDATOMIC,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -93,7 +93,7 @@ const declarations: BuiltinDeclarationType[] = [
 		},
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSERROR
+			ValueType.XSERROR,
 		) as FunctionDefinitionType,
 	},
 	// AnySimpleType cannot be instantiated
@@ -107,7 +107,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSSTRING, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSSTRING
+			ValueType.XSSTRING,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -119,7 +119,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSBOOLEAN
+			ValueType.XSBOOLEAN,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -131,7 +131,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSDECIMAL, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSDECIMAL
+			ValueType.XSDECIMAL,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -143,7 +143,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSFLOAT, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSFLOAT
+			ValueType.XSFLOAT,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -155,7 +155,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSDOUBLE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSDOUBLE
+			ValueType.XSDOUBLE,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -167,7 +167,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSDURATION, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSDURATION
+			ValueType.XSDURATION,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -179,7 +179,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSDATETIME, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSDATETIME
+			ValueType.XSDATETIME,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -191,7 +191,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSDATETIMESTAMP, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSDATETIMESTAMP
+			ValueType.XSDATETIMESTAMP,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -203,7 +203,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSTIME, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSTIME
+			ValueType.XSTIME,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -215,7 +215,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSDATE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSDATE
+			ValueType.XSDATE,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -227,7 +227,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSGYEARMONTH, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSGYEARMONTH
+			ValueType.XSGYEARMONTH,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -239,7 +239,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSGYEAR, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSGYEAR
+			ValueType.XSGYEAR,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -251,7 +251,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSGMONTHDAY, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSGMONTHDAY
+			ValueType.XSGMONTHDAY,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -263,7 +263,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSGDAY, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSGDAY
+			ValueType.XSGDAY,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -275,7 +275,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSGMONTH, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSGMONTH
+			ValueType.XSGMONTH,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -287,7 +287,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSHEXBINARY, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSHEXBINARY
+			ValueType.XSHEXBINARY,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -299,7 +299,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSBASE64BINARY, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSBASE64BINARY
+			ValueType.XSBASE64BINARY,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -320,7 +320,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSANYURI, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSANYURI
+			ValueType.XSANYURI,
 		) as FunctionDefinitionType,
 	},
 	// NOTATION cannot be instantiated
@@ -336,7 +336,7 @@ const declarations: BuiltinDeclarationType[] = [
 		},
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSNORMALIZEDSTRING
+			ValueType.XSNORMALIZEDSTRING,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -348,7 +348,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSTOKEN, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSTOKEN
+			ValueType.XSTOKEN,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -360,7 +360,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSLANGUAGE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSLANGUAGE
+			ValueType.XSLANGUAGE,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -372,7 +372,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSNMTOKEN, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSNMTOKEN
+			ValueType.XSNMTOKEN,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -384,7 +384,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSNMTOKENS, mult: SequenceMultiplicity.ZERO_OR_MORE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSNMTOKENS
+			ValueType.XSNMTOKENS,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -396,7 +396,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSNAME, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSNAME
+			ValueType.XSNAME,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -408,7 +408,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSNCNAME, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSNCNAME
+			ValueType.XSNCNAME,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -420,7 +420,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSID, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSID
+			ValueType.XSID,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -432,7 +432,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSIDREF, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSIDREF
+			ValueType.XSIDREF,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -444,7 +444,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSIDREFS, mult: SequenceMultiplicity.ZERO_OR_MORE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSIDREFS
+			ValueType.XSIDREFS,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -456,7 +456,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSENTITY, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSENTITY
+			ValueType.XSENTITY,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -468,7 +468,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSENTITIES, mult: SequenceMultiplicity.ZERO_OR_MORE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSENTITIES
+			ValueType.XSENTITIES,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -480,7 +480,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSINTEGER
+			ValueType.XSINTEGER,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -495,7 +495,7 @@ const declarations: BuiltinDeclarationType[] = [
 		},
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSNONPOSITIVEINTEGER
+			ValueType.XSNONPOSITIVEINTEGER,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -510,7 +510,7 @@ const declarations: BuiltinDeclarationType[] = [
 		},
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSNEGATIVEINTEGER
+			ValueType.XSNEGATIVEINTEGER,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -522,7 +522,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSLONG, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSLONG
+			ValueType.XSLONG,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -534,7 +534,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSINT, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSINT
+			ValueType.XSINT,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -546,7 +546,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSSHORT, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSSHORT
+			ValueType.XSSHORT,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -558,7 +558,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSBYTE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSBYTE
+			ValueType.XSBYTE,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -573,7 +573,7 @@ const declarations: BuiltinDeclarationType[] = [
 		},
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSNONNEGATIVEINTEGER
+			ValueType.XSNONNEGATIVEINTEGER,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -585,7 +585,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSUNSIGNEDLONG, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSUNSIGNEDLONG
+			ValueType.XSUNSIGNEDLONG,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -597,7 +597,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSUNSIGNEDINT, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSUNSIGNEDINT
+			ValueType.XSUNSIGNEDINT,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -609,7 +609,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSUNSIGNEDSHORT, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSUNSIGNEDSHORT
+			ValueType.XSUNSIGNEDSHORT,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -621,7 +621,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSUNSIGNEDBYTE, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSUNSIGNEDBYTE
+			ValueType.XSUNSIGNEDBYTE,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -636,7 +636,7 @@ const declarations: BuiltinDeclarationType[] = [
 		},
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSPOSITIVEINTEGER
+			ValueType.XSPOSITIVEINTEGER,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -651,7 +651,7 @@ const declarations: BuiltinDeclarationType[] = [
 		},
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSYEARMONTHDURATION
+			ValueType.XSYEARMONTHDURATION,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -666,7 +666,7 @@ const declarations: BuiltinDeclarationType[] = [
 		},
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSDAYTIMEDURATION
+			ValueType.XSDAYTIMEDURATION,
 		) as FunctionDefinitionType,
 	},
 	{
@@ -678,7 +678,7 @@ const declarations: BuiltinDeclarationType[] = [
 		returnType: { type: ValueType.XSDATETIMESTAMP, mult: SequenceMultiplicity.ZERO_OR_ONE },
 		callFunction: genericDataTypeConstructor.bind(
 			null,
-			ValueType.XSDATETIMESTAMP
+			ValueType.XSDATETIMESTAMP,
 		) as FunctionDefinitionType,
 	},
 ];

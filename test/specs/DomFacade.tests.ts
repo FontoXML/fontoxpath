@@ -24,12 +24,12 @@ describe('DomFacade', () => {
 				['someChildElement'],
 				['someChildElement'],
 			],
-			documentNode
+			documentNode,
 		);
 
 		documentNode.insertBefore(
 			documentNode.implementation.createDocumentType('qname', 'publicid', 'systemid'),
-			documentNode.firstChild
+			documentNode.firstChild,
 		);
 
 		attributeNode = documentNode.documentElement.getAttributeNode('someAttribute');
@@ -47,7 +47,7 @@ describe('DomFacade', () => {
 					node: documentNode.documentElement,
 					graftAncestor: null,
 				}).node,
-				documentNode.documentElement.firstChild
+				documentNode.documentElement.firstChild,
 			));
 		it('returns null for attributes', () =>
 			chai.assert.isNull(domFacade.getFirstChildPointer(attributeNodePointer)));
@@ -57,12 +57,12 @@ describe('DomFacade', () => {
 					node: documentNode.documentElement,
 					graftAncestor: null,
 				}).node,
-				documentNode.documentElement.firstChild
+				documentNode.documentElement.firstChild,
 			));
 		it('skips document type nodes', () => {
 			chai.assert.equal(
 				domFacade.getFirstChildPointer({ node: documentNode, graftAncestor: null }).node,
-				documentNode.documentElement
+				documentNode.documentElement,
 			);
 		});
 	});
@@ -76,13 +76,13 @@ describe('DomFacade', () => {
 					node: documentNode.documentElement,
 					graftAncestor: null,
 				}).node,
-				documentNode.documentElement.lastChild
+				documentNode.documentElement.lastChild,
 			));
 		it('skips document type nodes', () => {
 			documentNode.removeChild(documentNode.documentElement);
 			// Now only the doctype is left
 			chai.assert.isNull(
-				domFacade.getLastChildPointer({ node: documentNode, graftAncestor: null })
+				domFacade.getLastChildPointer({ node: documentNode, graftAncestor: null }),
 			);
 		});
 	});
@@ -96,16 +96,16 @@ describe('DomFacade', () => {
 					node: documentNode.documentElement.firstChild as slimdom.Element,
 					graftAncestor: null,
 				}).node,
-				documentNode.documentElement.lastChild
+				documentNode.documentElement.lastChild,
 			));
 		it('skips document type nodes', () => {
 			const commentNode = documentNode.insertBefore(
 				documentNode.createComment('First'),
-				documentNode.firstChild
+				documentNode.firstChild,
 			);
 			chai.assert.equal(
 				domFacade.getNextSiblingPointer({ node: commentNode, graftAncestor: null }).node,
-				documentNode.lastChild
+				documentNode.lastChild,
 			);
 		});
 	});
@@ -119,14 +119,14 @@ describe('DomFacade', () => {
 					node: documentNode.documentElement.lastChild as slimdom.Element,
 					graftAncestor: null,
 				}).node,
-				documentNode.documentElement.firstChild
+				documentNode.documentElement.firstChild,
 			));
 		it('skips document type nodes', () => {
 			chai.assert.isNull(
 				domFacade.getPreviousSiblingPointer({
 					node: documentNode.documentElement,
 					graftAncestor: null,
-				})
+				}),
 			);
 		});
 	});
@@ -142,7 +142,7 @@ describe('DomFacade', () => {
 						graftAncestor: null,
 					})
 					.map((e) => e.node),
-				documentNode.documentElement.childNodes
+				documentNode.documentElement.childNodes,
 			));
 	});
 
@@ -150,7 +150,7 @@ describe('DomFacade', () => {
 		it('returns the defining element for attributes', () =>
 			chai.assert.equal(
 				domFacade.getParentNodePointer(attributeNodePointer).node,
-				documentNode.documentElement
+				documentNode.documentElement,
 			));
 		it('returns the parentNode', () =>
 			chai.assert.equal(
@@ -158,7 +158,7 @@ describe('DomFacade', () => {
 					node: documentNode.documentElement,
 					graftAncestor: null,
 				}).node,
-				documentNode
+				documentNode,
 			));
 	});
 
@@ -169,16 +169,16 @@ describe('DomFacade', () => {
 			chai.assert.equal(
 				domFacade.getAttribute(
 					{ node: documentNode.documentElement, graftAncestor: null },
-					'someAttribute'
+					'someAttribute',
 				),
-				'someValue'
+				'someValue',
 			));
 		it('returns null if not attribute defined', () =>
 			chai.assert.isNull(
 				domFacade.getAttribute(
 					{ node: documentNode.documentElement, graftAncestor: null },
-					'no_such_attribute'
-				)
+					'no_such_attribute',
+				),
 			));
 	});
 
@@ -194,7 +194,7 @@ describe('DomFacade', () => {
 					})
 					.map((ap) => ap.node)
 					.map(({ name, value }) => ({ name, value })),
-				[{ name: 'someAttribute', value: 'someValue' }]
+				[{ name: 'someAttribute', value: 'someValue' }],
 			);
 		});
 	});
@@ -227,7 +227,7 @@ describe('DomFacade', () => {
 					node: documentNode.documentElement,
 					graftAncestor: null,
 				}),
-				''
+				'',
 			));
 	});
 
@@ -235,7 +235,7 @@ describe('DomFacade', () => {
 		it('returns the result of the callback', () =>
 			chai.assert.equal(
 				domFacade.getRelatedNodes(attributeNodePointer, () => documentNode),
-				documentNode
+				documentNode,
 			));
 	});
 });

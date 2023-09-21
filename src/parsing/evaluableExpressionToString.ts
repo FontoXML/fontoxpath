@@ -3,7 +3,7 @@ import ExternalDomFacade from '../domFacade/ExternalDomFacade';
 import { EvaluableExpression } from '../evaluateXPath';
 
 export default function evaluableExpressionToString(
-	evaluableExpression: EvaluableExpression
+	evaluableExpression: EvaluableExpression,
 ): string {
 	if (typeof evaluableExpression === 'string') {
 		return evaluableExpression;
@@ -12,7 +12,7 @@ export default function evaluableExpressionToString(
 
 		const childNodes = domFacade.getChildNodes(evaluableExpression);
 		const commentNode: any = childNodes.find(
-			(node: ConcreteNode) => node.nodeType === NODE_TYPES.COMMENT_NODE
+			(node: ConcreteNode) => node.nodeType === NODE_TYPES.COMMENT_NODE,
 		);
 		return commentNode ? commentNode.data : 'some expression';
 	}

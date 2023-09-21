@@ -28,7 +28,7 @@ class TypeSwitchExpression extends PossiblyUpdatingExpression {
 		argExpression: Expression,
 		caseClauses: TypeSwitchCaseClause[],
 		defaultExpression: PossiblyUpdatingExpression,
-		type: SequenceType
+		type: SequenceType,
 	) {
 		const specificity = new Specificity({});
 		super(
@@ -39,8 +39,8 @@ class TypeSwitchExpression extends PossiblyUpdatingExpression {
 				defaultExpression,
 			].concat(
 				...caseClauses.map((clause) =>
-					clause.typeTests.map((typetest) => typetest.typeTest)
-				)
+					clause.typeTests.map((typetest) => typetest.typeTest),
+				),
 			),
 			{
 				canBeStaticallyEvaluated: false,
@@ -48,7 +48,7 @@ class TypeSwitchExpression extends PossiblyUpdatingExpression {
 				resultOrder: RESULT_ORDERINGS.UNSORTED,
 				subtree: false,
 			},
-			type
+			type,
 		);
 		this._argExpression = argExpression;
 		this._amountOfCases = caseClauses.length;
@@ -58,7 +58,7 @@ class TypeSwitchExpression extends PossiblyUpdatingExpression {
 	public performFunctionalEvaluation(
 		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters,
-		sequenceCallbacks: ((dynamicContext: DynamicContext) => ISequence)[]
+		sequenceCallbacks: ((dynamicContext: DynamicContext) => ISequence)[],
 	) {
 		// Pick the argumentExpression.
 		const evaluatedExpression = sequenceCallbacks[0](dynamicContext);
@@ -95,7 +95,7 @@ class TypeSwitchExpression extends PossiblyUpdatingExpression {
 							const scopedContext = dynamicContext.scopeWithFocus(
 								j,
 								value,
-								contextItems
+								contextItems,
 							);
 							return typeTest.typeTest
 								.evaluateMaybeStatically(scopedContext, executionParameters)

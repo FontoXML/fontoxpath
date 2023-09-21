@@ -7,22 +7,22 @@ import { Node } from '../types/Types';
 
 export default function convertUpdateResultToTransferable<
 	TNode extends Node,
-	TReturnType extends keyof IReturnTypes<TNode>
+	TReturnType extends keyof IReturnTypes<TNode>,
 >(
 	result: UpdatingExpressionResult,
 	script: EvaluableExpression | string,
 	returnType: TReturnType,
-	executionParameters: ExecutionParameters
+	executionParameters: ExecutionParameters,
 ): { pendingUpdateList: object[]; xdmValue: IReturnTypes<TNode>[TReturnType] } {
 	return {
 		['pendingUpdateList']: result.pendingUpdateList.map((update) =>
-			update.toTransferable(executionParameters)
+			update.toTransferable(executionParameters),
 		),
 		['xdmValue']: convertXDMReturnValue(
 			script,
 			sequenceFactory.create(result.xdmValue),
 			returnType,
-			executionParameters
+			executionParameters,
 		),
 	};
 }

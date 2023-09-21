@@ -17,7 +17,7 @@ import {
 export function emitAndExpr(
 	ast: IAST,
 	contextItemExpr: PartialCompilationResult,
-	context: CodeGenContext
+	context: CodeGenContext,
 ): [PartialCompilationResult, Bucket] {
 	return emitLogicalExpr(ast, '&&', contextItemExpr, context);
 }
@@ -30,7 +30,7 @@ export function emitAndExpr(
 export function emitOrExpr(
 	ast: IAST,
 	contextItemExpr: PartialCompilationResult,
-	context: CodeGenContext
+	context: CodeGenContext,
 ): [PartialCompilationResult, Bucket] {
 	return emitLogicalExpr(ast, '||', contextItemExpr, context);
 }
@@ -50,32 +50,32 @@ function emitLogicalExpr(
 	ast: IAST,
 	logicalExprOperator: '&&' | '||',
 	contextItemExpr: PartialCompilationResult,
-	context: CodeGenContext
+	context: CodeGenContext,
 ): [PartialCompilationResult, Bucket] {
 	const [firstExpr, firstBucket] = emitOperand(ast, 'firstOperand', contextItemExpr, context);
 	const firstType = astHelper.getAttribute(
 		astHelper.followPath(ast, ['firstOperand', '*']),
-		'type'
+		'type',
 	);
 	const firstAsBool = emitEffectiveBooleanValue(firstExpr, firstType, contextItemExpr, context);
 	const [secondExpr, secondBucket] = emitOperand(ast, 'secondOperand', contextItemExpr, context);
 	const logicalOpExpr = mapPartialCompilationResult(firstAsBool, (firstAsBool) => {
 		const secondType = astHelper.getAttribute(
 			astHelper.followPath(ast, ['secondOperand', '*']),
-			'type'
+			'type',
 		);
 		const secondAsBool = emitEffectiveBooleanValue(
 			secondExpr,
 			secondType,
 			contextItemExpr,
-			context
+			context,
 		);
 		return mapPartialCompilationResult(secondAsBool, (secondAsBool) =>
 			acceptAst(
 				`(${firstAsBool.code} ${logicalExprOperator} ${secondAsBool.code})`,
 				{ type: GeneratedCodeBaseType.Value },
-				[...firstAsBool.variables, ...secondAsBool.variables]
-			)
+				[...firstAsBool.variables, ...secondAsBool.variables],
+			),
 		);
 	});
 

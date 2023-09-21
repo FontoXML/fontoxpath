@@ -6,7 +6,7 @@ import { DONE_TOKEN } from './iterators';
 
 export default function atomizeSequence(
 	sequence: ISequence,
-	executionParameters: ExecutionParameters
+	executionParameters: ExecutionParameters,
 ): ISequence {
 	let currentSequence: ISequence;
 

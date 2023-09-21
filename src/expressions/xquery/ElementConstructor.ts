@@ -34,7 +34,7 @@ class ElementConstructor extends Expression {
 			| { localName: string; namespaceURI: string | null; prefix: string },
 		attributes: AttributeConstructor[],
 		namespaceDeclarations: { prefix: string; uri: string }[],
-		contents: Expression[]
+		contents: Expression[],
 	) {
 		super(new Specificity({}), contents.concat(attributes).concat((name as any).expr || []), {
 			canBeStaticallyEvaluated: false,
@@ -47,7 +47,7 @@ class ElementConstructor extends Expression {
 			this._name = new QName(
 				(name as any).prefix,
 				(name as any).namespaceURI,
-				(name as any).localName
+				(name as any).localName,
 			);
 		}
 
@@ -55,13 +55,13 @@ class ElementConstructor extends Expression {
 			(namespacesInScope: { [prefix: string]: string }, namespaceDecl) => {
 				if (namespaceDecl.prefix in namespacesInScope) {
 					throw new Error(
-						`XQST0071: The namespace declaration with the prefix ${namespaceDecl.prefix} has already been declared on the constructed element.`
+						`XQST0071: The namespace declaration with the prefix ${namespaceDecl.prefix} has already been declared on the constructed element.`,
 					);
 				}
 				namespacesInScope[namespaceDecl.prefix || ''] = namespaceDecl.uri;
 				return namespacesInScope;
 			},
-			{}
+			{},
 		);
 
 		this._attributes = attributes;
@@ -93,8 +93,8 @@ class ElementConstructor extends Expression {
 					if (!attributesSequence) {
 						attributesSequence = concatSequences(
 							this._attributes.map((attr) =>
-								attr.evaluateMaybeStatically(dynamicContext, executionParameters)
-							)
+								attr.evaluateMaybeStatically(dynamicContext, executionParameters),
+							),
 						);
 					}
 
@@ -109,8 +109,8 @@ class ElementConstructor extends Expression {
 						childNodesSequences = this._contents.map((contentExpression) =>
 							contentExpression.evaluateMaybeStatically(
 								dynamicContext,
-								executionParameters
-							)
+								executionParameters,
+							),
 						);
 					}
 
@@ -127,12 +127,12 @@ class ElementConstructor extends Expression {
 					if (!nameIterator) {
 						const nameSequence = this._nameExpr.evaluate(
 							dynamicContext,
-							executionParameters
+							executionParameters,
 						);
 						nameIterator = evaluateQNameExpression(
 							this._staticContext,
 							executionParameters,
-							nameSequence
+							nameSequence,
 						);
 					}
 					const nv = nameIterator.next(IterationHint.NONE);
@@ -180,7 +180,7 @@ class ElementConstructor extends Expression {
 						tinyElementNode.attributes.find(
 							(attr) =>
 								attr.namespaceURI === attrNode.namespaceURI &&
-								attr.localName === attrNode.localName
+								attr.localName === attrNode.localName,
 						)
 					) {
 						throw errXQDY0025(attrNode.name);
@@ -229,11 +229,11 @@ class ElementConstructor extends Expression {
 		// Register namespace related things
 		staticContext.introduceScope();
 		Object.keys(this._namespacesInScope).forEach((prefix) =>
-			staticContext.registerNamespace(prefix, this._namespacesInScope[prefix])
+			staticContext.registerNamespace(prefix, this._namespacesInScope[prefix]),
 		);
 
 		this._childExpressions.forEach((subselector) =>
-			subselector.performStaticEvaluation(staticContext)
+			subselector.performStaticEvaluation(staticContext),
 		);
 
 		this._attributes.reduce((attributeNames, attribute) => {

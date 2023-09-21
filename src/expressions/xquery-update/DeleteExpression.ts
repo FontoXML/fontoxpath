@@ -26,12 +26,12 @@ class DeleteExpression extends UpdatingExpression {
 
 	public evaluateWithUpdateList(
 		dynamicContext: DynamicContext,
-		executionParameters: ExecutionParameters
+		executionParameters: ExecutionParameters,
 	): IIterator<UpdatingExpressionResult> {
 		const targetValueIterator: IIterator<UpdatingExpressionResult> =
 			this.ensureUpdateListWrapper(this._targetExpression)(
 				dynamicContext,
-				executionParameters
+				executionParameters,
 			);
 		const domFacade = executionParameters.domFacade;
 
@@ -62,7 +62,7 @@ class DeleteExpression extends UpdatingExpression {
 				return ready({
 					pendingUpdateList: mergeUpdates(
 						tlist.map((node) => deletePu(node.value)),
-						tlistUpdates
+						tlistUpdates,
 					),
 					xdmValue: [],
 				});

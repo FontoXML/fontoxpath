@@ -47,7 +47,7 @@ describe('functions over strings', () => {
 
 		it('Throws when a collation is used (as third argument)', () => {
 			chai.assert.throw(() =>
-				evaluateXPathToNumber('compare("a", "a", "collation")', documentNode)
+				evaluateXPathToNumber('compare("a", "a", "collation")', documentNode),
 			);
 		});
 	});
@@ -61,25 +61,25 @@ describe('functions over strings', () => {
 		it('The function returns a sequence of strings formed by breaking the $input string into a sequence of strings, treating any substring that matches $pattern as a separator. The separators themselves are not returned.', () => {
 			chai.assert.deepEqual(
 				evaluateXPathToStrings('tokenize("A piece of text")', documentNode),
-				['A', 'piece', 'of', 'text']
+				['A', 'piece', 'of', 'text'],
 			);
 			chai.assert.deepEqual(
 				evaluateXPathToStrings('tokenize("A,piece,of,text", ",")', documentNode),
-				['A', 'piece', 'of', 'text']
+				['A', 'piece', 'of', 'text'],
 			);
 		});
 
 		it('Except with the one-argument form of the function, if a separator occurs at the start of the $input string, the result sequence will start with a zero-length string. Similarly, zero-length strings will also occur in the result sequence if a separator occurs at the end of the $input string, or if two adjacent substrings match the supplied $pattern.', () =>
 			chai.assert.deepEqual(
 				evaluateXPathToStrings('tokenize(",A,piece,of,text", ",")', documentNode),
-				['', 'A', 'piece', 'of', 'text']
+				['', 'A', 'piece', 'of', 'text'],
 			));
 
 		// Javascript regexes don't work this way
 		it.skip('If two alternatives within the supplied $pattern both match at the same position in the $input string, then the match that is chosen is the first.', () =>
 			chai.assert.deepEqual(
 				evaluateXPathToStrings('tokenize("abracadabra", "(ab)|(a)")', documentNode),
-				['', 'r', 'c', 'd', 'r', '']
+				['', 'r', 'c', 'd', 'r', ''],
 			));
 
 		it('wraps the thrown error if the supplied $pattern is invalid', () => {
@@ -91,7 +91,7 @@ describe('functions over strings', () => {
 		it('tokenize("abracadabra", ".*?") raises an error, because the pattern matches the zero-length string', () =>
 			chai.assert.throws(
 				() => evaluateXPathToString('tokenize("abracadabra", ".*?")'),
-				'FORX0003'
+				'FORX0003',
 			));
 	});
 
@@ -100,9 +100,9 @@ describe('functions over strings', () => {
 			chai.assert.equal(
 				evaluateXPathToString(
 					'normalize-space("  something with a lot of		  spaces	   ")',
-					documentNode
+					documentNode,
 				),
-				'something with a lot of spaces'
+				'something with a lot of spaces',
 			));
 
 		it('If the value of $arg is the empty sequence, returns the zero-length string.', () =>
@@ -112,7 +112,7 @@ describe('functions over strings', () => {
 			const textNode = documentNode.createTextNode('   A piece	of text  ');
 			chai.assert.equal(
 				evaluateXPathToString('./normalize-space()', textNode),
-				'A piece of text'
+				'A piece of text',
 			);
 		});
 	});
@@ -124,7 +124,7 @@ describe('functions over strings', () => {
 
 		it('returns true for tattoo starts with tat', () =>
 			chai.assert.isTrue(
-				evaluateXPathToBoolean('starts-with("tattoo", "tat")', documentNode)
+				evaluateXPathToBoolean('starts-with("tattoo", "tat")', documentNode),
 			));
 		it('returns true if arg2 is the empty string', () =>
 			chai.assert.isTrue(evaluateXPathToBoolean('starts-with("abc", "")', documentNode)));
@@ -138,7 +138,7 @@ describe('functions over strings', () => {
 			chai.assert.isTrue(evaluateXPathToBoolean('starts-with("", "")', documentNode)));
 		it('returns false if arg1 does not start with arg2', () =>
 			chai.assert.isFalse(
-				evaluateXPathToBoolean('starts-with("tattoo", "abc")', documentNode)
+				evaluateXPathToBoolean('starts-with("tattoo", "abc")', documentNode),
 			));
 	});
 
@@ -178,7 +178,7 @@ describe('functions over strings', () => {
 			chai.assert.isTrue(evaluateXPathToBoolean('ends-with("", "")', documentNode)));
 		it('returns false if arg1 does not start with arg2', () =>
 			chai.assert.isFalse(
-				evaluateXPathToBoolean('ends-with("tattoo", "abc")', documentNode)
+				evaluateXPathToBoolean('ends-with("tattoo", "abc")', documentNode),
 			));
 	});
 
@@ -192,7 +192,7 @@ describe('functions over strings', () => {
 			jsonMlMapper.parse(['someElement', 'Some text.'], documentNode);
 			chai.assert.equal(
 				evaluateXPathToString('string()', documentNode.documentElement.firstChild),
-				'Some text.'
+				'Some text.',
 			);
 		});
 
@@ -200,7 +200,7 @@ describe('functions over strings', () => {
 			jsonMlMapper.parse(['?someTarget', 'A piece of text'], documentNode);
 			chai.assert.equal(
 				evaluateXPathToString('string()', documentNode.firstChild),
-				'A piece of text'
+				'A piece of text',
 			);
 		});
 
@@ -211,7 +211,7 @@ describe('functions over strings', () => {
 			element.appendChild(document.createCDATASection('<CDATA>'));
 			chai.assert.equal(
 				evaluateXPathToString('string()', document.documentElement),
-				'Some <CDATA>'
+				'Some <CDATA>',
 			);
 		});
 
@@ -231,7 +231,7 @@ describe('functions over strings', () => {
 				jsonMlMapper.parse(['someElement', 'Some text.'], documentNode);
 				chai.assert.equal(
 					evaluateXPathToString('string(.)', documentNode.documentElement.firstChild),
-					'Some text.'
+					'Some text.',
 				);
 			});
 
@@ -243,11 +243,11 @@ describe('functions over strings', () => {
 			it('concatenates textNodes', () => {
 				jsonMlMapper.parse(
 					['someElement', 'Some text, and ', 'some other text node'],
-					documentNode
+					documentNode,
 				);
 				chai.assert.equal(
 					evaluateXPathToString('string(.)', documentNode),
-					'Some text, and some other text node'
+					'Some text, and some other text node',
 				);
 			});
 		});
@@ -270,19 +270,19 @@ describe('functions over strings', () => {
 		it('concats multiple strings', () =>
 			chai.assert.equal(
 				evaluateXPathToString('concat("a","b","c","d","e")', documentNode),
-				'abcde'
+				'abcde',
 			));
 
 		it('concats array integer values', () =>
 			chai.assert.equal(
 				evaluateXPathToString('concat([1,2],[3,4,5])', documentNode),
-				'12345'
+				'12345',
 			));
 
 		it('concats array string values', () =>
 			chai.assert.equal(
 				evaluateXPathToString('concat(["a","b"],["c","d","e"])', documentNode),
-				'abcde'
+				'abcde',
 			));
 	});
 
@@ -297,7 +297,7 @@ describe('functions over strings', () => {
 			jsonMlMapper.parse(['someElement', 'A piece of text'], documentNode);
 			chai.assert.equal(
 				evaluateXPathToNumber('/someElement/string-length()', documentNode),
-				15
+				15,
 			);
 		});
 
@@ -311,19 +311,19 @@ describe('functions over strings', () => {
 		it('The function returns an xs:string created by concatenating the items in the sequence $arg1, in order, using the value of $arg2 as a separator between adjacent items.', () =>
 			chai.assert.equal(
 				evaluateXPathToString('string-join(("a", "b", "c"), "X")', documentNode),
-				'aXbXc'
+				'aXbXc',
 			));
 
 		it('If the value of $arg2 is the zero-length string, then the members of $arg1 are concatenated without a separator.', () =>
 			chai.assert.equal(
 				evaluateXPathToString('string-join(("a", "b", "c"))', documentNode),
-				'abc'
+				'abc',
 			));
 
 		it('If the value of $arg2 is the zero-length string, then the members of $arg1 are concatenated without a separator.', () =>
 			chai.assert.equal(
 				evaluateXPathToString('string-join(("a", "b", "c"), "")', documentNode),
-				'abc'
+				'abc',
 			));
 
 		it('returns the empty string when joining the empty sequence', () =>
@@ -332,7 +332,7 @@ describe('functions over strings', () => {
 		it('converts its arguments', () =>
 			chai.assert.equal(
 				evaluateXPathToString('fn:string-join(1 to 9)', documentNode),
-				'123456789'
+				'123456789',
 			));
 	});
 
@@ -347,7 +347,7 @@ describe('functions over strings', () => {
 		it('returns the string, uppercased', () =>
 			chai.assert.equal(
 				evaluateXPathToString('upper-case("1234PrrRRrrRt567")', documentNode),
-				'1234PRRRRRRRT567'
+				'1234PRRRRRRRT567',
 			));
 	});
 
@@ -358,7 +358,7 @@ describe('functions over strings', () => {
 		it('returns the string, lowercased', () =>
 			chai.assert.equal(
 				evaluateXPathToString('lower-case("1234PrrRRrrRt567")', documentNode),
-				'1234prrrrrrrt567'
+				'1234prrrrrrrt567',
 			));
 	});
 
@@ -366,12 +366,12 @@ describe('functions over strings', () => {
 		it('Returns the substring before the match', () =>
 			chai.assert.equal(
 				evaluateXPathToString('substring-before("tattoo", "attoo")', documentNode),
-				't'
+				't',
 			));
 		it('May return the zero length string if the string matches from 0', () =>
 			chai.assert.equal(
 				evaluateXPathToString('substring-before("tattoo","tatto")', documentNode),
-				''
+				'',
 			));
 		it('May return the zero length string if the arguments are the empty sequence', () =>
 			chai.assert.equal(evaluateXPathToString('substring-before((),())', documentNode), ''));
@@ -381,17 +381,17 @@ describe('functions over strings', () => {
 		it('Returns the substring after the match', () =>
 			chai.assert.equal(
 				evaluateXPathToString('substring-after("tattoo", "tat")', documentNode),
-				'too'
+				'too',
 			));
 		it('Returns the substring after the match if the query occurs multiple times', () =>
 			chai.assert.equal(
 				evaluateXPathToString('substring-after("queryquery", "ue")', documentNode),
-				'ryquery'
+				'ryquery',
 			));
 		it('May return the zero length string if the string matches ending at the last character', () =>
 			chai.assert.equal(
 				evaluateXPathToString('substring-after("tattoo","ttoo")', documentNode),
-				''
+				'',
 			));
 		it('May return the zero length string if the arguments are the empty sequence', () =>
 			chai.assert.equal(evaluateXPathToString('substring-after((),())', documentNode), ''));
@@ -401,27 +401,27 @@ describe('functions over strings', () => {
 		it('returns "BAr"', () =>
 			chai.assert.equal(
 				evaluateXPathToString('translate("bar","abc","ABC")', documentNode),
-				'BAr'
+				'BAr',
 			));
 		it('returns "AAA"', () =>
 			chai.assert.equal(
 				evaluateXPathToString('translate("--aaa--","abc-","ABC")', documentNode),
-				'AAA'
+				'AAA',
 			));
 		it(' returns "ABdAB"', () =>
 			chai.assert.equal(
 				evaluateXPathToString('translate("abcdabc", "abc", "AB")', documentNode),
-				'ABdAB'
+				'ABdAB',
 			));
 		it(' returns ""', () =>
 			chai.assert.equal(
 				evaluateXPathToString('translate("", "abc", "AB")', documentNode),
-				''
+				'',
 			));
 		it(' returns "" for an empty sequence as an first argument', () =>
 			chai.assert.equal(
 				evaluateXPathToString('translate((), "abc", "AB")', documentNode),
-				''
+				'',
 			));
 	});
 
@@ -429,33 +429,36 @@ describe('functions over strings', () => {
 		it('Returns "BACH"', () =>
 			chai.assert.equal(
 				evaluateXPathToString('codepoints-to-string((66, 65, 67, 72))', documentNode),
-				'BACH'
+				'BACH',
 			));
 		it('Returns "अशॊक"', () =>
 			chai.assert.equal(
 				evaluateXPathToString(
 					'codepoints-to-string((2309, 2358, 2378, 2325))',
-					documentNode
+					documentNode,
 				),
-				'अशॊक'
+				'अशॊक',
 			));
 		it('Return the zero length string for an empty sequence', () =>
 			chai.assert.equal(evaluateXPathToString('codepoints-to-string(())', documentNode), ''));
 		it('Return true for a test whose essence is: `codepoints-to-string(1114111) eq "&#1114111;"`', () =>
 			chai.assert.isTrue(
-				evaluateXPathToBoolean('codepoints-to-string(1114111) = "\u{10FFFF}"', documentNode)
+				evaluateXPathToBoolean(
+					'codepoints-to-string(1114111) = "\u{10FFFF}"',
+					documentNode,
+				),
 			));
 		it('Raises error FOCH0001 for the expression fn:codepoints-to-string(0)', () =>
 			chai.assert.throws(
 				() => evaluateXPathToString('codepoints-to-string(0)', documentNode),
 				Error,
-				'FOCH0001'
+				'FOCH0001',
 			));
 		it('Raises error FOCH0001 for the expression fn:codepoints-to-string(10000000)', () =>
 			chai.assert.throws(
 				() => evaluateXPathToString('codepoints-to-string(10000000)', documentNode),
 				Error,
-				'FOCH0001'
+				'FOCH0001',
 			));
 	});
 
@@ -463,25 +466,25 @@ describe('functions over strings', () => {
 		it('Returns "(84, 104, 233, 114, 232, 115, 101)"', () =>
 			chai.assert.deepEqual(
 				evaluateXPathToNumbers('string-to-codepoints("Thérèse")', documentNode),
-				[84, 104, 233, 114, 232, 115, 101]
+				[84, 104, 233, 114, 232, 115, 101],
 			));
 		it('Returns empty sequence for a zero length string', () =>
 			chai.assert.isTrue(
-				evaluateXPathToBoolean('string-to-codepoints("") => empty()', documentNode)
+				evaluateXPathToBoolean('string-to-codepoints("") => empty()', documentNode),
 			));
 		it('Returns empty sequence for an empty sequence', () =>
 			chai.assert.isTrue(
-				evaluateXPathToBoolean('string-to-codepoints(()) => empty()', documentNode)
+				evaluateXPathToBoolean('string-to-codepoints(()) => empty()', documentNode),
 			));
 		it('Returns 12 for string-to-codepoints(codepoints-to-string(12))', () =>
 			chai.assert.throws(
 				() =>
 					evaluateXPathToNumbers(
 						'string-to-codepoints(codepoints-to-string(12))',
-						documentNode
+						documentNode,
 					),
 				Error,
-				'FOCH0001'
+				'FOCH0001',
 			));
 	});
 
@@ -496,26 +499,26 @@ describe('functions over strings', () => {
 		it('replace("abracadabra", "bra", "*") returns "a*cada*"', () =>
 			chai.assert.equal(
 				evaluateXPathToString('replace("abracadabra", "bra", "*")'),
-				'a*cada*'
+				'a*cada*',
 			));
 		it('replace("abracadabra", "a.*a", "*") returns "*"', () =>
 			chai.assert.equal(evaluateXPathToString('replace("abracadabra", "a.*a", "*")'), '*'));
 		it('replace("abracadabra", "a.*?a", "*") returns "*c*bra"', () =>
 			chai.assert.equal(
 				evaluateXPathToString('replace("abracadabra", "a.*?a", "*")'),
-				'*c*bra'
+				'*c*bra',
 			));
 		it('replace("abracadabra", "a", "") returns "brcdbr"', () =>
 			chai.assert.equal(evaluateXPathToString('replace("abracadabra", "a", "")'), 'brcdbr'));
 		it('replace("abracadabra", "a(.)", "a$1$1") returns "abbraccaddabbra"', () =>
 			chai.assert.equal(
 				evaluateXPathToString('replace("abracadabra", "a(.)", "a$1$1")'),
-				'abbraccaddabbra'
+				'abbraccaddabbra',
 			));
 		it('replace("abracadabra", ".*?", "$1") raises an error, because the pattern matches the zero-length string', () =>
 			chai.assert.throws(
 				() => evaluateXPathToString('replace("abracadabra", ".*?", "$1")'),
-				'FORX0003'
+				'FORX0003',
 			));
 		it('replace("AAAA", "(A)", "\\$1") returns "$1$1$1$1"', () =>
 			chai.assert.equal(evaluateXPathToString('replace("AAAA", "(A)", "\\$1")'), '$1$1$1$1'));
@@ -524,7 +527,7 @@ describe('functions over strings', () => {
 		it('replace("AAAA", "(A)", "\\$$1") returns "$A$A$A$A"', () =>
 			chai.assert.equal(
 				evaluateXPathToString('replace("AAAA", "(A)", "\\$$1")'),
-				'$A$A$A$A'
+				'$A$A$A$A',
 			));
 		it('replace("AAAA", "A", "") returns "b"', () =>
 			chai.assert.equal(evaluateXPathToString('replace("AAAA", "A+", "b")'), 'b'));
@@ -533,7 +536,7 @@ describe('functions over strings', () => {
 		it('replace("darted", "^(.*?)d(.*)$", "$1c$2") returns "carted". (The first d is replaced.)', () =>
 			chai.assert.equal(
 				evaluateXPathToString('replace("darted", "^(.*?)d(.*)$", "$1c$2")'),
-				'carted'
+				'carted',
 			));
 		it('Throws when a fourth argument is passed', () => {
 			chai.assert.throw(() => evaluateXPathToString('replace("a", "a", "a", "q")'));
@@ -543,23 +546,23 @@ describe('functions over strings', () => {
 	describe('codepoint-equal()', () => {
 		it('Returns empty sequence for an empty sequence as an first argument', () =>
 			chai.assert.isTrue(
-				evaluateXPathToBoolean('codepoint-equal((), "Lady") => empty()', documentNode)
+				evaluateXPathToBoolean('codepoint-equal((), "Lady") => empty()', documentNode),
 			));
 		it('Returns empty sequence for an empty sequence as a second argument', () =>
 			chai.assert.isTrue(
-				evaluateXPathToBoolean('codepoint-equal("Gentleman", ()) => empty()', documentNode)
+				evaluateXPathToBoolean('codepoint-equal("Gentleman", ()) => empty()', documentNode),
 			));
 		it('Returns empty sequence when compared two empty sequences', () =>
 			chai.assert.isTrue(
-				evaluateXPathToBoolean('codepoint-equal((), ()) => empty()', documentNode)
+				evaluateXPathToBoolean('codepoint-equal((), ()) => empty()', documentNode),
 			));
 		it('Returns true() for the expression fn:codepoint-equal("abcd", "abcd") ', () =>
 			chai.assert.isTrue(
-				evaluateXPathToBoolean('codepoint-equal("abcd", "abcd")', documentNode)
+				evaluateXPathToBoolean('codepoint-equal("abcd", "abcd")', documentNode),
 			));
 		it('Returns false() for the expression fn:codepoint-equal("abcd", "abcd ")', () =>
 			chai.assert.isFalse(
-				evaluateXPathToBoolean('codepoint-equal("abcd", "abcd ")', documentNode)
+				evaluateXPathToBoolean('codepoint-equal("abcd", "abcd ")', documentNode),
 			));
 		it('Returns true() for the expression fn:codepoint-equal("", "")', () =>
 			chai.assert.isTrue(evaluateXPathToBoolean('codepoint-equal("", "")', documentNode)));
@@ -571,8 +574,8 @@ describe('functions over strings', () => {
 					documentNode,
 					undefined,
 					null,
-					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-				)
+					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
+				),
 			));
 		it('Returns false() for the expression fn:codepoint-equal("a", "b")', () =>
 			chai.assert.isFalse(evaluateXPathToBoolean('codepoint-equal("a","b")', documentNode)));
@@ -582,9 +585,9 @@ describe('functions over strings', () => {
 		it('Returns the correct example for the example in the specs', () => {
 			chai.assert.equal(
 				evaluateXPathToString(
-					'encode-for-uri("http://www.example.com/00/Weather/CA/Los%20Angeles#ocean")'
+					'encode-for-uri("http://www.example.com/00/Weather/CA/Los%20Angeles#ocean")',
 				),
-				'http%3A%2F%2Fwww.example.com%2F00%2FWeather%2FCA%2FLos%2520Angeles%23ocean'
+				'http%3A%2F%2Fwww.example.com%2F00%2FWeather%2FCA%2FLos%2520Angeles%23ocean',
 			);
 		});
 
@@ -597,7 +600,7 @@ describe('functions over strings', () => {
 		it('Returns the correct example for the example in the specs', () => {
 			chai.assert.equal(
 				evaluateXPathToString('iri-to-uri("http://www.example.com/~bébé")'),
-				'http://www.example.com/~b%C3%A9b%C3%A9'
+				'http://www.example.com/~b%C3%A9b%C3%A9',
 			);
 		});
 

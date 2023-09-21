@@ -44,7 +44,7 @@ function evaluateNewName(
 	staticContext: StaticContext,
 	executionParameters: ExecutionParameters,
 	newNameXdmValue: Value[],
-	target: Value
+	target: Value,
 ) {
 	// NewNameExpr is processed as follows:
 	const nameSequence = sequenceFactory.create(newNameXdmValue);
@@ -55,7 +55,7 @@ function evaluateNewName(
 			const qName = evaluateQNameExpression(
 				staticContext,
 				executionParameters,
-				nameSequence
+				nameSequence,
 			).next(IterationHint.NONE).value.value;
 
 			// If the namespace binding of $QName conflicts with any namespace binding in the namespaces property of $target, a dynamic error is raised [err:XUDY0023].
@@ -71,7 +71,7 @@ function evaluateNewName(
 			const qName = evaluateQNameExpression(
 				staticContext,
 				executionParameters,
-				nameSequence
+				nameSequence,
 			).next(IterationHint.NONE).value.value;
 
 			// If $QName has a non-absent namespace URI, and if the namespace binding of $QName conflicts with any namespace binding in the namespaces property of the parent (if any) of $target, a dynamic error is raised [err:XUDY0023].
@@ -87,7 +87,7 @@ function evaluateNewName(
 		case ValueType.PROCESSINGINSTRUCTION: {
 			// If $target is a processing instruction node, let $NCName be the result of evaluating NewNameExpr as though it were the name expression of a computed processing instruction constructor (see Section 3.9.3.5 Computed Processing Instruction Constructors XQ30),
 			const nCName = evaluateNCNameExpression(executionParameters, nameSequence).next(
-				IterationHint.NONE
+				IterationHint.NONE,
 			).value.value;
 
 			// and let $QName be defined as fn:QName((), $NCName).
@@ -114,15 +114,15 @@ class RenameExpression extends UpdatingExpression {
 
 	public evaluateWithUpdateList(
 		dynamicContext: DynamicContext,
-		executionParameters: ExecutionParameters
+		executionParameters: ExecutionParameters,
 	): IIterator<UpdatingExpressionResult> {
 		const targetValueIterator = this.ensureUpdateListWrapper(this._targetExpression)(
 			dynamicContext,
-			executionParameters
+			executionParameters,
 		);
 		const newNameValueIterator = this.ensureUpdateListWrapper(this._newNameExpression)(
 			dynamicContext,
-			executionParameters
+			executionParameters,
 		);
 
 		return {
@@ -135,7 +135,7 @@ class RenameExpression extends UpdatingExpression {
 					this._staticContext,
 					executionParameters,
 					nnv.value.xdmValue,
-					target
+					target,
 				);
 
 				// The result of the rename expression is an empty XDM instance and a pending update list constructed by merging the pending update lists returned by the NewNameExpr and TargetExpr with the following update primitives using upd:mergeUpdates: upd:rename($target, $QName).
@@ -144,7 +144,7 @@ class RenameExpression extends UpdatingExpression {
 					pendingUpdateList: mergeUpdates(
 						[rename(target.value, qName)],
 						tv.value.pendingUpdateList,
-						nnv.value.pendingUpdateList
+						nnv.value.pendingUpdateList,
 					),
 				});
 			},

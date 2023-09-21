@@ -13,7 +13,7 @@ import astHelper, { IAST } from '../parsing/astHelper';
 export function annotateIfThenElseExpr(
 	ast: IAST,
 	elseClause: SequenceType,
-	thenClause: SequenceType
+	thenClause: SequenceType,
 ): SequenceType {
 	if (!elseClause || !thenClause) {
 		return {

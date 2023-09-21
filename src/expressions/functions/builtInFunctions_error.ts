@@ -9,7 +9,7 @@ const fnError: FunctionDefinitionType = (
 	_executionParameters,
 	_staticContext,
 	code,
-	description
+	description,
 ) => {
 	const codeQName =
 		code === undefined || code.isEmpty()
@@ -65,7 +65,7 @@ const declarations: BuiltinDeclarationType[] = [
 			_staticContext,
 			_input,
 			_pattern,
-			_flags
+			_flags,
 		) {
 			throw new Error('Not implemented: Using an error object in error is not supported');
 		},

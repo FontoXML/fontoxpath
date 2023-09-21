@@ -2,7 +2,9 @@ import { ValueType, valueTypeToString } from './dataTypes/Value';
 
 export const errFORG0001 = (value: string, type: ValueType, reason?: string) =>
 	new Error(
-		`FORG0001: Cannot cast ${value} to ${valueTypeToString(type)}${reason ? `, ${reason}` : ''}`
+		`FORG0001: Cannot cast ${value} to ${valueTypeToString(type)}${
+			reason ? `, ${reason}` : ''
+		}`,
 	);
 export const errXPDY0002 = (message: string) => new Error(`XPDY0002: ${message}`);
 export const errXPTY0004 = (message: string) => new Error(`XPTY0004: ${message}`);

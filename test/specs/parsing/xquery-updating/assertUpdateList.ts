@@ -17,8 +17,8 @@ export default function assertUpdateList(actual, expected) {
 				actual[i].replacement.forEach((replacement, j) =>
 					chai.assert.equal(
 						new slimdom.XMLSerializer().serializeToString(replacement),
-						expected[i].replacementXML[j]
-					)
+						expected[i].replacementXML[j],
+					),
 				);
 				break;
 			case 'replaceElementContent':

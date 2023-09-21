@@ -20,14 +20,14 @@ function hasAttribute(
 	target: ElementNodePointer,
 	localName: string,
 	namespace: string,
-	domFacade: DomFacade
+	domFacade: DomFacade,
 ): boolean {
 	return domFacade
 		.getAllAttributePointers(target, `name-${localName}`)
 		.some(
 			(attr) =>
 				domFacade.getLocalName(attr) === localName &&
-				domFacade.getNamespaceURI(attr) === namespace
+				domFacade.getNamespaceURI(attr) === namespace,
 		);
 }
 
@@ -41,7 +41,7 @@ function hasAttribute(
 export const deletePu = (
 	target: AttributeNodePointer | ChildNodePointer,
 	domFacade: (DomFacade | null) | undefined,
-	documentWriter: (IDocumentWriter | null) | undefined
+	documentWriter: (IDocumentWriter | null) | undefined,
 ) => {
 	const parentPointer = domFacade.getParentNodePointer(target);
 	const parent = parentPointer ? parentPointer.node : null;
@@ -50,7 +50,7 @@ export const deletePu = (
 			documentWriter.removeAttributeNS(
 				parent as Element,
 				domFacade.getNamespaceURI(target as AttributeNodePointer),
-				domFacade.getLocalName(target as AttributeNodePointer)
+				domFacade.getLocalName(target as AttributeNodePointer),
 			);
 		} else {
 			documentWriter.removeChild(parent as Document | Element, target.node);
@@ -70,7 +70,7 @@ export const insertAfter = (
 	target: ChildNodePointer,
 	content: NodePointer[],
 	domFacade: (DomFacade | null) | undefined,
-	documentWriter: (IDocumentWriter | null) | undefined
+	documentWriter: (IDocumentWriter | null) | undefined,
 ) => {
 	// The parent must exist or an error has been raised.
 	const parent = domFacade.getParentNodePointer(target).node;
@@ -94,7 +94,7 @@ export const insertBefore = (
 	target: ChildNodePointer,
 	content: NodePointer[],
 	domFacade: (DomFacade | null) | undefined,
-	documentWriter: (IDocumentWriter | null) | undefined
+	documentWriter: (IDocumentWriter | null) | undefined,
 ) => {
 	// The parent must exist or an error has been raised.
 	const parent = domFacade.getParentNodePointer(target).node;
@@ -114,7 +114,7 @@ export const insertBefore = (
 export const insertInto = (
 	target: ElementNodePointer | DocumentNodePointer,
 	content: NodePointer[],
-	documentWriter: (IDocumentWriter | null) | undefined
+	documentWriter: (IDocumentWriter | null) | undefined,
 ) => {
 	insertIntoAsLast(target, content, documentWriter);
 };
@@ -131,7 +131,7 @@ export const insertIntoAsFirst = (
 	target: ElementNodePointer | DocumentNodePointer,
 	content: NodePointer[],
 	domFacade: (DomFacade | null) | undefined,
-	documentWriter: (IDocumentWriter | null) | undefined
+	documentWriter: (IDocumentWriter | null) | undefined,
 ) => {
 	const firstChildPointer = domFacade.getFirstChildPointer(target);
 	const firstChild = firstChildPointer ? firstChildPointer.node : null;
@@ -150,7 +150,7 @@ export const insertIntoAsFirst = (
 export const insertIntoAsLast = (
 	target: ElementNodePointer | DocumentNodePointer,
 	content: NodePointer[],
-	documentWriter: (IDocumentWriter | null) | undefined
+	documentWriter: (IDocumentWriter | null) | undefined,
 ) => {
 	content.forEach((pointer) => {
 		documentWriter.insertBefore(target.node, pointer.node, null);
@@ -169,7 +169,7 @@ export const insertAttributes = (
 	target: ElementNodePointer,
 	content: AttributeNodePointer[],
 	domFacade: (DomFacade | null) | undefined,
-	documentWriter: (IDocumentWriter | null) | undefined
+	documentWriter: (IDocumentWriter | null) | undefined,
 ) => {
 	content.forEach((attributeNodePointer) => {
 		const attrLocalName = domFacade.getLocalName(attributeNodePointer);
@@ -178,14 +178,14 @@ export const insertAttributes = (
 			throw errXUDY0021(
 				`An attribute ${
 					attrNamespace ? `Q{${attrNamespace}}${attrLocalName}` : attrLocalName
-				} already exists.`
+				} already exists.`,
 			);
 		}
 		documentWriter.setAttributeNS(
 			target.node,
 			attrNamespace,
 			attrLocalName,
-			domFacade.getDataFromPointer(attributeNodePointer)
+			domFacade.getDataFromPointer(attributeNodePointer),
 		);
 	});
 };
@@ -204,7 +204,7 @@ export const rename = (
 	newName: QName | null,
 	domFacade: (DomFacade | null) | undefined,
 	nodesFactory: (INodesFactory | null) | undefined,
-	documentWriter: (IDocumentWriter | null) | undefined
+	documentWriter: (IDocumentWriter | null) | undefined,
 ) => {
 	if (!nodesFactory) {
 		nodesFactory = new DomBackedNodesFactory(target ? target.node : null);
@@ -215,14 +215,14 @@ export const rename = (
 	switch (domFacade.getNodeType(target)) {
 		case NODE_TYPES.ELEMENT_NODE: {
 			const attributes = domFacade.getAllAttributes(
-				target.node as ConcreteElementNode | TinyElementNode
+				target.node as ConcreteElementNode | TinyElementNode,
 			);
 			const childNodes = domFacade.getChildNodes(
-				target.node as ConcreteElementNode | TinyElementNode
+				target.node as ConcreteElementNode | TinyElementNode,
 			);
 			const replacementNode = nodesFactory.createElementNS(
 				newName.namespaceURI,
-				newName.buildPrefixedName()
+				newName.buildPrefixedName(),
 			);
 			replacement = { node: replacementNode, graftAncestor: null };
 
@@ -231,7 +231,7 @@ export const rename = (
 					replacementNode,
 					attribute.namespaceURI,
 					attribute.nodeName,
-					attribute.value
+					attribute.value,
 				);
 			});
 			childNodes.forEach((childNode) => {
@@ -242,7 +242,7 @@ export const rename = (
 		case NODE_TYPES.ATTRIBUTE_NODE: {
 			const replacementAttr = nodesFactory.createAttributeNS(
 				newName.namespaceURI,
-				newName.buildPrefixedName()
+				newName.buildPrefixedName(),
 			);
 			replacementAttr.value = domFacade.getDataFromPointer(target as AttributeNodePointer);
 			replacement = { node: replacementAttr, graftAncestor: null };
@@ -252,7 +252,7 @@ export const rename = (
 			replacement = {
 				node: nodesFactory.createProcessingInstruction(
 					newName.buildPrefixedName(),
-					domFacade.getDataFromPointer(target as ProcessingInstructionNodePointer)
+					domFacade.getDataFromPointer(target as ProcessingInstructionNodePointer),
 				),
 				graftAncestor: null,
 			};
@@ -279,7 +279,7 @@ export const replaceElementContent = (
 	target: ElementNodePointer | DocumentNodePointer,
 	text: NodePointer | null,
 	domFacade: (DomFacade | null) | undefined,
-	documentWriter: (IDocumentWriter | null) | undefined
+	documentWriter: (IDocumentWriter | null) | undefined,
 ) => {
 	domFacade
 		.getChildNodes(target.node)
@@ -301,7 +301,7 @@ export const replaceNode = (
 	target: AttributeNodePointer | ChildNodePointer,
 	replacement: (AttributeNodePointer | ChildNodePointer)[],
 	domFacade: (DomFacade | null) | undefined,
-	documentWriter: (IDocumentWriter | null) | undefined
+	documentWriter: (IDocumentWriter | null) | undefined,
 ) => {
 	// The parent must exist or an error has been raised.
 	const parent = domFacade.getParentNodePointer(target);
@@ -312,11 +312,11 @@ export const replaceNode = (
 		// All replacement must consist of attribute nodes.
 		if (
 			replacement.some(
-				(candidate) => domFacade.getNodeType(candidate) !== NODE_TYPES.ATTRIBUTE_NODE
+				(candidate) => domFacade.getNodeType(candidate) !== NODE_TYPES.ATTRIBUTE_NODE,
 			)
 		) {
 			throw new Error(
-				'Constraint "If $target is an attribute node, $replacement must consist of zero or more attribute nodes." failed.'
+				'Constraint "If $target is an attribute node, $replacement must consist of zero or more attribute nodes." failed.',
 			);
 		}
 
@@ -325,7 +325,7 @@ export const replaceNode = (
 		documentWriter.removeAttributeNS(
 			element,
 			domFacade.getNamespaceURI(attrTarget),
-			domFacade.getLocalName(attrTarget)
+			domFacade.getLocalName(attrTarget),
 		);
 		replacement.forEach((attr: AttributeNodePointer) => {
 			const attrLocalName = domFacade.getLocalName(attr);
@@ -336,14 +336,14 @@ export const replaceNode = (
 				throw errXUDY0021(
 					`An attribute ${
 						attrNamespace ? `Q{${attrNamespace}}${attrLocalName}` : attrLocalName
-					} already exists.`
+					} already exists.`,
 				);
 			}
 			documentWriter.setAttributeNS(
 				element,
 				attrNamespace,
 				attrLocalName,
-				domFacade.getDataFromPointer(attr)
+				domFacade.getDataFromPointer(attr),
 			);
 		});
 	}
@@ -375,7 +375,7 @@ export const replaceValue = (
 	target: ElementNodePointer | AttributeNodePointer,
 	stringValue: string,
 	domFacade: (DomFacade | null) | undefined,
-	documentWriter: (IDocumentWriter | null) | undefined
+	documentWriter: (IDocumentWriter | null) | undefined,
 ) => {
 	if (domFacade.getNodeType(target) === NODE_TYPES.ATTRIBUTE_NODE) {
 		const element = domFacade.getParentNodePointer(target) as ElementNodePointer;
@@ -384,7 +384,7 @@ export const replaceValue = (
 				element.node,
 				domFacade.getNamespaceURI(target),
 				domFacade.getLocalName(target),
-				stringValue
+				stringValue,
 			);
 		} else {
 			(target.node as Attr).value = stringValue;

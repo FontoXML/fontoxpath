@@ -42,44 +42,44 @@ describe('Functions and operators on sequences', () => {
 				chai.assert.isTrue(
 					evaluateXPathToBoolean(
 						'filter((1, 2, 3), function ($a) {$a = 2}) eq 2',
-						documentNode
-					)
+						documentNode,
+					),
 				));
 			it('works in obscure cases', () =>
 				chai.assert.isTrue(
 					evaluateXPathToBoolean(
 						'(1 to 20)[. = filter(1 to position(), function($x){$x idiv 2 * 2 = $x})] => deep-equal((2,4,6,8,10,12,14,16,18,20))',
-						documentNode
-					)
+						documentNode,
+					),
 				));
 			it('throws error with wrong arity', () =>
 				chai.assert.throws(
 					() =>
 						evaluateXPathToNumbers('filter(1 to 3, function(){true()})', documentNode),
-					'XPTY0004: signature of function passed to fn:filter is incompatible.'
+					'XPTY0004: signature of function passed to fn:filter is incompatible.',
 				));
 		});
 
 		describe('fn:for-each', () => {
 			it('applies the function to an empty sequence', () =>
 				chai.assert.isEmpty(
-					evaluateXPathToNumbers('for-each((), function($a) {$a * $a})', documentNode)
+					evaluateXPathToNumbers('for-each((), function($a) {$a * $a})', documentNode),
 				));
 			it('applies the function to each item', () =>
 				chai.assert.deepEqual(
 					evaluateXPathToNumbers(
 						'for-each(1 to 5, function($a) {$a * $a})',
-						documentNode
+						documentNode,
 					),
-					[1, 4, 9, 16, 25]
+					[1, 4, 9, 16, 25],
 				));
 			it('applies the function to each item and returns more items', () =>
 				chai.assert.deepEqual(
 					evaluateXPathToNumbers(
 						'for-each(1 to 5, function($a) {($a, $a + 1)})',
-						documentNode
+						documentNode,
 					),
-					[1, 2, 2, 3, 3, 4, 4, 5, 5, 6]
+					[1, 2, 2, 3, 3, 4, 4, 5, 5, 6],
 				));
 		});
 
@@ -88,33 +88,33 @@ describe('Functions and operators on sequences', () => {
 				chai.assert.deepEqual(
 					evaluateXPathToNumbers(
 						'fold-left((), (), function($a, $b) {$a + $b})',
-						documentNode
+						documentNode,
 					),
-					[]
+					[],
 				));
 			it('get sum of sequence', () =>
 				chai.assert.deepEqual(
 					evaluateXPathToNumber(
 						'fold-left(1 to 5, 0, function($a, $b) {$a + $b})',
-						documentNode
+						documentNode,
 					),
-					15
+					15,
 				));
 			it('reverse sequence', () =>
 				chai.assert.deepEqual(
 					evaluateXPathToNumbers(
 						'fold-left(1 to 5, (), function($a, $b) {($b, $a)})',
-						documentNode
+						documentNode,
 					),
-					[5, 4, 3, 2, 1]
+					[5, 4, 3, 2, 1],
 				));
 			it('concat values indicating order', () =>
 				chai.assert.deepEqual(
 					evaluateXPathToString(
 						'fold-left(1 to 5, "$zero", fn:concat("$f(", ?, ", ", ?, ")"))',
-						documentNode
+						documentNode,
 					),
-					'$f($f($f($f($f($zero, 1), 2), 3), 4), 5)'
+					'$f($f($f($f($f($zero, 1), 2), 3), 4), 5)',
 				));
 		});
 
@@ -123,25 +123,25 @@ describe('Functions and operators on sequences', () => {
 				chai.assert.deepEqual(
 					evaluateXPathToNumbers(
 						'fold-right((), (), function($a, $b) {$a + $b})',
-						documentNode
+						documentNode,
 					),
-					[]
+					[],
 				));
 			it('get sum of sequence', () =>
 				chai.assert.deepEqual(
 					evaluateXPathToNumber(
 						'fold-right(1 to 5, 0, function($a, $b) {$a + $b})',
-						documentNode
+						documentNode,
 					),
-					15
+					15,
 				));
 			it('concat values indicating order', () =>
 				chai.assert.deepEqual(
 					evaluateXPathToString(
 						'fold-right(1 to 5, "$zero", fn:concat("$f(", ?, ", ", ?, ")"))',
-						documentNode
+						documentNode,
 					),
-					'$f(1, $f(2, $f(3, $f(4, $f(5, $zero)))))'
+					'$f(1, $f(2, $f(3, $f(4, $f(5, $zero)))))',
 				));
 		});
 
@@ -151,7 +151,7 @@ describe('Functions and operators on sequences', () => {
 			it('returns the first item of a given sequence', () =>
 				chai.assert.deepEqual(
 					evaluateXPathToStrings('head(("a", "b", "c"))', documentNode),
-					['a']
+					['a'],
 				));
 		});
 
@@ -163,7 +163,7 @@ describe('Functions and operators on sequences', () => {
 			it('returns all but the first item of a given sequence', () =>
 				chai.assert.deepEqual(
 					evaluateXPathToStrings('tail(("a", "b", "c"))', documentNode),
-					['b', 'c']
+					['b', 'c'],
 				));
 		});
 
@@ -171,37 +171,37 @@ describe('Functions and operators on sequences', () => {
 			it('returns the inserts sequence when given an empty targets sequence', () =>
 				chai.assert.deepEqual(
 					evaluateXPathToStrings('insert-before((), 1, ("1", "2", "3"))', documentNode),
-					['1', '2', '3']
+					['1', '2', '3'],
 				));
 			it('returns the target sequence when given an empty inserts sequence', () =>
 				chai.assert.deepEqual(
 					evaluateXPathToStrings('insert-before(("1", "2", "3"), 1, ())', documentNode),
-					['1', '2', '3']
+					['1', '2', '3'],
 				));
 			it('inserts the item on position 1 when position = 0', () =>
 				chai.assert.deepEqual(
 					evaluateXPathToStrings('insert-before(("a", "b", "c"), 0, "z")', documentNode),
-					['z', 'a', 'b', 'c']
+					['z', 'a', 'b', 'c'],
 				));
 			it('inserts the item on position 1 when position = 1', () =>
 				chai.assert.deepEqual(
 					evaluateXPathToStrings('insert-before(("a", "b", "c"), 1, "z")', documentNode),
-					['z', 'a', 'b', 'c']
+					['z', 'a', 'b', 'c'],
 				));
 			it('inserts the item on position 2 when position = 2', () =>
 				chai.assert.deepEqual(
 					evaluateXPathToStrings('insert-before(("a", "b", "c"), 2, "x")', documentNode),
-					['a', 'x', 'b', 'c']
+					['a', 'x', 'b', 'c'],
 				));
 			it('inserts the item on position 4 when position = 4', () =>
 				chai.assert.deepEqual(
 					evaluateXPathToStrings('insert-before(("a", "b", "c"), 4, "x")', documentNode),
-					['a', 'b', 'c', 'x']
+					['a', 'b', 'c', 'x'],
 				));
 			it('inserts the item on position 4 when position = 5 (greater than largest position)', () =>
 				chai.assert.deepEqual(
 					evaluateXPathToStrings('insert-before(("a", "b", "c"), 5, "x")', documentNode),
-					['a', 'b', 'c', 'x']
+					['a', 'b', 'c', 'x'],
 				));
 		});
 
@@ -211,17 +211,17 @@ describe('Functions and operators on sequences', () => {
 			it('returns the original sequence when the position is 0', () =>
 				chai.assert.deepEqual(
 					evaluateXPathToStrings('remove(("a", "b", "c"), 0)', documentNode),
-					['a', 'b', 'c']
+					['a', 'b', 'c'],
 				));
 			it('returns the original sequence when the position is out of bounds (greater than largest position)', () =>
 				chai.assert.deepEqual(
 					evaluateXPathToStrings('remove(("a", "b", "c"), 5)', documentNode),
-					['a', 'b', 'c']
+					['a', 'b', 'c'],
 				));
 			it('returns the sequence with the item at the given position removed', () =>
 				chai.assert.deepEqual(
 					evaluateXPathToStrings('remove(("a", "b", "c"), 2)', documentNode),
-					['a', 'c']
+					['a', 'c'],
 				));
 		});
 
@@ -231,7 +231,7 @@ describe('Functions and operators on sequences', () => {
 			it('returns an reversed sequence', () =>
 				chai.assert.deepEqual(
 					evaluateXPathToStrings('reverse(("a", "b", "c"))', documentNode),
-					['c', 'b', 'a']
+					['c', 'b', 'a'],
 				));
 		});
 
@@ -239,88 +239,88 @@ describe('Functions and operators on sequences', () => {
 			it('returns an empty sequence when given an empty sequence', () =>
 				chai.assert.deepEqual(
 					evaluateXPathToStrings('subsequence((), 0, 1)', documentNode),
-					[]
+					[],
 				));
 			it('returns a sequence starting at position until the end of the given sequence', () =>
 				chai.assert.deepEqual(
 					evaluateXPathToStrings('subsequence(("a", "b", "c"), 2)', documentNode),
-					['b', 'c']
+					['b', 'c'],
 				));
 			it('returns the empty sequence when inputted a start higher than the length of the input', () =>
 				chai.assert.deepEqual(
 					evaluateXPathToStrings('subsequence(("a", "b", "c"), 4)', documentNode),
-					[]
+					[],
 				));
 			it('returns the last item if the start is length', () =>
 				chai.assert.deepEqual(
 					evaluateXPathToStrings('subsequence(("a", "b", "c"), 3)', documentNode),
-					['c']
+					['c'],
 				));
 			it('returns the last item if the start is input length and length = 1', () =>
 				chai.assert.deepEqual(
 					evaluateXPathToStrings('subsequence(("a", "b", "c"), 3, 1)', documentNode),
-					['c']
+					['c'],
 				));
 			it('returns a sequence starting at position with given length', () =>
 				chai.assert.deepEqual(
 					evaluateXPathToStrings('subsequence(("a", "b", "c"), 2, 1)', documentNode),
-					['b']
+					['b'],
 				));
 			it('returns the empty sequence is start is NaN', () =>
 				chai.assert.deepEqual(
 					evaluateXPathToStrings(
 						'subsequence(("a", "b", "c"), xs:double("NaN"), 1)',
-						documentNode
+						documentNode,
 					),
-					[]
+					[],
 				));
 			it('allows decimals', () =>
 				chai.assert.deepEqual(
 					evaluateXPathToStrings(
 						'let $x := (1 to 10)[. mod 2 = 0] return subsequence((0,$x),3,count($x) div 2)',
-						documentNode
+						documentNode,
 					),
-					['4', '6', '8']
+					['4', '6', '8'],
 				));
 			it('optimizes for length', () => {
 				chai.assert.equal(
 					evaluateXPathToNumber('count(subsequence(1 to 3000000000, -2147483649))'),
-					3000000000
+					3000000000,
 				);
 			});
 			it('returns an empty sequence when startingLoc = -INF and length = +INF', () =>
 				chai.assert.deepEqual(
 					evaluateXPathToStrings(
 						'subsequence(("a", "b", "c"), xs:double("-INF"), xs:double("+INF"))',
-						documentNode
+						documentNode,
 					),
-					[]
+					[],
 				));
 			it('returns the full sequence when startingLoc = -INF', () =>
 				chai.assert.deepEqual(
 					evaluateXPathToStrings(
 						'subsequence(("a", "b", "c"), xs:double("-INF"))',
-						documentNode
+						documentNode,
 					),
-					['a', 'b', 'c']
+					['a', 'b', 'c'],
 				));
 			it('returns the full sequence when start = 1 and length = INF', () =>
 				chai.assert.deepEqual(
 					evaluateXPathToStrings(
 						'subsequence(("a", "b", "c"), 0, xs:double("+INF"))',
-						documentNode
+						documentNode,
 					),
-					['a', 'b', 'c']
+					['a', 'b', 'c'],
 				));
 			it('returns the first item when start = -10 and length = 12 FIRST', () =>
 				chai.assert.deepEqual(
 					evaluateXPathToStrings('subsequence(("a", "b", "c"), -10, 12)', documentNode),
-					['a']
+					['a'],
 				));
 			it('returns the first item when start = -10 and length = 12 SECOND, for static compilation checks', () =>
 				chai.assert.deepEqual(
 					evaluateXPathToStrings('subsequence(("a", "b", "c"), -10, 12)', documentNode),
-					['a']
+					['a'],
 				));
 		});
 
@@ -329,7 +329,7 @@ describe('Functions and operators on sequences', () => {
 				chai.assert.deepEqual(evaluateXPathToNumbers('unordered(())', documentNode), []);
 				chai.assert.deepEqual(
 					evaluateXPathToNumbers('unordered((1, 2, 3))', documentNode),
-					[1, 2, 3]
+					[1, 2, 3],
 				);
 			});
 		});
@@ -344,25 +344,25 @@ describe('Functions and operators on sequences', () => {
 
 				it('returns true if both sequences contain an equal string', () => {
 					chai.assert.isTrue(
-						evaluateXPathToBoolean('deep-equal(("abc"), ("abc"))', documentNode)
+						evaluateXPathToBoolean('deep-equal(("abc"), ("abc"))', documentNode),
 					);
 				});
 
 				it('returns false if both sequences are a function', () => {
 					chai.assert.isFalse(
-						evaluateXPathToBoolean('deep-equal(true#0, true#0)', documentNode)
+						evaluateXPathToBoolean('deep-equal(true#0, true#0)', documentNode),
 					);
 				});
 
 				it('returns true if both sequences contain an equal number (1 vs 1)', () => {
 					chai.assert.isTrue(
-						evaluateXPathToBoolean('deep-equal((1), (1))', documentNode)
+						evaluateXPathToBoolean('deep-equal((1), (1))', documentNode),
 					);
 				});
 
 				it('returns true if both sequences contain an equal number (1 vs float 1)', () => {
 					chai.assert.isTrue(
-						evaluateXPathToBoolean('deep-equal((1), (xs:float("1")))', documentNode)
+						evaluateXPathToBoolean('deep-equal((1), (xs:float("1")))', documentNode),
 					);
 				});
 
@@ -370,14 +370,14 @@ describe('Functions and operators on sequences', () => {
 					chai.assert.isTrue(
 						evaluateXPathToBoolean(
 							'deep-equal((xs:float("NaN")), (xs:float("NaN")))',
-							documentNode
-						)
+							documentNode,
+						),
 					);
 				});
 
 				it('returns true if both sequences contain an equal number (double 1 vs 1)', () => {
 					chai.assert.isTrue(
-						evaluateXPathToBoolean('deep-equal((xs:double("1")), (1))', documentNode)
+						evaluateXPathToBoolean('deep-equal((xs:double("1")), (1))', documentNode),
 					);
 				});
 
@@ -385,8 +385,8 @@ describe('Functions and operators on sequences', () => {
 					chai.assert.isTrue(
 						evaluateXPathToBoolean(
 							'deep-equal((xs:int("-2147483648")),(xs:int("-2147483648")))',
-							documentNode
-						)
+							documentNode,
+						),
 					);
 				});
 
@@ -394,8 +394,8 @@ describe('Functions and operators on sequences', () => {
 					chai.assert.isTrue(
 						evaluateXPathToBoolean(
 							'deep-equal((xs:double("1")), (xs:float("1")))',
-							documentNode
-						)
+							documentNode,
+						),
 					);
 				});
 
@@ -403,8 +403,8 @@ describe('Functions and operators on sequences', () => {
 					chai.assert.isTrue(
 						evaluateXPathToBoolean(
 							'deep-equal((xs:double("1")), (xs:double("1")))',
-							documentNode
-						)
+							documentNode,
+						),
 					);
 				});
 
@@ -412,8 +412,8 @@ describe('Functions and operators on sequences', () => {
 					chai.assert.isTrue(
 						evaluateXPathToBoolean(
 							'deep-equal((xs:double("NaN")), (xs:double("NaN")))',
-							documentNode
-						)
+							documentNode,
+						),
 					);
 				});
 
@@ -421,8 +421,8 @@ describe('Functions and operators on sequences', () => {
 					chai.assert.isTrue(
 						evaluateXPathToBoolean(
 							'deep-equal((xs:boolean("true")), xs:boolean("true"))',
-							documentNode
-						)
+							documentNode,
+						),
 					);
 				});
 
@@ -430,26 +430,26 @@ describe('Functions and operators on sequences', () => {
 					chai.assert.isTrue(
 						evaluateXPathToBoolean(
 							'deep-equal(("abc", 1, xs:boolean("false")), ("abc", 1, xs:boolean("false")))',
-							documentNode
-						)
+							documentNode,
+						),
 					);
 				});
 
 				it('returns false if both sequences have a different length', () => {
 					chai.assert.isFalse(
-						evaluateXPathToBoolean('deep-equal(("xyz", "abc"), ("abc"))', documentNode)
+						evaluateXPathToBoolean('deep-equal(("xyz", "abc"), ("abc"))', documentNode),
 					);
 				});
 
 				it('returns false if both sequences contain different strings', () => {
 					chai.assert.isFalse(
-						evaluateXPathToBoolean('deep-equal(("xyz"), ("abc"))', documentNode)
+						evaluateXPathToBoolean('deep-equal(("xyz"), ("abc"))', documentNode),
 					);
 				});
 
 				it('returns false if both sequences contain different numbers', () => {
 					chai.assert.isFalse(
-						evaluateXPathToBoolean('deep-equal((22), (42))', documentNode)
+						evaluateXPathToBoolean('deep-equal((22), (42))', documentNode),
 					);
 				});
 
@@ -457,8 +457,8 @@ describe('Functions and operators on sequences', () => {
 					chai.assert.isFalse(
 						evaluateXPathToBoolean(
 							'deep-equal((xs:boolean("true")), (xs:boolean("false")))',
-							documentNode
-						)
+							documentNode,
+						),
 					);
 				});
 
@@ -466,8 +466,8 @@ describe('Functions and operators on sequences', () => {
 					chai.assert.isFalse(
 						evaluateXPathToBoolean(
 							'deep-equal(("abc", 12, xs:boolean("false"), xs:boolean("true")), ("abc", 12, xs:boolean("false"), xs:boolean("false")))',
-							documentNode
-						)
+							documentNode,
+						),
 					);
 				});
 
@@ -475,8 +475,8 @@ describe('Functions and operators on sequences', () => {
 					chai.assert.isTrue(
 						evaluateXPathToBoolean(
 							'deep-equal((map { "a": 123, "b": 456 }), (map { "a": 123, "b": 456 }))',
-							documentNode
-						)
+							documentNode,
+						),
 					);
 				});
 
@@ -484,8 +484,8 @@ describe('Functions and operators on sequences', () => {
 					chai.assert.isTrue(
 						evaluateXPathToBoolean(
 							'deep-equal((map { "b": 456, "a": 123 }), (map { "a": 123, "b": 456 }))',
-							documentNode
-						)
+							documentNode,
+						),
 					);
 				});
 
@@ -493,8 +493,8 @@ describe('Functions and operators on sequences', () => {
 					chai.assert.isTrue(
 						evaluateXPathToBoolean(
 							'deep-equal(([1, 2, 5, 8]), ([1, 2, 5, 8]))',
-							documentNode
-						)
+							documentNode,
+						),
 					);
 				});
 
@@ -502,8 +502,8 @@ describe('Functions and operators on sequences', () => {
 					chai.assert.isFalse(
 						evaluateXPathToBoolean(
 							'deep-equal((map { "a": 123, "b": 456 }), (map { "a": 123, "b": 456, "c": 789 }))',
-							documentNode
-						)
+							documentNode,
+						),
 					);
 				});
 
@@ -511,8 +511,8 @@ describe('Functions and operators on sequences', () => {
 					chai.assert.isFalse(
 						evaluateXPathToBoolean(
 							'deep-equal((map { "a": 123, "b": 456 }), (map { "y": 123, "z": 456 }))',
-							documentNode
-						)
+							documentNode,
+						),
 					);
 				});
 
@@ -520,8 +520,8 @@ describe('Functions and operators on sequences', () => {
 					chai.assert.isFalse(
 						evaluateXPathToBoolean(
 							'deep-equal(([1, 2, 5, 8, 10]), ([1, 2, 5, 8]))',
-							documentNode
-						)
+							documentNode,
+						),
 					);
 				});
 
@@ -541,8 +541,8 @@ describe('Functions and operators on sequences', () => {
 					chai.assert.isTrue(
 						evaluateXPathToBoolean(
 							'deep-equal(./someElement, ./someElement)',
-							documentNode
-						)
+							documentNode,
+						),
 					);
 				});
 				it('returns true two equal elements', () => {
@@ -552,13 +552,13 @@ describe('Functions and operators on sequences', () => {
 							['someEqualElement', 'Some equal text.'],
 							['someEqualElement', 'Some equal text.'],
 						],
-						documentNode
+						documentNode,
 					);
 					chai.assert.isTrue(
 						evaluateXPathToBoolean(
 							'deep-equal(./someElement/someEqualElement[1], ./someElement/someEqualElement[2])',
-							documentNode
-						)
+							documentNode,
+						),
 					);
 				});
 				it('returns true two unequal elements (unequal on node name)', () => {
@@ -568,13 +568,13 @@ describe('Functions and operators on sequences', () => {
 							['someEqualElement', 'Some equal text.'],
 							['someUnequalElement', 'Some equal text.'],
 						],
-						documentNode
+						documentNode,
 					);
 					chai.assert.isFalse(
 						evaluateXPathToBoolean(
 							'deep-equal(./someElement/someEqualElement, ./someElement/someUnequalElement)',
-							documentNode
-						)
+							documentNode,
+						),
 					);
 				});
 				it('returns false two unequal elements (unequal on contents)', () => {
@@ -584,13 +584,13 @@ describe('Functions and operators on sequences', () => {
 							['someEqualElement', 'Some equal text.'],
 							['someEqualElement', 'Some unequal text.'],
 						],
-						documentNode
+						documentNode,
 					);
 					chai.assert.isFalse(
 						evaluateXPathToBoolean(
 							'deep-equal(./someElement/someEqualElement[1], ./someElement/someEqualElement[2])',
-							documentNode
-						)
+							documentNode,
+						),
 					);
 				});
 				it('returns true for equal elements with different prefixes for the same uri', () => {
@@ -603,12 +603,12 @@ describe('Functions and operators on sequences', () => {
 						documentNode,
 						null,
 						null,
-						{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+						{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 					);
 
 					chai.assert.isTrue(
 						evaluateXPathToBoolean('deep-equal(./*[1], ./*[2])', dom),
-						'both elements must be equal'
+						'both elements must be equal',
 					);
 				});
 
@@ -620,8 +620,8 @@ describe('Functions and operators on sequences', () => {
 							documentNode,
 							undefined,
 							{},
-							{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-						)
+							{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
+						),
 					);
 				});
 				it('returns true for elements which only differ on prefix', () => {
@@ -631,8 +631,8 @@ describe('Functions and operators on sequences', () => {
 							documentNode,
 							undefined,
 							{},
-							{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-						)
+							{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
+						),
 					);
 				});
 
@@ -644,13 +644,13 @@ describe('Functions and operators on sequences', () => {
 							['someElement', { someAttribute: 'value' }],
 							['someElement', { someAttribute: 'value' }],
 						],
-						documentNode
+						documentNode,
 					);
 					chai.assert.isTrue(
 						evaluateXPathToBoolean(
 							'let $attributeNode := ./someElement/someElement/@someAttribute return deep-equal($attributeNode[1], $attributeNode[2])',
-							documentNode
-						)
+							documentNode,
+						),
 					);
 				});
 				it('returns false for two sequences containing two unequal attribute nodes', () => {
@@ -660,13 +660,13 @@ describe('Functions and operators on sequences', () => {
 							['someElement', { someAttribute: 'value1' }],
 							['someElement', { someAttribute: 'value2' }],
 						],
-						documentNode
+						documentNode,
 					);
 					chai.assert.isFalse(
 						evaluateXPathToBoolean(
 							'let $attributeNode := ./someElement/someElement/@someAttribute return deep-equal($attributeNode[1], $attributeNode[2])',
-							documentNode
-						)
+							documentNode,
+						),
 					);
 				});
 				it('returns false for two unequal elements (unequal on attributes)', () => {
@@ -676,13 +676,13 @@ describe('Functions and operators on sequences', () => {
 							['someEqualElement', { attr1: 'A' }],
 							['someEqualElement', { attr1: 'B' }],
 						],
-						documentNode
+						documentNode,
 					);
 					chai.assert.isFalse(
 						evaluateXPathToBoolean(
 							'deep-equal(./someElement/someEqualElement[1], ./someElement/someEqualElement[2])',
-							documentNode
-						)
+							documentNode,
+						),
 					);
 				});
 				it('returns false for two unequal elements (A has more attributes)', () => {
@@ -692,13 +692,13 @@ describe('Functions and operators on sequences', () => {
 							['someEqualElement', { attr1: 'someAttributeValue', attr2: 'hah' }],
 							['someEqualElement', { attr1: 'someAttributeValue' }],
 						],
-						documentNode
+						documentNode,
 					);
 					chai.assert.isFalse(
 						evaluateXPathToBoolean(
 							'deep-equal(./someElement/someEqualElement[1], ./someElement/someEqualElement[2])',
-							documentNode
-						)
+							documentNode,
+						),
 					);
 				});
 				it('returns false for two unequal elements (B has more attributes)', () => {
@@ -708,13 +708,13 @@ describe('Functions and operators on sequences', () => {
 							['someEqualElement', { attr1: 'someAttributeValue' }],
 							['someEqualElement', { attr1: 'someAttributeValue', attr2: 'hah' }],
 						],
-						documentNode
+						documentNode,
 					);
 					chai.assert.isFalse(
 						evaluateXPathToBoolean(
 							'deep-equal(./someElement/someEqualElement[1], ./someElement/someEqualElement[2])',
-							documentNode
-						)
+							documentNode,
+						),
 					);
 				});
 				it('returns false for two unequal elements (other names)', () => {
@@ -724,13 +724,13 @@ describe('Functions and operators on sequences', () => {
 							['someEqualElement', { AAAA: 'someAttributeValue' }],
 							['someEqualElement', { BBBB: 'someAttributeValue' }],
 						],
-						documentNode
+						documentNode,
 					);
 					chai.assert.isFalse(
 						evaluateXPathToBoolean(
 							'deep-equal(./someElement/someEqualElement[1], ./someElement/someEqualElement[2])',
-							documentNode
-						)
+							documentNode,
+						),
 					);
 				});
 
@@ -738,25 +738,25 @@ describe('Functions and operators on sequences', () => {
 				it("returns true for two sequences containing two equal PI's", () => {
 					jsonMlMapper.parse(
 						['someElement', ['?somePi', 'value'], ['?somePi', 'value']],
-						documentNode
+						documentNode,
 					);
 					chai.assert.isTrue(
 						evaluateXPathToBoolean(
 							'let $piNode := ./someElement/processing-instruction() return deep-equal($piNode[1], $piNode[2])',
-							documentNode
-						)
+							documentNode,
+						),
 					);
 				});
 				it("returns false for two sequences containing two unequal PI's", () => {
 					jsonMlMapper.parse(
 						['someElement', ['?somePi', 'value1'], ['?somePi', 'value2']],
-						documentNode
+						documentNode,
 					);
 					chai.assert.isFalse(
 						evaluateXPathToBoolean(
 							'let $piNode := ./someElement/processing-instruction() return deep-equal($piNode[1], $piNode[2])',
-							documentNode
-						)
+							documentNode,
+						),
 					);
 				});
 
@@ -766,8 +766,8 @@ describe('Functions and operators on sequences', () => {
 					chai.assert.isTrue(
 						evaluateXPathToBoolean(
 							'let $textNode := ./someElement/text() return deep-equal($textNode[1], $textNode[2])',
-							documentNode
-						)
+							documentNode,
+						),
 					);
 				});
 				it('returns false for two sequences containing two equal text nodes', () => {
@@ -775,21 +775,21 @@ describe('Functions and operators on sequences', () => {
 					chai.assert.isFalse(
 						evaluateXPathToBoolean(
 							'let $textNode := ./someElement/text() return deep-equal($textNode[1], $textNode[2])',
-							documentNode
-						)
+							documentNode,
+						),
 					);
 				});
 
 				it('returns true for comments', () => {
 					jsonMlMapper.parse(
 						['someElement', ['!', 'Some comment.'], ['!', 'Some comment.']],
-						documentNode
+						documentNode,
 					);
 					chai.assert.isTrue(
 						evaluateXPathToBoolean(
 							'let $commentNode := ./someElement/comment() return deep-equal($commentNode[1], $commentNode[2])',
-							documentNode
-						)
+							documentNode,
+						),
 					);
 				});
 			});
@@ -813,19 +813,19 @@ describe('Functions and operators on sequences', () => {
 				chai.assert(evaluateXPathToNumber('avg((1, 2, 3))', documentNode) === 2));
 			it('returns the avg of integers as a double value', () =>
 				chai.assert(
-					evaluateXPathToBoolean('avg((1, 2)) instance of xs:double', documentNode)
+					evaluateXPathToBoolean('avg((1, 2)) instance of xs:double', documentNode),
 				));
 			it('returns the avg of integers as a double', () =>
 				chai.assert(
 					evaluateXPathToBoolean('avg((1, 2)) = 1.5', documentNode),
-					'avg of 1 and 2 is 1.5'
+					'avg of 1 and 2 is 1.5',
 				));
 			it('returns the avg of decimals', () =>
 				chai.assert(
 					evaluateXPathToBoolean(
 						'avg((1.5, 2.0, 2.5)) instance of xs:decimal',
-						documentNode
-					)
+						documentNode,
+					),
 				));
 			it('returns the avg of doubles as a double', () =>
 				chai.assert.equal(evaluateXPathToNumber('avg((1.5, 2.0, 2.5))', documentNode), 2));
@@ -833,25 +833,25 @@ describe('Functions and operators on sequences', () => {
 				chai.assert.equal(evaluateXPathToNumber('avg((1e-1, 1e1))', documentNode), 5.05));
 			it('returns the avg of doubles as a double', () =>
 				chai.assert(
-					evaluateXPathToBoolean('avg((1e-1, 1e1)) instance of xs:double', documentNode)
+					evaluateXPathToBoolean('avg((1e-1, 1e1)) instance of xs:double', documentNode),
 				));
 			it('returns the avg of floats as a float', () =>
 				chai.assert(
 					evaluateXPathToBoolean(
 						'avg((xs:float("1e-1"), xs:float("1e1"))) instance of xs:float',
-						documentNode
-					)
+						documentNode,
+					),
 				));
 			it('returns the avg of mixed doubles and decimals as a double', () =>
 				chai.assert(
-					evaluateXPathToBoolean('avg((1e-1, 1.0)) instance of xs:double', documentNode)
+					evaluateXPathToBoolean('avg((1e-1, 1.0)) instance of xs:double', documentNode),
 				));
 			it('casts untypedAtomic to double');
 			// TODO: when we have support for creating untypedAtomicValue items, when we have implemented the function conversion
 			it('throws when not all items are numeric', () =>
 				chai.assert.throw(
 					() => evaluateXPathToNumber('avg(("bla", "bliep"))', documentNode),
-					'FORG0006'
+					'FORG0006',
 				));
 		});
 
@@ -860,7 +860,7 @@ describe('Functions and operators on sequences', () => {
 				chai.assert(evaluateXPathToNumber('max((1,3,2))', documentNode) === 3));
 			it('returns the max of integers as an integer', () =>
 				chai.assert(
-					evaluateXPathToBoolean('max((1,3,2)) instance of xs:integer', documentNode)
+					evaluateXPathToBoolean('max((1,3,2)) instance of xs:integer', documentNode),
 				));
 			it('returns the max of strings', () =>
 				chai.assert(evaluateXPathToString('max(("a", "b", "c"))', documentNode) === 'c'));
@@ -870,19 +870,19 @@ describe('Functions and operators on sequences', () => {
 				chai.assert(
 					evaluateXPathToBoolean(
 						'max((1, 1.5, 0.5)) instance of xs:decimal',
-						documentNode
-					)
+						documentNode,
+					),
 				));
 			it('returns the max of mixed decimals, doubles and integers', () =>
 				chai.assert(evaluateXPathToNumber('max((1, 1.5, 0.5e1))', documentNode) === 5));
 			it('throws a type error if the values are not of the same type', () =>
 				chai.assert.throws(
 					() => evaluateXPathToNumber('max((1, "zero"))', documentNode),
-					'FORG0006'
+					'FORG0006',
 				));
 			it('returns NaN if one of the values is NaN', () =>
 				chai.assert.isNaN(
-					evaluateXPathToNumber('max((1, number(xs:double("NaN"))))', documentNode)
+					evaluateXPathToNumber('max((1, number(xs:double("NaN"))))', documentNode),
 				));
 			it('returns the empty sequence when passed the empty sequence', () =>
 				chai.assert.deepEqual(evaluateXPathToStrings('max(())', documentNode), []));
@@ -904,11 +904,11 @@ describe('Functions and operators on sequences', () => {
 			it('throws a type error if the values are not of the same type', () =>
 				chai.assert.throws(
 					() => evaluateXPathToNumber('min((1, "zero"))', documentNode),
-					'FORG0006'
+					'FORG0006',
 				));
 			it('returns NaN if one of the values is NaN', () =>
 				chai.assert.isNaN(
-					evaluateXPathToNumber('min((1, number(xs:double("NaN"))))', documentNode)
+					evaluateXPathToNumber('min((1, number(xs:double("NaN"))))', documentNode),
 				));
 			it('returns the empty sequence when passed the empty sequence', () =>
 				chai.assert.deepEqual(evaluateXPathToStrings('min(())', documentNode), []));
@@ -931,29 +931,29 @@ describe('Functions and operators on sequences', () => {
 				chai.assert(evaluateXPathToNumber('sum((1e-1, 1e1))', documentNode) === 10.1));
 			it('returns the sum of doubles as a double', () =>
 				chai.assert.isTrue(
-					evaluateXPathToBoolean('sum((1e-1, 1e1)) instance of xs:double', documentNode)
+					evaluateXPathToBoolean('sum((1e-1, 1e1)) instance of xs:double', documentNode),
 				));
 			it('returns the sum of integers as an integer', () =>
 				chai.assert.isTrue(
-					evaluateXPathToBoolean('sum((1, 1)) instance of xs:integer', documentNode)
+					evaluateXPathToBoolean('sum((1, 1)) instance of xs:integer', documentNode),
 				));
 			it('returns the sum of decimals as a decimal', () =>
 				chai.assert.isTrue(
-					evaluateXPathToBoolean('sum((1.0, 1.0)) instance of xs:decimal', documentNode)
+					evaluateXPathToBoolean('sum((1.0, 1.0)) instance of xs:decimal', documentNode),
 				));
 			it('returns the sum of floats as a float', () =>
 				chai.assert.isTrue(
 					evaluateXPathToBoolean(
 						'sum((xs:float(1.0), xs:float(1.0))) instance of xs:float',
-						documentNode
-					)
+						documentNode,
+					),
 				));
 			it('casts untypedAtomic to double');
 			// TODO: when we have support for creating untypedAtomicValue items, when we have implemented the function conversion
 			it('throws when not all items are numeric', () =>
 				chai.assert.throw(
 					() => evaluateXPathToNumber('sum(("bla", "bliep"))', documentNode),
-					'FORG0006'
+					'FORG0006',
 				));
 		});
 
@@ -969,7 +969,7 @@ describe('Functions and operators on sequences', () => {
 					{
 						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 						xmlSerializer: new slimdom.XMLSerializer(),
-					}
+					},
 				);
 				chai.assert.equal(res, '<foo>A piece of text</foo>');
 			});
@@ -989,11 +989,11 @@ describe('Functions and operators on sequences', () => {
 						namespaceResolver: (prefix: string) => URI_BY_PREFIX[prefix],
 						xmlSerializer: new slimdom.XMLSerializer(),
 						debug: true,
-					}
+					},
 				);
 				chai.assert.equal(
 					res,
-					'<foo xmlns="http://fontoxml.com/fontoxpath">A piece of text</foo>'
+					'<foo xmlns="http://fontoxml.com/fontoxpath">A piece of text</foo>',
 				);
 			});
 
@@ -1004,9 +1004,9 @@ describe('Functions and operators on sequences', () => {
 						documentNode.createElement('ele'),
 						null,
 						null,
-						{ xmlSerializer: new slimdom.XMLSerializer() }
+						{ xmlSerializer: new slimdom.XMLSerializer() },
 					),
-					'<ele/>'
+					'<ele/>',
 				));
 
 			it('can serialize multiple elements', () =>
@@ -1016,9 +1016,9 @@ describe('Functions and operators on sequences', () => {
 						documentNode.createElement('ele'),
 						null,
 						null,
-						{ xmlSerializer: new slimdom.XMLSerializer() }
+						{ xmlSerializer: new slimdom.XMLSerializer() },
 					),
-					'<ele/><ele/><ele/>'
+					'<ele/><ele/><ele/>',
 				));
 
 			it('can serialize a text node', () =>
@@ -1028,9 +1028,9 @@ describe('Functions and operators on sequences', () => {
 						documentNode.createTextNode('A piece of text'),
 						null,
 						null,
-						{ xmlSerializer: new slimdom.XMLSerializer() }
+						{ xmlSerializer: new slimdom.XMLSerializer() },
 					),
-					'A piece of text'
+					'A piece of text',
 				));
 
 			it('throws a readable error when no xmlSerializer is passed', () =>
@@ -1041,9 +1041,9 @@ describe('Functions and operators on sequences', () => {
 							documentNode.createTextNode('A piece of text'),
 							null,
 							null,
-							{ xmlSerializer: null }
+							{ xmlSerializer: null },
 						),
-					'serialize() called but no xmlSerializer set in execution parameters.'
+					'serialize() called but no xmlSerializer set in execution parameters.',
 				));
 
 			it('throws a readable error when no nodes are passed', () =>
@@ -1052,7 +1052,7 @@ describe('Functions and operators on sequences', () => {
 						evaluateXPathToString('serialize(42)', null, null, null, {
 							xmlSerializer: new slimdom.XMLSerializer(),
 						}),
-					'Expected argument to fn:serialize to resolve to a sequence of Nodes'
+					'Expected argument to fn:serialize to resolve to a sequence of Nodes',
 				));
 		});
 	});

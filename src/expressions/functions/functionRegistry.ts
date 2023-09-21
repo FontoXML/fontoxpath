@@ -48,7 +48,7 @@ function computeLevenshteinDistance(a: string, b: string) {
 		const distance = Math.min(
 			computeStep(aLen - 1, bLen) + 1,
 			computeStep(aLen, bLen - 1) + 1,
-			computeStep(aLen - 1, bLen - 1) + cost
+			computeStep(aLen - 1, bLen - 1) + cost,
 		);
 
 		computedDistances.get(aLen).set(bLen, distance);
@@ -66,7 +66,7 @@ export function getAlternativesAsStringFor(functionName: string): string {
 						name: alternativeName,
 						distance: computeLevenshteinDistance(
 							functionName,
-							alternativeName.slice(alternativeName.lastIndexOf(':') + 1)
+							alternativeName.slice(alternativeName.lastIndexOf(':') + 1),
 						),
 					};
 				})
@@ -75,14 +75,14 @@ export function getAlternativesAsStringFor(functionName: string): string {
 				// If we need to change more than half the string, it cannot be a match
 				.filter(
 					(alternativeNameWithScore) =>
-						alternativeNameWithScore.distance < functionName.length / 2
+						alternativeNameWithScore.distance < functionName.length / 2,
 				)
 				.reduce(
 					(alternatives, alternativeNameWithScore) =>
 						alternatives.concat(
-							registeredFunctionsByName[alternativeNameWithScore.name]
+							registeredFunctionsByName[alternativeNameWithScore.name],
 						),
-					[]
+					[],
 				)
 				.slice(0, 5)
 		: registeredFunctionsByName[functionName];
@@ -101,9 +101,9 @@ export function getAlternativesAsStringFor(functionName: string): string {
 						.map((argumentType) =>
 							argumentType === EllipsisType.ELLIPSIS
 								? '...'
-								: sequenceTypeToString(argumentType)
+								: sequenceTypeToString(argumentType),
 						)
-						.join(', ')})"`
+						.join(', ')})"`,
 			)
 			.reduce((accumulator, alternativeFunctionName, index, array) => {
 				if (index === 0) {
@@ -118,7 +118,7 @@ export function getAlternativesAsStringFor(functionName: string): string {
 export function getFunctionByArity(
 	functionNamespaceURI: string,
 	functionLocalName: string,
-	arity: number
+	arity: number,
 ): FunctionProperties | null {
 	const matchingFunctions =
 		registeredFunctionsByName[functionNamespaceURI + ':' + functionLocalName];
@@ -129,7 +129,7 @@ export function getFunctionByArity(
 
 	const matchingFunction = matchingFunctions.find((functionDeclaration) => {
 		const isElipsis = functionDeclaration.argumentTypes.some(
-			(argument) => argument === EllipsisType.ELLIPSIS
+			(argument) => argument === EllipsisType.ELLIPSIS,
 		);
 		if (isElipsis) {
 			return functionDeclaration.argumentTypes.length - 1 <= arity;
@@ -157,7 +157,7 @@ export function registerFunction(
 	localName: string,
 	argumentTypes: ParameterType[],
 	returnType: SequenceType,
-	callFunction: FunctionSignature<ISequence>
+	callFunction: FunctionSignature<ISequence>,
 ) {
 	if (!registeredFunctionsByName[namespaceURI + ':' + localName]) {
 		registeredFunctionsByName[namespaceURI + ':' + localName] = [];

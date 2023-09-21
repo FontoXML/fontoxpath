@@ -61,7 +61,7 @@ export default async function evaluateUpdatingExpression(
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
-	options?: UpdatingOptions | null
+	options?: UpdatingOptions | null,
 ): Promise<{ pendingUpdateList: object[]; xdmValue: any[] }> {
 	options = options || {};
 
@@ -82,7 +82,7 @@ export default async function evaluateUpdatingExpression(
 				allowXQuery: true,
 				debug: !!options['debug'],
 				disableCache: !!options['disableCache'],
-			}
+			},
 		);
 		dynamicContext = context.dynamicContext;
 		executionParameters = context.executionParameters;
@@ -113,7 +113,7 @@ export default async function evaluateUpdatingExpression(
 	try {
 		const resultIterator = (expression as PossiblyUpdatingExpression).evaluateWithUpdateList(
 			dynamicContext,
-			executionParameters
+			executionParameters,
 		);
 
 		attempt = resultIterator.next(IterationHint.NONE);
@@ -125,6 +125,6 @@ export default async function evaluateUpdatingExpression(
 		attempt.value,
 		updateScript,
 		options['returnType'],
-		executionParameters
+		executionParameters,
 	);
 }

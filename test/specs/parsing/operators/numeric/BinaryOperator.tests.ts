@@ -29,7 +29,7 @@ describe('mathematical operators', () => {
 		chai.assert.equal(
 			evaluateXPathToNumber('2 idiv 2 * 2', documentNode),
 			2,
-			'This should be parsed as (2 idiv 2) * 2'
+			'This should be parsed as (2 idiv 2) * 2',
 		));
 
 	it('subtracts in the correct order', () =>
@@ -47,7 +47,7 @@ describe('mathematical operators', () => {
 	it('throws when passed strings', () =>
 		chai.assert.throws(
 			() => evaluateXPathToNumber('"something" + 1', documentNode),
-			'XPTY0004'
+			'XPTY0004',
 		));
 
 	it('can parse untyped attributes', () => {
@@ -62,43 +62,43 @@ describe('Durations', () => {
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
 					'xs:yearMonthDuration("P10Y10M") + xs:yearMonthDuration("P10Y10M") eq xs:yearMonthDuration("P21Y8M")',
-					documentNode
-				)
+					documentNode,
+				),
 			));
 		it('can evaluate "P11Y10M" - "P10Y10M"', () =>
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
 					'xs:yearMonthDuration("P11Y10M") - xs:yearMonthDuration("P10Y10M") eq xs:yearMonthDuration("P1Y")',
-					documentNode
-				)
+					documentNode,
+				),
 			));
 		it('can evaluate "P11Y10M" * 2', () =>
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
 					'xs:yearMonthDuration("P1Y10M") * xs:double("2") eq xs:yearMonthDuration("P44M")',
-					documentNode
-				)
+					documentNode,
+				),
 			));
 		it('can evaluate "P11Y10M" div 2', () =>
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
 					'xs:yearMonthDuration("P1Y10M") div xs:double("2") eq xs:yearMonthDuration("P11M")',
-					documentNode
-				)
+					documentNode,
+				),
 			));
 		it('can evaluate "P3Y4M" div "-P1Y4M"', () =>
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
 					'xs:yearMonthDuration("P3Y4M") div xs:yearMonthDuration("-P1Y4M") eq xs:decimal("-2.5")',
-					documentNode
-				)
+					documentNode,
+				),
 			));
 		it('can evaluate "P3Y4M" div "P1M"', () =>
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
 					'xs:yearMonthDuration("P3Y4M") div xs:yearMonthDuration("P1M") eq xs:decimal("40")',
-					documentNode
-				)
+					documentNode,
+				),
 			));
 	});
 
@@ -107,52 +107,52 @@ describe('Durations', () => {
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
 					'xs:dayTimeDuration("P4DT26H") + xs:dayTimeDuration("P4DT26H") eq xs:dayTimeDuration("P10DT4H")',
-					documentNode
-				)
+					documentNode,
+				),
 			));
 		it('can evaluate "P4DT28H" - "P4DT26H"', () =>
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
 					'xs:dayTimeDuration("P4DT28H") - xs:dayTimeDuration("P4DT26H") eq xs:dayTimeDuration("PT2H")',
-					documentNode
-				)
+					documentNode,
+				),
 			));
 		it('can evaluate "PT20H" * 2', () =>
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
 					'xs:dayTimeDuration("PT20H") * xs:double("2") eq xs:dayTimeDuration("P1DT16H")',
-					documentNode
-				)
+					documentNode,
+				),
 			));
 		it('can evaluate "PT11H" div 2', () =>
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
 					'xs:dayTimeDuration("PT11H") div xs:double("2") eq xs:dayTimeDuration("PT5H30M")',
-					documentNode
-				)
+					documentNode,
+				),
 			));
 		it('can evaluate "PT10S" div "PT5S"', () =>
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
 					'xs:dayTimeDuration("PT10S") div xs:dayTimeDuration("PT5S") eq xs:decimal("2")',
-					documentNode
-				)
+					documentNode,
+				),
 			));
 		it('can evaluate "P2DT53M11S" div "PT1S"', () =>
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
 					'xs:dayTimeDuration("P2DT53M11S") div xs:dayTimeDuration("PT1S") eq xs:decimal("175991")',
-					documentNode
-				)
+					documentNode,
+				),
 			));
 		it('can evaluate implicit timezone div 0', () =>
 			chai.assert.throws(
 				() =>
 					evaluateXPathToBoolean(
 						'fn:string(fn:implicit-timezone() div 0 )',
-						documentNode
+						documentNode,
 					),
-				'FODT0002'
+				'FODT0002',
 			));
 	});
 
@@ -160,8 +160,8 @@ describe('Durations', () => {
 		it('can subtract dateTimes', () => {
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
-					'xs:dateTime("2000-10-30T06:12:00-05:00") - xs:dateTime("1999-11-28T09:00:00Z") eq xs:dayTimeDuration("P337DT2H12M")'
-				)
+					'xs:dateTime("2000-10-30T06:12:00-05:00") - xs:dateTime("1999-11-28T09:00:00Z") eq xs:dayTimeDuration("P337DT2H12M")',
+				),
 			);
 		});
 	});

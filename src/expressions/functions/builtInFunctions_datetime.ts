@@ -12,7 +12,7 @@ const fnDateTime: FunctionDefinitionType = (
 	_executionParameters,
 	_staticContext,
 	sequence,
-	arg2
+	arg2,
 ) => {
 	if (sequence.isEmpty()) {
 		return sequence;
@@ -38,7 +38,7 @@ const fnDateTime: FunctionDefinitionType = (
 		timezoneToUse = dateTimezone;
 	} else {
 		throw new Error(
-			'FORG0008: fn:dateTime: got a date and time value with different timezones.'
+			'FORG0008: fn:dateTime: got a date and time value with different timezones.',
 		);
 	}
 
@@ -50,7 +50,7 @@ const fnDateTime: FunctionDefinitionType = (
 		time.getMinutes(),
 		time.getSeconds(),
 		time.getSecondFraction(),
-		timezoneToUse
+		timezoneToUse,
 	);
 	return sequenceFactory.singleton(createAtomicValue(dateTime, ValueType.XSDATETIME));
 };
@@ -59,13 +59,13 @@ const fnYearFromDateTime: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getYear(), ValueType.XSINTEGER)
+		createAtomicValue(sequence.first().value.getYear(), ValueType.XSINTEGER),
 	);
 };
 
@@ -73,13 +73,13 @@ const fnMonthFromDateTime: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getMonth(), ValueType.XSINTEGER)
+		createAtomicValue(sequence.first().value.getMonth(), ValueType.XSINTEGER),
 	);
 };
 
@@ -87,13 +87,13 @@ const fnDayFromDateTime: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getDay(), ValueType.XSINTEGER)
+		createAtomicValue(sequence.first().value.getDay(), ValueType.XSINTEGER),
 	);
 };
 
@@ -101,13 +101,13 @@ const fnHoursFromDateTime: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getHours(), ValueType.XSINTEGER)
+		createAtomicValue(sequence.first().value.getHours(), ValueType.XSINTEGER),
 	);
 };
 
@@ -115,13 +115,13 @@ const fnMinutesFromDateTime: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getMinutes(), ValueType.XSINTEGER)
+		createAtomicValue(sequence.first().value.getMinutes(), ValueType.XSINTEGER),
 	);
 };
 
@@ -129,20 +129,20 @@ const fnSecondsFromDateTime: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getFullSeconds(), ValueType.XSDECIMAL)
+		createAtomicValue(sequence.first().value.getFullSeconds(), ValueType.XSDECIMAL),
 	);
 };
 const fnTimezoneFromDateTime: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	if (sequence.isEmpty()) {
 		return sequence;

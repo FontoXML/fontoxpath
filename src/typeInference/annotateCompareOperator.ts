@@ -33,11 +33,11 @@ export function annotateValueCompare(ast: IAST): SequenceType {
 	// A value comparison only returns an empty sequence if either of its arguments is empty
 	const firstOperandType = astHelper.getAttribute(
 		astHelper.followPath(ast, ['firstOperand', '*']),
-		'type'
+		'type',
 	);
 	const secondOperandType = astHelper.getAttribute(
 		astHelper.followPath(ast, ['secondOperand', '*']),
-		'type'
+		'type',
 	);
 	const seqType = {
 		type: ValueType.XSBOOLEAN,
@@ -64,11 +64,11 @@ export function annotateNodeCompare(ast: IAST): SequenceType {
 	// A node comparison only returns an empty sequence if either of its arguments is empty
 	const firstOperandType = astHelper.getAttribute(
 		astHelper.followPath(ast, ['firstOperand', '*']),
-		'type'
+		'type',
 	);
 	const secondOperandType = astHelper.getAttribute(
 		astHelper.followPath(ast, ['secondOperand', '*']),
-		'type'
+		'type',
 	);
 	const seqType = {
 		type: ValueType.XSBOOLEAN,

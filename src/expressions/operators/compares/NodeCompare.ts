@@ -23,7 +23,7 @@ function nodeCompare(
 	operator: string,
 	domFacade: DomFacade,
 	first: ValueType,
-	second: ValueType
+	second: ValueType,
 ): (firstSequence: ISequence, secondSequence: ISequence, context: DynamicContext) => boolean {
 	// https://www.w3.org/TR/xpath-31/#doc-xpath31-NodeComp
 
@@ -44,7 +44,7 @@ function nodeCompare(
 					compareNodePositions(
 						domFacade,
 						firstSequenceParam.first(),
-						secondSequenceParam.first()
+						secondSequenceParam.first(),
 					) < 0
 				);
 			};
@@ -58,7 +58,7 @@ function nodeCompare(
 					compareNodePositions(
 						domFacade,
 						firstSequenceParam.first(),
-						secondSequenceParam.first()
+						secondSequenceParam.first(),
 					) > 0
 				);
 			};
@@ -70,11 +70,11 @@ function nodeCompare(
 
 function isOpHandler(
 	first: ValueType,
-	second: ValueType
+	second: ValueType,
 ): (
 	firstSequence: ISequence,
 	secondSequence: ISequence,
-	dynamicContext: DynamicContext
+	dynamicContext: DynamicContext,
 ) => boolean {
 	return first === second &&
 		(first === ValueType.ATTRIBUTE ||
@@ -87,11 +87,11 @@ function isOpHandler(
 		? (
 				firstSequenceParam: ISequence,
 				secondSequenceParam: ISequence,
-				_context: DynamicContext
+				_context: DynamicContext,
 		  ) => {
 				return arePointersEqual(
 					firstSequenceParam.first().value,
-					secondSequenceParam.first().value
+					secondSequenceParam.first().value,
 				);
 		  }
 		: (firstSequenceParam: ISequence, secondSequenceParam: ISequence) => false;
@@ -108,7 +108,7 @@ export default class NodeCompare extends Expression {
 			[firstExpression, secondExpression],
 			{
 				canBeStaticallyEvaluated: false,
-			}
+			},
 		);
 		this._firstExpression = firstExpression;
 		this._secondExpression = secondExpression;
@@ -117,15 +117,15 @@ export default class NodeCompare extends Expression {
 
 	public evaluate(
 		dynamicContext: DynamicContext,
-		executionParameters: ExecutionParameters
+		executionParameters: ExecutionParameters,
 	): ISequence {
 		const firstSequence = this._firstExpression.evaluateMaybeStatically(
 			dynamicContext,
-			executionParameters
+			executionParameters,
 		);
 		const secondSequence = this._secondExpression.evaluateMaybeStatically(
 			dynamicContext,
-			executionParameters
+			executionParameters,
 		);
 
 		return firstSequence.switchCases({
@@ -150,7 +150,7 @@ export default class NodeCompare extends Expression {
 							this._operator,
 							executionParameters.domFacade,
 							first.type,
-							second.type
+							second.type,
 						);
 						return compareFunction(firstSequence, secondSequence, dynamicContext)
 							? sequenceFactory.singletonTrueSequence()

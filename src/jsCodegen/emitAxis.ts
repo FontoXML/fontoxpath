@@ -19,7 +19,7 @@ export const axisAstNodes = {
 function emitMultipleNodesAxis(
 	iterationCode: PartialCompilationResult,
 	conditionExpr: PartialCompilationResult,
-	nestedCode: PartialCompilationResult
+	nestedCode: PartialCompilationResult,
 ): PartialCompilationResult {
 	return mapPartialCompilationResult(iterationCode, (iterationCode) =>
 		mapPartialCompilationResult(conditionExpr, (conditionExpr) =>
@@ -34,10 +34,10 @@ function emitMultipleNodesAxis(
 						${nestedCode.code}
 					}`,
 					{ type: GeneratedCodeBaseType.Statement },
-					iterationCode.variables
-				)
-			)
-		)
+					iterationCode.variables,
+				),
+			),
+		),
 	);
 }
 
@@ -51,7 +51,7 @@ function emitChildAxis(
 	conditionBucket: Bucket,
 	nestedCode: PartialCompilationResult,
 	stepContextItemExpr: PartialCompilationResult,
-	contextItemExpr: PartialCompilationResult
+	contextItemExpr: PartialCompilationResult,
 ): PartialCompilationResult {
 	const bucketArg = conditionBucket ? `, "${conditionBucket}"` : '';
 
@@ -62,9 +62,9 @@ function emitChildAxis(
 							${stepContextItemExpr.code};
 							${stepContextItemExpr.code} = domFacade.getNextSibling(${stepContextItemExpr.code}${bucketArg})`,
 				{ type: GeneratedCodeBaseType.Statement },
-				[...stepContextItemExpr.variables, ...contextItemExpr.variables]
-			)
-		)
+				[...stepContextItemExpr.variables, ...contextItemExpr.variables],
+			),
+		),
 	);
 
 	return emitMultipleNodesAxis(iterationCode, conditionExpr, nestedCode);
@@ -76,7 +76,7 @@ function emitAttributeAxis(
 	conditionBucket: Bucket,
 	nestedCode: PartialCompilationResult,
 	stepContextItemExpr: PartialCompilationResult,
-	contextItemExpr: PartialCompilationResult
+	contextItemExpr: PartialCompilationResult,
 ): PartialCompilationResult {
 	// Can't get anything but attributes here
 	const bucket = intersectBuckets(conditionBucket, 'type-2');
@@ -89,17 +89,17 @@ function emitAttributeAxis(
 				bucket ? `, "${bucket}"` : ''
 			}) : [])`,
 			{ type: GeneratedCodeBaseType.Value },
-			contextItemExpr.variables
-		)
+			contextItemExpr.variables,
+		),
 	);
 	const iterationCode = mapPartialCompilationResult(stepContextItemExpr, (stepContextItemExpr) =>
 		mapPartialCompilationResult(nodesExpr, (nodesExpr) =>
 			acceptAst(
 				`const ${stepContextItemExpr.code} of ${nodesExpr.code}`,
 				{ type: GeneratedCodeBaseType.Statement },
-				[...stepContextItemExpr.variables, ...nodesExpr.variables]
-			)
-		)
+				[...stepContextItemExpr.variables, ...nodesExpr.variables],
+			),
+		),
 	);
 
 	return emitMultipleNodesAxis(iterationCode, conditionExpr, nestedCode);
@@ -112,7 +112,7 @@ function emitSelfAxis(
 	conditionBucket: Bucket,
 	nestedCode: PartialCompilationResult,
 	stepContextItemExpr: PartialCompilationResult,
-	contextItemExpr: PartialCompilationResult
+	contextItemExpr: PartialCompilationResult,
 ): PartialCompilationResult {
 	return emitSingleNodeAxis(stepContextItemExpr, contextItemExpr, conditionExpr, nestedCode);
 }
@@ -125,15 +125,15 @@ function emitParentAxis(
 	conditionBucket: Bucket,
 	nestedCode: PartialCompilationResult,
 	stepContextItemExpr: PartialCompilationResult,
-	contextItemExpr: PartialCompilationResult
+	contextItemExpr: PartialCompilationResult,
 ): PartialCompilationResult {
 	const bucketArg = conditionBucket ? `, "${conditionBucket}"` : '';
 	const parentExpr = mapPartialCompilationResult(contextItemExpr, (contextItemExpr) =>
 		acceptAst(
 			`domFacade.getParentNode(${contextItemExpr.code}${bucketArg})`,
 			{ type: GeneratedCodeBaseType.Value },
-			contextItemExpr.variables
-		)
+			contextItemExpr.variables,
+		),
 	);
 
 	return emitSingleNodeAxis(stepContextItemExpr, parentExpr, conditionExpr, nestedCode);
@@ -145,7 +145,7 @@ function emitSingleNodeAxis(
 	stepContextItemExpr: PartialCompilationResult,
 	contextItemExpr: PartialCompilationResult,
 	conditionExpr: PartialCompilationResult,
-	nestedCode: PartialCompilationResult
+	nestedCode: PartialCompilationResult,
 ): PartialCompilationResult {
 	const nullCheck = stepContextItemExpr;
 	const conditionsWithNullCheck = emitAnd(nullCheck, conditionExpr);
@@ -161,11 +161,11 @@ function emitSingleNodeAxis(
 							${nestedCode.code}
 						}`,
 						{ type: GeneratedCodeBaseType.Statement },
-						[...stepContextItemExpr.variables, ...contextItemExpr.variables]
-					)
-				)
-			)
-		)
+						[...stepContextItemExpr.variables, ...contextItemExpr.variables],
+					),
+				),
+			),
+		),
 	);
 }
 
@@ -175,7 +175,7 @@ export default function emitAxis(
 	conditionBucket: Bucket,
 	nestedCode: PartialCompilationResult,
 	stepContextItemExpr: PartialCompilationResult,
-	contextItemExpr: PartialCompilationResult
+	contextItemExpr: PartialCompilationResult,
 ): [PartialCompilationResult, Bucket] {
 	const axisName = astHelper.getTextContent(ast);
 
@@ -187,7 +187,7 @@ export default function emitAxis(
 					conditionBucket,
 					nestedCode,
 					stepContextItemExpr,
-					contextItemExpr
+					contextItemExpr,
 				),
 				'type-1',
 			];
@@ -198,7 +198,7 @@ export default function emitAxis(
 					conditionBucket,
 					nestedCode,
 					stepContextItemExpr,
-					contextItemExpr
+					contextItemExpr,
 				),
 				null,
 			];
@@ -209,7 +209,7 @@ export default function emitAxis(
 					conditionBucket,
 					nestedCode,
 					stepContextItemExpr,
-					contextItemExpr
+					contextItemExpr,
 				),
 				null,
 			];
@@ -220,7 +220,7 @@ export default function emitAxis(
 					conditionBucket,
 					nestedCode,
 					stepContextItemExpr,
-					contextItemExpr
+					contextItemExpr,
 				),
 				conditionBucket,
 			];

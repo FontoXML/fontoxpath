@@ -15,15 +15,15 @@ describe('IfExpression', () => {
 		chai.assert(
 			evaluateXPathToBoolean(
 				'(if (true()) then "then expression" else "else expression") eq "then expression"',
-				documentNode
-			)
+				documentNode,
+			),
 		));
 
 	it('returns the value of the else expression if the test resolves to false', () =>
 		chai.assert(
 			evaluateXPathToBoolean(
 				'(if (false()) then "then expression" else "else expression") eq "else expression"',
-				documentNode
-			)
+				documentNode,
+			),
 		));
 });

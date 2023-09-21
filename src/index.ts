@@ -130,10 +130,10 @@ function getBucketForSelector(xpathExpression: EvaluableExpression): Bucket {
  */
 function compareSpecificity(
 	xpathExpressionA: EvaluableExpression,
-	xpathExpressionB: EvaluableExpression
+	xpathExpressionB: EvaluableExpression,
 ): -1 | 0 | 1 {
 	return parseXPath(xpathExpressionA).specificity.compareTo(
-		parseXPath(xpathExpressionB).specificity
+		parseXPath(xpathExpressionB).specificity,
 	);
 }
 
@@ -190,7 +190,7 @@ if (typeof fontoxpathGlobal !== 'undefined') {
  * @public
  */
 type ExternalTypedValueFactory = (
-	type: string
+	type: string,
 ) => (value: UntypedExternalValue, domFacade: IDomFacade) => unknown;
 
 /**

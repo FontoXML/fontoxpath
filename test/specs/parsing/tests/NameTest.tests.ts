@@ -24,7 +24,7 @@ describe('nameTests', () => {
 		chai.assert.isTrue(
 			evaluateXPathToBoolean('self::someNs:*', element, null, null, {
 				namespaceResolver: () => 'http://fontoxml.com/ns/',
-			})
+			}),
 		);
 	});
 
@@ -33,7 +33,7 @@ describe('nameTests', () => {
 		chai.assert.isTrue(
 			evaluateXPathToBoolean('self::*:someElement', element, null, null, {
 				namespaceResolver: () => 'http://fontoxml.com/ns/',
-			})
+			}),
 		);
 	});
 
@@ -43,7 +43,7 @@ describe('nameTests', () => {
 			evaluateXPathToFirstNode('self::someNamespace:someElement', element, null, null, {
 				namespaceResolver: () => 'http://fontoxml.com/ns/',
 			}),
-			element
+			element,
 		);
 	});
 
@@ -51,7 +51,7 @@ describe('nameTests', () => {
 		const element = documentNode.createElementNS('http://fontoxml.com/ns/', 'someElement');
 		chai.assert.equal(
 			evaluateXPathToFirstNode('self::Q{http://fontoxml.com/ns/}someElement', element),
-			element
+			element,
 		);
 	});
 
@@ -59,7 +59,7 @@ describe('nameTests', () => {
 		const element = documentNode.createElementNS('http://fontoxml.com/ns/', 'someElement');
 		chai.assert.equal(
 			evaluateXPathToFirstNode('self::Q{http://fontoxml.com/ns/}*', element),
-			element
+			element,
 		);
 	});
 
@@ -68,7 +68,7 @@ describe('nameTests', () => {
 		chai.assert.equal(evaluateXPathToFirstNode('self::Q{}*', element), element);
 		const elementWithNamespace = documentNode.createElementNS(
 			'http://fontoxml.com/ns/',
-			'someElement'
+			'someElement',
 		);
 		chai.assert.equal(evaluateXPathToFirstNode('self::Q{}*', elementWithNamespace), null);
 	});
@@ -79,12 +79,12 @@ describe('nameTests', () => {
 
 		const elementWithNamespace = documentNode.createElementNS(
 			'http://fontoxml.com/ns/',
-			'someElement'
+			'someElement',
 		);
 		chai.assert.equal(
 			evaluateXPathToFirstNode('self::Q{}someElement', elementWithNamespace),
 			null,
-			'Empty namespace should not match non-absent namespace.'
+			'Empty namespace should not match non-absent namespace.',
 		);
 	});
 
@@ -92,7 +92,7 @@ describe('nameTests', () => {
 		documentNode.appendChild(documentNode.createElement('someElement'));
 		chai.assert.throws(
 			() => evaluateXPathToBoolean('//someNonExistingNS:*', documentNode),
-			'XPST0081'
+			'XPST0081',
 		);
 	});
 

@@ -15,7 +15,7 @@ class ArrayValue extends FunctionValue {
 					executionParameters,
 					staticContext,
 					sequenceFactory.singleton(this),
-					key
+					key,
 				),
 			localName: 'get',
 			namespaceURI: BUILT_IN_NAMESPACE_URIS.ARRAY_NAMESPACE_URI,

@@ -19,7 +19,7 @@ describe('DeleteExpression', () => {
 			documentNode,
 			null,
 			{},
-			{}
+			{},
 		);
 
 		chai.assert.deepEqual(result.xdmValue, []);

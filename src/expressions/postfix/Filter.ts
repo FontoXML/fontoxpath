@@ -22,7 +22,7 @@ class Filter extends Expression {
 				peer: selector.peer,
 				resultOrder: selector.expectedResultOrder,
 				subtree: selector.subtree,
-			}
+			},
 		);
 
 		this._selector = selector;
@@ -32,14 +32,14 @@ class Filter extends Expression {
 	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
 		const valuesToFilter = this._selector.evaluateMaybeStatically(
 			dynamicContext,
-			executionParameters
+			executionParameters,
 		);
 
 		if (this._filterExpression.canBeStaticallyEvaluated) {
 			// Shortcut, if this is numeric, all the values are the same numeric value, same for booleans
 			const result = this._filterExpression.evaluateMaybeStatically(
 				dynamicContext,
-				executionParameters
+				executionParameters,
 			);
 			if (result.isEmpty()) {
 				return result;
@@ -95,7 +95,7 @@ class Filter extends Expression {
 				while (!iteratorItem || !iteratorItem.done) {
 					if (!iteratorItem) {
 						iteratorItem = iteratorToFilter.next(
-							isHintApplied ? IterationHint.NONE : hint
+							isHintApplied ? IterationHint.NONE : hint,
 						);
 						isHintApplied = true;
 					}
@@ -105,7 +105,7 @@ class Filter extends Expression {
 					if (!filterResultSequence) {
 						filterResultSequence = this._filterExpression.evaluateMaybeStatically(
 							dynamicContext.scopeWithFocus(i, iteratorItem.value, valuesToFilter),
-							executionParameters
+							executionParameters,
 						);
 					}
 

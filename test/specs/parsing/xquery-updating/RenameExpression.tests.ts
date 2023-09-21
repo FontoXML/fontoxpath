@@ -18,7 +18,7 @@ describe('RenameExpression', () => {
 			documentNode,
 			null,
 			{},
-			{}
+			{},
 		);
 
 		chai.assert.deepEqual(result.xdmValue, []);
@@ -39,7 +39,7 @@ describe('RenameExpression', () => {
 			documentNode,
 			null,
 			{},
-			{}
+			{},
 		);
 
 		chai.assert.deepEqual(result.xdmValue, []);

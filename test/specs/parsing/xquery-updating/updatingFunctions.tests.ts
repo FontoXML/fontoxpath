@@ -24,7 +24,7 @@ xxx(/)
 			documentNode,
 			null,
 			{},
-			{}
+			{},
 		);
 
 		chai.assert.deepEqual(result.xdmValue, []);
@@ -51,7 +51,7 @@ xxx(insert node <a>I've been inserted.</a> into /)
 			documentNode,
 			null,
 			{},
-			{}
+			{},
 		);
 
 		chai.assert.deepEqual(result.xdmValue, []);
@@ -78,7 +78,7 @@ xxx(insert node <a>I've been inserted.</a> into /)
 			documentNode,
 			null,
 			{},
-			{}
+			{},
 		);
 
 		chai.assert.deepEqual(result.xdmValue, []);
@@ -106,7 +106,7 @@ return $xxx(insert node <a>I've been inserted.</a> into /)
 			documentNode,
 			null,
 			{},
-			{}
+			{},
 		);
 
 		chai.assert.deepEqual(result.xdmValue, []);
@@ -135,9 +135,9 @@ if (xxx(.)) then fn:true() else fn:false()
 					documentNode,
 					null,
 					{},
-					{}
+					{},
 				),
-			'XUST0001'
+			'XUST0001',
 		);
 	});
 
@@ -158,9 +158,9 @@ return $xxx(insert node <a>I've been inserted.</a> into /)
 					documentNode,
 					null,
 					{},
-					{}
+					{},
 				),
-			'XUDY0038'
+			'XUDY0038',
 		);
 	});
 
@@ -169,7 +169,7 @@ return $xxx(insert node <a>I've been inserted.</a> into /)
 			`module namespace test="http://www.example.com/ns";
 declare %updating function test:xxx ($root) {
   insert node <a>I've been inserted.</a> into $root
-};`
+};`,
 		);
 		const result = evaluateUpdatingExpressionSync(
 			`
@@ -180,7 +180,7 @@ test:xxx(/)
 			documentNode,
 			null,
 			{},
-			{}
+			{},
 		);
 
 		chai.assert.deepEqual(result.xdmValue, []);
@@ -200,9 +200,9 @@ test:xxx(/)
 					`module namespace test="http://www.example.com/ns";
 declare function test:xxx ($root) {
   insert node <a>I've been inserted.</a> into $root
-};`
+};`,
 				),
-			'XUST0001'
+			'XUST0001',
 		);
 	});
 });

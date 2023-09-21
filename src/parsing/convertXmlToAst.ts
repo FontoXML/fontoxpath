@@ -36,7 +36,7 @@ export default function convertXmlToAst(element: Element): IAST {
 					attrs[attr.localName] = attr.value;
 				}
 				return attrs;
-			}, {})
+			}, {}),
 		);
 	}
 

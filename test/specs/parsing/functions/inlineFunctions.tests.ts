@@ -11,7 +11,7 @@ beforeEach(() => {
 describe('inline functions', () => {
 	it('can be placed in a let', () => {
 		chai.assert.isTrue(
-			evaluateXPathToBoolean('let $fn := function () as xs:boolean { true() } return $fn()')
+			evaluateXPathToBoolean('let $fn := function () as xs:boolean { true() } return $fn()'),
 		);
 	});
 
@@ -22,23 +22,23 @@ describe('inline functions', () => {
 	it('accepts parameters', () => {
 		chai.assert.isTrue(
 			evaluateXPathToBoolean(
-				'let $fn := function ($a as xs:boolean+){ $a } return $fn(true())'
-			)
+				'let $fn := function ($a as xs:boolean+){ $a } return $fn(true())',
+			),
 		);
 	});
 
 	it('correctly binds context', () => {
 		chai.assert.isTrue(
 			evaluateXPathToBoolean(
-				'let $x := true(), $fn := function () {$x}, $x := false() return $fn() = true()'
-			)
+				'let $x := true(), $fn := function () {$x}, $x := false() return $fn() = true()',
+			),
 		);
 	});
 
 	it('correctly binds contextItem / sequence', () => {
 		chai.assert.throws(
 			() => evaluateXPathToBoolean('function () { position() }()'),
-			'XPDY0002'
+			'XPDY0002',
 		);
 	});
 
@@ -46,9 +46,9 @@ describe('inline functions', () => {
 		chai.assert.throws(
 			() =>
 				evaluateXPathToBoolean(
-					'let $fn := function ($a as xs:boolean+){ $a } return $fn()'
+					'let $fn := function ($a as xs:boolean+){ $a } return $fn()',
 				),
-			'XPTY0004'
+			'XPTY0004',
 		);
 	});
 
@@ -56,9 +56,9 @@ describe('inline functions', () => {
 		chai.assert.throws(
 			() =>
 				evaluateXPathToBoolean(
-					'let $fn := function ($a as xs:integer){ $a } return $fn("A string")'
+					'let $fn := function ($a as xs:integer){ $a } return $fn("A string")',
 				),
-			'XPTY0004'
+			'XPTY0004',
 		);
 	});
 
@@ -66,9 +66,9 @@ describe('inline functions', () => {
 		chai.assert.throws(
 			() =>
 				evaluateXPathToBoolean(
-					'let $fn := function ($a as xs:integer){ $a } return $fn((1,2,3))'
+					'let $fn := function ($a as xs:integer){ $a } return $fn((1,2,3))',
 				),
-			'XPTY0004'
+			'XPTY0004',
 		);
 	});
 
@@ -83,7 +83,7 @@ deep-equal((let $index-of-node := function($seqParam as node()*, $srchParam as n
     $perm := ($nodes[1], $nodes[2], $nodes[3], $nodes[1], $nodes[2], $nodes[4], $nodes[2], $nodes[1])
 return $index-of-node($perm, $nodes[2])), (2,5,7))
 `,
-			documentNode
+			documentNode,
 		);
 		chai.assert.deepEqual(result, true);
 	});
@@ -98,9 +98,9 @@ function ($key as item()*) as attribute() { $key }($key)`,
 					null,
 					null,
 					null,
-					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 				),
-			'XPTY0004'
+			'XPTY0004',
 		);
 	});
 });

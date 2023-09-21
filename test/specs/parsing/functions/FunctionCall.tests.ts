@@ -22,27 +22,27 @@ describe('Dynamic function call', () => {
 		chai.assert.equal(
 			evaluateXPathToString(
 				'let $fn := concat#3 return $fn("abc", "def", "ghi")',
-				documentNode
+				documentNode,
 			),
-			'abcdefghi'
+			'abcdefghi',
 		));
 
 	it('parses a function with a function to be executed as one of its arguments', () =>
 		chai.assert.equal(
 			evaluateXPathToString(
 				'let $fn := concat#2 return $fn(avg((10, 20)), max((2, 50)))',
-				documentNode
+				documentNode,
 			),
-			'1550'
+			'1550',
 		));
 
 	it('allows recursion', () =>
 		chai.assert.equal(
 			evaluateXPathToNumber(
 				'let $fn := function ($recurse, $i) {if ($i < 100) then $recurse($recurse, $i + 1) else $i } return $fn($fn, 0)',
-				documentNode
+				documentNode,
 			),
-			100
+			100,
 		));
 
 	it('Fibonacci', async () => {
@@ -54,7 +54,7 @@ let $fib := function ($recurse, $a, $b) {
 $fib-entries := $fib($fib, 1, 1)
 return $fib-entries
 `,
-			documentNode
+			documentNode,
 		);
 		chai.assert.equal((await it.next()).value, 1);
 		chai.assert.equal((await it.next()).value, 1);
@@ -69,7 +69,7 @@ return $fib-entries
 
 	it('parses a function with a fixed number of arguments', () =>
 		chai.assert.isFalse(
-			evaluateXPathToBoolean('let $fn := not#1 return $fn(true())', documentNode)
+			evaluateXPathToBoolean('let $fn := not#1 return $fn(true())', documentNode),
 		));
 
 	it('parses a function with a node lookup', () => {
@@ -82,25 +82,25 @@ return $fib-entries
 					someAttribute3: 'someValue3',
 				},
 			],
-			documentNode
+			documentNode,
 		);
 		chai.assert.equal(
 			evaluateXPathToString(
 				'let $fn := string-join#2 return $fn(@node()/name(), ",")',
-				documentNode.firstChild
+				documentNode.firstChild,
 			),
-			'someAttribute1,someAttribute2,someAttribute3'
+			'someAttribute1,someAttribute2,someAttribute3',
 		);
 	});
 
 	it('parses a function with a no arguments', () =>
 		chai.assert.isFalse(
-			evaluateXPathToBoolean('let $fn := false#0 return $fn()', documentNode)
+			evaluateXPathToBoolean('let $fn := false#0 return $fn()', documentNode),
 		));
 
 	it('parses a dynamic functionc all with the arrow syntax', () =>
 		chai.assert.isFalse(
-			evaluateXPathToBoolean('let $fn := not#1 return true() => $fn()', documentNode)
+			evaluateXPathToBoolean('let $fn := not#1 return true() => $fn()', documentNode),
 		));
 
 	it('throws when the base expression does not evaluate to a function', () =>
@@ -108,39 +108,39 @@ return $fib-entries
 			() =>
 				evaluateXPathToString(
 					'let $notfn := 123 return $notfn("someArgument")',
-					documentNode
+					documentNode,
 				),
-			'XPTY0004'
+			'XPTY0004',
 		));
 
 	it('throws when the base expression evaluates to a non-singleton sequence of functions', () =>
 		chai.assert.throws(
 			() => evaluateXPathToString('(false#0, false#0)()', documentNode),
-			'XPTY0004'
+			'XPTY0004',
 		));
 
 	it('throws when a function is called with the wrong type of arguments', () =>
 		chai.assert.throws(
 			() => evaluateXPathToString('let $fn := ends-with#2 return $fn(0, 0)', documentNode),
-			'XPTY0004'
+			'XPTY0004',
 		));
 
 	it('throws when a function is called with the wrong multiplicity of arguments', () =>
 		chai.assert.throws(
 			() => evaluateXPathToString('let $fn := ends-with#2 return $fn(0, 0)', documentNode),
-			'XPTY0004'
+			'XPTY0004',
 		));
 
 	it('throws when a function is called with the wrong number of arguments', () =>
 		chai.assert.throws(
 			() => evaluateXPathToString('let $fn := false#0 return $fn(1, 2)', documentNode),
-			'XPTY0004'
+			'XPTY0004',
 		));
 
 	it('throws when a function with the wrong arity cannot be found', () =>
 		chai.assert.throws(
 			() => evaluateXPathToString('let $fn := false#2 return $fn(1, 2)', documentNode),
-			'XPST0017'
+			'XPST0017',
 		));
 
 	it('allows a spaces around the arguments', () =>
@@ -156,11 +156,11 @@ describe('function argument transformation', () => {
 					attr: 'a b c',
 				},
 			],
-			documentNode
+			documentNode,
 		);
 		chai.assert.deepEqual(
 			evaluateXPathToStrings('@attr => tokenize()', documentNode.firstChild),
-			['a', 'b', 'c']
+			['a', 'b', 'c'],
 		);
 	});
 
@@ -172,11 +172,11 @@ describe('function argument transformation', () => {
 					attr: '1',
 				},
 			],
-			documentNode
+			documentNode,
 		);
 		chai.assert.deepEqual(
 			evaluateXPathToNumbers('@attr to 2', documentNode.firstChild),
-			[1, 2]
+			[1, 2],
 		);
 	});
 
@@ -199,9 +199,9 @@ return $ret instance of xs:string and $ret = "XXX"
 				{
 					language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 					nodesFactory: documentNode,
-				}
+				},
 			),
-			true
+			true,
 		);
 	});
 
@@ -213,22 +213,22 @@ return $ret instance of xs:string and $ret = "XXX"
 					attr: 'not something numerical',
 				},
 			],
-			documentNode
+			documentNode,
 		);
 		chai.assert.throws(
 			() => evaluateXPathToNumbers('@attr to 2', documentNode.firstChild),
-			'FORG0001'
+			'FORG0001',
 		);
 	});
 
 	it('Mentions the erroneous function if argument conversion fails', () => {
 		chai.assert.throws(
 			() => evaluateXPathToNumbers('abs((1,2,3))', documentNode.firstChild),
-			'abs'
+			'abs',
 		);
 		chai.assert.throws(
 			() => evaluateXPathToNumbers('array:size(())', documentNode.firstChild),
-			'size'
+			'size',
 		);
 	});
 });

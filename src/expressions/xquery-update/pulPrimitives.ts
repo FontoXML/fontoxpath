@@ -28,7 +28,7 @@ export const insertAfter = (target: ChildNodePointer, content: ChildNodePointer[
 
 export const insertBefore = (
 	target: ElementNodePointer | DocumentNodePointer,
-	content: ChildNodePointer[]
+	content: ChildNodePointer[],
 ) => {
 	return new InsertBeforePendingUpdate(target, content);
 };
@@ -39,14 +39,14 @@ export const insertInto = (target: ElementNodePointer, content: ChildNodePointer
 
 export const insertIntoAsFirst = (
 	target: ElementNodePointer | DocumentNodePointer,
-	content: ChildNodePointer[]
+	content: ChildNodePointer[],
 ) => {
 	return new InsertIntoAsFirstPendingUpdate(target, content);
 };
 
 export const insertIntoAsLast = (
 	target: ElementNodePointer | DocumentNodePointer,
-	content: ChildNodePointer[]
+	content: ChildNodePointer[],
 ) => {
 	return new InsertIntoAsLastPendingUpdate(target, content);
 };
@@ -65,14 +65,14 @@ export const replaceElementContent = (target: ElementNodePointer, text: TextNode
 
 export const replaceNode = (
 	target: AttributeNodePointer | ChildNodePointer,
-	replacement: (AttributeNodePointer | ChildNodePointer)[]
+	replacement: (AttributeNodePointer | ChildNodePointer)[],
 ) => {
 	return new ReplaceNodePendingUpdate(target, replacement);
 };
 
 export const replaceValue = (
 	target: ElementNodePointer | AttributeNodePointer,
-	stringValue: string
+	stringValue: string,
 ) => {
 	return new ReplaceValuePendingUpdate(target, stringValue);
 };

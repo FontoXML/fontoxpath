@@ -126,12 +126,12 @@ export interface IReturnTypes<T extends Node> {
 
 export default function convertXDMReturnValue<
 	TNode extends Node,
-	TReturnType extends keyof IReturnTypes<TNode>
+	TReturnType extends keyof IReturnTypes<TNode>,
 >(
 	expression: EvaluableExpression | string,
 	rawResults: ISequence,
 	returnType: TReturnType,
-	executionParameters: ExecutionParameters
+	executionParameters: ExecutionParameters,
 ): IReturnTypes<TNode>[TReturnType] {
 	switch (returnType) {
 		case ReturnType.BOOLEAN: {
@@ -181,7 +181,7 @@ export default function convertXDMReturnValue<
 					'Expected XPath ' +
 						evaluableExpressionToString(expression) +
 						' to resolve to Node. Got ' +
-						valueTypeToString(first.type)
+						valueTypeToString(first.type),
 				);
 			}
 			// over here: unravel pointers. if they point to actual nodes:return them. if they point
@@ -190,7 +190,7 @@ export default function convertXDMReturnValue<
 			return realizeDom(
 				first.value as NodePointer,
 				executionParameters,
-				false
+				false,
 			) as IReturnTypes<TNode>[TReturnType];
 		}
 
@@ -205,14 +205,14 @@ export default function convertXDMReturnValue<
 				throw new Error(
 					'Expected XPath ' +
 						evaluableExpressionToString(expression) +
-						' to resolve to a sequence of Nodes.'
+						' to resolve to a sequence of Nodes.',
 				);
 			}
 			return allResults.map((nodeValue) => {
 				return realizeDom(
 					nodeValue.value as NodePointer,
 					executionParameters,
-					false
+					false,
 				) as unknown;
 			}) as IReturnTypes<TNode>[TReturnType];
 		}
@@ -224,7 +224,7 @@ export default function convertXDMReturnValue<
 				throw new Error(
 					'Expected XPath ' +
 						evaluableExpressionToString(expression) +
-						' to resolve to a single map.'
+						' to resolve to a single map.',
 				);
 			}
 			const first = allValues[0];
@@ -232,12 +232,12 @@ export default function convertXDMReturnValue<
 				throw new Error(
 					'Expected XPath ' +
 						evaluableExpressionToString(expression) +
-						' to resolve to a map'
+						' to resolve to a map',
 				);
 			}
 			const transformedMap = transformMapToObject(
 				first as MapValue,
-				executionParameters
+				executionParameters,
 			).next(IterationHint.NONE);
 			return transformedMap.value as IReturnTypes<TNode>[TReturnType];
 		}
@@ -249,7 +249,7 @@ export default function convertXDMReturnValue<
 				throw new Error(
 					'Expected XPath ' +
 						evaluableExpressionToString(expression) +
-						' to resolve to a single array.'
+						' to resolve to a single array.',
 				);
 			}
 			const first = allValues[0];
@@ -257,12 +257,12 @@ export default function convertXDMReturnValue<
 				throw new Error(
 					'Expected XPath ' +
 						evaluableExpressionToString(expression) +
-						' to resolve to an array'
+						' to resolve to an array',
 				);
 			}
 			const transformedArray = transformArrayToArray(
 				first as ArrayValue,
-				executionParameters
+				executionParameters,
 			).next(IterationHint.NONE);
 			return transformedArray.value as IReturnTypes<TNode>[TReturnType];
 		}
@@ -274,7 +274,7 @@ export default function convertXDMReturnValue<
 					throw new Error(
 						'Expected XPath ' +
 							evaluableExpressionToString(expression) +
-							' to resolve to numbers'
+							' to resolve to numbers',
 					);
 				}
 				return value.value;
@@ -295,7 +295,7 @@ export default function convertXDMReturnValue<
 						}
 						transformedValueGenerator = transformXPathItemToJavascriptObject(
 							value.value,
-							executionParameters
+							executionParameters,
 						);
 					}
 					const transformedValue = transformedValueGenerator.next(IterationHint.NONE);
@@ -315,7 +315,7 @@ export default function convertXDMReturnValue<
 							},
 							next: () =>
 								new Promise<IteratorResult<any>>((resolve) =>
-									resolve(getNextResult())
+									resolve(getNextResult()),
 								).catch((error) => {
 									printAndRethrowError(expression, error);
 								}),
@@ -333,7 +333,7 @@ export default function convertXDMReturnValue<
 				// TODO: Make this function directly return its value instead of an iterator to a
 				// single value
 				return transformXPathItemToJavascriptObject(value, executionParameters).next(
-					IterationHint.NONE
+					IterationHint.NONE,
 				).value;
 			}) as IReturnTypes<TNode>[TReturnType];
 		}
@@ -361,14 +361,14 @@ export default function convertXDMReturnValue<
 				if (isSubtypeOf(first.type, ValueType.ARRAY)) {
 					const transformedArray = transformArrayToArray(
 						first as ArrayValue,
-						executionParameters
+						executionParameters,
 					).next(IterationHint.NONE);
 					return transformedArray.value as IReturnTypes<TNode>[TReturnType];
 				}
 				if (isSubtypeOf(first.type, ValueType.MAP)) {
 					const transformedMap = transformMapToObject(
 						first as MapValue,
-						executionParameters
+						executionParameters,
 					).next(IterationHint.NONE);
 					return transformedMap.value as IReturnTypes<TNode>[TReturnType];
 				}

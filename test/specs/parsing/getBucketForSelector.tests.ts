@@ -10,7 +10,7 @@ describe('getBucketForSelector', () => {
 		// Assert selector as an AST
 		chai.assert.equal(
 			getBucketForSelector(parseScript(selector, {}, new Document())),
-			expectedBucket
+			expectedBucket,
 		);
 	};
 

@@ -37,7 +37,7 @@ export const applyUpdates = (
 	_inheritNamespaces: any,
 	domFacade: DomFacade,
 	nodesFactory: INodesFactory,
-	documentWriter: IDocumentWriter
+	documentWriter: IDocumentWriter,
 ) => {
 	// 1. Checks the update primitives on $pul for compatibility using upd:compatibilityCheck.
 	compatibilityCheck(pul, domFacade);
@@ -45,7 +45,8 @@ export const applyUpdates = (
 	// 2. The semantics of all update primitives on $pul, other than upd:put primitives, are made effective in the following order:
 	// a. First, all upd:insertInto, upd:insertAttributes, upd:replaceValue, and upd:rename primitives are applied.
 	pul.filter(
-		(pu) => ['insertInto', 'insertAttributes', 'replaceValue', 'rename'].indexOf(pu.type) !== -1
+		(pu) =>
+			['insertInto', 'insertAttributes', 'replaceValue', 'rename'].indexOf(pu.type) !== -1,
 	).forEach((pu) => {
 		switch (pu.type) {
 			case 'insertInto':
@@ -58,7 +59,7 @@ export const applyUpdates = (
 					insertAttributesPu.target,
 					insertAttributesPu.content,
 					domFacade,
-					documentWriter
+					documentWriter,
 				);
 				break;
 			case 'rename':
@@ -71,7 +72,7 @@ export const applyUpdates = (
 					replaceValuePu.target,
 					replaceValuePu.stringValue,
 					domFacade,
-					documentWriter
+					documentWriter,
 				);
 				break;
 		}
@@ -81,8 +82,8 @@ export const applyUpdates = (
 	pul.filter(
 		(pu) =>
 			['insertBefore', 'insertAfter', 'insertIntoAsFirst', 'insertIntoAsLast'].indexOf(
-				pu.type
-			) !== -1
+				pu.type,
+			) !== -1,
 	).forEach((pu) => {
 		switch (pu.type) {
 			case 'insertAfter':
@@ -95,7 +96,7 @@ export const applyUpdates = (
 					insertBeforePu.target,
 					insertBeforePu.content,
 					domFacade,
-					documentWriter
+					documentWriter,
 				);
 				break;
 			case 'insertIntoAsFirst':
@@ -104,7 +105,7 @@ export const applyUpdates = (
 					insertAsFirstPu.target,
 					insertAsFirstPu.content,
 					domFacade,
-					documentWriter
+					documentWriter,
 				);
 				break;
 			case 'insertIntoAsLast':
@@ -137,7 +138,7 @@ export const applyUpdates = (
 	// 8. As the final step, all upd:put primitives on $pul are applied.
 	if (pul.some((pu) => pu.type === 'put')) {
 		throw new Error(
-			'Not implemented: the execution for pendingUpdate "put" is not yet implemented.'
+			'Not implemented: the execution for pendingUpdate "put" is not yet implemented.',
 		);
 	}
 };
@@ -187,7 +188,7 @@ const compatibilityCheck = (pul: IPendingUpdate[], domFacade: DomFacade) => {
 		new QName(
 			domFacade.getPrefix(attribute),
 			domFacade.getNamespaceURI(attribute),
-			domFacade.getLocalName(attribute)
+			domFacade.getLocalName(attribute),
 		);
 	// a. upd:insertAttributes creates one namespace binding on the $target element corresponding to
 	//    the implied namespace binding of the name of each attribute node in $content.
@@ -196,7 +197,7 @@ const compatibilityCheck = (pul: IPendingUpdate[], domFacade: DomFacade) => {
 	pul.filter(
 		(pu) =>
 			pu.type === 'replaceNode' &&
-			domFacade.getNodeType(pu.target) === NODE_TYPES.ATTRIBUTE_NODE
+			domFacade.getNodeType(pu.target) === NODE_TYPES.ATTRIBUTE_NODE,
 	).forEach((pu: ReplaceNodePendingUpdate) => {
 		const elementPointer = domFacade.getParentNodePointer(pu.target);
 		const element = elementPointer ? elementPointer.node : null;
@@ -211,7 +212,7 @@ const compatibilityCheck = (pul: IPendingUpdate[], domFacade: DomFacade) => {
 	//    $target is an attribute node, corresponding to the implied namespace binding of $newName.
 	pul.filter(
 		(pu) =>
-			pu.type === 'rename' && domFacade.getNodeType(pu.target) === NODE_TYPES.ATTRIBUTE_NODE
+			pu.type === 'rename' && domFacade.getNodeType(pu.target) === NODE_TYPES.ATTRIBUTE_NODE,
 	).forEach((pu: RenamePendingUpdate) => {
 		const elementPointer = domFacade.getParentNodePointer(pu.target);
 		if (!elementPointer) {

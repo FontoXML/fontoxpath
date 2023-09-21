@@ -24,7 +24,7 @@ describe('InsertExpression', () => {
 			documentNode,
 			null,
 			{},
-			{}
+			{},
 		);
 
 		chai.assert.deepEqual(result.xdmValue, []);
@@ -57,7 +57,7 @@ describe('InsertExpression', () => {
 			{
 				node: element,
 			},
-			{}
+			{},
 		);
 
 		chai.assert.deepEqual(result.xdmValue, []);
@@ -77,7 +77,7 @@ describe('InsertExpression', () => {
 			{
 				node: firstChild,
 			},
-			{}
+			{},
 		);
 
 		chai.assert.deepEqual(result.xdmValue, []);
@@ -91,7 +91,7 @@ describe('InsertExpression', () => {
 
 	it('can insert attribute nodes in the null namespace', () => {
 		const element = documentNode.appendChild(
-			documentNode.createElementNS('http://www.example.com/ns', 'element')
+			documentNode.createElementNS('http://www.example.com/ns', 'element'),
 		);
 
 		const result = evaluateUpdatingExpressionSync(
@@ -101,7 +101,7 @@ describe('InsertExpression', () => {
 			{
 				node: element,
 			},
-			{}
+			{},
 		);
 
 		chai.assert.deepEqual(result.xdmValue, []);

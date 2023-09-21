@@ -20,14 +20,14 @@ describe('compare attributes tests', () => {
 			xml,
 			null,
 			null,
-			ReturnType.NODES
+			ReturnType.NODES,
 		);
 
 		const jsCodegenEvaluation = evaluateXPathWithJsCodegen(
 			"/xml/tips/tip[@id = 'edit']",
 			xml,
 			null,
-			ReturnType.NODES
+			ReturnType.NODES,
 		);
 		chai.assert.equal(normalEvaluation.length, jsCodegenEvaluation.length);
 		chai.assert.equal(normalEvaluation.length, 1);
@@ -40,14 +40,14 @@ describe('compare attributes tests', () => {
 			xml,
 			null,
 			null,
-			ReturnType.NODES
+			ReturnType.NODES,
 		);
 
 		const jsCodegenEvaluation = evaluateXPathWithJsCodegen(
 			"/xml/tips/tip[@id = 'examples']",
 			xml,
 			null,
-			ReturnType.NODES
+			ReturnType.NODES,
 		);
 		chai.assert.equal(normalEvaluation.length, jsCodegenEvaluation.length);
 		chai.assert.equal(normalEvaluation.length, 2);
@@ -61,14 +61,14 @@ describe('compare attributes tests', () => {
 			xml,
 			null,
 			null,
-			ReturnType.NODES
+			ReturnType.NODES,
 		);
 
 		const jsCodegenEvaluation = evaluateXPathWithJsCodegen(
 			"/xml/tips/tip[@id = 'help']",
 			xml,
 			null,
-			ReturnType.NODES
+			ReturnType.NODES,
 		);
 		chai.assert.equal(normalEvaluation.length, jsCodegenEvaluation.length);
 		chai.assert.equal(normalEvaluation.length, 0);
@@ -80,14 +80,14 @@ describe('compare attributes tests', () => {
 			xml,
 			null,
 			null,
-			ReturnType.NODES
+			ReturnType.NODES,
 		);
 
 		const jsCodegenEvaluation = evaluateXPathWithJsCodegen(
 			"/xml/tips/tip[@id eq 'examples']",
 			xml,
 			null,
-			ReturnType.NODES
+			ReturnType.NODES,
 		);
 		chai.assert.equal(normalEvaluation.length, jsCodegenEvaluation.length);
 		chai.assert.equal(normalEvaluation.length, 2);
@@ -100,7 +100,7 @@ describe('compare attributes tests', () => {
 			"@absent eq 'value'",
 			xml,
 			null,
-			ReturnType.BOOLEAN
+			ReturnType.BOOLEAN,
 		);
 		chai.assert.isFalse(jsCodegenEvaluation);
 	});
@@ -110,7 +110,7 @@ describe('compare attributes tests', () => {
 			"@absent eq ''",
 			xml,
 			null,
-			ReturnType.BOOLEAN
+			ReturnType.BOOLEAN,
 		);
 		chai.assert.isFalse(jsCodegenEvaluation);
 	});

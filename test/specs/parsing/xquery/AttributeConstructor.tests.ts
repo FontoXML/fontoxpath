@@ -16,7 +16,7 @@ describe('AttributeConstructor', () => {
 			documentNode,
 			undefined,
 			{},
-			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 		);
 
 		chai.assert.equal(attribute.nodeType, 2);

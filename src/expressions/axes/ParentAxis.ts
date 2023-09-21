@@ -26,14 +26,14 @@ class ParentAxis extends Expression {
 
 	public evaluate(
 		dynamicContext: DynamicContext,
-		executionParameters: ExecutionParameters
+		executionParameters: ExecutionParameters,
 	): ISequence {
 		const domFacade = executionParameters.domFacade;
 		const contextPointer = validateContextNode(dynamicContext.contextItem);
 
 		const parentNode = domFacade.getParentNodePointer(
 			contextPointer as ChildNodePointer,
-			this._filterBucket
+			this._filterBucket,
 		);
 		if (!parentNode) {
 			return sequenceFactory.empty();
@@ -42,7 +42,7 @@ class ParentAxis extends Expression {
 		const nodeIsMatch = this._parentExpression.evaluateToBoolean(
 			dynamicContext,
 			parentNodeValue,
-			executionParameters
+			executionParameters,
 		);
 		if (!nodeIsMatch) {
 			return sequenceFactory.empty();

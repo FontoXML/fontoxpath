@@ -45,7 +45,7 @@ function testNamespaceURIForAttribute(
 	targetElement: ElementNodePointer,
 	attributeNode: AttributeNodePointer,
 	namespaceBindings: { [s: string]: string },
-	domFacade: DomFacade
+	domFacade: DomFacade,
 ): void {
 	const prefix = domFacade.getPrefix(attributeNode as any) || '';
 	const namespaceURI = domFacade.getNamespaceURI(attributeNode as any);
@@ -71,7 +71,7 @@ function buildPendingUpdates(
 	target: ElementNodePointer,
 	parent: ElementNodePointer,
 	alist: AttributeNodePointer[],
-	clist: ChildNodePointer[]
+	clist: ChildNodePointer[],
 ) {
 	const updates = [];
 	switch (targetChoice) {
@@ -142,7 +142,7 @@ class InsertExpression extends UpdatingExpression {
 	constructor(
 		sourceExpression: Expression,
 		targetChoice: TargetChoice,
-		targetExpression: Expression
+		targetExpression: Expression,
 	) {
 		super(new Specificity({}), [sourceExpression, targetExpression], {
 			canBeStaticallyEvaluated: false,
@@ -156,15 +156,15 @@ class InsertExpression extends UpdatingExpression {
 
 	public evaluateWithUpdateList(
 		dynamicContext: DynamicContext,
-		executionParameters: ExecutionParameters
+		executionParameters: ExecutionParameters,
 	): IIterator<UpdatingExpressionResult> {
 		const sourceValueIterator = this.ensureUpdateListWrapper(this._sourceExpression)(
 			dynamicContext,
-			executionParameters
+			executionParameters,
 		);
 		const targetValueIterator = this.ensureUpdateListWrapper(this._targetExpression)(
 			dynamicContext,
-			executionParameters
+			executionParameters,
 		);
 		const domFacade = executionParameters.domFacade;
 
@@ -184,7 +184,7 @@ class InsertExpression extends UpdatingExpression {
 					const insertionSequence = parseContent(
 						allChildNodes,
 						executionParameters,
-						errXUTY0004
+						errXUTY0004,
 					);
 
 					// Let $alist be the sequence of attribute nodes in the insertion sequence. Let $clist be the remainder of the insertion sequence, in its original order.
@@ -234,7 +234,7 @@ class InsertExpression extends UpdatingExpression {
 						// d. If before or after is specified, the node returned by the target expression must have a non-empty parent property [err:XUDY0029].
 						parent = domFacade.getParentNodePointer(
 							tv.value.xdmValue[0].value,
-							null
+							null,
 						) as ElementNodePointer;
 						if (parent === null) {
 							throw errXUDY0029(tv.value.xdmValue[0].value);
@@ -268,15 +268,15 @@ class InsertExpression extends UpdatingExpression {
 								target.value,
 								attributeNode,
 								namespaceBindings,
-								domFacade
+								domFacade,
 							);
 
 							namespaceBindings[prefix] = domFacade.getNamespaceURI(
-								attributeNode as any
+								attributeNode as any,
 							);
 							return namespaceBindings;
 						},
-						{}
+						{},
 					);
 				}
 
@@ -289,10 +289,10 @@ class InsertExpression extends UpdatingExpression {
 							target.value,
 							parent ? parent : null,
 							alist,
-							clist
+							clist,
 						),
 						sourceUpdates,
-						targetUpdates
+						targetUpdates,
 					),
 				});
 			},

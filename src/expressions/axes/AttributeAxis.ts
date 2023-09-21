@@ -25,13 +25,13 @@ class AttributeAxis extends Expression {
 				subtree: true,
 				peer: true,
 				canBeStaticallyEvaluated: false,
-			}
+			},
 		);
 
 		this._attributeTestExpression = attributeTestExpression;
 		this._filterBucket = intersectBuckets(
 			this._attributeTestExpression.getBucket(),
-			filterBucket
+			filterBucket,
 		);
 	}
 
@@ -52,15 +52,15 @@ class AttributeAxis extends Expression {
 			.getAllAttributePointers(contextItem, this._filterBucket)
 			.filter(
 				(attr) =>
-					domFacade.getNamespaceURI(attr) !== BUILT_IN_NAMESPACE_URIS.XMLNS_NAMESPACE_URI
+					domFacade.getNamespaceURI(attr) !== BUILT_IN_NAMESPACE_URIS.XMLNS_NAMESPACE_URI,
 			)
 			.map((attribute) => createPointerValue(attribute, executionParameters.domFacade))
 			.filter((item) =>
 				this._attributeTestExpression.evaluateToBoolean(
 					dynamicContext,
 					item,
-					executionParameters
-				)
+					executionParameters,
+				),
 			);
 		return sequenceFactory.create(matchingAttributes);
 	}

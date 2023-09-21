@@ -25,10 +25,10 @@ export const loadModuleFile = (uri: string, moduleContents: ModuleDeclaration) =
 			/* This module is already statically compiled */
 		});
 	loadedModuleContents.functionDeclarations = loadedModuleContents.functionDeclarations.concat(
-		moduleContents.functionDeclarations
+		moduleContents.functionDeclarations,
 	);
 	loadedModuleContents.variableDeclarations = loadedModuleContents.variableDeclarations.concat(
-		moduleContents.variableDeclarations
+		moduleContents.variableDeclarations,
 	);
 	loadedModuleContents.performStaticAnalysis = (m) => {
 		staticallyAnalyseEarlierModules(m);
@@ -52,7 +52,7 @@ export const enhanceStaticContextWithModule = (staticContext: StaticContext, uri
 				uri,
 				functionDeclaration.localName,
 				functionDeclaration.arity,
-				functionDeclaration
+				functionDeclaration,
 			);
 		}
 	});
@@ -65,8 +65,8 @@ export const enhanceStaticContextWithModule = (staticContext: StaticContext, uri
 			(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) =>
 				variableDeclaration.expression.evaluateMaybeStatically(
 					dynamicContext,
-					executionParameters
-				)
+					executionParameters,
+				),
 		);
 	});
 };

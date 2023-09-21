@@ -109,7 +109,7 @@ describe('evaluateUpdatingExpressionSync', () => {
 		documentNode.appendChild(documentNode.createElement('ele'));
 		const result = evaluateUpdatingExpressionSync(
 			'(replace node ele with <ele/>, 1)',
-			documentNode
+			documentNode,
 		);
 
 		chai.assert.deepEqual(result.xdmValue, 1);
@@ -126,7 +126,7 @@ describe('evaluateUpdatingExpressionSync', () => {
 		documentNode.appendChild(documentNode.createElement('ele'));
 		const result = evaluateUpdatingExpressionSync(
 			'copy $a := . modify rename node $a/ele as "renamed" return name($a/*)',
-			documentNode
+			documentNode,
 		);
 
 		chai.assert.deepEqual(result.xdmValue, 'renamed');
@@ -145,7 +145,7 @@ describe('evaluateUpdatingExpressionSync', () => {
 			{
 				documentWriter: stubbedDocumentWriter,
 				nodesFactory: stubbedNodesFactory,
-			}
+			},
 		);
 
 		chai.assert.isTrue(insertBeforeCalled, 'insertBeforeCalled');
@@ -178,7 +178,7 @@ describe('evaluateUpdatingExpressionSync', () => {
 			{
 				documentWriter: stubbedDocumentWriter,
 				nodesFactory: stubbedNodesFactory,
-			}
+			},
 		);
 
 		chai.assert.isTrue(insertBeforeCalled, 'insertBeforeCalled');
@@ -199,7 +199,7 @@ describe('evaluateUpdatingExpressionSync', () => {
 			result.pendingUpdateList,
 			null,
 			stubbedNodesFactory,
-			stubbedDocumentWriter
+			stubbedDocumentWriter,
 		);
 
 		chai.assert.isTrue(insertBeforeCalled, 'insertBeforeCalled');
@@ -219,7 +219,7 @@ describe('evaluateUpdatingExpressionSync', () => {
 			null,
 			{
 				doc: documentNode,
-			}
+			},
 		);
 
 		const pulItems = result.pendingUpdateList as TransferablePendingUpdate[];
@@ -244,7 +244,7 @@ describe('evaluateUpdatingExpressionSync', () => {
 
 		chai.assert.equal(
 			ele.outerHTML,
-			'<ele><child/><ele><child/></ele><ele><child/></ele><child/></ele>'
+			'<ele><child/><ele><child/></ele><ele><child/></ele><child/></ele>',
 		);
 	});
 });

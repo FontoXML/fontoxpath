@@ -118,7 +118,7 @@ function getTypeDeclaration(ast: IAST): SequenceType {
 				return ValueType.ARRAY;
 			case 'atomicType':
 				return stringToValueType(
-					[getAttribute(typeAst, 'prefix'), getTextContent(typeAst)].join(':')
+					[getAttribute(typeAst, 'prefix'), getTextContent(typeAst)].join(':'),
 				);
 			case 'parenthesizedItemType':
 				return determineType(getFirstChild(typeAst, '*'));
@@ -129,7 +129,7 @@ function getTypeDeclaration(ast: IAST): SequenceType {
 				throw new Error(
 					`Type declaration "${
 						getFirstChild(typeDeclarationAst, '*')[0]
-					}" is not supported.`
+					}" is not supported.`,
 				);
 		}
 	};

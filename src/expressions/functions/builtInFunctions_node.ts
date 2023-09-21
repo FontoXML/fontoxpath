@@ -38,18 +38,18 @@ function contextItemAsFirstArgument(
 	fn: FunctionDefinitionType,
 	dynamicContext: DynamicContext,
 	executionParameters: ExecutionParameters,
-	staticContext: StaticContext
+	staticContext: StaticContext,
 ) {
 	if (dynamicContext.contextItem === null) {
 		throw errXPDY0002(
-			`The function ${functionName} depends on dynamic context, which is absent.`
+			`The function ${functionName} depends on dynamic context, which is absent.`,
 		);
 	}
 	return fn(
 		dynamicContext,
 		executionParameters,
 		staticContext,
-		sequenceFactory.singleton(dynamicContext.contextItem)
+		sequenceFactory.singleton(dynamicContext.contextItem),
 	);
 }
 
@@ -57,7 +57,7 @@ const fnNodeName: FunctionDefinitionType = (
 	_dynamicContext,
 	executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	return zipSingleton([sequence], ([pointerValue]) => {
 		if (pointerValue === null) {
@@ -75,10 +75,10 @@ const fnNodeName: FunctionDefinitionType = (
 						new QName(
 							domFacade.getPrefix(attrOrElPointer),
 							domFacade.getNamespaceURI(attrOrElPointer),
-							domFacade.getLocalName(attrOrElPointer)
+							domFacade.getLocalName(attrOrElPointer),
 						),
-						ValueType.XSQNAME
-					)
+						ValueType.XSQNAME,
+					),
 				);
 			case NODE_TYPES.PROCESSING_INSTRUCTION_NODE:
 				// A processing instruction's target is its nodename (https://www.w3.org/TR/xpath-functions-31/#func-node-name)
@@ -86,8 +86,8 @@ const fnNodeName: FunctionDefinitionType = (
 				return sequenceFactory.singleton(
 					createAtomicValue(
 						new QName('', '', domFacade.getTarget(processingInstruction)),
-						ValueType.XSQNAME
-					)
+						ValueType.XSQNAME,
+					),
 				);
 			default:
 				// All other nodes have no name
@@ -100,7 +100,7 @@ const fnName: FunctionDefinitionType = (
 	dynamicContext,
 	executionParameters,
 	staticContext,
-	sequence
+	sequence,
 ) => {
 	return sequence.switchCases({
 		default: () =>
@@ -108,7 +108,7 @@ const fnName: FunctionDefinitionType = (
 				dynamicContext,
 				executionParameters,
 				staticContext,
-				fnNodeName(dynamicContext, executionParameters, staticContext, sequence)
+				fnNodeName(dynamicContext, executionParameters, staticContext, sequence),
 			),
 		empty: () => sequenceFactory.singleton(createAtomicValue('', ValueType.XSSTRING)),
 	});
@@ -118,7 +118,7 @@ const fnData: FunctionDefinitionType = (
 	_dynamicContext,
 	executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	return atomize(sequence, executionParameters);
 };
@@ -127,7 +127,7 @@ const fnHasChildren: FunctionDefinitionType = (
 	_dynamicContext,
 	executionParameters,
 	_staticContext,
-	nodeSequence: ISequence
+	nodeSequence: ISequence,
 ) => {
 	return zipSingleton([nodeSequence], ([pointerValue]: (Value | null)[]) => {
 		const pointer: ParentNodePointer = pointerValue ? pointerValue.value : null;
@@ -142,7 +142,7 @@ const fnHasChildren: FunctionDefinitionType = (
 function areSameNode(
 	nodeA: ChildNodePointer,
 	nodeB: ChildNodePointer,
-	domFacade: DomFacade
+	domFacade: DomFacade,
 ): boolean {
 	if (domFacade.getNodeType(nodeA) !== domFacade.getNodeType(nodeB)) {
 		return false;
@@ -169,7 +169,7 @@ const fnPath: FunctionDefinitionType = (
 	_dynamicContext,
 	executionParameters,
 	_staticContext,
-	nodeSequence: ISequence
+	nodeSequence: ISequence,
 ) => {
 	return zipSingleton([nodeSequence], ([pointerValue]: (Value | null)[]) => {
 		if (pointerValue === null) {
@@ -197,11 +197,11 @@ const fnPath: FunctionDefinitionType = (
 			ancestor = pointer;
 			executionParameters.domFacade.getParentNodePointer(
 				ancestor as ChildNodePointer,
-				null
+				null,
 			) !== null;
 			ancestor = executionParameters.domFacade.getParentNodePointer(
 				ancestor as ChildNodePointer,
-				null
+				null,
 			)
 		) {
 			switch (domFacade.getNodeType(ancestor)) {
@@ -210,7 +210,7 @@ const fnPath: FunctionDefinitionType = (
 					result = `/Q{${
 						domFacade.getNamespaceURI(ancestorElement) || ''
 					}}${domFacade.getLocalName(ancestorElement)}[${getChildIndex(
-						ancestorElement
+						ancestorElement,
 					)}]${result}`;
 					break;
 				}
@@ -220,7 +220,7 @@ const fnPath: FunctionDefinitionType = (
 						? `Q{${domFacade.getNamespaceURI(ancestorAttributeNode)}}`
 						: '';
 					result = `/@${attributeNameSpace}${domFacade.getLocalName(
-						ancestorAttributeNode
+						ancestorAttributeNode,
 					)}${result}`;
 					break;
 				}
@@ -232,7 +232,7 @@ const fnPath: FunctionDefinitionType = (
 				case NODE_TYPES.PROCESSING_INSTRUCTION_NODE: {
 					const ancestorPI = ancestor as ProcessingInstructionNodePointer;
 					result = `/processing-instruction(${domFacade.getTarget(
-						ancestorPI
+						ancestorPI,
 					)})[${getChildIndex(ancestorPI)}]${result}`;
 					break;
 				}
@@ -255,13 +255,13 @@ const fnNamespaceURI: FunctionDefinitionType = (
 	_dynamicContext,
 	executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	return sequence.map((node) =>
 		createAtomicValue(
 			executionParameters.domFacade.getNamespaceURI(node.value) || '',
-			ValueType.XSANYURI
-		)
+			ValueType.XSANYURI,
+		),
 	);
 };
 
@@ -269,7 +269,7 @@ const fnLocalName: FunctionDefinitionType = (
 	_dynamicContext,
 	executionParameters,
 	_staticContext,
-	sequence
+	sequence,
 ) => {
 	const domFacade = executionParameters.domFacade;
 	return sequence.switchCases({
@@ -282,7 +282,7 @@ const fnLocalName: FunctionDefinitionType = (
 
 				return createAtomicValue(
 					domFacade.getLocalName(node.value) || '',
-					ValueType.XSSTRING
+					ValueType.XSSTRING,
 				);
 			});
 		},
@@ -310,7 +310,7 @@ const fnOutermost: FunctionDefinitionType = (
 	_dynamicContext,
 	executionParameters,
 	_staticContext,
-	nodeSequence
+	nodeSequence,
 ) => {
 	return nodeSequence.mapAll((allNodeValues) => {
 		if (!allNodeValues.length) {
@@ -328,7 +328,7 @@ const fnOutermost: FunctionDefinitionType = (
 					contains(
 						executionParameters.domFacade,
 						previousNodes[previousNodes.length - 1].value,
-						node.value
+						node.value,
 					)
 				) {
 					// The previous node is an ancestor
@@ -338,7 +338,7 @@ const fnOutermost: FunctionDefinitionType = (
 				previousNodes.push(node);
 				return previousNodes;
 			},
-			[]
+			[],
 		);
 
 		return sequenceFactory.create(resultNodes);
@@ -349,7 +349,7 @@ const fnInnermost: FunctionDefinitionType = (
 	_dynamicContext,
 	executionParameters,
 	_staticContext,
-	nodeSequence
+	nodeSequence,
 ) => {
 	return nodeSequence.mapAll((allNodeValues) => {
 		if (!allNodeValues.length) {
@@ -358,7 +358,7 @@ const fnInnermost: FunctionDefinitionType = (
 
 		const resultNodes = sortNodeValues(
 			executionParameters.domFacade,
-			allNodeValues
+			allNodeValues,
 		).reduceRight((followingNodes, node, i, allNodes) => {
 			if (i === allNodes.length - 1) {
 				followingNodes.push(node);
@@ -382,7 +382,7 @@ const fnRoot: FunctionDefinitionType = (
 	_dynamicContext,
 	executionParameters,
 	_staticContext,
-	nodeSequence
+	nodeSequence,
 ) => {
 	return nodeSequence.map((node) => {
 		if (!isSubtypeOf(node.type, ValueType.NODE)) {

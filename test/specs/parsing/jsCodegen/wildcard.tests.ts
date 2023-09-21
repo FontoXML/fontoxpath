@@ -22,7 +22,7 @@ describe('wildcard', () => {
 					['tip', 'Make it fast'],
 				],
 			],
-			documentNode
+			documentNode,
 		);
 	});
 
@@ -34,7 +34,7 @@ describe('wildcard', () => {
 
 	it('does not select text elements', () => {
 		chai.assert.isFalse(
-			evaluateXPathWithJsCodegen('/xml/tips/tip/*', documentNode, null, ReturnType.BOOLEAN)
+			evaluateXPathWithJsCodegen('/xml/tips/tip/*', documentNode, null, ReturnType.BOOLEAN),
 		);
 	});
 });

@@ -15,9 +15,9 @@ describe('Typeswitch', () => {
 				null,
 				null,
 				null,
-				{ debug: true, language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				{ debug: true, language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 			),
-			2828
+			2828,
 		));
 
 	it('runs typeswitch and returns a string', () =>
@@ -32,8 +32,8 @@ describe('Typeswitch', () => {
 				null,
 				null,
 				null,
-				{ debug: true, language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				{ debug: true, language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 			),
-			'Good morning'
+			'Good morning',
 		));
 });

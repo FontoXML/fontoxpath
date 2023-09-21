@@ -7,7 +7,7 @@ import CastResult from './CastResult';
 const createGMonthValue = (value: any): AtomicValue => createAtomicValue(value, ValueType.XSGMONTH);
 
 export default function castToGMonth(
-	instanceOf: (typeName: ValueType) => boolean
+	instanceOf: (typeName: ValueType) => boolean,
 ): (value: any) => CastResult {
 	if (instanceOf(ValueType.XSDATE) || instanceOf(ValueType.XSDATETIME)) {
 		return (value: DateTime) => ({
@@ -24,7 +24,7 @@ export default function castToGMonth(
 	return () => ({
 		successful: false,
 		error: new Error(
-			'XPTY0004: Casting not supported from given type to xs:gMonth or any of its derived types.'
+			'XPTY0004: Casting not supported from given type to xs:gMonth or any of its derived types.',
 		),
 	});
 }

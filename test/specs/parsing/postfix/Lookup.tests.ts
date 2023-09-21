@@ -19,16 +19,16 @@ describe('lookup operator', () => {
 		it("is equivalent to 'for $k in fn:data(KS) return .($k)', if the KeySpecifier is a ParenthesizedExpr and the context item is a map", () => {
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
-					`let $ks := "Mo", $res1 := ${daysMap}?($ks), $res2 := for $k in fn:data($ks) return ${daysMap}($k) return $res1=$res2`
-				)
+					`let $ks := "Mo", $res1 := ${daysMap}?($ks), $res2 := for $k in fn:data($ks) return ${daysMap}($k) return $res1=$res2`,
+				),
 			);
 		});
 
 		it('is equivalent to \'for $k in map:keys(.) return .($k)\', if the KeySpecifier is a wildcard ("*") and the context item is a map', () => {
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
-					`deep-equal(${daysMap}?*, for $k in map:keys(${daysMap}) return ${daysMap}($k))`
-				)
+					`deep-equal(${daysMap}?*, for $k in map:keys(${daysMap}) return ${daysMap}($k))`,
+				),
 			);
 		});
 
@@ -43,16 +43,16 @@ describe('lookup operator', () => {
 		it("is equivalent to 'for $k in fn:data(KS) return .($k)', if the KeySpecifier is a ParenthesizedExpr and the context item is an array", () => {
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
-					`let $ks := 2 to 4 return deep-equal(${daysArray}?($ks), for $k in fn:data($ks) return ${daysArray}($k))`
-				)
+					`let $ks := 2 to 4 return deep-equal(${daysArray}?($ks), for $k in fn:data($ks) return ${daysArray}($k))`,
+				),
 			);
 		});
 
 		it('is equivalent to \'for $k in 1 to array:size(.) return .($k)\', if the KeySpecifier is a wildcard ("*") and the context item is an array', () => {
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
-					`deep-equal(${daysArray}?*, for $k in 1 to array:size(${daysArray}) return ${daysArray}($k))`
-				)
+					`deep-equal(${daysArray}?*, for $k in 1 to array:size(${daysArray}) return ${daysArray}($k))`,
+				),
 			);
 		});
 	});
@@ -61,8 +61,8 @@ describe('lookup operator', () => {
 		it('can lookup in a map', () => {
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
-					'map { "first" : "Jenna", "last" : "Scott" }?first eq "Jenna"'
-				)
+					'map { "first" : "Jenna", "last" : "Scott" }?first eq "Jenna"',
+				),
 			);
 		});
 
@@ -78,8 +78,8 @@ describe('lookup operator', () => {
 		it('can lookup in multiple maps', () => {
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
-					'deep-equal((map {"first": "Tom"}, map {"first": "Dick"}, map {"first": "Harry"})?first, ("Tom", "Dick", "Harry"))'
-				)
+					'deep-equal((map {"first": "Tom"}, map {"first": "Dick"}, map {"first": "Harry"})?first, ("Tom", "Dick", "Harry"))',
+				),
 			);
 		});
 
@@ -90,14 +90,14 @@ describe('lookup operator', () => {
 		it('gets all items using the * key specifier', () => {
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
-					'map { "first" : "Jenna", "*" : "Scott" }?* = ("Jenna", "Scott")'
-				)
+					'map { "first" : "Jenna", "*" : "Scott" }?* = ("Jenna", "Scott")',
+				),
 			);
 		});
 
 		it('treats handles a string keys specifier as string', () => {
 			chai.assert.isTrue(
-				evaluateXPathToBoolean('map { "first" : "Jenna", "*" : "Scott" }?("*") eq "Scott"')
+				evaluateXPathToBoolean('map { "first" : "Jenna", "*" : "Scott" }?("*") eq "Scott"'),
 			);
 		});
 

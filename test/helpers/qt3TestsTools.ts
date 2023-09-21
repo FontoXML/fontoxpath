@@ -124,17 +124,17 @@ function createEnvironment(cwd, environmentNode) {
 			return {
 				...varsByName,
 				[evaluateXPathToString('@role', variable).substr(1)]: getFile(
-					(cwd ? cwd + '/' : '') + evaluateXPathToString('@file', variable)
+					(cwd ? cwd + '/' : '') + evaluateXPathToString('@file', variable),
 				),
 			};
 		},
-		{}
+		{},
 	);
 
 	// Params area also variables. But different
 	evaluateXPathToNodes('param', environmentNode).forEach((paramNode) => {
 		variables[evaluateXPathToString('@name', paramNode)] = evaluateXPath(
-			evaluateXPathToString('@select', paramNode)
+			evaluateXPathToString('@select', paramNode),
 		);
 		// tslint:disable-next-line: no-console
 		console.log(variables);
@@ -142,7 +142,7 @@ function createEnvironment(cwd, environmentNode) {
 
 	const namespaces = evaluateXPathToMap(
 		'(namespace!map:entry(@prefix/string(), @uri/string())) => map:merge()',
-		environmentNode
+		environmentNode,
 	);
 
 	return {
@@ -158,7 +158,7 @@ const environmentsByName = evaluateXPathToNodes('/catalog/environment', catalog)
 			...envByName,
 			[evaluateXPathToString('@name', environmentNode)]: createEnvironment(
 				'',
-				environmentNode
+				environmentNode,
 			),
 		};
 	},
@@ -166,7 +166,7 @@ const environmentsByName = evaluateXPathToNodes('/catalog/environment', catalog)
 		empty: {
 			contextNode: emptyDoc,
 		},
-	}
+	},
 );
 
 function getAllTestSets(): string[] {
@@ -177,7 +177,7 @@ function getAllTestSets(): string[] {
 
 function getArguments(
 	testSetFileName: string,
-	testCase: Node
+	testCase: Node,
 ): {
 	baseUrl: string;
 	contextNode: Node;
@@ -192,7 +192,7 @@ function getArguments(
 		? getFile(
 				evaluateXPathToString('$baseUrl || "/" || test/@file', testCase, null, {
 					baseUrl,
-				})
+				}),
 		  )
 		: evaluateXPathToString('./test', testCase);
 	const language = evaluateXPathToString(
@@ -200,11 +200,11 @@ function getArguments(
 							then "XQuery3.1" else if (((dependency)[@type = "spec"]/@value)!tokenize(.) = ("XP20", "XP20+", "XP30", "XP30+"))
 							then "XPath3.1"	else if (((../dependency)[@type = "spec"]/@value)!tokenize(.) = ("XQ10+", "XQ30+", "XQ31+", "XQ31"))
 							then "XQuery3.1" else "XPath3.1"`,
-		testCase
+		testCase,
 	) as Language;
 	const namespaces = evaluateXPathToMap(
 		'(environment/namespace!map:entry(@prefix/string(), @uri/string())) => map:merge()',
-		testCase
+		testCase,
 	);
 
 	const localNamespaceResolver = Object.keys(namespaces).length
@@ -214,7 +214,7 @@ function getArguments(
 	const environmentNode = evaluateXPathToFirstNode(
 		'let $ref := ./environment/@ref return if ($ref) then /test-set/environment[@name = $ref] else ./environment',
 		testCase,
-		null
+		null,
 	);
 	const env = environmentNode
 		? createEnvironment(baseUrl, environmentNode)

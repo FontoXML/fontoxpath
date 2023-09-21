@@ -11,7 +11,7 @@ import { parseUsingPrsc } from './prscParser';
  */
 export default function parseExpression(
 	xPathString: string,
-	compilationOptions: { allowXQuery?: boolean; debug?: boolean }
+	compilationOptions: { allowXQuery?: boolean; debug?: boolean },
 ): IAST {
 	const options = {
 		xquery: !!compilationOptions.allowXQuery,
@@ -38,7 +38,7 @@ export default function parseExpression(
 		'',
 		'',
 		new Error(
-			`XPST0003: Failed to parse script. Expected ${[...new Set(parseResult.expected)]}`
-		)
+			`XPST0003: Failed to parse script. Expected ${[...new Set(parseResult.expected)]}`,
+		),
 	);
 }

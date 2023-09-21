@@ -26,9 +26,9 @@ describe('Simple map operator', () => {
 				documentNode,
 				null,
 				null,
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 			),
-			'FIRST'
+			'FIRST',
 		);
 	});
 
@@ -42,16 +42,16 @@ describe('Simple map operator', () => {
 	it('accepts a sequence as second expression: "abc" ! (concat("123", .), concat(., "123"))', () =>
 		chai.assert.deepEqual(
 			evaluateXPathToStrings('"abc" ! (concat("123", .), concat(., "123"))', documentNode),
-			['123abc', 'abc123']
+			['123abc', 'abc123'],
 		));
 
 	it('accepts a sequence as first and as second expression: ("a", "b", "c") ! (concat("a-", .), concat("b-", .), concat("c-", .))', () =>
 		chai.assert.deepEqual(
 			evaluateXPathToStrings(
 				'("a", "b", "c") ! (concat("a-", .), concat("b-", .), concat("c-", .))',
-				documentNode
+				documentNode,
 			),
-			['a-a', 'b-a', 'c-a', 'a-b', 'b-b', 'c-b', 'a-c', 'b-c', 'c-c']
+			['a-a', 'b-a', 'c-a', 'a-b', 'b-b', 'c-b', 'a-c', 'b-c', 'c-c'],
 		));
 
 	it('accepts being stacked: . ! (@first, @second, @last) ! string(.)', () => {
@@ -61,14 +61,14 @@ describe('Simple map operator', () => {
 		element.setAttribute('last', 'z');
 		chai.assert.deepEqual(
 			evaluateXPathToStrings('. ! (@first, @second, @last) ! string(.)', element),
-			['a', 'b', 'z']
+			['a', 'b', 'z'],
 		);
 	});
 
 	it('sets the context sequence', () =>
 		chai.assert.deepEqual(
 			evaluateXPathToStrings('("a", "b", "c")!position()!string()', documentNode),
-			['1', '2', '3']
+			['1', '2', '3'],
 		));
 
 	it('throws the correct error when mapping numbers to a child path expresion', () =>
@@ -80,19 +80,19 @@ describe('Simple map operator', () => {
 	it('throws the correct error when mapping numbers to a following sibling path expresion', () =>
 		chai.assert.throws(
 			() => evaluateXPathToNodes('0!following-sibling::a', documentNode),
-			'XPTY0020'
+			'XPTY0020',
 		));
 	it('throws the correct error when mapping numbers to a preceding path expresion', () =>
 		chai.assert.throws(() => evaluateXPathToNodes('0!preceding::a', documentNode), 'XPTY0020'));
 	it('throws the correct error when mapping numbers to a descendant path expresion', () =>
 		chai.assert.throws(
 			() => evaluateXPathToNodes('0!descendant::a', documentNode),
-			'XPTY0020'
+			'XPTY0020',
 		));
 	it('throws the correct error when mapping numbers to a preceding-sibling path expresion', () =>
 		chai.assert.throws(
 			() => evaluateXPathToNodes('0!preceding-sibling::a', documentNode),
-			'XPTY0020'
+			'XPTY0020',
 		));
 	it('throws the correct error when mapping numbers to a ancestor path expresion', () =>
 		chai.assert.throws(() => evaluateXPathToNodes('0!ancestor::a', documentNode), 'XPTY0020'));

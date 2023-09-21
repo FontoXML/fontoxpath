@@ -20,7 +20,7 @@ function emitReturnTypeConversion(
 	returnType: ReturnType,
 	astType: SequenceType,
 	contextItemExpr: PartialCompilationResult,
-	context: CodeGenContext
+	context: CodeGenContext,
 ): PartialCompilationResult {
 	switch (returnType) {
 		case ReturnType.FIRST_NODE:
@@ -65,7 +65,7 @@ const compiledXPathIdentifier = 'compiledXPathExpression';
 function compileAstToJavaScript(
 	xPathAst: IAST,
 	returnType: ReturnType,
-	context: CodeGenContext
+	context: CodeGenContext,
 ): JavaScriptCompiledXPathResult {
 	const mainModule = astHelper.getFirstChild(xPathAst, 'mainModule');
 	if (!mainModule) {
@@ -83,7 +83,7 @@ function compileAstToJavaScript(
 	const [compiledBaseExpr, _bucket] = context.emitBaseExpr(
 		queryBodyContents,
 		contextItemExpr,
-		context
+		context,
 	);
 
 	const queryType = astHelper.getAttribute(queryBodyContents, 'type');
@@ -92,7 +92,7 @@ function compileAstToJavaScript(
 		returnType,
 		queryType,
 		contextItemExpr,
-		context
+		context,
 	);
 
 	// Convert partial compilation into a fully-compiled expression

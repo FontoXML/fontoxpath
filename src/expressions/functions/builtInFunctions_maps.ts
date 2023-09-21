@@ -16,17 +16,17 @@ const mapMerge: FunctionDefinitionType = (
 	executionParameters,
 	staticContext,
 	mapSequence,
-	optionMap
+	optionMap,
 ) => {
 	const duplicateKey = sequenceFactory.singleton(
-		createAtomicValue('duplicates', ValueType.XSSTRING)
+		createAtomicValue('duplicates', ValueType.XSSTRING),
 	);
 	const duplicationHandlingValueSequence = mapGet(
 		dynamicContext,
 		executionParameters,
 		staticContext,
 		optionMap,
-		duplicateKey
+		duplicateKey,
 	);
 
 	const duplicationHandlingStrategy = duplicationHandlingValueSequence.isEmpty()
@@ -38,7 +38,7 @@ const mapMerge: FunctionDefinitionType = (
 				allValues.reduce((resultingKeyValuePairs, map) => {
 					(map as MapValue).keyValuePairs.forEach((keyValuePair) => {
 						const existingPairIndex = resultingKeyValuePairs.findIndex((existingPair) =>
-							isSameMapKey(existingPair.key, keyValuePair.key)
+							isSameMapKey(existingPair.key, keyValuePair.key),
 						);
 
 						if (existingPairIndex >= 0) {
@@ -46,14 +46,14 @@ const mapMerge: FunctionDefinitionType = (
 							switch (duplicationHandlingStrategy) {
 								case 'reject':
 									throw new Error(
-										'FOJS0003: Duplicate encountered when merging maps.'
+										'FOJS0003: Duplicate encountered when merging maps.',
 									);
 								case 'use-last':
 									// Use this one
 									resultingKeyValuePairs.splice(
 										existingPairIndex,
 										1,
-										keyValuePair
+										keyValuePair,
 									);
 									return;
 								case 'combine':
@@ -64,8 +64,8 @@ const mapMerge: FunctionDefinitionType = (
 												resultingKeyValuePairs[existingPairIndex]
 													.value()
 													.getAllValues()
-													.concat(keyValuePair.value().getAllValues())
-											)
+													.concat(keyValuePair.value().getAllValues()),
+											),
 										),
 									});
 									return;
@@ -78,9 +78,9 @@ const mapMerge: FunctionDefinitionType = (
 						resultingKeyValuePairs.push(keyValuePair);
 					});
 					return resultingKeyValuePairs;
-				}, [])
-			)
-		)
+				}, []),
+			),
+		),
 	);
 };
 
@@ -90,12 +90,12 @@ const mapPut: FunctionDefinitionType = (
 	_staticContext,
 	mapSequence,
 	keySequence,
-	newValueSequence
+	newValueSequence,
 ) => {
 	return zipSingleton([mapSequence, keySequence], ([map, newKey]) => {
 		const resultingKeyValuePairs = (map as MapValue).keyValuePairs.concat();
 		const indexOfExistingPair = resultingKeyValuePairs.findIndex((existingPair) =>
-			isSameMapKey(existingPair.key, newKey)
+			isSameMapKey(existingPair.key, newKey),
 		);
 		if (indexOfExistingPair >= 0) {
 			// Duplicate keys, use options to determine what to do
@@ -118,10 +118,10 @@ const mapEntry: FunctionDefinitionType = (
 	_executionParameters,
 	_staticContext,
 	keySequence,
-	value
+	value,
 ) => {
 	return keySequence.map(
-		(onlyKey) => new MapValue([{ key: onlyKey, value: createDoublyIterableSequence(value) }])
+		(onlyKey) => new MapValue([{ key: onlyKey, value: createDoublyIterableSequence(value) }]),
 	);
 };
 
@@ -129,10 +129,10 @@ const mapSize: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	mapSequence
+	mapSequence,
 ) => {
 	return mapSequence.map((onlyMap) =>
-		createAtomicValue((onlyMap as MapValue).keyValuePairs.length, ValueType.XSINTEGER)
+		createAtomicValue((onlyMap as MapValue).keyValuePairs.length, ValueType.XSINTEGER),
 	);
 };
 
@@ -140,10 +140,10 @@ const mapKeys: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	mapSequence
+	mapSequence,
 ) => {
 	return zipSingleton([mapSequence], ([map]) =>
-		sequenceFactory.create((map as MapValue).keyValuePairs.map((pair) => pair.key))
+		sequenceFactory.create((map as MapValue).keyValuePairs.map((pair) => pair.key)),
 	);
 };
 
@@ -152,11 +152,11 @@ const mapContains: FunctionDefinitionType = (
 	_executionParameters,
 	_staticContext,
 	mapSequence,
-	keySequence
+	keySequence,
 ) => {
 	return zipSingleton([mapSequence, keySequence], ([map, key]) => {
 		const doesContain = (map as MapValue).keyValuePairs.some((pair) =>
-			isSameMapKey(pair.key, key)
+			isSameMapKey(pair.key, key),
 		);
 		return doesContain
 			? sequenceFactory.singletonTrueSequence()
@@ -169,14 +169,14 @@ const mapRemove: FunctionDefinitionType = (
 	_executionParameters,
 	_staticContext,
 	mapSequence,
-	keySequence
+	keySequence,
 ) => {
 	return zipSingleton([mapSequence], ([map]) => {
 		const resultingKeyValuePairs = (map as MapValue).keyValuePairs.concat();
 		return keySequence.mapAll((keys) => {
 			keys.forEach((key) => {
 				const indexOfExistingPair = resultingKeyValuePairs.findIndex((existingPair) =>
-					isSameMapKey(existingPair.key, key)
+					isSameMapKey(existingPair.key, key),
 				);
 				if (indexOfExistingPair >= 0) {
 					resultingKeyValuePairs.splice(indexOfExistingPair, 1);
@@ -192,7 +192,7 @@ const mapForEach: FunctionDefinitionType = (
 	executionParameters,
 	staticContext,
 	mapSequence,
-	itemSequence
+	itemSequence,
 ) => {
 	return zipSingleton([mapSequence, itemSequence], ([map, item]) =>
 		concatSequences(
@@ -203,10 +203,10 @@ const mapForEach: FunctionDefinitionType = (
 					executionParameters,
 					staticContext,
 					sequenceFactory.singleton(keyValuePair.key),
-					keyValuePair.value()
-				)
-			)
-		)
+					keyValuePair.value(),
+				),
+			),
+		),
 	);
 };
 
@@ -292,11 +292,11 @@ const declarations: BuiltinDeclarationType[] = [
 							key: createAtomicValue('duplicates', ValueType.XSSTRING),
 							value: () =>
 								sequenceFactory.singleton(
-									createAtomicValue('use-first', ValueType.XSSTRING)
+									createAtomicValue('use-first', ValueType.XSSTRING),
 								),
 						},
-					])
-				)
+					]),
+				),
 			);
 		},
 	},

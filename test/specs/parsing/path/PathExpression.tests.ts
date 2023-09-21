@@ -30,7 +30,7 @@ describe('relative paths', () => {
 		jsonMlMapper.parse(['someNode', ['someChildNode', ['someGrandChild']]], documentNode);
 		chai.assert.deepEqual(
 			evaluateXPathToNodes('../child::someNode', documentNode.documentElement),
-			[documentNode.documentElement]
+			[documentNode.documentElement],
 		);
 	});
 
@@ -38,7 +38,7 @@ describe('relative paths', () => {
 		jsonMlMapper.parse(['someNode', ['someChildNode', ['someGrandChild']]], documentNode);
 		chai.assert.deepEqual(
 			evaluateXPathToNumbers('//*/position()', documentNode.documentElement),
-			[1, 2, 3]
+			[1, 2, 3],
 		);
 	});
 
@@ -51,13 +51,13 @@ describe('relative paths', () => {
 				['someChildElement', 'A piece of text'],
 				['someChildElement', 'A piece of text'],
 			],
-			documentNode
+			documentNode,
 		);
 		chai.assert.isTrue(
 			evaluateXPathToBoolean(
 				'/*/*[./text() => contains("piece of")]',
-				documentNode.firstChild
-			)
+				documentNode.firstChild,
+			),
 		);
 	});
 
@@ -66,9 +66,9 @@ describe('relative paths', () => {
 		chai.assert.deepEqual(
 			evaluateXPathToNodes(
 				'(//secondNode, //firstNode)/self::node()',
-				documentNode.documentElement
+				documentNode.documentElement,
 			),
-			[documentNode.documentElement.firstChild, documentNode.documentElement.lastChild]
+			[documentNode.documentElement.firstChild, documentNode.documentElement.lastChild],
 		);
 	});
 
@@ -77,20 +77,20 @@ describe('relative paths', () => {
 		chai.assert.deepEqual(
 			evaluateXPathToNodes(
 				'/someNode/(secondNode, firstNode)/self::node()',
-				documentNode.documentElement
+				documentNode.documentElement,
 			),
-			[documentNode.documentElement.firstChild, documentNode.documentElement.lastChild]
+			[documentNode.documentElement.firstChild, documentNode.documentElement.lastChild],
 		);
 	});
 
 	it('supports walking from attribute nodes', () => {
 		jsonMlMapper.parse(
 			['someNode', { someAttribute: 'someValue' }, ['someChildNode']],
-			documentNode
+			documentNode,
 		);
 		chai.assert.deepEqual(
 			evaluateXPathToNodes('@someAttribute/..', documentNode.documentElement),
-			[documentNode.documentElement]
+			[documentNode.documentElement],
 		);
 	});
 
@@ -100,42 +100,42 @@ describe('relative paths', () => {
 	it('sorts attribute nodes after their element', () => {
 		jsonMlMapper.parse(
 			['someNode', { someAttribute: 'someValue' }, ['someChildNode']],
-			documentNode
+			documentNode,
 		);
 		chai.assert.deepEqual(
 			evaluateXPathToNodes(
 				'((@someAttribute, /someNode, //someChildNode)/.)[1]',
-				documentNode.documentElement
+				documentNode.documentElement,
 			),
 			[documentNode.documentElement],
-			'Document element first'
+			'Document element first',
 		);
 		chai.assert.deepEqual(
 			evaluateXPathToString(
 				'((@someAttribute, /someNode, //someChildNode)/.)[2]',
-				documentNode.documentElement
+				documentNode.documentElement,
 			),
 			'someValue',
-			'attributes of the document element second'
+			'attributes of the document element second',
 		);
 		chai.assert.deepEqual(
 			evaluateXPathToNodes(
 				'((@someAttribute, /someNode, //someChildNode)/.)[3]',
-				documentNode.documentElement
+				documentNode.documentElement,
 			),
 			[documentNode.documentElement.firstChild],
-			'Descendant elements last'
+			'Descendant elements last',
 		);
 	});
 
 	it('sorts and dedupes child::/parent:: axes correctly', () => {
 		jsonMlMapper.parse(
 			['someNode', ['someChildNode'], ['someChildNode'], ['someChildNode']],
-			documentNode
+			documentNode,
 		);
 		chai.assert.equal(
 			evaluateXPathToString('/*/*/../name()', documentNode.documentElement),
-			'someNode'
+			'someNode',
 		);
 	});
 
@@ -147,14 +147,14 @@ describe('relative paths', () => {
 				['someChildNode', ['someGrandChildB1'], ['someGrandChildB2']],
 				['someChildNode', ['someGrandChildC1'], ['someGrandChildC2']],
 			],
-			documentNode
+			documentNode,
 		);
 		chai.assert.equal(
 			evaluateXPathToString(
 				'descendant::someChildNode/*/name()',
-				documentNode.documentElement
+				documentNode.documentElement,
 			),
-			'someGrandChildA1 someGrandChildA2 someGrandChildB1 someGrandChildB2 someGrandChildC1 someGrandChildC2'
+			'someGrandChildA1 someGrandChildA2 someGrandChildB1 someGrandChildB2 someGrandChildC1 someGrandChildC2',
 		);
 	});
 
@@ -166,14 +166,14 @@ describe('relative paths', () => {
 				['someChildNode', ['someGrandChildB1'], ['someGrandChildB2']],
 				['someChildNode', ['someGrandChildC1'], ['someGrandChildC2']],
 			],
-			documentNode
+			documentNode,
 		);
 		chai.assert.equal(
 			evaluateXPathToString(
 				'(/someNode/someChildNode//*)!name()',
-				documentNode.documentElement
+				documentNode.documentElement,
 			),
-			'someGrandChildA1 someGrandChildA2 someGrandChildB1 someGrandChildB2 someGrandChildC1 someGrandChildC2'
+			'someGrandChildA1 someGrandChildA2 someGrandChildB1 someGrandChildB2 someGrandChildC1 someGrandChildC2',
 		);
 	});
 
@@ -184,9 +184,9 @@ describe('relative paths', () => {
 				documentNode,
 				null,
 				null,
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 			),
-			'Wilheit~~, ~~T. T.~~, ~~1986~~: ~~Some comments on passive microwave measurement of rain.~~Bull. Amer. Meteor. Soc.~~, ~~67~~, ~~1226~~–~~1232~~, doi:~~10.1175/1520-0477(1986)067<1226:SCOPMM>2.0.CO;2'
+			'Wilheit~~, ~~T. T.~~, ~~1986~~: ~~Some comments on passive microwave measurement of rain.~~Bull. Amer. Meteor. Soc.~~, ~~67~~, ~~1226~~–~~1232~~, doi:~~10.1175/1520-0477(1986)067<1226:SCOPMM>2.0.CO;2',
 		);
 	});
 
@@ -198,14 +198,14 @@ describe('relative paths', () => {
 				['someChildNode', ['someGrandChildB1'], ['someGrandChildB2']],
 				['someChildNode', ['someGrandChildC1'], ['someGrandChildC2']],
 			],
-			documentNode
+			documentNode,
 		);
 		chai.assert.equal(
 			evaluateXPathToString(
 				'/descendant-or-self::*/child::*!name()',
-				documentNode.documentElement
+				documentNode.documentElement,
 			),
-			'someChildNode someGrandChildA1 someGrandChildA2 someChildNode someGrandChildB1 someGrandChildB2 someChildNode someGrandChildC1 someGrandChildC2'
+			'someChildNode someGrandChildA1 someGrandChildA2 someChildNode someGrandChildB1 someGrandChildB2 someChildNode someGrandChildC1 someGrandChildC2',
 		);
 	});
 
@@ -233,14 +233,14 @@ describe('relative paths', () => {
 					],
 				],
 			],
-			documentNode
+			documentNode,
 		);
 		chai.assert.equal(
 			evaluateXPathToString(
 				'/descendant-or-self::*/child::*/descendant-or-self::*!name()',
-				documentNode.documentElement
+				documentNode.documentElement,
 			),
-			'someChildNode someGrandChildA1 someGrandGrandChildA1-1 someGrandGrandChildA1-2 someGrandChildA2 someGrandGrandChildA2-1 someGrandGrandChildA2-2 someChildNode someGrandChildB1 someGrandGrandChildB1-1 someGrandGrandChildB1-2 someGrandChildB2 someGrandGrandChildB2-1 someGrandGrandChildB2-2 someChildNode someGrandChildC1 someGrandGrandChildC1-1 someGrandGrandChildC1-2 someGrandChildC2 someGrandGrandChild1C2-1 someGrandGrandChild1C2-2'
+			'someChildNode someGrandChildA1 someGrandGrandChildA1-1 someGrandGrandChildA1-2 someGrandChildA2 someGrandGrandChildA2-1 someGrandGrandChildA2-2 someChildNode someGrandChildB1 someGrandGrandChildB1-1 someGrandGrandChildB1-2 someGrandChildB2 someGrandGrandChildB2-1 someGrandGrandChildB2-2 someChildNode someGrandChildC1 someGrandGrandChildC1-1 someGrandGrandChildC1-2 someGrandChildC2 someGrandGrandChild1C2-1 someGrandGrandChild1C2-2',
 		);
 	});
 
@@ -252,14 +252,14 @@ describe('relative paths', () => {
 				['someChildNodeB', ['someGrandChild'], ['someGrandChild']],
 				['someChildNodeC', ['someGrandChild'], ['someGrandChild']],
 			],
-			documentNode
+			documentNode,
 		);
 		chai.assert.equal(
 			evaluateXPathToString(
 				'descendant::someGrandChild/ancestor::*!name()',
-				documentNode.documentElement
+				documentNode.documentElement,
 			),
-			'someNode someChildNodeA someChildNodeB someChildNodeC'
+			'someNode someChildNodeA someChildNodeB someChildNodeC',
 		);
 	});
 
@@ -271,14 +271,14 @@ describe('relative paths', () => {
 				['someChildNodeB', ['someGrandChildB1'], ['someGrandChildB2']],
 				['someChildNodeC', ['someGrandChildC1'], ['someGrandChildC2']],
 			],
-			documentNode
+			documentNode,
 		);
 		chai.assert.equal(
 			evaluateXPathToString(
 				'descendant-or-self::*/descendant::*!name()',
-				documentNode.documentElement
+				documentNode.documentElement,
 			),
-			'someChildNodeA someGrandChildA1 someGrandChildA2 someChildNodeB someGrandChildB1 someGrandChildB2 someChildNodeC someGrandChildC1 someGrandChildC2'
+			'someChildNodeA someGrandChildA1 someGrandChildA2 someChildNodeB someGrandChildB1 someGrandChildB2 someChildNodeC someGrandChildC1 someGrandChildC2',
 		);
 	});
 
@@ -289,15 +289,15 @@ describe('relative paths', () => {
 				{ AsomeAttribute: 'someValue', BsomeOtherAttribute: 'someOtherValue' },
 				['someChildNode'],
 			],
-			documentNode
+			documentNode,
 		);
 		// We need to convert to string becase string-join expects strings and function conversion is not in yet
 		chai.assert.equal(
 			evaluateXPathToString(
 				'(@BsomeOtherAttribute, @AsomeAttribute)/string() => string-join(", ")',
-				documentNode.documentElement
+				documentNode.documentElement,
 			),
-			'someValue, someOtherValue'
+			'someValue, someOtherValue',
 		);
 	});
 
@@ -306,9 +306,9 @@ describe('relative paths', () => {
 		chai.assert.deepEqual(
 			evaluateXPathToFirstNode(
 				'/someNode/someChildNode//someGrandChild/../..//someGrandChild',
-				documentNode.documentElement
+				documentNode.documentElement,
 			),
-			documentNode.documentElement.firstChild.firstChild
+			documentNode.documentElement.firstChild.firstChild,
 		);
 	});
 
@@ -325,9 +325,9 @@ describe('relative paths', () => {
 		chai.assert.deepEqual(
 			evaluateXPathToNodes(
 				'function ($node) { $node//someGrandChild }(.)',
-				documentNode.documentElement
+				documentNode.documentElement,
 			),
-			[documentNode.documentElement.firstChild.firstChild]
+			[documentNode.documentElement.firstChild.firstChild],
 		);
 	});
 });

@@ -65,7 +65,7 @@ class CustomXPathFunctionError extends Error {
 export function adaptXPathValueToJavascriptValue(
 	valueSequence: ISequence,
 	sequenceType: SequenceType,
-	executionParameters: ExecutionParameters
+	executionParameters: ExecutionParameters,
 ): any | null | any[] {
 	if (sequenceType.mult === SequenceMultiplicity.ZERO_OR_ONE) {
 		if (valueSequence.isEmpty()) {
@@ -73,7 +73,7 @@ export function adaptXPathValueToJavascriptValue(
 		}
 		return transformXPathItemToJavascriptObject(
 			valueSequence.first(),
-			executionParameters
+			executionParameters,
 		).next(IterationHint.NONE).value;
 	}
 
@@ -86,13 +86,13 @@ export function adaptXPathValueToJavascriptValue(
 				throw new Error('Cannot pass attribute nodes to custom functions');
 			}
 			return transformXPathItemToJavascriptObject(value, executionParameters).next(
-				IterationHint.NONE
+				IterationHint.NONE,
 			).value;
 		});
 	}
 
 	return transformXPathItemToJavascriptObject(valueSequence.first(), executionParameters).next(
-		IterationHint.NONE
+		IterationHint.NONE,
 	).value;
 }
 
@@ -139,7 +139,7 @@ export default function registerCustomXPathFunction(
 	callback: (
 		domFacade: { currentContext: any; domFacade: IDomFacade },
 		...functionArgs: any[]
-	) => any
+	) => any,
 ): void {
 	const { namespaceURI, localName } = splitFunctionName(name);
 
@@ -154,7 +154,7 @@ export default function registerCustomXPathFunction(
 	const callFunction = function (
 		_dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters,
-		_staticContext: any
+		_staticContext: any,
 	) {
 		// Make arguments a real array instead of a array-like object
 		const args = Array.from(arguments);
@@ -165,7 +165,7 @@ export default function registerCustomXPathFunction(
 			return adaptXPathValueToJavascriptValue(
 				argument,
 				signature[index],
-				executionParameters
+				executionParameters,
 			);
 		});
 
@@ -199,7 +199,7 @@ export default function registerCustomXPathFunction(
 		const xpathResult = adaptJavaScriptValueToSequence(
 			executionParameters.domFacade,
 			jsResult,
-			returnType
+			returnType,
 		);
 
 		return xpathResult;

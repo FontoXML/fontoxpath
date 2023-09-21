@@ -42,7 +42,7 @@ class TextConstructor extends Expression {
 			const textNodePointer: TextNodePointer = { node: tinyTextNode, graftAncestor: null };
 
 			return sequenceFactory.singleton(
-				createPointerValue(textNodePointer, executionParameters.domFacade)
+				createPointerValue(textNodePointer, executionParameters.domFacade),
 			);
 		});
 	}

@@ -31,7 +31,7 @@ class DynamicContext {
 			implicitTimezone: null,
 			isInitialized: false,
 		},
-		random = new Random()
+		random = new Random(),
 	) {
 		this._temporalContext = temporalContext;
 
@@ -101,7 +101,7 @@ class DynamicContext {
 	public scopeWithFocus(
 		contextItemIndex: number,
 		contextItem: Value | null,
-		contextSequence: ISequence
+		contextSequence: ISequence,
 	): DynamicContext {
 		return new DynamicContext(
 			{
@@ -111,7 +111,7 @@ class DynamicContext {
 				variableBindings: this.variableBindings,
 			},
 			this._temporalContext,
-			this._random
+			this._random,
 		);
 	}
 
@@ -126,11 +126,11 @@ class DynamicContext {
 				variableBindings: Object.assign(
 					Object.create(null),
 					this.variableBindings,
-					variableBindings
+					variableBindings,
 				),
 			},
 			this._temporalContext,
-			this._random
+			this._random,
 		);
 	}
 }

@@ -19,7 +19,7 @@ class LetExpression extends FlworExpression {
 	constructor(
 		rangeVariable: { localName: string; namespaceURI: string | null; prefix: string },
 		bindingSequence: Expression,
-		returnExpression: PossiblyUpdatingExpression | FlworExpression
+		returnExpression: PossiblyUpdatingExpression | FlworExpression,
 	) {
 		super(
 			bindingSequence.specificity.add(returnExpression.specificity),
@@ -30,7 +30,7 @@ class LetExpression extends FlworExpression {
 				resultOrder: returnExpression.expectedResultOrder,
 				subtree: returnExpression.subtree,
 			},
-			returnExpression
+			returnExpression,
 		);
 
 		if (rangeVariable.prefix || rangeVariable.namespaceURI) {
@@ -50,7 +50,7 @@ class LetExpression extends FlworExpression {
 		_dynamicContext: DynamicContext,
 		dynamicContextIterator: IIterator<DynamicContext>,
 		executionParameters: ExecutionParameters,
-		createReturnSequence: (dynamicContextIterator: IIterator<DynamicContext>) => ISequence
+		createReturnSequence: (dynamicContextIterator: IIterator<DynamicContext>) => ISequence,
 	): ISequence {
 		return createReturnSequence({
 			next: (_hint) => {
@@ -65,8 +65,8 @@ class LetExpression extends FlworExpression {
 					[this._variableBinding]: createDoublyIterableSequence(
 						this._bindingSequence.evaluateMaybeStatically(
 							currentDynamicContext,
-							executionParameters
-						)
+							executionParameters,
+						),
 					),
 				});
 				return ready(scopedContext);
@@ -80,7 +80,7 @@ class LetExpression extends FlworExpression {
 
 			if (!this._namespaceURI && this._prefix) {
 				throw new Error(
-					`XPST0081: Could not resolve namespace for prefix ${this._prefix} using in a for expression`
+					`XPST0081: Could not resolve namespace for prefix ${this._prefix} using in a for expression`,
 				);
 			}
 		}

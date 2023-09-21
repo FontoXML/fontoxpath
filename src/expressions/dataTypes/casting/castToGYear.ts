@@ -7,7 +7,7 @@ import CastResult from './CastResult';
 const createGYearValue = (value: any): AtomicValue => createAtomicValue(value, ValueType.XSGYEAR);
 
 export default function castToGYear(
-	instanceOf: (typeName: ValueType) => boolean
+	instanceOf: (typeName: ValueType) => boolean,
 ): (value: any) => CastResult {
 	if (instanceOf(ValueType.XSDATE) || instanceOf(ValueType.XSDATETIME)) {
 		return (value) => ({
@@ -24,7 +24,7 @@ export default function castToGYear(
 	return () => ({
 		successful: false,
 		error: new Error(
-			'XPTY0004: Casting not supported from given type to xs:gYear or any of its derived types.'
+			'XPTY0004: Casting not supported from given type to xs:gYear or any of its derived types.',
 		),
 	});
 }

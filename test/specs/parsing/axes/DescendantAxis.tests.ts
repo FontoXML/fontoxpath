@@ -56,7 +56,7 @@ describe('descendant-or-self', () => {
 		jsonMlMapper.parse(['someParentElement', ['someElement']], documentNode);
 		chai.assert.deepEqual(
 			evaluateXPathToNodes('descendant-or-self::someElement', documentNode.documentElement),
-			[documentNode.documentElement.firstChild]
+			[documentNode.documentElement.firstChild],
 		);
 	});
 
@@ -65,9 +65,9 @@ describe('descendant-or-self', () => {
 		chai.assert.deepEqual(
 			evaluateXPathToNodes(
 				'descendant-or-self::someParentElement',
-				documentNode.documentElement
+				documentNode.documentElement,
 			),
-			[documentNode.documentElement]
+			[documentNode.documentElement],
 		);
 	});
 
@@ -75,14 +75,14 @@ describe('descendant-or-self', () => {
 		jsonMlMapper.parse(['someParentElement', ['someElement']], documentNode);
 		chai.assert.deepEqual(
 			evaluateXPathToNodes('descendant-or-self::*', documentNode.documentElement),
-			[documentNode.documentElement, documentNode.documentElement.firstChild]
+			[documentNode.documentElement, documentNode.documentElement.firstChild],
 		);
 	});
 
 	it('ordering of deeper descendants', () => {
 		jsonMlMapper.parse(
 			['someParentElement', ['someElement', ['someElement', ['someElement']]]],
-			documentNode
+			documentNode,
 		);
 		chai.assert.deepEqual(
 			evaluateXPathToNodes('descendant-or-self::*', documentNode.documentElement),
@@ -91,21 +91,21 @@ describe('descendant-or-self', () => {
 				documentNode.documentElement.firstChild,
 				documentNode.documentElement.firstChild.firstChild,
 				documentNode.documentElement.firstChild.firstChild.firstChild,
-			]
+			],
 		);
 	});
 
 	it('ordering of descendants with complex-ish queries', () => {
 		jsonMlMapper.parse(
 			['root', ['a', ['a-a'], ['a-b']], ['b', ['b-a'], ['b-b']]],
-			documentNode
+			documentNode,
 		);
 		chai.assert.deepEqual(
 			evaluateXPathToNodes(
 				'//*[name() = "root" or name() => starts-with("a") or name() => starts-with("b")]',
-				documentNode
+				documentNode,
 			).map((node: Element) => node.localName),
-			['root', 'a', 'a-a', 'a-b', 'b', 'b-a', 'b-b']
+			['root', 'a', 'a-a', 'a-b', 'b', 'b-a', 'b-b'],
 		);
 	});
 

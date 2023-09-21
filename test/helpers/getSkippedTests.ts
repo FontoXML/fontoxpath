@@ -5,7 +5,7 @@ export function getSkippedTests(filename) {
 	if (process.argv.indexOf('--regenerate') !== -1) {
 		const skipIndex =
 			skippedTests.indexOf(
-				'=====================TESTS ABOVE HAVE BEEN MARKED MANUALLY====================='
+				'=====================TESTS ABOVE HAVE BEEN MARKED MANUALLY=====================',
 			) + 1;
 		skippedTests.splice(skipIndex);
 	}

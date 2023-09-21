@@ -30,13 +30,13 @@ import { Node } from './types/Types';
  */
 export default function evaluateUpdatingExpressionSync<
 	TNode extends Node,
-	TReturnType extends ReturnType
+	TReturnType extends ReturnType,
 >(
 	updateScript: EvaluableExpression,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
-	options?: UpdatingOptions | null
+	options?: UpdatingOptions | null,
 ): { pendingUpdateList: object[]; xdmValue: IReturnTypes<TNode>[TReturnType] } {
 	options = options || {};
 
@@ -57,7 +57,7 @@ export default function evaluateUpdatingExpressionSync<
 				allowXQuery: true,
 				debug: !!options['debug'],
 				disableCache: !!options['disableCache'],
-			}
+			},
 		);
 		dynamicContext = context.dynamicContext;
 		executionParameters = context.executionParameters;
@@ -78,7 +78,7 @@ export default function evaluateUpdatingExpressionSync<
 				domFacade,
 				variables,
 				options.returnType as TReturnType,
-				{ ...options, ['language']: evaluateXPath.XQUERY_UPDATE_3_1_LANGUAGE }
+				{ ...options, ['language']: evaluateXPath.XQUERY_UPDATE_3_1_LANGUAGE },
 			),
 		};
 	}
@@ -87,7 +87,7 @@ export default function evaluateUpdatingExpressionSync<
 	try {
 		const resultIterator = (expression as PossiblyUpdatingExpression).evaluateWithUpdateList(
 			dynamicContext,
-			executionParameters
+			executionParameters,
 		);
 
 		attempt = resultIterator.next(IterationHint.NONE);
@@ -99,6 +99,6 @@ export default function evaluateUpdatingExpressionSync<
 		attempt.value,
 		updateScript,
 		options['returnType'],
-		executionParameters
+		executionParameters,
 	);
 }

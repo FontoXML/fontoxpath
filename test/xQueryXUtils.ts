@@ -25,7 +25,7 @@ export function buildTestCase(
 	loadXQuery: () => Promise<string>,
 	loadXQueryX: () => Promise<string>,
 	skippableTests: string[],
-	onActualParsed: (actual: any) => void
+	onActualParsed: (actual: any) => void,
 ): void {
 	it(testCase, async function () {
 		let xQuery = await loadXQuery();
@@ -39,7 +39,7 @@ export function buildTestCase(
 			astElement = parseScript(
 				xQuery,
 				{ language: Language.XQUERY_UPDATE_3_1_LANGUAGE, annotateAst: false },
-				new Document()
+				new Document(),
 			);
 		} catch (err) {
 			if (err.message.includes('XPST0003')) {
@@ -78,7 +78,7 @@ export function buildTestCase(
 			.serializeToString(actual.documentElement.firstElementChild)
 			.replace(regex, '');
 		const expectedInnerHtml = new XMLSerializer().serializeToString(
-			expected.documentElement.firstElementChild
+			expected.documentElement.firstElementChild,
 		);
 		if (actualInnerHtml === expectedInnerHtml) {
 			return;
@@ -98,7 +98,7 @@ export function buildTestCase(
 					new XMLSerializer()
 						.serializeToString(expected.documentElement)
 						.replace(/></g, '>\n<'),
-					'Expected the XML to be deep-equal'
+					'Expected the XML to be deep-equal',
 				);
 			} catch (e) {
 				skippableTests.push(`${testCase},result was not equal`);

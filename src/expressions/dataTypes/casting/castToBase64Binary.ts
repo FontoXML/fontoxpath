@@ -18,7 +18,7 @@ function hexToString(hex: string) {
 declare let btoa: (s: string) => string;
 
 export default function castToBase64Binary(
-	instanceOf: (typeName: ValueType) => boolean
+	instanceOf: (typeName: ValueType) => boolean,
 ): (value: any) => CastResult {
 	if (instanceOf(ValueType.XSHEXBINARY)) {
 		return (value) => ({
@@ -34,7 +34,7 @@ export default function castToBase64Binary(
 	}
 	return () => ({
 		error: new Error(
-			'XPTY0004: Casting not supported from given type to xs:base64Binary or any of its derived types.'
+			'XPTY0004: Casting not supported from given type to xs:base64Binary or any of its derived types.',
 		),
 		successful: false,
 	});

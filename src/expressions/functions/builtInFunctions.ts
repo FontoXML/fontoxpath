@@ -49,7 +49,7 @@ const builtInFunctions: BuiltinDeclarationType[] = [].concat(
 	builtInSequencesFunctions.declarations,
 	builtInStringFunctions.declarations,
 	builtInFontoxpathFunctions.declarations,
-	builtInFunctionsFunctions.declarations
+	builtInFunctionsFunctions.declarations,
 );
 
 export default builtInFunctions;

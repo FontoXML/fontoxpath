@@ -14,9 +14,9 @@ export const commentContents: Parser<string> = preceded(
 	peek(
 		not(or([tokens.COMMENT_START, tokens.COMMENT_END]), [
 			'comment contents cannot contain "(:" or ":)"',
-		])
+		]),
 	),
-	char
+	char,
 );
 
 function commentIndirect(input: string, offset: number) {
@@ -28,9 +28,9 @@ export const comment: Parser<string> = map(
 		tokens.COMMENT_START,
 		star(or([commentContents, commentIndirect])),
 		tokens.COMMENT_END,
-		true
+		true,
 	),
-	(x) => x.join('')
+	(x) => x.join(''),
 );
 
 export const whitespaceCharacter: Parser<string> = or([tokens.WHITESPACE, comment]);
@@ -39,10 +39,10 @@ export const explicitWhitespace: Parser<string> = map(plus(tokens.WHITESPACE), (
 
 export const whitespace: Parser<string> = cached(
 	map(star(whitespaceCharacter), (x) => x.join('')),
-	whitespaceCache
+	whitespaceCache,
 );
 
 export const whitespacePlus: Parser<string> = cached(
 	map(plus(whitespaceCharacter), (x) => x.join('')),
-	whitespacePlusCache
+	whitespacePlusCache,
 );

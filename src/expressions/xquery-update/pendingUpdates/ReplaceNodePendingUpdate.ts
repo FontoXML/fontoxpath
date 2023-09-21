@@ -5,7 +5,7 @@ import { IPendingUpdate } from '../IPendingUpdate';
 export class ReplaceNodePendingUpdate extends IPendingUpdate {
 	constructor(
 		readonly target: AttributeNodePointer | ChildNodePointer,
-		readonly replacement: (AttributeNodePointer | ChildNodePointer)[]
+		readonly replacement: (AttributeNodePointer | ChildNodePointer)[],
 	) {
 		super('replaceNode');
 	}
@@ -14,7 +14,7 @@ export class ReplaceNodePendingUpdate extends IPendingUpdate {
 			['type']: this.type,
 			['target']: realizeDom(this.target, executionParameters, false),
 			['replacement']: this.replacement.map((pointer) =>
-				realizeDom(pointer, executionParameters, true)
+				realizeDom(pointer, executionParameters, true),
 			),
 		};
 	}

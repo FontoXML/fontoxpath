@@ -38,7 +38,7 @@ class PIConstructor extends Expression {
 
 	constructor(
 		target: { targetExpr: Expression | null; targetValue: string | null },
-		dataExpr: Expression
+		dataExpr: Expression,
 	) {
 		const expressions = target.targetExpr ? [target.targetExpr].concat(dataExpr) : [dataExpr];
 		super(
@@ -49,7 +49,7 @@ class PIConstructor extends Expression {
 			{
 				canBeStaticallyEvaluated: false,
 				resultOrder: RESULT_ORDERINGS.UNSORTED,
-			}
+			},
 		);
 
 		this._target = target;
@@ -59,14 +59,14 @@ class PIConstructor extends Expression {
 	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
 		const dataSequence = this._dataExpr.evaluateMaybeStatically(
 			dynamicContext,
-			executionParameters
+			executionParameters,
 		);
 		return atomize(dataSequence, executionParameters).mapAll((items) => {
 			const data = items.map((item) => castToType(item, ValueType.XSSTRING).value).join(' ');
 
 			if (data.indexOf('?>') !== -1) {
 				throw new Error(
-					'XQDY0026: The contents of the data of a processing instruction may not include "?>"'
+					'XQDY0026: The contents of the data of a processing instruction may not include "?>"',
 				);
 			}
 
@@ -74,13 +74,16 @@ class PIConstructor extends Expression {
 				const target = this._target.targetValue;
 				assertValidTarget(target);
 				return sequenceFactory.singleton(
-					createPointerValue(createPIPointer(target, data), executionParameters.domFacade)
+					createPointerValue(
+						createPIPointer(target, data),
+						executionParameters.domFacade,
+					),
 				);
 			}
 
 			const targetSequence = this._target.targetExpr.evaluateMaybeStatically(
 				dynamicContext,
-				executionParameters
+				executionParameters,
 			);
 			const targetIterator = evaluateNCNameExpression(executionParameters, targetSequence);
 
@@ -96,8 +99,8 @@ class PIConstructor extends Expression {
 					return ready(
 						createPointerValue(
 							createPIPointer(target, data),
-							executionParameters.domFacade
-						)
+							executionParameters.domFacade,
+						),
 					);
 				},
 			});

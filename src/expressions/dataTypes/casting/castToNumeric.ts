@@ -10,7 +10,10 @@ const numericTypes = [
 
 export default function castToNumeric(
 	inputType: ValueType,
-	castToPrimitiveType: (inputType: ValueType, outputType: ValueType) => (value: any) => CastResult
+	castToPrimitiveType: (
+		inputType: ValueType,
+		outputType: ValueType,
+	) => (value: any) => CastResult,
 ): (value: any) => CastResult {
 	return (value) => {
 		for (const outputType of numericTypes) {
@@ -23,7 +26,7 @@ export default function castToNumeric(
 		return {
 			successful: false,
 			error: new Error(
-				`XPTY0004: Casting not supported from "${value}" given type to xs:numeric or any of its derived types.`
+				`XPTY0004: Casting not supported from "${value}" given type to xs:numeric or any of its derived types.`,
 			),
 		};
 	};

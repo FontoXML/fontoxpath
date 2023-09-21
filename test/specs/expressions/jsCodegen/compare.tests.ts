@@ -17,7 +17,7 @@ describe('compare tests', () => {
 
 		chai.assert.throws(
 			() => evaluateXPathWithJsCodegen(query, node, null, ReturnType.BOOLEAN),
-			'Unsupported compare type'
+			'Unsupported compare type',
 		);
 
 		chai.assert.equal(evaluateXPathToBoolean(query, node), true);

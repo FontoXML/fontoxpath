@@ -34,7 +34,7 @@ type ExpressionArguments = [
 		debug?: boolean;
 		returnType?: any;
 		language?: EvaluateXPath['XPATH_3_1_LANGUAGE'] | EvaluateXPath['XQUERY_3_1_LANGUAGE'];
-	}
+	},
 ];
 
 const parser = {
@@ -75,7 +75,7 @@ function parseQuery(query: string) {
 	return parseScript(
 		query,
 		{ language: evaluateXPath.XQUERY_3_1_LANGUAGE, debug: false },
-		new Document()
+		new Document(),
 	);
 }
 
@@ -93,7 +93,7 @@ async function assertError(
 	expectedError,
 	args: ExpressionArguments,
 	isUpdating,
-	shouldPreparseTheQuery?: boolean
+	shouldPreparseTheQuery?: boolean,
 ) {
 	let hasThrown = false;
 	try {
@@ -154,7 +154,7 @@ function assertFragment(actualNodes, expectedString) {
 		.forEach((node) => {
 			if (node.nodeType === node.DOCUMENT_NODE) {
 				node.childNodes.forEach((childNode) =>
-					actual.documentElement.appendChild(childNode.cloneNode(true))
+					actual.documentElement.appendChild(childNode.cloneNode(true)),
 				);
 			} else {
 				actual.documentElement.appendChild(node);
@@ -171,7 +171,7 @@ async function runAssertions(
 	outputFiles,
 	args: ExpressionArguments,
 	isUpdating,
-	shouldPreparseTheQuery?: boolean
+	shouldPreparseTheQuery?: boolean,
 ) {
 	const failed = [];
 	const catchAssertion = (assertion) => {
@@ -207,7 +207,7 @@ async function runAssertions(
 				{
 					...newArgs[4],
 					returnType,
-				}
+				},
 			);
 			xdmValue = it.xdmValue;
 			if (it.pendingUpdateList) {
@@ -312,7 +312,7 @@ async function runTestCase(testName: string, testCase: Node, shouldPreparseTheQu
 		null,
 		{
 			language: evaluateXPath.XQUERY_3_1_LANGUAGE,
-		}
+		},
 	);
 
 	const loadedInputFiles = {};
@@ -326,7 +326,7 @@ async function runTestCase(testName: string, testCase: Node, shouldPreparseTheQu
 			const xmlDoc =
 				loadedInputFiles[inputFile.file] ||
 				(loadedInputFiles[inputFile.file] = parser.parseFromString(
-					getFile(path.join('TestSources', inputFile.file))
+					getFile(path.join('TestSources', inputFile.file)),
 				));
 			variables[inputFile.variable] = xmlDoc;
 		});
@@ -343,7 +343,7 @@ async function runTestCase(testName: string, testCase: Node, shouldPreparseTheQu
 					outputFiles,
 					args,
 					isUpdating,
-					shouldPreparseTheQuery
+					shouldPreparseTheQuery,
 				);
 			} else if (isUpdating) {
 				const arg2 = shouldPreparseTheQuery
@@ -353,7 +353,7 @@ async function runTestCase(testName: string, testCase: Node, shouldPreparseTheQu
 				executePul(it2.pendingUpdateList, arg2);
 			} else {
 				throw new Error(
-					'A non-updating expression without an expected value is not supported in the test framework.'
+					'A non-updating expression without an expected value is not supported in the test framework.',
 				);
 			}
 		} catch (e) {
@@ -377,7 +377,7 @@ function buildTestCases(testGroup) {
 			case 'test-group': {
 				const groupName = evaluateXPathToString(
 					'(@name, string(GroupInfo/title), string(GroupInfo/description))[. != ""][1]',
-					test
+					test,
 				);
 				describe(groupName, () => buildTestCases(test));
 				break;

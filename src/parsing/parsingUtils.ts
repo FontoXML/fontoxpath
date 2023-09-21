@@ -48,7 +48,7 @@ function assertValidCodePoint(codePoint: number) {
 			codePoint +
 			' (' +
 			codePoint.toString(16) +
-			') does not reference a valid codePoint.'
+			') does not reference a valid codePoint.',
 	);
 }
 
@@ -85,7 +85,7 @@ export function parseCharacterReferences(input: string): string {
 export function accumulateDirContents(
 	parts: (IAST | string)[],
 	expressionsOnly: boolean,
-	normalizeWhitespace: boolean
+	normalizeWhitespace: boolean,
 ) {
 	if (!parts.length) {
 		return [];
@@ -151,7 +151,7 @@ export function assertEqualQNames(a: QNameAST, b: QNameAST) {
 				nameA +
 				'" does not match "' +
 				nameB +
-				'"'
+				'"',
 		);
 	}
 }

@@ -6,7 +6,7 @@ function timeXPath(xpath, document) {
 	const then = Date.now();
 	chai.assert(
 		evaluateXPathToBoolean(xpath, document),
-		`The passed XPath ${xpath} should resolve to true`
+		`The passed XPath ${xpath} should resolve to true`,
 	);
 	const now = Date.now();
 	return now - then;
@@ -18,7 +18,7 @@ function fillDocument(document, element, depth) {
 		return element;
 	}
 	const prototypeElement = element.appendChild(
-		fillDocument(document, document.createElement('ele'), depth - 1)
+		fillDocument(document, document.createElement('ele'), depth - 1),
 	);
 
 	for (let i = 1, l = 10; i < l; ++i) {
@@ -40,7 +40,7 @@ function runTests(document) {
 		chai.assert.isAtMost(
 			timeXPath('(/descendant::element()["4" = @depth]) => head() => count() = 1', document),
 			fullTraversalCost * 0.5,
-			'Revaluating a filtered xpath must not cost significantly more then an unfiltered one'
+			'Revaluating a filtered xpath must not cost significantly more then an unfiltered one',
 		);
 	});
 
@@ -51,9 +51,9 @@ function runTests(document) {
 		chai.assert.isAtMost(
 			timeXPath(
 				'let $c := (/descendant::*) => count() return $c + $c + $c + $c + $c + $c',
-				document
+				document,
 			),
-			timeWithoutExtraSteps * 3
+			timeWithoutExtraSteps * 3,
 		);
 	});
 
@@ -84,13 +84,13 @@ describe('measuring performance', () => {
 						null,
 						{
 							shouldRecurse: !shouldRecurse,
-						}
+						},
 					);
 					now++;
 					return toReturn;
 				}
 				return shouldRecurse;
-			}
+			},
 		);
 	});
 	beforeEach(() => {
@@ -193,7 +193,7 @@ describe('measuring performance', () => {
 		chai.assert.isFalse(
 			evaluateXPathToBoolean('perftest:syncsleep($shouldRecurse)', null, null, {
 				shouldRecurse: true,
-			})
+			}),
 		);
 		profiler.stopProfiling();
 		const summ = profiler.getPerformanceSummary();

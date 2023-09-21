@@ -21,7 +21,7 @@ export default function executePendingUpdateList(
 	pendingUpdateList: object[],
 	domFacade?: IDomFacade,
 	nodesFactory?: INodesFactory,
-	documentWriter?: IDocumentWriter
+	documentWriter?: IDocumentWriter,
 ): void {
 	const newDomFacade = new DomFacade(domFacade ? domFacade : new ExternalDomFacade());
 

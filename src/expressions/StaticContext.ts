@@ -56,7 +56,7 @@ export default class StaticContext implements IContext {
 	public registeredVariableDeclarationByHashKey: {
 		[hash: string]: (
 			dynamicContext: DynamicContext,
-			executionParameters: ExecutionParameters
+			executionParameters: ExecutionParameters,
 		) => ISequence;
 	};
 	private _registeredFunctionsByHash: Record<
@@ -96,19 +96,19 @@ export default class StaticContext implements IContext {
 				Object.assign(
 					Object.create(null),
 					contextAtThisPoint._registeredNamespaceURIByPrefix[0],
-					this._registeredNamespaceURIByPrefix[i]
+					this._registeredNamespaceURIByPrefix[i],
 				),
 			];
 			contextAtThisPoint.registeredVariableBindingByHashKey = [
 				Object.assign(
 					Object.create(null),
 					contextAtThisPoint.registeredVariableBindingByHashKey[0],
-					this.registeredVariableBindingByHashKey[i]
+					this.registeredVariableBindingByHashKey[i],
 				),
 			];
 			contextAtThisPoint._registeredFunctionsByHash = Object.assign(
 				Object.create(null),
-				this._registeredFunctionsByHash
+				this._registeredFunctionsByHash,
 			);
 			contextAtThisPoint.registeredVariableDeclarationByHashKey =
 				this.registeredVariableDeclarationByHashKey;
@@ -124,7 +124,7 @@ export default class StaticContext implements IContext {
 	}
 
 	public getVariableDeclaration(
-		hashKey: string
+		hashKey: string,
 	): (dynamicContext: DynamicContext, executionParameters: ExecutionParameters) => ISequence {
 		return this.registeredVariableDeclarationByHashKey[hashKey];
 	}
@@ -141,7 +141,7 @@ export default class StaticContext implements IContext {
 		namespaceURI: string,
 		localName: string,
 		arity: number,
-		skipExternal: boolean = false
+		skipExternal: boolean = false,
 	): FunctionProperties | null {
 		const hashKey = createHashKey(namespaceURI, localName) + '~' + arity;
 		const foundFunction = this._registeredFunctionsByHash[hashKey];
@@ -163,7 +163,7 @@ export default class StaticContext implements IContext {
 		const hash = createHashKey(namespaceURI, localName);
 		const varNameInCurrentScope = lookupInOverrides(
 			this.registeredVariableBindingByHashKey,
-			hash
+			hash,
 		);
 		if (varNameInCurrentScope) {
 			return varNameInCurrentScope;
@@ -186,7 +186,7 @@ export default class StaticContext implements IContext {
 		namespaceURI: string,
 		localName: string,
 		arity: number,
-		functionDefinition: FunctionDefinition | UpdatingFunctionDefinition
+		functionDefinition: FunctionDefinition | UpdatingFunctionDefinition,
 	) {
 		const hashKey = createHashKey(namespaceURI, localName) + '~' + arity;
 		const duplicateFunction = this._registeredFunctionsByHash[hashKey];
@@ -219,8 +219,8 @@ export default class StaticContext implements IContext {
 		localName: string,
 		createValue: (
 			dynamicContext: DynamicContext,
-			executionParameters: ExecutionParameters
-		) => ISequence
+			executionParameters: ExecutionParameters,
+		) => ISequence,
 	) {
 		const hash = `${createHashKey(namespaceURI || '', localName)}[${this._scopeCount}]`;
 		this.registeredVariableDeclarationByHashKey[hash] = createValue;
@@ -234,7 +234,7 @@ export default class StaticContext implements IContext {
 
 	public resolveFunctionName(
 		lexicalQName: LexicalQualifiedName,
-		arity: number
+		arity: number,
 	): ResolvedQualifiedName {
 		const { prefix, localName } = lexicalQName;
 		// First consider local definitions

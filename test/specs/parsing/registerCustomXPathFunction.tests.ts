@@ -34,7 +34,7 @@ describe('registerCustomXPathFunction', () => {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
 				return stringValue === null || stringValue === 'test';
-			}
+			},
 		);
 
 		registerCustomXPathFunction(
@@ -46,7 +46,7 @@ describe('registerCustomXPathFunction', () => {
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
 
 				return stringValue === 'test' && booleanValue;
-			}
+			},
 		);
 
 		registerCustomXPathFunction(
@@ -58,7 +58,7 @@ describe('registerCustomXPathFunction', () => {
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
 
 				return input[0] || null;
-			}
+			},
 		);
 
 		registerCustomXPathFunction(
@@ -72,7 +72,7 @@ describe('registerCustomXPathFunction', () => {
 				return stringArray.map((stringValue) => {
 					return stringValue + '-test';
 				});
-			}
+			},
 		);
 
 		registerCustomXPathFunction(
@@ -90,7 +90,7 @@ describe('registerCustomXPathFunction', () => {
 				} else {
 					return stringValueFactory('test', dynamicContext.domFacade);
 				}
-			}
+			},
 		);
 
 		registerCustomXPathFunction(
@@ -102,7 +102,7 @@ describe('registerCustomXPathFunction', () => {
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
 
 				return new Date(Date.UTC(2018, 5, 22, 10, 25, 30));
-			}
+			},
 		);
 
 		registerCustomXPathFunction(
@@ -114,7 +114,7 @@ describe('registerCustomXPathFunction', () => {
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
 
 				return new Date(Date.UTC(2018, 5, 22, 10, 25, 30));
-			}
+			},
 		);
 
 		registerCustomXPathFunction(
@@ -126,7 +126,7 @@ describe('registerCustomXPathFunction', () => {
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
 
 				return new Date(Date.UTC(2018, 5, 22, 10, 25, 30));
-			}
+			},
 		);
 
 		registerCustomXPathFunction(
@@ -138,7 +138,7 @@ describe('registerCustomXPathFunction', () => {
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
 
 				return new Date(Date.UTC(2018, 5, 22, 10, 25, 30));
-			}
+			},
 		);
 
 		registerCustomXPathFunction(
@@ -150,7 +150,7 @@ describe('registerCustomXPathFunction', () => {
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
 
 				return new Date(Date.UTC(2018, 5, 22, 10, 25, 30));
-			}
+			},
 		);
 
 		registerCustomXPathFunction(
@@ -162,7 +162,7 @@ describe('registerCustomXPathFunction', () => {
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
 
 				return new Date(Date.UTC(2018, 5, 22, 10, 25, 30));
-			}
+			},
 		);
 
 		registerCustomXPathFunction(
@@ -174,7 +174,7 @@ describe('registerCustomXPathFunction', () => {
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
 
 				return new Date(Date.UTC(2018, 5, 22, 10, 25, 30));
-			}
+			},
 		);
 
 		registerCustomXPathFunction(
@@ -186,7 +186,7 @@ describe('registerCustomXPathFunction', () => {
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
 
 				return new Date(Date.UTC(2018, 5, 22, 10, 25, 30));
-			}
+			},
 		);
 	});
 
@@ -194,17 +194,17 @@ describe('registerCustomXPathFunction', () => {
 		chai.assert.isTrue(
 			evaluateXPathToBoolean('test:custom-function1("test")', documentNode, null, null, {
 				namespaceResolver: identityNamespaceResolver,
-			})
+			}),
 		);
 		chai.assert.isFalse(
 			evaluateXPathToBoolean('test:custom-function1("bla")', documentNode, null, null, {
 				namespaceResolver: identityNamespaceResolver,
-			})
+			}),
 		);
 		chai.assert.isTrue(
 			evaluateXPathToBoolean('test:custom-function1(())', documentNode, null, null, {
 				namespaceResolver: identityNamespaceResolver,
-			})
+			}),
 		);
 	});
 
@@ -215,8 +215,8 @@ describe('registerCustomXPathFunction', () => {
 				documentNode,
 				null,
 				null,
-				{ namespaceResolver: identityNamespaceResolver }
-			)
+				{ namespaceResolver: identityNamespaceResolver },
+			),
 		);
 		chai.assert.isFalse(
 			evaluateXPathToBoolean(
@@ -224,8 +224,8 @@ describe('registerCustomXPathFunction', () => {
 				documentNode,
 				null,
 				null,
-				{ namespaceResolver: identityNamespaceResolver }
-			)
+				{ namespaceResolver: identityNamespaceResolver },
+			),
 		);
 	});
 
@@ -233,12 +233,12 @@ describe('registerCustomXPathFunction', () => {
 		chai.assert.isTrue(
 			evaluateXPathToString('test:custom-function3("test")', documentNode, null, null, {
 				namespaceResolver: identityNamespaceResolver,
-			}) === 'test'
+			}) === 'test',
 		);
 		chai.assert.isTrue(
 			evaluateXPathToString('test:custom-function3("test")', documentNode, null, null, {
 				namespaceResolver: identityNamespaceResolver,
-			}) === 'test'
+			}) === 'test',
 		);
 	});
 
@@ -254,7 +254,7 @@ describe('registerCustomXPathFunction', () => {
 				chai.assert.equal(dynamicContext.currentContext.nodeId, '123456789');
 
 				return true;
-			}
+			},
 		);
 		const options = {
 			currentContext: {
@@ -263,7 +263,7 @@ describe('registerCustomXPathFunction', () => {
 		};
 		chai.assert.isTrue(
 			evaluateXPathToBoolean(`Q{${namespaceURI}}test()`, null, null, null, options),
-			'Attempt to access the function using the namespace uri'
+			'Attempt to access the function using the namespace uri',
 		);
 	});
 
@@ -274,9 +274,9 @@ describe('registerCustomXPathFunction', () => {
 					'custom-function-in-no-ns',
 					[],
 					'xs:boolean',
-					() => true
+					() => true,
 				),
-			'Do not register custom functions in the default function namespace'
+			'Do not register custom functions in the default function namespace',
 		);
 	});
 
@@ -286,7 +286,7 @@ describe('registerCustomXPathFunction', () => {
 				evaluateXPathToString('test:custom-function3(//@*)', documentNode, null, null, {
 					namespaceResolver: identityNamespaceResolver,
 				}),
-			'Cannot pass attribute nodes'
+			'Cannot pass attribute nodes',
 		);
 	});
 
@@ -297,22 +297,22 @@ describe('registerCustomXPathFunction', () => {
 				documentNode,
 				null,
 				null,
-				{ namespaceResolver: identityNamespaceResolver }
+				{ namespaceResolver: identityNamespaceResolver },
 			),
-			['abc-test', '123-test', 'XYZ-test']
+			['abc-test', '123-test', 'XYZ-test'],
 		);
 		// Returns ['abc-test'], but does get atomized by the evaluateXPath function
 		chai.assert.deepEqual(
 			evaluateXPathToString('test:custom-function4(("abc"))', documentNode, null, null, {
 				namespaceResolver: identityNamespaceResolver,
 			}),
-			'abc-test'
+			'abc-test',
 		);
 		chai.assert.deepEqual(
 			evaluateXPathToStrings('test:custom-function4(())', documentNode, null, null, {
 				namespaceResolver: identityNamespaceResolver,
 			}),
-			[]
+			[],
 		);
 	});
 
@@ -321,7 +321,7 @@ describe('registerCustomXPathFunction', () => {
 			evaluateXPathToString('test:custom-function5("returnNull")', documentNode, null, null, {
 				namespaceResolver: identityNamespaceResolver,
 			}),
-			''
+			'',
 		);
 	});
 
@@ -330,7 +330,7 @@ describe('registerCustomXPathFunction', () => {
 			evaluateXPathToString('test:custom-function5("abc")', documentNode, null, null, {
 				namespaceResolver: identityNamespaceResolver,
 			}),
-			'test'
+			'test',
 		);
 	});
 
@@ -345,9 +345,9 @@ describe('registerCustomXPathFunction', () => {
 				},
 				{
 					namespaceResolver: identityNamespaceResolver,
-				}
+				},
 			),
-			'nullIsPassed'
+			'nullIsPassed',
 		);
 	});
 
@@ -362,9 +362,9 @@ describe('registerCustomXPathFunction', () => {
 				},
 				{
 					namespaceResolver: identityNamespaceResolver,
-				}
+				},
 			),
-			''
+			'',
 		);
 	});
 
@@ -373,7 +373,7 @@ describe('registerCustomXPathFunction', () => {
 			evaluateXPathToString('test:custom-date-function()', documentNode, null, null, {
 				namespaceResolver: identityNamespaceResolver,
 			}),
-			'2018-06-22Z'
+			'2018-06-22Z',
 		);
 	});
 
@@ -382,7 +382,7 @@ describe('registerCustomXPathFunction', () => {
 			evaluateXPathToString('test:custom-time-function()', documentNode, null, null, {
 				namespaceResolver: identityNamespaceResolver,
 			}),
-			'10:25:30Z'
+			'10:25:30Z',
 		);
 	});
 
@@ -391,7 +391,7 @@ describe('registerCustomXPathFunction', () => {
 			evaluateXPathToString('test:custom-dateTime-function()', documentNode, null, null, {
 				namespaceResolver: identityNamespaceResolver,
 			}),
-			'2018-06-22T10:25:30Z'
+			'2018-06-22T10:25:30Z',
 		);
 	});
 
@@ -400,7 +400,7 @@ describe('registerCustomXPathFunction', () => {
 			evaluateXPathToString('test:custom-gYearMonth-function()', documentNode, null, null, {
 				namespaceResolver: identityNamespaceResolver,
 			}),
-			'2018-06Z'
+			'2018-06Z',
 		);
 	});
 
@@ -409,7 +409,7 @@ describe('registerCustomXPathFunction', () => {
 			evaluateXPathToString('test:custom-gYear-function()', documentNode, null, null, {
 				namespaceResolver: identityNamespaceResolver,
 			}),
-			'2018Z'
+			'2018Z',
 		);
 	});
 
@@ -418,7 +418,7 @@ describe('registerCustomXPathFunction', () => {
 			evaluateXPathToString('test:custom-gMonthDay-function()', documentNode, null, null, {
 				namespaceResolver: identityNamespaceResolver,
 			}),
-			'--06-22Z'
+			'--06-22Z',
 		);
 	});
 
@@ -427,7 +427,7 @@ describe('registerCustomXPathFunction', () => {
 			evaluateXPathToString('test:custom-gMonth-function()', documentNode, null, null, {
 				namespaceResolver: identityNamespaceResolver,
 			}),
-			'--06Z'
+			'--06Z',
 		);
 	});
 
@@ -436,7 +436,7 @@ describe('registerCustomXPathFunction', () => {
 			evaluateXPathToString('test:custom-gDay-function()', documentNode, null, null, {
 				namespaceResolver: identityNamespaceResolver,
 			}),
-			'---22Z'
+			'---22Z',
 		);
 	});
 
@@ -449,7 +449,7 @@ describe('registerCustomXPathFunction', () => {
 			(dynamicContext) => {
 				chai.assert.equal(outerDomFacade, dynamicContext.domFacade);
 				return true;
-			}
+			},
 		);
 		chai.assert.isTrue(
 			evaluateXPathToBoolean(
@@ -457,8 +457,8 @@ describe('registerCustomXPathFunction', () => {
 				documentNode,
 				outerDomFacade,
 				null,
-				{ namespaceResolver: identityNamespaceResolver }
-			)
+				{ namespaceResolver: identityNamespaceResolver },
+			),
 		);
 	});
 
@@ -469,9 +469,9 @@ describe('registerCustomXPathFunction', () => {
 					{ namespaceURI: '', localName: 'empty-uri' },
 					[],
 					'xs:boolean',
-					(dynamicContext) => true
+					(dynamicContext) => true,
 				),
-			'XQST0060'
+			'XQST0060',
 		);
 		chai.assert.throws(
 			() =>
@@ -479,9 +479,9 @@ describe('registerCustomXPathFunction', () => {
 					{ namespaceURI: null, localName: 'empty-uri' },
 					[],
 					'xs:boolean',
-					(dynamicContext) => true
+					(dynamicContext) => true,
 				),
-			'XQST0060'
+			'XQST0060',
 		);
 	});
 
@@ -491,12 +491,12 @@ describe('registerCustomXPathFunction', () => {
 			documentNode,
 			undefined,
 			{},
-			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE },
 		);
 		const blueprint = {
 			getAttribute(element, attrName) {
 				const attr = element.attributes.find(
-					(attribute) => attribute.localName === attrName
+					(attribute) => attribute.localName === attrName,
 				);
 				return attr.value;
 			},
@@ -511,11 +511,11 @@ describe('registerCustomXPathFunction', () => {
 			(dynamicContext, node) => {
 				chai.assert.equal(
 					dynamicContext.domFacade.getAttribute(node, 'myAttribute'),
-					'myValue'
+					'myValue',
 				);
 				chai.assert.equal(myNode, node);
 				return node;
-			}
+			},
 		);
 
 		/*
@@ -530,7 +530,7 @@ describe('registerCustomXPathFunction', () => {
 			myNode,
 			blueprint,
 			null,
-			{ namespaceResolver: identityNamespaceResolver }
+			{ namespaceResolver: identityNamespaceResolver },
 		);
 		chai.assert.equal(myNodeAfterFunction.outerHTML, myNode.outerHTML);
 	});
@@ -544,10 +544,10 @@ describe('registerCustomXPathFunction', () => {
 				(dynamicContext, date) => {
 					chai.assert.isTrue(
 						date instanceof Date,
-						'Parameter is not of type javascript date'
+						'Parameter is not of type javascript date',
 					);
 					return date;
-				}
+				},
 			);
 
 			registerCustomXPathFunction(
@@ -557,10 +557,10 @@ describe('registerCustomXPathFunction', () => {
 				(dynamicContext, date) => {
 					chai.assert.isTrue(
 						date === null || date instanceof Date,
-						'Parameter is not null or of type javascript date'
+						'Parameter is not null or of type javascript date',
 					);
 					return date;
-				}
+				},
 			);
 
 			registerCustomXPathFunction(
@@ -573,11 +573,11 @@ describe('registerCustomXPathFunction', () => {
 					for (const date of dates) {
 						chai.assert.isTrue(
 							date instanceof Date,
-							'Parameter is not of type javascript date'
+							'Parameter is not of type javascript date',
 						);
 					}
 					return dates;
-				}
+				},
 			);
 
 			registerCustomXPathFunction(
@@ -590,11 +590,11 @@ describe('registerCustomXPathFunction', () => {
 					for (const date of dates) {
 						chai.assert.isTrue(
 							date instanceof Date,
-							'Parameter is not of type javascript date'
+							'Parameter is not of type javascript date',
 						);
 					}
 					return dates;
-				}
+				},
 			);
 
 			registerCustomXPathFunction(
@@ -604,10 +604,10 @@ describe('registerCustomXPathFunction', () => {
 				(dynamicContext, time) => {
 					chai.assert.isTrue(
 						time instanceof Date,
-						'Parameter is not of type javascript date'
+						'Parameter is not of type javascript date',
 					);
 					return time;
-				}
+				},
 			);
 
 			registerCustomXPathFunction(
@@ -617,10 +617,10 @@ describe('registerCustomXPathFunction', () => {
 				(dynamicContext, dateTime) => {
 					chai.assert.isTrue(
 						dateTime instanceof Date,
-						'Parameter is not of type javascript date'
+						'Parameter is not of type javascript date',
 					);
 					return dateTime;
-				}
+				},
 			);
 
 			registerCustomXPathFunction(
@@ -630,10 +630,10 @@ describe('registerCustomXPathFunction', () => {
 				(dynamicContext, gYearMonth) => {
 					chai.assert.isTrue(
 						gYearMonth instanceof Date,
-						'Parameter is not of type javascript date'
+						'Parameter is not of type javascript date',
 					);
 					return gYearMonth;
-				}
+				},
 			);
 
 			registerCustomXPathFunction(
@@ -643,10 +643,10 @@ describe('registerCustomXPathFunction', () => {
 				(dynamicContext, gYear) => {
 					chai.assert.isTrue(
 						gYear instanceof Date,
-						'Parameter is not of type javascript date'
+						'Parameter is not of type javascript date',
 					);
 					return gYear;
-				}
+				},
 			);
 
 			registerCustomXPathFunction(
@@ -656,10 +656,10 @@ describe('registerCustomXPathFunction', () => {
 				(dynamicContext, gMonthDay) => {
 					chai.assert.isTrue(
 						gMonthDay instanceof Date,
-						'Parameter is not of type javascript date'
+						'Parameter is not of type javascript date',
 					);
 					return gMonthDay;
-				}
+				},
 			);
 
 			registerCustomXPathFunction(
@@ -669,10 +669,10 @@ describe('registerCustomXPathFunction', () => {
 				(dynamicContext, gMonth) => {
 					chai.assert.isTrue(
 						gMonth instanceof Date,
-						'Parameter is not of type javascript date'
+						'Parameter is not of type javascript date',
 					);
 					return gMonth;
-				}
+				},
 			);
 
 			registerCustomXPathFunction(
@@ -682,10 +682,10 @@ describe('registerCustomXPathFunction', () => {
 				(dynamicContext, gDay) => {
 					chai.assert.isTrue(
 						gDay instanceof Date,
-						'Parameter is not of type javascript date'
+						'Parameter is not of type javascript date',
 					);
 					return gDay;
-				}
+				},
 			);
 		});
 		it('Passes xs:date as a javascript date when the param cardinality is 1', () => {
@@ -695,7 +695,7 @@ describe('registerCustomXPathFunction', () => {
 				null,
 				null,
 				null,
-				{ namespaceResolver: identityNamespaceResolver }
+				{ namespaceResolver: identityNamespaceResolver },
 			);
 		});
 		it('Passes xs:date as a javascript date when the param cardinality is 0-1', () => {
@@ -705,7 +705,7 @@ describe('registerCustomXPathFunction', () => {
 				null,
 				null,
 				null,
-				{ namespaceResolver: identityNamespaceResolver }
+				{ namespaceResolver: identityNamespaceResolver },
 			);
 		});
 		it('Passes an array of xs:date as a javascript array of date when the param cardinality is 0 to many', () => {
@@ -715,7 +715,7 @@ describe('registerCustomXPathFunction', () => {
 				null,
 				null,
 				null,
-				{ namespaceResolver: identityNamespaceResolver }
+				{ namespaceResolver: identityNamespaceResolver },
 			);
 		});
 		it('Passes an array of xs:date as a javascript array of date when the param cardinality is 1 to many', () => {
@@ -725,7 +725,7 @@ describe('registerCustomXPathFunction', () => {
 				null,
 				null,
 				null,
-				{ namespaceResolver: identityNamespaceResolver }
+				{ namespaceResolver: identityNamespaceResolver },
 			);
 		});
 		it('Passes xs:time as a javascript date', () => {
@@ -735,7 +735,7 @@ describe('registerCustomXPathFunction', () => {
 				null,
 				null,
 				null,
-				{ namespaceResolver: identityNamespaceResolver }
+				{ namespaceResolver: identityNamespaceResolver },
 			);
 		});
 		it('Passes xs:dateTime as a javascript date', () => {
@@ -745,7 +745,7 @@ describe('registerCustomXPathFunction', () => {
 				null,
 				null,
 				null,
-				{ namespaceResolver: identityNamespaceResolver }
+				{ namespaceResolver: identityNamespaceResolver },
 			);
 		});
 		it('Passes xs:gYearMonth as a javascript date', () => {
@@ -755,7 +755,7 @@ describe('registerCustomXPathFunction', () => {
 				null,
 				null,
 				null,
-				{ namespaceResolver: identityNamespaceResolver }
+				{ namespaceResolver: identityNamespaceResolver },
 			);
 		});
 		it('Passes xs:gYear as a javascript date', () => {
@@ -767,7 +767,7 @@ describe('registerCustomXPathFunction', () => {
 				null,
 				{
 					namespaceResolver: identityNamespaceResolver,
-				}
+				},
 			);
 		});
 		it('Passes xs:gMonthDay as a javascript date', () => {
@@ -777,7 +777,7 @@ describe('registerCustomXPathFunction', () => {
 				null,
 				null,
 				null,
-				{ namespaceResolver: identityNamespaceResolver }
+				{ namespaceResolver: identityNamespaceResolver },
 			);
 		});
 		it('Passes xs:gMonth as a javascript date', () => {
@@ -787,7 +787,7 @@ describe('registerCustomXPathFunction', () => {
 				null,
 				null,
 				null,
-				{ namespaceResolver: identityNamespaceResolver }
+				{ namespaceResolver: identityNamespaceResolver },
 			);
 		});
 		it('Passes xs:gDay as a javascript date', () => {
@@ -799,7 +799,7 @@ describe('registerCustomXPathFunction', () => {
 				null,
 				{
 					namespaceResolver: identityNamespaceResolver,
-				}
+				},
 			);
 		});
 
@@ -810,9 +810,9 @@ describe('registerCustomXPathFunction', () => {
 						'a-random-prefix-to-prevent-collisions:func',
 						[],
 						'this-type::does-not-exist',
-						() => {}
+						() => {},
 					),
-				'XPST0081: Invalid prefix for input this-type::does-not-exist'
+				'XPST0081: Invalid prefix for input this-type::does-not-exist',
 			);
 		});
 	});

@@ -45,7 +45,7 @@ export default function annotateAst(ast: IAST, context: AnnotationContext) {
 export function countQueryBodyAnnotations(
 	ast: IAST,
 	total: number = 0,
-	annotated: number = 0
+	annotated: number = 0,
 ): [number, number] {
 	for (let i = 1; i < ast.length; i++) {
 		if (Array.isArray(ast[i]))
@@ -271,13 +271,13 @@ const annotationFunctions = new Map<
 				astHelper.getFirstChild(ast, 'thenClause') ||
 				astHelper.getFirstChild(
 					astHelper.getChildren(ast, 'x:stackTrace')[1],
-					'thenClause'
+					'thenClause',
 				);
 			const elseClausePart =
 				astHelper.getFirstChild(ast, 'elseClause') ||
 				astHelper.getFirstChild(
 					astHelper.getChildren(ast, 'x:stackTrace')[2],
-					'elseClause'
+					'elseClause',
 				);
 			annotate(astHelper.getFirstChild(ifClausePart, '*'), context);
 			const thenClause = annotate(astHelper.getFirstChild(thenClausePart, '*'), context);
@@ -368,7 +368,7 @@ const annotationFunctions = new Map<
 		(ast: IAST, context: AnnotationContext): SequenceType => {
 			const functionItem: SequenceType = annotate(
 				astHelper.followPath(ast, ['functionItem', '*']),
-				context
+				context,
 			);
 			const argNodes = astHelper.getFirstChild(ast, 'arguments');
 			const args: SequenceType = argNodes ? annotate(argNodes, context) : undefined;
@@ -449,20 +449,20 @@ const annotationFunctions = new Map<
 		(ast: IAST, context: AnnotationContext): SequenceType => {
 			const argumentType = annotate(
 				astHelper.getFirstChild(ast, 'argExpr')[1] as IAST,
-				context
+				context,
 			);
 			const caseClausesReturns = astHelper
 				.getChildren(ast, 'typeswitchExprCaseClause')
 				.map((a) => annotate(astHelper.followPath(a, ['resultExpr'])[1] as IAST, context));
 			const defaultCaseReturn = annotate(
 				astHelper.followPath(ast, ['typeswitchExprDefaultClause', 'resultExpr'])[1] as IAST,
-				context
+				context,
 			);
 			return annotateTypeSwitchOperator(
 				ast,
 				argumentType,
 				caseClausesReturns,
-				defaultCaseReturn
+				defaultCaseReturn,
 			);
 		},
 	],

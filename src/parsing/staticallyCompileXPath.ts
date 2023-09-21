@@ -38,7 +38,7 @@ function createExpressionFromSource(
 	variables: { [varName: string]: any },
 	moduleImports: { [namespaceURI: string]: string },
 	defaultFunctionNamespaceURI: string,
-	functionNameResolver: FunctionNameResolver
+	functionNameResolver: FunctionNameResolver,
 ):
 	| { ast: IAST; state: CACHE_STATE.PARSED }
 	| { expression: Expression; state: CACHE_STATE.COMPILED | CACHE_STATE.STATIC_ANALYZED } {
@@ -54,7 +54,7 @@ function createExpressionFromSource(
 				moduleImports,
 				compilationOptions.debug,
 				defaultFunctionNamespaceURI,
-				functionNameResolver
+				functionNameResolver,
 		  );
 
 	if (fromCache !== null) {
@@ -87,7 +87,7 @@ function buildExpressionFromAst(
 		disableCache: boolean | undefined;
 	},
 	rootStaticContext: StaticContext,
-	source: EvaluableExpression
+	source: EvaluableExpression,
 ) {
 	const mainModule = astHelper.getFirstChild(ast, 'mainModule');
 	if (!mainModule) {
@@ -100,7 +100,7 @@ function buildExpressionFromAst(
 	if (prolog) {
 		if (!compilationOptions.allowXQuery) {
 			throw new Error(
-				'XPST0003: Use of XQuery functionality is not allowed in XPath context'
+				'XPST0003: Use of XQuery functionality is not allowed in XPath context',
 			);
 		}
 
@@ -133,13 +133,13 @@ export default function staticallyCompileXPath(
 	variables: { [varName: string]: any },
 	moduleImports: { [namespaceURI: string]: string },
 	defaultFunctionNamespaceURI: string,
-	functionNameResolver: FunctionNameResolver
+	functionNameResolver: FunctionNameResolver,
 ): { expression: Expression; staticContext: StaticContext } {
 	const executionSpecificStaticContext = new ExecutionSpecificStaticContext(
 		namespaceResolver,
 		variables,
 		defaultFunctionNamespaceURI,
-		functionNameResolver
+		functionNameResolver,
 	);
 	const rootStaticContext = new StaticContext(executionSpecificStaticContext);
 
@@ -166,7 +166,7 @@ export default function staticallyCompileXPath(
 		variables,
 		moduleImports,
 		defaultFunctionNamespaceURI,
-		functionNameResolver
+		functionNameResolver,
 	);
 	switch (result.state) {
 		case CACHE_STATE.STATIC_ANALYZED:
@@ -186,7 +186,7 @@ export default function staticallyCompileXPath(
 				moduleImports,
 				result.expression,
 				compilationOptions.debug,
-				defaultFunctionNamespaceURI
+				defaultFunctionNamespaceURI,
 			);
 
 			return {
@@ -199,7 +199,7 @@ export default function staticallyCompileXPath(
 				result.ast,
 				compilationOptions,
 				rootStaticContext,
-				selector
+				selector,
 			);
 			expressionFromAst.performStaticEvaluation(rootStaticContext);
 
@@ -212,7 +212,7 @@ export default function staticallyCompileXPath(
 					moduleImports,
 					expressionFromAst,
 					compilationOptions.debug,
-					defaultFunctionNamespaceURI
+					defaultFunctionNamespaceURI,
 				);
 			}
 

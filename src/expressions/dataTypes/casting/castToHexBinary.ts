@@ -18,7 +18,7 @@ function stringToHex(s: string) {
 declare let atob: (s: string) => string;
 
 export default function castToHexBinary(
-	instanceOf: (typeName: ValueType) => boolean
+	instanceOf: (typeName: ValueType) => boolean,
 ): (value: any) => CastResult {
 	if (instanceOf(ValueType.XSBASE64BINARY)) {
 		return (value) => ({
@@ -35,7 +35,7 @@ export default function castToHexBinary(
 	return () => ({
 		successful: false,
 		error: new Error(
-			'XPTY0004: Casting not supported from given type to xs:hexBinary or any of its derived types.'
+			'XPTY0004: Casting not supported from given type to xs:hexBinary or any of its derived types.',
 		),
 	});
 }
