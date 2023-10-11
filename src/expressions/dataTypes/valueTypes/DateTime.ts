@@ -466,13 +466,51 @@ export function subtract(
 	return new DayTimeDuration(secondsOfDuration);
 }
 
-export function addDuration(dateTime: DateTime, _duration: AbstractDuration): DateTime {
-	throw new Error(`Not implemented: adding durations to ${valueTypeToString(dateTime.type)}`);
+export function addDuration(dateTime: DateTime, duration: AbstractDuration): DateTime {
+	const jsDateTime = dateTime.toJavaScriptDate();
+	jsDateTime.setUTCFullYear(jsDateTime.getUTCFullYear() + duration.getYears());
+	jsDateTime.setUTCMonth(jsDateTime.getUTCMonth() + duration.getMonths());
+	jsDateTime.setUTCDate(jsDateTime.getUTCDate() + duration.getDays());
+	jsDateTime.setUTCHours(jsDateTime.getUTCHours() + duration.getHours());
+	jsDateTime.setUTCMinutes(jsDateTime.getUTCMinutes() + duration.getMinutes());
+	jsDateTime.setUTCSeconds(jsDateTime.getUTCSeconds() + Math.floor(duration.getSeconds()));
+	jsDateTime.setUTCMilliseconds(jsDateTime.getUTCMilliseconds() + (duration.getSeconds() % 1));
+
+	return new DateTime(
+		jsDateTime.getUTCFullYear(),
+		jsDateTime.getUTCMonth() + 1,
+		jsDateTime.getUTCDate(),
+		jsDateTime.getUTCHours(),
+		jsDateTime.getUTCMinutes(),
+		jsDateTime.getUTCSeconds(),
+		jsDateTime.getUTCMilliseconds(),
+
+		dateTime.getTimezone(),
+		dateTime.type,
+	);
 }
 
-export function subtractDuration(dateTime: DateTime, _duration: AbstractDuration): DateTime {
-	throw new Error(
-		`Not implemented: subtracting durations from ${valueTypeToString(dateTime.type)}`,
+export function subtractDuration(dateTime: DateTime, duration: AbstractDuration): DateTime {
+	const jsDateTime = dateTime.toJavaScriptDate();
+	jsDateTime.setUTCFullYear(jsDateTime.getUTCFullYear() - duration.getYears());
+	jsDateTime.setUTCMonth(jsDateTime.getUTCMonth() - duration.getMonths());
+	jsDateTime.setUTCDate(jsDateTime.getUTCDate() - duration.getDays());
+	jsDateTime.setUTCHours(jsDateTime.getUTCHours() - duration.getHours());
+	jsDateTime.setUTCMinutes(jsDateTime.getUTCMinutes() - duration.getMinutes());
+	jsDateTime.setUTCSeconds(jsDateTime.getUTCSeconds() - Math.floor(duration.getSeconds()));
+	jsDateTime.setUTCMilliseconds(jsDateTime.getUTCMilliseconds() - (duration.getSeconds() % 1));
+
+	return new DateTime(
+		jsDateTime.getUTCFullYear(),
+		jsDateTime.getUTCMonth() + 1,
+		jsDateTime.getUTCDate(),
+		jsDateTime.getUTCHours(),
+		jsDateTime.getUTCMinutes(),
+		jsDateTime.getUTCSeconds(),
+		jsDateTime.getUTCMilliseconds(),
+
+		dateTime.getTimezone(),
+		dateTime.type,
 	);
 }
 
