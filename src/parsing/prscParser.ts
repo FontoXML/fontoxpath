@@ -1813,25 +1813,33 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const switchCaseClause: Parser<IAST> = then(
 		plus(
-			map(precededMultiple([tokens.CASE, whitespacePlus], switchCaseOperand), (x) => [
-				'switchCaseExpr',
-				x,
-			]),
+			then(
+				map(
+					precededMultiple([tokens.CASE, whitespacePlus], cut(switchCaseOperand)),
+					(x) => ['switchCaseExpr', x],
+				),
+				cut(whitespacePlus),
+				(x, _) => x,
+			),
 		),
-		precededMultiple([whitespacePlus, tokens.RETURN, whitespacePlus], exprSingle),
+		cut(precededMultiple([tokens.RETURN, whitespacePlus], cut(exprSingle))),
 		(operands, exprPart) =>
 			['switchExprCaseClause', ...operands, ['resultExpr', exprPart]] as IAST,
 	);
 
 	const switchExpr: Parser<IAST> = then3(
-		precededMultiple([tokens.SWITCH, whitespace, tokens.BRACE_OPEN], expr),
-		precededMultiple(
-			[whitespace, tokens.BRACE_CLOSE, whitespace],
-			plus(followed(switchCaseClause, whitespace)),
+		precededMultiple([tokens.SWITCH, whitespace, tokens.BRACE_OPEN], cut(expr)),
+		cut(
+			precededMultiple(
+				[whitespace, tokens.BRACE_CLOSE, cut(whitespace)],
+				plus(followed(switchCaseClause, whitespace)),
+			),
 		),
-		precededMultiple(
-			[tokens.DEFAULT, whitespacePlus, tokens.RETURN, whitespacePlus],
-			exprSingle,
+		cut(
+			precededMultiple(
+				[tokens.DEFAULT, whitespacePlus, tokens.RETURN, whitespacePlus],
+				exprSingle,
+			),
 		),
 		(exprPart, clauses, resultExpr) => [
 			'switchExpr',
