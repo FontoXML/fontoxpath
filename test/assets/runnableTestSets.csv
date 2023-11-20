@@ -408,7 +408,7 @@ prod-SequenceType,true
 prod-SquareArrayConstructor,true
 prod-StepExpr,true
 prod-StringConstructor,true
-prod-SwitchExpr,false
+prod-SwitchExpr,true
 prod-TreatExpr,false
 prod-TryCatchExpr,false
 prod-TypeswitchExpr,true

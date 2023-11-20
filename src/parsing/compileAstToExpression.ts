@@ -68,6 +68,7 @@ import ElementConstructor from '../expressions/xquery/ElementConstructor';
 import PIConstructor from '../expressions/xquery/PIConstructor';
 import TextConstructor from '../expressions/xquery/TextConstructor';
 import TypeSwitchExpression from '../expressions/xquery/TypeSwitchExpression';
+import SwitchExpression from '../expressions/xquery/SwitchExpression';
 import astHelper, { IAST } from './astHelper';
 
 const COMPILATION_OPTIONS = {
@@ -204,6 +205,8 @@ function compile(ast: IAST, compilationOptions: CompilationOptions): Expression 
 
 		case 'typeswitchExpr':
 			return typeswitchExpr(ast, compilationOptions);
+		case 'switchExpr':
+			return switchExpr(ast, compilationOptions);
 
 		// XQuery node constructors
 		case 'elementConstructor':
@@ -1481,7 +1484,7 @@ function typeswitchExpr(ast: IAST, compilationOptions: CompilationOptions) {
 	const caseClause = astHelper.getChildren(ast, 'typeswitchExprCaseClause');
 
 	const caseClauseExpressions = caseClause.map((caseClauseExpression) => {
-		const sequenceTypesAstNodes: IAST[] =
+		const caseNodes: IAST[] =
 			astHelper.getChildren(caseClauseExpression, 'sequenceTypeUnion').length === 0
 				? [astHelper.getFirstChild(caseClauseExpression, 'sequenceType')]
 				: astHelper.getChildren(
@@ -1496,7 +1499,7 @@ function typeswitchExpr(ast: IAST, compilationOptions: CompilationOptions) {
 
 		return {
 			caseClauseExpression: resultExpression,
-			typeTests: sequenceTypesAstNodes.map((sequenceTypeAstNode: IAST) => {
+			typeTests: caseNodes.map((sequenceTypeAstNode: IAST) => {
 				const occurrenceIndicator = astHelper.getFirstChild(
 					sequenceTypeAstNode,
 					'occurrenceIndicator',
@@ -1520,6 +1523,44 @@ function typeswitchExpr(ast: IAST, compilationOptions: CompilationOptions) {
 	) as PossiblyUpdatingExpression;
 
 	return new TypeSwitchExpression(argExpr, caseClauseExpressions, defaultExpression, type);
+}
+
+function switchExpr(ast: IAST, compilationOptions: CompilationOptions) {
+	if (!compilationOptions.allowXQuery) {
+		throw new Error('XPST0003: Use of XQuery functionality is not allowed in XPath context');
+	}
+
+	const type = astHelper.getAttribute(ast, 'type');
+
+	const argExpr = compile(
+		astHelper.getFirstChild(astHelper.getFirstChild(ast, 'argExpr'), '*'),
+		compilationOptions,
+	);
+
+	const caseClauses = astHelper.getChildren(ast, 'switchExprCaseClause');
+
+	const caseClauseExpressions = caseClauses.map((caseClauseExpression) => {
+		const caseNodes: IAST[] = astHelper.getChildren(caseClauseExpression, 'switchCaseExpr');
+
+		const resultExpression = compile(
+			astHelper.followPath(caseClauseExpression, ['resultExpr', '*']),
+			compilationOptions,
+		) as PossiblyUpdatingExpression;
+
+		return {
+			caseClauseExpression: resultExpression,
+			tests: caseNodes.map((caseNode) =>
+				compile(astHelper.getFirstChild(caseNode, '*'), compilationOptions),
+			),
+		};
+	});
+
+	const defaultExpression = compile(
+		astHelper.followPath(ast, ['switchExprDefaultClause', 'resultExpr', '*']),
+		compilationOptions,
+	) as PossiblyUpdatingExpression;
+
+	return new SwitchExpression(argExpr, caseClauseExpressions, defaultExpression, type);
 }
 
 export default function (xPathAst: IAST, compilationOptions: CompilationOptions): Expression {
