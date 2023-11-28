@@ -9,7 +9,7 @@ import parseExpression from './parsing/parseExpression';
 import processProlog, { ModuleDeclaration } from './parsing/processProlog';
 import annotateAst from './typeInference/annotateAST';
 import { AnnotationContext } from './typeInference/AnnotationContext';
-import { NamespaceResolver } from './types/Options';
+import { Language, NamespaceResolver } from './types/Options';
 
 /**
  * Register an XQuery module
@@ -47,13 +47,25 @@ import { NamespaceResolver } from './types/Options';
  */
 export default function registerXQueryModule(
 	moduleString: string,
-	options: { debug: boolean } = { debug: false },
+	options: {
+		debug: boolean;
+		language:
+			| Language.XQUERY_3_1_LANGUAGE
+			| Language.XQUERY_4_0_LANGUAGE
+			| Language.XQUERY_UPDATE_3_1_LANGUAGE
+			| Language.XQUERY_UPDATE_4_0_LANGUAGE;
+	} = { debug: false, language: Language.XQUERY_3_1_LANGUAGE },
 ): string {
 	let parsedModule;
 	try {
 		parsedModule = parseExpression(moduleString, {
 			allowXQuery: true,
 			debug: options['debug'],
+			version:
+				options.language === Language.XQUERY_4_0_LANGUAGE ||
+				options.language === Language.XQUERY_UPDATE_4_0_LANGUAGE
+					? 4
+					: 3.1,
 		});
 	} catch (error) {
 		printAndRethrowError(moduleString, error);

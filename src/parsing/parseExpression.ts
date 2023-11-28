@@ -3,6 +3,8 @@ import { StackTraceEntry } from '../expressions/debug/StackTraceEntry';
 import { IAST } from './astHelper';
 import { parseUsingPrsc } from './prscParser';
 
+export type CompilationOptions = { allowXQuery?: boolean; debug?: boolean; version: 3.1 | 4 };
+
 /**
  * Parse an XPath string to a selector.
  *
@@ -11,11 +13,12 @@ import { parseUsingPrsc } from './prscParser';
  */
 export default function parseExpression(
 	xPathString: string,
-	compilationOptions: { allowXQuery?: boolean; debug?: boolean },
+	compilationOptions: CompilationOptions,
 ): IAST {
 	const options = {
 		xquery: !!compilationOptions.allowXQuery,
 		outputDebugInfo: !!compilationOptions.debug,
+		version: compilationOptions.version,
 	};
 
 	const parseResult = parseUsingPrsc(xPathString, options);

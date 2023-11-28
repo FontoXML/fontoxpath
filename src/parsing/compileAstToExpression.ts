@@ -1,3 +1,5 @@
+import Otherwise from '../expressions/xpath-40/Otherwise';
+import CombinatingTest from '../expressions/tests/CombinatingTest';
 import CurlyArrayConstructor from '../expressions/arrays/CurlyArrayConstructor';
 import SquareArrayConstructor from '../expressions/arrays/SquareArrayConstructor';
 import AncestorAxis from '../expressions/axes/AncestorAxis';
@@ -112,6 +114,8 @@ function compile(ast: IAST, compilationOptions: CompilationOptions): Expression 
 			return sequence(ast, compilationOptions);
 		case 'unionOp':
 			return unionOp(ast, compilationOptions);
+		case 'otherwiseOp':
+			return otherwiseOp(ast, compilationOptions);
 		case 'exceptOp':
 		case 'intersectOp':
 			return intersectExcept(ast, compilationOptions);
@@ -866,65 +870,71 @@ function pathExpr(ast: IAST, compilationOptions: CompilationOptions) {
 
 		if (axis) {
 			hasAxisStep = true;
-			const test = astHelper.getFirstChild(step, [
-				'attributeTest',
-				'anyElementTest',
-				'piTest',
-				'documentTest',
-				'elementTest',
-				'commentTest',
-				'namespaceTest',
-				'anyKindTest',
-				'textTest',
-				'anyFunctionTest',
-				'typedFunctionTest',
-				'schemaAttributeTest',
-				'atomicType',
-				'anyItemType',
-				'parenthesizedItemType',
-				'typedMapTest',
-				'typedArrayTest',
-				'nameTest',
-				'Wildcard',
-			]);
+			const tests = astHelper
+				.getChildren(step, '*')
+				.filter((test) =>
+					[
+						'attributeTest',
+						'anyElementTest',
+						'piTest',
+						'documentTest',
+						'elementTest',
+						'commentTest',
+						'namespaceTest',
+						'anyKindTest',
+						'textTest',
+						'anyFunctionTest',
+						'typedFunctionTest',
+						'schemaAttributeTest',
+						'atomicType',
+						'anyItemType',
+						'parenthesizedItemType',
+						'typedMapTest',
+						'typedArrayTest',
+						'nameTest',
+						'Wildcard',
+					].includes(test[0]),
+				);
 
-			const testExpression = compileTest(test, disallowUpdating(compilationOptions));
+			const testExpressions = new CombinatingTest(
+				tests.map((test) => compileTest(test, disallowUpdating(compilationOptions))),
+			);
 			switch (astHelper.getTextContent(axis)) {
 				case 'ancestor':
-					stepExpression = new AncestorAxis(testExpression, { inclusive: false });
+					stepExpression = new AncestorAxis(testExpressions, { inclusive: false });
 					break;
 				case 'ancestor-or-self':
-					stepExpression = new AncestorAxis(testExpression, { inclusive: true });
+					stepExpression = new AncestorAxis(testExpressions, { inclusive: true });
 					break;
 				case 'attribute':
-					stepExpression = new AttributeAxis(testExpression, intersectingBucket);
+					stepExpression = new AttributeAxis(testExpressions, intersectingBucket);
 					break;
 				case 'child':
-					stepExpression = new ChildAxis(testExpression, intersectingBucket);
+					stepExpression = new ChildAxis(testExpressions, intersectingBucket);
 					break;
 				case 'descendant':
-					stepExpression = new DescendantAxis(testExpression, { inclusive: false });
+					stepExpression = new DescendantAxis(testExpressions, { inclusive: false });
 					break;
 				case 'descendant-or-self':
-					stepExpression = new DescendantAxis(testExpression, { inclusive: true });
+					stepExpression = new DescendantAxis(testExpressions, { inclusive: true });
 					break;
 				case 'parent':
-					stepExpression = new ParentAxis(testExpression, intersectingBucket);
+					stepExpression = new ParentAxis(testExpressions, intersectingBucket);
 					break;
 				case 'following-sibling':
-					stepExpression = new FollowingSiblingAxis(testExpression, intersectingBucket);
+					stepExpression = new FollowingSiblingAxis(testExpressions, intersectingBucket);
 					break;
 				case 'preceding-sibling':
-					stepExpression = new PrecedingSiblingAxis(testExpression, intersectingBucket);
+					stepExpression = new PrecedingSiblingAxis(testExpressions, intersectingBucket);
 					break;
 				case 'following':
-					stepExpression = new FollowingAxis(testExpression);
+					stepExpression = new FollowingAxis(testExpressions);
 					break;
 				case 'preceding':
-					stepExpression = new PrecedingAxis(testExpression);
+					stepExpression = new PrecedingAxis(testExpressions);
 					break;
 				case 'self':
-					stepExpression = new SelfAxis(testExpression, intersectingBucket);
+					stepExpression = new SelfAxis(testExpressions, intersectingBucket);
 					break;
 			}
 		} else {
@@ -1147,6 +1157,23 @@ function unaryMinus(
 function unionOp(ast: IAST, compilationOptions: CompilationOptions) {
 	const type = astHelper.getAttribute(ast, 'type');
 	return new Union(
+		[
+			compile(
+				astHelper.followPath(ast, ['firstOperand', '*']),
+				disallowUpdating(compilationOptions),
+			),
+			compile(
+				astHelper.followPath(ast, ['secondOperand', '*']),
+				disallowUpdating(compilationOptions),
+			),
+		],
+		type,
+	);
+}
+
+function otherwiseOp(ast: IAST, compilationOptions: CompilationOptions) {
+	const type = astHelper.getAttribute(ast, 'type');
+	return new Otherwise(
 		[
 			compile(
 				astHelper.followPath(ast, ['firstOperand', '*']),

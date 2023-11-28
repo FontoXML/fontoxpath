@@ -85,7 +85,7 @@ function parseXPath(xpathExpression: EvaluableExpression): Expression {
 
 	const ast =
 		typeof xpathExpression === 'string'
-			? parseExpression(xpathExpression, { allowXQuery: false })
+			? parseExpression(xpathExpression, { allowXQuery: false, version: 4 })
 			: // AST is an element: convert to jsonml
 			  convertXmlToAst(xpathExpression);
 
