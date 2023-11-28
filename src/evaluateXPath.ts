@@ -180,6 +180,12 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 					options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE,
 				debug: !!options['debug'],
 				disableCache: !!options['disableCache'],
+				version:
+					options['language'] === Language.XPATH_4_0_LANGUAGE ||
+					options['language'] === Language.XQUERY_4_0_LANGUAGE ||
+					options['language'] === Language.XQUERY_UPDATE_4_0_LANGUAGE
+						? 4
+						: 3.1,
 			},
 		);
 		dynamicContext = context.dynamicContext;

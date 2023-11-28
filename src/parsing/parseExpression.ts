@@ -11,11 +11,12 @@ import { parseUsingPrsc } from './prscParser';
  */
 export default function parseExpression(
 	xPathString: string,
-	compilationOptions: { allowXQuery?: boolean; debug?: boolean },
+	compilationOptions: { allowXQuery?: boolean; debug?: boolean; version: 3.1 | 4 },
 ): IAST {
 	const options = {
 		xquery: !!compilationOptions.allowXQuery,
 		outputDebugInfo: !!compilationOptions.debug,
+		version: compilationOptions.version || 3.1,
 	};
 
 	const parseResult = parseUsingPrsc(xPathString, options);
