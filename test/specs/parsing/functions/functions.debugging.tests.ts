@@ -1,5 +1,5 @@
 import * as chai from 'chai';
-import { evaluateXPathToBoolean } from 'fontoxpath';
+import { evaluateXPathToArray, evaluateXPathToBoolean } from 'fontoxpath';
 import * as sinon from 'sinon';
 import * as slimdom from 'slimdom';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
@@ -25,6 +25,9 @@ describe('debugging functions', () => {
 
 		it('accepts two parameters', () =>
 			chai.assert.isTrue(evaluateXPathToBoolean('trace(true(), "message")')));
+
+		it('accepts empty array as first argument', () =>
+			chai.assert.isEmpty(evaluateXPathToArray('trace([], "message")')));
 
 		it('outputs the trace', () => {
 			evaluateXPathToBoolean('trace(true())');

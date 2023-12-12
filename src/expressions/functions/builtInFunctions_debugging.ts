@@ -31,9 +31,13 @@ const fnTrace: FunctionDefinitionType = (
 					  )
 					: atomize(sequenceFactory.singleton(value), executionParameters)
 							.map((atomizedValue) => castToType(atomizedValue, ValueType.XSSTRING))
-							.first().value;
+							.first()?.value;
 
-			newMessage += `{type: ${valueTypeToString(value.type)}, value: ${argumentAsString}}\n`;
+			if (argumentAsString) {
+				newMessage += `{type: ${valueTypeToString(
+					value.type,
+				)}, value: ${argumentAsString}}\n`;
+			}
 		}
 		if (label !== undefined) {
 			newMessage += label.first().value;
