@@ -81,10 +81,11 @@ export const enum ValueType {
 }
 
 /**
- * Handles the occurances in the XPath specs.
- * Zero or one matches to '?';
- * One or more matches to '+';
- * Zero or more matches to '*'
+ * Handles the occurences in the XPath specs.
+ *
+ * * Zero or one matches to '?';
+ * * One or more matches to '+';
+ * * Zero or more matches to '*';
  *
  * @private
  */
