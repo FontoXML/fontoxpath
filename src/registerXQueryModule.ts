@@ -47,7 +47,7 @@ import { NamespaceResolver } from './types/Options';
  */
 export default function registerXQueryModule(
 	moduleString: string,
-	options: { debug: boolean } = { debug: false }
+	options: { debug: boolean } = { debug: false },
 ): string {
 	let parsedModule;
 	try {
@@ -77,8 +77,8 @@ export default function registerXQueryModule(
 			namespaceResolver,
 			Object.create(null),
 			BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
-			createDefaultFunctionNameResolver(BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI)
-		)
+			createDefaultFunctionNameResolver(BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI),
+		),
 	);
 
 	staticContext.registerNamespace(moduleTargetPrefix, moduleTargetNamespaceURI);
@@ -94,7 +94,7 @@ export default function registerXQueryModule(
 		moduleDeclaration.functionDeclarations.forEach(({ namespaceURI }) => {
 			if (moduleTargetNamespaceURI !== namespaceURI) {
 				throw new Error(
-					'XQST0048: Functions and variables declared in a module must reside in the module target namespace.'
+					'XQST0048: Functions and variables declared in a module must reside in the module target namespace.',
 				);
 			}
 		});
