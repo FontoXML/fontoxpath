@@ -95,6 +95,13 @@ describe('functions over strings', () => {
 			));
 	});
 
+	it('tokenize("abracadabra", "(ab)|(a)") returns ("","r","c","d","r","")', () => {
+		chai.assert.sameOrderedMembers(
+			evaluateXPathToStrings('fn:tokenize("abracadabra", "(ab)|(a)")'),
+			['', 'r', 'c', 'd', 'r', ''],
+		);
+	});
+
 	describe('normalize-space()', () => {
 		it('Returns the value of $arg with whitespace normalized by stripping leading and trailing whitespace and replacing sequences of one or more than one whitespace character with a single space, #x20.', () =>
 			chai.assert.equal(
