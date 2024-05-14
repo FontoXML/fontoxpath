@@ -355,11 +355,25 @@ const fnTokenize: FunctionDefinitionType = (
 	const patternString: string = pattern.first().value;
 
 	const regex = compileJSRegex(patternString);
+	regex.lastIndex = 0;
+	const results = [];
+	let result = regex.exec(inputString);
+
+	let index = 0;
+
+	// Repeatedly execute the regex to get all the outputs
+	// TODO: with this approach it should not be too difficult to actually use XSPattern here.
+	while (result) {
+		results.push(inputString.slice(index, result.index));
+		index = regex.lastIndex;
+		result = regex.exec(inputString);
+	}
+
+	// Don't forget the last split part!
+	results.push(inputString.slice(index));
 
 	return sequenceFactory.create(
-		inputString
-			.split(regex)
-			.map((token: string) => createAtomicValue(token, ValueType.XSSTRING)),
+		results.map((token: string) => createAtomicValue(token, ValueType.XSSTRING)),
 	);
 };
 
