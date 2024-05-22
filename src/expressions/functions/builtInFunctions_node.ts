@@ -165,6 +165,64 @@ function areSameNode(
 	return true;
 }
 
+/**
+ * Test if a string should match the xml:lang attribute string of a node.
+ */
+function langMatchString(truth: string, test: string) {
+	truth = truth.toLowerCase();
+	test = test.toLowerCase();
+	if (truth === test) {
+		return true;
+	} else {
+		truth = truth.split('-')[0];
+		return truth === test;
+	}
+}
+
+/**
+ * Starting at a given node, test the xml:lang attribute to see if it
+   matches a test. Move up the tree until the test passes or fails.
+ */
+function langMatchNode(node: ElementNodePointer, domFacade: DomFacade, test: string): ISequence {
+	let toTest = node;
+	while (toTest) {
+		const attrValue = domFacade.getAttribute(toTest, 'xml:lang');
+		if (attrValue) {
+			return langMatchString(attrValue, test)
+				? sequenceFactory.singletonTrueSequence()
+				: sequenceFactory.singletonFalseSequence();
+		} else {
+			toTest = domFacade.getParentNodePointer(toTest) as ElementNodePointer;
+		}
+	}
+	return sequenceFactory.singletonFalseSequence();
+}
+
+const fnLang: FunctionDefinitionType = (
+	dynamicContext,
+	executionParameters,
+	_staticContext,
+	langTest,
+	nodeValue,
+) => {
+	const domFacade = executionParameters.domFacade;
+	if (!isSubtypeOf(langTest.first().type, ValueType.XSSTRING)) {
+		throw new Error('XPTY0004: The first argument of lang must be a string.');
+	}
+	let node;
+	if (!nodeValue) {
+		if (dynamicContext.contextItem === null) {
+			throw errXPDY0002(
+				`The function lang depends on dynamic context if a node is not passed as the second argument.`,
+			);
+		}
+		node = dynamicContext.contextItem.value;
+	} else {
+		node = nodeValue.first().value;
+	}
+	return langMatchNode(node, domFacade, langTest.first().value);
+};
+
 const fnPath: FunctionDefinitionType = (
 	_dynamicContext,
 	executionParameters,
@@ -544,6 +602,24 @@ const declarations: BuiltinDeclarationType[] = [
 		localName: 'data',
 		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_MORE },
+	},
+
+	{
+		argumentTypes: [{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE }],
+		callFunction: fnLang,
+		localName: 'lang',
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE },
+	},
+	{
+		argumentTypes: [
+			{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
+			{ type: ValueType.NODE, mult: SequenceMultiplicity.EXACTLY_ONE },
+		],
+		callFunction: fnLang,
+		localName: 'lang',
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE },
 	},
 ];
 

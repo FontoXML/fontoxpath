@@ -16,6 +16,86 @@ beforeEach(() => {
 });
 
 describe('functions over nodes', () => {
+	describe('lang()', () => {
+		it('returns true when the node has the right lang', () => {
+			jsonMlMapper.parse(['someElement', { 'xml:lang': 'en' }], documentNode);
+			chai.assert.equal(
+				evaluateXPathToBoolean('lang("en", .)', documentNode.firstChild),
+				true,
+			);
+		});
+
+		it('returns false when the node has the wrong lang', () => {
+			jsonMlMapper.parse(['someElement', { 'xml:lang': 'en' }], documentNode);
+			chai.assert.equal(
+				evaluateXPathToBoolean('lang("es", .)', documentNode.firstChild),
+				false,
+			);
+		});
+
+		it('returns true when the node has the right lang, but capitalized', () => {
+			jsonMlMapper.parse(['someElement', { 'xml:lang': 'EN' }], documentNode);
+			chai.assert.equal(
+				evaluateXPathToBoolean('lang("en", .)', documentNode.firstChild),
+				true,
+			);
+		});
+
+		it('returns true when the node has the right lang, but more specific', () => {
+			jsonMlMapper.parse(['someElement', { 'xml:lang': 'en-gb' }], documentNode);
+			chai.assert.equal(
+				evaluateXPathToBoolean('lang("en", .)', documentNode.firstChild),
+				true,
+			);
+		});
+
+		it('returns false when the node has the right lang, but not specific enough', () => {
+			jsonMlMapper.parse(['someElement', { 'xml:lang': 'en' }], documentNode);
+			chai.assert.equal(
+				evaluateXPathToBoolean('lang("en-gb", .)', documentNode.firstChild),
+				false,
+			);
+		});
+
+		it('returns true for implied context', () => {
+			jsonMlMapper.parse(['someElement', { 'xml:lang': 'en' }], documentNode);
+			chai.assert.equal(evaluateXPathToBoolean('lang("en")', documentNode.firstChild), true);
+		});
+
+		it('returns true when the parent is true', () => {
+			jsonMlMapper.parse(
+				['someElement', { 'xml:lang': 'en' }, ['child', 'Hello']],
+				documentNode,
+			);
+			chai.assert.equal(
+				evaluateXPathToBoolean('lang("en")', documentNode.firstChild.firstChild),
+				true,
+			);
+		});
+
+		it('returns false even if the parent is true', () => {
+			jsonMlMapper.parse(
+				['someElement', { 'xml:lang': 'en' }, ['child', { 'xml:lang': 'de' }, 'Hello']],
+				documentNode,
+			);
+			chai.assert.equal(
+				evaluateXPathToBoolean('lang("en")', documentNode.firstChild.firstChild),
+				false,
+			);
+		});
+
+		it('returns true even if the parent is false', () => {
+			jsonMlMapper.parse(
+				['someElement', { 'xml:lang': 'de' }, ['child', { 'xml:lang': 'en' }, 'Hello']],
+				documentNode,
+			);
+			chai.assert.equal(
+				evaluateXPathToBoolean('lang("en")', documentNode.firstChild.firstChild),
+				true,
+			);
+		});
+	});
+
 	describe('node-name()', () => {
 		it('returns an empty sequence if $arg is an empty sequence', () =>
 			chai.assert.isEmpty(evaluateXPathToStrings('node-name(())', documentNode)));
