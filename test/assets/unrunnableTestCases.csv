@@ -607,10 +607,6 @@ fn-function-lookup-259,AssertionError: Expected XPath exists(function-lookup(fn:
 fn-function-lookup-260,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-261,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'in-scope-prefixes'), 1)) to resolve to true: expected false to be true
 fn-function-lookup-262,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
-fn-function-lookup-275,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'lang'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-276,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
-fn-function-lookup-277,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'lang'), 2)) to resolve to true: expected false to be true
-fn-function-lookup-278,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-318,Error: FOCH0002: No collations are supported
 fn-function-lookup-320,Error: XPTY0004: eqOp not available for xs:integer and xs:string
 fn-function-lookup-322,Error: FOCH0002: No collations are supported
@@ -804,6 +800,8 @@ K-SeqInsertBeforeFunc-17,Error: No selector counterpart for: treatExpr.
 K-SeqInsertBeforeFunc-18,Error: No selector counterpart for: treatExpr.
 K-SeqInsertBeforeFunc-19,Error: No selector counterpart for: treatExpr.
 K-SeqInsertBeforeFunc-20,Error: No selector counterpart for: treatExpr.
+fn-lang-31,AssertionError: Expected XPath let $l := /langs/para[4]!fn:lang#1 return /langs/para[1]!$l('en') to resolve to false: expected true to be false
+fn-lang-32,AssertionError: Expected XPath let $l := /langs/para[4]!fn:lang#1 return /langs/para[1]!$l('de') to resolve to true: expected false to be true
 K-ContextLastFunc-5,Error: No selector counterpart for: treatExpr.
 K-ContextLastFunc-24,Error: No selector counterpart for: treatExpr.
 K-ContextLastFunc-25,Error: No selector counterpart for: treatExpr.
@@ -3160,10 +3158,6 @@ function-literal-259,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-fu
 function-literal-260,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}namespace-uri-for-prefix with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}namespace-uri-from-QName (xs:QName?)", "Q{http://www.w3.org/2005/xpath-functions}namespace-uri (node())" or "Q{http://www.w3.org/2005/xpath-functions}namespace-uri ()"?
 function-literal-261,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}in-scope-prefixes with arity of 1 not registered. No similar functions found.
 function-literal-262,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}in-scope-prefixes with arity of 1 not registered. No similar functions found.
-function-literal-275,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}lang with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}long (xs:anyAtomicType?)"?
-function-literal-276,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}lang with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}long (xs:anyAtomicType?)"?
-function-literal-277,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}lang with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}long (xs:anyAtomicType?)"?
-function-literal-278,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}lang with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}long (xs:anyAtomicType?)"?
 function-literal-318,Error: FOCH0002: No collations are supported
 function-literal-320,Error: XPTY0004: eqOp not available for xs:integer and xs:string
 function-literal-322,Error: FOCH0002: No collations are supported
@@ -3784,13 +3778,6 @@ functx-fn-escape-html-uri-2,Error: XPST0017: Function Q{http://www.w3.org/2005/x
 functx-fn-escape-html-uri-all,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}escape-html-uri with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}encode-for-uri (xs:string?)"?
 functx-fn-index-of-5,Error: XPTY0004: eqOp not available for xs:integer and xs:string
 functx-fn-index-of-all,Error: XPTY0004: eqOp not available for xs:integer and xs:string
-functx-fn-lang-1,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}lang with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}long (xs:anyAtomicType?)"?
-functx-fn-lang-2,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}lang with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}long (xs:anyAtomicType?)"?
-functx-fn-lang-3,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}lang with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}long (xs:anyAtomicType?)"?
-functx-fn-lang-4,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}lang with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}long (xs:anyAtomicType?)"?
-functx-fn-lang-5,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}lang with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}long (xs:anyAtomicType?)"?
-functx-fn-lang-6,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}lang with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}long (xs:anyAtomicType?)"?
-functx-fn-lang-all,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}lang with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}long (xs:anyAtomicType?)"?
 functx-fn-matches-10,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}matches with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}matches (xs:string?, xs:string)"?
 functx-fn-matches-12,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}matches with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}matches (xs:string?, xs:string)"?
 functx-fn-matches-14,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}matches with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}matches (xs:string?, xs:string)"?
@@ -4128,7 +4115,6 @@ fo-test-fn-idref-001,Error: No selector counterpart for: validateExpr.
 fo-test-fn-idref-002,Error: No selector counterpart for: validateExpr.
 fo-test-fn-serialize-001,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
 fo-test-fn-serialize-002,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}serialize with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}serialize (item()*)"?
-fo-test-fn-filter-002,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}lang with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}long (xs:anyAtomicType?)"?
 fo-test-fn-for-each-pair-001,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}for-each-pair with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}for-each-pair (array(*), array(*), function(*))", "Q{http://www.w3.org/2005/xpath-functions/array}for-each (array(*), function(*))", "Q{http://www.w3.org/2005/xpath-functions/map}for-each (map(*), item()*)" or "Q{http://www.w3.org/2005/xpath-functions}for-each (item()*, function(*))"?
 fo-test-fn-for-each-pair-002,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}for-each-pair with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}for-each-pair (array(*), array(*), function(*))", "Q{http://www.w3.org/2005/xpath-functions/array}for-each (array(*), function(*))", "Q{http://www.w3.org/2005/xpath-functions/map}for-each (map(*), item()*)" or "Q{http://www.w3.org/2005/xpath-functions}for-each (item()*, function(*))"?
 fo-test-fn-for-each-pair-003,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}for-each-pair with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}for-each-pair (array(*), array(*), function(*))", "Q{http://www.w3.org/2005/xpath-functions/array}for-each (array(*), function(*))", "Q{http://www.w3.org/2005/xpath-functions/map}for-each (map(*), item()*)" or "Q{http://www.w3.org/2005/xpath-functions}for-each (item()*, function(*))"?
