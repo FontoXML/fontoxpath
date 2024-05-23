@@ -165,6 +165,78 @@ function areSameNode(
 	return true;
 }
 
+/**
+ * Test if a string should match the xml:lang attribute string of a node.
+ */
+function langMatchString(truth: string, test: string): boolean {
+	truth = truth.toLowerCase();
+	test = test.toLowerCase();
+	if (truth === test) {
+		return true;
+	} else {
+		return truth.length < 5 || !truth.startsWith(test)
+			? false
+			: /* Strip the least specific part and test again */
+			  langMatchString(truth.replace(/-[a-z0-9]+$/, ''), test);
+	}
+}
+
+/**
+ * Starting at a given node, test the xml:lang attribute to see if it
+   matches a test. Move up the tree until the test passes or fails.
+ */
+function langMatchNode(node: NodePointer, domFacade: DomFacade, test: string): ISequence {
+	let toTest = node;
+	while (toTest) {
+		if (domFacade.getNodeType(toTest) !== NODE_TYPES.ELEMENT_NODE) {
+			toTest = domFacade.getParentNodePointer(toTest as AttributeNodePointer);
+		} else if (domFacade.getNodeType(toTest) === NODE_TYPES.ELEMENT_NODE) {
+			const attrValue = domFacade.getAttribute(toTest as ElementNodePointer, 'xml:lang');
+			if (attrValue) {
+				return langMatchString(attrValue, test)
+					? sequenceFactory.singletonTrueSequence()
+					: sequenceFactory.singletonFalseSequence();
+			} else {
+				toTest = domFacade.getParentNodePointer(toTest as ElementNodePointer);
+			}
+		}
+	}
+	return sequenceFactory.singletonFalseSequence();
+}
+
+const fnLang: FunctionDefinitionType = (
+	dynamicContext,
+	executionParameters,
+	_staticContext,
+	langTestValue,
+	nodeValue,
+) => {
+	const domFacade = executionParameters.domFacade;
+	let langTest;
+	if (langTestValue.isEmpty()) {
+		langTest = '';
+	} else if (!isSubtypeOf(langTestValue.first().type, ValueType.XSSTRING)) {
+		throw new Error('XPTY0004: The first argument of lang must be a string.');
+	} else {
+		langTest = langTestValue.first().value;
+	}
+	let node;
+	if (!nodeValue) {
+		if (!dynamicContext || !dynamicContext.contextItem) {
+			throw errXPDY0002(
+				`The function lang depends on dynamic context if a node is not passed as the second argument.`,
+			);
+		}
+		if (!isSubtypeOf(dynamicContext.contextItem.type, ValueType.NODE)) {
+			throw new Error('XPTY0004: The context item must be a node.');
+		}
+		node = dynamicContext.contextItem.value;
+	} else {
+		node = nodeValue.first().value;
+	}
+	return langMatchNode(node, domFacade, langTest);
+};
+
 const fnPath: FunctionDefinitionType = (
 	_dynamicContext,
 	executionParameters,
@@ -544,6 +616,24 @@ const declarations: BuiltinDeclarationType[] = [
 		localName: 'data',
 		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_MORE },
+	},
+
+	{
+		argumentTypes: [{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.ZERO_OR_ONE }],
+		callFunction: fnLang,
+		localName: 'lang',
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE },
+	},
+	{
+		argumentTypes: [
+			{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.ZERO_OR_ONE },
+			{ type: ValueType.NODE, mult: SequenceMultiplicity.EXACTLY_ONE },
+		],
+		callFunction: fnLang,
+		localName: 'lang',
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE },
 	},
 ];
 

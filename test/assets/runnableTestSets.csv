@@ -111,7 +111,7 @@ fn-insert-before,true
 fn-iri-to-uri,true
 fn-json-doc,false
 fn-json-to-xml,false
-fn-lang,false
+fn-lang,true
 fn-last,true
 fn-load-xquery-module,false
 fn-local-name,false
