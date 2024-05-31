@@ -30,7 +30,7 @@ import { errXPDY0002 } from '../XPathErrors';
 import { BuiltinDeclarationType } from './builtInFunctions';
 import builtinStringFunctions from './builtInFunctions_string';
 import FunctionDefinitionType from './FunctionDefinitionType';
-
+import generateId from './generateId';
 const fnString = builtinStringFunctions.functions.string;
 
 function contextItemAsFirstArgument(
@@ -121,6 +121,32 @@ const fnData: FunctionDefinitionType = (
 	sequence,
 ) => {
 	return atomize(sequence, executionParameters);
+};
+
+const fnGenerateId: FunctionDefinitionType = (
+	dynamicContext,
+	executionParameters,
+	_staticContext,
+	nodeValue,
+) => {
+	let node: NodePointer;
+	if (!nodeValue) {
+		if (!dynamicContext || !dynamicContext.contextItem) {
+			throw errXPDY0002(
+				`The function generate-id depends on dynamic context if a node is not passed.`,
+			);
+		}
+		if (!isSubtypeOf(dynamicContext.contextItem.type, ValueType.NODE)) {
+			throw new Error('XPTY0004: The context item must be a node.');
+		}
+		node = dynamicContext.contextItem.value;
+	} else {
+		if (nodeValue.isEmpty()) {
+			return sequenceFactory.singleton(createAtomicValue('', ValueType.XSSTRING));
+		}
+		node = nodeValue.first().value;
+	}
+	return sequenceFactory.singleton(createAtomicValue(generateId(node), ValueType.XSSTRING));
 };
 
 const fnHasChildren: FunctionDefinitionType = (
@@ -634,6 +660,20 @@ const declarations: BuiltinDeclarationType[] = [
 		localName: 'lang',
 		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE },
+	},
+	{
+		argumentTypes: [],
+		callFunction: fnGenerateId,
+		localName: 'generate-id',
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
+	},
+	{
+		argumentTypes: [{ type: ValueType.NODE, mult: SequenceMultiplicity.ZERO_OR_ONE }],
+		callFunction: fnGenerateId,
+		localName: 'generate-id',
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
 	},
 ];
 

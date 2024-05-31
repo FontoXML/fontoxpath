@@ -16,6 +16,21 @@ beforeEach(() => {
 });
 
 describe('functions over nodes', () => {
+	describe('generate-id()', () => {
+		it('returns the same value for the same node', () => {
+			jsonMlMapper.parse(['someElement'], documentNode);
+			chai.assert.isTrue(
+				evaluateXPathToBoolean('generate-id(/) = generate-id(/)', documentNode),
+			);
+		});
+
+		it('returns the same value for subsequent calls', () => {
+			jsonMlMapper.parse(['someElement'], documentNode);
+			const id = evaluateXPathToString('generate-id(/)', documentNode);
+			chai.assert.equal(evaluateXPathToString('generate-id(/)', documentNode), id);
+		});
+	});
+
 	describe('lang()', () => {
 		it('returns true when the node has the right lang', () => {
 			jsonMlMapper.parse(['someElement', { 'xml:lang': 'en' }], documentNode);
