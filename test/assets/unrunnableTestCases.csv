@@ -617,10 +617,6 @@ fn-function-lookup-353,AssertionError: Expected XPath exists(function-lookup(fn:
 fn-function-lookup-354,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-355,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'element-with-id'), 2)) to resolve to true: expected false to be true
 fn-function-lookup-356,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
-fn-function-lookup-361,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'generate-id'), 0)) to resolve to true: expected false to be true
-fn-function-lookup-362,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
-fn-function-lookup-363,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'generate-id'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-364,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-365,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'doc'), 1)) to resolve to true: expected false to be true
 fn-function-lookup-366,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-367,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'doc-available'), 1)) to resolve to true: expected false to be true
@@ -723,33 +719,13 @@ fn-function-name-014,AssertionError: Expected executing the XPath "fn:function-n
 fn-function-name-018,AssertionError: Expected executing the XPath "fn:function-name( concat#340282366920938463463374607431768211456 )" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error matching /FOAR0002/ but got 'Invalid array length', RangeError: Invalid array length.
 fn-function-name-023,Error: 1: ( 2: 	declare function local:add($arg1, $arg2, $arg3)    	        ^ 3:         { 4:            $arg1 + $arg2 + $arg3  Error: XPST0003: Failed to parse script. Expected -,+,validate,(#,(,#,parent::,ancestor::,preceding-sibling::,preceding::,ancestor-or-self::,..,child::,descendant::,attribute::,self::,descendant-or-self::,following-sibling::,following::,document-node(,element,attribute,schema-element,schema-attribute(,processing-instruction(,processing-instruction(),comment(),text(),namespace-node(),node(),:*,Q,[A-Z_a-z\xC0-\xD6\xD8-\xF6\xF8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD],[\uD800-\uDB7F],/,//   at <>:2:10 - 2:11
 fn-function-name-024,Error: No selector counterpart for: typedFunctionTest.
-generate-id-000,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}generate-id with arity of 1 not registered. No similar functions found.
-generate-id-001,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}generate-id with arity of 1 not registered. No similar functions found.
-generate-id-002,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}generate-id with arity of 1 not registered. No similar functions found.
-generate-id-003,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}generate-id with arity of 1 not registered. No similar functions found.
-generate-id-004,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}generate-id with arity of 1 not registered. No similar functions found.
-generate-id-005,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}generate-id with arity of 1 not registered. No similar functions found.
-generate-id-006,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}generate-id with arity of 1 not registered. No similar functions found.
-generate-id-008,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}generate-id with arity of 0 not registered. No similar functions found.
-generate-id-009,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}generate-id with arity of 0 not registered. No similar functions found.
-generate-id-010,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}generate-id with arity of 0 not registered. No similar functions found.
 generate-id-012,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}collection with arity of 0 not registered. No similar functions found.
 generate-id-013,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}collection with arity of 0 not registered. No similar functions found.
 generate-id-014,Error: No selector counterpart for: computedDocumentConstructor.
 generate-id-015,Error: No selector counterpart for: computedDocumentConstructor.
 generate-id-016,Error: No selector counterpart for: computedDocumentConstructor.
 generate-id-017,Error: No selector counterpart for: computedDocumentConstructor.
-generate-id-018,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}generate-id with arity of 1 not registered. No similar functions found.
-generate-id-019,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}generate-id with arity of 0 not registered. No similar functions found.
-generate-id-020,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}generate-id with arity of 1 not registered. No similar functions found.
-generate-id-021,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}generate-id with arity of 1 not registered. No similar functions found.
-generate-id-022,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}generate-id with arity of 1 not registered. No similar functions found.
-generate-id-023,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}generate-id with arity of 1 not registered. No similar functions found.
-generate-id-901,AssertionError: expected [Function] to throw error matching /XPDY0002/ but got 'XPST0017: Function Q{http://www.w3.or…'
-generate-id-902,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0017: Function Q{http://www.w3.or…'
-generate-id-903,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0017: Function Q{http://www.w3.or…'
-generate-id-904,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0017: Function Q{http://www.w3.or…'
-generate-id-905,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0017: Function Q{http://www.w3.or…'
+generate-id-018,Error: XPTY0004: Multiplicity of function argument of type node()? for generate-id is incorrect. Expected "?", but got "+".
 fn-has-children-007,AssertionError: Expected executing the XPath "(1)[fn:has-children()]" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Cannot read properties of undefined (…'.
 fn-has-children-008,AssertionError: Expected executing the XPath "(fn:concat#2)[fn:has-children()]" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Cannot read properties of undefined (…'.
 fn-has-children-012,AssertionError: expected [Function] to throw an error
@@ -2981,7 +2957,6 @@ K-FunctionCallExpr-5,AssertionError: expected [Function] to throw error matching
 K-FunctionCallExpr-15a,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-number with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}format-integer (xs:integer?, xs:string)"?
 K-FunctionCallExpr-16a,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-time with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-time ()" or "Q{http://www.w3.org/2005/xpath-functions}format-integer (xs:integer?, xs:string)"?
 K-FunctionCallExpr-17a,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-time with arity of 5 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-time ()" or "Q{http://www.w3.org/2005/xpath-functions}format-integer (xs:integer?, xs:string)"?
-K-FunctionCallExpr-25a,Error: XPST0017: Function generate-id with arity of 1 not registered. No similar functions found.
 function-call-reserved-function-names-034,AssertionError: expected [Function] to throw error matching /XPST0017/ but got '1: \n2: \tnamespace-node(1)\n   \t   …'
 function-declaration-017,Error: XPST0008, The variable v is not in scope.
 function-declaration-022,AssertionError: expected [Function] to throw error matching /XQST0034/ but got 'XQST0049: The function or variable "Q…'
@@ -3168,10 +3143,6 @@ function-literal-353,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-fu
 function-literal-354,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}element-with-id with arity of 1 not registered. No similar functions found.
 function-literal-355,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}element-with-id with arity of 2 not registered. No similar functions found.
 function-literal-356,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}element-with-id with arity of 2 not registered. No similar functions found.
-function-literal-361,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}generate-id with arity of 0 not registered. No similar functions found.
-function-literal-362,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}generate-id with arity of 0 not registered. No similar functions found.
-function-literal-363,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}generate-id with arity of 1 not registered. No similar functions found.
-function-literal-364,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}generate-id with arity of 1 not registered. No similar functions found.
 function-literal-365,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}doc with arity of 1 not registered. No similar functions found.
 function-literal-366,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}doc with arity of 1 not registered. No similar functions found.
 function-literal-367,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}doc-available with arity of 1 not registered. No similar functions found.
