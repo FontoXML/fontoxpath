@@ -129,23 +129,14 @@ const fnGenerateId: FunctionDefinitionType = (
 	_staticContext,
 	nodeValue,
 ) => {
-	let node: NodePointer;
-	if (!nodeValue) {
-		if (!dynamicContext || !dynamicContext.contextItem) {
-			throw errXPDY0002(
-				`The function generate-id depends on dynamic context if a node is not passed.`,
-			);
-		}
-		if (!isSubtypeOf(dynamicContext.contextItem.type, ValueType.NODE)) {
-			throw new Error('XPTY0004: The context item must be a node.');
-		}
-		node = dynamicContext.contextItem.value;
-	} else {
-		if (nodeValue.isEmpty()) {
-			return sequenceFactory.singleton(createAtomicValue('', ValueType.XSSTRING));
-		}
-		node = nodeValue.first().value;
+	if (nodeValue.isEmpty()) {
+		return sequenceFactory.singleton(createAtomicValue('', ValueType.XSSTRING));
 	}
+	if (!isSubtypeOf(nodeValue.first().type, ValueType.NODE)) {
+		throw new Error('XPTY0004: The context item must be a node.');
+	}
+	const node = nodeValue.first().value as NodePointer;
+	
 	return sequenceFactory.singleton(createAtomicValue(generateId(node), ValueType.XSSTRING));
 };
 
@@ -663,7 +654,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 	{
 		argumentTypes: [],
-		callFunction: fnGenerateId,
+		callFunction: contextItemAsFirstArgument.bind(null, 'generate-id', fnGenerateId),
 		localName: 'generate-id',
 		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
