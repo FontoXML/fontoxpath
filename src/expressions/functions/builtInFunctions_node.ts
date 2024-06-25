@@ -136,7 +136,7 @@ const fnGenerateId: FunctionDefinitionType = (
 		throw new Error('XPTY0004: The context item must be a node.');
 	}
 	const node = nodeValue.first().value as NodePointer;
-	
+
 	return sequenceFactory.singleton(createAtomicValue(generateId(node), ValueType.XSSTRING));
 };
 

@@ -24,6 +24,18 @@ describe('functions over nodes', () => {
 			);
 		});
 
+		it('returns the empty string for the empty sequence', () => {
+			jsonMlMapper.parse(['someElement'], documentNode);
+			chai.assert.isTrue(evaluateXPathToBoolean('generate-id(()) = ""', documentNode));
+		});
+
+		it('throws the correct error when the context item is not a node', () => {
+			chai.assert.throws(
+				() => evaluateXPathToBoolean('"not a node" ! generate-id()'),
+				'XPTY0004',
+			);
+		});
+
 		it('returns the same value for subsequent calls', () => {
 			jsonMlMapper.parse(['someElement'], documentNode);
 			const id = evaluateXPathToString('generate-id(/)', documentNode);
