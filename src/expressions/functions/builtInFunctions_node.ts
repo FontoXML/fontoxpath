@@ -30,7 +30,7 @@ import { errXPDY0002 } from '../XPathErrors';
 import { BuiltinDeclarationType } from './builtInFunctions';
 import builtinStringFunctions from './builtInFunctions_string';
 import FunctionDefinitionType from './FunctionDefinitionType';
-
+import generateId from './generateId';
 const fnString = builtinStringFunctions.functions.string;
 
 function contextItemAsFirstArgument(
@@ -121,6 +121,23 @@ const fnData: FunctionDefinitionType = (
 	sequence,
 ) => {
 	return atomize(sequence, executionParameters);
+};
+
+const fnGenerateId: FunctionDefinitionType = (
+	dynamicContext,
+	executionParameters,
+	_staticContext,
+	nodeValue,
+) => {
+	if (nodeValue.isEmpty()) {
+		return sequenceFactory.singleton(createAtomicValue('', ValueType.XSSTRING));
+	}
+	if (!isSubtypeOf(nodeValue.first().type, ValueType.NODE)) {
+		throw new Error('XPTY0004: The context item must be a node.');
+	}
+	const node = nodeValue.first().value as NodePointer;
+
+	return sequenceFactory.singleton(createAtomicValue(generateId(node), ValueType.XSSTRING));
 };
 
 const fnHasChildren: FunctionDefinitionType = (
@@ -634,6 +651,20 @@ const declarations: BuiltinDeclarationType[] = [
 		localName: 'lang',
 		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE },
+	},
+	{
+		argumentTypes: [],
+		callFunction: contextItemAsFirstArgument.bind(null, 'generate-id', fnGenerateId),
+		localName: 'generate-id',
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
+	},
+	{
+		argumentTypes: [{ type: ValueType.NODE, mult: SequenceMultiplicity.ZERO_OR_ONE }],
+		callFunction: fnGenerateId,
+		localName: 'generate-id',
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
 	},
 ];
 
