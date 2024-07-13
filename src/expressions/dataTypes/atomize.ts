@@ -79,7 +79,11 @@ export function atomizeSingleValue(
 				);
 				return;
 			}
-			if (aNodeType === NODE_TYPES.ELEMENT_NODE || aNodeType === NODE_TYPES.DOCUMENT_NODE) {
+			if (
+				aNodeType === NODE_TYPES.ELEMENT_NODE ||
+				aNodeType === NODE_TYPES.DOCUMENT_NODE ||
+				aNodeType === NODE_TYPES.DOCUMENT_FRAGMENT_NODE
+			) {
 				const children = domFacade.getChildNodes(
 					aNode as ConcreteParentNode | TinyParentNode,
 				);
