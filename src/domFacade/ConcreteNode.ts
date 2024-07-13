@@ -28,6 +28,9 @@ export type ConcreteCDATASectionNode = CDATASection & { nodeType: NODE_TYPES.CDA
 export type ConcreteDocumentTypeNode = DocumentType & { nodeType: NODE_TYPES.DOCUMENT_TYPE_NODE };
 export type ConcreteAttributeNode = Attr & { nodeType: NODE_TYPES.ATTRIBUTE_NODE };
 export type ConcreteDocumentNode = Document & { nodeType: NODE_TYPES.DOCUMENT_NODE };
+export type ConcreteDocumentFragmentNode = DocumentFragment & {
+	nodeType: NODE_TYPES.DOCUMENT_FRAGMENT_NODE;
+};
 export type ConcreteProcessingInstructionNode = ProcessingInstruction & {
 	nodeType: NODE_TYPES.PROCESSING_INSTRUCTION_NODE;
 };
@@ -47,4 +50,5 @@ export type ConcreteNode =
 	| ConcreteChildNode
 	| ConcreteParentNode
 	| ConcreteAttributeNode
-	| ConcreteDocumentTypeNode;
+	| ConcreteDocumentTypeNode
+	| ConcreteDocumentFragmentNode;
