@@ -230,6 +230,19 @@ describe('functions over strings', () => {
 			chai.assert.equal(evaluateXPathToString('string()', document), 'Some <CDATA>');
 		});
 
+		it('regards documentFragment nodes as normal parents', () => {
+			const document = new slimdom.Document();
+			const f = document.createDocumentFragment();
+			const foo = f.appendChild(document.createElement('foo'));
+			f.firstChild.appendChild(document.createTextNode('Test'));
+			f.appendChild(foo.cloneNode(true));
+			chai.assert.equal(
+				evaluateXPathToString('string($f)', undefined, undefined, { f }),
+				'TestTest',
+			);
+			chai.assert.equal(evaluateXPathToString('string(.)', f, undefined), 'TestTest');
+		});
+
 		it('If $arg is the empty sequence, the function returns the zero-length string.', () =>
 			chai.assert.equal(evaluateXPathToString('string(())', documentNode), ''));
 
