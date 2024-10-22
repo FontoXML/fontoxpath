@@ -268,7 +268,7 @@ async function rerunXPath() {
 			xpath,
 			{
 				language: fontoxpath.evaluateXPath.XQUERY_3_1_LANGUAGE,
-				debug: false,
+				debug: true,
 			},
 			document
 		);
