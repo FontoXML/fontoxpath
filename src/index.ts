@@ -1,9 +1,9 @@
-import IDocumentWriter from './documentWriter/IDocumentWriter';
+import type IDocumentWriter from './documentWriter/IDocumentWriter';
 import ExternalDomFacade from './domFacade/ExternalDomFacade';
-import IDomFacade from './domFacade/IDomFacade';
-import evaluateUpdatingExpression, { UpdatingOptions } from './evaluateUpdatingExpression';
+import type IDomFacade from './domFacade/IDomFacade';
+import evaluateUpdatingExpression, { type UpdatingOptions } from './evaluateUpdatingExpression';
 import evaluateUpdatingExpressionSync from './evaluateUpdatingExpressionSync';
-import evaluateXPath, { EvaluableExpression, EvaluateXPath } from './evaluateXPath';
+import evaluateXPath, { type EvaluableExpression, type EvaluateXPath } from './evaluateXPath';
 import evaluateXPathToArray from './evaluateXPathToArray';
 import evaluateXPathToAsyncIterator from './evaluateXPathToAsyncIterator';
 import evaluateXPathToBoolean from './evaluateXPathToBoolean';
@@ -16,28 +16,28 @@ import evaluateXPathToString from './evaluateXPathToString';
 import evaluateXPathToStrings from './evaluateXPathToStrings';
 import executePendingUpdateList from './executePendingUpdateList';
 import Expression from './expressions/Expression';
-import { Bucket } from './expressions/util/Bucket';
+import type { Bucket } from './expressions/util/Bucket';
 import { getBucketsForNode } from './getBuckets';
 import compileXPathToJavaScript from './jsCodegen/compileXPathToJavaScript';
 import executeJavaScriptCompiledXPath, {
-	CompiledXPathFunction,
+	type CompiledXPathFunction,
 } from './jsCodegen/executeJavaScriptCompiledXPath';
 import {
-	IAstAccepted,
-	IAstRejected,
-	JavaScriptCompiledXPathResult,
+	type IAstAccepted,
+	type IAstRejected,
+	type JavaScriptCompiledXPathResult,
 } from './jsCodegen/JavaScriptCompiledXPath';
-import INodesFactory from './nodesFactory/INodesFactory';
-import ISimpleNodesFactory from './nodesFactory/ISimpleNodesFactory';
+import type INodesFactory from './nodesFactory/INodesFactory';
+import type ISimpleNodesFactory from './nodesFactory/ISimpleNodesFactory';
 import parseScript from './parseScript';
 import astHelper from './parsing/astHelper';
 import compileAstToExpression from './parsing/compileAstToExpression';
 import { getAnyStaticCompilationResultFromCache } from './parsing/compiledExpressionCache';
-import { IReturnTypes, ReturnType } from './parsing/convertXDMReturnValue';
+import { type IReturnTypes, ReturnType } from './parsing/convertXDMReturnValue';
 import convertXmlToAst from './parsing/convertXmlToAst';
 import { performStaticCompilationOnModules } from './parsing/globalModuleCache';
 import parseExpression from './parsing/parseExpression';
-import { Profiler, profiler, XPathPerformanceMeasurement } from './performance';
+import { type Profiler, profiler, type XPathPerformanceMeasurement } from './performance';
 import precompileXPath from './precompileXPath';
 import registerCustomXPathFunction from './registerCustomXPathFunction';
 import registerXQueryModule from './registerXQueryModule';
@@ -45,20 +45,21 @@ import registerXQueryModule from './registerXQueryModule';
 // the types which it uses in the public API
 // tslint:disable-next-line: match-default-export-name
 import internalCreateTypedValueFactory, {
-	UntypedExternalValue,
-	ValidValue,
+	type UntypedExternalValue,
+	type ValidValue,
 } from './types/createTypedValueFactory';
+
 import {
-	FunctionNameResolver,
 	Language,
-	LexicalQualifiedName,
-	Logger,
-	NamespaceResolver,
-	Options,
-	ResolvedQualifiedName,
-	XMLSerializer,
+	type FunctionNameResolver,
+	type LexicalQualifiedName,
+	type Logger,
+	type NamespaceResolver,
+	type Options,
+	type ResolvedQualifiedName,
+	type XMLSerializer,
 } from './types/Options';
-import {
+import type {
 	Attr,
 	CDATASection,
 	CharacterData,
