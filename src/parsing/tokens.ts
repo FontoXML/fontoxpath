@@ -233,3 +233,9 @@ export const NAMESPACE_NODE_TEST = token('namespace-node()');
 export const ANY_KIND_TEST = token('node()');
 export const ITEM_TYPE_TEST = token('item()');
 export const EMPTY_SEQUENCE_TEST = token('empty-sequence()');
+
+export const BACKTICK = token('`');
+export const STRING_CONSTRUCTOR_OPEN = token('``[');
+export const STRING_CONSTRUCTOR_CLOSE = token(']``');
+export const STRING_INTERPOLATION_OPEN = token('`{');
+export const STRING_INTERPOLATION_CLOSE = token('}`');

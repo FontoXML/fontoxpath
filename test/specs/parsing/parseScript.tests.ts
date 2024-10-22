@@ -10,6 +10,7 @@ import {
 	evaluateXPathToString,
 	evaluateXPathToStrings,
 	executePendingUpdateList,
+	Language,
 	parseScript,
 	ReturnType,
 } from 'fontoxpath';
@@ -160,6 +161,15 @@ some-function#0()
 		const ast = parseScript('2 = 2 and 3 = 3 or 4 = 4', {}, new Document());
 		const result = evaluateXPathToBoolean(ast);
 		chai.assert.isTrue(result);
+	});
+
+	it('can parse an AST containing a string constructor expression', () => {
+		const ast = parseScript(
+			'let $a := "my" return ``[Hello "`{$a}`" world!]``',
+			{ language: Language.XQUERY_3_1_LANGUAGE },
+			new Document(),
+		);
+		chai.assert.isOk(ast);
 	});
 
 	it('can execute an AST, using variables', () => {

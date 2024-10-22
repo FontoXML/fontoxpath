@@ -90,6 +90,7 @@ import {
 import * as tokens from './tokens';
 import { atomicOrUnionType, singleType, typeName } from './typesParser';
 import {
+	char,
 	explicitWhitespace,
 	whitespace,
 	whitespaceCache,
@@ -713,6 +714,57 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		(x) => ['arrayConstructor', x],
 	);
 
+	const stringConstructorChars: Parser<IAST> = map(
+		star(
+			preceded(
+				peek(
+					not(
+						or([
+							tokens.STRING_INTERPOLATION_OPEN,
+							tokens.STRING_INTERPOLATION_CLOSE,
+							tokens.STRING_CONSTRUCTOR_CLOSE,
+						]),
+						['String constructors can not contain interpolation characters'],
+					),
+				),
+				char,
+			),
+		),
+		(x) => ['stringConstructorChars', x.join('')],
+	);
+
+	const stringConstructorInterpolation: Parser<IAST> = map(
+		delimited(tokens.STRING_INTERPOLATION_OPEN, expr, tokens.STRING_INTERPOLATION_CLOSE, true),
+		(ast) => ['stringConstructorInterpolation', ast],
+	);
+
+	const stringConstructorContent: Parser<IAST[]> = then(
+		stringConstructorChars,
+		star(
+			then(stringConstructorInterpolation, stringConstructorChars, (interpolation, chars) => [
+				interpolation,
+				chars,
+			]),
+		),
+		(a, b) => {
+			const toReturn = [a];
+			for (const [interpolation, chars] of b) {
+				toReturn.push(interpolation, chars);
+			}
+			return toReturn;
+		},
+	);
+
+	const stringConstructor: Parser<IAST> = map(
+		delimited(
+			tokens.STRING_CONSTRUCTOR_OPEN,
+			stringConstructorContent,
+			tokens.STRING_CONSTRUCTOR_CLOSE,
+			true,
+		),
+		(contents) => ['stringConstructor', ...contents],
+	);
+
 	const keySpecifier: Parser<string | IAST> = or([
 		ncName as Parser<string | IAST>,
 		integerLiteral,
@@ -986,7 +1038,7 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		functionItemExpr,
 		mapConstructor,
 		arrayConstructor,
-		// stringConstructor,
+		stringConstructor,
 		unaryLookup,
 	]);
 

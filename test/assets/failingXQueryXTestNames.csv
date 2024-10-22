@@ -2641,35 +2641,10 @@ K2-Steps-19,result was not equal
 K2-Steps-20,result was not equal
 K2-Steps-7,result was not equal
 Steps-leading-lone-slash-13,Parse error
-string-constructor-001,Parse error
-string-constructor-002,Parse error
-string-constructor-003,Parse error
-string-constructor-004,Parse error
-string-constructor-005,Parse error
-string-constructor-006,Parse error
-string-constructor-007,Parse error
-string-constructor-008,Parse error
-string-constructor-009,Parse error
-string-constructor-010,Parse error
-string-constructor-011,Parse error
-string-constructor-012,Parse error
-string-constructor-013,Parse error
-string-constructor-014,Parse error
-string-constructor-015,Parse error
-string-constructor-016,Parse error
-string-constructor-017,Parse error
-string-constructor-018,Parse error
-string-constructor-019,Parse error
 string-constructor-020,Parse error
-string-constructor-021,Parse error
-string-constructor-022,Parse error
 string-constructor-023,Parse error
 string-constructor-024,Parse error
 string-constructor-025,Parse error
-string-constructor-026,Parse error
-string-constructor-910,Parse error
-string-constructor-911,Parse error
-string-constructor-912,Parse error
 try-001,Parse error
 try-002,Parse error
 try-003,Parse error
