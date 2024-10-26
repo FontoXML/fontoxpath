@@ -25,7 +25,7 @@ function assertValueType(
 	context: AnnotationContext,
 	followSpecificPath?: string[],
 ) {
-	const ast = parseExpression(expression, {});
+	const ast = parseExpression(expression, { version: 3.1 });
 	if (context) annotateAst(ast, context);
 	else annotateAst(ast, new AnnotationContext(undefined));
 
@@ -371,20 +371,20 @@ describe('Annotation counting', () => {
 		['b', { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.EXACTLY_ONE }],
 	]);
 	it('correctly counts add expressions', () => {
-		const ast = parseExpression('2 + 1', {});
+		const ast = parseExpression('2 + 1', { version: 3.1 });
 		annotateAst(ast, new AnnotationContext(undefined));
 		const [total, annotated] = countQueryBodyAnnotations(ast);
 		chai.assert.equal(total, annotated);
 	});
 	it('correctly counts unannotated expressions', () => {
-		const ast = parseExpression('$x + 1', {});
+		const ast = parseExpression('$x + 1', { version: 3.1 });
 		annotateAst(ast, context);
 		const [total, annotated] = countQueryBodyAnnotations(ast);
 		chai.assert.equal(annotated, total);
 		chai.assert.equal(total, 3);
 	});
 	it('correctly counts unannotated expressions 2', () => {
-		const ast = parseExpression('$b + math:sin($a)', {});
+		const ast = parseExpression('$b + math:sin($a)', { version: 3.1 });
 		annotateAst(ast, context);
 		const [total, annotated] = countQueryBodyAnnotations(ast);
 		chai.assert.equal(annotated, 2);

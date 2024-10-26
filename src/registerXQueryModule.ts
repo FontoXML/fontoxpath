@@ -49,7 +49,7 @@ export default function registerXQueryModule(
 	moduleString: string,
 	options: {
 		debug: boolean;
-		language:
+		language?:
 			| Language.XQUERY_3_1_LANGUAGE
 			| Language.XQUERY_4_0_LANGUAGE
 			| Language.XQUERY_UPDATE_3_1_LANGUAGE
