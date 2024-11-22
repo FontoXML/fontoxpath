@@ -30,6 +30,7 @@ import { Language, Logger, XMLSerializer } from './types/Options';
  * nodesFactory				- Reference to a nodes factory object.
  * returnType				- The type that the evaluation function will return.
  * xmlSerializer			- An XML serializer that can serialize nodes. Used when the `fn:serialize` function is called with a node.
+ * language                 - Whether to allow experimental XQuery 4 features in the script
  */
 export type UpdatingOptions = {
 	debug?: boolean;
@@ -41,6 +42,7 @@ export type UpdatingOptions = {
 	nodesFactory?: INodesFactory;
 	returnType?: ReturnType;
 	xmlSerializer?: XMLSerializer;
+	language?: Language.XQUERY_UPDATE_3_1_LANGUAGE | Language.XQUERY_UPDATE_4_0_LANGUAGE;
 };
 
 /**
@@ -82,6 +84,7 @@ export default async function evaluateUpdatingExpression(
 				allowXQuery: true,
 				debug: !!options['debug'],
 				disableCache: !!options['disableCache'],
+				version: options.language === Language.XQUERY_UPDATE_4_0_LANGUAGE ? 4 : 3.1,
 			},
 		);
 		dynamicContext = context.dynamicContext;

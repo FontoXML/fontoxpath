@@ -225,7 +225,15 @@ export default function parseScript<TElement extends Element>(
 		ast = parseExpression(script, {
 			allowXQuery:
 				options['language'] === Language.XQUERY_3_1_LANGUAGE ||
-				options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE,
+				options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE ||
+				options['language'] === Language.XQUERY_4_0_LANGUAGE ||
+				options['language'] === Language.XQUERY_UPDATE_4_0_LANGUAGE,
+			version:
+				options['language'] === Language.XPATH_4_0_LANGUAGE ||
+				options['language'] === Language.XQUERY_4_0_LANGUAGE ||
+				options['language'] === Language.XQUERY_UPDATE_4_0_LANGUAGE
+					? 4
+					: 3.1,
 			debug: options.debug,
 		});
 	} catch (error) {

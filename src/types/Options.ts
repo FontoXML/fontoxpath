@@ -10,6 +10,30 @@ export enum Language {
 	'XPATH_3_1_LANGUAGE' = 'XPath3.1',
 	'XQUERY_3_1_LANGUAGE' = 'XQuery3.1',
 	'XQUERY_UPDATE_3_1_LANGUAGE' = 'XQueryUpdate3.1',
+	/**
+	 * Use XPath 4.0 processing. Note that this is experimental and subject to change as long as the
+	 * specification changes. More information can be found on the [QT4 community
+	 * page](https://qt4cg.org/)
+	 *
+	 * @beta
+	 */
+	'XPATH_4_0_LANGUAGE' = 'XPath4.0',
+	/**
+	 * Use XQuery 4.0 processing. Note that this is experimental and subject to change as long as
+	 * the specification changes. More information can be found on the [QT4 community
+	 * page](https://qt4cg.org/)
+	 *
+	 * @beta
+	 */
+	'XQUERY_4_0_LANGUAGE' = 'XQuery4.0',
+	/**
+	 * Use XQueryUpdate 4.0 processing. Note that this is experimental and subject to change as long
+	 * as the specification changes. More information can be found on the [QT4 community
+	 * page](https://qt4cg.org)/
+	 *
+	 * @beta
+	 */
+	'XQUERY_UPDATE_4_0_LANGUAGE' = 'XQueryUpdate4.0',
 }
 
 /**
