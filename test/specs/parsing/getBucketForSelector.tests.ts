@@ -37,6 +37,26 @@ describe('getBucketForSelector', () => {
 	it('returns the correct bucket for expressions using the and operator, first not having a bucket', () => {
 		assertBucketForSelector('true() and self::element()', 'type-1');
 	});
+	it('returns the correct bucket for expressions using the and operator, first matching nothing', () => {
+		assertBucketForSelector(
+			'(self::element() and self::processing-instruction()) or self::element()',
+			'type-1',
+		);
+		assertBucketForSelector(
+			'self::element() or (self::element() and self::processing-instruction())',
+			'type-1',
+		);
+	});
+	it('returns the correct bucket for expressions using nested operators, first matching everything', () => {
+		assertBucketForSelector(
+			'(self::element() or self::processing-instruction()) or self::element()',
+			null,
+		);
+		assertBucketForSelector(
+			'self::element() or (self::element() or self::processing-instruction())',
+			null,
+		);
+	});
 	it('returns the correct bucket for expressions using the or operator, first not having a bucket', () => {
 		assertBucketForSelector('true() or self::element()', null);
 	});
