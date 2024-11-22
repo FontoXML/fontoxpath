@@ -1,16 +1,15 @@
 import Value from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
-import {} from '../Expression';
 import Specificity from '../Specificity';
 import StaticContext from '../StaticContext';
 import { Bucket, unionBucket } from '../util/Bucket';
 import TestAbstractExpression from './TestAbstractExpression';
 
 /**
- * Combinating test, used to process `descendant::(a|b|c)` selectors
+ * Union node test, used to process `descendant::(a|b|c)` selectors
  */
-class CombinatingTest extends TestAbstractExpression {
+class UnionNodeTest extends TestAbstractExpression {
 	private _subTests: TestAbstractExpression[];
 	private _bucket: Bucket;
 	constructor(subTests: TestAbstractExpression[]) {
@@ -62,4 +61,4 @@ class CombinatingTest extends TestAbstractExpression {
 	}
 }
 
-export default CombinatingTest;
+export default UnionNodeTest;

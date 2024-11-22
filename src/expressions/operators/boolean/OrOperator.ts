@@ -8,7 +8,7 @@ import DynamicContext from '../../DynamicContext';
 import ExecutionParameters from '../../ExecutionParameters';
 import Expression from '../../Expression';
 import Specificity from '../../Specificity';
-import { Bucket } from '../../util/Bucket';
+import { Bucket, unionBucket } from '../../util/Bucket';
 import { DONE_TOKEN, ready } from '../../util/iterators';
 
 class OrOperator extends Expression {
@@ -35,21 +35,18 @@ class OrOperator extends Expression {
 			type,
 		);
 
-		// If all subExpressions define the same bucket: use that one, else, use no bucket.
 		let bucket: Bucket | null;
 		for (let i = 0; i < expressions.length; ++i) {
+			const subTestBucket = expressions[i].getBucket();
 			if (bucket === undefined) {
-				bucket = expressions[i].getBucket();
+				bucket = subTestBucket;
 			}
 			if (bucket === null) {
-				// Not applicable buckets
+				// No applicable buckets
 				break;
 			}
 
-			if (bucket !== expressions[i].getBucket()) {
-				bucket = null;
-				break;
-			}
+			bucket = unionBucket(bucket, subTestBucket);
 		}
 		this._bucket = bucket;
 

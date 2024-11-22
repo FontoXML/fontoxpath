@@ -270,6 +270,8 @@ Object.assign(evaluateXPath, {
 	['XPATH_3_1_LANGUAGE']: Language.XPATH_3_1_LANGUAGE,
 	['XQUERY_3_1_LANGUAGE']: Language.XQUERY_3_1_LANGUAGE,
 	['XQUERY_UPDATE_3_1_LANGUAGE']: Language.XQUERY_UPDATE_3_1_LANGUAGE,
+	['XPATH_4_0_LANGUAGE']: Language.XPATH_4_0_LANGUAGE,
+	['XQUERY_4_0_LANGUAGE']: Language.XQUERY_4_0_LANGUAGE,
 });
 
 export default evaluateXPath as EvaluateXPath;

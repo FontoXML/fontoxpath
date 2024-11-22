@@ -43,6 +43,15 @@ describe('getBucketForSelector', () => {
 	it('returns the correct bucket for expressions using the or operator, all having the same bucket', () => {
 		assertBucketForSelector('self::element() or self::element()', 'type-1');
 	});
+	it('returns the correct bucket for expressions using the or operator, all having a different nonoverlapping bucket', () => {
+		assertBucketForSelector('self::processing-instruction() or self::element()', null);
+	});
+	it('returns the correct bucket for expressions using the or operator, all having a different overlapping bucket', () => {
+		assertBucketForSelector('self::p or self::element()', 'type-1-or-type-2');
+	});
+	it('returns the correct bucket for expressions using the or operator, all having a different semi-overlapping bucket', () => {
+		assertBucketForSelector('self::p or self::a', 'type-1-or-type-2');
+	});
 	it('returns the correct bucket for PI expressions', () => {
 		assertBucketForSelector('self::processing-instruction()', 'type-7');
 	});

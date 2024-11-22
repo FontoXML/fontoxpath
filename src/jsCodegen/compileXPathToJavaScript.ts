@@ -50,7 +50,12 @@ function compileXPathToJavaScript(
 			// Debugging inserts xs:stackTrace in the AST, but this is not supported
 			// yet by the js-codegen backend.
 			debug: false,
-			version: 3.1,
+			version:
+				options['language'] === Language.XPATH_4_0_LANGUAGE ||
+				options['language'] === Language.XQUERY_4_0_LANGUAGE ||
+				options['language'] === Language.XQUERY_UPDATE_4_0_LANGUAGE
+					? 4
+					: 3.1,
 		};
 		try {
 			ast = parseExpression(expressionString, parserOptions);

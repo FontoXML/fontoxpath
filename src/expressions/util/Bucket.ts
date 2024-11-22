@@ -93,6 +93,7 @@ export function intersectBuckets(bucket1: Bucket | null, bucket2: Bucket | null)
  * Example: `name-p` ∪ `name-div` = `type-1-or-type-2`
  * Example: `type-1` ∪ `name-p` = `type-1`
  * Example: `type-1` ∪ `empty` = `type-1`
+ * Example: `type-1` ∪ `type-7` = `null`
  *
  * @param  bucket1 - The first bucket to check
  * @param  bucket2 - The second bucket to check
@@ -133,6 +134,6 @@ export function unionBucket(bucket1: Bucket | null, bucket2: Bucket | null): Buc
 		return supertypes1;
 	}
 
-	// Expression will never match any nodes
-	return 'empty';
+	// Expression match a lot. More than can be captured in buckets
+	return null;
 }

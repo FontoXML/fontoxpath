@@ -1,5 +1,5 @@
 import Otherwise from '../expressions/xpath-40/Otherwise';
-import CombinatingTest from '../expressions/tests/CombinatingTest';
+import UnionNodeTest from '../expressions/tests/UnionNodeTest';
 import CurlyArrayConstructor from '../expressions/arrays/CurlyArrayConstructor';
 import SquareArrayConstructor from '../expressions/arrays/SquareArrayConstructor';
 import AncestorAxis from '../expressions/axes/AncestorAxis';
@@ -285,6 +285,8 @@ function compileTest(ast: IAST, compilationOptions: CompilationOptions): TestAbs
 			return typeTest(ast, compilationOptions);
 		case 'anyItemType':
 			return anyItemTest();
+		case 'unionNodeTest':
+			return unionNodeTest(ast, compilationOptions);
 
 		default:
 			throw new Error('No selector counterpart for: ' + ast[0] + '.');
@@ -822,6 +824,14 @@ function anyItemTest() {
 	return new TypeTest({ prefix: '', namespaceURI: null, localName: 'item()' });
 }
 
+function unionNodeTest(ast: IAST, compilationOptions: CompilationOptions) {
+	const subTests = astHelper.getChildren(ast, '*').map((t) => compileTest(t, compilationOptions));
+	if (subTests.length === 1) {
+		return subTests[1];
+	}
+	return new UnionNodeTest(subTests);
+}
+
 function pathExpr(ast: IAST, compilationOptions: CompilationOptions) {
 	const type = astHelper.getAttribute(ast, 'type');
 	const rawSteps = astHelper.getChildren(ast, 'stepExpr');
@@ -870,35 +880,30 @@ function pathExpr(ast: IAST, compilationOptions: CompilationOptions) {
 
 		if (axis) {
 			hasAxisStep = true;
-			const tests = astHelper
-				.getChildren(step, '*')
-				.filter((test) =>
-					[
-						'attributeTest',
-						'anyElementTest',
-						'piTest',
-						'documentTest',
-						'elementTest',
-						'commentTest',
-						'namespaceTest',
-						'anyKindTest',
-						'textTest',
-						'anyFunctionTest',
-						'typedFunctionTest',
-						'schemaAttributeTest',
-						'atomicType',
-						'anyItemType',
-						'parenthesizedItemType',
-						'typedMapTest',
-						'typedArrayTest',
-						'nameTest',
-						'Wildcard',
-					].includes(test[0]),
-				);
+			const test = astHelper.getFirstChild(step, [
+				'attributeTest',
+				'anyElementTest',
+				'piTest',
+				'documentTest',
+				'elementTest',
+				'commentTest',
+				'namespaceTest',
+				'anyKindTest',
+				'textTest',
+				'anyFunctionTest',
+				'typedFunctionTest',
+				'schemaAttributeTest',
+				'atomicType',
+				'anyItemType',
+				'parenthesizedItemType',
+				'typedMapTest',
+				'typedArrayTest',
+				'nameTest',
+				'Wildcard',
+				'unionNodeTest',
+			]);
 
-			const testExpressions = new CombinatingTest(
-				tests.map((test) => compileTest(test, disallowUpdating(compilationOptions))),
-			);
+			const testExpressions = compileTest(test, disallowUpdating(compilationOptions));
 			switch (astHelper.getTextContent(axis)) {
 				case 'ancestor':
 					stepExpression = new AncestorAxis(testExpressions, { inclusive: false });

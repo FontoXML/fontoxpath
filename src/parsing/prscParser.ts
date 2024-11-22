@@ -16,7 +16,6 @@ import {
 	star,
 	then,
 } from 'prsc';
-import { version } from 'chai';
 import { Location, SourceRange } from '../expressions/debug/StackTraceGenerator';
 import { IAST } from './astHelper';
 import {
@@ -371,34 +370,32 @@ function generateParser(options: {
 
 	const simpleNodeTest: Parser<IAST> = or([kindTest, nameTest]);
 
-	const unionNodeTest: Parser<IAST[]> = delimited(
-		followed(tokens.BRACE_OPEN, whitespace),
-		cut(
+	const unionNodeTest: Parser<IAST> = map(
+		delimited(
+			followed(tokens.BRACE_OPEN, whitespace),
 			then(
 				simpleNodeTest,
 				star(preceded(surrounded(tokens.VERTICAL_BAR, whitespace), simpleNodeTest)),
 				(first, rest) => [first].concat(rest),
 			),
+			followed(whitespace, tokens.BRACE_CLOSE),
+			true,
 		),
-		followed(whitespace, tokens.BRACE_CLOSE),
+		(tests) => ['unionNodeTest', ...tests],
 	);
 
-	const nodeTest: Parser<IAST[]> =
-		options.version === 4
-			? or([unionNodeTest, map(simpleNodeTest, (test) => [test])])
-			: map(or([kindTest, nameTest]), (test) => [test]);
+	const nodeTest: Parser<IAST> =
+		options.version === 4 ? or([unionNodeTest, simpleNodeTest]) : simpleNodeTest;
 
 	const abbrevForwardStep: Parser<IAST> =
 		options.version === 4
 			? or([
-					map(
-						preceded(tokens.AT_SIGN, nodeTest),
-						(test) => ['stepExpr', ['xpathAxis', 'attribute'], test] as IAST,
-					),
-					map(
-						simpleNodeTest,
-						(test) => ['stepExpr', ['xpathAxis', 'child'], test] as IAST,
-					),
+					map(preceded(tokens.AT_SIGN, nodeTest), (test) => [
+						'stepExpr',
+						['xpathAxis', 'attribute'],
+						test,
+					]),
+					map(simpleNodeTest, (test) => ['stepExpr', ['xpathAxis', 'child'], test]),
 			  ])
 			: then(optional(tokens.AT_SIGN), simpleNodeTest, (a, b) => {
 					return a !== null || isAttributeTest(b)
@@ -407,11 +404,7 @@ function generateParser(options: {
 			  });
 
 	const forwardStep: Parser<IAST> = or([
-		then(
-			forwardAxis,
-			nodeTest,
-			(axis, tests) => (['stepExpr', ['xpathAxis', axis]] as IAST).concat(tests) as IAST,
-		),
+		then(forwardAxis, nodeTest, (axis, test) => ['stepExpr', ['xpathAxis', axis], test]),
 		abbrevForwardStep,
 	]);
 
@@ -422,11 +415,7 @@ function generateParser(options: {
 	]);
 
 	const reverseStep: Parser<IAST> = or([
-		then(
-			reverseAxis,
-			nodeTest,
-			(axis, tests) => (['stepExpr', ['xpathAxis', axis]] as IAST).concat(tests) as IAST,
-		),
+		then(reverseAxis, nodeTest, (axis, test) => ['stepExpr', ['xpathAxis', axis], test]),
 		abbrevReverseStep,
 	]);
 
@@ -1467,7 +1456,7 @@ function generateParser(options: {
 
 	const otherwiseExpr: Parser<IAST> = binaryOperator(
 		unionExpr,
-		followed(alias([tokens.OTHERWISE], 'otherwiseOp'), assertAdjacentOpeningTerminal),
+		followed(alias([tokens.OTHERWISE], 'otherwiseOp'), cut(assertAdjacentOpeningTerminal)),
 		defaultBinaryOperatorFn,
 	);
 
