@@ -1,0 +1,6 @@
+<boxup xmlns="http://mansoft.nl/boxup" columns="3" rows="3">
+    <mover column="1" row="2"/>
+    <box box-type="normal" column="3" row="1" dx="1" dy="0" depth="1"/>
+    <box box-type="destination" column="2" row="2" dx="0" dy="1" depth="1"/>
+    <box box-type="source" column="1" row="3" dx="0" dy="1" depth="2"/>
+</boxup>

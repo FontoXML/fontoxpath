@@ -1,0 +1,19 @@
+<chain-game xmlns="http://mansoft.nl/chain" rows="5" columns="5">
+	<field row="1" column="2" shape="circle" color="blue" state="unvisited"/>
+	<field row="1" column="3" shape="square" color="red" state="unvisited"/>
+	<field row="1" column="4" shape="square" color="green" state="unvisited"/>
+	<field row="2" column="1" shape="square" color="red" state="unvisited"/>
+	<field row="2" column="2" shape="square" color="green" state="unvisited"/>
+	<field row="2" column="4" shape="circle" color="blue" state="unvisited"/>
+	<field row="2" column="5" shape="circle" color="red" state="unvisited"/>
+	<field row="3" column="1" shape="circle" color="green" state="unvisited"/>
+	<field row="3" column="3" shape="circle" color="red" state="current"/>
+	<field row="3" column="5" shape="square" color="green" state="unvisited"/>
+	<field row="4" column="1" shape="square" color="blue" state="unvisited"/>
+	<field row="4" column="2" shape="circle" color="blue" state="unvisited"/>
+	<field row="4" column="4" shape="square" color="blue" state="unvisited"/>
+	<field row="4" column="5" shape="circle" color="green" state="unvisited"/>
+	<field row="5" column="2" shape="circle" color="red" state="unvisited"/>
+	<field row="5" column="3" shape="square" color="green" state="unvisited"/>
+	<field row="5" column="4" shape="square" color="red" state="unvisited"/>
+</chain-game>

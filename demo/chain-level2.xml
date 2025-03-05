@@ -1,0 +1,11 @@
+<chain:chain-game xmlns:chain="http://mansoft.nl/chain" rows="3" columns="3">
+  <chain:field row="1" column="1" shape="square" color="red" state="unvisited"/>
+  <chain:field row="1" column="2" shape="circle" color="green" state="unvisited"/>
+  <chain:field row="1" column="3" shape="square" color="blue" state="unvisited"/>
+  <chain:field row="2" column="1" shape="circle" color="green" state="unvisited"/>
+  <chain:field row="2" column="2" shape="circle" color="red" state="current"/>
+  <chain:field row="2" column="3" shape="circle" color="green" state="unvisited"/>
+  <chain:field row="3" column="1" shape="square" color="blue" state="unvisited"/>
+  <chain:field row="3" column="2" shape="square" color="green" state="unvisited"/>
+  <chain:field row="3" column="3" shape="circle" color="blue" state="unvisited"/>
+</chain:chain-game>

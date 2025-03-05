@@ -1,0 +1,21 @@
+<svg
+	xmlns="http://www.w3.org/2000/svg"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:boxup="http://mansoft.nl/boxup"
+	width="100%" height="100%"
+	viewBox="-0.1 -0.1 1.2 1.2"
+	boxup:rows="1"
+	boxup:columns="1"
+>
+	<title>Box Up</title>
+	<script type="module" xlink:href="game.js"></script>
+	<script type="module" xlink:href="boxup.js"></script>
+	<script type="text/javascript" xlink:href="xmljs-bundle.js"></script>
+	<defs>
+		<rect id="empty" stroke="grey" stroke-width="0.02" fill="white" height="1" width="1"/>
+		<rect id="mover" x="0.375" y="0.375" height="0.25" width="0.25"/>
+		<path id="big-box" fill="none" stroke-width="0.075" d="M 0.1 0.1 l 0 0.8 l 0.8 0 l 0 -0.8"/>
+		<path id="small-box" fill="none" stroke-width="0.075" d="M 0.225 0.225 l 0 0.55 l 0.55 0 l 0 -0.55"/>
+		<rect id="block" stroke="grey" stroke-width="0.02" fill="black" height="1" width="1"/>
+	</defs>
+</svg>
