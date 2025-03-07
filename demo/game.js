@@ -1,4 +1,9 @@
 import * as fontoxpath from '../src/index';
+import * as buffer from 'buffer';
+import * as xmljs from 'xml-js';
+
+// https://stackoverflow.com/a/59621673/433626
+window.Buffer = buffer.Buffer;
 
 export const
 	getQueryVariable = (variable, defval) => {

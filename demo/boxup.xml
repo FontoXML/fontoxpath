@@ -8,9 +8,7 @@
 	boxup:columns="1"
 >
 	<title>Box Up</title>
-	<script type="module" xlink:href="game.js"></script>
 	<script type="module" xlink:href="boxup.js"></script>
-	<script type="text/javascript" xlink:href="xmljs-bundle.js"></script>
 	<defs>
 		<rect id="empty" stroke="grey" stroke-width="0.02" fill="white" height="1" width="1"/>
 		<rect id="mover" x="0.375" y="0.375" height="0.25" width="0.25"/>
