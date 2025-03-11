@@ -3,6 +3,7 @@ import castToType from '../dataTypes/castToType';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import promoteToType from '../dataTypes/promoteToType';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value, {
 	SequenceMultiplicity,
 	SequenceType,
@@ -10,7 +11,11 @@ import Value, {
 	ValueType,
 	valueTypeToString,
 } from '../dataTypes/Value';
+import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
+import StaticContext from '../StaticContext';
+import { errXPDY0002 } from '../XPathErrors';
+import FunctionDefinitionType from './FunctionDefinitionType';
 
 function mapItem(
 	argumentItem: Value,
@@ -149,3 +154,31 @@ export const performFunctionConversion = (
 		},
 	});
 };
+
+export function contextItemAsFirstArgument(
+	functionName: string,
+	parameterType: ValueType,
+	fn: FunctionDefinitionType,
+): FunctionDefinitionType {
+	return (
+		dynamicContext: DynamicContext,
+		executionParameters: ExecutionParameters,
+		staticContext: StaticContext,
+	): ISequence => {
+		if (dynamicContext.contextItem === null) {
+			throw errXPDY0002(
+				`The function ${functionName} depends on dynamic context, which is absent.`,
+			);
+		}
+
+		const contextItemArgument = performFunctionConversion(
+			{ type: parameterType, mult: SequenceMultiplicity.EXACTLY_ONE },
+			sequenceFactory.singleton(dynamicContext.contextItem),
+			executionParameters,
+			functionName,
+			false,
+		);
+
+		return fn(dynamicContext, executionParameters, staticContext, contextItemArgument);
+	};
+}

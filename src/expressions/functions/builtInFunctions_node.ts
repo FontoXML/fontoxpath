@@ -19,39 +19,17 @@ import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value, { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
-import DynamicContext from '../DynamicContext';
-import ExecutionParameters from '../ExecutionParameters';
 import arePointersEqual from '../operators/compares/arePointersEqual';
 import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
-import StaticContext from '../StaticContext';
 import { IterationHint } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
 import { errXPDY0002 } from '../XPathErrors';
+import { contextItemAsFirstArgument } from './argumentHelper';
 import { BuiltinDeclarationType } from './builtInFunctions';
 import builtinStringFunctions from './builtInFunctions_string';
 import FunctionDefinitionType from './FunctionDefinitionType';
 import generateId from './generateId';
 const fnString = builtinStringFunctions.functions.string;
-
-function contextItemAsFirstArgument(
-	functionName: string,
-	fn: FunctionDefinitionType,
-	dynamicContext: DynamicContext,
-	executionParameters: ExecutionParameters,
-	staticContext: StaticContext,
-) {
-	if (dynamicContext.contextItem === null) {
-		throw errXPDY0002(
-			`The function ${functionName} depends on dynamic context, which is absent.`,
-		);
-	}
-	return fn(
-		dynamicContext,
-		executionParameters,
-		staticContext,
-		sequenceFactory.singleton(dynamicContext.contextItem),
-	);
-}
 
 const fnNodeName: FunctionDefinitionType = (
 	_dynamicContext,
@@ -499,7 +477,7 @@ const declarations: BuiltinDeclarationType[] = [
 
 	{
 		argumentTypes: [],
-		callFunction: contextItemAsFirstArgument.bind(null, 'name', fnName),
+		callFunction: contextItemAsFirstArgument('name', ValueType.NODE, fnName),
 		localName: 'name',
 		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
@@ -515,7 +493,7 @@ const declarations: BuiltinDeclarationType[] = [
 
 	{
 		argumentTypes: [],
-		callFunction: contextItemAsFirstArgument.bind(null, 'namespace-uri', fnNamespaceURI),
+		callFunction: contextItemAsFirstArgument('namespace-uri', ValueType.NODE, fnNamespaceURI),
 		localName: 'namespace-uri',
 		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSANYURI, mult: SequenceMultiplicity.EXACTLY_ONE },
@@ -550,7 +528,7 @@ const declarations: BuiltinDeclarationType[] = [
 
 	{
 		argumentTypes: [],
-		callFunction: contextItemAsFirstArgument.bind(null, 'has-children', fnHasChildren),
+		callFunction: contextItemAsFirstArgument('has-children', ValueType.NODE, fnHasChildren),
 		localName: 'has-children',
 		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSBOOLEAN, mult: SequenceMultiplicity.EXACTLY_ONE },
@@ -566,7 +544,7 @@ const declarations: BuiltinDeclarationType[] = [
 
 	{
 		argumentTypes: [],
-		callFunction: contextItemAsFirstArgument.bind(null, 'path', fnPath),
+		callFunction: contextItemAsFirstArgument('path', ValueType.NODE, fnPath),
 		localName: 'path',
 		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSSTRING, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -582,7 +560,7 @@ const declarations: BuiltinDeclarationType[] = [
 
 	{
 		argumentTypes: [],
-		callFunction: contextItemAsFirstArgument.bind(null, 'node-name', fnNodeName),
+		callFunction: contextItemAsFirstArgument('node-name', ValueType.NODE, fnNodeName),
 		localName: 'node-name',
 		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSQNAME, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -598,7 +576,7 @@ const declarations: BuiltinDeclarationType[] = [
 
 	{
 		argumentTypes: [],
-		callFunction: contextItemAsFirstArgument.bind(null, 'local-name', fnLocalName),
+		callFunction: contextItemAsFirstArgument('local-name', ValueType.NODE, fnLocalName),
 		localName: 'local-name',
 		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
@@ -614,7 +592,7 @@ const declarations: BuiltinDeclarationType[] = [
 
 	{
 		argumentTypes: [],
-		callFunction: contextItemAsFirstArgument.bind(null, 'root', fnRoot),
+		callFunction: contextItemAsFirstArgument('root', ValueType.NODE, fnRoot),
 		localName: 'root',
 		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.NODE, mult: SequenceMultiplicity.ZERO_OR_ONE },
@@ -622,7 +600,7 @@ const declarations: BuiltinDeclarationType[] = [
 
 	{
 		argumentTypes: [],
-		callFunction: contextItemAsFirstArgument.bind(null, 'data', fnData),
+		callFunction: contextItemAsFirstArgument('data', ValueType.ITEM, fnData),
 		localName: 'data',
 		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSANYATOMICTYPE, mult: SequenceMultiplicity.ZERO_OR_MORE },
@@ -654,7 +632,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 	{
 		argumentTypes: [],
-		callFunction: contextItemAsFirstArgument.bind(null, 'generate-id', fnGenerateId),
+		callFunction: contextItemAsFirstArgument('generate-id', ValueType.NODE, fnGenerateId),
 		localName: 'generate-id',
 		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },

@@ -726,11 +726,8 @@ generate-id-015,Error: No selector counterpart for: computedDocumentConstructor.
 generate-id-016,Error: No selector counterpart for: computedDocumentConstructor.
 generate-id-017,Error: No selector counterpart for: computedDocumentConstructor.
 generate-id-018,Error: XPTY0004: Multiplicity of function argument of type node()? for generate-id is incorrect. Expected "?", but got "+".
-fn-has-children-007,AssertionError: Expected executing the XPath "(1)[fn:has-children()]" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Cannot read properties of undefined (…'.
-fn-has-children-008,AssertionError: Expected executing the XPath "(fn:concat#2)[fn:has-children()]" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Cannot read properties of undefined (…'.
 fn-has-children-012,AssertionError: expected [Function] to throw an error
 fn-has-children-013,AssertionError: expected [Function] to throw an error
-fn-has-children-014,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Cannot read properties of undefined (…'
 fn-hours-from-dateTime-3,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}adjust-dateTime-to-timezone with arity of 2 not registered. Did you mean "Q{test}custom-dateTime-function ()"?
 fn-hours-from-time-4,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}adjust-time-to-timezone with arity of 2 not registered. No similar functions found.
 fn-id-4,Error: No selector counterpart for: computedDocumentConstructor.
@@ -981,8 +978,6 @@ fn-node-name-15,Error: No selector counterpart for: computedDocumentConstructor.
 fn-node-name-16,Error: No selector counterpart for: computedDocumentConstructor.
 fn-node-name-17,Error: No selector counterpart for: computedDocumentConstructor.
 fn-node-name-28,Error: No selector counterpart for: computedNamespaceConstructor.
-fn-node-name-30,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Cannot read properties of undefined (…'
-fn-node-name-31,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Cannot read properties of undefined (…'
 fn-notintg1args-1,Error: FOCA0003: can not cast -999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-notintg1args-2,Error: FOCA0003: can not cast 830993497117024304 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-notintg1args-3,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
@@ -2461,8 +2456,8 @@ cbcl-cast-gYearMonth-003,AssertionError: expected [Function] to throw an error
 XQueryComment014,Error: 3:  4:  5: "10" cast as (: type comment :) xs:integer ?                                               ^ 6:  7:  = 10  Error: XPST0003: Failed to parse script. Expected end of input   at <>:5:44 - 5:45
 Constr-compattr-compname-20,Error: XQDY0074: The value "Q{http://example.com/x}y" of a name expressions cannot be converted to an expanded QName.
 Constr-compattr-compname-21,Error: XQDY0074: The value " Q{}y " of a name expressions cannot be converted to an expanded QName.
-Constr-compattr-compname-22,Error: XQDY0074: The value " Q{http://example.com/x}y2024" of a name expressions cannot be converted to an expanded QName.
-Constr-compattr-compname-23,Error: XQDY0074: The value "Q{}y2024" of a name expressions cannot be converted to an expanded QName.
+Constr-compattr-compname-22,Error: XQDY0074: The value " Q{http://example.com/x}y2025" of a name expressions cannot be converted to an expanded QName.
+Constr-compattr-compname-23,Error: XQDY0074: The value "Q{}y2025" of a name expressions cannot be converted to an expanded QName.
 Constr-compattr-id-2,AssertionError: Expected executing the XPath "element elem {attribute xml:id {" ab c d "}}" to resolve to one of the expected results, but got AssertionError: Expected XPath element elem {attribute xml:id {" ab c d "}} to resolve to the given XML. Expected <elem xml:id=" ab c d "/> to equal <elem xml:id="ab c d"/>, AssertionError: expected [Function] to throw an error.
 K2-ComputeConAttr-34,AssertionError: Expected XPath <e> { attribute name {xs:hexBinary("ff")}, attribute name2 {"content"} } </e> to resolve to the given XML. Expected <e name="ff" name2="content"/> to equal <e name="FF" name2="content"/>
 K2-ComputeConAttr-48,AssertionError: Expected executing the XPath "string(attribute xml:id {" ab c d "})" to resolve to one of the expected results, but got AssertionError: string(attribute xml:id {" ab c d "}): expected ' ab c d ' to equal 'ab c d', AssertionError: expected [Function] to throw an error.
@@ -2548,8 +2543,8 @@ cbcl-constr-compcomment-001,AssertionError: expected [Function] to throw an erro
 cbcl-constr-compcomment-002,AssertionError: expected [Function] to throw an error
 Constr-compelem-name-20,Error: XQDY0074: The value "Q{http://example.com/x}x" of a name expressions cannot be converted to an expanded QName.
 Constr-compelem-name-21,Error: XQDY0074: The value "Q{}x" of a name expressions cannot be converted to an expanded QName.
-Constr-compelem-name-22,Error: XQDY0074: The value " Q{http://example.com/x}x2024" of a name expressions cannot be converted to an expanded QName.
-Constr-compelem-name-23,Error: XQDY0074: The value " Q{}x2024 " of a name expressions cannot be converted to an expanded QName.
+Constr-compelem-name-22,Error: XQDY0074: The value " Q{http://example.com/x}x2025" of a name expressions cannot be converted to an expanded QName.
+Constr-compelem-name-23,Error: XQDY0074: The value " Q{}x2025 " of a name expressions cannot be converted to an expanded QName.
 Constr-compelem-name-24,AssertionError: element {" x" || year-from-date(current-date()) || " "} {}: expected false to be true
 Constr-compelem-constrmod-3,AssertionError: expected [Function] to throw error matching /FORG0001/ but got 'Not implemented: only module imports,…'
 Constr-compelem-constrmod-4,AssertionError: Expected executing the XPath "declare construction preserve; (element elem {xs:decimal((//decimal[1]))}) cast as xs:integer" to resolve to one of the expected results, but got Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules, AssertionError: expected [Function] to throw error matching /FORG0001/ but got 'Not implemented: only module imports,…'.
