@@ -8,7 +8,10 @@ module.exports = defineConfig({
       input: {
         boxup: './stub_boxup.html',
       },
-      format: 'iife'
+      output:
+      {
+        format: 'iife'
+      }
     }
   }
 });

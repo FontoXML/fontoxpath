@@ -7,7 +7,7 @@
     height="100%"
     viewBox="0 0 12 12"
 >
-    <title>Tilemathics level 1</title>
+    <title>Tilemathics</title>
 	<script type="module" xlink:href="tilemathics.js"></script>
     <defs>
         <g id="square">

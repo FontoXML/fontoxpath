@@ -8,7 +8,10 @@ module.exports = defineConfig({
       input: {
         chainreaction: './stub_chainreaction.html',
       },
-      format: 'iife'
+      output:
+      {
+        format: 'iife'
+      }
     }
   }
 });

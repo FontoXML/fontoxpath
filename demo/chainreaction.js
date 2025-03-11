@@ -27,6 +27,7 @@ declare %updating function local:load-svg($leveldoc, $svg) {
     return
     (
         replace value of node $svg/@viewBox with concat("0 0 ", $columns * 10 + 2, " ", $rows * 10 + 2),
+        replace node $webdoc/svg:svg/svg:title/text() with concat("Chainreaction level ", $levelnr),
         (
         for $row in 1 to $rows, $column in 1 to $columns
             let
@@ -86,11 +87,13 @@ declare %updating function local:click-svg($use) {
 
 local:click-svg(.)
 `
-    , level = "chain-level" + game.getQueryVariable("level", "1") + ".xml"
+    , levelnr = game.getQueryVariable("level", "1")
+    , level = "chain-level" + levelnr + ".xml"
     ;
 
 game.game(
     level,
+    levelnr,
     load_xq,
     {
         click: click_xq

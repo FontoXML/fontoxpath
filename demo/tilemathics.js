@@ -160,6 +160,7 @@ declare %updating function local:load-svg($svg, $model) {
   return
   (
     replace value of node $svg/@viewBox with concat("0 0 ", data($model/@width) * 10 + 2, " ", data($model/@height) * 10 + 2),
+    replace node $webdoc/svg:svg/svg:title/text() with concat("Tilemathics level ", $levelnr),
     insert node local:process-tilemathics-fields($layer1) as last into $svg,
     insert node local:process-tilemathics-fields($layer2[not(@type = 'mover')]) as last into $svg,
     insert node local:process-tilemathics-fields($layer2[@type = 'mover']) as last into $svg
@@ -392,7 +393,8 @@ declare %updating function local:keydown-svg($evtObj) {
 
 local:keydown-svg($event)
 `
-    , level = "map" + game.getQueryVariable("level", "1") + ".xml"
+    , levelnr = game.getQueryVariable("level", "1")
+    , level = "map" + levelnr + ".xml"
     ;
 
 game.load_sounds(
@@ -406,6 +408,7 @@ game.load_sounds(
 );
 game.game(
     level,
+    levelnr,
     load_xq,
     {
         keydown: keydown_xq

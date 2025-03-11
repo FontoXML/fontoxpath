@@ -5,9 +5,7 @@
 	viewBox="0 0 32 32"
 >
 	<title>Chainreaction</title>
-	<script type="module" xlink:href="game.js"></script>
 	<script type="module" xlink:href="chainreaction.js"></script>
-	<script type="text/javascript" xlink:href="xmljs-bundle.js"></script>
 	<defs>
 		<rect id="empty" width="10" height="10" stroke="lightgrey" fill="white" stroke-width="0.2"/>
 		<g id="circle" stroke-width="0.5">

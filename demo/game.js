@@ -97,7 +97,7 @@ export const
 	, play_sound = (name) => {
 		webaudios.playSound(name);
 	}	
-	, game = (level, load_xq, events) => {
+	, game = (level, levelnr, load_xq, events) => {
 		addEventListener("DOMContentLoaded", (e) => {
 			const
 			ns_xqib = 'http://mansoft.nl/xqib'
@@ -113,7 +113,8 @@ export const
 					, null
 					, {
 						webdoc: document,
-						leveldoc: leveldoc
+						leveldoc: leveldoc,
+						levelnr: levelnr
 					}
 					,
 					{
@@ -169,4 +170,4 @@ export const
 		}, false);
 	}
 	;
-	
+

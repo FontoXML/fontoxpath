@@ -68,6 +68,7 @@ declare %updating function local:load-svg() {
     return
 	(
 		replace value of node $svg/@viewBox with concat("-0.1 -0.1 ", $columns + 0.2, " ", $rows + 0.2),
+		replace node $webdoc/svg:svg/svg:title/text() with concat("Box Up level ", $levelnr),
 		for $y in 0 to $rows - 1, $x in 0 to $columns - 1
 			return (
 				insert node <use xmlns="http://www.w3.org/2000/svg" xlink:href="#empty" x="{$x}" y="{$y}"/> as last into $svg),
@@ -201,11 +202,13 @@ declare %updating function local:keydown-svg($evtObj) {
 
 local:keydown-svg($event)
 `
-	, level = "level" + game.getQueryVariable("level", "1") + ".xml"
+ 	, levelnr = game.getQueryVariable("level", "1")
+	, level = "level" + levelnr + ".xml"
 	;
 
 game.game(
 	level,
+	levelnr,
 	load_xq,
 	{
 		keydown: keydown_xq

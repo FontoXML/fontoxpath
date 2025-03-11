@@ -8,7 +8,10 @@ module.exports = defineConfig({
       input: {
         tilemathics: './stub_tilemathics.html',
       },
-      format: 'iife'
+      output:
+      {
+        format: 'iife'
+      }
     }
   }
 });
