@@ -502,6 +502,22 @@ return $node/root() = $element`,
 			);
 		});
 
+		it('returns the correct error if the context argument is of the wrong type', () => {
+			documentNode = slimdom.parseXmlDocument(
+				`<p xmlns="http://example.com/one" xml:lang="de" author="Friedrich von Schiller">
+				Freude, schöner Götterfunken,<br/>
+				Tochter aus Elysium,<br/>
+				Wir betreten feuertrunken,<br/>
+				Himmlische, dein Heiligtum.</p>`,
+			);
+
+			chai.assert.throws(() => {
+				evaluateXPathToString(`'string'!path()`, documentNode, null, null, {
+					language: evaluateXPath.XQUERY_3_1_LANGUAGE,
+				});
+			}, 'XPTY0004');
+		});
+
 		it('returns "/Q{http://example.com/one}p[1]" for the <p> element of the document', () => {
 			documentNode = slimdom.parseXmlDocument(
 				`<p xmlns="http://example.com/one" xml:lang="de" author="Friedrich von Schiller">

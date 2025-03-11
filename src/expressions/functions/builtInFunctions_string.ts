@@ -16,30 +16,12 @@ import { errXPDY0002 } from '../XPathErrors';
 import { BuiltinDeclarationType } from './builtInFunctions';
 import builtInNumericFunctions from './builtInFunctions_numeric';
 import FunctionDefinitionType from './FunctionDefinitionType';
+import { contextItemAsFirstArgument } from './argumentHelper';
 
 const fnRound = builtInNumericFunctions.functions.round;
 
 function collationError(): ISequence {
 	throw new Error('FOCH0002: No collations are supported');
-}
-
-function contextItemAsFirstArgument(
-	fn: FunctionDefinitionType,
-	dynamicContext: DynamicContext,
-	executionParameters: ExecutionParameters,
-	staticContext: StaticContext,
-) {
-	if (dynamicContext.contextItem === null) {
-		throw errXPDY0002(
-			'The function which was called depends on dynamic context, which is absent.',
-		);
-	}
-	return fn(
-		dynamicContext,
-		executionParameters,
-		staticContext,
-		sequenceFactory.singleton(dynamicContext.contextItem),
-	);
 }
 
 const fnCompare: FunctionDefinitionType = (
@@ -767,8 +749,9 @@ const declarations: BuiltinDeclarationType[] = [
 		localName: 'normalize-space',
 		argumentTypes: [],
 		returnType: { type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
-		callFunction: contextItemAsFirstArgument.bind(
-			null,
+		callFunction: contextItemAsFirstArgument(
+			'normalize-space',
+			ValueType.XSSTRING,
 			(
 				dynamicContext: DynamicContext,
 				executionParameters: ExecutionParameters,
@@ -820,7 +803,7 @@ const declarations: BuiltinDeclarationType[] = [
 		localName: 'string',
 		argumentTypes: [],
 		returnType: { type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
-		callFunction: contextItemAsFirstArgument.bind(null, fnString),
+		callFunction: contextItemAsFirstArgument('string', ValueType.ITEM, fnString),
 	},
 
 	{
@@ -926,8 +909,11 @@ const declarations: BuiltinDeclarationType[] = [
 		localName: 'string-length',
 		argumentTypes: [],
 		returnType: { type: ValueType.XSINTEGER, mult: SequenceMultiplicity.EXACTLY_ONE },
-		callFunction: contextItemAsFirstArgument.bind(
-			null,
+		callFunction: contextItemAsFirstArgument(
+			'string-length',
+			// Note: deviate from the spec to allow expressions line `1!fn:string-length()` to
+			// atomize the input still
+			ValueType.XSANYATOMICTYPE,
 			(
 				dynamicContext: DynamicContext,
 				executionParameters: ExecutionParameters,
