@@ -60,10 +60,11 @@ declare function local:process-boxes($boxes)  {
         </use>
 };
 
-declare %updating function local:load-svg($leveldoc, $svg) {
-    let $boxup-game := $leveldoc
-        , $columns := xs:integer($boxup-game/@columns)
+declare %updating function local:load-svg() {
+    let $boxup-game := $leveldoc/boxup:boxup
+        , $columns := trace(xs:integer($boxup-game/@columns), '??')
         , $rows := xs:integer($boxup-game/@rows)
+		, $svg := $webdoc/svg:svg
     return
 	(
 		replace value of node $svg/@viewBox with concat("-0.1 -0.1 ", $columns + 0.2, " ", $rows + 0.2),
@@ -78,7 +79,7 @@ declare %updating function local:load-svg($leveldoc, $svg) {
 	)
 };
 
-local:load-svg($leveldoc, .)
+local:load-svg()
 `
 	, keydown_xq = 
 `
@@ -125,7 +126,7 @@ declare %updating function local:move-box($box, $svg-box, $new-column, $new-row)
 
 
 declare %updating function local:update($model-mover, $svg-mover, $x, $y, $new-x, $new-y, $dx, $dy) {
-  let $boxes := $model-mover/../boxup:box
+  let $boxes := $leveldoc/boxup:boxup/boxup:box
       , $mover-boxes := $boxes[@column eq $model-mover/@column][@row eq $model-mover/@row]
   return
   (
@@ -153,14 +154,16 @@ declare function local:max-depth($boxes, $column, $row) {
   local:max-depth2($boxes, $column, $row)[1]
 };
 
-declare %updating function local:check-move($model-mover, $svg-mover, $dx, $dy)  {
-  let $column := xs:integer($model-mover/@column)
+declare %updating function local:check-move($dx, $dy)  {
+  let $model-element := $leveldoc/boxup:boxup
+	  , $model-mover := $model-element/boxup:mover
+      , $svg-mover := $webdoc/svg:svg/svg:use[@xlink:href='#mover']
+      , $boxes := $model-element/boxup:box
+      , $blocks := $model-element/boxup:block
+	  , $column := xs:integer($model-mover/@column)
       , $row := xs:integer($model-mover/@row)
       , $new-column := $column + $dx
       , $new-row := $row + $dy
-      , $model-element := $model-mover/..
-      , $boxes := $model-element/boxup:box
-      , $blocks := $model-element/boxup:block
 return
   (
     (: b:preventDefault(), :)
@@ -185,20 +188,18 @@ return
   )
 };
 
-declare %updating function local:keydown-svg($leveldoc, $svg, $evtObj) {
-  let $key := $evtObj/key
-      , $model-mover := $leveldoc/boxup:mover
-      , $svg-mover := $svg/svg:use[@xlink:href='#mover']
+declare %updating function local:keydown-svg($evtObj) {
+  let $key := trace($evtObj/key, 'key')
 
   return
-    if ($key = 'ArrowLeft') then local:check-move($model-mover, $svg-mover, -1, 0) else
-    if ($key = 'ArrowRight') then local:check-move($model-mover, $svg-mover, 1, 0) else
-    if ($key = 'ArrowUp') then local:check-move($model-mover, $svg-mover, 0, -1) else
-    if ($key = 'ArrowDown') then local:check-move($model-mover, $svg-mover, 0, 1) else
+    if ($key = 'ArrowLeft') then local:check-move(-1, 0) else
+    if ($key = 'ArrowRight') then local:check-move(1, 0) else
+    if ($key = 'ArrowUp') then local:check-move(0, -1) else
+    if ($key = 'ArrowDown') then local:check-move(0, 1) else
     ()
 };
 
-local:keydown-svg($leveldoc, ., $event)
+local:keydown-svg($event)
 `
 	, level = "level" + game.getQueryVariable("level", "1") + ".xml"
 	;

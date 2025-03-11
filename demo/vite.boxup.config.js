@@ -6,7 +6,7 @@ module.exports = defineConfig({
 	emptyOutDir: false,
     rollupOptions: {
       input: {
-        tilemathics: './stub_tilemathics.html',
+        boxup: './stub_boxup.html',
       },
       format: 'iife'
     }

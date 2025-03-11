@@ -1,7 +1,9 @@
 {
 	"scripts": {
 		"start": "vite",
-		"build": "vite build"
+		"build": "vite build",
+		"build-chain": "vite --config vite.chain.config.js build",
+		"build-boxup": "vite --config vite.boxup.config.js build"
 	},
 	"dependencies": {
 		"typescript": "^4.5.5",

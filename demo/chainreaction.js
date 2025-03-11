@@ -20,7 +20,7 @@ declare function local:process-field($row, $column, $field ) {
 };
 
 declare %updating function local:load-svg($leveldoc, $svg) {
-    let $chainreaction := $leveldoc
+    let $chainreaction := $leveldoc/chain:chain-game
         , $chain-field := $chainreaction/chain:field
         , $columns := xs:integer($chainreaction/@columns)
         , $rows := xs:integer($chainreaction/@rows)
@@ -37,7 +37,7 @@ declare %updating function local:load-svg($leveldoc, $svg) {
     )
 };
 
-local:load-svg($leveldoc, .)
+local:load-svg($leveldoc, svg:svg)
 `
     , click_xq = 
 `
@@ -47,10 +47,10 @@ declare namespace chain="http://mansoft.nl/chain";
 declare variable $leveldoc external;
 declare variable $event external;
 
-declare %updating function local:click-svg($leveldoc, $use) {
+declare %updating function local:click-svg($use) {
     if (not(empty($use/@chain:row)) and not(empty($use/@chain:column))) then
     (
-        let $field := $leveldoc/chain:field
+        let $field := $leveldoc/chain:chain-game/chain:field
             , $unvisited := $field[@state = 'unvisited']
             , $new-field := $field[@row = $use/@chain:row][@column = $use/@chain:column]
             , $current-field := $field[@state = 'current']
@@ -84,7 +84,7 @@ declare %updating function local:click-svg($leveldoc, $use) {
         ()
 };
 
-local:click-svg($leveldoc, .)
+local:click-svg(.)
 `
     , level = "chain-level" + game.getQueryVariable("level", "1") + ".xml"
     ;

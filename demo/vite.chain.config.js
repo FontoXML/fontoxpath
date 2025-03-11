@@ -6,7 +6,7 @@ module.exports = defineConfig({
 	emptyOutDir: false,
     rollupOptions: {
       input: {
-        tilemathics: './stub_tilemathics.html',
+        chainreaction: './stub_chainreaction.html',
       },
       format: 'iife'
     }

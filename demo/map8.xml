@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Level xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <levelWidth>7</levelWidth>
+  <levelHeight>10</levelHeight>
+  <StandAlone_Objects />
+  <Asociated_Objects>
+    <Object>
+      <name>casilla</name>
+      <x>0</x>
+      <y>4</y>
+      <idTile>9</idTile>
+      <idLayer>0</idLayer>
+      <values>
+        <Value>
+          <name>tipo</name>
+          <type>Texto</type>
+          <subType>tipoCasilla</subType>
+          <value>x</value>
+          <values />
+        </Value>
+        <Value>
+          <name>valor</name>
+          <type>Texto</type>
+          <subType>string</subType>
+          <value>10</value>
+          <values />
+        </Value>
+      </values>
+    </Object>
+    <Object>
+      <name>casilla</name>
+      <x>6</x>
+      <y>4</y>
+      <idTile>9</idTile>
+      <idLayer>0</idLayer>
+      <values>
+        <Value>
+          <name>tipo</name>
+          <type>Texto</type>
+          <subType>tipoCasilla</subType>
+          <value>x</value>
+          <values />
+        </Value>
+        <Value>
+          <name>valor</name>
+          <type>Texto</type>
+          <subType>string</subType>
+          <value>10</value>
+          <values />
+        </Value>
+      </values>
+    </Object>
+    <Object>
+      <name>casilla</name>
+      <x>3</x>
+      <y>6</y>
+      <idTile>6</idTile>
+      <idLayer>0</idLayer>
+      <values>
+        <Value>
+          <name>tipo</name>
+          <type>Texto</type>
+          <subType>tipoCasilla</subType>
+          <value>menos</value>
+          <values />
+        </Value>
+        <Value>
+          <name>valor</name>
+          <type>Texto</type>
+          <subType>string</subType>
+          <value>1</value>
+          <values />
+        </Value>
+      </values>
+    </Object>
+    <Object>
+      <name>casilla</name>
+      <x>3</x>
+      <y>7</y>
+      <idTile>9</idTile>
+      <idLayer>0</idLayer>
+      <values>
+        <Value>
+          <name>tipo</name>
+          <type>Texto</type>
+          <subType>tipoCasilla</subType>
+          <value>x</value>
+          <values />
+        </Value>
+        <Value>
+          <name>valor</name>
+          <type>Texto</type>
+          <subType>string</subType>
+          <value>10</value>
+          <values />
+        </Value>
+      </values>
+    </Object>
+    <Object>
+      <name>casilla</name>
+      <x>3</x>
+      <y>8</y>
+      <idTile>9</idTile>
+      <idLayer>0</idLayer>
+      <values>
+        <Value>
+          <name>tipo</name>
+          <type>Texto</type>
+          <subType>tipoCasilla</subType>
+          <values />
+        </Value>
+        <Value>
+          <name>valor</name>
+          <type>Texto</type>
+          <subType>string</subType>
+          <values />
+        </Value>
+      </values>
+    </Object>
+    <Object>
+      <name>ficha</name>
+      <x>0</x>
+      <y>1</y>
+      <idTile>12</idTile>
+      <idLayer>1</idLayer>
+      <values>
+        <Value>
+          <name>tipo</name>
+          <type>Texto</type>
+          <subType>tipoFicha</subType>
+          <value>numero</value>
+          <values />
+        </Value>
+        <Value>
+          <name>valor</name>
+          <type>Texto</type>
+          <subType>string</subType>
+          <value>1</value>
+          <values />
+        </Value>
+      </values>
+    </Object>
+    <Object>
+      <name>ficha</name>
+      <x>2</x>
+      <y>2</y>
+      <idTile>3</idTile>
+      <idLayer>1</idLayer>
+      <values>
+        <Value>
+          <name>tipo</name>
+          <type>Texto</type>
+          <subType>tipoFicha</subType>
+          <value>flechader</value>
+          <values />
+        </Value>
+        <Value>
+          <name>valor</name>
+          <type>Texto</type>
+          <subType>string</subType>
+          <value>0</value>
+          <values />
+        </Value>
+      </values>
+    </Object>
+    <Object>
+      <name>ficha</name>
+      <x>1</x>
+      <y>4</y>
+      <idTile>12</idTile>
+      <idLayer>1</idLayer>
+      <values>
+        <Value>
+          <name>tipo</name>
+          <type>Texto</type>
+          <subType>tipoFicha</subType>
+          <value>numero</value>
+          <values />
+        </Value>
+        <Value>
+          <name>valor</name>
+          <type>Texto</type>
+          <subType>string</subType>
+          <value>1</value>
+          <values />
+        </Value>
+      </values>
+    </Object>
+    <Object>
+      <name>ficha</name>
+      <x>3</x>
+      <y>4</y>
+      <idTile>11</idTile>
+      <idLayer>1</idLayer>
+      <values>
+        <Value>
+          <name>tipo</name>
+          <type>Texto</type>
+          <subType>tipoFicha</subType>
+          <value>numero</value>
+          <values />
+        </Value>
+        <Value>
+          <name>valor</name>
+          <type>Texto</type>
+          <subType>string</subType>
+          <value>0</value>
+          <values />
+        </Value>
+      </values>
+    </Object>
+    <Object>
+      <name>ficha</name>
+      <x>5</x>
+      <y>4</y>
+      <idTile>11</idTile>
+      <idLayer>1</idLayer>
+      <values>
+        <Value>
+          <name>tipo</name>
+          <type>Texto</type>
+          <subType>tipoFicha</subType>
+          <value>numero</value>
+          <values />
+        </Value>
+        <Value>
+          <name>valor</name>
+          <type>Texto</type>
+          <subType>string</subType>
+          <value>0</value>
+          <values />
+        </Value>
+      </values>
+    </Object>
+  </Asociated_Objects>
+  <Layers>
+    <Layer>1,1,1,1,1,1,1|1,1,1,1,1,1,1|1,1,1,1,1,1,1|1,1,1,1,1,1,1|9,1,1,1,1,1,9|1,1,1,1,1,1,1|1,1,1,6,1,1,1|1,1,1,9,1,1,1|1,1,1,1,1,1,1|1,1,1,1,1,1,1</Layer>
+    <Layer>0,0,10,10,10,0,0|12,0,10,0,10,0,0|0,0,3,0,10,0,0|10,10,10,0,10,10,10|0,12,0,11,0,11,0|10,10,10,0,10,10,10|0,0,10,0,10,0,0|0,0,10,0,10,0,0|0,0,10,10,10,0,0|0,0,0,0,0,0,0</Layer>
+  </Layers>
+</Level>
