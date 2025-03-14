@@ -1,15 +1,17 @@
 {
+	"name": "xquery-games",
+	"version": "1.0.0",
+	"type": "module",
+	"main": "build.js",
 	"scripts": {
-		"start": "vite",
-		"build": "vite build",
-		"build-chain": "vite --config vite.chain.config.js build",
-		"build-boxup": "vite --config vite.boxup.config.js build"
+		"start": "vite"
 	},
 	"dependencies": {
 		"typescript": "^4.5.5",
-		"xml-js": "^1.6.11",
-		"vite": "^5.4.9"
+		"vite": "^5.4.9",
+		"xml-js": "^1.6.11"
 	},
 	"devDependencies": {
+		"xmldom": "^0.6.0"
 	}
 }

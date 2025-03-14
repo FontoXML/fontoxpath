@@ -98,6 +98,8 @@ declare function local:process-field($x as xs:integer, $y as xs:integer, $layer 
             (attribute selected { false() }, attribute type {"mover"}, attribute increment { 1}, attribute symbol {$field - 31}, attribute color {"blue"})
           else if ($field ge 51 and $field le 60) then
             (attribute type {"goal"}, attribute symbol {$field - 51}, attribute color {"cyan"})
+          else if ($field ge 71 and $field le 80) then
+            (attribute type {"mover-match"}, attribute symbol {$field - 71}, attribute color {"magenta"})
           else
             ()
     return
@@ -367,6 +369,20 @@ declare %updating function local:move($mover as element(), $dx as xs:integer, $d
                     return 
                     if ($updated-mover-value ge 0 and $updated-mover-value lt 10) then
                         local:normal-move($mover, $updated-mover-value, $x, $y)
+                    else
+                        ()
+                )
+                case 'one-way' return
+                (
+                    if (xs:integer($new-field/@dx) != $dx or xs:integer($new-field/@dy) != $dy) then
+                        local:normal-move($mover, $mover-value, $x, $y)
+                    else
+                        ()
+                )
+                case 'mover-match' return
+                (
+                    if (xs:integer($new-field/@symbol) = $mover-value) then
+                        local:normal-move($mover, $mover-value, $x, $y)
                     else
                         ()
                 )
