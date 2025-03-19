@@ -3,8 +3,10 @@ import {
 	domFacade,
 	evaluateXPath,
 	evaluateXPathToBoolean,
+	evaluateXPathToFirstNode,
 	evaluateXPathToNumber,
 	evaluateXPathToString,
+	parseScript,
 	registerCustomXPathFunction,
 } from 'fontoxpath';
 import * as slimdom from 'slimdom';
@@ -157,6 +159,21 @@ describe('extension functions', () => {
 				),
 				42,
 			));
+
+		it('throws when passed an XQueryX program with stack traces that throws', () => {
+			const expr = parseScript('format-integer($n,"A")', { debug: true }, documentNode);
+			chai.assert.throws(
+				() =>
+					evaluateXPathToString(
+						`fontoxpath:evaluate($expr, map{ 'n': 1.2 })`,
+						documentNode,
+						domFacade,
+						{ expr },
+						{ language: evaluateXPath.XQUERY_3_1_LANGUAGE, debug: true },
+					),
+				'XPTY0004',
+			);
+		});
 
 		it('throws when passed nonsense as an XQueryX program', () =>
 			chai.assert.throws(

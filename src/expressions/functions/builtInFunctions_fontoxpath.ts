@@ -42,7 +42,7 @@ function buildResultIterator(
 	args: ISequence,
 	staticContext: StaticContext,
 	executionParameters: ExecutionParameters,
-): { queryValue: Value; resultIterator: IIterator<Value> } {
+): { evaluableExpression: EvaluableExpression; resultIterator: IIterator<Value> } {
 	const queryValue = query.first();
 	const variables = (args.first() as MapValue).keyValuePairs.reduce((expandedArgs, arg) => {
 		expandedArgs[arg.key.value] = createDoublyIterableSequence(arg.value());
@@ -53,9 +53,11 @@ function buildResultIterator(
 	const contextItemSequence = variables['.'] ? variables['.']() : sequenceFactory.empty();
 	delete variables['.'];
 
+	const evaluableExpression = getEvaluableExpressionFromValue(queryValue);
+
 	try {
 		const { expression, staticContext: innerStaticContext } = staticallyCompileXPath(
-			getEvaluableExpressionFromValue(queryValue),
+			evaluableExpression,
 			{
 				allowUpdating: false,
 				allowXQuery: true,
@@ -87,10 +89,10 @@ function buildResultIterator(
 
 		return {
 			resultIterator: expression.evaluate(innerDynamicContext, executionParameters).value,
-			queryValue,
+			evaluableExpression,
 		};
 	} catch (error) {
-		printAndRethrowError(queryValue.value, error);
+		printAndRethrowError(evaluableExpression, error);
 	}
 }
 
@@ -102,11 +104,11 @@ const fontoxpathEvaluate: FunctionDefinitionType = (
 	args,
 ) => {
 	let resultIterator: IIterator<Value>;
-	let queryValue: Value;
+	let evaluableExpression: EvaluableExpression;
 	return sequenceFactory.create({
 		next: () => {
 			if (!resultIterator) {
-				({ resultIterator, queryValue } = buildResultIterator(
+				({ resultIterator, evaluableExpression } = buildResultIterator(
 					query,
 					args,
 					staticContext,
@@ -117,7 +119,7 @@ const fontoxpathEvaluate: FunctionDefinitionType = (
 			try {
 				return resultIterator.next(IterationHint.NONE);
 			} catch (error) {
-				printAndRethrowError(queryValue.value, error);
+				printAndRethrowError(evaluableExpression, error);
 			}
 		},
 	});
