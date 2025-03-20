@@ -33,6 +33,7 @@ function createExpressionFromSource(
 		allowXQuery: boolean | undefined;
 		debug: boolean | undefined;
 		disableCache: boolean | undefined;
+		version: 3.1 | 4;
 	},
 	namespaceResolver: (namespace: string) => string | null,
 	variables: { [varName: string]: any },
@@ -128,6 +129,7 @@ export default function staticallyCompileXPath(
 		allowXQuery: boolean | undefined;
 		debug: boolean | undefined;
 		disableCache: boolean | undefined;
+		version: 3.1 | 4;
 	},
 	namespaceResolver: (namespace: string) => string | null,
 	variables: { [varName: string]: any },

@@ -1,3 +1,4 @@
+import { version } from 'chai';
 import { EvaluableExpression } from '../evaluateXPath';
 import {
 	createDefaultFunctionNameResolver,
@@ -11,7 +12,7 @@ import astHelper from '../parsing/astHelper';
 import { ReturnType } from '../parsing/convertXDMReturnValue';
 import convertXmlToAst from '../parsing/convertXmlToAst';
 import normalizeEndOfLines from '../parsing/normalizeEndOfLines';
-import parseExpression from '../parsing/parseExpression';
+import parseExpression, { CompilationOptions } from '../parsing/parseExpression';
 import annotateAst from '../typeInference/annotateAST';
 import { AnnotationContext } from '../typeInference/AnnotationContext';
 import { Language, Options } from '../types/Options';
@@ -42,13 +43,19 @@ function compileXPathToJavaScript(
 	let ast;
 	if (typeof selector === 'string') {
 		const expressionString = normalizeEndOfLines(selector);
-		const parserOptions = {
+		const parserOptions: CompilationOptions = {
 			allowXQuery:
 				options['language'] === Language.XQUERY_3_1_LANGUAGE ||
 				options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE,
 			// Debugging inserts xs:stackTrace in the AST, but this is not supported
 			// yet by the js-codegen backend.
 			debug: false,
+			version:
+				options['language'] === Language.XPATH_4_0_LANGUAGE ||
+				options['language'] === Language.XQUERY_4_0_LANGUAGE ||
+				options['language'] === Language.XQUERY_UPDATE_4_0_LANGUAGE
+					? 4
+					: 3.1,
 		};
 		try {
 			ast = parseExpression(expressionString, parserOptions);
