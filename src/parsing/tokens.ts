@@ -102,6 +102,7 @@ export const SCHEMA_ELEMENT = token('schema-element');
 export const INTERSECT = token('intersect');
 export const EXCEPT = token('except');
 export const UNION = token('union');
+export const OTHERWISE = token('otherwise');
 export const TO = token('to');
 export const IS = token('is');
 export const OR = token('or');

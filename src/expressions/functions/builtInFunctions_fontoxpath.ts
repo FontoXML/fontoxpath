@@ -63,6 +63,7 @@ function buildResultIterator(
 				allowXQuery: true,
 				debug: executionParameters.debug,
 				disableCache: executionParameters.disableCache,
+				version: 3.1,
 			},
 			(prefix) => staticContext.resolveNamespace(prefix),
 			// Set up temporary bindings for the given variables

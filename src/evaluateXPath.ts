@@ -180,6 +180,12 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 					options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE,
 				debug: !!options['debug'],
 				disableCache: !!options['disableCache'],
+				version:
+					options['language'] === Language.XPATH_4_0_LANGUAGE ||
+					options['language'] === Language.XQUERY_4_0_LANGUAGE ||
+					options['language'] === Language.XQUERY_UPDATE_4_0_LANGUAGE
+						? 4
+						: 3.1,
 			},
 		);
 		dynamicContext = context.dynamicContext;
@@ -264,6 +270,8 @@ Object.assign(evaluateXPath, {
 	['XPATH_3_1_LANGUAGE']: Language.XPATH_3_1_LANGUAGE,
 	['XQUERY_3_1_LANGUAGE']: Language.XQUERY_3_1_LANGUAGE,
 	['XQUERY_UPDATE_3_1_LANGUAGE']: Language.XQUERY_UPDATE_3_1_LANGUAGE,
+	['XPATH_4_0_LANGUAGE']: Language.XPATH_4_0_LANGUAGE,
+	['XQUERY_4_0_LANGUAGE']: Language.XQUERY_4_0_LANGUAGE,
 });
 
 export default evaluateXPath as EvaluateXPath;

@@ -33,7 +33,7 @@ type ExpressionArguments = [
 	{
 		debug?: boolean;
 		returnType?: any;
-		language?: EvaluateXPath['XPATH_3_1_LANGUAGE'] | EvaluateXPath['XQUERY_3_1_LANGUAGE'];
+		language?: EvaluateXPath['XQUERY_UPDATE_3_1_LANGUAGE'];
 	},
 ];
 
@@ -268,7 +268,7 @@ function createArgs(query, variables): ExpressionArguments {
 		null,
 		variables,
 		{
-			language: evaluateXPath.XQUERY_3_1_LANGUAGE,
+			language: evaluateXPath.XQUERY_UPDATE_3_1_LANGUAGE,
 			returnType: evaluateXPath.STRING_TYPE,
 		},
 	];

@@ -190,8 +190,8 @@ async function runNormalXPath(script: string, asXQuery: boolean) {
 		debug: true,
 		disableCache: true,
 		language: asXQuery
-			? fontoxpath.evaluateXPath.XQUERY_3_1_LANGUAGE
-			: fontoxpath.evaluateXPath.XPATH_3_1_LANGUAGE,
+			? fontoxpath.evaluateXPath.XQUERY_4_0_LANGUAGE
+			: fontoxpath.evaluateXPath.XPATH_4_0_LANGUAGE,
 		logger: {
 			trace: (m) => {
 				traceOutput.textContent = m;
@@ -227,9 +227,9 @@ async function runXPathWithJsCodegen(xpath: string, asXQuery: boolean) {
 		getReturnTypeFromChoice(codegenReturnTypeChoice.value),
 		{
 			language: asXQuery
-				? fontoxpath.evaluateXPath.XQUERY_3_1_LANGUAGE
-				: fontoxpath.evaluateXPath.XPATH_3_1_LANGUAGE,
-		}
+				? fontoxpath.evaluateXPath.XQUERY_4_0_LANGUAGE
+				: fontoxpath.evaluateXPath.XPATH_4_0_LANGUAGE,
+		},
 	);
 
 	if (compiledXPathResult.isAstAccepted === true) {
@@ -267,7 +267,7 @@ async function rerunXPath() {
 		const ast = fontoxpath.parseScript<Element>(
 			xpath,
 			{
-				language: fontoxpath.evaluateXPath.XQUERY_3_1_LANGUAGE,
+				language: fontoxpath.evaluateXPath.XQUERY_4_0_LANGUAGE,
 				debug: true,
 			},
 			document

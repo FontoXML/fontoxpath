@@ -1,7 +1,7 @@
 import * as chai from 'chai';
 import * as slimdom from 'slimdom';
 
-import { evaluateUpdatingExpressionSync, executePendingUpdateList } from 'fontoxpath';
+import { Language, evaluateUpdatingExpressionSync, executePendingUpdateList } from 'fontoxpath';
 import { IPendingUpdate } from 'fontoxpath/expressions/xquery-update/IPendingUpdate';
 import { InsertPendingUpdate } from 'fontoxpath/expressions/xquery-update/pendingUpdates/InsertPendingUpdate';
 import { TransferablePendingUpdate } from 'fontoxpath/expressions/xquery-update/createPendingUpdateFromTransferable';
@@ -101,6 +101,19 @@ describe('evaluateUpdatingExpressionSync', () => {
 	it('can evaluate an expression without any of the optional parameters set', async () => {
 		documentNode.appendChild(documentNode.createElement('ele'));
 		const result = evaluateUpdatingExpressionSync('replace node ele with <ele/>', documentNode);
+
+		chai.assert.deepEqual(result.xdmValue, []);
+	});
+
+	it('can evaluate an expression with XPath 4.0 used', async () => {
+		documentNode.appendChild(documentNode.createElement('ele'));
+		const result = evaluateUpdatingExpressionSync(
+			'replace node not_here otherwise ele with <ele/>',
+			documentNode,
+			null,
+			null,
+			{ language: Language.XQUERY_UPDATE_4_0_LANGUAGE },
+		);
 
 		chai.assert.deepEqual(result.xdmValue, []);
 	});
