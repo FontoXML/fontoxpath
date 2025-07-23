@@ -145,6 +145,13 @@ class Duration extends AbstractDuration {
 		return this._yearMonthDuration.isPositive() && this._dayTimeDuration.isPositive();
 	}
 
+	public negate(): this {
+		return new (this.constructor as any)(
+			this._yearMonthDuration.negate(),
+			this._dayTimeDuration.negate(),
+		);
+	}
+
 	public toString() {
 		const durationString = this.isPositive() ? 'P' : '-P';
 		const TYM = this._yearMonthDuration.toStringWithoutP();
