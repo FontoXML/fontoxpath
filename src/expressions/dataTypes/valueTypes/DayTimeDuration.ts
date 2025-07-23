@@ -50,6 +50,10 @@ class DayTimeDuration extends AbstractDuration {
 		return Object.is(-0, this.seconds) ? false : this.seconds >= 0;
 	}
 
+	public negate(): this {
+		return new (this.constructor as any)(-this.seconds);
+	}
+
 	public toString() {
 		return (this.isPositive() ? 'P' : '-P') + this.toStringWithoutP();
 	}

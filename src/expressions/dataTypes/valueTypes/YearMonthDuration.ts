@@ -33,6 +33,10 @@ class YearMonthDuration extends AbstractDuration {
 		return Object.is(-0, this.months) ? false : this.months >= 0;
 	}
 
+	public negate(): this {
+		return new (this.constructor as any)(-this.months);
+	}
+
 	public toString() {
 		return (this.isPositive() ? 'P' : '-P') + this.toStringWithoutP();
 	}

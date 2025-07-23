@@ -1,5 +1,6 @@
 import * as chai from 'chai';
 import Duration from 'fontoxpath/expressions/dataTypes/valueTypes/Duration';
+import YearMonthDuration from 'fontoxpath/expressions/dataTypes/valueTypes/YearMonthDuration';
 
 describe('Data type: duration', () => {
 	describe('Duration.compare()', () => {
@@ -199,6 +200,32 @@ describe('Data type: duration', () => {
 			const duration2 = Duration.fromString('P4Y');
 			chai.assert.equal(duration1.compare(duration2), 0);
 			chai.assert.equal(duration2.compare(duration1), 0);
+		});
+	});
+	describe('Duration.negate()', () => {
+		it('negates a positiv YearMonthDuration duration', () => {
+			const duration = YearMonthDuration.fromString('P1Y2M');
+			const negated = duration.negate();
+			chai.assert.isFalse(negated.isPositive());
+			chai.assert.equal(negated.toString(), '-P1Y2M');
+		});
+		it('negates a negative YearMonthDuration duration', () => {
+			const duration = YearMonthDuration.fromString('-P1Y2M');
+			const negated = duration.negate();
+			chai.assert.isTrue(negated.isPositive());
+			chai.assert.equal(negated.toString(), 'P1Y2M');
+		});
+		it('negates a positiv DateTime duration', () => {
+			const duration = Duration.fromString('P1Y2M3DT4H5M6S');
+			const negated = duration.negate();
+			chai.assert.isFalse(negated.isPositive());
+			chai.assert.equal(negated.toString(), '-P1Y2M3DT4H5M6S');
+		});
+		it('negates a negative DateTime duration', () => {
+			const duration = Duration.fromString('-P1Y2M3DT4H5M6S');
+			const negated = duration.negate();
+			chai.assert.isTrue(negated.isPositive());
+			chai.assert.equal(negated.toString(), 'P1Y2M3DT4H5M6S');
 		});
 	});
 });

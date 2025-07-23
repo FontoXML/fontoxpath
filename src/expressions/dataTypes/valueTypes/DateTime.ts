@@ -466,14 +466,109 @@ export function subtract(
 	return new DayTimeDuration(secondsOfDuration);
 }
 
-export function addDuration(dateTime: DateTime, _duration: AbstractDuration): DateTime {
-	throw new Error(`Not implemented: adding durations to ${valueTypeToString(dateTime.type)}`);
+export function evalDuration(dateTime: DateTime, duration: AbstractDuration): DateTime {
+	const tz = dateTime.getTimezone();
+
+	let years = dateTime.getYear();
+	let months = dateTime.getMonth();
+	let days = dateTime.getDay();
+	let hours = dateTime.getHours();
+	let minutes = dateTime.getMinutes();
+	let seconds = dateTime.getSeconds();
+	const fraction = dateTime.getSecondFraction();
+
+	// Add years and months
+	years += duration.getYears();
+	months += duration.getMonths();
+
+	// Normalize months
+	while (months > 12) {
+		months -= 12;
+		years += 1;
+	}
+	while (months < 1) {
+		months += 12;
+		years -= 1;
+	}
+
+	function isLeapYear(year: number): boolean {
+		return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+	}
+	function getLastDayOfMonth(year: number, month: number): number {
+		if (month === 2) {
+			return isLeapYear(year) ? 29 : 28;
+		}
+		return [4, 6, 9, 11].includes(month) ? 30 : 31;
+	}
+
+	const originalLastDay = getLastDayOfMonth(dateTime.getYear(), dateTime.getMonth());
+	const originalWasLastDay = dateTime.getDay() === originalLastDay;
+
+	// Clamp day to last valid day of new month/year ONLY if original date was last day of its month
+	const newLastDay = getLastDayOfMonth(years, months);
+	if (originalWasLastDay) {
+		days = newLastDay;
+	}
+
+	// Add days, hours, minutes, seconds, fraction
+	days += duration.getDays();
+	hours += duration.getHours();
+	minutes += duration.getMinutes();
+	seconds += duration.getSeconds();
+
+	// Normalize seconds
+	if (seconds >= 60) {
+		minutes += Math.floor(seconds / 60);
+		seconds = seconds % 60;
+	} else if (seconds < 0) {
+		minutes -= Math.ceil(Math.abs(seconds) / 60);
+		seconds = ((seconds % 60) + 60) % 60;
+	}
+
+	// Normalize minutes
+	if (minutes >= 60) {
+		hours += Math.floor(minutes / 60);
+		minutes = minutes % 60;
+	} else if (minutes < 0) {
+		hours -= Math.ceil(Math.abs(minutes) / 60);
+		minutes = ((minutes % 60) + 60) % 60;
+	}
+
+	// Normalize hours
+	if (hours >= 24) {
+		days += Math.floor(hours / 24);
+		hours = hours % 24;
+	} else if (hours < 0) {
+		days -= Math.ceil(Math.abs(hours) / 24);
+		hours = ((hours % 24) + 24) % 24;
+	}
+
+	while (days > getLastDayOfMonth(years, months)) {
+		days -= getLastDayOfMonth(years, months);
+		months += 1;
+	}
+	while (days < 1) {
+		months -= 1;
+		days += getLastDayOfMonth(years, months);
+	}
+
+	while (months > 12) {
+		months -= 12;
+		years += 1;
+	}
+	while (months < 1) {
+		months += 12;
+		years -= 1;
+	}
+
+	return new DateTime(years, months, days, hours, minutes, seconds, fraction, tz, dateTime.type);
+}
+export function addDuration(dateTime: DateTime, duration: AbstractDuration): DateTime {
+	return evalDuration(dateTime, duration);
 }
 
-export function subtractDuration(dateTime: DateTime, _duration: AbstractDuration): DateTime {
-	throw new Error(
-		`Not implemented: subtracting durations from ${valueTypeToString(dateTime.type)}`,
-	);
+export function subtractDuration(dateTime: DateTime, duration: AbstractDuration): DateTime {
+	return evalDuration(dateTime, duration.negate());
 }
 
 export default DateTime;

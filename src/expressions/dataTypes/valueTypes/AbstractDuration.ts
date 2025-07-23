@@ -40,6 +40,9 @@ abstract class AbstractDuration {
 	public isPositive() {
 		return true;
 	}
+	public negate() {
+		return this;
+	}
 }
 
 export default AbstractDuration;
