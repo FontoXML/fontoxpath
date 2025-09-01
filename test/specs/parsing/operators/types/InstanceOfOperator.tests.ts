@@ -1,8 +1,7 @@
 import * as chai from 'chai';
-import * as slimdom from 'slimdom';
+import { Document } from 'slimdom';
 
-import { evaluateXPathToBoolean } from 'fontoxpath';
-import evaluateXPathToAsyncSingleton from 'test-helpers/evaluateXPathToAsyncSingleton';
+import { Language, evaluateXPathToBoolean } from 'fontoxpath';
 
 describe('instance of operator', () => {
 	it('returns true for a valid instance of xs:boolean', () =>
@@ -38,4 +37,17 @@ describe('instance of operator', () => {
 
 	it('returns false for an invalid instance of node()', () =>
 		chai.assert.isFalse(evaluateXPathToBoolean('1 instance of node()')));
+
+	it('keeps namespaces into account', () => {
+		chai.assert.isTrue(
+			evaluateXPathToBoolean(
+				`declare namespace x='x';
+<x:ele/> instance of element(x:ele)`,
+				new Document(),
+				null,
+				null,
+				{ language: Language.XQUERY_3_1_LANGUAGE },
+			),
+		);
+	});
 });
