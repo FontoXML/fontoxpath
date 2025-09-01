@@ -18,7 +18,7 @@ class InstanceOfOperator extends Expression {
 	) {
 		super(
 			expression.specificity,
-			[expression],
+			[expression, typeTest],
 			{ canBeStaticallyEvaluated: false },
 			false,
 			type,
