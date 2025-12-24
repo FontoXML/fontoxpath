@@ -9,7 +9,7 @@ import {
 	JavaScriptCompiledXPathResult,
 	Options,
 	ReturnType,
-} from '../../../../src/index';
+} from 'fontoxpath';
 
 const compiledXPathCache = new Map<EvaluableExpression, Map<ReturnType, CompiledXPathFunction>>();
 

@@ -28,6 +28,13 @@ describe('or operator', () => {
 		);
 	});
 
+	it('can parse an "or" selector with different nonoverlapping buckets that does not match', () => {
+		jsonMlMapper.parse(['c'], documentNode);
+		chai.assert.isFalse(
+			evaluateXPathToBoolean('self::a or self::b', documentNode.documentElement),
+		);
+	});
+
 	it('can parse a concatenation of ors', () =>
 		chai.assert.isTrue(
 			evaluateXPathToBoolean(

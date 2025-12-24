@@ -270,6 +270,43 @@ declare %public function prefix:ok() as xs:string {
 		chai.assert.isOk(ast);
 	});
 
+	it('can parse an XPath 4.0 script', () => {
+		const document = new Document();
+		const ast = parseScript(`self::(a|b)`, { language: Language.XPATH_4_0_LANGUAGE }, document);
+
+		chai.assert.isOk(ast);
+	});
+
+	it('can skip ast annotation', () => {
+		const document = new Document();
+		const ast = parseScript(
+			`self::(a|b)`,
+			{ language: Language.XPATH_4_0_LANGUAGE, annotateAst: false },
+			document,
+		);
+
+		chai.assert.isOk(ast);
+		chai.assert.isFalse(
+			evaluateXPathToBoolean('.//@*:type', ast),
+			'there should be no type annotations',
+		);
+	});
+
+	it('can perform ast annotation', () => {
+		const document = new Document();
+		const ast = parseScript(
+			`self::(a|b)`,
+			{ language: Language.XPATH_4_0_LANGUAGE, annotateAst: true },
+			document,
+		);
+
+		chai.assert.isOk(ast);
+		chai.assert.isTrue(
+			evaluateXPathToBoolean('.//@*:type', ast),
+			'there should be no type annotations',
+		);
+	});
+
 	it('can execute a map function within an AST', () => {
 		const ast = parseScript('map:put($week, "1", "Monday")', {}, new Document());
 		const result = evaluateXPathToMap(ast, null, null, {

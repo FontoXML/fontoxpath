@@ -100,7 +100,11 @@ import {
 
 const pathExprCache = new Map<number, ParseResult<IAST>>();
 
-function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }): Parser<IAST> {
+function generateParser(options: {
+	version: number;
+	outputDebugInfo: boolean;
+	xquery: boolean;
+}): Parser<IAST> {
 	function defaultBinaryOperatorFn(lhs: IAST, rhs: [string, IAST][]): IAST {
 		return rhs.reduce((lh, rh) => [rh[0], ['firstOperand', lh], ['secondOperand', rh[1]]], lhs);
 	}
@@ -364,13 +368,40 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 
 	const nameTest: Parser<IAST> = or([wildcard, map(eqName, (x) => ['nameTest', ...x])]);
 
-	const nodeTest: Parser<IAST> = or([kindTest, nameTest]);
+	const simpleNodeTest: Parser<IAST> = or([kindTest, nameTest]);
 
-	const abbrevForwardStep: Parser<IAST> = then(optional(tokens.AT_SIGN), nodeTest, (a, b) => {
-		return a !== null || isAttributeTest(b)
-			? ['stepExpr', ['xpathAxis', 'attribute'], b]
-			: ['stepExpr', ['xpathAxis', 'child'], b];
-	});
+	const unionNodeTest: Parser<IAST> = map(
+		delimited(
+			followed(tokens.BRACE_OPEN, whitespace),
+			then(
+				simpleNodeTest,
+				star(preceded(surrounded(tokens.VERTICAL_BAR, whitespace), simpleNodeTest)),
+				(first, rest) => [first].concat(rest),
+			),
+			followed(whitespace, tokens.BRACE_CLOSE),
+			true,
+		),
+		(tests) => ['unionNodeTest', ...tests],
+	);
+
+	const nodeTest: Parser<IAST> =
+		options.version === 4 ? or([unionNodeTest, simpleNodeTest]) : simpleNodeTest;
+
+	const abbrevForwardStep: Parser<IAST> =
+		options.version === 4
+			? or([
+					map(preceded(tokens.AT_SIGN, nodeTest), (test) => [
+						'stepExpr',
+						['xpathAxis', 'attribute'],
+						test,
+					]),
+					map(simpleNodeTest, (test) => ['stepExpr', ['xpathAxis', 'child'], test]),
+			  ])
+			: then(optional(tokens.AT_SIGN), simpleNodeTest, (a, b) => {
+					return a !== null || isAttributeTest(b)
+						? ['stepExpr', ['xpathAxis', 'attribute'], b]
+						: ['stepExpr', ['xpathAxis', 'child'], b];
+			  });
 
 	const forwardStep: Parser<IAST> = or([
 		then(forwardAxis, nodeTest, (axis, test) => ['stepExpr', ['xpathAxis', axis], test]),
@@ -1423,8 +1454,14 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 		defaultBinaryOperatorFn,
 	);
 
-	const multiplicativeExpr: Parser<IAST> = binaryOperator(
+	const otherwiseExpr: Parser<IAST> = binaryOperator(
 		unionExpr,
+		followed(alias([tokens.OTHERWISE], 'otherwiseOp'), cut(assertAdjacentOpeningTerminal)),
+		defaultBinaryOperatorFn,
+	);
+
+	const multiplicativeExpr: Parser<IAST> = binaryOperator(
+		options.version >= 4 ? otherwiseExpr : unionExpr,
 		or([
 			alias([tokens.ASTERIX], 'multiplyOp'),
 			followed(alias([tokens.DIV], 'divOp'), assertAdjacentOpeningTerminal),
@@ -2311,28 +2348,49 @@ function generateParser(options: { outputDebugInfo: boolean; xquery: boolean }):
 	};
 }
 
-const xpathParser = generateParser({ outputDebugInfo: false, xquery: false });
-const xpathDebugParser = generateParser({ outputDebugInfo: true, xquery: false });
-const xqueryParser = generateParser({ outputDebugInfo: false, xquery: true });
-const xqueryDebugParser = generateParser({ outputDebugInfo: true, xquery: true });
+const xpathParser = generateParser({ outputDebugInfo: false, xquery: false, version: 3.1 });
+const xpathDebugParser = generateParser({ outputDebugInfo: true, xquery: false, version: 3.1 });
+const xqueryParser = generateParser({ outputDebugInfo: false, xquery: true, version: 3.1 });
+const xqueryDebugParser = generateParser({ outputDebugInfo: true, xquery: true, version: 3.1 });
+const xpath4Parser = generateParser({ outputDebugInfo: false, xquery: false, version: 4 });
+const xpath4DebugParser = generateParser({ outputDebugInfo: true, xquery: false, version: 4 });
+const xquery4Parser = generateParser({ outputDebugInfo: false, xquery: true, version: 4 });
+const xquery4DebugParser = generateParser({ outputDebugInfo: true, xquery: true, version: 4 });
+
+const tree = {
+	xpath: {
+		four: {
+			debug: xpath4DebugParser,
+			nodebug: xpath4Parser,
+		},
+		three_one: {
+			debug: xpathDebugParser,
+			nodebug: xpathParser,
+		},
+	},
+	xquery: {
+		four: {
+			debug: xquery4DebugParser,
+			nodebug: xquery4Parser,
+		},
+		three_one: {
+			debug: xqueryDebugParser,
+			nodebug: xqueryParser,
+		},
+	},
+};
 
 export function parseUsingPrsc(
 	xpath: string,
-	options: { outputDebugInfo: boolean; xquery: boolean },
+	options: { outputDebugInfo: boolean; xquery: boolean; version: 3.1 | 4 },
 ): ParseResult<IAST> {
 	whitespaceCache.clear();
 	whitespacePlusCache.clear();
 	pathExprCache.clear();
 
-	if (options.xquery) {
-		if (options.outputDebugInfo) {
-			return xqueryDebugParser(xpath, 0);
-		}
-		return xqueryParser(xpath, 0);
-	}
-
-	if (options.outputDebugInfo) {
-		return xpathDebugParser(xpath, 0);
-	}
-	return xpathParser(xpath, 0);
+	const parsersForLanguage = options.xquery ? tree.xquery : tree.xpath;
+	const parsersForVersion =
+		options.version === 4 ? parsersForLanguage.four : parsersForLanguage.three_one;
+	const parser = options.outputDebugInfo ? parsersForVersion.debug : parsersForVersion.nodebug;
+	return parser(xpath, 0);
 }

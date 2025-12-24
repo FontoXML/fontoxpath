@@ -12,6 +12,7 @@ import UpdatingExpressionResult from './expressions/UpdatingExpressionResult';
 import { IterationHint, IterationResult } from './expressions/util/iterators';
 import { IReturnTypes, ReturnType } from './parsing/convertXDMReturnValue';
 import { performStaticCompilationOnModules } from './parsing/globalModuleCache';
+import { Language } from './types/Options';
 import { Node } from './types/Types';
 
 /**
@@ -57,6 +58,7 @@ export default function evaluateUpdatingExpressionSync<
 				allowXQuery: true,
 				debug: !!options['debug'],
 				disableCache: !!options['disableCache'],
+				version: options.language === Language.XQUERY_UPDATE_4_0_LANGUAGE ? 4 : 3.1,
 			},
 		);
 		dynamicContext = context.dynamicContext;
