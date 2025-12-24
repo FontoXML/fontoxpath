@@ -7,18 +7,18 @@ jobs:
         name: Tests on node.js ${{ matrix.node-version }}
         runs-on: ubuntu-latest
         env:
-          NODE_OPTIONS: '--max_old_space_size=4096'
+            NODE_OPTIONS: '--max_old_space_size=4096'
         strategy:
             fail-fast: false
             matrix:
                 node-version:
+                    - 24
                     - 22
                     - 20
-                    - 18
         steps:
             - uses: actions/checkout@v2
               with:
-                submodules: recursive
+                  submodules: recursive
             - uses: ./.github/workflows/download-qt3
             - uses: actions/setup-node@v1
               with:
