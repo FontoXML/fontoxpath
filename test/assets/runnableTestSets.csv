@@ -160,7 +160,7 @@ fn-seconds-from-duration,true
 fn-seconds-from-time,true
 fn-serialize,true
 fn-serialize-json,false
-fn-sort,false
+fn-sort,true
 fn-starts-with,true
 fn-static-base-uri,false
 fn-string,true

@@ -8,7 +8,10 @@ import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value, { SequenceMultiplicity, SequenceType, ValueType } from '../dataTypes/Value';
+import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
 import { valueCompare } from '../operators/compares/ValueCompare';
+import StaticContext from '../StaticContext';
 import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
 import { DONE_TOKEN, IIterator, IterationHint, ready } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
@@ -690,6 +693,105 @@ const fnFoldRight: FunctionDefinitionType = (
 	);
 };
 
+function compareKeys(keysA: Value[], keysB: Value[], dynamicContext: DynamicContext): number {
+	const maxLen = Math.max(keysA.length, keysB.length);
+	for (let i = 0; i < maxLen; i++) {
+		const a = i < keysA.length ? keysA[i] : null;
+		const b = i < keysB.length ? keysB[i] : null;
+
+		if (a === null && b === null) continue;
+		// Empty sequences sort first (least)
+		if (a === null) return -1;
+		if (b === null) return 1;
+
+		const aIsNaN = typeof a.value === 'number' && isNaN(a.value);
+		const bIsNaN = typeof b.value === 'number' && isNaN(b.value);
+
+		if (aIsNaN && bIsNaN) continue;
+		// NaN sorts last (greatest)
+		if (aIsNaN) return 1;
+		if (bIsNaN) return -1;
+
+		if (valueCompare('gtOp', a.type, b.type)(a, b, dynamicContext)) return 1;
+		if (valueCompare('ltOp', a.type, b.type)(a, b, dynamicContext)) return -1;
+	}
+	return 0;
+}
+
+function doSort(
+	dynamicContext: DynamicContext,
+	executionParameters: ExecutionParameters,
+	staticContext: StaticContext,
+	sequence: ISequence,
+	keyFn: FunctionValue | null,
+): ISequence {
+	return sequence.mapAll((items) => {
+		if (items.length === 0) {
+			return sequenceFactory.empty();
+		}
+
+		// Compute raw sort keys (sequence of atomic values) for each item
+		const rawKeys: Value[][] = items.map((item) => {
+			if (keyFn) {
+				const argTypes = keyFn.getArgumentTypes();
+				const arg = performFunctionConversion(
+					argTypes[0] as SequenceType,
+					sequenceFactory.singleton(item),
+					executionParameters,
+					'fn:sort',
+					false,
+				);
+				return keyFn.value
+					.call(undefined, dynamicContext, executionParameters, staticContext, arg)
+					.getAllValues();
+			}
+			return atomize(sequenceFactory.singleton(item), executionParameters).getAllValues();
+		});
+
+		// Cast xs:untypedAtomic to xs:string per spec
+		const castKeys: Value[][] = rawKeys.map((keys) =>
+			keys.map((key) =>
+				isSubtypeOf(key.type, ValueType.XSUNTYPEDATOMIC)
+					? castToType(key, ValueType.XSSTRING)
+					: key,
+			),
+		);
+
+		// For each key position, convert all values at that position to a common type
+		const maxKeyLen = castKeys.reduce((max, k) => Math.max(max, k.length), 0);
+		const finalKeys: Value[][] = castKeys.map((k) => [...k]);
+
+		for (let pos = 0; pos < maxKeyLen; pos++) {
+			const entries: { itemIndex: number; value: Value }[] = [];
+			castKeys.forEach((keys, itemIndex) => {
+				if (keys.length > pos) {
+					entries.push({ itemIndex, value: keys[pos] });
+				}
+			});
+
+			const converted = convertItemsToCommonType(entries.map((e) => e.value));
+			if (!converted) {
+				throw new Error('XPTY0004: fn:sort key values must be comparable');
+			}
+
+			entries.forEach(({ itemIndex }, idx) => {
+				finalKeys[itemIndex][pos] = converted[idx];
+			});
+		}
+
+		const sortable = items.map((item, i) => ({ item, keys: finalKeys[i] }));
+		sortable.sort((a, b) => compareKeys(a.keys, b.keys, dynamicContext));
+		return sequenceFactory.create(sortable.map((s) => s.item));
+	});
+}
+
+const fnSort: FunctionDefinitionType = (
+	dynamicContext,
+	executionParameters,
+	staticContext,
+	sequence,
+) => doSort(dynamicContext, executionParameters, staticContext, sequence, null);
+
 const fnSerialize: FunctionDefinitionType = (
 	_dynamicContext,
 	executionParameters,
@@ -1085,6 +1187,60 @@ const declarations: BuiltinDeclarationType[] = [
 		localName: 'serialize',
 		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
 		returnType: { type: ValueType.XSSTRING, mult: SequenceMultiplicity.EXACTLY_ONE },
+	},
+
+	{
+		argumentTypes: [{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE }],
+		callFunction: fnSort,
+		localName: 'sort',
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+	},
+
+	{
+		argumentTypes: [
+			{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+			{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.ZERO_OR_ONE },
+		],
+		callFunction: (dynamicContext, executionParameters, staticContext, sequence, collation) => {
+			if (!collation.isEmpty()) {
+				throw new Error('FOCH0002: No collations are supported');
+			}
+			return doSort(dynamicContext, executionParameters, staticContext, sequence, null);
+		},
+		localName: 'sort',
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+	},
+
+	{
+		argumentTypes: [
+			{ type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
+			{ type: ValueType.XSSTRING, mult: SequenceMultiplicity.ZERO_OR_ONE },
+			{ type: ValueType.FUNCTION, mult: SequenceMultiplicity.EXACTLY_ONE },
+		],
+		callFunction: (
+			dynamicContext,
+			executionParameters,
+			staticContext,
+			sequence,
+			collation,
+			keySeq,
+		) => {
+			if (!collation.isEmpty()) {
+				throw new Error('FOCH0002: No collations are supported');
+			}
+			return doSort(
+				dynamicContext,
+				executionParameters,
+				staticContext,
+				sequence,
+				keySeq.first() as FunctionValue,
+			);
+		},
+		localName: 'sort',
+		namespaceURI: BUILT_IN_NAMESPACE_URIS.FUNCTIONS_NAMESPACE_URI,
+		returnType: { type: ValueType.ITEM, mult: SequenceMultiplicity.ZERO_OR_MORE },
 	},
 ];
 
