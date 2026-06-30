@@ -280,13 +280,12 @@ describe('registerCustomXPathFunction', () => {
 		);
 	});
 
-	it('disallows attributes as parameters', () => {
-		chai.assert.throws(
-			() =>
-				evaluateXPathToString('test:custom-function3(//@*)', documentNode, null, null, {
-					namespaceResolver: identityNamespaceResolver,
-				}),
-			'Cannot pass attribute nodes',
+	it('allows attributes as parameters', () => {
+		chai.assert.equal(
+			evaluateXPathToString('test:custom-function3(//@*)', documentNode, null, null, {
+				namespaceResolver: identityNamespaceResolver,
+			}),
+			'someValue',
 		);
 	});
 

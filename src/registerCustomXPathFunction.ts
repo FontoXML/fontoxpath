@@ -82,9 +82,6 @@ export function adaptXPathValueToJavascriptValue(
 		sequenceType.mult === SequenceMultiplicity.ONE_OR_MORE
 	) {
 		return valueSequence.getAllValues().map((value) => {
-			if (isSubtypeOf(value.type, ValueType.ATTRIBUTE)) {
-				throw new Error('Cannot pass attribute nodes to custom functions');
-			}
 			return transformXPathItemToJavascriptObject(value, executionParameters).next(
 				IterationHint.NONE,
 			).value;
