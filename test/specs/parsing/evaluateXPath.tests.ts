@@ -26,6 +26,67 @@ describe('evaluateXPath', () => {
 		documentNode = new slimdom.Document();
 	});
 
+	describe('document fragments as roots', () => {
+		it('supports descendant queries on document fragments', () => {
+			const fragment = documentNode.createDocumentFragment();
+			const first = fragment.appendChild(documentNode.createElement('item'));
+			first.setAttribute('id', 'first');
+			fragment.appendChild(documentNode.createElement('item'));
+
+			chai.assert.deepEqual(
+				evaluateXPathToNodes('//item', fragment, domFacade),
+				[fragment.firstChild, fragment.lastChild],
+			);
+		});
+
+		it('supports predicates on document fragments', () => {
+			const fragment = documentNode.createDocumentFragment();
+			const first = fragment.appendChild(documentNode.createElement('item'));
+			first.setAttribute('id', 'first');
+			fragment.appendChild(documentNode.createElement('item'));
+
+			chai.assert.deepEqual(
+				evaluateXPathToNodes('//item[@id="first"]', fragment, domFacade),
+				[first],
+			);
+		});
+
+		it('supports more complex expressions on document fragments', () => {
+			const fragment = documentNode.createDocumentFragment();
+			const first = fragment.appendChild(documentNode.createElement('item'));
+			first.setAttribute('id', 'first');
+			const second = fragment.appendChild(documentNode.createElement('item'));
+			second.setAttribute('id', 'second');
+
+			chai.assert.equal(
+				evaluateXPathToString('string-join(//item/@id, ",")', fragment, domFacade),
+				'first,second',
+			);
+		});
+
+		it('supports functions on document fragments', () => {
+			const fragment = documentNode.createDocumentFragment();
+			const child = fragment.appendChild(documentNode.createElement('item'));
+
+			chai.assert.isTrue(
+				evaluateXPathToBoolean('root(.) is .', fragment, domFacade),
+				'root(.) should be the fragment',
+			);
+			chai.assert.equal(
+				evaluateXPathToString('name(//item)', fragment, domFacade),
+				'item',
+			);
+			chai.assert.isTrue(
+				evaluateXPathToBoolean('has-children(.)', fragment, domFacade),
+				'has-children() should work on fragments',
+			);
+			chai.assert.equal(
+				evaluateXPathToFirstNode('root(.)', child, domFacade),
+				fragment,
+			);
+		});
+	});
+
 	describe('ANY_TYPE', () => {
 		it('Keeps booleans booleans', () =>
 			chai.assert.equal(evaluateXPath('true()', documentNode, domFacade), true));
@@ -302,6 +363,17 @@ describe('evaluateXPath', () => {
 			chai.assert.deepEqual(evaluateXPathToNodes('.', documentNode, domFacade), [
 				documentNode,
 			]));
+
+		it('supports document fragments with multiple children', () => {
+			const fragment = documentNode.createDocumentFragment();
+			const first = fragment.appendChild(documentNode.createElement('first'));
+			const second = fragment.appendChild(documentNode.createElement('second'));
+
+			chai.assert.deepEqual(
+				evaluateXPathToNodes('following-sibling::element()', first, domFacade),
+				[second],
+			);
+		});
 
 		it('Returns all nodes', () =>
 			chai.assert.deepEqual(evaluateXPathToNodes('(., ., .)', documentNode, domFacade), [

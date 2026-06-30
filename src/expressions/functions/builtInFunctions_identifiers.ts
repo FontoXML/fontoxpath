@@ -17,7 +17,8 @@ function findDescendants(
 ): Node[] {
 	if (
 		node.node.nodeType !== NODE_TYPES.ELEMENT_NODE &&
-		node.node.nodeType !== NODE_TYPES.DOCUMENT_NODE
+		node.node.nodeType !== NODE_TYPES.DOCUMENT_NODE &&
+		node.node.nodeType !== NODE_TYPES.DOCUMENT_FRAGMENT_NODE
 	) {
 		return [];
 	}
@@ -65,7 +66,10 @@ const fnId: FunctionDefinitionType = (
 		}, Object.create(null));
 
 	let documentNode = targetNodeValue.value;
-	while (domFacade.getNodeType(documentNode) !== NODE_TYPES.DOCUMENT_NODE) {
+	while (
+		domFacade.getNodeType(documentNode) !== NODE_TYPES.DOCUMENT_NODE &&
+		domFacade.getNodeType(documentNode) !== NODE_TYPES.DOCUMENT_FRAGMENT_NODE
+	) {
 		documentNode = domFacade.getParentNodePointer(documentNode);
 		if (documentNode === null) {
 			throw new Error('FODC0001: the root node of the target node is not a document node.');
@@ -118,7 +122,10 @@ const fnIdref: FunctionDefinitionType = (
 	}, Object.create(null));
 
 	let documentNode = targetNodeValue.value;
-	while (domFacade.getNodeType(documentNode) !== NODE_TYPES.DOCUMENT_NODE) {
+	while (
+		domFacade.getNodeType(documentNode) !== NODE_TYPES.DOCUMENT_NODE &&
+		domFacade.getNodeType(documentNode) !== NODE_TYPES.DOCUMENT_FRAGMENT_NODE
+	) {
 		documentNode = domFacade.getParentNodePointer(documentNode);
 		if (documentNode === null) {
 			throw new Error('FODC0001: the root node of the context node is not a document node.');

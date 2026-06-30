@@ -10,7 +10,11 @@ export default function createChildGenerator(
 	bucket: Bucket | null,
 ): IIterator<ChildNodePointer> {
 	const nodeType = domFacade.getNodeType(pointer);
-	if (nodeType !== NODE_TYPES.ELEMENT_NODE && nodeType !== NODE_TYPES.DOCUMENT_NODE) {
+	if (
+		nodeType !== NODE_TYPES.ELEMENT_NODE &&
+		nodeType !== NODE_TYPES.DOCUMENT_NODE &&
+		nodeType !== NODE_TYPES.DOCUMENT_FRAGMENT_NODE
+	) {
 		return {
 			next: () => {
 				return DONE_TOKEN;

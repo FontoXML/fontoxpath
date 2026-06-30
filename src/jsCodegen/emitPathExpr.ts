@@ -278,7 +278,7 @@ function emitRootExpr(
 		acceptAst(
 			`(function () {
 				let n = ${contextItemExpr.code};
-				while (n.nodeType !== /*DOCUMENT_NODE*/${NODE_TYPES.DOCUMENT_NODE}) {
+				while (n.nodeType !== /*DOCUMENT_NODE*/${NODE_TYPES.DOCUMENT_NODE} && n.nodeType !== /*DOCUMENT_FRAGMENT_NODE*/${NODE_TYPES.DOCUMENT_FRAGMENT_NODE}) {
 					n = domFacade.getParentNode(n);
 					if (n === null) {
 						throw new Error('XPDY0050: the root node of the context node is not a document node.');

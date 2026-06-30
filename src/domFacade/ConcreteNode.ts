@@ -34,7 +34,7 @@ export type ConcreteDocumentFragmentNode = DocumentFragment & {
 export type ConcreteProcessingInstructionNode = ProcessingInstruction & {
 	nodeType: NODE_TYPES.PROCESSING_INSTRUCTION_NODE;
 };
-export type ConcreteParentNode = ConcreteElementNode | ConcreteDocumentNode;
+export type ConcreteParentNode = ConcreteElementNode | ConcreteDocumentNode | ConcreteDocumentFragmentNode;
 export type ConcreteChildNode =
 	| ConcreteElementNode
 	| ConcreteTextNode

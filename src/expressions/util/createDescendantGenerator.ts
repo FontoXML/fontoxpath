@@ -13,7 +13,11 @@ function findDeepestLastDescendant(
 	bucket: Bucket | null,
 ): NodePointer {
 	const nodeType = domFacade.getNodeType(pointer);
-	if (nodeType !== NODE_TYPES.ELEMENT_NODE && nodeType !== NODE_TYPES.DOCUMENT_NODE) {
+	if (
+		nodeType !== NODE_TYPES.ELEMENT_NODE &&
+		nodeType !== NODE_TYPES.DOCUMENT_NODE &&
+		nodeType !== NODE_TYPES.DOCUMENT_FRAGMENT_NODE
+	) {
 		return pointer;
 	}
 
@@ -55,7 +59,9 @@ export default function createDescendantGenerator(
 
 				const nodeType = domFacade.getNodeType(currentPointer);
 				const previousSibling =
-					nodeType === NODE_TYPES.DOCUMENT_NODE || nodeType === NODE_TYPES.ATTRIBUTE_NODE
+					nodeType === NODE_TYPES.DOCUMENT_NODE ||
+					nodeType === NODE_TYPES.DOCUMENT_FRAGMENT_NODE ||
+					nodeType === NODE_TYPES.ATTRIBUTE_NODE
 						? null
 						: domFacade.getPreviousSiblingPointer(
 								currentPointer as ChildNodePointer,
@@ -67,7 +73,8 @@ export default function createDescendantGenerator(
 				}
 
 				currentPointer =
-					nodeType === NODE_TYPES.DOCUMENT_NODE
+					nodeType === NODE_TYPES.DOCUMENT_NODE ||
+					nodeType === NODE_TYPES.DOCUMENT_FRAGMENT_NODE
 						? null
 						: domFacade.getParentNodePointer(
 								currentPointer as ChildNodePointer,

@@ -32,7 +32,10 @@ class AbsolutePathExpression extends Expression {
 		const domFacade = executionParameters.domFacade;
 
 		let documentNode = node;
-		while (domFacade.getNodeType(documentNode) !== NODE_TYPES.DOCUMENT_NODE) {
+		while (
+			domFacade.getNodeType(documentNode) !== NODE_TYPES.DOCUMENT_NODE &&
+			domFacade.getNodeType(documentNode) !== NODE_TYPES.DOCUMENT_FRAGMENT_NODE
+		) {
 			documentNode = domFacade.getParentNodePointer(documentNode);
 			if (documentNode === null) {
 				throw new Error(

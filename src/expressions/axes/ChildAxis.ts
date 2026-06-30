@@ -30,7 +30,11 @@ class ChildAxis extends Expression {
 		const domFacade = executionParameters.domFacade;
 		const contextNode = validateContextNode(dynamicContext.contextItem);
 		const nodeType = domFacade.getNodeType(contextNode);
-		if (nodeType !== NODE_TYPES.ELEMENT_NODE && nodeType !== NODE_TYPES.DOCUMENT_NODE) {
+		if (
+			nodeType !== NODE_TYPES.ELEMENT_NODE &&
+			nodeType !== NODE_TYPES.DOCUMENT_NODE &&
+			nodeType !== NODE_TYPES.DOCUMENT_FRAGMENT_NODE
+		) {
 			return sequenceFactory.empty();
 		}
 

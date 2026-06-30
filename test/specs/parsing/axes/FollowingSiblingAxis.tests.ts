@@ -38,6 +38,16 @@ describe('following-sibling', () => {
 		);
 	});
 
+	it('supports document fragments with multiple children', () => {
+		const fragment = documentNode.createDocumentFragment();
+		const first = fragment.appendChild(documentNode.createElement('first'));
+		const second = fragment.appendChild(documentNode.createElement('second'));
+
+		chai.assert.deepEqual(evaluateXPathToNodes('following-sibling::element()', first), [
+			second,
+		]);
+	});
+
 	it('passes buckets for followingSibling', () => {
 		jsonMlMapper.parse(
 			['parentElement', ['firstChildElement'], ['secondChildElement']],

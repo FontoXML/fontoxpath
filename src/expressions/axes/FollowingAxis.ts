@@ -23,7 +23,9 @@ function createFollowingGenerator(
 
 	for (
 		let ancestorNode = node as ParentNodePointer;
-		ancestorNode && domFacade.getNodeType(ancestorNode) !== NODE_TYPES.DOCUMENT_NODE;
+		ancestorNode &&
+			domFacade.getNodeType(ancestorNode) !== NODE_TYPES.DOCUMENT_NODE &&
+			domFacade.getNodeType(ancestorNode) !== NODE_TYPES.DOCUMENT_FRAGMENT_NODE;
 		// Any parent can contain the node we want
 		ancestorNode = domFacade.getParentNodePointer(ancestorNode as ChildNodePointer, null)
 	) {

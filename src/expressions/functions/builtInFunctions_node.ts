@@ -310,7 +310,10 @@ const fnPath: FunctionDefinitionType = (
 				}
 			}
 		}
-		if (domFacade.getNodeType(ancestor) === NODE_TYPES.DOCUMENT_NODE) {
+		if (
+			domFacade.getNodeType(ancestor) === NODE_TYPES.DOCUMENT_NODE ||
+			domFacade.getNodeType(ancestor) === NODE_TYPES.DOCUMENT_FRAGMENT_NODE
+		) {
 			return sequenceFactory.create(createAtomicValue(result || '/', ValueType.XSSTRING));
 		}
 		result = 'Q{http://www.w3.org/2005/xpath-functions}root()' + result;

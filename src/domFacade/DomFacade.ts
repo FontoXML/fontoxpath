@@ -112,7 +112,7 @@ class DomFacade {
 			? parentNode.childNodes
 			: this._domFacade['getChildNodes'](parentNode, bucket);
 
-		if (parentNode.nodeType === NODE_TYPES.DOCUMENT_NODE) {
+		if (parentNode.nodeType === NODE_TYPES.DOCUMENT_NODE || parentNode.nodeType === NODE_TYPES.DOCUMENT_FRAGMENT_NODE) {
 			return childNodes.filter(
 				(childNode) => childNode['nodeType'] !== NODE_TYPES.DOCUMENT_TYPE_NODE,
 			);

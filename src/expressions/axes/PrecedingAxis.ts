@@ -23,7 +23,9 @@ function createPrecedingGenerator(
 
 	for (
 		let ancestorNode = node;
-		ancestorNode && domFacade.getNodeType(ancestorNode) !== NODE_TYPES.DOCUMENT_NODE;
+		ancestorNode &&
+			domFacade.getNodeType(ancestorNode) !== NODE_TYPES.DOCUMENT_NODE &&
+			domFacade.getNodeType(ancestorNode) !== NODE_TYPES.DOCUMENT_FRAGMENT_NODE;
 		// Any parent can contain the node we want. documents AND elements
 		ancestorNode = domFacade.getParentNodePointer(ancestorNode, null) as ChildNodePointer
 	) {

@@ -42,6 +42,26 @@ export function createDefaultNamespaceResolver(contextItem: any): (s: string) =>
 	if (!contextItem || typeof contextItem !== 'object' || !('lookupNamespaceURI' in contextItem)) {
 		return (_prefix) => null;
 	}
+
+	// For DOCUMENT_FRAGMENT_NODE (e.g., ShadowRoot), use special handling
+	// ShadowRoot may have lookupNamespaceURI but it returns null for the default namespace
+	// Instead, we should use the host element or first element child for namespace resolution
+	if (contextItem.nodeType === 11) { // DOCUMENT_FRAGMENT_NODE
+		// For ShadowRoot, try to use the host element
+		if ('host' in contextItem && contextItem.host && 'lookupNamespaceURI' in contextItem.host) {
+			return (prefix) => contextItem.host['lookupNamespaceURI'](prefix || null);
+		}
+		
+		// Otherwise, try the first element child
+		const firstElementChild = contextItem.firstElementChild;
+		if (firstElementChild && 'lookupNamespaceURI' in firstElementChild) {
+			return (prefix) => firstElementChild['lookupNamespaceURI'](prefix || null);
+		}
+		
+		// Last resort: return null
+		return (_prefix) => null;
+	}
+
 	return (prefix) => contextItem['lookupNamespaceURI'](prefix || null);
 }
 
