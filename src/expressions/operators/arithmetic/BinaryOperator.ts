@@ -10,6 +10,7 @@ import { SequenceType } from '../../dataTypes/Value';
 import DynamicContext from '../../DynamicContext';
 import Expression from '../../Expression';
 import { hash, operationMap, returnTypeMap } from './BinaryEvaluationFunctionMap';
+import { getDecimalOperation } from './decimalArithmetic';
 
 /**
  * Lambda helper function to the binary operator
@@ -82,7 +83,12 @@ export function generateBinaryOperatorFunction(
 		parentTypesOfA.includes(ValueType.XSNUMERIC) &&
 		parentTypesOfB.includes(ValueType.XSNUMERIC)
 	) {
-		const fun = operationMap[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, operator)];
+		// Two xs:decimals, or an xs:decimal and an xs:integer, are computed exactly. Anything
+		// involving a float or a double, and integer arithmetic, stays on plain numbers.
+		const fun =
+			(determineReturnType(typeA, typeB) === ValueType.XSDECIMAL &&
+				getDecimalOperation(operator)) ||
+			operationMap[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, operator)];
 		let retType = returnTypeMap[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, operator)];
 		if (!retType) retType = determineReturnType(typeA, typeB);
 		if (operator === 'divOp' && retType === ValueType.XSINTEGER) retType = ValueType.XSDECIMAL;

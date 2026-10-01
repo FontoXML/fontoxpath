@@ -56,6 +56,70 @@ describe('mathematical operators', () => {
 	});
 });
 
+describe('xs:decimal arithmetic', () => {
+	it('adds exactly', () => {
+		chai.assert.isTrue(evaluateXPathToBoolean('1.1 + 2.2 eq 3.3'));
+		chai.assert.isTrue(evaluateXPathToBoolean('336300.95 + 49243.65 eq 385544.6'));
+		chai.assert.equal(evaluateXPathToNumber('0.1 + 0.2'), 0.3);
+	});
+
+	it('subtracts exactly', () => {
+		chai.assert.isTrue(evaluateXPathToBoolean('0.3 - 0.1 eq 0.2'));
+		chai.assert.isTrue(evaluateXPathToBoolean('-0.1 - 0.2 eq -0.3'));
+	});
+
+	it('multiplies exactly', () => {
+		chai.assert.isTrue(evaluateXPathToBoolean('1.1 * 1.1 eq 1.21'));
+		chai.assert.isTrue(evaluateXPathToBoolean('10.05 * 100 eq 1005'));
+	});
+
+	it('divides exactly', () => {
+		chai.assert.isTrue(evaluateXPathToBoolean('0.3 div 0.1 eq 3'));
+		chai.assert.isTrue(evaluateXPathToBoolean('4338 div 100 eq 43.38'));
+	});
+
+	it('rounds a quotient that does not terminate to the nearest number', () => {
+		chai.assert.equal(evaluateXPathToNumber('1.0 div 3'), 1 / 3);
+		chai.assert.equal(evaluateXPathToNumber('-2.0 div 3'), -2 / 3);
+	});
+
+	it('leaves operands of more than 15 significant digits to number arithmetic', () =>
+		chai.assert.equal(evaluateXPathToNumber('(1.0 div 3) * 3'), (1 / 3) * 3));
+
+	it('computes idiv and mod exactly', () => {
+		chai.assert.isTrue(evaluateXPathToBoolean('0.3 idiv 0.1 eq 3'));
+		chai.assert.isTrue(evaluateXPathToBoolean('4.5 mod 1.2 eq 0.9'));
+		chai.assert.isTrue(evaluateXPathToBoolean('-4.5 mod 1.2 eq -0.9'));
+	});
+
+	it('computes exactly on values cast to xs:decimal', () =>
+		chai.assert.isTrue(
+			evaluateXPathToBoolean(
+				'xs:decimal("10.05") + xs:decimal("33.33") eq xs:decimal("43.38")',
+			),
+		));
+
+	it('computes exactly when an xs:decimal meets an xs:integer', () =>
+		chai.assert.isTrue(evaluateXPathToBoolean('0.1 * 3 eq 0.3')));
+
+	it('writes the exact result as a string', () =>
+		chai.assert.deepEqual(evaluateXPathToStrings('string(10.05 + 33.33)'), ['43.38']));
+
+	it('keeps the result an xs:decimal', () =>
+		chai.assert.isTrue(evaluateXPathToBoolean('(0.1 + 0.2) instance of xs:decimal')));
+
+	it('keeps xs:double arithmetic in floating point', () =>
+		chai.assert.equal(evaluateXPathToNumber('0.1e0 + 0.2e0'), 0.1 + 0.2));
+
+	it('keeps untyped operands in floating point, as they are cast to xs:double', () => {
+		jsonMlMapper.parse(['someElement', { a: '0.1' }], documentNode);
+		chai.assert.equal(
+			evaluateXPathToNumber('@a + 0.2', documentNode.documentElement),
+			0.1 + 0.2,
+		);
+	});
+});
+
 describe('Durations', () => {
 	describe('xs:yearMonthDuration', () => {
 		it('can evaluate "P10Y10M" + "P10Y10M"', () =>
