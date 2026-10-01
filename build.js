@@ -13,7 +13,7 @@ function outputDeclarations() {
 	const options = {
 		outDir: './built',
 		baseUrl: '.',
-		lib: ['es6', 'es2017', 'esnext.asynciterable'],
+		lib: ['es6', 'es2017', 'es2020.bigint', 'esnext.asynciterable'],
 		target: 'es2017',
 		module: 'commonjs',
 		declaration: true,
