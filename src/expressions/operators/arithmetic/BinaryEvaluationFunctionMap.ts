@@ -1,3 +1,4 @@
+import { Decimal } from '../../../expressions/dataTypes/valueTypes/Decimal';
 import { ValueType } from '../../../expressions/dataTypes/Value';
 import {
 	addDuration as addDurationToDateTime,
@@ -98,6 +99,18 @@ export const returnTypeMap: { [key: number]: ValueType } = {
  * returns a function that needs to be applied to the operands.
  */
 export const operationMap: { [key: number]: (a: any, b: any) => any } = {
+	[hash(ValueType.XSDECIMAL, ValueType.XSDECIMAL, 'addOp')]: (a, b) =>
+		Decimal.coerce(a).add(Decimal.coerce(b)),
+	[hash(ValueType.XSDECIMAL, ValueType.XSDECIMAL, 'subtractOp')]: (a, b) =>
+		Decimal.coerce(a).subtract(Decimal.coerce(b)),
+	[hash(ValueType.XSDECIMAL, ValueType.XSDECIMAL, 'multiplyOp')]: (a, b) =>
+		Decimal.coerce(a).multiply(Decimal.coerce(b)),
+	[hash(ValueType.XSDECIMAL, ValueType.XSDECIMAL, 'divOp')]: (a, b) =>
+		Decimal.coerce(a).div(Decimal.coerce(b)),
+	[hash(ValueType.XSDECIMAL, ValueType.XSDECIMAL, 'idivOp')]: (a, b) =>
+		Decimal.coerce(a).idiv(Decimal.coerce(b)),
+	[hash(ValueType.XSDECIMAL, ValueType.XSDECIMAL, 'modOp')]: (a, b) =>
+		Decimal.coerce(a).mod(Decimal.coerce(b)),
 	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'addOp')]: (a, b) => a + b,
 	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'subtractOp')]: (a, b) => a - b,
 	[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, 'multiplyOp')]: (a, b) => a * b,

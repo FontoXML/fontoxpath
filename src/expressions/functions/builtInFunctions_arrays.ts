@@ -5,6 +5,7 @@ import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value, { SequenceMultiplicity, SequenceType, ValueType } from '../dataTypes/Value';
+import { Decimal } from '../dataTypes/valueTypes/Decimal';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
@@ -78,8 +79,9 @@ const arraySubarray: FunctionDefinitionType = (
 	return zipSingleton(
 		[arraySequence, startSequence, lengthSequence],
 		([array, start, length]) => {
-			const startValue = start.value;
-			const lengthValue = length.value;
+			// Make both floats. Infinite precision numbers in arrays are nonsense.
+			const startValue = (start.value as Decimal).toFloat();
+			const lengthValue = (length.value as Decimal).toFloat();
 
 			if (startValue > (array as ArrayValue).members.length || startValue <= 0) {
 				throw new Error('FOAY0001: subarray start out of bounds.');
@@ -112,14 +114,16 @@ const arrayRemove: FunctionDefinitionType = (
 	return zipSingleton([arraySequence], ([array]) =>
 		positionSequence.mapAll((allIndices) => {
 			const indicesToRemove = allIndices
-				.map((value) => value.value)
+				.map((value) =>
+					value.value instanceof Decimal ? value.value.toFloat() : value.value,
+				)
 				// Sort them in reverse order, to keep them stable
 				.sort((a, b) => b - a)
 				.filter((item, i, all) => all[i - 1] !== item);
 
 			const newMembers = (array as ArrayValue).members.concat();
 			for (let i = 0, l = indicesToRemove.length; i < l; ++i) {
-				const position = indicesToRemove[i];
+				const position = indicesToRemove[i] as number;
 				if (position > (array as ArrayValue).members.length || position <= 0) {
 					throw new Error('FOAY0001: subarray position out of bounds.');
 				}
@@ -414,8 +418,16 @@ const deepLessThan = (
 		return true;
 	} else if (isString(valuesA[0].type) && valuesB.length !== 0 && isString(valuesB[0].type)) {
 		return valuesA[0].value < valuesB[0].value;
+	} else if (
+		valuesB.length !== 0 &&
+		valuesA[0].value instanceof Decimal &&
+		valuesB[0].value instanceof Decimal
+	) {
+		return valuesA[0].value.compareTo(valuesB[0].value) < 0;
 	} else {
-		return valuesB.length === 0 ? false : valuesA[0].value < valuesB[0].value;
+		return valuesB.length === 0
+			? false
+			: (valuesA[0].value as number) < (valuesB[0].value as number);
 	}
 };
 

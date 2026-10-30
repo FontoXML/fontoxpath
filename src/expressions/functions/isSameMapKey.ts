@@ -1,5 +1,6 @@
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import Value, { ValueType } from '../dataTypes/Value';
+import { Decimal } from '../dataTypes/valueTypes/Decimal';
 
 export default function isSameMapKey(k1: Value, k2: Value): boolean {
 	const k1IsStringLike =
@@ -28,7 +29,7 @@ export default function isSameMapKey(k1: Value, k2: Value): boolean {
 		if (isNaN(k1.value) && isNaN(k2.value)) {
 			return true;
 		}
-		return k1.value === k2.value;
+		return Decimal.coerce(k1.value).equals(Decimal.coerce(k2.value));
 	}
 	// TODO: dateTime
 

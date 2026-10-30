@@ -2,6 +2,7 @@ import AtomicValue from '../../../expressions/dataTypes/AtomicValue';
 import castToType from '../../../expressions/dataTypes/castToType';
 import createAtomicValue from '../../../expressions/dataTypes/createAtomicValue';
 import isSubtypeOf from '../../../expressions/dataTypes/isSubtypeOf';
+import { Decimal } from '../../../expressions/dataTypes/valueTypes/Decimal';
 import { ValueType, valueTypeToString, ValueValue } from '../../../expressions/dataTypes/Value';
 import ExecutionParameters from '../../../expressions/ExecutionParameters';
 import atomize from '../../dataTypes/atomize';
@@ -27,6 +28,14 @@ function determineReturnType(typeA: ValueType, typeB: ValueType): ValueType {
 		return ValueType.XSFLOAT;
 	}
 	return ValueType.XSDOUBLE;
+}
+
+/**
+ * Converts a numeric operand to a JavaScript number: Decimal values use their float
+ * representation, other values (already JavaScript numbers) are returned as-is.
+ */
+function toJsNumber(value: any): number {
+	return value instanceof Decimal ? value.toFloat() : value;
 }
 
 /**
@@ -82,14 +91,35 @@ export function generateBinaryOperatorFunction(
 		parentTypesOfA.includes(ValueType.XSNUMERIC) &&
 		parentTypesOfB.includes(ValueType.XSNUMERIC)
 	) {
-		const fun = operationMap[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, operator)];
 		let retType = returnTypeMap[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, operator)];
 		if (!retType) retType = determineReturnType(typeA, typeB);
 		if (operator === 'divOp' && retType === ValueType.XSINTEGER) retType = ValueType.XSDECIMAL;
+
+		const bothOperandsAreDecimalOrInteger =
+			isSubtypeOf(typeA, ValueType.XSDECIMAL) && isSubtypeOf(typeB, ValueType.XSDECIMAL);
+
+		// Arithmetic on xs:decimal / xs:integer values is dispatched to the Decimal
+		// implementation to preserve arbitrary precision.
+		const useDecimalArithmetic = bothOperandsAreDecimalOrInteger;
+
+		if (useDecimalArithmetic) {
+			const decimalFun =
+				operationMap[hash(ValueType.XSDECIMAL, ValueType.XSDECIMAL, operator)];
+			return (a, b) => {
+				const { castA, castB } = applyCastFunctions(a, b);
+				const result = decimalFun(castA.value, castB.value);
+				return createAtomicValue(result, retType);
+			};
+		}
+
+		const fun = operationMap[hash(ValueType.XSNUMERIC, ValueType.XSNUMERIC, operator)];
 		if (operator === 'idivOp') return iDivOpChecksFunction(applyCastFunctions, fun)[0];
 		return (a, b) => {
 			const { castA, castB } = applyCastFunctions(a, b);
-			return createAtomicValue(fun(castA.value, castB.value), retType);
+			return createAtomicValue(
+				fun(toJsNumber(castA.value), toJsNumber(castB.value)),
+				retType,
+			);
 		};
 	}
 
@@ -201,22 +231,20 @@ function iDivOpChecksFunction(
 	return [
 		(a, b) => {
 			const { castA, castB } = applyCastFunctions(a, b);
-			if (castB.value === 0) {
+			const valueA = toJsNumber(castA.value);
+			const valueB = toJsNumber(castB.value);
+			if (valueB === 0) {
 				throw new Error('FOAR0001: Divisor of idiv operator cannot be (-)0');
 			}
-			if (
-				Number.isNaN(castA.value) ||
-				Number.isNaN(castB.value) ||
-				!Number.isFinite(castA.value)
-			) {
+			if (Number.isNaN(valueA) || Number.isNaN(valueB) || !Number.isFinite(valueA)) {
 				throw new Error(
 					'FOAR0002: One of the operands of idiv is NaN or the first operand is (-)INF',
 				);
 			}
-			if (Number.isFinite(castA.value) && !Number.isFinite(castB.value)) {
+			if (Number.isFinite(valueA) && !Number.isFinite(valueB)) {
 				return createAtomicValue(0, ValueType.XSINTEGER);
 			}
-			return createAtomicValue(fun(castA.value, castB.value), ValueType.XSINTEGER);
+			return createAtomicValue(fun(valueA, valueB), ValueType.XSINTEGER);
 		},
 		ValueType.XSINTEGER,
 	];

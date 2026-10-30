@@ -18,6 +18,9 @@ export const enum ValueType {
 	XSSTRING,
 	XSNUMERIC,
 	XSDOUBLE,
+	/**
+	 * A arbitrary-precision decimal number.
+	 */
 	XSDECIMAL,
 	XSINTEGER,
 	XSFLOAT,

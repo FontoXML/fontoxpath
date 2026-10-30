@@ -1,5 +1,6 @@
 import createAtomicValue from '../createAtomicValue';
 import { ValueType } from '../Value';
+import { Decimal } from '../valueTypes/Decimal';
 import CastResult from './CastResult';
 
 export default function castToDecimal(
@@ -8,7 +9,7 @@ export default function castToDecimal(
 	if (instanceOf(ValueType.XSINTEGER)) {
 		return (value) => ({
 			successful: true,
-			value: createAtomicValue(value, ValueType.XSDECIMAL),
+			value: createAtomicValue(Decimal.coerce(value), ValueType.XSDECIMAL),
 		});
 	}
 	if (instanceOf(ValueType.XSFLOAT) || instanceOf(ValueType.XSDOUBLE)) {
@@ -29,30 +30,30 @@ export default function castToDecimal(
 			}
 			return {
 				successful: true,
-				value: createAtomicValue(value, ValueType.XSDECIMAL),
+				value: createAtomicValue(Decimal.coerce(value), ValueType.XSDECIMAL),
 			};
 		};
 	}
 	if (instanceOf(ValueType.XSBOOLEAN)) {
 		return (value) => ({
 			successful: true,
-			value: createAtomicValue(value ? 1 : 0, ValueType.XSDECIMAL),
+			value: createAtomicValue(Decimal.coerce(value ? 1 : 0), ValueType.XSDECIMAL),
 		});
 	}
 
 	if (instanceOf(ValueType.XSSTRING) || instanceOf(ValueType.XSUNTYPEDATOMIC)) {
 		return (value) => {
-			const decimalValue = parseFloat(value);
-			if (!isNaN(decimalValue) || isFinite(decimalValue)) {
+			try {
 				return {
 					successful: true,
-					value: createAtomicValue(decimalValue, ValueType.XSDECIMAL),
+					value: createAtomicValue(Decimal.fromString(value), ValueType.XSDECIMAL),
+				};
+			} catch (e) {
+				return {
+					successful: false,
+					error: e as Error,
 				};
 			}
-			return {
-				successful: false,
-				error: new Error(`FORG0001: Can not cast ${value} to xs:decimal`),
-			};
 		};
 	}
 

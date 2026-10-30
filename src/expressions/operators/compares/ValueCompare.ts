@@ -1,9 +1,10 @@
+import { Decimal } from '../../dataTypes/valueTypes/Decimal';
 import AtomicValue from '../../dataTypes/AtomicValue';
 import castToType from '../../dataTypes/castToType';
 import ISequence from '../../dataTypes/ISequence';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import { ValueType, valueTypeToString } from '../../dataTypes/Value';
+import Value, { ValueType, valueTypeToString } from '../../dataTypes/Value';
 import {
 	equal as dateTimeEqual,
 	greaterThan as dateTimeGreaterThan,
@@ -47,40 +48,92 @@ function handleQName(
 	throw new Error('XPTY0004: Only the "eq" and "ne" comparison is defined for xs:QName');
 }
 
-function handleNumeric(
+function toComparableJsValue(value: number | string | boolean | Decimal) {
+	if (value instanceof Decimal) {
+		return value.toFloat();
+	}
+	return value;
+}
+
+/**
+ * Handle a simple compare, between atomic values that are not datetime / durations. Includes xs:decimals
+ */
+function handleSimpleAtomicValue(
 	operator: string,
-	applyCastFunctions: (valA: AtomicValue, valB: AtomicValue) => any,
-): (valA: any, valB: any, dynamicContext: DynamicContext) => boolean {
+	applyCastFunctions: (
+		valA: AtomicValue,
+		valB: AtomicValue,
+	) => { castA: AtomicValue; castB: AtomicValue },
+): (valA: Value, valB: Value, dynamicContext: DynamicContext) => boolean {
 	switch (operator) {
 		case 'eqOp':
 			return (a, b, _dynamicContext) => {
 				const { castA, castB } = applyCastFunctions(a, b);
-				return castA.value === castB.value;
+				if (
+					isSubtypeOf(castA.type, ValueType.XSDECIMAL) &&
+					isSubtypeOf(castB.type, ValueType.XSDECIMAL)
+				) {
+					return Decimal.coerce(castA.value).equals(Decimal.coerce(castB.value));
+				}
+				return toComparableJsValue(castA.value) === toComparableJsValue(castB.value);
 			};
 		case 'neOp':
 			return (a, b, _dynamicContext) => {
 				const { castA, castB } = applyCastFunctions(a, b);
-				return castA.value !== castB.value;
+				if (
+					isSubtypeOf(castA.type, ValueType.XSDECIMAL) &&
+					isSubtypeOf(castB.type, ValueType.XSDECIMAL)
+				) {
+					return !Decimal.coerce(castA.value).equals(Decimal.coerce(castB.value));
+				}
+				return toComparableJsValue(castA.value) !== toComparableJsValue(castB.value);
 			};
 		case 'ltOp':
 			return (a, b, _dynamicContext) => {
 				const { castA, castB } = applyCastFunctions(a, b);
-				return castA.value < castB.value;
+				if (
+					isSubtypeOf(castA.type, ValueType.XSDECIMAL) &&
+					isSubtypeOf(castB.type, ValueType.XSDECIMAL)
+				) {
+					return Decimal.coerce(castA.value).compareTo(Decimal.coerce(castB.value)) < 0;
+				}
+
+				return toComparableJsValue(castA.value) < toComparableJsValue(castB.value);
 			};
 		case 'leOp':
 			return (a, b, _dynamicContext) => {
 				const { castA, castB } = applyCastFunctions(a, b);
-				return castA.value <= castB.value;
+				if (
+					isSubtypeOf(castA.type, ValueType.XSDECIMAL) &&
+					isSubtypeOf(castB.type, ValueType.XSDECIMAL)
+				) {
+					return Decimal.coerce(castA.value).compareTo(Decimal.coerce(castB.value)) <= 0;
+				}
+
+				return toComparableJsValue(castA.value) <= toComparableJsValue(castB.value);
 			};
 		case 'gtOp':
 			return (a, b, _dynamicContext) => {
 				const { castA, castB } = applyCastFunctions(a, b);
-				return castA.value > castB.value;
+				if (
+					isSubtypeOf(castA.type, ValueType.XSDECIMAL) &&
+					isSubtypeOf(castB.type, ValueType.XSDECIMAL)
+				) {
+					return Decimal.coerce(castA.value).compareTo(Decimal.coerce(castB.value)) > 0;
+				}
+				return toComparableJsValue(castA.value) > toComparableJsValue(castB.value);
 			};
 		case 'geOp':
 			return (a, b, _dynamicContext) => {
 				const { castA, castB } = applyCastFunctions(a, b);
-				return castA.value >= castB.value;
+				if (
+					isSubtypeOf(castA.type, ValueType.XSDECIMAL) &&
+					isSubtypeOf(castB.type, ValueType.XSDECIMAL)
+				) {
+					return Decimal.coerce(castA.value).compareTo(Decimal.coerce(castB.value)) >= 0;
+				}
+
+				return toComparableJsValue(castA.value) >= toComparableJsValue(castB.value);
 			};
 		default:
 			return undefined;
@@ -334,7 +387,7 @@ function generateCompareFunction(
 		areBothSubtypeOf(ValueType.XSBASE64BINARY) ||
 		areBothSubtypeOfOne([ValueType.XSSTRING, ValueType.XSANYURI])
 	) {
-		const result = handleNumeric(operator, applyCastFunctions);
+		const result = handleSimpleAtomicValue(operator, applyCastFunctions);
 		if (result !== undefined) {
 			return result;
 		}

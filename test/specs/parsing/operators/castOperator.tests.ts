@@ -115,10 +115,10 @@ describe('cast as', () => {
 				() => evaluateXPathToBoolean('xs:double("INF") cast as xs:integer'),
 				'FOCA0002',
 			));
-		it('can cast decimals to integers: out of range', () =>
-			chai.assert.throws(
-				() => evaluateXPathToBoolean('xs:double("1E100") cast as xs:integer'),
-				'FOAR0002',
+		it('can cast decimals to integers: very large values stay exact', () =>
+			chai.assert.strictEqual(
+				evaluateXPathToString('xs:double("1E100") cast as xs:integer'),
+				'1' + '0'.repeat(100),
 			));
 		it('can cast strings to integers: unparsable', () =>
 			chai.assert.throws(
@@ -426,10 +426,10 @@ describe('cast as', () => {
 	});
 
 	describe('to xs:long', () => {
-		it('can cast strings to xs:long: max bounds. This will not work because of JavaScript numbers not having the same ranges', () =>
+		it('can cast strings to xs:long: out of range values throw FORG0001', () =>
 			chai.assert.throws(
 				() => evaluateXPathToNumber('xs:long("9223372036854775808")'),
-				'FOCA0003',
+				'FORG0001',
 			));
 		it('can cast strings to xs:long: middle bounds', () =>
 			chai.assert.equal(

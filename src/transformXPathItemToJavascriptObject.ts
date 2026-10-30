@@ -5,6 +5,7 @@ import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
 import MapValue from './expressions/dataTypes/MapValue';
 import Value, { ValueType } from './expressions/dataTypes/Value';
 import DateTime from './expressions/dataTypes/valueTypes/DateTime';
+import { Decimal } from './expressions/dataTypes/valueTypes/Decimal';
 import QName from './expressions/dataTypes/valueTypes/QName';
 import ExecutionParameters from './expressions/ExecutionParameters';
 import { DONE_TOKEN, IIterator, IterationHint, ready } from './expressions/util/iterators';
@@ -119,6 +120,12 @@ export default function transformXPathItemToJavascriptObject(
 		const qualifiedName = value.value as QName;
 		return {
 			next: () => ready(`Q{${qualifiedName.namespaceURI || ''}}${qualifiedName.localName}`),
+		};
+	}
+
+	if (value.value instanceof Decimal) {
+		return {
+			next: () => ready(value.value.toFloat()),
 		};
 	}
 

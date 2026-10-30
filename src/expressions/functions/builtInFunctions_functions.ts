@@ -2,6 +2,7 @@ import createAtomicValue from '../dataTypes/createAtomicValue';
 import FunctionValue from '../dataTypes/FunctionValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
+import { Decimal } from '../dataTypes/valueTypes/Decimal';
 import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
 import zipSingleton from '../util/zipSingleton';
 import { BuiltinDeclarationType } from './builtInFunctions';
@@ -15,10 +16,11 @@ const fnFunctionLookup: FunctionDefinitionType = (
 	aritySequence,
 ) => {
 	return zipSingleton([nameSequence, aritySequence], ([name, arity]) => {
+		const arityValue = arity.value instanceof Decimal ? arity.value.toFloat() : arity.value;
 		const functionProperties = staticContext.lookupFunction(
 			name.value.namespaceURI,
 			name.value.localName,
-			arity.value,
+			arityValue,
 		);
 
 		if (functionProperties === null) {
@@ -27,7 +29,7 @@ const fnFunctionLookup: FunctionDefinitionType = (
 
 		const functionItem = new FunctionValue({
 			argumentTypes: functionProperties.argumentTypes,
-			arity: arity.value,
+			arity: arityValue,
 			localName: name.value.localName,
 			namespaceURI: name.value.namespaceURI,
 			returnType: functionProperties.returnType,

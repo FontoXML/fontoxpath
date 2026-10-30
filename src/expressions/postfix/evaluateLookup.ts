@@ -4,6 +4,7 @@ import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import MapValue from '../dataTypes/MapValue';
 import EmptySequence from '../dataTypes/Sequences/EmptySequence';
 import Value, { ValueType } from '../dataTypes/Value';
+import { Decimal } from '../dataTypes/valueTypes/Decimal';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression from '../Expression';
@@ -27,7 +28,9 @@ function performLookup(
 		} else if (!isSubtypeOf(lookup.type, ValueType.XSINTEGER)) {
 			throw errXPTY0004('The key specifier is not an integer.');
 		} else {
-			const index = lookup.value as number;
+			const decimalLookup = lookup.value as Decimal;
+
+			const index = decimalLookup.toFloat();
 			if (arrayItem.members.length < index || 0 >= index) {
 				throw errFOAY0001();
 			}

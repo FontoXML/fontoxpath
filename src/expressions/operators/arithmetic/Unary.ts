@@ -1,3 +1,4 @@
+import { Decimal } from '../../dataTypes/valueTypes/Decimal';
 import atomize from '../../dataTypes/atomize';
 import castToType from '../../dataTypes/castToType';
 import createAtomicValue from '../../dataTypes/createAtomicValue';
@@ -57,11 +58,11 @@ class Unary extends Expression {
 			const value = atomizedValues[0];
 
 			// We could infer the return type during annotation so we can early return here
-			if (this.type) {
-				let finalValue = this._kind === '+' ? +value.value : -value.value;
-				if (value.type === ValueType.XSBOOLEAN) finalValue = Number.NaN;
-				return sequenceFactory.singleton(createAtomicValue(finalValue, this.type.type));
-			}
+			// if (this.type) {
+			// 	let finalValue = this._kind === '+' ? +value.value : -value.value;
+			// 	if (value.type === ValueType.XSBOOLEAN) finalValue = Number.NaN;
+			// 	return sequenceFactory.singleton(createAtomicValue(finalValue, this.type.type));
+			// }
 
 			if (atomizedValues.length > 1) {
 				throw new Error(
@@ -82,6 +83,13 @@ class Unary extends Expression {
 			if (isSubtypeOf(value.type, ValueType.XSNUMERIC)) {
 				if (this._kind === '+') {
 					return sequenceFactory.singleton(value);
+				}
+
+				if (isSubtypeOf(value.type, ValueType.XSDECIMAL)) {
+					return sequenceFactory.singleton({
+						value: (value.value as Decimal).negate(),
+						type: value.type,
+					});
 				}
 				return sequenceFactory.singleton(
 					createAtomicValue((value.value as number) * -1, UNARY_LOOKUP[value.type]),

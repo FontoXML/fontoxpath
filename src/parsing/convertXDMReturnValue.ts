@@ -1,3 +1,4 @@
+import { Decimal } from '../expressions/dataTypes/valueTypes/Decimal';
 import { NodePointer } from '../domClone/Pointer';
 import realizeDom from '../domClone/realizeDom';
 import { EvaluableExpression } from '../evaluateXPath';
@@ -124,6 +125,13 @@ export interface IReturnTypes<T extends Node> {
 	[ReturnType.ASYNC_ITERATOR]: AsyncIterableIterator<any>;
 }
 
+function handleAtomicValue(value: Value) {
+	if (value.value instanceof Decimal) {
+		return value.value.toFloat();
+	}
+	return value.value;
+}
+
 export default function convertXDMReturnValue<
 	TNode extends Node,
 	TReturnType extends keyof IReturnTypes<TNode>,
@@ -168,7 +176,7 @@ export default function convertXDMReturnValue<
 			if (!isSubtypeOf(first.type, ValueType.XSNUMERIC)) {
 				return NaN as IReturnTypes<TNode>[TReturnType];
 			}
-			return first.value as IReturnTypes<TNode>[TReturnType];
+			return handleAtomicValue(first);
 		}
 
 		case ReturnType.FIRST_NODE: {
@@ -277,7 +285,7 @@ export default function convertXDMReturnValue<
 							' to resolve to numbers',
 					);
 				}
-				return value.value;
+				return handleAtomicValue(value);
 			}) as IReturnTypes<TNode>[TReturnType];
 		}
 
@@ -372,14 +380,15 @@ export default function convertXDMReturnValue<
 					).next(IterationHint.NONE);
 					return transformedMap.value as IReturnTypes<TNode>[TReturnType];
 				}
-				return atomizeSingleValue(first, executionParameters).first()
-					.value as IReturnTypes<TNode>[TReturnType];
+				const singleAtomic = atomizeSingleValue(first, executionParameters).first();
+
+				return handleAtomicValue(singleAtomic) as IReturnTypes<TNode>[TReturnType];
 			}
 
 			return atomize(sequenceFactory.create(allValues), executionParameters)
 				.getAllValues()
 				.map((atomizedValue) => {
-					return atomizedValue.value;
+					return handleAtomicValue(atomizedValue);
 				}) as IReturnTypes<TNode>[TReturnType];
 		}
 	}

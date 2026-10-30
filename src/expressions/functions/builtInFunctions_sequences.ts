@@ -8,6 +8,7 @@ import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value, { SequenceMultiplicity, SequenceType, ValueType } from '../dataTypes/Value';
+import { Decimal } from '../dataTypes/valueTypes/Decimal';
 import { valueCompare } from '../operators/compares/ValueCompare';
 import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
 import { DONE_TOKEN, IIterator, IterationHint, ready } from '../util/iterators';
@@ -262,7 +263,11 @@ const fnIndexOf: FunctionDefinitionType = (
 					: createAtomicValue(-1, ValueType.XSINTEGER);
 			})
 			.filter((indexValue) => {
-				return indexValue.value !== -1;
+				const index =
+					indexValue.value instanceof Decimal
+						? indexValue.value.toFloat()
+						: indexValue.value;
+				return index !== -1;
 			}),
 	);
 };
@@ -338,27 +343,30 @@ const fnAvg: FunctionDefinitionType = (
 		throw new Error('FORG0006: items passed to fn:avg are not all numeric.');
 	}
 
-	const resultValue =
-		items.reduce((sum, item) => {
-			return sum + item.value;
-		}, 0) / items.length;
+	const allIntegersOrDoubles = items.every(
+		(item) =>
+			isSubtypeOf(item.type, ValueType.XSINTEGER) ||
+			isSubtypeOf(item.type, ValueType.XSDOUBLE),
+	);
+	const allDecimals = items.every((item) => isSubtypeOf(item.type, ValueType.XSDECIMAL));
 
-	if (
-		items.every((item) => {
-			return (
-				isSubtypeOf(item.type, ValueType.XSINTEGER) ||
-				isSubtypeOf(item.type, ValueType.XSDOUBLE)
-			);
-		})
-	) {
+	const resultValue: number | Decimal =
+		allDecimals && !allIntegersOrDoubles
+			? items
+					.reduce((sum, item) => sum.add(item.value), Decimal.fromFloat(0))
+					.div(Decimal.fromFloat(items.length))
+			: items.reduce((sum, item) => {
+					if (isSubtypeOf(item.type, ValueType.XSDECIMAL)) {
+						return sum + (item.value as Decimal).toFloat();
+					}
+					return sum + item.value;
+			  }, 0) / items.length;
+
+	if (allIntegersOrDoubles) {
 		return sequenceFactory.singleton(createAtomicValue(resultValue, ValueType.XSDOUBLE));
 	}
 
-	if (
-		items.every((item) => {
-			return isSubtypeOf(item.type, ValueType.XSDECIMAL);
-		})
-	) {
+	if (allDecimals) {
 		return sequenceFactory.singleton(createAtomicValue(resultValue, ValueType.XSDECIMAL));
 	}
 
@@ -380,7 +388,12 @@ const fnMax: FunctionDefinitionType = (
 	// Use first element in array as initial value
 	return sequenceFactory.singleton(
 		items.reduce((max, item) => {
-			return max.value < item.value ? item : max;
+			const maxVal = max.value instanceof Decimal ? max.value : item.value;
+			const itemVal = item.value instanceof Decimal ? item.value : max.value;
+			if (maxVal instanceof Decimal && itemVal instanceof Decimal) {
+				return maxVal.compareTo(itemVal) < 0 ? item : max;
+			}
+			return (max.value as number) < (item.value as number) ? item : max;
 		}),
 	);
 };
@@ -400,7 +413,12 @@ const fnMin: FunctionDefinitionType = (
 	// Use first element in array as initial value
 	return sequenceFactory.singleton(
 		items.reduce((min, item) => {
-			return min.value > item.value ? item : min;
+			const minVal = min.value instanceof Decimal ? min.value : item.value;
+			const itemVal = item.value instanceof Decimal ? item.value : min.value;
+			if (minVal instanceof Decimal && itemVal instanceof Decimal) {
+				return minVal.compareTo(itemVal) > 0 ? item : min;
+			}
+			return (min.value as number) > (item.value as number) ? item : min;
 		}),
 	);
 };
@@ -427,17 +445,34 @@ const fnSum: FunctionDefinitionType = (
 		throw new Error('FORG0006: items passed to fn:sum are not all numeric.');
 	}
 
-	const resultValue = items.reduce((sum, item) => {
+	const shouldUseDecimalPath = items.every((item) => isSubtypeOf(item.type, ValueType.XSDECIMAL));
+
+	if (shouldUseDecimalPath) {
+		// We will return a decimal. Keep decimals here to prevent any loss of precision
+		const resultValue: number | Decimal = items.reduce((sum, item) => {
+			const decimalValue = item.value as Decimal;
+			return sum.add(decimalValue);
+		}, Decimal.fromFloat(0));
+
+		if (
+			items.every((item) => {
+				return isSubtypeOf(item.type, ValueType.XSINTEGER);
+			})
+		) {
+			return sequenceFactory.singleton(createAtomicValue(resultValue, ValueType.XSINTEGER));
+		}
+
+		return sequenceFactory.singleton(createAtomicValue(resultValue, ValueType.XSDECIMAL));
+	}
+	const resultValue: number | Decimal = items.reduce((sum, item) => {
+		if (isSubtypeOf(item.type, ValueType.XSDECIMAL)) {
+			const decimalValue = item.value as Decimal;
+			// Coerce to a float. lose precision
+			return sum + decimalValue.toFloat();
+		}
+
 		return sum + item.value;
 	}, 0);
-
-	if (
-		items.every((item) => {
-			return isSubtypeOf(item.type, ValueType.XSINTEGER);
-		})
-	) {
-		return sequenceFactory.singleton(createAtomicValue(resultValue, ValueType.XSINTEGER));
-	}
 
 	if (
 		items.every((item) => {
@@ -445,14 +480,6 @@ const fnSum: FunctionDefinitionType = (
 		})
 	) {
 		return sequenceFactory.singleton(createAtomicValue(resultValue, ValueType.XSDOUBLE));
-	}
-
-	if (
-		items.every((item) => {
-			return isSubtypeOf(item.type, ValueType.XSDECIMAL);
-		})
-	) {
-		return sequenceFactory.singleton(createAtomicValue(resultValue, ValueType.XSDECIMAL));
 	}
 
 	return sequenceFactory.singleton(createAtomicValue(resultValue, ValueType.XSFLOAT));

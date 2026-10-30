@@ -1,11 +1,18 @@
 import { falseBoolean, trueBoolean } from '../createAtomicValue';
 import { ValueType } from '../Value';
+import { Decimal } from '../valueTypes/Decimal';
 import CastResult from './CastResult';
 
 export default function castToBoolean(
 	instanceOf: (typeName: ValueType) => boolean,
 ): (value: any) => CastResult {
 	if (instanceOf(ValueType.XSNUMERIC)) {
+		if (instanceOf(ValueType.XSDECIMAL)) {
+			return (value) => ({
+				successful: true,
+				value: (value as Decimal).equals(Decimal.ZERO) ? falseBoolean : trueBoolean,
+			});
+		}
 		return (value) => ({
 			successful: true,
 			value: value === 0 || isNaN(value) ? falseBoolean : trueBoolean,

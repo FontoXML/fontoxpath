@@ -1,5 +1,6 @@
 import { errFORG0001 } from '../../../expressions/XPathErrors';
 import { ValueType } from '../Value';
+import { Decimal } from '../valueTypes/Decimal';
 
 export default function castToFloatLikeType(
 	instanceOf: (typeName: ValueType) => boolean,
@@ -8,7 +9,7 @@ export default function castToFloatLikeType(
 	if (instanceOf(ValueType.XSNUMERIC)) {
 		return (value) => ({
 			successful: true,
-			value,
+			value: value instanceof Decimal ? value.toFloat() : value,
 		});
 	}
 	if (instanceOf(ValueType.XSBOOLEAN)) {

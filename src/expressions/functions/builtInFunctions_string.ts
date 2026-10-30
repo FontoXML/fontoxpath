@@ -6,6 +6,7 @@ import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value, { EllipsisType, SequenceMultiplicity, ValueType } from '../dataTypes/Value';
+import { Decimal } from '../dataTypes/valueTypes/Decimal';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
@@ -443,7 +444,8 @@ const fnCodepointsToString: FunctionDefinitionType = (
 	return numberSequence.mapAll((numbers) => {
 		const str = numbers
 			.map((num) => {
-				const numericValue: number = num.value;
+				const numericValue: number =
+					num.value instanceof Decimal ? num.value.toFloat() : num.value;
 				if (
 					numericValue === 0x9 ||
 					numericValue === 0xa ||

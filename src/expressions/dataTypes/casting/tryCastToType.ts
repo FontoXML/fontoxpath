@@ -9,6 +9,7 @@ import {
 	validateRestrictions,
 } from '../typeHelpers';
 import Value, { ValueType, valueTypeToString } from '../Value';
+import { Decimal } from '../valueTypes/Decimal';
 import CastResult from './CastResult';
 import castToAnyURI from './castToAnyURI';
 import castToBase64Binary from './castToBase64Binary';
@@ -160,6 +161,42 @@ function createCastingFunction(from: ValueType, to: ValueType): (value: Value) =
 				value: val,
 			},
 		});
+	}
+
+	if (
+		to !== ValueType.XSNUMERIC &&
+		isSubtypeOf(to, ValueType.XSDECIMAL) &&
+		isSubtypeOf(from, ValueType.XSNUMERIC)
+	) {
+		const isIntegerTarget = isSubtypeOf(to, ValueType.XSINTEGER);
+		return (val: any) => {
+			if (typeof val === 'number' && !Number.isFinite(val)) {
+				return {
+					successful: false,
+					error: new Error(`FOCA0002: Can not cast ${val} to ${valueTypeToString(to)}`),
+				};
+			}
+			const decimalValue = isIntegerTarget
+				? Decimal.fromBigInt(Decimal.coerce(val).idiv(Decimal.fromFloat(1)))
+				: Decimal.coerce(val);
+			if (!validateRestrictions(decimalValue.toString(), to)) {
+				return {
+					successful: false,
+					error: new Error(
+						`FORG0001: Cannot cast ${decimalValue} to ${valueTypeToString(
+							to,
+						)}, pattern validation failed.`,
+					),
+				};
+			}
+			return {
+				successful: true,
+				value: {
+					type: to,
+					value: decimalValue,
+				},
+			};
+		};
 	}
 
 	const primitiveFrom = TREAT_AS_PRIMITIVE.includes(from) ? from : getPrimitiveTypeName(from);

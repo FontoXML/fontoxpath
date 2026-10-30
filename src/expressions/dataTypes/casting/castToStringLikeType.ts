@@ -1,4 +1,5 @@
 import { ValueType } from '../Value';
+import { Decimal } from '../valueTypes/Decimal';
 import QName from '../valueTypes/QName';
 
 export default function castToStringLikeType(
@@ -31,6 +32,13 @@ export default function castToStringLikeType(
 		});
 	}
 	if (instanceOf(ValueType.XSNUMERIC)) {
+		if (instanceOf(ValueType.XSDECIMAL)) {
+			return (value) => {
+				const decimal = value as Decimal;
+				return { successful: true, value: decimal.toString() };
+			};
+		}
+
 		if (instanceOf(ValueType.XSINTEGER) || instanceOf(ValueType.XSDECIMAL)) {
 			return (value) => ({
 				successful: true,

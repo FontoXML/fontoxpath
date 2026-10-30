@@ -1,6 +1,7 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
+import { Decimal } from '../dataTypes/valueTypes/Decimal';
 import { ready } from '../util/iterators';
 import { BuiltinDeclarationType } from './builtInFunctions';
 import FunctionDefinitionType from './FunctionDefinitionType';
@@ -19,17 +20,24 @@ const opTo: FunctionDefinitionType = (
 	if (from === null || to === null) {
 		return sequenceFactory.empty();
 	}
-	let fromValue = from.value as number;
-	const toValue = to.value as number;
-	if (fromValue > toValue) {
+
+	let fromValue = Decimal.coerce(from.value);
+	const toValue = Decimal.coerce(to.value);
+
+	if (fromValue.compareTo(toValue) > 0) {
 		return sequenceFactory.empty();
 	}
 	// By providing a length, we do not have to hold an end condition into account
+	const length = Number(toValue.subtract(fromValue).add(1).toFloat());
 	return sequenceFactory.create(
 		{
-			next: () => ready(createAtomicValue(fromValue++, ValueType.XSINTEGER)),
+			next: () => {
+				const current = fromValue;
+				fromValue = fromValue.add(1);
+				return ready(createAtomicValue(current, ValueType.XSINTEGER));
+			},
 		},
-		toValue - fromValue + 1,
+		length,
 	);
 };
 

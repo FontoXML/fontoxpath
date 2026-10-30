@@ -1,9 +1,11 @@
-import { errFORG0001 } from '../../../expressions/XPathErrors';
+import { errXPTY0004 } from '../../../expressions/XPathErrors';
 import createAtomicValue from '../createAtomicValue';
 import { ValueType } from '../Value';
+import { Decimal } from '../valueTypes/Decimal';
 import CastResult from './CastResult';
 
-const createIntegerValue = (value: number) => createAtomicValue(value, ValueType.XSINTEGER);
+const createIntegerValue = (value: number | Decimal) =>
+	createAtomicValue(value, ValueType.XSINTEGER);
 
 export default function castToInteger(
 	instanceOf: (typeName: ValueType) => boolean,
@@ -24,15 +26,6 @@ export default function castToInteger(
 				};
 			}
 
-			if (!Number.isSafeInteger(integerValue)) {
-				return {
-					successful: false,
-					error: new Error(
-						`FOAR0002: can not cast ${value} to xs:integer, it is out of bounds for JavaScript numbers.`,
-					),
-				};
-			}
-
 			return {
 				successful: true,
 				value: createIntegerValue(integerValue),
@@ -41,32 +34,16 @@ export default function castToInteger(
 	}
 	if (instanceOf(ValueType.XSSTRING) || instanceOf(ValueType.XSUNTYPEDATOMIC)) {
 		return (value) => {
-			const integerValue = parseInt(value, 10);
-			if (isNaN(integerValue)) {
-				return {
-					successful: false,
-					error: errFORG0001(value, ValueType.XSINTEGER),
-				};
-			}
-			if (!Number.isSafeInteger(integerValue)) {
-				return {
-					successful: false,
-					error: new Error(
-						`FOCA0003: can not cast ${value} to xs:integer, it is out of bounds for JavaScript numbers.`,
-					),
-				};
-			}
-
 			return {
 				successful: true,
-				value: createIntegerValue(integerValue),
+				value: createIntegerValue(Decimal.fromString(value)),
 			};
 		};
 	}
-	return (value) => ({
+	return (_value) => ({
 		successful: false,
-		error: new Error(
-			'XPTY0004: Casting not supported from given type to xs:integer or any of its derived types.',
+		error: errXPTY0004(
+			'Casting not supported from given type to xs:integer or any of its derived types.',
 		),
 	});
 }

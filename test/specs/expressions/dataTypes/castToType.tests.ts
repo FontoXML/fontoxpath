@@ -2,6 +2,7 @@ import * as chai from 'chai';
 import castToType from 'fontoxpath/expressions/dataTypes/castToType';
 import createAtomicValue from 'fontoxpath/expressions/dataTypes/createAtomicValue';
 import { ValueType } from 'fontoxpath/expressions/dataTypes/Value';
+import { Decimal } from 'fontoxpath/expressions/dataTypes/valueTypes/Decimal';
 import DateTime from 'fontoxpath/expressions/dataTypes/valueTypes/DateTime';
 import DayTimeDuration from 'fontoxpath/expressions/dataTypes/valueTypes/DayTimeDuration';
 import Duration from 'fontoxpath/expressions/dataTypes/valueTypes/Duration';
@@ -1008,32 +1009,38 @@ describe('castToType()', () => {
 					createAtomicValue('10.10', ValueType.XSUNTYPEDATOMIC),
 					ValueType.XSDECIMAL,
 				),
-				createAtomicValue(10.1, ValueType.XSDECIMAL),
+				createAtomicValue(Decimal.fromString('10.10'), ValueType.XSDECIMAL),
 			));
 		it('from xs:string', () =>
 			chai.assert.deepEqual(
 				castToType(createAtomicValue('10.10', ValueType.XSSTRING), ValueType.XSDECIMAL),
-				createAtomicValue(10.1, ValueType.XSDECIMAL),
+				createAtomicValue(Decimal.fromString('10.10'), ValueType.XSDECIMAL),
 			));
 		it('from xs:float', () =>
 			chai.assert.deepEqual(
 				castToType(createAtomicValue(10.123, ValueType.XSFLOAT), ValueType.XSDECIMAL),
-				createAtomicValue(10.123, ValueType.XSDECIMAL),
+				createAtomicValue(Decimal.fromFloat(10.123), ValueType.XSDECIMAL),
 			));
 		it('from xs:double', () =>
 			chai.assert.deepEqual(
 				castToType(createAtomicValue(10.123, ValueType.XSDOUBLE), ValueType.XSDECIMAL),
-				createAtomicValue(10.123, ValueType.XSDECIMAL),
+				createAtomicValue(Decimal.fromFloat(10.123), ValueType.XSDECIMAL),
 			));
 		it('from xs:decimal', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1010, ValueType.XSDECIMAL), ValueType.XSDECIMAL),
-				createAtomicValue(1010, ValueType.XSDECIMAL),
+				castToType(
+					createAtomicValue(Decimal.fromString('1010'), ValueType.XSDECIMAL),
+					ValueType.XSDECIMAL,
+				),
+				createAtomicValue(Decimal.fromString('1010'), ValueType.XSDECIMAL),
 			));
 		it('from xs:integer', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1010, ValueType.XSINTEGER), ValueType.XSDECIMAL),
-				createAtomicValue(1010, ValueType.XSDECIMAL),
+				castToType(
+					createAtomicValue(Decimal.fromString('1010'), ValueType.XSINTEGER),
+					ValueType.XSDECIMAL,
+				),
+				createAtomicValue(Decimal.fromString('1010'), ValueType.XSDECIMAL),
 			));
 		it('from xs:duration (throws XPTY0004)', () =>
 			chai.assert.throws(
@@ -1209,22 +1216,28 @@ describe('castToType()', () => {
 		it('from xs:float', () =>
 			chai.assert.deepEqual(
 				castToType(createAtomicValue(10.123, ValueType.XSFLOAT), ValueType.XSINTEGER),
-				createAtomicValue(10, ValueType.XSINTEGER),
+				createAtomicValue(Decimal.fromString('10'), ValueType.XSINTEGER),
 			));
 		it('from xs:double', () =>
 			chai.assert.deepEqual(
 				castToType(createAtomicValue(10.123, ValueType.XSDOUBLE), ValueType.XSINTEGER),
-				createAtomicValue(10, ValueType.XSINTEGER),
+				createAtomicValue(Decimal.fromString('10'), ValueType.XSINTEGER),
 			));
 		it('from xs:decimal', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1010, ValueType.XSDECIMAL), ValueType.XSINTEGER),
-				createAtomicValue(1010, ValueType.XSINTEGER),
+				castToType(
+					createAtomicValue(Decimal.fromString('1010'), ValueType.XSDECIMAL),
+					ValueType.XSINTEGER,
+				),
+				createAtomicValue(Decimal.fromString('1010'), ValueType.XSINTEGER),
 			));
 		it('from xs:integer', () =>
 			chai.assert.deepEqual(
-				castToType(createAtomicValue(1010, ValueType.XSINTEGER), ValueType.XSINTEGER),
-				createAtomicValue(1010, ValueType.XSINTEGER),
+				castToType(
+					createAtomicValue(Decimal.fromString('1010'), ValueType.XSINTEGER),
+					ValueType.XSINTEGER,
+				),
+				createAtomicValue(Decimal.fromString('1010'), ValueType.XSINTEGER),
 			));
 		it('from xs:duration (throws XPTY0004)', () =>
 			chai.assert.throws(

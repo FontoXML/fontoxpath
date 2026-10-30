@@ -3,6 +3,7 @@ import createAtomicValue from '../dataTypes/createAtomicValue';
 import ISequence from '../dataTypes/ISequence';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { SequenceType, ValueType } from '../dataTypes/Value';
+import { Decimal } from '../dataTypes/valueTypes/Decimal';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
 
@@ -24,12 +25,14 @@ class Literal extends Expression {
 		let value: AtomicValue;
 		switch (type.type) {
 			case ValueType.XSINTEGER:
-				value = createAtomicValue(parseInt(jsValue, 10), type.type);
+				value = createAtomicValue(Decimal.fromString(jsValue), type.type);
 				break;
 			case ValueType.XSSTRING:
 				value = createAtomicValue(jsValue + '', type.type);
 				break;
 			case ValueType.XSDECIMAL:
+				value = createAtomicValue(Decimal.fromString(jsValue), type.type);
+				break;
 			case ValueType.XSDOUBLE:
 				value = createAtomicValue(parseFloat(jsValue), type.type);
 				break;

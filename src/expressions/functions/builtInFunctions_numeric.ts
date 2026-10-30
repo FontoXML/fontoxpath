@@ -8,6 +8,7 @@ import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { SequenceMultiplicity, ValueType } from '../dataTypes/Value';
+import { Decimal } from '../dataTypes/valueTypes/Decimal';
 import type DynamicContext from '../DynamicContext';
 import type ExecutionParameters from '../ExecutionParameters';
 import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
@@ -473,9 +474,16 @@ const fnAbs: FunctionDefinitionType = (
 	_staticContext,
 	sequence,
 ) => {
-	return sequence.map((onlyValue) =>
-		createValidNumericType(onlyValue.type, Math.abs(onlyValue.value)),
-	);
+	return sequence.map((onlyValue) => {
+		if (onlyValue.value instanceof Decimal) {
+			const absValue =
+				onlyValue.value.compareTo(Decimal.ZERO) < 0
+					? onlyValue.value.negate()
+					: onlyValue.value;
+			return createAtomicValue(absValue, onlyValue.type);
+		}
+		return createValidNumericType(onlyValue.type, Math.abs(onlyValue.value));
+	});
 };
 
 const integerConverters = new Map([
@@ -546,9 +554,12 @@ const fnCeiling: FunctionDefinitionType = (
 	_staticContext,
 	sequence,
 ) => {
-	return sequence.map((onlyValue) =>
-		createValidNumericType(onlyValue.type, Math.ceil(onlyValue.value)),
-	);
+	return sequence.map((onlyValue) => {
+		if (onlyValue.value instanceof Decimal) {
+			return createAtomicValue(onlyValue.value.ceiling(), onlyValue.type);
+		}
+		return createValidNumericType(onlyValue.type, Math.ceil(onlyValue.value));
+	});
 };
 
 const fnFloor: FunctionDefinitionType = (
@@ -557,9 +568,12 @@ const fnFloor: FunctionDefinitionType = (
 	_staticContext,
 	sequence,
 ) => {
-	return sequence.map((onlyValue) =>
-		createValidNumericType(onlyValue.type, Math.floor(onlyValue.value)),
-	);
+	return sequence.map((onlyValue) => {
+		if (onlyValue.value instanceof Decimal) {
+			return createAtomicValue(onlyValue.value.floor(), onlyValue.type);
+		}
+		return createValidNumericType(onlyValue.type, Math.floor(onlyValue.value));
+	});
 };
 
 function isHalf(value: number, scaling: number) {
@@ -591,7 +605,16 @@ function determineRoundedNumber(itemAsDecimal: number, halfToEven: boolean, scal
 		}
 		return Math.ceil(itemAsDecimal * scaling) / scaling;
 	}
-	return Math.round(itemAsDecimal * scaling) / scaling;
+	const scaled = itemAsDecimal * scaling;
+	const truncated = scaled < 0 ? Math.ceil(scaled) : Math.floor(scaled);
+	const frac = Math.abs(scaled - truncated);
+	if (frac > 0.5) {
+		return (scaled < 0 ? truncated - 1 : truncated + 1) / scaling;
+	}
+	if (frac < 0.5) {
+		return truncated / scaling;
+	}
+	return (scaled > 0 ? truncated + 1 : truncated) / scaling;
 }
 
 function fnRound(
@@ -635,10 +658,6 @@ function fnRound(
 			}
 			done = true;
 
-			if (getNumberOfDecimalDigits(firstValue.value as number) < scalingPrecision) {
-				return ready(firstValue);
-			}
-
 			const originalType = [
 				ValueType.XSINTEGER,
 				ValueType.XSDECIMAL,
@@ -647,6 +666,64 @@ function fnRound(
 			].find((type: ValueType) => {
 				return isSubtypeOf(firstValue.type, type);
 			});
+
+			if (firstValue.value instanceof Decimal) {
+				const dec = firstValue.value;
+				const absPrecision = Math.abs(scalingPrecision);
+				const decScale = (dec as any)._scale as number;
+				if (scalingPrecision >= 0 && absPrecision >= decScale) {
+					return ready(firstValue);
+				}
+				const pow10p = Decimal.fromBigInt(BigInt(10) ** BigInt(absPrecision));
+				const scaled = scalingPrecision >= 0 ? dec.multiply(pow10p) : dec.div(pow10p);
+				const truncated = scaled.truncate();
+				const frac = scaled.subtract(truncated);
+				const absFrac = frac.compareTo(Decimal.ZERO) < 0 ? frac.negate() : frac;
+				const half = Decimal.fromFloat(0.5);
+				let roundedScaled: Decimal;
+				if (halfToEven) {
+					const cmp = absFrac.compareTo(half);
+					if (cmp > 0) {
+						roundedScaled =
+							scaled.compareTo(Decimal.ZERO) < 0
+								? truncated.subtract(1)
+								: truncated.add(1);
+					} else if (cmp < 0) {
+						roundedScaled = truncated;
+					} else {
+						const two = Decimal.fromFloat(2);
+						const isEven = truncated.mod(two).isZero();
+						roundedScaled = isEven
+							? truncated
+							: scaled.compareTo(Decimal.ZERO) < 0
+							? truncated.subtract(1)
+							: truncated.add(1);
+					}
+				} else {
+					const cmp = absFrac.compareTo(half);
+					if (cmp > 0) {
+						roundedScaled =
+							scaled.compareTo(Decimal.ZERO) < 0
+								? truncated.subtract(1)
+								: truncated.add(1);
+					} else if (cmp < 0) {
+						roundedScaled = truncated;
+					} else {
+						roundedScaled =
+							scaled.compareTo(Decimal.ZERO) > 0 ? truncated.add(1) : truncated;
+					}
+				}
+				const rounded =
+					scalingPrecision >= 0
+						? roundedScaled.div(pow10p)
+						: roundedScaled.multiply(pow10p);
+				return ready(createAtomicValue(rounded, firstValue.type));
+			}
+
+			if (getNumberOfDecimalDigits(firstValue.value as number) < scalingPrecision) {
+				return ready(firstValue);
+			}
+
 			const itemAsDecimal = castToType(firstValue, ValueType.XSDECIMAL);
 			const scaling = Math.pow(10, scalingPrecision);
 			const roundedNumber = determineRoundedNumber(itemAsDecimal.value, halfToEven, scaling);

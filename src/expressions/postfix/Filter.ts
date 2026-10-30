@@ -2,6 +2,7 @@ import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value, { ValueType } from '../dataTypes/Value';
+import { Decimal } from '../dataTypes/valueTypes/Decimal';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression from '../Expression';
@@ -47,7 +48,10 @@ class Filter extends Expression {
 
 			const resultValue = result.first();
 			if (isSubtypeOf(resultValue.type, ValueType.XSNUMERIC)) {
-				let requestedIndex: number = resultValue.value as number;
+				// Sequences are really not expected to hit the bounds of JS numbers. Just downcast to keep the code easier
+				let requestedIndex: number = isSubtypeOf(resultValue.type, ValueType.XSDECIMAL)
+					? (resultValue.value as Decimal).toFloat()
+					: (resultValue.value as number);
 				if (!Number.isInteger(requestedIndex)) {
 					// There are only values for integer positions
 					return sequenceFactory.empty();
@@ -117,7 +121,10 @@ class Filter extends Expression {
 						shouldReturnCurrentValue = false;
 					} else if (isSubtypeOf(first.type, ValueType.XSNUMERIC)) {
 						// Remember: XPath is one-based
-						shouldReturnCurrentValue = first.value === i + 1;
+						const requestedIndex =
+							first.value instanceof Decimal ? first.value.toFloat() : first.value;
+						shouldReturnCurrentValue =
+							Number.isInteger(requestedIndex) && requestedIndex === i + 1;
 					} else {
 						const ebv = filterResultSequence.getEffectiveBooleanValue();
 						shouldReturnCurrentValue = ebv;

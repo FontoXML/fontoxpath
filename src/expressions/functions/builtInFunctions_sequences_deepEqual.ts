@@ -3,7 +3,6 @@ import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import DomFacade from '../../domFacade/DomFacade';
 import ArrayValue from '../dataTypes/ArrayValue';
 import { atomizeSingleValue } from '../dataTypes/atomize';
-import castToType from '../dataTypes/castToType';
 import createPointerValue from '../dataTypes/createPointerValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
@@ -13,6 +12,7 @@ import Value, { ValueType } from '../dataTypes/Value';
 import { equal } from '../dataTypes/valueTypes/DateTime';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
+import { valueCompare } from '../operators/compares/ValueCompare';
 import { BUILT_IN_NAMESPACE_URIS } from '../staticallyKnownNamespaces';
 import StaticContext from '../StaticContext';
 import createSingleValueIterator from '../util/createSingleValueIterator';
@@ -58,32 +58,20 @@ function filterElementAndTextNodes(node: NodePointer, domFacade: DomFacade) {
 }
 
 export function anyAtomicTypeDeepEqual(
-	_dynamicContext: DynamicContext,
+	dynamicContext: DynamicContext,
 	_executionParameters: ExecutionParameters,
 	_staticContext: StaticContext,
 	item1: Value,
 	item2: Value,
 ): boolean {
 	if (
-		(isSubtypeOf(item1.type, ValueType.XSDECIMAL) ||
-			isSubtypeOf(item1.type, ValueType.XSFLOAT)) &&
-		(isSubtypeOf(item2.type, ValueType.XSDECIMAL) || isSubtypeOf(item2.type, ValueType.XSFLOAT))
+		isSubtypeOf(item1.type, ValueType.XSNUMERIC) &&
+		isSubtypeOf(item2.type, ValueType.XSNUMERIC)
 	) {
-		const temp1 = castToType(item1, ValueType.XSFLOAT);
-		const temp2 = castToType(item2, ValueType.XSFLOAT);
-		return temp1.value === temp2.value || (isNaN(item1.value) && isNaN(item2.value));
-	}
-	if (
-		(isSubtypeOf(item1.type, ValueType.XSDECIMAL) ||
-			isSubtypeOf(item1.type, ValueType.XSFLOAT) ||
-			isSubtypeOf(item1.type, ValueType.XSDOUBLE)) &&
-		(isSubtypeOf(item2.type, ValueType.XSDECIMAL) ||
-			isSubtypeOf(item2.type, ValueType.XSFLOAT) ||
-			isSubtypeOf(item2.type, ValueType.XSDOUBLE))
-	) {
-		const temp1 = castToType(item1, ValueType.XSDOUBLE);
-		const temp2 = castToType(item2, ValueType.XSDOUBLE);
-		return temp1.value === temp2.value || (isNaN(item1.value) && isNaN(item2.value));
+		if (valueCompare('eqOp', item1.type, item2.type)(item1, item2, dynamicContext)) {
+			return true;
+		}
+		return isNaN(item1.value) && isNaN(item2.value);
 	}
 
 	if (isSubtypeOf(item1.type, ValueType.XSQNAME) && isSubtypeOf(item2.type, ValueType.XSQNAME)) {
